@@ -1,0 +1,400 @@
+/*
+* Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-extension {
+  namespace "urn:huawei:yang:huawei-extension";
+  prefix ext;
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+
+  description
+    "Huawei private extensions to the YANG language.";
+
+  revision 2019-12-13 {
+    description
+      "Add refine-ext, deviation-ext and deviate-ext.";
+    reference
+      "Huawei private.";
+  }
+
+  revision 2019-11-09 {
+    description
+      "Update example for generated-by.";
+    reference
+      "Huawei private.";
+  }
+
+  revision 2019-09-26 {
+    description
+      "Add new extensions.";
+    reference
+      "Huawei private.";
+  }   
+
+  revision 2019-05-07 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  extension support-filter {
+    argument value;
+    description
+      "The syntax indicates whether a non-key node supports filtering in list or leaf-list node.
+       The key node does not need to define this syntax because it must support filtering.
+       The options are as follows: true, false. Default is false.";
+    /*
+    Example:
+    leaf aaa {
+      type string;
+      ext:support-filter true;
+    }
+    */
+  }
+
+  extension value-mapping {
+    description
+      "Value-mapping.";
+  }
+
+  extension value-replace {
+    description
+      "Value-replace.";
+  }
+
+  extension value-meaning {
+    description
+      "The syntax indicates meanings of some special values through using item and meaning syntax.";
+    /*
+    Example1:
+    leaf aaa {
+      type uint8 {
+        ext:value-meaning {      
+          ext:item 0 {
+            ext:meaning "IP";
+            description "Value 0 means IP protocol.";
+          }
+          ext:item 1 {
+            ext:meaning "ICMP";
+            description "Value 1 means ICMP protocol.";
+          }
+          ext:item 2 {
+            ext:meaning "IGMP";
+            description "Value 2 means IGMP protocol.";
+          }
+        }
+      }
+    }
+    */
+  }
+
+  extension item {
+    argument value;
+    description
+      "The syntax indicates one special value and it is substatement of value-meaning. See value-meaning for usage.";
+  }
+
+  extension meaning {
+    argument value;
+    description
+      "The syntax indicates meaning of the special value and it is substatement of item. See value-meaning for usage.";
+  }
+
+  extension case-sensitivity {
+    argument value;
+    description
+      "The syntax indicates case sensitivity of string type or its derived type nodes.
+       The options are as follows:
+       1. lower-and-upper: Server can accept both lower and upper case, and it is case-sensitive when checking uniqueness.
+       2. lower-or-upper: Server can accept both lower and upper case, and it is case-insensitive when checking uniqueness.
+       3. lower-only: Server can accept lower case only.
+       4. upper-only: Server can accept upper case only.
+       5. lower2upper: Server transfers lower case into upper case automatically.
+       6. upper2lower: Server transfers upper case into lower case automatically.
+       Default is lower-and-upper.";
+    /*
+    Example:
+    leaf aaa {
+      type string;
+      ext:case-sensitivity upper2lower;    
+    }
+    */
+  }
+
+  extension bitmap-bit-range {
+    argument value;
+    description
+      "Bitmap-bit-range.";
+  }
+
+  extension masklen {
+    argument value;
+    description
+      "The syntax indicates total number of bit for the node using pub-type:bits8/bits16/bits32/bits64 type.";
+    /*
+    Example:
+    leaf week {
+      type pub-type:bits8;
+      ext:masklen 7;
+      ext:bit "mon" {
+        position 0;
+      }
+      ext:bit "tue" {
+        position 1;
+      }
+      ext:bit "wed" {
+        position 2;
+      }
+      ext:bit "tur" {
+        position 3;
+      }
+      ext:bit "fri" {
+        position 4;
+      }
+      ext:bit "sat" {
+        position 5;
+      }
+      ext:bit "sun" {
+        position 6;
+      }
+    }
+    */
+  }
+
+  extension bit {
+    argument value;
+    description
+      "The syntax indicates the name of one bit for the node using pub-type:bits8/bits16/bits32/bits64 type.
+       See masklen for usage.";
+  }
+
+  extension allowDelete {
+    argument value;
+    description
+      "AllowDelete.";
+  }
+  extension value-range {
+    argument value;
+    description
+      "The syntax indicates numerical range of value that can be entered using id-range type or its derived type nodes.";
+    /*
+    Example1:
+    leaf aaa {
+      type id-range {
+        ext:value-range "1..100"; 
+      };
+    }
+
+    Example2:
+    leaf bbb {
+      type vlan-range {
+        ext:value-range "1..4094"; 
+      };
+    }
+    */
+  }
+
+  extension task-name {
+    argument value;
+    description
+      "The syntax indicates which task the module belongs to and should be defined before the root node.";
+    /* 
+    Example:
+    module huawei-devm {
+      ...
+      ext:task-name "device-mgr";
+      container devm {
+        ...
+      }
+    }
+    */
+  }
+  
+  extension entry-from {
+    argument value;
+    description "Applies only to a list or presence container whose config is true. " +
+      "entry-from specifies an instance to be automatically generated by the system "+
+	  "based on other data or to be created by a user.";
+  }
+  
+  extension node-ref {
+    argument value;
+    description 
+      "The syntax indicates the xpath of the data node for which the rpc operation is performed.
+       If the rpc operation is performed for the entire system (the corresponding node cannot 
+       be found in the model tree), this syntax is not required.";
+    /*
+    Example:
+    rpc aaa {
+      ext:node-ref "/ifm/interfaces/interface";
+      ...
+    }
+    */
+  }
+
+  extension dynamic-default {
+    description
+      "The syntax indicates dynamic default value according to system or other nodes.";
+    /*  
+    Example1:
+    leaf aaa {
+      type uint32;
+      ext:dynamic-default;
+    }
+
+    Example2:
+    leaf aaa {
+      type uint32;
+      ext:dynamic-default {
+        ext:default-value "../bbb + ../ccc" {
+          description "The default value of aaa is bbb plus ccc.";
+        }
+      }
+    }
+
+    Example3:
+    leaf aaa {
+      type uint32;
+      ext:dynamic-default {
+        ext:default-value "../bbb * 3" {
+          when "../ccc = 'true'";
+          description "The default value is three times of bbb when ccc is true.";
+        }
+        ext:default-value 20 {
+          when "../ccc = 'false'";
+          description "The default value is 20 when ccc is false.";
+        }
+        ext:default-value 30 {
+          description "The default value is 30 under other conditions.";   
+        }
+      }
+    }
+    */
+  }
+
+  extension default-value {
+    argument value;
+    description
+      "The syntax indicates one dynamic default value and it is substatement of dynamic-default. See dynamic-default for usage.";
+  }
+
+  extension operation-exclude {
+    argument value;
+    description
+      "The syntax indicates which operations are not supported.
+       The options are as follows:
+       create, delete, update and various combinations separated by '|'.";
+    /*
+    Example1:
+    list aaa {
+      ext:operation-exclude create|delete;
+      ...
+    }
+       
+    Example2:
+    leaf aaa {
+      type string;
+      ext:operation-exclude update;
+    }
+
+    Example3:
+    list aaa {
+      ext:operation-exclude create|delete {
+        ext:filter "name = '_public_'";
+        description "The instances whose name is '_public_' cannot be created, deleted.";
+      };
+      ...
+    }
+    */
+  }
+
+  extension filter {
+    argument value;
+    description
+      "The syntax indicates rules satisfying specific constraints and it is substatement of operation-exclude or generated-by syntax.
+       See operation-exclude or generated-by for usage.";
+  }
+
+  extension generated-by {
+    argument value;
+    description
+      "The syntax indicates whether config datas are generated by the system.
+       The options are as follows: system, user. Default is user.";
+    /*
+    Example1:
+    list aaa {
+      ext:generated-by system;
+      ...
+    }
+
+    Example2:
+    list aaa {
+      ext:generated-by system {
+        when "../enable = 'true'";
+        description "The all instances are generated automatically when enable is true.";
+      }
+    ...
+    }
+
+    Example3:
+    list aaa {
+      ext:generated-by system {
+        when "../enable = 'true'";
+        ext:filter "type = 'dynamic'";
+        description "The instances whose type is 'dynamic' are generated automatically when enable is true.";
+      }
+      ...
+    }
+    */
+  }
+  extension upper2lower {
+    argument value;
+    description
+      "Convert upper-case letters to lower-case letters.";
+  }
+  
+  extension refine-ext {
+    argument value;
+    description
+      "The syntax is used to define a private syntax for a xpath node in an extended manner, the value is xpath.";
+    /*
+    Example:
+    ext:refine-ext "/aaa/bbb/ccc" {
+      ext:operation-exclude create|delete;
+      ext:generated-by system;
+      ...
+    }
+    */
+  }
+  
+  extension deviation-ext {
+    argument value;
+    description
+      "This syntax is used to tailor and customize multiple products for private syntax, the value is XPath.";
+    /*
+    ext:deviation-ext "/aaa/bbb/ccc" {
+      ext:deviate-ext add {
+        ext:generated-by system;
+      }
+    }
+    */
+  }
+    
+  extension deviate-ext {
+    argument value;
+    description
+      "This syntax is used to tailor and customize multiple products for private syntax, it is substatement of deviation-ext syntax,
+       The options are as follows: add, delete, replace.
+       See deviation-ext for usage.";
+  }
+
+}

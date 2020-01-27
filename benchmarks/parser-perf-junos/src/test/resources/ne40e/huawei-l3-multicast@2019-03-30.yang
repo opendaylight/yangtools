@@ -1,0 +1,144 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l3-multicast {
+  namespace "urn:huawei:yang:huawei-l3-multicast";
+  prefix l3mc;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-routing {
+    prefix rt;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Multicast basic service package.";
+  revision 2019-03-30 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mcast-base";
+  typedef load-splitting-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Disable load splitting for multicast routes.";
+      }
+      enum "source" {
+        value 1;
+        description
+          "Specify the multicast source-based load splitting mode. This mode applies to a scenario in which multiple sources provide services for one group.";
+      }
+      enum "group" {
+        value 2;
+        description
+          "Specify the multicast group-based multicast load splitting mode. This mode applies to a scenario in which one source provides services for multiple groups.";
+      }
+      enum "source-group" {
+        value 3;
+        description
+          "Specify the multicast source-based and group-based load splitting mode. This mode applies to a scenario in which multiple sources provide services for multiple groups.";
+      }
+      enum "balance" {
+        value 4;
+        description
+          "Specify the stable-preferred load splitting. This mode enables a device to automatically adjust and balance entries on equal-cost routes when equal-cost routes are added or deleted, when multicast routing entries are deleted, or when load splitting weights are changed on interfaces. This mode applies to a scenario in which hosts frequently join or leave groups and automatic load splitting adjustment is required.";
+      }
+      enum "balance-ucmp" {
+        value 5;
+        description
+          "Specify the balance-ucmp load splitting.";
+      }
+    }
+    description
+      "Load splitting type.";
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance" {
+    description "Adds mcastbase configuration to the l3vpn module.";
+    container multicast {
+      description
+        "Configure multicast in the instance.";
+      container ipv4 {
+        when "(../../ni:name='_public_' and ../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']) or ../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']/l3vpn:route-distinguisher";
+        presence "Create mcastbaseAf4.";
+        description
+          "Enable/disable multicast in the instance.";
+        container global {
+          description
+            "Configure global multicast configurations.";
+          leaf longest-match {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the function of selecting an RPF route based on the longest matching rule. By default, the route with the highest preference is selected as the RPF route.";
+          }
+          leaf load-splitting {
+            type load-splitting-type;
+            default "none";
+            description
+              "Configured a multicast load splitting policy.";
+          }
+          leaf cpu-fwd-disable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable CPU forwarding. By default, CPU forwarding is enabled.";
+          }
+        }
+        container rpf-multi-topology {
+          when "../../../ni:name='_public_'";
+          must "../../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']/rt:routing/rt:routing-manage/rt:topologys/rt:topology[rt:name='multicast']";
+          presence "Enable multicast services to run in a specified multicast topology instance.";
+          description
+            "Enable/disable the multicast multi-topology function. By default, the multicast multi-topology function is disabled. Before enabling a multicast multi-topology, you must create it globally first.";
+        }
+      }
+      container ipv6 {
+        when "(../../ni:name='_public_' and ../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']) or ../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']/l3vpn:route-distinguisher";
+        presence "Create mcastbase-af6.";
+        description
+          "Enable/disable multicast IPv6 in the instance.";
+        container global {
+          description
+            "Configure global IPv6 multicast configurations.";
+          leaf load-splitting {
+            type load-splitting-type;
+            default "none";
+            description
+              "Configured a multicast load splitting policy.";
+          }
+          leaf cpu-fwd-disable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable CPU forwarding. By default, CPU forwarding is enabled.";
+          }
+        }
+        container rpf-multi-topology {
+          when "../../../ni:name='_public_'";
+          must "../../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']/rt:routing/rt:routing-manage/rt:topologys/rt:topology[rt:name='multicast']";
+          presence "Enable multicast services to run in a specified multicast topology instance.";
+          description
+            "Enable/disable the multicast multi-topology function. By default, the multicast multi-topology function is disabled. Before enabling a multicast multi-topology, you must create it globally first.";
+        }
+      }
+    }
+  }
+}

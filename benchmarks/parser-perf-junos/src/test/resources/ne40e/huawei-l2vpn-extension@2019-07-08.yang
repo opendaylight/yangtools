@@ -1,0 +1,325 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2vpn-extension {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-l2vpn-extension";
+  prefix l2vpn-extension;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "L2 virtual private network extensions.";
+  revision 2019-07-08 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  typedef qos-query-type {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "Best effort (BE) service-class.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "Assured forwarding 1 (AF1) service-class.";
+      }
+      enum "af2" {
+        value 2;
+        description
+          "Assured forwarding 2 (AF2) service-class.";
+      }
+      enum "af3" {
+        value 3;
+        description
+          "Assured forwarding 3 (AF3) service-class.";
+      }
+      enum "af4" {
+        value 4;
+        description
+          "Assured forwarding 4 (AF4) service-class.";
+      }
+      enum "ef" {
+        value 5;
+        description
+          "Expedited forwarding (EF) service-class.";
+      }
+      enum "cs6" {
+        value 6;
+        description
+          "Class selector 6 (CS6) service-class.";
+      }
+      enum "cs7" {
+        value 7;
+        description
+          "Class selector 7 (CS7) service-class.";
+      }
+    }
+    description
+      "L2VPN QoS query.";
+  }
+  grouping qos-query-info-grp {
+    description
+      "QoS query info.";
+    leaf packets {
+      type uint64;
+      units packet;
+      description
+        "The total number of output packets.";
+    }
+    leaf bytes {
+      type uint64;
+      units Byte;
+      description
+        "The total number of output bytes.";
+    }
+    leaf packets-rate {
+      type uint64;
+      units pps;
+      description
+        "The last 300 seconds packets rate.";
+    }
+    leaf bits-rate {
+      type uint64;
+      units bit/s;
+      description
+        "The last 300 seconds bits rate.";
+    }
+    leaf discard-packets {
+      type uint64;
+      units packet;
+      description
+        "The total discard number of the packets.";
+    }
+    leaf discard-bytes {
+      type uint64;
+      units Byte;
+      description
+        "The total discard number of the bytes.";
+    }
+    leaf discard-packets-rate {
+      type uint64;
+      units pps;
+      description
+        "The last 300 seconds discard packets rate.";
+    }
+    leaf discard-bit-rate {
+      type uint64;
+      units bit/s;
+      description
+        "The last 300 seconds discard bits rate.";
+    }
+  }
+  grouping qos-traffic-statistics-grp {
+    description
+      "QoS traffic-statistics table.";
+    leaf last-clear-time {
+      type string {
+        length "1..60";
+      }
+      description
+        "Last time of clean out.";
+    }
+    leaf bits-rate {
+      type uint64;
+      units bit/s;
+      description
+        "The traffic bits rate received on the PW.";
+    }
+    leaf packets-rate {
+      type uint64;
+      units pps;
+      description
+        "The traffic packet rate received on the PW.";
+    }
+    leaf output-bytes {
+      type uint64;
+      units Byte;
+      description
+        "The traffic bytes transmitted out of the PW.";
+    }
+    leaf output-packets {
+      type uint64;
+      units packet;
+      description
+        "The traffic packets transmitted out of the PW.";
+    }
+    container qos-querys {
+      description
+        "List of the QoS traffic-statistics.";
+      list qos-query {
+        key "query";
+        description
+          "Indicates the query table of the QoS traffic statistics.";
+        leaf query {
+          type qos-query-type;
+          description
+            "Indicates the query of the QoS traffic statistics.";
+        }
+        uses qos-query-info-grp;
+      }
+    }
+  }
+  grouping qos-parameter-grp {
+    description
+      "QoS parameter information.";
+    leaf cir {
+      type uint32 {
+        range "0..4294967295";
+      }
+      units kbit/s;
+      default "0";
+      description
+        "Specify the CIR.";
+    }
+    leaf pir {
+      type uint32 {
+        range "0..4294967295";
+      }
+      units kbit/s;
+      description
+        "Specify the PIR.";
+    }
+    leaf profile-name {
+      when "../pir>0";
+      type leafref {
+        path "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile/qos:name";
+      }
+      description
+        "Specify the name of QoS profile.";
+    }
+  }
+
+  augment /l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls {
+    description
+      "Configure the vpls QoS traffic statistics.";
+    container qos-parameter {
+      must "cir<=pir" {
+        error-message
+          "The pir value is less than cir value.";
+      }
+      must "not(cir=0 and pir=0)" {
+          error-message
+          "The cir and pir value can not be zero at same time.";
+      }
+      presence "enable QoS for pw";
+      description
+        "Enable/disable the QoS parameter information.";
+      uses qos-parameter-grp;
+    }
+  }
+
+  augment /l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:ldp-signaling/l2vpn:pws/l2vpn:pw {
+    description
+      "Configure the vpls ldp pw QoS traffic statistics.";
+    container qos-parameter {
+      when "../l2vpn:name";
+      must "cir<=pir" {
+        error-message
+          "The pir value is less than cir value.";
+      }
+      must "not(cir=0 and pir=0)" {
+          error-message
+          "The cir and pir value can not be zero at same time.";
+      }
+      presence "enable QoS for pw";
+      description
+        "Enable/disable the QoS parameter information.";
+      uses qos-parameter-grp;
+    }
+  }
+
+  augment /l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-ldp/l2vpn:pws/l2vpn:pw {
+    description
+      "Configure the vpws-ldp pw QoS traffic statistics.";
+    container qos-parameter {
+      when "../l2vpn:role!='ac-bypass' and ../l2vpn:role!='pw-bypass'";
+      must "cir<=pir" {
+        error-message
+          "The pir value is less than cir value.";
+      }
+      must "not(cir=0 and pir=0)" {
+          error-message
+          "The cir and pir value can not be zero at same time.";
+      }
+      presence "enable QoS for pw";
+      description
+        "Enable/disable the QoS parameter information.";
+      uses qos-parameter-grp;
+    }
+    container qos-traffic-statistics {
+      config false;
+      description
+        "Operational data of QoS traffic statistics table.";
+      leaf interface-name {
+        type pub-type:if-name;
+        description
+          "Indicates the type and number of the AC interface.";
+      }
+      uses qos-traffic-statistics-grp;
+    }
+  }
+
+  augment /l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-switch/l2vpn:pws/l2vpn:pw {
+    description
+      "Configure the vpws-switch pw QoS traffic statistics.";
+    container qos-parameter {
+      must "cir<=pir" {
+        error-message
+          "The pir value is less than cir value.";
+      }
+      must "not(cir=0 and pir=0)" {
+          error-message
+          "The cir and pir value can not be zero at same time.";
+      }
+      presence "enable QoS for pw";
+      description
+        "Enable/disable QoS parameter information.";
+      uses qos-parameter-grp;
+    }
+  }
+
+  augment /l2vpn:l2vpn/l2vpn:common/l2vpn:pw-templates/l2vpn:pw-template {
+    description
+      "Configure the QoS traffic statistics in pw-template.";
+    container qos-parameter {
+      must "cir<=pir" {
+        error-message
+          "The pir value is less than cir value.";
+      }
+      must "not(cir=0 and pir=0)" {
+          error-message
+          "The cir and pir value can not be zero at same time.";
+      }
+      presence "enable QoS for pw";
+      description
+        "Enable/disable QoS parameter information.";
+      uses qos-parameter-grp;
+    }
+  }
+  ext:task-name "l2vpn";
+}

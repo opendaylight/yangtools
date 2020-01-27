@@ -1,0 +1,466 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-trafficmng {
+  namespace "urn:huawei:yang:huawei-trafficmng";
+  prefix trafficmng;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Traffic management.";
+ revision 2019-12-21 {
+    description
+      "Add new nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-07-21 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "device-mgr";
+  typedef board-type {
+    type enumeration {
+      enum "sfu" {
+        value 0;
+        description
+          "Tm board type SFU.";
+      }
+      enum "lpu" {
+        value 1;
+        description
+          "Tm board type LPU.";
+      }
+    }
+    description
+      "The type of board.";
+  }
+  typedef lpu-switch-status {
+    type enumeration {
+      enum "close" {
+        value 0;
+        description
+          "Close status.";
+      }
+      enum "open" {
+        value 1;
+        description
+          "Open status.";
+      }
+      enum "init" {
+        value 2;
+        description
+          "Init status.";
+      }
+      enum "link-lost-error" {
+        value 3;
+        description
+          "Link lost error status.";
+      }
+      enum "crc-error" {
+        value 4;
+        description
+          "Crc error status.";
+      }
+      enum "packet-error" {
+        value 5;
+        description
+          "Packet error status.";
+      }
+      enum "unstable-error" {
+        value 6;
+        description
+          "Unstable error status.";
+      }
+      enum "isoswf-error" {
+        value 11;
+        description
+          "Isoswf error status.";
+      }
+      enum "isotm-error" {
+        value 26;
+        description
+          "Isotm error status.";
+      }
+      enum "linkv" {
+        value 42;
+        description
+          "Linkv status.";
+      }
+      enum "tx-off" {
+        value 49;
+        description
+          "TX off status.";
+      }
+    }
+    description
+      "The status of switch.";
+  }
+  typedef choice-enable-type {
+    type enumeration {
+      enum "enable" {
+        value 0;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable warm backup.";
+  }
+  container trafficmng {
+    description
+      "Specify configuration information of traffic management.";
+    container board-alarm-sfu-thresholds {
+      description
+        "List of link-lost alarm config with board sfu.";
+      list board-alarm-sfu-threshold{
+        key "slot-id";
+        description
+          "Configure link-lost alarm value.";
+        leaf slot-id {
+          type string {
+              length "1..32";
+              pattern '(c[cl]c\d+/)?\d+';
+          }
+          description
+            "Slot ID of board.";
+        }
+        leaf value {
+          type uint32 {
+            range "1..64";
+          }
+          mandatory true;
+          description
+            "Value of link-lost.";
+        }
+      }
+    }
+    container board-alarm-lpu-thresholds {
+      description
+        "List of link-lost alarm config with board lpu.";
+      list board-alarm-lpu-threshold{
+        key "slot-id";
+        description
+          "Configure link-lost alarm value.";
+        leaf slot-id {
+          type leafref {
+            path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+          }
+          description
+            "Slot ID of board.";
+        }
+        leaf value {
+          type uint32 {
+            range "1..16";
+          }
+          mandatory true;
+          description
+            "Value of link lost.";
+        }
+      }
+    }
+    container sfu-warm-backup-switch {
+      description
+        "Configure SFU warm backup enable.";
+      leaf enable {
+        type choice-enable-type;
+        description
+          "Enable/disable SFU warm backup.";
+      }
+    }
+    container packet-loss-alarms {
+      description
+        "List of statistics alarm thresholds.";
+      list packet-loss-alarm {
+        key "slot-id";
+        description
+          "Configure statistics alarm threshold.";
+        leaf slot-id {
+          type leafref {
+            path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+          }
+          description
+            "Slot ID of board.";
+        }
+        leaf packets {
+          type uint32 {
+            range "1..4294967295";
+          }
+          units "packet";
+          default "10000";
+          description
+            "Packets.";
+        }
+        leaf seconds {
+          type uint32 {
+            range "5..3600";
+          }
+          units "s";
+          default "60";
+          description
+            "Seconds.";
+        }
+      }
+    }
+    container lpu-backpressure-switch {
+      description
+        "Configure LPU backpressure.";
+      leaf enable {
+        type choice-enable-type;
+        description
+          "Enable/disable LPU backpressure.";
+      }
+    }
+    container tm-sfu-informations {
+      config false;
+      description
+        "List of tm SFU information.";
+      list tm-sfu-information {
+        key "slot-id";
+        description
+          "Operational state of tm SFU.";
+        leaf slot-id {
+          type string {
+              length "1..32";
+              pattern '(c[cl]c\d+/)?\d+';
+          }
+          description
+            "Slot id.";
+        }
+        container inbound-switch-port-statuss {
+          description
+            "List of SFU switch input port status.";
+          list inbound-switch-port-status {
+            key "chip-number port";
+            description
+              "Operational state of SFU switch input port.";
+            leaf chip-number {
+              type uint32 {
+                range "0..7";
+              }
+              description
+                "Chip number.";
+            }
+            leaf port {
+              type uint32 {
+                range "0..200";
+              }
+              description
+                "Input port.";
+            }
+            leaf status {
+              type lpu-switch-status;
+              description
+                "Input status.";
+            }
+          }
+        }
+        container outbound-switch-port-statuss {
+          description
+            "List of SFU switch output port status.";
+          list outbound-switch-port-status {
+            key "chip-number port";
+            description
+              "Operational state of SFU switch output port.";
+            leaf chip-number {
+              type uint32 {
+                range "0..7";
+              }
+              description
+                "Chip number.";
+            }
+            leaf port {
+              type uint32 {
+                range "0..200";
+              }
+              description
+                "Output port.";
+            }
+            leaf status {
+              type lpu-switch-status;
+              description
+                "Output status.";
+            }
+          }
+        }
+        container sfu-statistics {
+          description
+            "List of SFU statistics.";
+          list sfu-statistic {
+	      key "chip-id";
+            description
+              "Statistics of SFU.";
+            leaf chip-id {
+              type uint32 {
+                range "0..7";
+              }
+              description
+                "Chip ID.";
+            }
+            leaf pass-cells {
+              type uint64;
+              description
+                "Pass cells.";
+            }
+            leaf discard-cells {
+              type uint64;
+              description
+                "Discard cells.";
+            }
+            leaf send-cells {
+              type uint64;
+              description
+                "Send cells.";
+            }
+          }
+        }
+      }
+    }
+    container tm-lpu-statuss {
+	  config false;
+      description
+        "List of the status of the switch port on an LPU.";
+      list tm-lpu-status {
+        key "slot-id";
+        description
+          "Operational state of the switch port on an LPU.";
+        leaf slot-id {
+          type string {
+            length "1..32";
+            pattern '(c[cl]c\d+/)?\d+';
+          }
+          description
+            "Slot ID.";
+        }
+        container inbound-switch-port-statuss {
+          description
+            "List of LPU switch input port status.";
+          list inbound-switch-port-status {
+            key "chip-number port";
+            description
+              "Operational state of LPU switch input port.";
+            leaf chip-number {
+              type uint32 {
+                range "0..7";
+              }
+              description
+                "Chip number.";
+            }
+            leaf port {
+              type uint32 {
+                range "0..200";
+              }
+              description
+                "Input port.";
+            }
+            leaf status {
+              type lpu-switch-status;
+              description
+                "Input status.";
+            }
+          }
+        }
+        container outbound-switch-port-statuss {
+          description
+            "List of LPU switch output port status.";
+          list outbound-switch-port-status {
+            key "chip-number port";
+            description
+              "Operational state of LPU switch output port.";
+            leaf chip-number {
+              type uint32 {
+                range "0..7";
+              }
+              description
+                "Chip number.";
+            }
+            leaf port {
+              type uint32 {
+                range "0..200";
+              }
+              description
+                "Output port.";
+            }
+            leaf status {
+              type lpu-switch-status;
+              description
+                "Output status.";
+            }
+          }
+        }
+        container tm-statisticss {
+          description
+          "List of tm statistics.";
+          list tm-statistics {
+            key "chip-id";
+            description
+              "Tm statistics.";
+            leaf chip-id {
+              type uint32 {
+              range "0..7";
+              }
+              description
+                "Chip ID.";
+            }
+            leaf pass-packets-in {
+              type uint64;
+              units "packet";
+              description
+                "Number of packets entered by NP to FABRIC.";
+            }
+            leaf discard-packets-in {
+              type uint64;
+              units "packet";
+              description
+                "Number of packets discarded from NP to FABRIC.";
+            }
+            leaf send-cells-in {
+              type uint64;
+              description
+                "Number of cells from NP to FABRIC out.";
+            }
+            leaf pass-cells-out {
+              type uint64;
+              description
+                "Number of cells entered by FABRIC to NP.";
+            }
+            leaf pass-packets-out {
+              type uint64;
+              units "packet";
+              description
+                "Number of packets entered by FABRIC to NP.";
+            }
+            leaf discard-packets-out {
+              type uint64;
+              units "packet";
+              description
+                "Number of packets discarded by FABRIC to NP.";
+            }
+            leaf send-packets-out {
+              type uint64;
+              units "packet";
+              description
+                "Number of packages from FABRIC to NP.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,339 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls-static {
+  namespace "urn:huawei:yang:huawei-mpls-static";
+  prefix mpls-static;
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+  revision 2019-03-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mpls-ldp";
+  typedef lsr-role-type {
+    type enumeration {
+      enum "ingress" {
+        value 1;
+        description
+          "The role of the current LSR is ingress.";
+      }
+      enum "transit" {
+        value 2;
+        description
+          "The role of the current LSR is transit.";
+      }
+      enum "egress" {
+        value 3;
+        description
+          "The role of the current LSR is egress.";
+      }
+    }
+    description
+      "LSR role type.";
+  }
+  typedef lsp-status-type {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "The status of the LSP is down.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "The status of the LSP is up.";
+      }
+    }
+    description
+      "LSP status type.";
+  }
+  
+  augment /mpls:mpls {
+    when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true'";
+    description
+      "MPLS static configuration information augment to module MPLS.";
+    container static {
+      when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true'";
+      description
+        "Configure MPLS static LSP.";
+      container lsps {
+        description
+          "List of statist static LSPs.";
+        list lsp {
+          key "lsp-name";
+          unique "transit/in-label";
+          unique "egress/in-label";
+          description
+            "Configure a list of defined static LSPs.";
+          leaf lsp-name {
+            type string {
+              length "1..19";
+            }
+            description
+              "The name of an LSP.";
+          }
+          leaf lsr-type {
+            ext:operation-exclude update;
+            type lsr-role-type;
+            mandatory true;
+            description
+              "The LSR role of an LSP.";
+          }
+          container ingress {
+            when "../lsr-type='ingress'";
+            must "(out-interface-name or next-hop)";
+            description
+              "Configure ingress.";
+            leaf fec-address {
+              type inet:ipv4-address-no-zone;
+              mandatory true;
+              description
+                "The destination IP address.";
+            }
+            leaf prefix-length {
+              type uint8 {
+                range "0..32";
+              }
+              mandatory true;
+              description
+                "The mask length of the destination IP address.";
+            }
+            leaf out-interface-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "The outbound interface.";
+            }
+            leaf next-hop {
+              type inet:ipv4-address-no-zone;
+              description
+                "The next-hop address.";
+            }
+            leaf out-label {
+              type uint32 {
+                range "16..1048575";
+              }
+              mandatory true;
+              description
+                "The value of an outgoing label.";
+            }
+          }
+          container transit {
+            when "../lsr-type='transit'";
+            must "(out-interface-name or next-hop)";
+            description
+              "Configure transit.";
+            leaf in-interface-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "The inbound interface.";
+            }
+            leaf out-interface-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "The outbound interface.";
+            }
+            leaf next-hop {
+              type inet:ipv4-address-no-zone;
+              description
+                "The next-hop address.";
+            }
+            leaf in-label {
+              type uint32 {
+                range "16..1048575";
+              }
+              must "count(../../../lsp[egress/in-label=current()])=0";
+              mandatory true;
+              description
+                "The value of an incoming label.
+    Special explanation:
+    Incoming label Range is the max configured value, the actual value is dynamic according to different devices.";
+            }
+            leaf out-label {
+              type uint32 {
+                range "16..1048575";
+              }
+              mandatory true;
+              description
+                "The value of an outgoing label.";
+            }
+          }
+          container egress {
+            when "../lsr-type='egress'";
+            description
+              "Configure egress.";
+            leaf in-interface-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "The inbound interface.";
+            }
+            leaf in-label {
+              type uint32 {
+                range "16..1048575";
+              }
+              must "count(../../../lsp[transit/in-label=current()])=0";
+              mandatory true;
+              description
+                "The value of an incoming label.
+    Special explanation:
+    Incoming label Range is the max configured value, the actual value is dynamic according to different devices.";
+            }
+          }
+        }
+        list lsp-state {
+          key "name";
+          config false;
+          description
+            "MPLS static lsp state.";
+          leaf name {
+            type string {
+              length "1..19";
+            }
+            config false;
+            description
+              "The name of an LSP.";
+          }
+          leaf type {
+            type lsr-role-type;
+            config false;
+            description
+              "The LSR Role of an LSP.";
+          }
+          leaf fec-address {
+            type inet:ipv4-address-no-zone;
+            config false;
+            description
+              "The destination IP addres.";
+          }
+          leaf prefix-length {
+            type uint8 {
+              range "0..32";
+            }
+            config false;
+            description
+              "The mask length of the destination IP address.";
+          }
+          leaf status {
+            type lsp-status-type;
+            config false;
+            description
+              "The status of an LSP.";
+          }
+          leaf index {
+            type uint32;
+            config false;
+            description
+              "The index of an LSP.";
+          }
+          leaf next-hop {
+            type inet:ipv4-address-no-zone;
+            config false;
+            description
+              "The next-hop address.";
+          }
+          leaf in-label {
+            type uint32 {
+              range "16..1048575";
+            }
+            config false;
+            description
+              "The value of an incoming label.
+  Special explanation:
+  Incoming label Range is the max configured value, the actual value is dynamic according to different devices.";
+          }
+          leaf out-label {
+            type uint32 {
+              range "16..1048575";
+            }
+            config false;
+            description
+              "The value of an outgoing label.";
+          }
+          leaf incoming-interface {
+            type pub-type:if-name;
+            config false;
+            description
+              "The incoming interface name.";
+          }
+          leaf outgoing-interface {
+            type pub-type:if-name;
+            config false;
+            description
+              "The outgoing interface name.";
+          }
+          leaf mtu {
+            type uint32 {
+              range "0..65535";
+            }
+            config false;
+            description
+              "The Mtu of an LSP.";
+          }
+          leaf time-stamp {
+            type uint32 {
+              range "0..4294967295";
+            }
+            config false;
+            description
+              "The time stamp of an LSP.";
+          }
+        }
+      }
+      container lsp-statistics {
+        config false;
+        description
+          "Statistics of static LSPs.";
+        leaf up-lsp-number {
+          type uint32;
+          description
+            "Total number of static LSPs.";
+        }
+        leaf down-lsp-number {
+          type uint32;
+          description
+            "Number of static LSPs that are in the down state.";
+        }
+        leaf total-lsp-number {
+          type uint32;
+          description
+            "Total number of static LSPs.";
+        }
+      }
+    }
+  }
+}

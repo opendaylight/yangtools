@@ -1,0 +1,46 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-netconf-metadata {
+  namespace "urn:huawei:yang:huawei-netconf-metadata";
+  prefix nc-md;
+
+  import ietf-yang-metadata {
+    prefix md;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Addition of private attributes to the NETCONF standard operations.";
+
+  revision 2019-05-25 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "netconf";
+  md:annotation difference {
+    type string;
+      description
+        "This annotation contains the record create/modify/delete information.";
+  }
+
+  md:annotation set-id {
+    type string;
+      description
+        "This annotation used for get/get-config operation with position;
+         It can be used to identify the previous query operation to select
+         the next set/range of records from NETCONF server.";
+  }
+}

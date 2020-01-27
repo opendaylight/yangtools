@@ -1,0 +1,117 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-nqa-server {
+  yang-version 1;
+  belongs-to huawei-nqa {
+    prefix nqa;
+  }
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of submodule nqa-server.";
+
+  revision 2019-10-25 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  grouping server-type {
+    description
+      "NQA ICMP server configuration.";
+    container icmp-servers {
+      description
+        "List of NQA ICMP server.";
+      list icmp-server {
+        key "server-address ni-name";
+        description
+          "Configure NQA ICMP server.";
+        leaf server-address {
+          type inet:ip-address-no-zone;
+          description
+            "IP address of NQA ICMP server.";
+        }
+        leaf ni-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "VPN Name of NQA ICMP server.";
+        }
+      }
+    }
+    container udp-servers {
+      description
+        "List of NQA UDP server.";
+      list udp-server {
+        key "server-address server-port ni-name";
+        description
+          "Configure NQA UDP server.";
+        leaf server-address {
+          type inet:ip-address-no-zone;
+          description
+            "IP address of NQA UDP server.";
+        }
+        leaf server-port {
+          type uint16 {
+            range "1..65535";
+          }
+          description
+            "Port of NQA UDP server.";
+        }
+        leaf ni-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "VPN name of NQA UDP server.";
+        }
+      }
+    }
+    container tcp-servers {
+      description
+        "List of NQA TCP server.";
+      list tcp-server {
+        key "server-address server-port ni-name";
+        description
+          "Configure NQA TCP server.";
+        leaf server-address {
+          type inet:ip-address-no-zone;
+          description
+            "IP address of NQA TCP server.";
+        }
+        leaf server-port {
+          type uint16 {
+            range "1..65535";
+          }
+          description
+            "Port of NQA TCP server.";
+        }
+        leaf ni-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "VPN name of NQA TCP server.";
+        }
+      }
+    }
+  }
+}

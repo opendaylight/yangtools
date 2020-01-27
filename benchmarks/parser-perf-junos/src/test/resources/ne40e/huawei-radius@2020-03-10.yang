@@ -1,0 +1,3447 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-radius {
+  namespace urn:huawei:yang:huawei-radius;
+  prefix radius;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-radius-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "RADIUS.";
+  revision 2020-03-10 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-02 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-radius";
+  
+  grouping radius-account-packet-statistics-type {
+    description
+      "Accounting packet statistics of the RADIUS server.";
+    leaf account-request-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting request packets.";
+    }
+    leaf account-retransmission-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of retransmitted accounting packets.";
+    }
+    leaf account-response-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting response packets.";
+    }
+    leaf malformed-response-account-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of malformed accounting response packets.";
+    }
+    leaf bad-account-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets with authenticator errors.";
+    }
+    leaf pending-account-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting request packets for which no response packets are received but the timeout period has not expired.";
+    }
+    leaf timeout-account-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of timeout accounting packets.";
+    }
+    leaf speed-limit-retrans-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets resent to the RADIUS server due to speed limiting.";
+    }
+    leaf pending-limit-retrans-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets resent to the RADIUS server due to pending limiting.";
+    }
+    leaf server-down-retrans-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets resent to the RADIUS server due to the Down status of the server.";
+    }
+    leaf no-source-ip-retrans-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets resent to the RADIUS server due to no source interface address.";
+    }
+    leaf no-reply-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets for which no response packets are received from the RADIUS server.";
+    }
+    leaf unknown-type-account-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets of unknown types.";
+    }
+    leaf dropped-account-packets {
+      type uint32;
+      units packet;
+      description
+        "Number of dropped accounting packets.";
+    }
+    leaf cancelled-requests {
+      type uint32;
+      units packet;
+      description
+        "Number of invalid requests or retransmitted packets that have been canceled due to user logouts.";
+    }
+    leaf account-requests-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting request packets in the last 30 minutes.";
+    }
+    leaf account-retransmissions-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of retransmitted accounting packets in the last 30 minutes.";
+    }
+    leaf account-responses-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting response packets in the last 30 minutes.";
+    }
+    leaf malformed-responses-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of malformed accounting response packets in the last 30 minutes.";
+    }
+    leaf bad-authenticators-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets with authenticator errors in the last 30 minutes.";
+    }
+    leaf pending-requests-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting request packets for which no response is received but the timeout period has not expired in the last 30 minutes.";
+    }
+    leaf timeouts-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of timeout accounting packets in the last 30 minutes.";
+    }
+    leaf speed-limit-block-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets resent to the RADIUS server due to speed limiting in the last 30 minutes.";
+    }
+    leaf pending-limit-block-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets resent to the RADIUS server due to pending limiting in the last 30 minutes.";
+    }
+    leaf server-down-block-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets resent to the RADIUS server in the last 30 minutes due to the Down status of the server.";
+    }
+    leaf no-source-ip-block-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets resent to the RADIUS server in the last 30 minutes due to no source interface IP address.";
+    }
+    leaf server-not-reply-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets for which no response packets are received from the RADIUS server in the last 30 minutes.";
+    }
+    leaf unknown-types-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets of unknown types in the last 30 minutes.";
+    }
+    leaf packets-dropped-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of accounting packets dropped in the last 30 minutes.";
+    }
+    leaf cancelled-requests-last30 {
+      type uint32;
+      units packet;
+      description
+        "Number of invalid requests or retransmitted packets that have been canceled in the last 30 minutes due to user logouts.";
+    }
+  }
+  grouping radius-authen-packet-statistics-info {
+    description
+      "Authentication packet statistics of the RADIUS server.";
+    leaf authen-request-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication request packets.";
+    }
+    leaf authen-retransmission-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of retransmitted authentication packets.";
+    }
+    leaf authen-accept-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication accept packets.";
+    }
+    leaf authen-reject-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication reject packets.";
+    }
+    leaf authen-challenge-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication challenge packets.";
+    }
+    leaf malformed-response-authen-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of malformed authentication response packets.";
+    }
+    leaf bad-authen-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets with authenticator errors.";
+    }
+    leaf pending-authen-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication request packets for which no response packets are received but the timeout period has not expired.";
+    }
+    leaf timeout-authen-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets for which no response packets are received from the RADIUS server.";
+    }
+    leaf speed-limit-retrans-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets resent to the RADIUS server due to speed limiting.";
+    }
+    leaf pending-limit-retrans-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets resent to the RADIUS server due to pending limiting.";
+    }
+    leaf server-down-retrans-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets resent to the RADIUS server due to the Down status of the server.";
+    }
+    leaf no-source-ip-retrans-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets resent to the RADIUS server due to no source interface address.";
+    }
+    leaf radius-server-no-reply-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets of unknown types.";
+    }
+    leaf unknown-type-authen-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of timeout authentication packets.";
+    }
+    leaf dropped-authen-packets {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of dropped authentication packets.";
+    }
+    leaf cancelled-requests {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of invalid requests or retransmitted packets that have been canceled due to user logouts.";
+    }
+    leaf access-requests-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication request packets in the last 30 minutes.";
+    }
+    leaf access-retransmissions-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of retransmitted authentication packets in the last 30 minutes.";
+    }
+    leaf access-accepts-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of Authentication Accept packets in the last 30 minutes.";
+    }
+    leaf access-rejects-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication reject packets in the last 30 minutes.";
+    }
+    leaf access-challenges-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of Authentication Challenge packets in the last 30 minutes.";
+    }
+    leaf malformed-responses-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of malformed authentication response packets in the last 30 minutes.";
+    }
+    leaf bad-authenticators-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets with authenticator errors in the last 30 minutes.";
+    }
+    leaf pending-requests-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication request packets for which no response is received but the timeout period has not expired in the last 30 minutes.";
+    }
+    leaf timeouts-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of timeout authentication packets in the last 30 minutes.";
+    }
+    leaf speed-limit-block-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets resent to the RADIUS server due to speed limiting in the last 30 minutes.";
+    }
+    leaf pending-limit-block-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets resent to the RADIUS server due to pending limiting in the last 30 minutes.";
+    }
+    leaf server-down-block-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets resent to the RADIUS server in the last 30 minutes due to the Down status of the server.";
+    }
+    leaf no-source-ip-block-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets resent to the RADIUS server in the last 30 minutes due to no source interface IP address.";
+    }
+    leaf server-not-reply-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets for which no response packets are received from the RADIUS server in the last 30 minutes.";
+    }
+    leaf unknown-types-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets of unknown types in the last 30 minutes.";
+    }
+    leaf packets-dropped-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of authentication packets dropped in the last 30 minutes.";
+    }
+    leaf cancelled-requests-last30 {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Number of invalid requests or retransmitted packets that have been canceled in the last 30 minutes due to user logouts.";
+    }
+  }
+  grouping radius-server-para-info-type {
+    description
+      "Configure the inbound and outbound rate for the service policy template.";
+    leaf master-enable {
+      type boolean;
+      config false;
+      description
+        "Enable/disable master and backup servers.";
+    }
+    leaf server-state {
+      type string {
+        length "1..32";
+      }
+      config false;
+      description
+        "Status of a RADIUS server.";
+    }
+    container server-status-changes {
+      config false;
+      description
+        "List of status change information about a RADIUS server.";
+      list server-status-change {
+        key "record-index";
+        config false;
+        description
+          "Operational state of status change information about a RADIUS server.";
+        leaf record-index {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Record index of status change information about a RADIUS server.";
+        }
+        leaf change-time {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Time when the status of a RADIUS server changes.";
+        }
+        leaf change-state {
+          type enumeration {
+            enum "up" {
+              value 1;
+              description
+                "Status of a RADIUS server as up.";
+            }
+            enum "down" {
+              value 2;
+              description
+                "Status of a RADIUS server as down.";
+            }
+          }
+          config false;
+          description
+            "Change status.";
+        }
+      }
+    }
+  }
+  container radius {
+    description
+      "RADIUS.";
+    container global-service {
+      description
+        "Configure RADIUS global function.";
+      leaf radius-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the RADIUS client services.";
+      }
+      leaf dead-count {
+        type uint32 {
+          range "3..65535";
+        }
+        default "10";
+        description
+          "To configure the dead count for all radius servers in the virtual system.";
+      }
+      leaf dead-interval {
+        type uint32 {
+          range "0..60";
+        }
+        units s;
+        default "5";
+        description
+          "To configure the dead interval for all the radius servers in the virtual system.";
+      }
+      leaf dead-time {
+        type uint32 {
+          range "1..65535";
+        }
+        units min;
+        default "3";
+        description
+          "To configure the dead time for all the radius servers in the virtual system.";
+      }
+      leaf fail-rate {
+        type uint32 {
+          range "1..100";
+        }
+        units %;
+        default "100";
+        description
+          "Configure the fail rate for all the RADIUS servers in the virtual system.";
+      }
+      leaf server-recovery-on-response {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable server recovery on response for all the RADIUS servers in the virtual system.";
+      }
+      leaf authen-client-identifier {
+        type string {
+          length "1..255";
+        }
+        config false;
+        description
+          "Radius client identifier for authentication purposes.";
+      }
+    }
+    container radius-server-groups {
+      description
+        "List of a set of RADIUS group.";
+      list radius-server-group {
+        must "(auth-retransmission-count and auth-retransmission-interval) or (not(auth-retransmission-count) and not(auth-retransmission-interval))";
+        must "(acct-retransmission-count and acct-retransmission-interval) or (not(acct-retransmission-count) and not(acct-retransmission-interval))";
+        key "name";
+        max-elements "128";
+        description
+          "Configure RADIUS server group.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern "[a-zA-Z0-9._-]{1,32}";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "RADIUS server group name.";
+          ext:case-sensitivity upper2lower;
+        }
+        leaf retransmission-count {
+          type int32 {
+            range "1..5";
+          }
+          default "3";
+          description
+            "Number of times packet retransmission will happen if server is not responding.";
+        }
+        leaf retransmission-interval {
+          type int32 {
+            range "3..25";
+          }
+          units s;
+          default "5";
+          description
+            "Server response timeout value.";
+        }
+        leaf auth-retransmission-count {
+          type int32 {
+            range "1..5";
+          }
+          description
+            "Number of retransmission times of RADIUS authentication request packets if the server is not responding.";
+        }
+        leaf auth-retransmission-interval {
+          type int32 {
+            range "3..25";
+          }
+          units s;
+          description
+            "Authentication response timeout interval of the RADIUS server.";
+        }
+        leaf acct-retransmission-count {
+          type int32 {
+            range "1..5";
+          }
+          description
+            "Number of retransmission times of RADIUS accounting request packets if the server is not responding.";
+        }
+        leaf acct-retransmission-interval {
+          type int32 {
+            range "3..25";
+          }
+          units s;
+          description
+            "Accounting response timeout interval of the RADIUS server.";
+        }
+        leaf shared-key {
+          type pub-type:password-extend {
+            length "1..128";
+          }
+          description
+            "Shared-key value for a particular group.";
+        }
+        leaf attribute-translation-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the attribute translation.";
+        }
+        leaf group-mode {
+          type enumeration {
+            enum "pri-secondary" {
+              value 0;
+              description
+                "Group mode as Primary secondary.";
+            }
+            enum "load-balance" {
+              value 1;
+              description
+                "Group mode as Load balance.";
+            }
+          }
+          default "pri-secondary";
+          description
+            "To configure mode (primary secondary and load balance) for a particular group.";
+        }
+        leaf nas-ip-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Value of NAS-IP-Address attribute.";
+        }
+        leaf source-interface-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "To configure source interface name at group level.";
+        }
+        leaf domain-mode {
+          type enumeration {
+            enum "exclude" {
+              value 0;
+              description
+                "User name excludes domain.";
+            }
+            enum "include" {
+              value 1;
+              description
+                "User name includes domain.";
+            }
+            enum "original" {
+              value 2;
+              description
+                "User name same as user input.";
+            }
+          }
+          default "include";
+          description
+            "Domain mode of RADIUS server group.";
+        }
+        container radius-server-ipv4s {
+          description
+            "List of RADIUS IPv4 server.";
+          list radius-server-ipv4 {
+            key "server-type server-ip-address server-port vpn-name";
+            max-elements "32";
+            description
+              "Configure server for a particular group.";
+            leaf server-type {
+              type enumeration {
+                enum "authentication" {
+                  value 0;
+                  description
+                    "Authentication server.";
+                }
+                enum "accounting" {
+                  value 1;
+                  description
+                    "Accounting server.";
+                }
+              }
+              description
+                "Type of RADIUS server.";
+            }
+            leaf server-ip-address {
+              type inet:ipv4-address-no-zone;
+              description
+                "IPv4 address of configured server.";
+            }
+            leaf server-port {
+              type int32 {
+                range "1..65535";
+              }
+              description
+                "Configured server port for a particular server.";
+            }
+            leaf vpn-name {
+              type leafref {
+                path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+              }
+              description
+                "Set VPN instance.";
+            }
+            leaf shared-key {
+              type pub-type:password-extend {
+                length "1..128";
+              }
+              description
+                "To configure shared-key value for a particular server.";
+            }
+            choice source-ip {
+              description "Source ip address or source interface of a RADIUS server.";
+              case ip {
+                description
+                  "Specify the source IP address of a RADIUS server.";
+                leaf source-ip-address {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Specify the source IP address of a RADIUS server.";
+                }
+              }
+              case interface {
+                description
+                  "Specify the source interface of a RADIUS server.";
+                leaf source-interface-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Name of source interface.";
+                }
+              }
+            }
+            leaf server-current-state {
+              type enumeration {
+                enum "up" {
+                  value 0;
+                  description "Up.";
+                }
+                enum "down" {
+                  value 1;
+                  description "Down.";
+                }
+                enum "NA" {
+                  value 2;
+                  description "NA.";
+                }
+              }
+              config false;
+              description
+                "Current state of the server.";
+            }
+            leaf is-current-server {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "Enable/disable the server as current server.";
+            }
+            leaf weight {
+              type uint8 {
+                range "0..100";
+              }
+              default "0";
+              description
+                "Set the weight.";
+            }
+            container ip-account-packet-statistic {
+              config false;
+              description
+                "Statistics of Accounting packet about a specified RADIUS server IP address.";
+              leaf start-packet-number {
+                type uint32;
+                config false;
+                description
+                  "Number of Accounting Start packets in the buffer queue.";
+              }
+              leaf stop-packet-number {
+                type uint32;
+                config false;
+                description
+                  "Number of Accounting Stop packets in the buffer queue.";
+              }
+              leaf interim-packet-number {
+                type uint32;
+                config false;
+                description
+                  "Number of Accounting Interim-Update packets in the buffer queue.";
+              }
+            }
+          }
+        }
+        container force-account-stop-packet {//forceAccountStopPackets
+          description
+            "Configure accounting stop packets to be sent forcibly.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable accounting stop packets to be sent forcibly.";
+          }
+        }
+        container radius-hw-dhcp-options {
+          description
+            "List of the device to send IPv4 DHCP options in the hw-dhcpv6-option attribute of authentication requests.";
+          list radius-hw-dhcp-option {
+            key "number";
+            max-elements 16;
+            description
+              "Configure the device to send IPv4 DHCP options in the hw-dhcpv6-option attribute of authentication requests.";
+            leaf number {
+              type uint32 {
+                range "1..254";
+              }
+              description
+                "Value of DHCP option.";
+            }
+          }
+        }
+        container hw-dhcpv6-options {
+          description
+            "List of the device to send IPv6 DHCP options in the hw-dhcpv6-option attribute of authentication requests.";
+          list hw-dhcpv6-option {
+            key "number";
+            max-elements 16;
+            description
+              "Configure the device to send IPv6 DHCP options in the hw-dhcpv6-option attribute of authentication requests.";
+            leaf number {
+              type uint32 {
+                range "1..65535";
+              }
+              description
+                "Value of IPv6 DHCP option.";
+            }
+          }
+        }
+        container accounting-include-hw-dhcp-option {
+          description
+            "Configure the device to send options in the hw-dhcp-option and hw-dhcpv6-option attribute.";
+          leaf-list hw-dhcp-option-accounting-request {
+            type uint32 {
+              range "60";
+            }
+            max-elements 1;
+            description
+              "Configure the device to send IPv4 DHCP options in the hw-dhcp-option attribute of accounting requests.";
+          }
+          leaf-list hw-dhcpv6-option-accounting-request {
+            type uint32 {
+              range "16";
+            }
+            max-elements 1;
+            description
+              "Configure the device to send IPv6 DHCP options in the hw-dhcpv6-option attribute of accounting requests.";
+          }
+        }
+        container version-type {
+          description
+            "Configure the RADIUS version used between the router and a RADIUS server.";
+          leaf type {
+            type enumeration {
+              enum "standard" {
+                value 0;
+                description
+                  "Indicates that RADIUS of the standard version that based on RFC 2865 is used between the router and the RADIUS server. This version is used to set a standard server.";
+              }
+              enum "plus10" {
+                value 1;
+                description
+                  "Indicates that RADIUS+1.0 is used between the router and the RADIUS server.";
+              }
+              enum "plus11" {
+                value 2;
+                description
+                  "Indicates that RADIUS+1.1 is used between the router and the RADIUS server.";
+              }
+            }
+            default "standard";
+            description
+              "The RADIUS version used between the router and a RADIUS server.";
+          }
+        }
+        container packet-control {//radiusPacketControl
+          description
+            "Configure radius packet.";
+          leaf interim-accout-resend-count {
+            type uint16 {
+              range "1..65535";
+            }
+            description
+              "Enables RADIUS real-time accounting packet caching and configures the number of real-time accounting packet retransmissions.";
+          }
+          leaf start-accout-resend-count {
+            type uint16 {
+              range "1..65535";
+            }
+            description
+              "Configure the number of times that cached accounting-start packets are retransmitted to the RADIUS accounting server in a RADIUS server group.";
+          }
+          leaf stop-accout-resend-count {
+            type uint16 {
+              range "1..65535";
+            }
+            description
+              "Configure the number of times that cached accounting-stop packets are retransmitted to the RADIUS accounting server in a RADIUS server group.";
+          }
+          leaf packet-priority {
+            type uint8 {
+              range "0..63";
+            }
+            description
+              "Sets the DSCP value for RADIUS packets sent by the device to a RADIUS server.";
+          }
+          leaf vas-account-packed-max-length {
+            type uint32 {
+              range "500..4096";
+            }
+            description
+              "Sets the maximum length for a post-merging accounting packet for value-added services.";
+          }
+        }
+        container common-attribute {
+          description
+            "Configure global radius server.";
+          leaf ncp-up-send-start-account {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the router to send Accounting Start packets to the RADIUS server after NCP goes Up for PPPv6 users that use DHCPv6 to obtain IPv6 addresses.";
+          }
+          leaf test-aaa-send-account-start {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the router to send Accounting Start packets to the RADIUS server upon the test-aaa command execution.";
+          }
+          leaf encode-option61-to-attribute153 {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the device to encapsulate the Option61 field into the No.153 proprietary attribute on the RADIUS server, hw-user-mac attribute.";
+          }
+          leaf decode-fail-ignore-hw-data-filter {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable a device to ignore a RADIUS attribute if the device fails to parse this attribute.";
+          }
+          leaf frame-ip-mask {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable a device to add a 32-bit Framed-IP-Netmask attribute to an Accounting-Request packet. By default, an Accounting-Request packet does not carry a 32-bit Framed-IP-Netmask attribute.";
+          }
+        }
+        container attribute-format-called-station-id {
+          must "(include-type!='ap-mac' and not(user-defined)) or (include-type='ap-mac' and user-defined)";
+          description
+            "Configure radius server attribute format of called-station-id.";
+          leaf include-type {
+            type enumeration {
+              enum "ap-mac" {
+                value 1;
+                description
+                  "Indicates that the encapsulation content of the Called-station-id (30) attribute is the AP's MAC address.";
+              }
+              enum "ac-ip" {
+                value 3;
+                description
+                  "Indicates that the encapsulation content of the Called-station-id (30) attribute is the AC's IP address.";
+              }
+            }
+            description
+              "Radius server attribute format of called-station-id.";
+          }
+          container user-defined {
+            must "include-attributes";
+            presence "user-defined.";
+            description
+              "Enable/disable user defined.";
+            leaf head-delimiter {
+              type string {
+                length "1";
+                pattern '[b\*\-\\#$@&:]';
+              }
+              description
+                "Configure the user-defined format of the Called-Station-Id include delimiter.";
+            }
+            container include-attributes {
+              description
+                "List of the user-defined format of the Called-Station-Id attributes.";
+              list include-attribute {
+                key "attribute-type";
+                min-elements "1";
+                max-elements "2";
+                ordered-by user;
+                description
+                  "Configure the user-defined format of the Called-Station-Id attribute.";
+                leaf attribute-type {
+                  type enumeration {
+                    enum "ap-mac" {
+                      value 1;
+                      description
+                        "Configure AP MAC content.";
+                    }
+                    enum "ssid" {
+                      value 2;
+                      description
+                        "Configure SSID content.";
+                    }
+                  }
+                  description
+                    "Configure the user-defined format of the attribute delimiter one.";
+                }
+                leaf delimiter {
+                  type string {
+                    length "1";
+                    pattern '[b\*\-\\#$@&:]';
+                  }
+                  description
+                    "Configure the user-defined format of the attribute delimiter.";
+                }
+                leaf split-format {
+                  when "../attribute-type='ap-mac'";
+                  type enumeration {
+                    enum "colon" {
+                      value 1;
+                      description
+                        "Indicates that the colon (:) is used as the separator in a MAC address, such as 00:01:af:e1:16:01.";
+                    }
+                    enum "hyphen" {
+                      value 2;
+                      description
+                        "Indicates that the hyphen (-) is used as the separator in a MAC address, such as 00-01-af-e1-16-01.";
+                    }
+                  }
+                  default "colon";
+                  description
+                    "MAC address split format.";
+                }
+              }
+            }
+          }
+        }
+        container attribute-format-calling-station-id {
+          description
+            "Configure radius server attribute format of calling-station-id.";
+          choice include-type {
+            description
+              "Radius server attribute format of calling-station-id.";
+            case refer-option61 {
+              description
+                "Refer to option61.";
+              leaf refer-option61-enable {
+                type empty;
+                description
+                  "Refer to option61.";
+              }
+            }
+            case vlan-binding {
+              description
+                "VLAN binding.";
+              leaf vlan-binding-enable {
+                type empty;
+                description
+                  "VLAN binding.";
+              }
+            }
+            case vlan-description {
+              description
+                "VLAN description.";
+              leaf vlan-description-enable {
+                type empty;
+                description
+                  "VLAN description.";
+              }
+            }
+            case llid {
+              description
+                "Logical line identifier.";
+              leaf ppp {
+                type empty;
+                description
+                  "PPP access user.";
+              }
+              leaf lns {
+                type empty;
+                description
+                  "LNS access user.";
+              }
+            }
+            case pevlan-before-cevlan {
+              description
+                "User's peVLAN priority ceVLAN.";
+              leaf pevlan-delimiter {
+                type string {
+                  length "1";
+                  pattern '[b\*\-\\#$@&:]';
+                }
+                description
+                  "Configure peVLAN delimiter of calling-station-id.";
+              }
+              leaf cevlan {
+                type empty;
+                description
+                  "User's ceVLAN.";
+              }
+            }
+            case cevlan-before-pevlan {
+              description
+                "User's ceVLAN priority peVLAN.";
+              leaf cevlan-delimiter {
+                type string {
+                  length "1";
+                  pattern '[b\*\-\\#$@&:]';
+                }
+                description
+                  "Configure ceVLAN delimiter of calling-station-id.";
+              }
+              leaf pevlan {
+                type empty;
+                description
+                  "User's peVLAN.";
+              }
+            }
+            case line-id {
+              description
+                "Configure line-id.";
+              leaf line-id-enable {
+                type empty;
+                description
+                  "Configure line-id.";
+              }
+            }
+            case user-defined {
+              description
+                "User defained.";
+              leaf head-delimiter {
+                type string {
+                  length "1";
+                  pattern '[b\*\-\\#$@&:]';
+                }
+                description
+                  "Configure the user-defined format of the Calling-Station-Id include delimiter.";
+              }
+              container include-attributes {
+                description
+                  "List of the user-defined format of the Calling-Station-Id attributes.";
+                list include-attribute {
+                  key "attribute-type";
+                  min-elements "1";
+                  max-elements "5";
+                  ordered-by user;
+                  description
+                    "Configure the user-defined format of the Calling-Station-Id attribute.";
+                  leaf attribute-type {
+                    type enumeration {
+                      enum "option82-or-access-line-id" {
+                        value 1;
+                        description
+                          "User's access-line-id (dhcpv4 option82/pppoe+/dhcpv6option18+37+17), the 'option82' and 'access-line-id' can not be configed together.";
+                      }
+                      enum "mac" {
+                        value 3;
+                        description
+                          "Configure SSID content.";
+                      }
+                      enum "sysname" {
+                        value 4;
+                        description
+                          "Configure SSID content.";
+                      }
+                      enum "interface" {
+                        value 5;
+                        description
+                          "Configure SSID content.";
+                      }
+                      enum "domain" {
+                        value 6;
+                        description
+                          "Configure SSID content.";
+                      }
+                    }
+                    description
+                      "Configure the user-defined format of the attribute delimiter one.";
+                  }
+                  leaf delimiter {
+                    type string {
+                      length "1";
+                      pattern '[b\*\-\\#$@&:]';
+                    }
+                    description
+                      "Configure the user-defined format of the attribute delimiter.";
+                  }
+                  leaf option82-or-access-line-id-type {
+                    when "../attribute-type='option82-or-access-line-id'";
+                    type enumeration {
+                      enum "option82" {
+                        value 1;
+                        description
+                          "User's access-line-id (dhcpv4 option82/pppoe+/dhcpv6option18+37+17), the 'option82' and 'access-line-id' can not be configed together.";
+                      }
+                      enum "access-line-id" {
+                        value 2;
+                        description
+                          "User's access-line-id (dhcpv4 option82/pppoe+/dhcpv6option18+37+17), the 'option82' and 'access-line-id' can not be configed together.";
+                      }
+                    }
+                    mandatory true;
+                    description
+                      "User's access-line-id (dhcpv4 option82/pppoe+/dhcpv6option18+37+17).";
+                  }
+                  leaf split-format {
+                    when "../attribute-type='mac'";
+                    type enumeration {
+                      enum "colon" {
+                        value 1;
+                        description
+                          "Indicates that the colon (:) is used as the separator in a MAC address, such as 00:01:af:e1:16:01.";
+                      }
+                      enum "hyphen" {
+                        value 2;
+                        description
+                          "Indicates that the hyphen (-) is used as the separator in a MAC address, such as 00-01-af-e1-16-01.";
+                      }
+                    }
+                    default "colon";
+                    description
+                      "MAC address split format.";
+                  }
+                }
+              }
+            }
+          }
+        }
+        container attribute-calling-station-id-lns-default {
+          description
+            "Configure the LNS to encapsulate the Calling-Station-Id attribute into RADIUS authentication and accounting packets in the default version1 format.";
+          leaf lns-version {
+            type enumeration {
+              enum "version1" {
+                value 1;
+                description
+                  "Configure the LNS to encapsulate the Calling-Station-Id attribute into RADIUS authentication and accounting packets in the default version1 format.";
+              }
+              enum "version1-force" {
+                value 2;
+                description
+                  "Configure the LNS to encapsulate the Calling-Station-Id attribute into RADIUS authentication and accounting packets in the default version1 format irrespective of whether the LAC sends the calling-number attribute to the LNS.";
+              }
+            }
+            description
+              "Configure the LNS to encapsulate the Calling-Station-Id attribute into RADIUS authentication and accounting packets in the default version1 format.";
+          }
+        }
+        container attribute-vendor-id {
+          presence "attribute-vendor-id.";
+          description
+            "Enable/disable the ID of a vendor whose private RADIUS attribute the device can parse.";
+          leaf vendor-number {
+            type uint32 {
+              range "1..65535";
+            }
+            mandatory true;
+            description
+              "Vendor ID.";
+          }
+        }
+        container nas-port-id-format {
+          description
+            "Configure the format of the NAS-Port or NAS-Port-Id attribute.";
+          leaf format {
+            type enumeration {
+              enum "version1" {
+                value 1;
+                description
+                  "Indicates encapsulating the NAS-Port-Id attribute in Huawei's default format.";
+              }
+              enum "version2" {
+                value 2;
+                description
+                  "Version2:format as <interface-type> <slot>/<sub-slot>/<port>.<subinterface> [:<out-VLAN>][.<in-VLAN>]";
+              }
+              enum "vendor" {
+                value 3;
+                description
+                  "Specifies the ID of a supplier.";
+              }
+              enum "redback-simple" {
+                value 4;
+                description
+                  "Specifies the format of Redback-simple to encapsulate the NAS-Port-Id attribute. 'VLAN-ID' is used as 'VLANID' in the format of Redback-simple.";
+              }
+              enum "redback-addition" {
+                value 5;
+                description
+                  "Specifies the format of redback-addition to encapsulate the NAS-Port-Id attribute.";
+              }
+            }
+            default "version1";
+            description
+              "Configure the format of the NAS-Port or NAS-Port-Id attribute.";
+          }
+          leaf vendor-id {
+            when "../format='vendor'";
+            type uint32 {
+              range "9|2352|2636";
+            }
+            mandatory true;
+            description
+              "Specifies the ID of a supplier.";
+          }
+          leaf vendor-version {
+            when "../vendor-id=2636";
+            type enumeration {
+              enum "version1" {
+                value 1;
+                description
+                  "Juniper version1.";
+              }
+            }
+            description
+              "Indicates the version format for specified vendor to encapsulate the NAS-Port-Id attribute.";
+          }
+        }
+        container attribute-include-nas {//radiusAttributeIncludeNas
+          must "not(nas-port-enable = 'true' and with-user-id-accounting-request = 'true')";
+          description
+            "Configure the automatic LAC receiving NAS-PORT attribute.";
+          leaf nas-port-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the automatic LAC receiving NAS-PORT attribute.";
+          }
+          leaf with-user-id-accounting-request {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable encapsulate type in the nas-port Attribute.";
+          }
+        }
+        container attribute-traffic-unit {
+          description
+            "Configure radius server attribute format.";
+          leaf traffic-unit {
+            type enumeration {
+              enum "byte" {
+                value 0;
+                description
+                  "Indicates that the traffic unit is byte.";
+              }
+              enum "kbyte" {
+                value 1;
+                description
+                  "Indicates that the traffic unit is Kbyte.";
+              }
+              enum "mbyte" {
+                value 2;
+                description
+                  "Indicates that the traffic unit is Mbyte.";
+              }
+              enum "gbyte" {
+                value 3;
+                description
+                  "Indicates that the traffic unit is Gbyte.";
+              }
+            }
+            default "byte";
+            description
+              "Sets the traffic unit for a RADIUS server.";
+          }
+        }
+        container attribute-packet-format {
+          description
+            "Configure the attribute packet.";
+          leaf packet-format {
+            type enumeration {
+              enum "tr-101-format" {
+                value 1;
+                description
+                  "Indicates the TR-101 format.";
+              }
+              enum "cn-format" {
+                value 0;
+                description
+                  "Indicates that the packets that inform the upstream device of the link ID are in the CN format.";
+              }
+            }
+            default "cn-format";
+            description
+              "Configure the format of packets that inform the upstream device of the link ID.";
+          }
+        }
+        container attribute-tunnel-password {
+          description
+            "Configure the attribute packet.";
+          leaf password-type {
+            type enumeration {
+              enum "simple" {
+                value 1;
+                description
+                  "Password type as simple.";
+              }
+              enum "cipher" {
+                value 0;
+                description
+                  "Password type as ciphertext.";
+              }
+            }
+            default "cipher";
+            description
+              "Sets the mode in which the RADIUS server sends a tunnel password to simple text or cipher.";
+          }
+        }
+        container attribute-connect {
+          description
+            "Configure the attribute packet.";
+          leaf refer-option82 {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable authentication and accounting request packets to use the Connect-Info attribute to carry the uplink and downlink rates negotiated between the BRAS and DSLAM.";
+          }
+        }
+        container attribute-sub-slot {
+          description
+            "Configure the attribute packet.";
+          leaf sub-slot {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the system to use the interface number format of slot number/sub-slot number/interface number in the calling-station-ID and NAS-port-ID attributes.";
+          }
+        }
+        container attribute-nas-port {
+          description
+            "Configure the attribute packet.";
+          leaf nas-port-value {
+            type string {
+              length "1..32";
+            }
+            description
+              "Enables the system to use the NAS-port-ID attributes.";
+          }
+        }
+        container attribute-access-policy {
+          description
+            "Configure the attribute action.";
+          leaf if-domain-blocked {
+            type enumeration {
+              enum "online" {
+                value 0;
+                description
+                  "Allows users to go online if the domain delivered by the RADIUS server is blocked.";
+              }
+              enum "offline" {
+                value 1;
+                description
+                  "Forbids users to go online if the domain delivered by the RADIUS server is blocked.";
+              }
+            }
+            default "online";
+            description
+              "Configure an access policy for users if the domain delivered by the RADIUS server is blocked.";
+          }
+        }
+        container attribute-user-name {
+          description
+            "Configure the attribute action.";
+          leaf author-reply-user-name-policy {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the device to reply with a CoA/DM response packet that carries the same user name as that in a CoA/DM request packet.";
+          }
+          leaf local-coa-enable {
+            when "../author-reply-user-name-policy='true'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable a user name adding policy for CoA response packets.";
+          }
+          leaf local-dm-enable {
+            when "../author-reply-user-name-policy='true'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable a user name adding policy for DM response packets.";
+          }
+          leaf update-domain-name {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable devices in a RADIUS server group to replace the domain name carried in a user name with the domain name delivered by the RADIUS server.";
+          }
+        }
+        container attribute-action-hw-mng-ipv6 {
+          description
+            "Configure the hw-mng-IPv6 attribute action.";
+          leaf hw-mng-ipv6-motm-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the encapsulation format and name of the hw-mng-IPv6 attribute to be encapsulated into a PPP packet's MTOM field.";
+          }
+          leaf hw-mng-ipv6-encapsulating-name {
+            when "../hw-mng-ipv6-motm-enable='true'";
+            type string {
+              length "1..31";
+            }
+            description
+              "Specifies the encapsulation format and name of the hw-mng-IPv6 attribute to be encapsulated into a PPP packet's MTOM field.";
+          }
+          leaf hw-mng-ipv6-delimiter {
+            when "../hw-mng-ipv6-encapsulating-name";
+            type string {
+              length "1";
+            }
+            mandatory true;
+            description
+              "Specifies a delimiter of the hw-mng-IPv6 attribute to be encapsulated into a PPP packet's MTOM field.";
+          }
+          leaf hw-mng-ipv6-exclude-local {
+            when "../hw-mng-ipv6-motm-enable='true'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable that the local configuration is excluded of the hw-mng-IPv6 attribute to be encapsulated into a PPP packet's MTOM field.";
+          }
+        }
+        container attribute-apply {
+          description
+            "Configure the attribute action.";
+          leaf ipoe-user-name-apply {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the router to replace the IPoE user name generated on the router with the user name delivered by the RADIUS server.";
+          }
+          leaf ipoe-priority-apply {
+            when "../ipoe-user-name-apply='true'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable RADIUS server delivered user name replaces the IPoE user name generated on the router with a higher priority than the user name in the Service identity policy.";
+          }
+          leaf pppoe-user-name-apply {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the router to replace the PPPoE user name generated on the router with the user name delivered by the RADIUS server.";
+          }
+          leaf replace-ipv6-pools-with-same-type {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable an IPv6 address pool to be delivered by a RADIUS server using the Framed-IPv6-Pool attribute to replace the IPv6 address pools of the same type configured in a domain.";
+          }
+        }
+        container attribute-disable-account {
+          description
+            "Configure accounting stop packets to be sent forcibly.";
+          leaf flow-attributes {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable if you specify the flow-attributes parameter. The following RADIUS attributes are all disabled: Acct-Input-Octets, Acct-Output-Octets, Acct-Input-Packets, Acct-Output-Packets, Acct-Input-Gigawords, Acct-Output-Gigawords, HW-Acct-IPv6-Input-Octets, HW-Acct-IPv6-Output-Octets, HW-Acct-IPv6-Input-Packets, HW-Acct-IPv6-Output-Packet, HW-Acct-IPv6-Input-Gigawords, HW-Acct-IPv6-Output-Gigawords.";
+          }
+          leaf hw-acct-update-address {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the HW-Acct-Update-Address attribute when the attribute value is equal to a certain integer.";
+          }
+        }
+        container standard-attributes {
+          description
+            "List of the standard RADIUS attributes.
+             Standard attributes cannot be disabled and extended attributes cannot be disabled on the same server at the same time.
+             Standard attributes cannot be translated and extended attributes cannot be translated on the same server at the same time.";
+          list standard-attribute {
+            key "attribute-name";
+            description
+              "Configure RADIUS attributes.";
+            leaf attribute-name {
+              type radius-attribute-table;
+              description
+                "Specifies an attribute name.";
+            }
+            leaf operation-type {
+              ext:operation-exclude update;
+              type enumeration {
+                enum "disable" {
+                  value 0;
+                  description
+                    "Disable radius attributes.";
+                }
+                enum "translate" {
+                  value 1;
+                  description
+                    "Translate radius attributes.";
+                }
+              }
+              description
+                "Operation of radius attributes.";
+            }
+            container disable-attribute {
+              when "../operation-type='disable'";
+              description
+                "Configure radius attributes.";
+              container disable-packet {
+                description
+                  "Configure radius attributes by packet type.";
+                leaf-list type {
+                  type enumeration {
+                    enum "access-request" {
+                      value 0;
+                      description
+                        "Access request packet.";
+                    }
+                    enum "access-accept" {
+                      value 1;
+                      description
+                        "Access accept packet.";
+                    }
+                    enum "account" {
+                      value 2;
+                      description
+                        "Account packet.";
+                    }
+                    enum "account-start" {
+                      value 3;
+                      description
+                        "Start account packet.";
+                    }
+                    enum "coa-request" {
+                      value 4;
+                      description
+                        "COA request packet.";
+                    }
+                    enum "dm-request" {
+                      value 5;
+                      description
+                        "Dm request packet.";
+                    }
+                  }
+                  min-elements "1";
+                  description
+                    "Configure a packet type.";
+                }
+              }
+            }
+          }
+        }
+        container radius-server-algorithm {
+          description
+            "Configure algorithm of a RADIUS server.";
+          leaf radius-arithmetic {
+            type enumeration {
+              enum "master-backup" {
+                value 1;
+                description
+                  "Indicates the active/standby algorithm. Only the RADIUS authentication server or accounting server configured first is the active server.";
+              }
+              enum "loading-share" {
+                value 2;
+                description
+                  "Indicates the load-sharing algorithm. The weight of the RADIUS authentication server or accounting server takes effect only after loading-share is used.";
+              }
+            }
+            default "master-backup";
+            description
+              "Sets the algorithm of a RADIUS server.";
+          }
+          leaf master-backup-rule {
+            when "../radius-arithmetic='master-backup'";
+            type enumeration {
+              enum "strict" {
+                value 1;
+                description
+                  "Indicates that the accounting server is selected based on the configured algorithm.";
+              }
+              enum "sequence" {
+                value 2;
+                description
+                  "The system selects a server in the sequence in which the servers are configured.";
+              }
+              enum "strict-and-sequence" {
+                value 3;
+                description
+                  "Indicates that the accounting server is selected based on the configured algorithm and the system selects a server in the sequence in which the servers are configured.";
+              }
+            }
+            description
+              "Indicates the rule of the active/standby algorithm.";
+          }
+        }
+        container rollover-on-reject {
+          description
+            "Configure a user fails to be authenticated by a RADIUS server in the group, the router sends an Access-Request packet to another RADIUS server until the user is authenticated or fails to be authenticated by any RADIUS servers.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable if a user fails to be authenticated by a RADIUS server in the group, the router sends an Access-Request packet to another RADIUS server until the user is authenticated or fails to be authenticated by any RADIUS servers.";
+          }
+        }
+        container llid-fail-disable-attribute {
+          description
+            "Configure radius attribute of Calling-Station-Id when LLID fail.";
+          leaf calling-station-id {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable radius attribute of Calling-Station-Id when LLID fail.";
+          }
+        }
+        container decode-hw-user-password-attribute {
+          description
+            "Configure the simple password decryption mode for the hw-user-password attribute (Huawei-proprietary attribute 33).";
+          leaf simple-coa-request {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the simple password decryption mode for the hw-user-password attribute (Huawei-proprietary attribute 33).";
+          }
+        }
+        container assign-hw-pcp-server {
+          description
+            "Configure the HW-PCP-Server-Name attribute to be encapsulated into a specified DHCP/DHCPv6 option.";
+          leaf dhcp-code-value {
+            type uint32 {
+              range "2|4..5|7..14|16..43|45|47..49|55..56|61..81|83..254";
+            }
+            description
+              "Specifies a DHCPv4 option code.";
+          }
+          leaf dhcpv6-code-value {
+            type uint32 {
+              range "15..17|21..22|27..36|39..65535";
+            }
+            description
+              "Specifies a DHCPv6 option code.";
+          }
+        }
+        container vendor-attribute-multiple {
+          description
+            "Configure the NE40E to carry multiple proprietary attributes in RADIUS attribute 26 Vendor-Specific.";
+          leaf huawei {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the Huawei proprietary attribute.";
+          }
+          leaf microsoft {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the Microsoft proprietary attribute.";
+          }
+          leaf attribute3gpp2 {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the 3GPP2 proprietary attribute.";
+          }
+          leaf redback {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the RedBack proprietary attribute.";
+          }
+          leaf dslforum {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the DSLForum proprietary attribute.";
+          }
+          leaf other {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the other proprietary attributes except the Huawei proprietary attribute, the Microsoft proprietary attribute, the 3GPP2 proprietary attribute, the RedBack proprietary attribute and the DSLForum proprietary attribute.";
+          }
+        }
+        container calling-station-id-format {
+          presence "Create calling-station-id-format.";
+          description
+            "Enable/disable PPPoE user calling_station_id in Redback format.";
+          leaf vendor-id {
+            type uint32 {
+              range "2352|2636";
+            }
+            mandatory true;
+            description
+              "Vendor ID, 2352 for Redback, 2636 for Juniper.";
+          }
+          leaf include-option82 {
+            when "../vendor-id=2352";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable user's access-line-id (dhcpv4 option82/pppoe+/dhcpv6 option18+37+17).";
+          }
+          leaf version1 {
+            when "../vendor-id=2352";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable using when calling-station-id is configed as redback format.";
+          }
+        }
+        container authen-account-attribute {
+          description
+            "Configure a attribute to be carried in user authentication and accounting packets.";
+          leaf bb-caller-id {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable No.97 RADIUS attribute, the private attribute of REDBACK.";
+          }
+          leaf hw-auth-type {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable No.180 RADIUS attribute, indicating the authentication type of users.";
+          }
+          leaf hw-product-id {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the Huawei proprietary No.255 attribute, which is used to indicate the device type.";
+          }
+          leaf hw-version {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the Huawei proprietary No.254 attribute, which is used to indicate the system software version.";
+          }
+          leaf cmcc-nas-type {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable China Mobile-proprietary attibute, used to distinguish between a non-forwarding-control separation device and a forwarding-control separation device.";
+          }
+          leaf cmcc-up-identifier {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable China Mobile-proprietary attibute, used to indicate the BRAS-UP ID.";
+          }
+          leaf cmcc-up-ip {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable China Mobile-proprietary attibute, used to indicate the IP address of the BRAS-UP.";
+          }
+        }
+        container lns-authen-account-attribute {
+          description
+            "Configure a attribute to be carried in LNS user authentication and accounting packets.";
+          leaf nas-port-id {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable No.87 RADIUS attribute. It is specific to scenarios in which the LNS sends request packets that need to carry the nas-port-id attribute to the LNS RADIUS server.";
+          }
+        }
+        container accounting-on-attribute {
+          description
+            "Configure a attribute to be carried in a RADIUS Accouting-On packet.";
+          leaf nas-ip-address {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the NAS-IP-Address attributes to be added to RADIUS accounting-on packet.";
+          }
+          leaf event-time-stamp {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable a RADIUS Accouting-On packet to carry the event-timestamp attribute.";
+          }
+        }
+        container accounting-off-attribute {
+          description
+            "Configure a attribute to be carried in a RADIUS Accouting-Off packet.";
+          leaf nas-ip-address {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the NAS-IP-Address attributes to be added to RADIUS accounting-off packet.";
+          }
+          leaf event-time-stamp {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable a Accounting-Off packet to carry the event-timestamp attribute.";
+          }
+        }
+        container coa-nak-attribute {
+          description
+            "Configure a attribute to be carried in a coa-nak packet.";
+          leaf reply-message {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the public No.18 attribute, which indicates the description of return character strings.";
+          }
+        }
+        container daa-account-attribute {
+          description
+            "Configure a attribute to be carried in a DAA accounting packet.";
+          leaf class {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the public No.25 attribute, which is used to take the accounting information.";
+          }
+        }
+        container edsg-authen-account-attribute {
+          description
+            "Configure a attribute to be carried in EDSG authentication and accounting packets.";
+          leaf hw-product-id {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the Huawei proprietary No.255 attribute, which is used to indicate the device type.";
+          }
+          leaf hw-version {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the Huawei proprietary No.254 attribute, which is used to indicate the system software version.";
+          }
+        }
+        container edsg-account-attribute {
+          description
+            "Configure a attribute to be carried in a EDSG accounting packet.";
+          leaf class {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the public No.25 attribute, which is used to take the accounting information.";
+          }
+          leaf user-offline-reason {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable detailed user offline reason in EDSG stop accounting-request packets.";
+          }
+          leaf user-mac {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the Huawei proprietary No.153 attribute, detailed user-mac in EDSG accounting-request packets.";
+          }
+        }
+        container accounting-request-attribute {
+          description
+            "Configure a attribute to be carried in a accounting request packet.";
+          leaf hw-dhcpv6-option37 {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the Huawei proprietary No.150 attribute, which is used to encapsulate the client MAC.";
+          }
+          leaf edsg-service-name {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the EDSG service name. If the command is configured, it indicates the Huawei proprietary No.95 attribute. If the command is not configured, it indicates the Huawei proprietary No.185 attribute.";
+          }
+          leaf hw-acct-terminate-subcause {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable No.181 RADIUS attribute, indicating the ID of a subcause for a session interruption.";
+          }
+          leaf hw-avpair-nat-vpn {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable HW-Avpair. Indicates the VPN instance of the CGN ip pool.";
+          }
+          leaf hw-avpair-nat-extend-port {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable HW-Avpair. Indicates the extended port range.";
+          }
+          leaf hw-avpair-subscriber-fq {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable HW-Avpair. Indicates that the hw-avpair attribute in Accounting-request packets is used for sending effective Flow-queue parameters.";
+          }
+          leaf hw-avpair-subscriber-vpnid {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable HW-Avpair. Indicates that the hw-avpair attribute in Accounting-request packets is used for subscriber:vpnid.";
+          }
+          leaf hw-vpn-instance {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the Huawei proprietary No. 94 attribute to be carried in accounting request packets. This attribute represents the VPN instance information. Specify this parameter if the upstream device needs to identify VPN instance information of users and implement service policies based on the VPN instance information in accounting request packets.";
+          }
+          leaf frame-route {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the public No. 22 attribute. users' route information.";
+          }
+          leaf hw-web-url {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the Huawei proprietary No. 253 attribute. the web users approve compulsive website.";
+          }
+        }
+        container bod-account-attribute {
+          description
+            "Configure the attribute of bod account.";
+          leaf hw-nat-ip-adress {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable public network IP address after network address translation (NAT).";
+          }
+          leaf hw-nat-start-port {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable starting port of the public network IP address after NAT in a centralized BRAS scenario.";
+          }
+          leaf hw-nat-end-port {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable ending port of the public network IP address after NAT in a centralized BRAS scenario.";
+          }
+        }
+        container coa-query-ack-attribute {
+          description
+            "Configure the attributes to be carried in the ACK packets that are replied to the RADIUS server in a COA-based query.";
+          leaf reply-message {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable CoA query ACK packets to carry the Reply-Message attribute saved upon CoA-based re-authentication success.";
+          }
+          leaf session-time-out {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable CoA query ACK packets to carry the Session-Timeout attribute to indicate the remaining duration of a user service.";
+          }
+          leaf acct-session-time {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable CoA query ACK packets to carry the Acct-Session-Time attribute to indicate the online duration of a user.";
+          }
+          leaf filter-id {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable CoA query ACK packets to carry the Filter-Id attribute to indicate the user group information.";
+          }
+        }
+        container access-request-attribute {
+          description
+            "Configure a attribute to be carried in a RADIUS access request packet.";
+          leaf hw-gateway-address {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable access authentication request packets of Layer 3 DHCPv4 access users to carry user gateway addresses when the packets are sent to a RADIUS server.";
+          }
+          leaf hw-avpair-link-address {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable access authentication request packets of Layer 3 DHCPv6 access users to carry the HW-AVPAIR attribute to indicate the user link-address information when the packets are sent to a RADIUS server.";
+          }
+        }
+        container coa-logon-ack-attribute {
+          description
+            "Configure the attributes to be carried in the ACK packets that are replied to the RADIUS server when CoA-based pre-authentication to authentication domain switchover is performed successfully.";
+          leaf reply-message {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable ACK packets to carry the Reply-Message attribute.";
+          }
+        }
+        container attribute-action-class {
+          presence "Create attribute-action-class.";
+          description
+            "Enable/disable the attribute action.";
+          leaf class-partial-match {
+            type string {
+              length "1..31";
+            }
+            mandatory true;
+            description
+              "Specifies the character string for approximate string matching of the class attribute to be encapsulated into a PPP packet's MTOM field.";
+          }
+          leaf class-encode-format-name {
+            type string {
+              length "1..31";
+            }
+            description
+              "Specifies the encapsulation format and name of the class attribute to be encapsulated into a PPP packet's MTOM field.";
+          }
+          leaf class-delimiter {
+            when "../class-encode-format-name";
+            type string {
+              length "1";
+            }
+            mandatory true;
+            description
+              "Specifies a delimiter of the class attribute to be encapsulated into a PPP packet's MTOM field.";
+          }
+          leaf class-exclude-local {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable that the local configuration is excluded of the class attribute to be encapsulated into a PPP packet's MTOM field.";
+          }
+        }
+      }
+    }
+    container radius-server-authorizations {
+      description
+        "List of the authorization servers in a group.";
+      list radius-server-authorization {
+        key "ipv4-address vpn-name";
+        max-elements 32;
+        description
+          "Configure a particular group.";
+        leaf ipv4-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Specifies the IP address of a RADIUS authorization server.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "Indicates the VPN instance to which the RADIUS authorization server belongs.";
+        }
+        leaf shared-key {
+          type pub-type:password-extend {
+            length "1..255";
+          }
+          mandatory true;
+          description
+            "Specifies the shared key for the RADIUS server.";
+        }
+        leaf destination-ip-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Specifies the IP address of dynamic authorization packets.";
+        }
+        leaf destination-port {
+          type uint32 {
+            range "1645..1646|1812..1813|3799";
+          }
+          description
+            "Specifies the port number of dynamic authorization packets.";
+        }
+        leaf server-group-name {
+          type leafref {
+            path "../../../radius-server-groups/radius-server-group/name";
+          }
+          description
+            "Specifies the name of the RADIUS server group corresponding to the RADIUS authorization server.";
+        }
+        leaf ack-reserved-interval {
+          type uint32 {
+            range "0..300";
+          }
+          units s;
+          default "0";
+          description
+            "Specifies the period when the authorization acknowledgment packets are saved.";
+        }
+      }
+    }
+    container account-cache-retransmit {
+      description
+        "Configure an interval at which cached RADIUS accounting packets are retransmitted and the number of users for each packet retransmission.";
+      leaf user-number {
+        type uint32 {
+          range "1..30";
+        }
+        default "1";
+        description
+          "Specifies the number of users for each packet retransmission.";
+      }
+      leaf time-out {
+        type uint32 {
+          range "1..10";
+        }
+        units s;
+        default "10";
+        description
+          "Specifies an interval at which cached RADIUS accounting packets are retransmitted.";
+      }
+    }
+    container account-cache-warning-threshold {
+      must "./lower-limit < ./upper-limit";
+      presence "Create account-cache-warning-threshold.";
+      description
+        "Enable/disable the accounting packet cache alarm function and Configure an alarm threshold and a clear alarm threshold. If the accounting packet cache usage reaches the configured alarm threshold, an alarm is reported.";
+      leaf upper-limit {
+        type uint32 {
+          range "1..100";
+        }
+        units %;
+        mandatory true;
+        description
+          "Specifies an alarm threshold.";
+      }
+      leaf lower-limit {
+        type uint32 {
+          range "0..99";
+        }
+        units %;
+        mandatory true;
+        description
+          "Specifies a clear alarm threshold.";
+      }
+    }
+    container account-cache-memory-threshold {
+      description
+        "Configure a memory usage threshold for the master main control board.";
+      leaf threshold {
+        type uint32 {
+          range "50..85";
+        }
+        units %;
+        default "75";
+        description
+          "Specifies a memory usage threshold for the master main control board.";
+      }
+    }
+    container account-cache-max-packet {
+      description
+        "Configure the maximum number of accounting packets that can be cached.";
+      leaf number {
+        type uint32 {
+          range "8192..256000";
+        }
+        units packet;
+        default "8192";
+        description
+          "Specifies the maximum number of accounting packets that can be cached.";
+      }
+    }
+    container access-line-id-length-extend {
+      description
+        "Configure the maximum length of the Agent-Circuit-Id or Agent-Remote-Id attribute carried in RADIUS packets when a device trusts the Option 82 field in user packets as 198 bytes.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the maximum length of the Agent-Circuit-Id or Agent-Remote-Id attribute carried in RADIUS packets when a device trusts the Option 82 field in user packets as 198 bytes.";
+      }
+    }
+    container account-stop-packet-optimize {
+      description
+        "Configure the BRAS not to count this packet retransmission into the number of RADIUS accounting stop packet retransmissions if a BRAS fails to transmit a RADIUS accounting stop packet due to a seed application failure and retransmits the packet.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the BRAS not to count this packet retransmission into the number of RADIUS accounting stop packet retransmissions if a BRAS fails to transmit a RADIUS accounting stop packet due to a seed application failure and retransmits the packet.";
+      }
+    }
+    container send-packet-optimize {
+      description
+        "Configure a device to adjust the sending of RADIUS real-time accounting packets based on the system status.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a device to adjust the sending of RADIUS real-time accounting packets based on the system status.";
+      }
+    }
+    container extended-source-port-number {
+      presence "Create extended-source-port-number";
+      description
+        "Enable/disable the extended source interfaces that the device uses to send and receive RADIUS packets, this operation will take effect about 30 seconds later.";
+      leaf port-number {
+        type uint32 {
+          range "1..32";
+        }
+        mandatory true;
+        description
+          "Specifies the number of extended source ports.";
+      }
+      leaf start-port {
+        type uint32 {
+          range "50000..55535";
+        }
+        description
+          "Specifies the start port number.";
+      }
+    }
+    container authentication-packet-statistics {
+      config false;
+      description
+        "List of the RADIUS server authentication packets.";
+      list authentication-packet-statistic {
+        key "ipv4-address vpn-name server-port";
+        config false;
+        description
+          "Statistics of the RADIUS server authentication packets.";
+        leaf ipv4-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IPv4 address of the RADIUS server.";
+        }
+        leaf vpn-name {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Name of the VPN instance to which the RADIUS server belongs.";
+        }
+        leaf server-port {
+          type uint16;
+          config false;
+          description
+            "Port number of RADIUS server.";
+        }
+        uses radius-authen-packet-statistics-info;
+      }
+    }
+    container server-ports {
+      config false;
+      description
+        "List of the source port number of a RADIUS server.";
+      list server-port {
+        key "server-type ip-type port";
+        config false;
+        description
+          "Statistics of the source port number of a RADIUS server.";
+        leaf server-type {
+          type bras-radius-server-type;
+          config false;
+          description
+            "Type of Radius Server.";
+        }
+        leaf ip-type {
+          type enumeration {
+            enum "ipv4" {
+              value 0;
+              description
+                "IPv4 server.";
+            }
+            enum "ipv6" {
+              value 1;
+              description
+                "IPv6 server.";
+            }
+          }
+          config false;
+          description
+            "Filter port numbers based on IP.";
+        }
+        leaf port {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Number of the source port.";
+        }
+        leaf port-invalid {
+          type boolean;
+          config false;
+          description
+            "Whether a port number is invalid.";
+        }
+      }
+    }
+    container server-parameters {
+      config false;
+      description
+        "List of the parameters of a RADIUS server.";
+      list server-parameter {
+        key "group-name server-type ip-address vpn-name port";
+        config false;
+        description
+          "Statistics of a RADIUS server parameter.";
+        leaf group-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Name of a RADIUS template.";
+        }
+        leaf server-type {
+          type bras-radius-server-type;
+          config false;
+          description
+            "Type of Radius Server.";
+        }
+        leaf ip-address {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "Filter information based on an IPv4 or an IPv6 address.";
+        }
+        leaf vpn-name {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Name of a VPN instance. When the the type of address is IPv6, the VPN is '-'.";
+        }
+        leaf port {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Port number.";
+        }
+        uses radius-server-para-info-type;
+      }
+    }
+    container global-pending-limit {
+      description
+        "Configure the maximum number of pending packets or the limit on the number of packets sent to a RADIUS server within a specified period.";
+      leaf authentication-pending-limit {
+        type uint32 {
+          range "1..255";
+        }
+        units packet;
+        description
+          "Configure the pending number of the packets send by radius.";
+      }
+      leaf account-pending-limit {
+        type uint32 {
+          range "1..255";
+        }
+        units packet;
+        description
+          "Configure the pending number of the packets send by radius.";
+      }
+    }
+    container server-pending-limits {
+      description
+        "List of the maximum number of pending packets or the limit on the number of packets sent to a RADIUS server within a specified period.";
+      list server-pending-limit {
+        key "server-type server-ip-address server-port vpn-name";
+        description
+          "Configure the maximum number of pending packets or the limit on the number of packets sent to a RADIUS server within a specified period.";
+        leaf server-type {
+          type enumeration {
+            enum "authentication" {
+              value 1;
+              description
+                "Radius authentication server.";
+            }
+            enum "accounting" {
+              value 2;
+              description
+                "Radius accounting server.";
+            }
+          }
+          description
+            "Configure accounting server or authentication server.";
+        }
+        leaf server-ip-address {
+          type leafref {
+            path "../../../radius-server-groups/radius-server-group/radius-server-ipv4s/radius-server-ipv4[server-type=current()/../server-type]/server-ip-address";
+          }
+          description
+            "IP address of the server.";
+        }
+        leaf server-port {
+          type leafref {
+            path "../../../radius-server-groups/radius-server-group/radius-server-ipv4s/radius-server-ipv4[server-type=current()/../server-type][server-ip-address=current()/../server-ip-address]/server-port";
+          }
+          description
+            "Port of the server.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "../../../radius-server-groups/radius-server-group/radius-server-ipv4s/radius-server-ipv4[server-type=current()/../server-type][server-ip-address=current()/../server-ip-address][server-port=current()/../server-port]/vpn-name";
+          }
+          description
+            "Vpn instance name of the server.";
+        }
+        leaf limit-value {
+          type uint32 {
+            range "1..255";
+          }
+          units packet;
+          mandatory true;
+          description
+            "Configure the pending number of the packets send by radius.";
+        }
+      }
+    }
+    container server-speed-limits {
+      description
+        "List of the maximum number of pending packets or the limit on the number of packets sent to a RADIUS server within a specified period.";
+      list server-speed-limit {
+        key "server-type server-ip-address server-port vpn-name";
+        description
+          "Configure the maximum number of pending packets or the limit on the number of packets sent to a RADIUS server within a specified period.";
+        leaf server-type {
+          type enumeration {
+            enum "authentication" {
+              value 1;
+              description
+                "Radius authentication server.";
+            }
+            enum "accounting" {
+              value 2;
+              description
+                "Radius accounting server.";
+            }
+          }
+          description
+            "Configure accounting server or authentication server.";
+        }
+        leaf server-ip-address {
+          type leafref {
+            path "../../../radius-server-groups/radius-server-group/radius-server-ipv4s/radius-server-ipv4[server-type=current()/../server-type]/server-ip-address";
+          }
+          description
+            "IP address of the server.";
+        }
+        leaf server-port {
+          type leafref {
+            path "../../../radius-server-groups/radius-server-group/radius-server-ipv4s/radius-server-ipv4[server-type=current()/../server-type][server-ip-address = current()/../server-ip-address]/server-port";
+          }
+          description
+            "Port of the server.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "../../../radius-server-groups/radius-server-group/radius-server-ipv4s/radius-server-ipv4[server-type=current()/../server-type][server-ip-address = current()/../server-ip-address][server-port=current()/../server-port]/vpn-name";
+          }
+          description
+            "Vpn instance name of the server.";
+        }
+        leaf limit-value {
+          type uint32 {
+            range "1..65535";
+          }
+          units packet;
+          mandatory true;
+          description
+            "Configure the number of the packets send by radius.";
+        }
+        leaf limit-time {
+          type uint32 {
+            range "1..255";
+          }
+          units s;
+          mandatory true;
+          description
+            "Configure the sending time of the radius.";
+        }
+      }
+    }
+    container account-packet-statistics {
+      config false;
+      description
+        "List of the RADIUS server accounting packets.";
+      list account-packet-statistic {
+        key "ipv4-address vpn-name port";
+        description
+          "Statistics of the RADIUS server accounting packets.";
+        leaf ipv4-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "IPv4 address of the RADIUS server.";
+        }
+        leaf vpn-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Name of the VPN instance to which the RADIUS server belongs.";
+        }
+        leaf port {
+          type uint32 {
+            range "1..65535";
+          }
+          description
+            "Port number of Radius Server.";
+        }
+        uses radius-account-packet-statistics-type;
+      }
+    }
+    container packet-statistics-algorithm {
+      description
+        "Configure a mode for collecting statistics about RADIUS authentication request and response packets.";
+      leaf algorithm {
+        type enumeration {
+          enum "version1" {
+            value 0;
+            description
+              "Collects statistics about RADIUS authentication request and response packets in the version1 collection mode.";
+          }
+          enum "version2" {
+            value 1;
+            description
+              "Collects statistics about RADIUS authentication request and response packets in the version2 collection mode.";
+          }
+        }
+        description
+          "Radius packets statistics algorithm.";
+      }
+    }
+    container author-error-reply-method {
+      description
+        "Configure the method for device to respond to the RADIUS server-delivered CoA packets that it cannot process.";
+      leaf method {
+        type enumeration {
+          enum "version1" {
+            value 1;
+            description
+              "Sends dynamic authorization packets in response to the server in version 1 method by default. Version 1 is the default method.";
+          }
+          enum "version2" {
+            value 0;
+            description
+              "Sends dynamic authorization packets in response to the server in version 2 method. The version 2 method complies with RFC 3576.";
+          }
+        }
+        default "version1";
+        description
+          "The method for device to respond to the RADIUS server-delivered CoA packets that it cannot process.";
+      }
+    }
+    container radius-local-ips {
+      description
+        "List of the listening IP address of the RADIUS service ports 1645, 1646, and 3799, cannot be configured frequently. the interval between two configuration changes cannot be less than 30 seconds.";
+      list radius-local-ip {
+        key "ip-address vpn-name";
+        max-elements "5";
+        description
+          "Configure the listening IP address of the RADIUS service ports 1645, 1646, and 3799.";
+        leaf ip-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Specifies the listening IP address of the RADIUS service ports 1645, 1646, and 3799.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+          description
+            "Specifies the listening vpn instance of the RADIUS service ports 1645, 1646, and 3799.";
+        }
+      }
+    }
+    container radius-local-ip-all {
+      description
+        "Configure the RADIUS service ports 1645, 1646, and 3799 to listen to all IP addresses, cannot be configured frequently. the interval between two configuration changes cannot be less than 30 seconds.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the RADIUS service ports 1645, 1646, and 3799 to listen to all IP addresses.";
+      }
+    }
+    container accounting-server-statistics {
+      config false;
+      description
+        "List of packets on the RADIUS server with a specified IP address.";
+      list accounting-server-statistic {
+        key "server-address";
+        description
+          "Statistics of packets on the RADIUS server with a specified IP address.";
+        leaf server-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "The IP address of the RADIUS accounting server referred to in this table entry.";
+        }
+        leaf server-index {
+          type uint32 {
+            range "1..2147483647";
+          }
+          description
+            "A number uniquely identifying each RADIUS Accounting server with which this client communicates.";
+        }
+        leaf client-server-port-number {
+          type uint16 {
+            range "0..65535";
+          }
+          description
+            "The UDP port the client is using to send requests to this server.";
+        }
+        leaf client-round-trip-time {
+          type pub-type:time-tick;
+          description
+            "The time interval between the most recent Accounting-Response and the Accounting-Request that matched it from this RADIUS accounting server.";
+        }
+        leaf client-requests {
+          type uint32;
+          description
+            "The number of RADIUS Accounting-Request packets sent. This does not include retransmissions.";
+        }
+        leaf client-retransmissions {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS Accounting-Request packets retransmitted to this RADIUS accounting server. Retransmissions include retries where the Identifier and Acct-Delay have been updated, as well as those in which they remain the same.";
+        }
+        leaf client-responses {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS packets received on the accounting port from this server.";
+        }
+        leaf client-malformed-responses {
+          type uint32;
+          units packet;
+          description
+            "The number of malformed RADIUS Accounting-Response packets received from this server. Malformed packets include packets with an invalid length. Bad authenticators and unknown types are not included as malformed accounting responses.";
+        }
+        leaf invalid-authenticators {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS Accounting-Response packets which contained invalid authenticators received from this server.";
+        }
+        leaf client-pending-requests {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS Accounting-Request packets sent to this server that have not yet timed out or received a response. This variable is incremented when an Accounting-Request is sent and decremented due to receipt of an Accounting-Response, a timeout or a retransmission.";
+        }
+        leaf client-timeouts {
+          type uint32;
+          units packet;
+          description
+            "The number of accounting timeouts to this server. After a timeout the client may retry to the same server, send to a different server, or give up. A retry to the same server is counted as a retransmit as well as a timeout. A send to a different server is counted as an Accounting-Request as well as a timeout.";
+        }
+        leaf client-unknown-packets {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS packets of unknown type which were received from this server on the accounting port.";
+        }
+        leaf client-packets-dropped {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS packets which were received from this server on the accounting port and dropped for some other reason.";
+        }
+      }
+    }
+    container auth-server-statistics {
+      config false;
+      description
+        "List of RADIUS authentication server.";
+      list auth-server-statistic {
+        key "server-address";
+        description
+          "Statistics of RADIUS authentication server.";
+        leaf server-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "The IP address of the RADIUS authentication server referred to in this table entry.";
+        }
+        leaf server-index {
+          type uint32 {
+            range "1..2147483647";
+          }
+          description
+            "A number uniquely identifying each RADIUS Authentication server with which this client communicates.";
+        }
+        leaf client-access-requests {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS Access-Request packets sent to this server. This does not include retransmissions.";
+        }
+        leaf access-retransmissions {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS Access-Request packets retransmitted to this RADIUS authentication server.";
+        }
+        leaf client-access-accepts {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS Access-Accept packets (valid or invalid) received from this server.";
+        }
+        leaf client-access-rejects {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS Access-Reject packets (valid or invalid) received from this server.";
+        }
+        leaf client-access-challenges {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS Access-Challenge packets (valid or invalid) received from this server.";
+        }
+        leaf malformed-access-responses {
+          type uint32;
+          units packet;
+          description
+            "The number of malformed RADIUS Access-Response packets received from this server. Malformed packets include packets with an invalid length. Bad authenticators or Signature attributes or unknown types are not included as malformed access responses.";
+        }
+        leaf invalid-authenticators {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS Access-Response packets containing invalid authenticators or Signature attributes received from this server.";
+        }
+        leaf client-pending-requests {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS Access-Request packets destined for this server that have not yet timed out or received a response. This variable is incremented when an Access-Request is sent and decremented due to receipt of an Acess-Accept, Access-Reject or Access-Challenge, a timeout or retransmission.";
+        }
+        leaf client-timeouts {
+          type uint32;
+          units packet;
+          description
+            "The number of authentication timeouts to this server. After a timeout the client may retry to the same server, send to a different server, or give up. A retry to the same server is counted as a retransmit as well as a timeout. A send to a different server is counted as a Request as well as a timeout.";
+        }
+        leaf client-unknown-packets {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS packets of unknown type which were received from this server on the authentication port.";
+        }
+        leaf client-packets-dropped {
+          type uint32;
+          units packet;
+          description
+            "The number of RADIUS packets of which were received from this server on the authentication port and dropped for some other reason.";
+        }
+        leaf client-server-port-number {
+          type uint16 {
+            range "0..65535";
+          }
+          description
+            "The UDP port the client is using to send requests to this server.";
+        }
+        leaf client-round-trip-time {
+          type pub-type:time-tick;
+          description
+            "The time interval (in hundredths of a second) between the most recent Access-Reply/Access-Challenge and the Access-Request that matched it from this RADIUS authentication server.";
+        }
+      }
+    }
+    container author-packet-statistics {
+      config false;
+      description
+        "List of authorization packets on the RADIUS server with a specified IP address.";
+      list author-packet-statistic {
+        key "packet-type ipv4-address vpn-name";
+        description
+          "Statistics of authorization packets on the RADIUS server with a specified IP address.";
+        leaf packet-type {
+          type enumeration {
+            enum "coa" {
+              value 1;
+              description
+                "Authorization COA Server Packets.";
+            }
+            enum "dm" {
+              value 2;
+              description
+                "Authorization DM Server Packets.";
+            }
+          }
+          description
+            "Radius server type.";
+        }
+        leaf ipv4-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Radius server IP.";
+        }
+        leaf vpn-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "VPN-instance name.";
+        }
+        leaf author-request-packets {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that were received.";
+        }
+        leaf author-accept-packets {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that were permitted.";
+        }
+        leaf author-reject-packets {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that were rejected.";
+        }
+        leaf bad-author-packets {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that carry incorrect authenticators and were received.";
+        }
+        leaf author-retransmission-packets {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that were retransmitted.";
+        }
+        leaf malformed-response-author-packets {
+          type uint32;
+          units packet;
+          description
+            "Number of malformed authorization requests that were received.";
+        }
+        leaf timeout-author-packets {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that expired.";
+        }
+        leaf unknown-type-author-packets {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests of which the types are unknown and that were received.";
+        }
+        leaf dropped-author-packets {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that were dropped.";
+        }
+        leaf invalid-ip-author-packets {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that carry invalid IP addresses.";
+        }
+        leaf invalid-port-author-packets {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that carry invalid port numbers.";
+        }
+        leaf author-request-packets-last30 {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that were received in the last 30 minutes.";
+        }
+        leaf author-accept-packets-last30 {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that were permitted in the last 30 minutes.";
+        }
+        leaf author-reject-packets-last30 {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that were rejected in the last 30 minutes.";
+        }
+        leaf bad-author-packets-last30 {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that carry incorrect authenticators and were received in the last 30 minutes.";
+        }
+        leaf retrans-packets-last30 {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that were retransmitted in the last 30 minutes.";
+        }
+        leaf malformed-packets-last30 {
+          type uint32;
+          units packet;
+          description
+            "Number of malformed authorization requests that were received in the last 30 minutes.";
+        }
+        leaf timeout-author-packets-last30 {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that expired in the last 30 minutes.";
+        }
+        leaf unknown-author-packets-last30 {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests of which the types are unknown and that were received in the last 30 minutes.";
+        }
+        leaf dropped-author-packets-last30 {
+          type uint32;
+          units packet;
+          description
+            "Number of authorization requests that were dropped in the last 30 minutes.";
+        }
+        leaf invalid-ip-packets-last30 {
+          type uint32;
+          units packet;
+          description
+          "Number of authorization requests that carry invalid IP addresses and were received in the last 30 minutes.";
+        }
+        leaf invalid-port-packets-last30 {
+          type uint32;
+          units packet;
+          description
+          "Number of authorization requests that carry invalid port numbers and were received in the last 30 minutes.";
+        }
+      }
+    }
+    container packet-attribute-statistics {
+      config false;
+      description
+        "List of attributes in RADIUS packets.";
+      list packet-attribute-statistic {
+        key "attribute-name";
+        description
+          "Statistics of attributes in RADIUS packets.";
+        leaf attribute-name {
+          type string {
+            length "1..64";
+          }
+          description
+            "The attribute name.";
+        }
+        leaf authen-request-attribute-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          description
+            "The number of attribute in authentication request packet.";
+        }
+        leaf authen-accept-attribute-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          description
+            "The number of attribute in authentication accept packet.";
+        }
+        leaf authen-reject-attribute-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          description
+            "The number of attribute in authentication reject packet.";
+        }
+        leaf account-request-attribute-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          description
+            "The number of attribute in accounting request packet.";
+        }
+        leaf account-response-attribute-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          description
+            "The number of attribute in accounting response packet.";
+        }
+        leaf coa-request-attribute-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          description
+            "The number of attribute in COA request packet.";
+        }
+        leaf coa-acknowledge-attribute-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          description
+            "The number of attribute in COA acknowledge packet.";
+        }
+        leaf dm-request-attribute-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          description
+            "The number of attribute in DM request packet.";
+        }
+        leaf dm-acknowledge-attribute-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          description
+            "The number of attribute in DM acknowledge packet.";
+        }
+      }
+    }
+    container authen-packet-statistics-ipv6s {
+      config false;
+      description
+        "List of authentication packets on the RADIUS server with a specified IPv6 address.";
+      list authen-packet-stat-ipv6 {
+        key "ipv6-address port";
+        config false;
+        description
+          "Statistics of authentication packets on the RADIUS server with a specified IPv6 address.";
+        leaf ipv6-address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Radius server IP.";
+        }
+        leaf port {
+          type uint16 {
+            range "1..65535";
+          }
+          description
+            "Port number of Radius Server.";
+        }
+        uses radius-authen-packet-statistics-info;
+      }
+    }
+    container account-packet-statistics-ipv6s {
+      config false;
+      description
+        "List of accounting packets on the RADIUS server with a specified IPv6 address.";
+      list account-packet-statistics-ipv6 {
+        key "ipv6-address port";
+        description
+          "Statistics of accounting packets on the RADIUS server with a specified IPv6 address.";
+        leaf ipv6-address {
+          type inet:ipv6-address-no-zone;
+          description
+            "IP address of Radius server.";
+        }
+        leaf port {
+          type uint16 {
+            range "1..65535";
+          }
+          description
+            "Port number of Radius server.";
+        }
+        uses radius-account-packet-statistics-type;
+      }
+    }
+    container aaa-route-download-status {
+      config false;
+      description
+        "Statistics of the status of static routes delivered by an AAA server.";
+      leaf status {
+        type string {
+          length "1..99";
+        }
+        description
+          "Current route update status.";
+      }
+      leaf last-download-attempt {
+        type string {
+          length "1..99";
+        }
+        description
+          "Time when the last route synchronization request was sent.";
+      }
+      leaf last-download-success {
+        type string {
+          length "1..99";
+        }
+        description
+          "Time when the last route synchronization succeeded.";
+      }
+      leaf next-scheduled-download {
+        type string {
+          length "1..99";
+        }
+        description
+          "Time of the next route synchronization.";
+      }
+      leaf is-route-advertise-delay {
+        type string {
+          length "1..99";
+        }
+        description
+          "Whether the route is waiting for advertisement.";
+      }
+      leaf route-advertise-delay-time {
+        type string {
+          length "1..99";
+        }
+        description
+          "Remaining time before routes are advertised.";
+      }
+    }
+    container aaa-static-routes {
+      config false;
+      description
+        "List of Radius server static routes.";
+      list aaa-static-route {
+        key "vpn-name ip-address";
+        description
+          "Statistics of Radius server static routes.";
+        leaf vpn-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "VPN Name.";
+        }
+        leaf ip-address {
+          type string {
+            length "1..99";
+          }
+          description
+            "IP and length of IP mask.";
+        }
+        leaf is-installed {
+          type bras-radius-aaa-route-infos-type;
+          description
+            "Is route installed.";
+          ext:support-filter "true";
+        }
+        leaf next-hop {
+          type string {
+            length "1..99";
+          }
+          description
+            "Next hop.";
+        }
+        leaf cost {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Routing weights.";
+        }
+        leaf interface-name {
+          type string {
+            length "1..99";
+          }
+          description
+            "Interface name.";
+        }
+        leaf tag {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Routing tag.";
+        }
+        leaf is-advertised {
+          type bras-radius-aaa-route-infos-type;
+          description
+            "Is route advertised.";
+        }
+        leaf is-rolled {
+          type bras-radius-aaa-route-infos-type;
+          description
+            "Is route rolled back to pre-sync state, under the radius fault scenario.";
+        }
+      }
+    }
+    container auth-client {
+      config false;
+      description
+        "Statistics of RADIUS authentication client.";
+      leaf invalid-server-packets {
+        type uint32;
+        description
+          "The number of RADIUS Access-Response packets received from unknown addresses.";
+      }
+      leaf identifier {
+        type string {
+          length "1..255";
+        }
+        description
+          "The NAS-Identifier of the RADIUS authentication client.";
+      }
+    }
+    container accounting-client {
+      config false;
+      description
+        "Statistics of RADIUS accounting client.";
+      leaf response-packets {
+        type uint32;
+        description
+          "The number of RADIUS Accounting-Response packets received from unknown addresses.";
+      }
+      leaf identifier {
+        type string {
+          length "1..255";
+        }
+        description
+          "The NAS-Identifier of the RADIUS accounting client.";
+      }
+    } 
+    container attribute-global {
+      description
+        "Configure Radius attribute global.";
+      leaf acct-term-sub-encap-type {
+        type enumeration {
+          enum "string" {
+            value 2;
+            description
+              "The string encapsulation type of hw-acct-terminate-subcause.";
+          }
+          enum "integer" {
+            value 3;
+            description
+              "The integer encapsulation type of hw-acct-terminate-subcause.";
+          }
+        }
+        default "integer";
+        description
+          "Configure the encapsulation format of the HW-Acct-terminate-subcause attribute.";
+      }
+    }
+  }
+}

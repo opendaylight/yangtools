@@ -1,0 +1,710 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-wdm {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-wdm";
+  prefix wdm;
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Configuration of WDM port.";
+  revision 2019-07-20 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  typedef wdm-transalarm-type {
+    type enumeration {
+      enum "ODU-AIS" {
+        value 22;
+        description
+          "ODU-AIS.";
+      }
+      enum "ODU-LCK" {
+        value 23;
+        description
+          "ODU-LCK.";
+      }
+      enum "ODU-OCI" {
+        value 24;
+        description
+          "ODU-OCI.";
+      }
+      enum "OTU-AIS" {
+        value 25;
+        description
+          "OTU-AIS.";
+      }
+      enum "OTU-LOM" {
+        value 26;
+        description
+          "OTU-LOM.";
+      }
+      enum "OTU-SD-BER" {
+        value 27;
+        description
+          "OTU-SD-BER.";
+      }
+      enum "OTU-SF-BER" {
+        value 28;
+        description
+          "OTU-SF-BER.";
+      }
+      enum "PM-BDI" {
+        value 29;
+        description
+          "PM-BDI.";
+      }
+      enum "PM-TIM" {
+        value 30;
+        description
+          "PM-TIM.";
+      }
+      enum "R-LOF" {
+        value 31;
+        description
+          "R-LOF.";
+      }
+      enum "R-LOS" {
+        value 32;
+        description
+          "R-LOS.";
+      }
+      enum "R-OOF" {
+        value 33;
+        description
+          "R-OOF.";
+      }
+      enum "SM-BDI" {
+        value 34;
+        description
+          "SM-BDI.";
+      }
+      enum "SM-IAE" {
+        value 35;
+        description
+          "SM-IAE.";
+      }
+      enum "SM-TIM" {
+        value 36;
+        description
+          "SM-TIM.";
+      }
+      enum "PREFEC-TCA" {
+        value 37;
+        description
+          "PREFEC-TCA.";
+      }
+      enum "ODU-SD-BER" {
+        value 45;
+        description
+          "ODU-SD-BER.";
+      }
+    }
+    description
+      "Transmission alarm.";
+  }
+  container wdm {
+    description
+      "Wdm configurations.";
+    container wdms {
+      description
+        "List of wdm port.";
+      list wdm {
+        ext:generated-by "system";
+        key "name";
+        description
+          "Configure wdm ports.";
+        leaf name {
+          type string {
+            length "1..64";
+          }
+          description
+            "Port name. The name is expressed in the format of WdmslotID/cardID/portID. For example, Wdm1/0/1. Here Wdm1/0/1 is an example. The value may vary with devices.";
+        }
+        leaf map-path {
+          ext:dynamic-default ;
+          type enumeration {
+            enum "opu2-non-standard" {
+              value 1;
+              description
+                "GSup43 6.2 mapping path.";
+            }
+            enum "opu2e" {
+              value 2;
+              description
+                "GSup43 7.1 mapping path.";
+            }
+            enum "opu2-standard" {
+              value 3;
+              description
+                "GSup43 7.3 mapping path.";
+            }
+          }
+          description
+            "The mapping path. Warn: change the mapping path configuration need to clear other wdm configurations except the trans-alarm-info node manually.";
+        }
+        leaf fecmode {
+          type enumeration {
+            enum "none" {
+              value 0;
+              description
+                "FEC Disable.";
+            }
+            enum "standard" {
+              value 1;
+              description
+                "FEC (G.709).";
+            }
+            enum "enhanced" {
+              value 2;
+              description
+                "HGFEC (Enhanced).";
+            }
+            enum "enhanced-i-4" {
+              value 3;
+              description
+                "AFEC-3 (G.975.1 I.4).";
+            }
+            enum "enhanced-i-7" {
+              value 4;
+              description
+                "AFEC (G.975.1 I.7).";
+            }
+            enum "lhaul-sd" {
+              value 5;
+              description
+                "Lhaul-sd.";
+            }
+          }
+          default "standard";
+          description
+            "The FEC module. Warn: Switch fec mode need to clear the pre-fec error threshold configurations manually.";
+        }
+        leaf tx-otu-tti {
+          type string {
+            length "0..64";
+            pattern '.{0,15}/.{0,15}/.{0,32}';
+          }
+          description
+            "Send trail trace identifier of optical transport unit. The character string must contain two reverse slashes (/). The length before the two reverse slashes cannot exceed 15 characters, and the length after the second reverse slash can contain a maximum of 32 characters, including only digits and letters.";
+        }
+        leaf tx-odu-pm-tti {
+          type string {
+            length "0..64";
+            pattern '.{0,15}/.{0,15}/.{0,32}';
+          }
+          description
+            "Send trail trace identifier of optical data unit path monitoring. The character string must contain two reverse slashes (/). The length before the two reverse slashes cannot exceed 15 characters, and the length after the second reverse slash can contain a maximum of 32 characters, including only digits and letters.";
+        }
+        leaf otu-tti-expt {
+          type string {
+            length "0..64";
+            pattern '.{0,15}/.{0,15}/.{0,32}';
+          }
+          description
+            "Expected trail trace identifier of optical transport unit. The character string must contain two reverse slashes (/). The length before the two reverse slashes cannot exceed 15 characters, and the length after the second reverse slash can contain a maximum of 32 characters, including only digits and letters.";
+        }
+        leaf odu-pm-tti-expt {
+          type string {
+            length "0..64";
+            pattern '.{0,15}/.{0,15}/.{0,32}';
+          }
+          description
+            "Expected trail trace identifier of optical data unit path monitoring. The character string must contain two reverse slashes (/). The length before the two reverse slashes cannot exceed 15 characters, and the length after the second reverse slash can contain a maximum of 32 characters, including only digits and letters.";
+        }
+        leaf otu-sd-threshold {
+          type uint32 {
+            range "6..9";
+          }
+          default "7";
+          description
+            "Threshold of OTU signal degrade alarm.";
+        }
+        leaf odu-sd-threshold {
+          type uint32 {
+            range "6..9";
+          }
+          default "7";
+          description
+            "Threshold of ODU signal degrade alarm.";
+        }
+        leaf span {
+          type uint32 {
+            range "0..50";
+          }
+          default "1";
+          description
+            "Optical span number.";
+        }
+        leaf rx-otu-tti {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "Receive trail trace identifier of optical transport unit.";
+        }
+        leaf rx-odu-pm-tti {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "Receive trail trace identifier of optical data unit path monitoring.";
+        }
+        leaf osnr {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "Optical Signal-to-noise ratio.";
+        }
+        leaf sm-bei {
+          type uint64;
+          config false;
+          description
+            "SmBei error.";
+        }
+        leaf pm-bei {
+          type uint64;
+          config false;
+          description
+            "PmBei error.";
+        }
+        leaf sm-bip {
+          type uint64;
+          config false;
+          description
+            "SmBip error.";
+        }
+        leaf pm-bip {
+          type uint64;
+          config false;
+          description
+            "PmBip error.";
+        }
+        leaf fec0-bit-statistics {
+          type uint64;
+          config false;
+          description
+            "FEC 0bit error statistics.";
+        }
+        leaf fec1-bit-statistics {
+          type uint64;
+          config false;
+          description
+            "FEC 1bit error statistics.";
+        }
+        leaf fec0-1-statistics {
+          type uint64;
+          config false;
+          description
+            "FEC 0bit and 1bit error statistics.";
+        }
+        leaf fec-symbol-err-statistics {
+          type uint64;
+          config false;
+          description
+            "FEC symbol error statistics.";
+        }
+        leaf fec-uncorrect-err-statistics {
+          type uint64;
+          config false;
+          description
+            "FEC uncorrected error statistics.";
+        }
+        leaf prefec-ber-coefficient {
+          type uint32;
+          config false;
+          description
+            "Before prefec error rate coefficient value.";
+        }
+        leaf prefec-ber-power {
+          type uint32;
+          config false;
+          description
+            "Before prefec error rate power value.";
+        }
+        leaf postfec-ber-coefficient {
+          type uint32;
+          config false;
+          description
+            "After prefec error rate coefficient value.";
+        }
+        leaf postfec-ber-power {
+          type uint32;
+          config false;
+          description
+            "After prefec error rate power value.";
+        }
+        container otn-port-alarm {
+          description
+            "Configure OTN port alarm information.";
+          leaf prefec-trigger-coeff {
+            ext:dynamic-default ;
+            type uint32 {
+              range "1..9";
+            }
+            must "../prefec-trigger-power and ../prefec-recover-coeff and ../prefec-recover-power and ((../prefec-trigger-power < ../prefec-recover-power) or 
+              (../prefec-recover-coeff <= ../prefec-trigger-coeff and ../prefec-trigger-power = ../prefec-recover-power))";
+            description
+              "Prefec-tca trigger-threshold coefficient, when fecmode is 'standard' or 'none', the default value is 1, when fecmode is equal to 'enhanced-i-4' or 'enhanced-i-7', the default value is 5.";
+          }
+          leaf prefec-trigger-power {
+            ext:dynamic-default ;
+            type uint32 {
+              range "1..7";
+            }
+            must "../prefec-trigger-coeff and ../prefec-recover-coeff and ../prefec-recover-power and ((../prefec-trigger-power < ../prefec-recover-power) or 
+              (../prefec-recover-coeff <= ../prefec-trigger-coeff and ../prefec-trigger-power = ../prefec-recover-power))";
+            description
+              "Prefec-tca trigger-threshold power, when fecmode is 'standard' or 'none', the default value is 6, when fecmode is equal to 'enhanced-i-4' or 'enhanced-i-7', the default value is 5.";
+          }
+          leaf prefec-trigger-interval {
+            type uint32 {
+              range "1..10";
+            }
+            default "3";
+            description
+              "Time interval for statistical prefec-tca to trigger prefec alarm.";
+          }
+          leaf prefec-recover-coeff {
+            ext:dynamic-default ;
+            type uint32 {
+              range "1..9";
+            }
+            must "../prefec-trigger-power and ../prefec-trigger-coeff and ../prefec-recover-power and ((../prefec-trigger-power < ../prefec-recover-power) or 
+              (../prefec-recover-coeff <= ../prefec-trigger-coeff and ../prefec-trigger-power = ../prefec-recover-power))";
+            description
+              "Prefec-tca recover-threshold coefficient, when fecmode is 'standard' or 'none', the default value is 1, when fecmode is equal to 'enhanced-i-4' or 'enhanced-i-7', the default value is 5.";
+          }
+          leaf prefec-recover-power {
+            ext:dynamic-default ;
+            type uint32 {
+              range "1..8";
+            }
+            must "../prefec-trigger-power and ../prefec-recover-coeff and ../prefec-trigger-coeff and ((../prefec-trigger-power < ../prefec-recover-power) or 
+              (../prefec-recover-coeff <= ../prefec-trigger-coeff and ../prefec-trigger-power = ../prefec-recover-power))";
+            description
+              "Prefec-tca recover-threshold power, when fecmode is 'standard' or 'none', the default value is 5, when fecmode is equal to 'enhanced-i-4' or 'enhanced-i-7', the default value is 6.";
+          }
+          leaf prefec-recover-interval {
+            type uint32 {
+              range "10..100";
+            }
+            default "30";
+            description
+              "Time interval for statistical prefec-tca to recover prefec alarm.";
+          }
+        }
+        container transmission-alarm {
+          description
+            "Configure TAD Alarm Information.";
+          leaf holdoff-timer {
+            type uint32 {
+              range "0|20..10000";
+            }
+            units "ms";
+            default "0";
+            description
+              "TAD Hold Down Time.";
+          }
+          leaf holdup-timer {
+            type uint32 {
+              range "0|200..3600000";
+            }
+            units "ms";
+            default "300";
+            description
+              "TAD Hold Up Time.";
+          }
+          leaf damp-suppress {
+            type uint32 {
+              range "2..19999";
+            }
+            must "((../damp-suppress and ../damp-reuse and ../damp-ceiling and ../damp-decayok and ../damp-decayng) and ../damp-suppress >= ../damp-reuse and ../damp-suppress <= ../damp-ceiling) or 
+              (not(../damp-suppress) and not(../damp-reuse) and not(../damp-ceiling) and not(../damp-decayok) and not(../damp-decayng))";
+            description
+              "TAD Alarm Suppress Value.";
+          }
+          leaf damp-reuse {
+            type uint32 {
+              range "1..19998";
+            }
+            must "((../damp-suppress and ../damp-reuse and ../damp-ceiling and ../damp-decayok and ../damp-decayng) and ../damp-suppress >= ../damp-reuse) or 
+              (not(../damp-suppress) and not(../damp-reuse) and not(../damp-ceiling) and not(../damp-decayok) and not(../damp-decayng))";
+            description
+              "TAD Alarm Reuse Value.";
+          }
+          leaf damp-ceiling {
+            type uint32 {
+              range "1001..20000";
+            }
+            must "((../damp-suppress and ../damp-reuse and ../damp-ceiling and ../damp-decayok and ../damp-decayng) and ../damp-suppress <= ../damp-ceiling) or 
+              (not(../damp-suppress) and not(../damp-reuse) and not(../damp-ceiling) and not(../damp-decayok) and not(../damp-decayng))";
+            description
+              "TAD Alarm Ceiling Value.";
+          }
+          leaf damp-decayok {
+            type uint32 {
+              range "500..10000";
+            }
+            units "ms";
+            must "(../damp-suppress and ../damp-reuse and ../damp-ceiling and ../damp-decayok and ../damp-decayng) or 
+              (not(../damp-suppress) and not(../damp-reuse) and not(../damp-ceiling) and not(../damp-decayok) and not(../damp-decayng))";
+            description
+              "TAD Alarm OK Half Decay Value.";
+          }
+          leaf damp-decayng {
+            type uint32 {
+              range "500..10000";
+            }
+            units "ms";
+            must "(../damp-suppress and ../damp-reuse and ../damp-ceiling and ../damp-decayok and ../damp-decayng) or 
+              (not(../damp-suppress) and not(../damp-reuse) and not(../damp-ceiling) and not(../damp-decayok) and not(../damp-decayng))";
+            description
+              "TAD Alarm NG Half Decay Value.";
+          }
+          leaf alm-last-reset-time {
+            type yang:date-and-time;
+            config false;
+            description
+              "TAD Last Reset Time.";
+          }
+          leaf filter-function {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "TAD Alarm Filter Function.";
+          }
+          leaf damping-function {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "TAD Alarm Damping Function.";
+          }
+          container trans-alarm-ifdowns {
+            description
+              "List of TAD Alarm Status Information.";
+            list trans-alarm-ifdown {
+              ext:generated-by "system";
+              key "alarm-type";
+              description
+                "Configure TAD Alarm Status Information.";
+              leaf alarm-type {
+                type wdm-transalarm-type;
+                description
+                  "TAD Alarm Type.";
+              }
+              leaf ifdown {
+                ext:dynamic-default ;
+                type boolean;
+                description
+                  "Enable/disable TAD Alarm If down. if the ifdown is true, the alarm will cause the port down.";
+              }
+              leaf alarm-status {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "TAD Alarm True Or False.";
+              }
+              leaf is-in-filtering {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "TAD Alarm Is In Filtering.";
+              }
+              leaf is-in-suppressing {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "TAD Alarm Is In Suppressing.";
+              }
+              leaf is-in-aging {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "TAD Alarm Is In Aging.";
+              }
+              leaf flapping-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                config false;
+                description
+                  "TAD Alarm Flapping Count.";
+              }
+              leaf suppressing-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                config false;
+                description
+                  "TAD Alarm Suppressing Count.";
+              }
+              leaf figure-of-merit {
+                type string {
+                  length "0..16";
+                }
+                config false;
+                description
+                  "TAD Alarm Figure Of Merit.";
+              }
+            }
+          }
+        }
+        container time-delay-msr {
+          description
+            "Configure link delay-time measurement.";
+          leaf sink-pm-msr-enable {
+            type enumeration {
+              enum "disable" {
+                value 0;
+                description
+                  "Disable.";
+              }
+              enum "enable" {
+                value 1;
+                description
+                  "Enable.";
+              }
+            }
+            default "disable";
+            description
+              "Sink pm mesure enable.";
+          }
+          container time-delay-msr-result {
+            config false;
+            description
+              "Statistics of link delay-time measurement result.";
+            leaf layer-type {
+              type enumeration {
+                enum "PM" {
+                  value 0;
+                  description
+                    "PM layer.";
+                }
+              }
+              config false;
+              description
+                "Layer type.";
+            }
+            leaf msr-result {
+              type enumeration {
+                enum "not-performed" {
+                  value 0;
+                  description
+                    "Not performed.";
+                }
+                enum "running" {
+                  value 1;
+                  description
+                    "Running.";
+                }
+                enum "success" {
+                  value 2;
+                  description
+                    "Success.";
+                }
+                enum "fail" {
+                  value 3;
+                  description
+                    "Fail.";
+                }
+              }
+              config false;
+              description
+                "Easurement result.";
+            }
+            leaf time-delay {
+              type string {
+                length "0..32";
+              }
+              units "us";
+              config false;
+              description
+                "Delay time.";
+            }
+            leaf msr-time {
+              type string {
+                length "0..32";
+              }
+              config false;
+              description
+                "Measurement operate time.";
+            }
+            leaf detail {
+              type string {
+                length "0..256";
+              }
+              config false;
+              description
+                "Detail information.";
+            }
+          }
+        }
+      }
+    }
+  }
+  rpc clear-port-trans-alarm {
+    ext:node-ref "/wdm/wdms/wdm";
+    description
+      "Clear tad alarm information.";
+    input  {
+      leaf ifname {
+        type string {
+          length "0..63";
+        }
+        description
+          "Interface name. The name is expressed in the format of WdmslotID/cardID/portID. For example, Wdm1/0/1. Here Wdm1/0/1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  rpc start-pm-delay-measure {
+    ext:node-ref "/wdm/wdms/wdm";
+    description
+      "Measure pm delay time.";
+    input  {
+      leaf ifname {
+        type string {
+          length "0..63";
+        }
+        description
+          "Interface Name. The name is expressed in the format of WdmslotID/cardID/portID. For example, Wdm1/0/1. Here Wdm1/0/1 is an example. The value may vary with devices.";
+      }
+      leaf msr-time {
+        type uint32 {
+          range "50..1000";
+        }
+	units "ms";
+        default "50";
+        description
+          "Measure time.";
+      }
+    }
+  }
+  ext:task-name "interface-mgr";
+}

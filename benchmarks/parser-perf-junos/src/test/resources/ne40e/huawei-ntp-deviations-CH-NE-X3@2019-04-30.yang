@@ -1,0 +1,38 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ntp-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-ntp-deviations-CH-NE-X3";
+  prefix ntp-devs-CH-NE-X3;
+
+  import huawei-ntp {
+    prefix ntp;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "NTP component.";
+
+  revision 2019-04-30 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/ntp:ntp/ntp:system-config/ntp:max-offset" {
+    deviate not-supported;
+  }
+  deviation "/ntp:ntp/ntp:access-controls/ntp:access-control" {
+    deviate add {
+      must 'acl4-identity or acl6-identity';
+    }
+  }
+}

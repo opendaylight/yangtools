@@ -1,0 +1,902 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-qppb {
+  namespace "urn:huawei:yang:huawei-qppb";
+  prefix qppb;
+
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "QPPB module.";
+  revision 2020-03-12 {
+    description
+      "Descriptive optimization.";
+    reference "Huawei private.";
+  }
+  revision 2020-02-25 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference "Huawei private.";
+  }
+  revision 2019-05-05 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+  typedef direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 0;
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        value 1;
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "Direction type.";
+  }
+  typedef qppb-direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 2;
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        value 3;
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "QPPB direction type.";
+  }
+  typedef behavior-state {
+    type enumeration {
+      enum "active" {
+        value 0;
+        description
+          "All active.";
+      }
+      enum "active-p" {
+        value 1;
+        description
+          "Part active.";
+      }
+      enum "inactive" {
+        value 2;
+        description
+          "Inactive.";
+      }
+    }
+    description
+      "QPPB behavior state.";
+  }
+   typedef traffic-mode {
+    type enumeration {
+      enum "source" {
+        value 0;
+        description
+          "Source address.";
+      }
+      enum "destination" {
+        value 1;
+        description
+          "Destination address.";
+      }
+      enum "both" {
+        value 2;
+        description
+          "Source and Destination address.";
+      }
+    }
+    description
+      "Traffic mode.";
+  }
+  typedef qppb-mode {
+    type enumeration {
+      enum "source" {
+        value 0;
+        description
+          "Source address.";
+      }
+      enum "destination" {
+        value 1;
+        description
+          "Destination address.";
+      }
+    }
+    description
+      "QPPB mode.";
+  }
+  augment "/qos:qos" {
+    description
+    "QPPB.";
+  container qppb {
+    description
+      "Configure QPPB.";
+    container local-policys {
+      description
+        "List of QPPB local policy.";
+      list local-policy {
+        key "policy-name";
+        description
+          "Configure QPPB local policy.";
+        leaf policy-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Local-policy name.";
+        }
+        leaf statistic-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable statistics flag.";
+        }
+        leaf service-class-outbound {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable outbound service-class flag.";
+        }
+        container qos-local-ids {
+          description
+            "List of QoS local ID.";
+          list qos-local-id {
+            key "local-id";
+            max-elements  "255";
+            description
+              "Configure local ID.";
+            leaf local-id {
+              type uint32 {
+                range "1..255";
+              }
+              description
+                "Local ID value.";
+            }
+            leaf behavior-name {
+              type leafref {
+                path "/qos:qos/qos:classifier-template/qos:traffic-behaviors/qos:traffic-behavior/qos:name";
+              }
+              mandatory true;
+              description
+                "Behavior name.";
+            }
+          }
+        }
+      }
+    }
+
+    container query-policys {
+      config false;
+      description
+        "List of interface QPPB.";
+      list query-policy {
+        key "if-name direction";
+        config false;
+        max-elements  "2";
+        description
+          "Interface QPPB state.";
+        leaf if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          config false;
+          description
+            "Name of an interface.";
+        }
+        leaf direction {
+          type direction-type;
+          config false;
+          description
+            "Direction.";
+        }
+        leaf policy-name {
+          type leafref {
+            path "/qos:qos/qppb:qppb/qppb:local-policys/qppb:local-policy/qppb:policy-name";
+          }
+          config false;
+          description
+            "Local-policy name.";
+        }
+        leaf local-id {
+          type uint32 {
+            range "1..255";
+          }
+          config false;
+          description
+            "Local ID.";
+        }
+        leaf behavior-name {
+          type leafref {
+            path "/qos:qos/qos:classifier-template/qos:traffic-behaviors/qos:traffic-behavior/qos:name";
+          }
+          config false;
+          description
+            "Behavior name.";
+        }
+        leaf state {
+          type behavior-state;
+          config false;
+          description
+            "QPPB Policy state.";
+        }
+      }
+    }
+   container query-statistics {
+      config false;
+      description
+        "List of QPPB statistics.";
+      list query-statistic {
+        key "if-name slot-id direction";
+        config false;
+        description
+          "QPPB statistics.";
+         leaf if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Outbound interface name.";
+        }
+        leaf slot-id {
+          type string {
+            length "1..127";
+            pattern '(c[cl]c\d+/)?\d+';
+          }
+          config false;
+          description
+            "Slot ID.";
+        }
+        leaf direction {
+          type qppb-direction-type;
+          config false;
+          description
+            "Direction.";
+        }
+        leaf local-id {
+          type uint32 {
+            range "1..255";
+          }
+          config false;
+          description
+            "Local ID.";
+        }
+        leaf match-packets {
+          type uint64;
+          config false;
+          description
+            "Match packets.";
+        }
+        leaf match-bytes {
+          type uint64;
+          config false;
+          description
+            "Match bytes.";
+        }
+        leaf match-packets-rate {
+          type uint64;
+          config false;
+          description
+            "Passed packets rate unit: packet/s.";
+        }
+        leaf match-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "Passed bytes rate unit: Byte/s.";
+        }
+        leaf passed-car-packets {
+          type uint64;
+          config false;
+          description
+            "Passed packets by CAR.";
+        }
+        leaf passed-car-bytes {
+          type uint64;
+          config false;
+          description
+            "Passed bytes by CAR.";
+        }
+        leaf dropped-car-packets {
+          type uint64;
+          config false;
+          description
+            "Dropped packets by CAR.";
+        }
+        leaf dropped-car-bytes {
+          type uint64;
+          config false;
+          description
+            "Dropped bytes by CAR.";
+        }
+        leaf passed-car-packets-rate {
+          type uint64;
+          config false;
+          description
+            "Passed packets rate by CAR unit: packet/s.";
+        }
+        leaf passed-car-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "Passed bytes rate by CAR unit: byte/s.";
+        }
+        leaf dropped-car-packets-rate {
+          type uint64;
+          config false;
+          description
+            "Dropped packets rate by CAR unit: packet/s.";
+        }
+        leaf dropped-car-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "Dropped bytes rate by CAR unit: byte/s.";
+        }
+        leaf car-green-packets {
+          type uint64;
+          config false;
+          description
+            "CAR green packets.";
+        }
+        leaf car-green-bytes {
+          type uint64;
+          config false;
+          description
+            "CAR green bytes.";
+        }
+        leaf car-green-packets-rate {
+          type uint64;
+          config false;
+          description
+            "CAR green packets rate unit: packet/s.";
+        }
+        leaf car-green-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "CAR green bytes rate unit: byte/s.";
+        }
+        leaf car-yellow-packets {
+          type uint64;
+          config false;
+          description
+            "CAR yellow packets.";
+        }
+        leaf car-yellow-bytes {
+          type uint64;
+          config false;
+          description
+            "CAR yellow bytes.";
+        }
+        leaf car-yellow-packets-rate {
+          type uint64;
+          config false;
+          description
+            "CAR yellow packets rate unit: packet/s.";
+        }
+        leaf car-yellow-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "CAR yellow bytes rate unit: byte/s.";
+        }
+        leaf car-red-packets {
+          type uint64;
+          config false;
+          description
+            "CAR red packets.";
+        }
+        leaf car-red-bytes {
+          type uint64;
+          config false;
+          description
+            "CAR red bytes.";
+        }
+        leaf car-red-packets-rate {
+          type uint64;
+          config false;
+          description
+            "CAR red packets rate unit: packet/s.";
+        }
+        leaf car-red-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "CAR red bytes rate unit: byte/s.";
+        }
+        leaf passed-sq-be-packets {
+          type uint64;
+          config false;
+          description
+            "BE Pass packets.";
+        }
+        leaf dropped-sq-be-packets {
+          type uint64;
+          config false;
+          description
+            "BE Drop packets.";
+        }
+        leaf passed-sq-af1-packets {
+          type uint64;
+          config false;
+          description
+            "AF1 Pass packets.";
+        }
+        leaf dropped-sq-af1-packets {
+          type uint64;
+          config false;
+          description
+            "AF1 Drop packets.";
+        }
+        leaf passed-sq-af2-packets {
+          type uint64;
+          config false;
+          description
+            "AF2 Pass packets.";
+        }
+        leaf dropped-sq-af2-packets {
+          type uint64;
+          config false;
+          description
+            "AF2 Drop packets.";
+        }
+        leaf passed-sq-af3-packets {
+          type uint64;
+          config false;
+          description
+            "AF3 Pass packets.";
+        }
+        leaf dropped-sq-af3-packets {
+          type uint64;
+          config false;
+          description
+            "AF3 Drop packets.";
+        }
+        leaf passed-sq-af4-packets {
+          type uint64;
+          config false;
+          description
+            "AF4 Pass packets.";
+        }
+        leaf dropped-sq-af4-packets {
+          type uint64;
+          config false;
+          description
+            "AF4 Drop packets.";
+        }
+        leaf passed-sq-ef-packets {
+          type uint64;
+          config false;
+          description
+            "EF Pass packets.";
+        }
+        leaf dropped-sq-ef-packets {
+          type uint64;
+          config false;
+          description
+            "EF Drop packets.";
+        }
+        leaf passed-sq-cs6-packets {
+          type uint64;
+          config false;
+          description
+            "CS6 Pass packets.";
+        }
+        leaf dropped-sq-cs6-packets {
+          type uint64;
+          config false;
+          description
+            "CS6 Drop packets.";
+        }
+        leaf passed-sq-cs7-packets {
+          type uint64;
+          config false;
+          description
+            "CS7 Pass packets.";
+        }
+        leaf dropped-sq-cs7-packets {
+          type uint64;
+          config false;
+          description
+            "CS7 Drop packets.";
+        }
+        leaf passed-sq-be-bytes {
+          type uint64;
+          config false;
+          description
+            "BE Pass Bytes.";
+        }
+        leaf dropped-sq-be-bytes {
+          type uint64;
+          config false;
+          description
+            "BE Drop Bytes.";
+        }
+        leaf passed-sq-af1-bytes {
+          type uint64;
+          config false;
+          description
+            "AF1 Pass Bytes.";
+        }
+        leaf dropped-sq-af1-bytes {
+          type uint64;
+          config false;
+          description
+            "AF1 Drop Bytes.";
+        }
+        leaf passed-sq-af2-bytes {
+          type uint64;
+          config false;
+          description
+            "AF2 Pass Bytes.";
+        }
+        leaf dropped-sq-af2-bytes {
+          type uint64;
+          config false;
+          description
+            "AF2 Drop Bytes.";
+        }
+        leaf passed-sq-af3-bytes {
+          type uint64;
+          config false;
+          description
+            "AF3 Pass Bytes.";
+        }
+        leaf dropped-sq-af3-bytes {
+          type uint64;
+          config false;
+          description
+            "AF3 Drop Bytes.";
+        }
+        leaf passed-sq-af4-bytes {
+          type uint64;
+          config false;
+          description
+            "AF4 Pass Bytes.";
+        }
+        leaf dropped-sq-af4-bytes {
+          type uint64;
+          config false;
+          description
+            "AF4 Drop Bytes.";
+        }
+        leaf passed-sq-ef-bytes {
+          type uint64;
+          config false;
+          description
+            "EF Pass Bytes.";
+        }
+        leaf dropped-sq-ef-bytes {
+          type uint64;
+          config false;
+          description
+            "EF Drop Bytes.";
+        }
+        leaf passed-sq-cs6-bytes {
+          type uint64;
+          config false;
+          description
+            "CS6 Pass Bytes.";
+        }
+        leaf dropped-sq-cs6-bytes {
+          type uint64;
+          config false;
+          description
+            "CS6 Drop Bytes.";
+        }
+        leaf passed-sq-cs7-bytes {
+          type uint64;
+          config false;
+          description
+            "CS7 Pass Bytes.";
+        }
+        leaf dropped-sq-cs7-bytes {
+          type uint64;
+          config false;
+          description
+            "CS7 Drop Bytes.";
+        }
+        leaf passed-sq-be-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "BE Pass Bytes unit: Byte/s.";
+        }
+        leaf dropped-sq-be-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "BE Drop Bytes unit: Byte/s.";
+        }
+        leaf passed-sq-af1-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "AF1 Pass Bytes unit: Byte/s.";
+        }
+        leaf dropped-sq-af1-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "AF1 Drop Bytes unit: Byte/s.";
+        }
+        leaf passed-sq-af2-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "AF2 Pass Bytes unit: Byte/s.";
+        }
+        leaf dropped-sq-af2-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "AF2 Drop Bytes unit: Byte/s.";
+        }
+        leaf passed-sq-af3-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "AF3 Pass Bytes unit: Byte/s.";
+        }
+        leaf dropped-sq-af3-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "AF3 Drop Bytes unit: Byte/s.";
+        }
+        leaf passed-sq-af4-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "AF4 Pass Bytes unit: Byte/s.";
+        }
+        leaf dropped-sq-af4-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "AF4 Drop Bytes unit: Byte/s.";
+        }
+        leaf passed-sq-ef-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "EF Pass Bytes unit: Byte/s.";
+        }
+        leaf dropped-sq-ef-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "EF Drop Bytes unit: Byte/s.";
+        }
+        leaf passed-sq-cs6-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "CS6 Pass Bytes unit: Byte/s.";
+        }
+        leaf dropped-sq-cs6-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "CS6 Drop Bytes unit: Byte/s.";
+        }
+        leaf passed-sq-cs7-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "CS7 Pass Bytes unit: Byte/s.";
+        }
+        leaf dropped-sq-cs7-bytes-rate {
+          type uint64;
+          config false;
+          description
+            "CS7 Drop Bytes unit: Byte/s.";
+        }
+        leaf passed-sq-be-packets-rate {
+          type uint64;
+          config false;
+          description
+            "BE Pass packets unit: packet/s.";
+        }
+        leaf dropped-sq-be-packets-rate {
+          type uint64;
+          config false;
+          description
+            "BE Drop packets unit: packet/s.";
+        }
+        leaf passed-sq-af1-packets-rate {
+          type uint64;
+          config false;
+          description
+            "AF1 Pass packets unit: packet/s.";
+        }
+        leaf dropped-sq-af1-packets-rate {
+          type uint64;
+          config false;
+          description
+            "AF1 Drop packets unit: packet/s.";
+        }
+        leaf passed-sq-af2-packets-rate {
+          type uint64;
+          config false;
+          description
+            "AF2 Pass packets unit: packet/s.";
+        }
+        leaf dropped-sq-af2-packets-rate {
+          type uint64;
+          config false;
+          description
+            "AF2 Drop packets unit: packet/s.";
+        }
+        leaf passed-sq-af3-packets-rate {
+          type uint64;
+          config false;
+          description
+            "AF3 Pass packets unit: packet/s.";
+        }
+        leaf dropped-sq-af3-packets-rate {
+          type uint64;
+          config false;
+          description
+            "AF3 Drop packets unit: packet/s.";
+        }
+        leaf passed-sq-af4-packets-rate {
+          type uint64;
+          config false;
+          description
+            "AF4 Pass packets unit: packet/s.";
+        }
+        leaf dropped-sq-af4-packets-rate {
+          type uint64;
+          config false;
+          description
+            "AF4 Drop packets unit: packet/s.";
+        }
+        leaf passed-sq-ef-packets-rate {
+          type uint64;
+          config false;
+          description
+            "EF Pass packets unit: packet/s.";
+        }
+        leaf dropped-sq-ef-packets-rate {
+          type uint64;
+          config false;
+          description
+            "EF Drop packets unit: packet/s.";
+        }
+        leaf passed-sq-cs6-packets-rate {
+          type uint64;
+          config false;
+          description
+            "CS6 Pass packets unit: packet/s.";
+        }
+        leaf dropped-sq-cs6-packets-rate {
+          type uint64;
+          config false;
+          description
+            "CS6 Drop packets unit: packet/s.";
+        }
+        leaf passed-sq-cs7-packets-rate {
+          type uint64;
+          config false;
+          description
+            "CS7 Pass packets unit: packet/s.";
+        }
+        leaf dropped-sq-cs7-packets-rate {
+          type uint64;
+          config false;
+          description
+            "CS7 Drop packets unit: packet/s.";
+        }
+      }
+    }
+  }
+  }
+  augment "/qos:qos/qos:global-config" {
+    description
+      "Global acl enable.";
+    container local-id-enable {
+        presence "create qos-local-id-enable";
+        description
+          "Enable/disable QoS-local-id.";
+        leaf mode {
+          type traffic-mode;
+          mandatory true;
+          description
+            "The mode of traffic policy QoS-local-id enable.";
+      }
+    }    
+  }
+   augment "/ifm:ifm/ifm:interfaces/ifm:interface/qos:qos" {
+    description
+            "QPPB.";
+       container local-id-enable {          
+          description
+            "Configure QoS-local-id enable.";
+          leaf mode {
+            type qppb-mode;
+             must "not(../../qppb:qppb/qppb:policys/qppb:policy[qppb:direction='inbound'])";
+            description
+              "The mode of traffic policy and QPPB QoS-local-id enable.";
+          }
+          leaf both {
+            type empty;
+            description
+              "The mode of traffic policy QoS-local-id both enable.both has a higher priority than mode.";
+          }          
+        }
+        container qppb {
+          description
+            "Configure QPPB.";
+            container policys {
+              description
+                "List of QPPB policies application.";
+              list policy {
+                must "(./direction='inbound' and ./policy-name and ./mode and not(../../../local-id-enable/mode)) or (./direction='outbound' and ./policy-name and not(./mode))";
+                key "direction";
+                description
+                  "Configure application of QPPB policy.";
+                leaf direction {    /*inbound  outbound */
+                  type qppb-direction-type;
+                  description "QPPB policy direction.";
+                }               
+                leaf policy-name {
+                  type leafref {
+                        path "/qos:qos/qppb:qppb/qppb:local-policys/qppb:local-policy/qppb:policy-name";
+                  }
+                  mandatory true;
+                  description "QPPB local policy name.";
+                }
+                leaf mode {    /*source  destination */
+                  when "../direction='inbound'";
+                  type qppb-mode;
+                  mandatory true;
+                  description "QPPB policy mode.";
+                } 
+                leaf share-mode {
+                  type boolean;
+                  default "true";
+                  description "Enable/disable share mode.";
+                }
+            }
+        }
+       container ip-precedence {
+          presence "create ip-precedence";
+          description  "Enable/disable QPPB policy ip-precedence.";
+          leaf mode {    /*source  destination */
+            type qppb-mode;
+            mandatory true;
+            description "QPPB policy mode.";
+          } 
+       }
+     }
+  }
+
+  ext:task-name "qos";
+}

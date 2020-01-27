@@ -1,0 +1,100 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-vaccess {
+  namespace "urn:huawei:yang:huawei-vaccess";
+  prefix vaccess;
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  include huawei-vaccess-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Virtual Access.";
+  revision 2020-03-24 {
+    description
+      "Fixed some problems.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-10 {
+    description
+      "Add a node primary-master-ip.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-13 {
+    description
+      "Add some condition for vaccess container.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-14 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-06-05 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "virtual-access";
+  container vaccess {
+    description
+      "Virtual Access.";
+    container global {
+      must "not(port-extend-enable='true' and enable='true')";
+      description
+        "Configure bisic function of virtural access.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable state of virtural access. Default is no configuration.";
+      }
+      leaf port-extend-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable state of virtural access port-extend. Default is no configuration.";
+      }
+      leaf role {
+        when "../enable='true' or ../port-extend-enable='true'";
+        type vaccess-va-role;
+        must "(../role='default') or (../enable='true' and ../role='ap') or (../port-extend-enable='true' and ../role='master')";
+        default "default";
+        description
+          "Role of virtual access. Default is no configuration.";
+      }
+    }
+    container ap {
+      when "../global/role='ap'";
+      description
+        "Configure ap of virtual access configuration.";
+      container master {
+        description
+          "Configure basic function of master.";
+        leaf primary-master-ip {
+          type inet:ip-address;
+          description
+            "Primary master IP address.";
+        }
+      }
+    }
+  }
+}

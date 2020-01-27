@@ -1,0 +1,1858 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ospfv2-type {
+  belongs-to huawei-ospfv2 {
+    prefix ospfv2;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "OSPFv2 type.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef domain-id-type {
+    type enumeration {
+      enum "0x0005" {
+        value 1; 
+        description
+          "Domain id type is 0x0005.";
+      }
+      enum "0x0105" {
+        value 2; 
+        description
+          "Domain id type is 0x0105.";
+      }
+      enum "0x0205" {
+        value 3; 
+        description
+          "Domain id type is 0x0205.";
+      }
+      enum "0x8005" {
+        value 4; 
+        description
+          "Domain id type is 0x8005.";
+      }
+    }
+    description
+      "OSPFv2 domain id type.";
+  }
+
+  typedef prefix-priority {
+    type enumeration {
+      enum "critical" {
+        value 1; 
+        description
+          "To set the convergence priority of OSPF routes to critical.";
+      }
+      enum "high" {
+        value 2;
+        description
+          "To set the convergence priority of OSPF routes to high.";
+      }
+      enum "medium" {
+        value 3;
+        description
+          "To set the convergence priority of OSPF routes to medium.";
+      }
+      enum "very-low" {
+        value 5;
+        description
+          "To set the convergence priority of OSPF routes to very low.";
+      }
+    }
+    description
+      "OSPFv2 prefix priority.";
+  }
+  typedef area-type {
+    type enumeration {
+      enum "normal" {
+        value 1;
+        description
+          "Normal area.";
+      }
+      enum "stub" {
+        value 2;
+        description
+          "Stub area.";
+      }
+      enum "nssa" {
+        value 3;
+        description
+          "NSSA area.";
+      }
+    }
+    description
+      "OSPFv2 area type.";
+  }
+  typedef stub-router-flag {
+    type enumeration {
+      enum "no-config" {
+        value 0;
+        description
+          "No config.";
+      }
+      enum "stub-on-hand" {
+        value 1;
+        description
+          "To configure a stub router.";
+      }
+      enum "stub-on-boot" {
+        value 2;
+        description
+          "To remain as the stub router during the active/standby switchover of a router.";
+      }
+    }
+    description
+      "OSPFv2 stub router flag.";
+  }
+  typedef ospf-route-type {
+    type enumeration {
+      enum "default" {
+        value 1;
+        description
+          "Intra and inter route.";
+      }
+      enum "inter" {
+        value 4;
+        description
+          "Inter route.";
+      }
+      enum "intra" {
+        value 3;
+        description
+          "Intra route.";
+      }
+      enum "ase" {
+        value 2;
+        description
+          "AS external route.";
+      }
+    }
+    description
+      "OSPFv2 ospf route type.";
+  }
+  typedef network-type {
+    type enumeration {
+      enum "broadcast" {
+        value 1;
+        description
+          "The network type of an interface is set to broadcast.";
+      }
+      enum "nbma" {
+        value 2;
+        description
+          "The network type of an interface is set to NBMA.";
+      }
+      enum "p2mp" {
+        value 5;
+        description
+          "The network type of an interface is set to P2MP.";
+      }
+      enum "p2p" {
+        value 3;
+        description
+          "The network type of an interface is set to P2P.";
+      }
+    }
+    description
+      "OSPFv2 network type.";
+  }
+  typedef intf-authen-mode {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "To cancel authentication.";
+      }
+      enum "null" {
+        value 16;
+        description
+          "To cancel authentication.";
+      }
+      enum "hmac-sha256" {
+        value 2;
+        description
+          "Cipher text authentication mode.";
+      }
+      enum "md5" {
+        value 64;
+        description
+          "Cipher text authentication mode.";
+      }
+      enum "hmac-md5" {
+        value 128;
+        description
+          "Cipher text authentication mode.";
+      }
+      enum "simple" {
+        value 32;
+        description
+          "Simple authentication mode.";
+      }
+      enum "keychain" {
+        value 1;
+        description
+          "Keychain authentication mode.";
+      }
+    }
+    description
+      "OSPFv2 interface authentication mode.";
+  }
+  typedef area-authen-mode {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "To cancel authentication.";
+      }
+      enum "md5" {
+        value 64;
+        description
+          "Cipher text authentication mode.";
+      }
+      enum "hmac-sha256" {
+        value 2;
+        description
+          "Cipher text authentication mode.";
+      }
+      enum "hmac-md5" {
+        value 128;
+        description
+          "Cipher text authentication mode.";
+      }
+      enum "simple" {
+        value 32;
+        description
+          "Simple authentication mode.";
+      }
+      enum "keychain" {
+        value 1;
+        description
+          "Keychain authentication mode.";
+      }
+    }
+    description
+      "OSPFv2 area authentication mode.";
+  }
+  typedef area-filter-mode {
+    type enumeration {
+      enum "filter-import" {
+        value 0;
+        description
+          "Filter incoming summary LSAs.";
+      }
+      enum "filter-export" {
+        value 1;
+        description
+          "Filter outgoing summary LSAs.";
+      }
+    }
+    description
+      "OSPFv2 area filter mode.";
+  }
+  typedef external-route-type {
+    type enumeration {
+      enum "type1" {
+        value 1;
+        description
+          "External route type 1.";
+      }
+      enum "type2" {
+        value 2;
+        description
+          "External route type 2.";
+      }
+    }
+    description
+      "OSPFv2 external route type.";
+  }
+  typedef gr-filter-type {
+    type enumeration {
+      enum "acl-name" {
+        value 0;
+        description
+          "ACL name.";
+      }
+      enum "ip-prefix" {
+        value 1;
+        description
+          "IP prefix name.";
+      }
+      enum "acl-num" {
+        value 3;
+        description
+          "ACL number.";
+      }
+      enum "none" {
+        value 4;
+        description
+          "None.";
+      }
+    }
+    description
+      "OSPFv2 GR filter type.";
+  }
+  typedef suppr-reach {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable reachability suppression.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable reachability suppression.";
+      }
+      enum "not-configured" {
+        value 2;
+        description
+          "None configuration.";
+      }
+    }
+    description
+      "OSPFv2 suppress flapping reach.";
+  }
+  typedef proc-auto-cfg-state {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable LDP auto config.";
+      }
+    }
+    description
+      "OSPFv2 process auto cfg state.";
+  }
+  typedef if-auto-cfg-state {
+    type enumeration {
+      enum "none" {
+        value 1;
+        description
+          "None configuration.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "Disable LDP auto config.";
+      }
+    }
+    description
+      "OSPFv2 interface auto cfg state.";
+  }
+  typedef peer-ip-ignore-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disables subnet match check.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enables subnet match check.";
+      }
+    }
+    description
+      "OSPFv2 peer ip ignore type.";
+  }
+  typedef prefix-sid-type {
+    type enumeration {
+      enum "no-set" {
+        value 0;
+        description
+          "No default value.";
+      }
+      enum "absolute" {
+        value 1;
+        description
+          "Absolute value.";
+      }
+      enum "index" {
+        value 2;
+        description
+          "Index.";
+      }
+    }
+    description
+      "OSPFv2 prefix sid type.";
+  }
+  typedef import-rt-protocol {
+    type enumeration {
+      enum "direct" {
+        value 1;
+        description
+          "Direct route.";
+      }
+      enum "ospf" {
+        value 2;
+        description
+          "OSPF protocol.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "ISIS protocol.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Static route.";
+      }
+      enum "rip" {
+        value 5;
+        description
+          "RIP protocol.";
+      }
+      enum "bgp" {
+        value 6;
+        description
+          "BGP protocol.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "User Network Routes.";
+      }
+    }
+    description
+      "OSPFv2 import tRoute protocol.";
+  }
+  typedef path-type {
+    type enumeration {
+      enum "unknow" {
+        value 0;
+        description
+          "Path type unknow.";
+      }
+      enum "intra-area" {
+        value 1;
+        description
+          "Intra area route.";
+      }
+      enum "transit" {
+        value 2;
+        description
+          "Routes advertised by the network LSA.";
+      }
+      enum "stub" {
+        value 3;
+        description
+          "Routes advertised by the router LSA. The routes correspond to the direct routes of non broadcast and non NBMA networks.";
+      }
+      enum "inter-area" {
+        value 4;
+        description
+          "Inter area route.";
+      }
+      enum "direct" {
+        value 5;
+        description
+          "Direct route.";
+      }
+      enum "type1" {
+        value 6;
+        description
+          "Type1 external route.";
+      }
+      enum "type2" {
+        value 7;
+        description
+          "Type2 external route.";
+      }
+    }
+    description
+      "OSPFv2 path type.";
+  }
+  typedef router-type {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal route.";
+      }
+      enum "asbr" {
+        value 2;
+        description
+          "Autonomous system border router.";
+      }
+      enum "abr" {
+        value 4;
+        description
+          "Area border router.";
+      }
+      enum "abr-asbr" {
+        value 6;
+        description
+          "ABR/ASBR.";
+      }
+    }
+    description
+      "OSPFv2 router type.";
+  }
+  typedef route-source-type {
+    type enumeration {
+      enum "local" {
+        value 0;
+        description
+          "Local route.";
+      }
+      enum "unknow" {
+        value 1;
+        description
+          "Route source type unknow.";
+      }
+    }
+    description
+      "OSPFv2 route source type.";
+  }
+  typedef pre-priority {
+    type enumeration {
+      enum "critical" {
+        value 0;
+        description
+          "Critical.";
+      }
+      enum "high" {
+        value 1;
+        description
+          "High.";
+      }
+      enum "medium" {
+        value 2;
+        description
+          "Medium.";
+      }
+      enum "low" {
+        value 3;
+        description
+          "Low.";
+      }
+    }
+    description
+      "OSPFv2 prePriority.";
+  }
+  typedef backup-type {
+    type enumeration {
+      enum "lfa-link" {
+        value 1;
+        description
+          "Lfa link.";
+      }
+      enum "lfa-link-node" {
+        value 2;
+        description
+          "Lfa link node.";
+      }
+      enum "remote-lfa-link" {
+        value 5;
+        description
+          "Remote lfa link.";
+      }
+      enum "remote-lfa-link-node" {
+        value 6;
+        description
+          "Remote lfa link node.";
+      }
+      enum "tilfa-link" {
+        value 7;
+        description
+          "TILFA link.";
+      }
+      enum "tilfa-link-node" {
+        value 8;
+        description
+          "TILFA link node.";
+      }
+    }
+    description
+      "OSPFv2 backup type.";
+  }
+  typedef tunnel-type {
+    type enumeration {
+      enum "ldp" {
+        value 1;
+        description
+          "LDP.";
+      }
+    }
+    description
+      "OSPFv2 tunnel type.";
+  }
+  typedef nbr-state {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "Initial status of a neighbor, which indicates that no neighbor receive any message. In an NBMA network, Hello packets can still be received and sent at poll intervals. The poll interval is longer than the Hello interval.";
+      }
+      enum "init" {
+        value 1;
+        description
+          "Hello packet is received from the neighbor.";
+      }
+      enum "attempt" {
+        value 2;
+        description
+          "The neighbor relationship is being set up, which exists on only an NBMA network. The period of sending and receiving Hello packets is Hello interval. Hello interval is shorter than the poll interval.";
+      }
+      enum "2-way" {
+        value 3;
+        description
+          "The Hello packet is received from the neighbor and the neighbor list of the Hello packet contains the local ID, that is, the two ends can interwork.";
+      }
+      enum "exstart" {
+        value 4;
+        description
+          "The neighbor relationship is set up. The master and slave relationship and DD sequence number are negotiated.";
+      }
+      enum "exchange" {
+        value 5;
+        description
+          "LSDBs are synchronized. DD packets, LSR packets, and LSU packets are exchanged during LSDB synchronization.";
+      }
+      enum "loading" {
+        value 6;
+        description
+          "LSDBs are being synchronized. LSR packets and LSU packets are exchanged during LSBD synchronization.";
+      }
+      enum "full" {
+        value 7;
+        description
+          "LSDBs of neighbors have been synchronized. Both sides set up the adjacency and they are in Full state.";
+      }
+    }
+    description
+      "OSPFv2 nbr state.";
+  }
+  typedef nbr-gr-state {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal mode.";
+      }
+      enum "doing-gr" {
+        value 1;
+        description
+          "Doing GR.";
+      }
+      enum "helper" {
+        value 2;
+        description
+          "Helper mode.";
+      }
+      enum "none" {
+        value 3;
+        description
+          "NA.";
+      }
+    }
+    description
+      "OSPFv2 nbr display gr state.";
+  }
+  typedef nbr-mode {
+    type enumeration {
+      enum "slave" {
+        value 0;
+        description
+          "The neighbor mode is slave, which responds to the DD packets sent by the master.";
+      }
+      enum "master" {
+        value 1;
+        description
+          "The neighbor mode is master, which sends DD packets.";
+      }
+    }
+    description
+      "OSPFv2 nbr mode.";
+  }
+  typedef lsa-type {
+    type enumeration {
+      enum "router" {
+        value 1;
+        description
+          "The router LSA is of Type1 LSA. Each router generates a router LSA. The router LSA describes the status and distance of the link between a router and an area.";
+      }
+      enum "network" {
+        value 2;
+        description
+          "The network LSA is of Type2 LSA. The network LSA is generated for the broadcast and NBMA networks where more than two routers are accessed in the area. The network LSA is generated by the DR on the network. Each LSA describes all routers accessing the network, including the DR itself.";
+      }
+      enum "sum-net" {
+        value 3;
+        description
+          "The summary LSA is generated by the ABR. Type3 summary LSAs are used when the destination is an IP network. In this case, the LS identifier of the LSAs is the IP network ID.";
+      }
+      enum "sum-asbr" {
+        value 4;
+        description
+          "The summary LSA is generated by the ABR. Type4 summary LSAs are used when the destination is an ASBR. In this case, the LS identifier of LSAs is the OSPF router identifier of the ASBR.";
+      }
+      enum "external" {
+        value 5;
+        description
+          "The ASE LSA is generated by the ASBR and describes the routes outside the AS.";
+      }
+      enum "lsa-type-6" {
+        value 6;
+        description
+          "Type 6 LSA.";
+      }
+      enum "nssa" {
+        value 7;
+        description
+          "Type 7 LSA.";
+      }
+      enum "lsa-type-8" {
+        value 8;
+        description
+          "Type 8 LSA.";
+      }
+      enum "opq-link" {
+        value 9;
+        description
+          "Opaque link LSA.";
+      }
+      enum "opq-area" {
+        value 10;
+        description
+          "Opaque area LSA.";
+      }
+      enum "opq-as" {
+        value 11;
+        description
+          "Opaque AS LSA.";
+      }
+    }
+    description
+      "OSPFv2 lsa type.";
+  }
+  typedef lsdb-option {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "LSDB option is none.";
+      }
+      enum "e" {
+        value 2;
+        description
+          "To support the function of flooding AS external LSAs.";
+      }
+      enum "mc" {
+        value 4;
+        description
+          "To support the function of forwarding IP multicast packets.";
+      }
+      enum "mc-e" {
+        value 6;
+        description
+          "To support the functions of forwarding IP multicast packets and flooding AS external LSAs.";
+      }
+      enum "np" {
+        value 8;
+        description
+          "N/P.";
+      }
+      enum "np-e" {
+        value 10;
+        description
+          "N/P E.";
+      }
+      enum "np-mc" {
+        value 12;
+        description
+          "N/P MC.";
+      }
+      enum "np-mc-e" {
+        value 14;
+        description
+          "N/P MC E.";
+      }
+      enum "ea" {
+        value 16;
+        description
+          "To support the functions of receiving and forwarding external attributes LSAs.";
+      }
+      enum "ea-e" {
+        value 18;
+        description
+          "To support the functions of receiving and forwarding external attributes LSAs, and flooding AS external LSAs.";
+      }
+      enum "ea-mc" {
+        value 20;
+        description
+          "To support the functions of receiving and forwarding external attributes LSAs, and forwarding IP multicast packets.";
+      }
+      enum "ea-mc-e" {
+        value 22;
+        description
+          "To support the functions of receiving and forwarding external attributes LSAs, forwarding IP multicast packets, and flooding AS external LSAs.";
+      }
+      enum "ea-np" {
+        value 24;
+        description
+          "EA N/P.";
+      }
+      enum "ea-np-e" {
+        value 26;
+        description
+          "EA N/P E.";
+      }
+      enum "ea-np-mc" {
+        value 28;
+        description
+          "EA N/P MC.";
+      }
+      enum "ea-np-mc-e" {
+        value 30;
+        description
+          "EA N/P MC E.";
+      }
+      enum "dc" {
+        value 32;
+        description
+          "To support the function of processing on demand links.";
+      }
+      enum "dc-e" {
+        value 34;
+        description
+          "To support the functions of processing on demand links and flooding AS external LSAs.";
+      }
+      enum "dc-mc" {
+        value 36;
+        description
+          "To support the functions of processing on demand links and forwarding IP multicast packets.";
+      }
+      enum "dc-mc-e" {
+        value 38;
+        description
+          "To support the functions of forwarding IP multicast packets and flooding AS external LSAs.";
+      }
+      enum "dc-np" {
+        value 40;
+        description
+          "DC N/P.";
+      }
+      enum "dc-np-e" {
+        value 42;
+        description
+          "DC N/P E.";
+      }
+      enum "dc-np-mc" {
+        value 44;
+        description
+          "DC N/P MC.";
+      }
+      enum "dc-np-mc-e" {
+        value 46;
+        description
+          "DC N/P MC E.";
+      }
+      enum "dc-ea" {
+        value 48;
+        description
+          "To support the functions of processing on demand links, and receiving and forwarding external attributes LSAs.";
+      }
+      enum "dc-ea-e" {
+        value 50;
+        description
+          "To support the functions of processing on demand links, receiving and forwarding external attributes LSAs, and flooding AS external LSAs.";
+      }
+      enum "dc-ea-mc" {
+        value 52;
+        description
+          "To support the functions of processing on demand links, receiving and forwarding external attributes LSAs, and forwarding IP multicast packets.";
+      }
+      enum "dc-ea-mc-e" {
+        value 54;
+        description
+          "To support the functions of processing on demand links, receiving and forwarding external attributes LSAs, forwarding IP multicast packets, and flooding AS external LSAs.";
+      }
+      enum "dc-ea-np" {
+        value 56;
+        description
+          "DC EA N/P.";
+      }
+      enum "dc-ea-np-e" {
+        value 58;
+        description
+          "DC EA N/P E.";
+      }
+      enum "dc-ea-np-mc" {
+        value 60;
+        description
+          "DC EA N/P MC.";
+      }
+      enum "dc-ea-np-mc-e" {
+        value 62;
+        description
+          "DC EA N/P MC E.";
+      }
+      enum "dn" {
+        value 128;
+        description
+          "To support the function of preventing loops.";
+      }
+      enum "e-dn" {
+        value 130;
+        description
+          "To support the functions of flooding AS external LSAs and disabling the loop function.";
+      }
+      enum "np-dn" {
+        value 136;
+        description
+          "N/P DN.";
+      }
+    }
+    description
+      "OSPFv2 LSDB option.";
+  }
+  typedef lsdb-option-flag {
+    type enumeration {
+      enum "null" {
+        value 0;
+        description
+          "No option flag.";
+      }
+      enum "abr" {
+        value 256;
+        description
+          "The router is an ABR.";
+      }
+      enum "asbr" {
+        value 512;
+        description
+          "The router is an ASBR.";
+      }
+      enum "asbr-abr" {
+        value 768;
+        description
+          "The router is an ASBR/ABR.";
+      }
+      enum "virtual" {
+        value 1024;
+        description
+          "The router virtual.";
+      }
+      enum "abr-virtual" {
+        value 1280;
+        description
+          "The router is an ABR and the endpoint of one or more completely adjacent virtual links. Also, the area is the transmission area.";
+      }
+      enum "asbr-virtual" {
+        value 1536;
+        description
+          "The router is an ASBR and the endpoint of one or more completely adjacent virtual links. Also, the area is the transmission area.";
+      }
+      enum "asbr-abr-virtual" {
+        value 1792;
+        description
+          "The router is an ASBR/ABR and the endpoint of one or more completely adjacent virtual channels. Also, the area is the transmission area.";
+      }
+      enum "nt" {
+        value 4096;
+        description
+          "The router supports NSSA translator.";
+      }
+      enum "abr-nt" {
+        value 4352;
+        description
+          "The router is ABR and NSSA translator.";
+      }
+      enum "asbr-nt" {
+        value 4608;
+        description
+          "The router is ASBR and NSSA translator.";
+      }
+      enum "asbr-abr-nt" {
+        value 4864;
+        description
+          "The router is ABR, ASBR and NSSA translator.";
+      }
+      enum "virtual-nt" {
+        value 5120;
+        description
+          "The router is Virtual NSSA translator.";
+      }
+      enum "abr-virtual-nt" {
+        value 5376;
+        description
+          "The router is ABR virtual NSSA translator.";
+      }
+      enum "asbr-virtual-nt" {
+        value 5632;
+        description
+          "The router is ASBR and VIRTUAL NSSA translator.";
+      }
+      enum "asbr-abr-virtual-nt" {
+        value 5888;
+        description
+          "The router is ASBR ABR and VIRTUAL NSSA translator.";
+      }
+    }
+    description
+      "OSPFv2 LSDB option flag.";
+  }
+  typedef lsdb-link-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "LSDB link type is none.";
+      }
+      enum "p2p" {
+        value 1;
+        description
+          "P2P connection to another router.";
+      }
+      enum "trans-net" {
+        value 2;
+        description
+          "The router is connected to the transmission network.";
+      }
+      enum "stub-net" {
+        value 3;
+        description
+          "The router is connected to the stub network.";
+      }
+      enum "virtual" {
+        value 4;
+        description
+          "Virtual link.";
+      }
+    }
+    description
+      "OSPFv2 LSDB link type.";
+  }
+  typedef nbr-down-imm-reason {
+    type enumeration {
+      enum "neighbor-down-due-to-inactivity" {
+        value 0;
+        description
+          "The inactive timer is activated.";
+      }
+      enum "neighbor-down-due-to-ll-down" {
+        value 1;
+        description
+          "The neighbor is disconnected because the lower layer protocol reports a failure.";
+      }
+      enum "neighbor-down-due-to-kill-neighbor" {
+        value 2;
+        description
+          "The neighbor status is forcibly switched to Down.";
+      }
+      enum "neighbor-down-due-to-1-wayhello-received" {
+        value 3;
+        description
+          "The neighbor is disconnected because 1-way Hello packets are received.";
+      }
+      enum "neighbor-down-due-to-adjok" {
+        value 4;
+        description
+          "The neighbor is disconnected because of the AdjOK event (determining whether to establish/maintain the adjacency relationship).";
+      }
+      enum "neighbor-down-due-to-sequence-num-mismatch" {
+        value 5;
+        description
+          "The neighbor is disconnected because of the following situations: Unexpected DD SN is contained; the Init bit is unexpectedly set; an option different from that in the last received DD packet is contained.";
+      }
+      enum "neighbor-down-due-to-bad-ls-req" {
+        value 6;
+        description
+          "The neighbor is disconnected because the LSAs not belonging to the database are contained in the received connection status request.";
+      }
+    }
+    description
+      "OSPFv2 nbr down imm reason.";
+  }
+  typedef nbr-down-prim-reason {
+    type enumeration {
+      enum "down-reason-init-value" {
+        value 0;
+        description
+          "Hello packets are not received.";
+      }
+      enum "hello-not-seen" {
+        value 1;
+        description
+          "Hello packets are not received.";
+      }
+      enum "interface-parameter-mismatch" {
+        value 2;
+        description
+          "Interface parameters are not matched.";
+      }
+      enum "logical-interface-state-change" {
+        value 3;
+        description
+          "The logical interface status changes.";
+      }
+      enum "link-fault-or-interface-configuration-change" {
+        value 4;
+        description
+          "The physical interface status changes.";
+      }
+      enum "ospf-process-reset" {
+        value 5;
+        description
+          "The process resets.";
+      }
+      enum "area-reset" {
+        value 6;
+        description
+          "The area resets.";
+      }
+      enum "area-option-mis-match" {
+        value 7;
+        description
+          "The area option is not matched.";
+      }
+      enum "vlink-peer-not-reachable" {
+        value 8;
+        description
+          "The virtual link neighbor is unreachable.";
+      }
+      enum "sham-link-unreachable" {
+        value 9;
+        description
+          "The shamlink is unreachable.";
+      }
+      enum "undo-network-command" {
+        value 10;
+        description
+          "To cancel the configuration of the network command.";
+      }
+      enum "undo-nbma-peer" {
+        value 11;
+        description
+          "To cancel the configuration of the nbma peer command.";
+      }
+      enum "passive-interface-down" {
+        value 12;
+        description
+          "To configure the suppression of packet sending and receiving on an interface.";
+      }
+      enum "opaque-capability-enabled" {
+        value 13;
+        description
+          "To enable the Opaque capability.";
+      }
+      enum "opaque-capability-disabled" {
+        value 14;
+        description
+          "To disable the Opaque capability.";
+      }
+      enum "virtual-interface-state-change" {
+        value 15;
+        description
+          "The virtual interface status changes.";
+      }
+      enum "bfd-session-down" {
+        value 16;
+        description
+          "The BFD session is disconnected.";
+      }
+      enum "retransmission-limit-exceed" {
+        value 17;
+        description
+          "The retransmission limit is exceeded.";
+      }
+      enum "1-wayhello-received" {
+        value 18;
+        description
+          "1-way Hello packets are received.";
+      }
+      enum "router-state-change-from-dr-or-bdr-to-drother" {
+        value 19;
+        description
+          "The router status changes from DR or BDR to DROTHER.";
+      }
+      enum "neighbor-state-change-from-dr-or-bdr-to-drother" {
+        value 20;
+        description
+          "The neighbor status changes from DR or BDR to DROTHER.";
+      }
+      enum "nssa-area-configure-change" {
+        value 21;
+        description
+          "NSSA area configurations change.";
+      }
+      enum "stub-area-configure-change" {
+        value 22;
+        description
+          "Stub area configurations change.";
+      }
+      enum "received-invalid-dd-packet" {
+        value 23;
+        description
+          "Invalid DD packets are received.";
+      }
+      enum "not-received-dd-during-router-dead-interval" {
+        value 24;
+        description
+          "DD packets are not received within the dead timer interval.";
+      }
+      enum "m-i-ms-bit-or-sequence-num-incorrect" {
+        value 25;
+        description
+          "The M, I, or MS bit or the SN is incorrect.";
+      }
+      enum "unable-opaque-capability-find-9-10-11-type-lsa" {
+        value 26;
+        description
+          "The Opaque capability is not enabled, but Type9, Type10, or Type11 LSAs are received.";
+      }
+      enum "not-nssa-find-7-type-lsa-in-summary-list" {
+        value 27;
+        description
+          "The area is not an NSSA area, but Type7 LSAs are in the summary list.";
+      }
+      enum "ls-request-packet-unknown-reason" {
+        value 28;
+        description
+          "Unknown reason.";
+      }
+      enum "nssa-or-stub-area-find-5-11-type-lsa" {
+        value 29;
+        description
+          "The area is not an NSSA or a stub area, but Type5 and Type11 LSAs are received.";
+      }
+      enum "ls-request-packet-request-lsa-is-not-in-the-lsdb" {
+        value 30;
+        description
+          "The requested LSAs are not in the LSDB.";
+      }
+      enum "ls-request-packet-exist-same-lsa-in-the-lsdb" {
+        value 31;
+        description
+          "The same LSAs already exist in the LSDB.";
+      }
+      enum "ls-request-packet-exist-newer-lsa-in-the-lsdb" {
+        value 32;
+        description
+          "Newer LSAs already exist in the LSDB.";
+      }
+      enum "neighbor-state-was-not-full-when-lsdb-overflow" {
+        value 33;
+        description
+          "The neighbor status is not full when LSDB overflow occurs.";
+      }
+      enum "filter-lsa-configuration-change" {
+        value 34;
+        description
+          "The configuration of filtering LSAs changes.";
+      }
+      enum "acl-changed-for-filter-lsa" {
+        value 35;
+        description
+          "ACL changed for Filter LSA.";
+      }
+      enum "reset-ospf-peer" {
+        value 36;
+        description
+          "The neighbor resets.";
+      }
+      enum "interface-reset" {
+        value 37;
+        description
+          "The interface resets.";
+      }
+      enum "undo-ospf-interface-undo-area-undo-network" {
+        value 38;
+        description
+          "Undo OSPF interface.";
+      }
+      enum "undo-ospf-area" {
+        value 39;
+        description
+          "Undo OSPF area.";
+      }
+      enum "cpu-overload" {
+        value 40;
+        description
+          "CPU overload.";
+      }
+      enum "interface-state-changed-to-standby" {
+        value 41;
+        description
+          "Interface state changed to standby.";
+      }
+      enum "undo-router-id" {
+        value 42;
+        description
+          "No router ID.";
+      }
+      enum "neighbor-router-id-changed-or-ip-conflicted" {
+        value 43;
+        description
+          "Router ID change.";
+      }
+      enum "component-is-in-implement-stat" {
+        value 44;
+        description
+          "Component is in implement stat.";
+      }
+      enum "seqeunce-number-mismatched" {
+        value 45;
+        description
+          "Seqeunce number mismatched.";
+      }
+      enum "i-bit-incorrect-in-dd" {
+        value 46;
+        description
+          "I bit incorrect in DD.";
+      }
+      enum "ms-bit-incorrect-in-dd" {
+        value 47;
+        description
+          "MS bit incorrect in DD.";
+      }
+      enum "options-incorrect-in-dd" {
+        value 48;
+        description
+          "Options incorrect in DD.";
+      }
+      enum "received-mtu-mismatched-dd-packet" {
+        value 49;
+        description
+          "Received MTU mismatched DD packet.";
+      }
+      enum "ospf-process-shutdown" {
+        value 51;
+        description
+          "OSPF process shutdown.";
+      }
+      enum "ospf-max-nbr-in-adj" {
+        value 52;
+        description
+          "OSPF max nbr in adj.";
+      }
+      enum "ospf-dcn-intf-para-mis-match" {
+        value 53;
+        description
+          "OSPF dcn intf para mismatch.";
+      }
+      enum "ospf-gr-master-force-down" {
+        value 54;
+        description
+          "OSPF GR master forcedown.";
+      }
+      enum "dd-retrans-times-upto-limit" {
+        value 55;
+        description
+          "DD retrans times upto limit.";
+      }
+      enum "ospf-overflow" {
+        value 56;
+        description
+          "OSPF overFlow.";
+      }
+      enum "undo-ospf-interface-undo-area" {
+        value 100;
+        description
+          "Disable OSPF interface, disable area.";
+      }
+    }
+    description
+      "OSPFv2 nbr down primary reason.";
+  }
+  typedef nbr-type {
+    type enumeration {
+      enum "normal" {
+        value 1;
+        description
+          "Normal neighbor.";
+      }
+      enum "vlink" {
+        value 2;
+        description
+          "VirtualLink neighbor.";
+      }
+      enum "slink" {
+        value 3;
+        description
+          "ShamLink neighbor.";
+      }
+    }
+    description
+      "OSPFv2 neighbor type.";
+  }
+  typedef helper-capabality {
+    type enumeration {
+      enum "disabled" {
+        value 0;
+        description
+          "Graceful restart capability is disabled.";
+      }
+      enum "enabled" {
+        value 1;
+        description
+          "Graceful restart capability is enabled.";
+      }
+    }
+    description
+      "OSPFv2 helper capabality.";
+  }
+  typedef helper-support {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None GR.";
+      }
+      enum "planned-strict-lsa-check" {
+        value 1;
+        description
+          "Planned, strict lsa check.";
+      }
+      enum "un-planned-strict-lsa-check" {
+        value 2;
+        description
+          "Unplanned, strict lsa check.";
+      }
+      enum "planned-un-planned-strict-lsa-check" {
+        value 3;
+        description
+          "Planned and unplanned, strict lsa check.";
+      }
+      enum "ignore-external-lsa-check" {
+        value 4;
+        description
+          "Ignore external lsa check.";
+      }
+      enum "planned-ignore-external-lsa-check" {
+        value 5;
+        description
+          "Planned, ignore external lsa check.";
+      }
+      enum "un-planned-ignore-external-lsa-check" {
+        value 6;
+        description
+          "Unplanned, ignore external lsa check.";
+      }
+      enum "planned-un-planned-ignore-external-lsa-check" {
+        value 7;
+        description
+          "Planned and unplanned, ignore external lsa check.";
+      }
+      enum "never" {
+        value 8;
+        description
+          "Never.";
+      }
+      enum "planned-un-planned-non-ietf" {
+        value 35;
+        description
+          "Planned, unplanned, nonietf.";
+      }
+    }
+    description
+      "OSPFv2 helper support.";
+  }
+  typedef gr-state {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal mode.";
+      }
+      enum "helper" {
+        value 1;
+        description
+          "Helper mode.";
+      }
+      enum "null" {
+        value 2;
+        description
+          "NA.";
+      }
+      enum "none" {
+        value 3;
+        description
+          "NA.";
+      }
+    }
+    description
+      "OSPFv2 GR state.";
+  }
+  typedef on-helper {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "The router never enters the helper mode after it starts.";
+      }
+      enum "successful-exit" {
+        value 1;
+        description
+          "To exit from GR successfully.";
+      }
+      enum "grace-period-expired" {
+        value 2;
+        description
+          "The GR period expires.";
+      }
+      enum "received-flushed-grace-lsa" {
+        value 3;
+        description
+          "Multiple grace LSAs are received.";
+      }
+      enum "flooding-changed-lsa" {
+        value 4;
+        description
+          "Changed LSAs are received.";
+      }
+      enum "policy-check-failed-for-received-grace-lsa" {
+        value 6;
+        description
+          "1-way Hello packets are received.";
+      }
+      enum "neighbor-reset" {
+        value 7;
+        description
+          "Policy of the helper is not matched.";
+      }
+      enum "interface-status-changed" {
+        value 8;
+        description
+          "Topology changes after the reset command is run on the neighbor of the helper.";
+      }
+      enum "graceful-restart-unconfigured-at-process-level" {
+        value 9;
+        description
+          "The status of an interface changes.";
+      }
+      enum "grace-lsa-not-found" {
+        value 10;
+        description
+          "GR is not configured on a neighbor.";
+      }
+    }
+    description
+      "OSPFv2 on helper.";
+  }
+  typedef border-router {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal.";
+      }
+      enum "area" {
+        value 1;
+        description
+          "Area border router.";
+      }
+      enum "as" {
+        value 2;
+        description
+          "ASBR.";
+      }
+      enum "area-as" {
+        value 3;
+        description
+          "ABR and ASBR.";
+      }
+      enum "nssa" {
+        value 4;
+        description
+          "NSSA area.";
+      }
+      enum "area-nssa" {
+        value 5;
+        description
+          "ABR with NSSA.";
+      }
+      enum "as-nssa" {
+        value 6;
+        description
+          "ASBR with NSA.";
+      }
+      enum "area-as-nssa" {
+        value 7;
+        description
+          "ASBR and ABR with NSSA.";
+      }
+    }
+    description
+      "OSPFv2 border router.";
+  }
+  typedef ietf-mode {
+    type enumeration {
+      enum "non-standard" {
+        value 0;
+        description
+          "Global DS TE mode is non standard IETF mode.";
+      }
+      enum "standard" {
+        value 1;
+        description
+          "Global DS TE mode is standard IETF mode.";
+      }
+    }
+    description
+      "OSPFv2 IETF mode.";
+  }
+  typedef lsdb-overflow-status {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "The LSDB in normal state.";
+      }
+      enum "approach" {
+        value 1;
+        description
+          "The LSDB approach the overflow state.";
+      }
+      enum "overflow" {
+        value 2;
+        description
+          "The LSDB enters the overflow state.";
+      }
+    }
+    description
+      "OSPFv2 LSDB overflow status.";
+  }
+  typedef import-limit-status {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disables the limit on the number of routes to be imported.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enables the limit on the number of routes to be imported.";
+      }
+      enum "alarm" {
+        value 2;
+        description
+          "Alarm indicating that the number of imported routes approach a specified limit.";
+      }
+      enum "over-limit" {
+        value 3;
+        description
+          "The number of imported routes exceeds a specified limit.";
+      }
+    }
+    description
+      "OSPFv2 import limit status.";
+  }
+  typedef router-id-conflict-state {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal no conflict.";
+      }
+      enum "wait-select" {
+        value 1;
+        description
+          "Wait select.";
+      }
+      enum "selecting" {
+        value 2;
+        description
+          "Selecting.";
+      }
+      enum "changed" {
+        value 3;
+        description
+          "Router ID changed.";
+      }
+      enum "suspend" {
+        value 4;
+        description
+          "Suspend.";
+      }
+      enum "none" {
+        value 5;
+        description
+          "Not applicable.";
+      }
+    }
+    description
+      "OSPFv2 router ID config state.";
+  }
+  typedef nssa-trans-state {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "NSSA translator state set to none for normal area.";
+      }
+      enum "enabled" {
+        value 1;
+        description
+          "NSSA translator state set to enable.";
+      }
+      enum "elected" {
+        value 2;
+        description
+          "NSSA translator state set to elected.";
+      }
+      enum "disabled" {
+        value 3;
+        description
+          "NSSA translator state set disable.";
+      }
+    }
+    description
+      "OSPFv2 nssa trans state.";
+  }
+  typedef nssa-trans-role {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "NSSA translator role set none for normal area.";
+      }
+      enum "always" {
+        value 1;
+        description
+          "NSSA translator role set always.";
+      }
+      enum "candidate" {
+        value 2;
+        description
+          "NSSA translator role set candidate.";
+      }
+    }
+    description
+      "OSPFv2 NSSA trans role.";
+  }
+  typedef intf-state {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "Initial status of the interface state machine.";
+      }
+      enum "waiting" {
+        value 1;
+        description
+          "The interface status is waiting.";
+      }
+      enum "p2p" {
+        value 2;
+        description
+          "The interface status is P2P.";
+      }
+      enum "dr" {
+        value 3;
+        description
+          "The interface status is DR.";
+      }
+      enum "bdr" {
+        value 4;
+        description
+          "The interface status is BDR.";
+      }
+      enum "dr-other" {
+        value 5;
+        description
+          "The interface status is DROTHER.";
+      }
+      enum "loopback" {
+        value 6;
+        description
+          "The interface status is Loopback.";
+      }
+    }
+    description
+      "OSPFv2 interface state.";
+  }
+  typedef peer-flapping-status {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Peer flapping suppress disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Peer flapping suppress enable.";
+      }
+      enum "hold-max-cost" {
+        value 2;
+        description
+          "Peer flapping suppress hold max cost.";
+      }
+      enum "hold-down" {
+        value 3;
+        description
+          "Peer flapping suppress hold down.";
+      }
+    }
+    description
+      "OSPFv2 peer suppress flapping status.";
+  }
+  typedef filter-rt-protocol {
+    type enumeration {
+      enum "default" {
+        value 9;
+        description
+          "None config.";
+      }
+      enum "direct" {
+        value 1;
+        description
+          "Direct route.";
+      }
+      enum "ospf" {
+        value 2;
+        description
+          "OSPF protocol.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "ISIS protocol.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Static route.";
+      }
+      enum "rip" {
+        value 5;
+        description
+          "RIP protocol.";
+      }
+      enum "bgp" {
+        value 6;
+        description
+          "BGP protocol.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "User Network Routes.";
+      }
+    }
+    description
+      "OSPFv2 filter router protocol.";
+  }
+}

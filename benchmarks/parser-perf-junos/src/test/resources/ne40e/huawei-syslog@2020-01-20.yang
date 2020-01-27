@@ -1,0 +1,1266 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-syslog {
+  namespace "urn:huawei:yang:huawei-syslog";
+  prefix syslog;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "System log.";
+  
+   revision 2020-01-20 {
+    description
+      "Add syslogserver.";
+    reference
+      "Huawei private.";
+  }
+
+  revision 2019-09-24 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef loghost-facility {
+    type enumeration {
+      enum "local0" {
+        value 16;
+        description
+          "Log server local 0.";
+      }
+      enum "local1" {
+        value 17;
+        description
+          "Log server local 1.";
+      }
+      enum "local2" {
+        value 18;
+        description
+          "Log server local 2.";
+      }
+      enum "local3" {
+        value 19;
+        description
+          "Log server local 3.";
+      }
+      enum "local4" {
+        value 20;
+        description
+          "Log server local 4.";
+      }
+      enum "local5" {
+        value 21;
+        description
+          "Log server local 5.";
+      }
+      enum "local6" {
+        value 22;
+        description
+          "Log server local 6.";
+      }
+      enum "local7" {
+        value 23;
+        description
+          "Log server local 7.";
+      }
+    }
+    description
+      "The type of log host facility.";
+  }
+  typedef log-level {
+    type enumeration {
+      enum "emergencies" {
+        value 0;
+        description
+          "The log host level is emergencies.";
+      }
+      enum "alert" {
+        value 1;
+        description
+          "The log host level is alert.";
+      }
+      enum "critical" {
+        value 2;
+        description
+          "The log host level is critical.";
+      }
+      enum "error" {
+        value 3;
+        description
+          "The log host level is error.";
+      }
+      enum "warning" {
+        value 4;
+        description
+          "The log host level is warning.";
+      }
+      enum "notification" {
+        value 5;
+        description
+          "The log host level is notification.";
+      }
+      enum "informational" {
+        value 6;
+        description
+          "The log host level is informational.";
+      }
+      enum "debugging" {
+        value 7;
+        description
+          "The log host level is debugging.";
+      }
+    }
+    description
+      "The type of log level.";
+  }
+  typedef logfile-type {
+    type enumeration {
+      enum "eventlog" {
+        value 2;
+        description
+          "The event log.";
+      }
+      enum "operlog" {
+        value 1;
+        description
+          "The operation log.";
+      }
+      enum "alarmlog" {
+        value 5;
+        description
+          "The alarm log.";
+      }
+      enum "diaglog" {
+        value 4;
+        description
+          "The diagnose log.";
+      }
+      enum "notificationlog" {
+        value 10;
+        description
+          "The notification Log.";
+      }
+      enum "maintainlog" {
+        value 11;
+        description
+          "The maintain Log.";
+      }	  
+    }
+    description
+      "The log type.";
+  }
+  typedef address-family-type {
+    type enumeration {
+      enum "ipv4" {
+        value 1;
+        description
+          "The address type is IPv4.";
+      }
+      enum "ipv6" {
+        value 2;
+        description
+          "The address type is IPv6.";
+      }
+    }
+    description
+      "The type of IP address.";
+  }
+  typedef timestamp {
+    type enumeration {
+      enum "date-boot" {
+       value 11;
+        description
+          "Time elapsed since the system started. It is a relative time period.";
+      }
+      enum "date-second" {
+        value 12;
+        description
+          "Date format with second precision.";
+      }
+      enum "date-tenthsecond" {
+        value 13;
+        description
+          "Date format with tenth-second precision.";
+      }
+      enum "date-millisecond" {
+        value 14;
+        description
+          "Date format with millisecond precision.";
+      }
+      enum "shortdate-second" {
+        value 15;
+        description
+          "Short date format second precision.";
+      }
+      enum "shortdate-tenthsecond" {
+        value 16;
+        description
+          "Short date format with tenth-second precision.";
+      }
+      enum "shortdate-millisecond" {
+        value 17;
+        description
+          "Short date format with millisecond precision.";
+      }
+      enum "formatdate-second" {
+        value 18;
+        description
+          "Format date format with second precision.";
+      }
+      enum "formatdate-tenthsecond" {
+        value 19;
+        description
+          "Format date format with tenth-second precision.";
+      }
+      enum "formatdate-millisecond" {
+        value 20;
+        description
+          "Format date format with millisecond precision.";
+      }
+    }
+    description
+      "The type of time stamp.";
+  }
+  typedef timestamp-format {
+    type enumeration {
+      enum "UTC" {
+        value 0;
+        description
+          "UTC format.";
+      }
+      enum "localtime" {
+        value 1;
+        description
+          "Local time format.";
+      }
+    }
+    description
+      "The time stamp format.";
+  }
+  typedef version-format {
+    type enumeration {
+      enum "rfc3164" {
+        value 0;
+        description
+          "RFC3164.";
+      }
+      enum "rfc5424" {
+        value 1;
+        description
+          "RFC5424.";
+      }
+    }
+    description
+      "The version format.";
+  }
+  typedef oper-result {
+    type enumeration {
+      enum "success" {
+        value 0;
+        description
+          "The operation is successful.";
+      }
+      enum "failed" {
+        value 1;
+        description
+          "The operation fails.";
+      }
+      enum "executed" {
+        value 2;
+        description
+          "The operation is executed.";
+      }
+      enum "unknown" {
+        value 3;
+        description
+          "The operation result is unknown.";
+      }
+    }
+    description
+      "The operation result.";
+  }
+  typedef terminal-type {
+    type enumeration {
+      enum "CONSOLE" {
+        value 1;
+        description
+          "Console access.";
+      }
+      enum "AUX" {
+        value 2;
+        description
+          "Aux access.";
+      }
+      enum "TELNET" {
+        value 3;
+        description
+          "Telnet access.";
+      }
+      enum "SSH" {
+        value 4;
+        description
+          "SSH access.";
+      }
+      enum "MODEM" {
+        value 5;
+        description
+          "Modem access.";
+      }
+      enum "FTP" {
+        value 6;
+        description
+          "FTP access.";
+      }
+      enum "SWITCHLR" {
+        value 7;
+        description
+          "SWITCHLR access.";
+      }
+      enum "SNMP" {
+        value 8;
+        description
+          "SNMP access.";
+      }
+      enum "OPS" {
+        value 9;
+        description
+          "OPS access.";
+      }
+      enum "EMS" {
+        value 10;
+        description
+          "EMS access.";
+      }
+      enum "TM" {
+        value 11;
+        description
+          "TM access.";
+      }
+      enum "LCT" {
+        value 12;
+        description
+          "LCT access.";
+      }
+      enum "TL1" {
+        value 13;
+        description
+          "TL1 access.";
+      }
+    }
+    description
+      "The terminal type.";
+  }
+  typedef log-type {
+    type enumeration {
+      enum "log" {
+        value 1;
+        description
+          "Log logfile.";
+      }
+      enum "security" {
+        value 3;
+        description
+          "Security logfile.";
+      }
+      enum "operation" {
+        value 4;
+        description
+          "Operation logfile.";
+      }
+      enum "debug" {
+        value 6;
+        description
+          "Debug logfile.";
+      }
+    }
+    description
+      "The type of log.";
+  }
+  typedef report-channel-type {
+    type enumeration {
+      enum "IETF" {
+        value 0;
+        description
+          "Using an IETF channel to send alarm.";
+      }
+      enum "ITUT" {
+        value 1;
+        description
+          "Using an ITU-T channel to send alarm.";
+      }
+    }
+    description
+      "The type of report channel.";
+  }
+  typedef transport-mode-type {
+    type enumeration {
+      enum "udp" {
+        value 2;
+        description
+          "UDP transport mode.";
+      }
+      enum "tcp" {
+        value 1;
+        description
+          "TCP transport mode.";
+      }
+    }
+    description
+      "The type of transport mode.";
+  }
+  ext:task-name  "log";
+  container syslog {
+    description
+      "System log.";
+    container servers {
+      description
+        "List of syslog servers.";
+      list server {
+        key "ip-type ipaddress is-default-vpn vrf-name";
+        max-elements  "8";
+        description
+          "Configure log sever that receives logs.";
+        leaf ip-type {
+          type address-family-type;
+          description
+            "Log server address type, IPv4 or IPv6.";
+        }
+        leaf ipaddress {
+          type inet:ip-address-no-zone;
+          description
+            "Log server address, IPv4 or IPv6 type.";
+        }
+        leaf is-default-vpn {
+          type boolean;
+          description
+            "Enable/disable use the default VPN or not.";
+        }
+        leaf vrf-name {
+          type string {
+            length "1..31";
+          }
+          must "not(../is-default-vpn='true') or (../is-default-vpn='true' and ../vrf-name='_public_')";
+          description
+            "VPN name on a log server.";
+        }
+        leaf level {
+          type log-level;
+          default "debugging";
+          description
+            "Level of logs saved on a log server.";
+          ext:support-filter "true";
+        }
+        leaf port {
+          type uint32 {
+            range "1..65535";
+          }
+          default "514";
+          description
+            "Number of a port recving logs.";
+          ext:support-filter "true";
+        }
+        leaf facility {
+          type loghost-facility;
+          default "local7";
+          description
+            "Log record tool.";
+          ext:support-filter "true";
+        }
+        leaf channel-id {
+          type leafref {
+            path "../../../info-center-channels/info-center-channel/channel-id";
+          }
+          default "2";
+          description
+            "Channel number.";
+          ext:support-filter "true";
+        }
+        leaf channel-name {
+          type string {
+            length "1..30";
+          }
+          default "loghost";
+          config false;
+          description
+            "Channel name.";
+        }
+        leaf timestamp {
+          type timestamp-format;
+          default "UTC";
+          description
+            "Log server timestamp.";
+          ext:support-filter "true";
+        }
+        leaf transport-mode {
+          type transport-mode-type;
+          default "udp";
+          description
+            "Transport mode.";
+          ext:support-filter "true";
+        }
+        leaf ssl-policy-name {
+          type string {
+            length "1..24";
+          }
+          must "../transport-mode='tcp'";
+          description
+            "SSL policy name.";
+        }
+        leaf source-ip {
+          ext:support-filter "true";
+          type inet:ip-address-no-zone;
+          description
+            "Syslog source IP address.";
+        }
+        leaf dns-identifier-name {
+          type string {
+            length "1..255";
+          }
+          must "../transport-mode='tcp' and ../ssl-policy-name";
+          description
+            "DNS Identifier Name.";
+        }
+        leaf is-security-only {
+          type boolean;
+          must "../is-security-only='false' or (../is-security-only='true' and ../ssl-policy-name)";
+          default "false";
+          description
+            "Enable/disable syslog support security log.";
+        }
+      }
+    }
+    container global-parameter {
+      description
+        "Configure global parameter.";
+      leaf info-center-enable {
+        type boolean;
+		default "true";
+        description
+          "Enable/disable the info-center function.";
+      }
+      leaf buffer-size {
+        type int32 {
+          range "0..102400";
+        }
+        default "512";
+        description
+          "Size of a log buffer, the maximum value is configured by the PAF.";
+      }
+      leaf suppress-enable {
+        type boolean;
+		default "true";
+        description
+          "Enable/disable a device to suppress duplicate statistics.";
+      }
+      leaf log-timestamp {
+        type timestamp;
+        default "date-second";
+        description
+          "Timestamp format of log information.";
+      }
+      leaf trap-timestamp {
+        type timestamp;
+        default "date-second";
+        description
+          "Timestamp format of alarm information.";
+      }
+      leaf debug-timestamp {
+        type timestamp;
+        default "date-millisecond";
+        description
+          "Timestamp type of debugging information.";
+      }
+      leaf interface-name {
+        type string {
+            length "1..63";
+          }
+        description
+          "Name of a log host interface sending logs.";
+      }
+      leaf logbuffer-enable {
+        type boolean;
+		default "true";
+        description
+          "Enable/disable a log buffer to output information.";
+      }
+      leaf trapbuffer-enable {
+        type boolean;
+		default "true";
+        description
+          "Enable/disable a trap buffer to output information.";
+      }
+      leaf trapbuffer-size {
+        type int32 {
+          range "0..1024";
+        }
+        default "256";
+        description
+          "Size of a trap buffer.";
+      }
+      leaf packet-priority {
+        type int32 {
+          range "0..7";
+        }
+        default "0";
+        description
+          "Set the priority of the syslog packet.";
+      }
+      leaf source-port {
+        type uint32 {
+          range "1025..65535";
+        }
+        default "38514";
+        description
+          "Port of the loghost.";
+      }
+      leaf log-none-timezone {
+        type boolean;
+		default "false";
+        description
+          "Enable/disable log Timestamp Without Timezone.";
+      }
+      leaf trap-none-timezone {
+        type boolean;
+		default "false";
+        description
+          "Enable/disable trap Timestamp Without Timezone.";
+      }
+      leaf debug-none-timezone {
+        type boolean;
+		default "false";
+        description
+          "Enable/disable debug Timestamp Without Timezone.";
+      }
+      leaf delay-suppress-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable event delay suppress.";
+      }
+      leaf event-logging-all {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable global event logging flag.";
+      }
+    }
+    container info-center-channels {
+      description
+        "List of channel list.";
+      list info-center-channel {
+        key "channel-id";
+        max-elements  "10";
+        description
+          "Configure info-center channel.";
+        ext:generated-by system;
+        ext:operation-exclude create|delete;
+        leaf channel-id {
+          type uint32 {
+            range "0..9";
+          }
+          description
+            "Number for channel.";
+        }
+        leaf channel-default-name {
+          type string {
+            length "1..30";
+          }
+          config false;
+          description
+            "Info-center channel default name.";
+        }
+        leaf channel-name {
+          type string {
+            length "1..30";
+          }
+          ext:dynamic-default;
+          description
+            "Channel name.";
+        }
+      }
+    }
+    container info-center-sources {
+      description
+        "List of rules in channel for outputting information.";
+      list info-center-source {
+        key "module-name channel-id";
+        description
+          "Configure rule in channel for outputting information.";
+        ext:generated-by system;
+        leaf module-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Module name of the rule.";
+        }
+        leaf channel-id {
+          type leafref {
+            path "../../../info-center-channels/info-center-channel/channel-id";
+          }
+          description
+            "Number of a channel.";
+        }
+        leaf channel-name {
+          type string {
+            length "1..30";
+          }
+          config false;
+          description
+            "Name of a channel.";
+        }
+        leaf enable-log {
+          type boolean;
+          description
+            "Enable/disable a device to output logs.";
+        }
+        leaf enable-log-level {
+          type log-level;
+          description
+            "Log level permitted to output.";
+        }
+        leaf enable-trap {
+          type boolean;
+          description
+            "Enable/disable a device to output alarms.";
+        }
+        leaf enable-trap-level {
+          type log-level;
+          default "debugging";
+          description
+            "Trap level permitted to output.";
+        }
+        leaf enable-debug {
+          type boolean;
+          description
+            "Enable/disable a device to output debugging information.";
+        }
+        leaf enable-debug-level {
+          type log-level;
+          default "debugging";
+          description
+            "Debug level permitted to output.";
+        }
+      }
+    }
+    container log-switch-list {
+      description
+        "Configure log name information table.";
+      list log-switch {
+        key "feature-name log-name";
+        max-elements  "65535";
+        description
+          "Configure log name information item.";
+        ext:generated-by system;
+        ext:operation-exclude create|delete;
+        leaf feature-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Feature name of a log.";
+        }
+        leaf log-name {
+          type string {
+            length "1..63";
+          }
+          description
+            "Log name.";
+        }
+        leaf log-level {
+          type log-level;
+          default "debugging";
+          description
+            "Log level.";
+        }
+        leaf security-log-flag {
+          type boolean;
+          config false;
+          description
+            "Flag of security log.";
+        }
+        leaf log-type {
+          type logfile-type;
+          config false;
+          description
+            "Log Type.";
+        }
+      }
+    }
+    container info-center-filters {
+      description
+        "List of info-center filter list.";
+      list info-center-filter {
+        key "feature-name filter-log-name";
+        max-elements  "65535";
+        description
+          "Configure filter item.";
+        leaf feature-name {
+          type leafref {
+            path "../../../log-switch-list/log-switch/feature-name";
+          }
+          description
+            "Feature name of the filtered log.";
+        }
+        leaf filter-log-name {
+          type leafref {
+            path "../../../log-switch-list/log-switch/log-name";
+          }
+          description
+            "Name of the filtered log.";
+        }
+      }
+    }
+    container domain-servers {
+      description
+        "List of domain syslog servers.";
+      list domain-server {
+        key "server-domain is-default-vpn vrf-name";
+        max-elements  "8";
+        description
+          "Configure domain log sever that receives logs.";
+        leaf server-domain {
+          type string {
+            length "1..255";
+          }
+          description
+            "Log server domian address.";
+        }
+        leaf is-default-vpn {
+          type boolean;
+          description
+            "Enable/disable use the default VPN or not.";
+        }
+        leaf vrf-name {
+          type string {
+            length "1..31";
+          }
+          must "not(../is-default-vpn='true') or (../is-default-vpn='true' and ../vrf-name='_public_')";
+          description
+            "VPN name on a log server.";
+        }
+        leaf level {
+          type log-level;
+          default "debugging";
+          description
+            "Level of logs saved on a log server.";
+        }
+        leaf server-port {
+          type uint32 {
+            range "1..65535";
+          }
+          default "514";
+          description
+            "Number of a port recving logs.";
+        }
+        leaf facility {
+          type loghost-facility;
+          default "local7";
+          description
+            "Log record tool.";
+        }
+        leaf channel-id {
+          type uint32 {
+            range "0..9";
+          }
+          default "2";
+          description
+            "Channel number.";
+        }
+        leaf channel-name {
+          type string {
+            length "1..30";
+          }
+          default "loghost";
+          config false;
+          description
+            "Channel name.";
+        }
+        leaf timestamp {
+          type timestamp-format;
+          default "UTC";
+          description
+            "Log server timestamp.";
+        }
+        leaf transport-mode {
+          type transport-mode-type;
+          default "udp";
+          description
+            "Transport mode.";
+        }
+        leaf ssl-policy-name {
+          type string {
+            length "1..23";
+          }
+          must "../transport-mode='tcp'";
+          description
+            "SSL policy name.";
+        }
+        leaf is-brief-format {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable syslog Brief Format.";
+        }
+        leaf is-security-only {
+          type boolean;
+          must "../is-security-only='false' or (../is-security-only='true' and ../ssl-policy-name)";
+          default "false";
+          description
+            "Enable/disable syslog support security log.";
+        }
+      }
+    }
+    container logfiles {
+      description
+        "List of log file info table.";
+      list logfile {
+        key "logfile-type";
+        max-elements  "4";
+        description
+          "Configure log file info.";
+        ext:generated-by system;
+        ext:operation-exclude create|delete;  
+        leaf logfile-type {
+          type log-type;
+          description
+            "Log file type.";
+        }
+        leaf max-file-num {
+          type uint32 {
+            range "1..500";
+          }
+          ext:dynamic-default;
+          description
+            "Maximum number of log files of the same type. The value range for log files is [3, 500], for security files is [1, 3], and for operation files is [1, 7].";
+        }
+        leaf max-file-size {
+          type uint32 {
+            range "1..32";
+          }
+          ext:dynamic-default;
+          must "(../logfile-type='debug' and ../max-file-size='8') or ../logfile-type!='debug'";
+          description
+            "Maximum size (in MB) of a log file. The value range for log files is [4, 8, 16, 32], for security files is [1, 4], and for operation files is [1, 4].";
+        }
+      }
+    }
+    container direction-channels {
+      description
+        "List of mappings of output directions and channels of the information center.";
+      list direction-channel {
+        key "output-direction";
+        max-elements  "7";
+        description
+          "Configure relation of direction and channel.";
+        ext:generated-by system;
+        ext:operation-exclude create|delete;
+        leaf output-direction {
+          type string {
+            length "1..30";
+          }
+          description
+            "Direction of information output.";
+        }
+        leaf default-channel-id {
+          type uint32 {
+            range "0..9";
+          }
+          config false;
+          description
+            "Number of the default channel.";
+        }
+        leaf channel-id {
+          type leafref {
+            path "../../../info-center-channels/info-center-channel/channel-id";
+          }
+          description
+            "Number of a configured channel.";
+        }
+        leaf channel-name {
+          type string {
+            length "1..30";
+          }
+          config false;
+          description
+            "Name of a configured channel.";
+        }
+      }
+    }
+    container info-center-statistics {
+      config false;
+      description
+        "List of info-center statistics list.";
+      list info-center-statistic {
+        key "module-name";
+        config false;
+        description
+          "Statistics of info-center statistics item.";
+        leaf module-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Module name of the log.";
+        }
+        leaf receive-log {
+          type uint32;
+          description
+            "Number of received logs.";
+        }
+        leaf drop-log {
+          type uint32;
+          description
+            "Number of dropped logs.";
+        }
+        leaf receive-diaglog {
+          type uint32;
+          description
+            "Number of received diagnostic logs.";
+        }
+        leaf drop-diaglog {
+          type uint32;
+          description
+            "Number of dropped diagnostic logs.";
+        }
+        leaf receive-eventtrap {
+          type uint32;
+          description
+            "Number of received event traps.";
+        }
+        leaf drop-eventtrap {
+          type uint32;
+          description
+            "Number of dropped event traps.";
+        }
+        leaf receive-debug {
+          type uint32;
+          description
+            "Number of received debugging logs.";
+        }
+        leaf drop-debug {
+          type uint32;
+          description
+            "Number of dropped debugging logs.";
+        }
+      }
+    }
+    container info-center-buffers {
+      config false;
+      description
+        "List of display the buffer statistics table.";
+      list info-center-buffer {
+        key "buffer-name";
+        config false;
+        max-elements  "2";
+        description
+          "Display buffer statistics.";
+        leaf buffer-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Buffer name.";
+        }
+        leaf enable-flag {
+          type boolean;
+          default "true";
+          description
+            "Buffer enable state.";
+        }
+        leaf max-buffer-size {
+          type uint32 {
+            range "1..10240";  
+          }
+          description
+            "Maximum buffer size.";
+        }
+        leaf cur-buffer-size {
+          type uint32 {
+            range "1..10240";  
+          }
+          description
+            "Configured buffer size.";
+        }
+        leaf current-message {
+          type uint32;
+          description
+            "Number of existing messages in the buffer.";
+        }
+        leaf dropped-message {
+          type uint32;
+          description
+            "Number of dropped messages in the buffer.";
+        }
+        leaf overwrite-message {
+          type uint32;
+          description
+            "Number of overwritten messages in the buffer.";
+        }
+        leaf channel-id {
+          type uint32 {
+            range "0..9";
+          }
+          default "0";
+          description
+            "ID of channel bind to the buffer.";
+        }
+        leaf channel-name {
+          type string {
+            length "1..30";
+          }
+          description
+            "Name of channel bind to the buffer.";
+        }
+      }
+    }
+    container modules {
+      config false;
+      description
+        "List of module name information table.";
+      list module {
+        key "module-name";
+        config false;
+        description
+          "Statistics of module name information item.";
+        leaf module-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Module name.";
+        }
+      }
+    }
+    container logbuffers {
+      config false;
+      description
+        "List of log buffer table.";
+      list logbuffer {
+        key "sequence";
+        config false;
+        description
+          "Statistics of log buffer item.";
+        leaf sequence {
+          type int32 {
+            range "1..102400";
+          }
+          description
+            "Sequence number of a queried log.";
+        }
+        leaf starttime {
+          type yang:date-and-time;
+          description
+            "Query start time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf endtime {
+          type yang:date-and-time;
+          description
+            "Query end time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf level {
+          type log-level;
+          default "debugging";
+          description
+            "Level of queried logs.";
+          ext:support-filter "true";
+        }
+        leaf log-content {
+          type string {
+            length "0..1200";
+          }
+          description
+            "Content of queried logs.";
+        }
+      }
+    }
+    container trapbuffers {
+      config false;
+      description
+        "List of trap buffer table.";
+      list trapbuffer {
+        key "sequence";
+        config false;
+        description
+          "Statistics of trap buffer item.";
+        leaf sequence {
+          type int32 {
+            range "1..1024";
+          }
+          description
+            "Sequence number of a queried trap.";
+        }
+        leaf trap-content {
+          type string {
+            length "0..1200";
+          }
+          description
+            "Content of query trap.";
+        }
+      }
+    }
+    container securitybuffers {
+      config false;
+      description
+        "List of security of a log buffer table.";
+      list securitybuffer {
+        key "sequence";
+        config false;
+        description
+          "Statistics of security of a log buffer item.";
+        leaf sequence {
+          type int32 {
+            range "1..102400";
+          }
+          description
+            "Sequence number of a queried log.";
+        }
+        leaf starttime {
+          type yang:date-and-time;
+          description
+            "Query start time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf endtime {
+          type yang:date-and-time;
+          description
+            "Query end time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf level {
+          type log-level;
+          default "debugging";
+          description
+            "Level of queried logs.";
+          ext:support-filter "true";
+        }
+        leaf log-content {
+          type string {
+            length "0..1200";
+          }
+          description
+            "Content of queried logs.";
+        }
+      }
+    }
+  }
+}

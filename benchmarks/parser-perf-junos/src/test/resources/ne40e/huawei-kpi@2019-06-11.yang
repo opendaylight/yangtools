@@ -1,0 +1,72 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-kpi {
+  namespace "urn:huawei:yang:huawei-kpi";
+  prefix kpi;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "KPI data management.";
+  revision 2019-06-11 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "perf-mgr";
+  container kpi {
+    config false;
+    description
+      "KPI data management.";
+    container kpi-datas {
+      config false;
+      description
+        "List of KPI data.";
+      list kpi-data {
+        key "module-id sequence-id";
+        config false;
+        description
+          "Statistics of KPI data.";
+          leaf module-id {
+            type uint32;
+          config false;
+          description
+            "KPI module ID.";
+        }
+          leaf sequence-id {
+            type uint32;
+          config false;
+          description
+            "KPI data sequence ID.";
+        }
+        leaf module-name {
+            type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Name of a KPI module, it is case sensitive.";
+        }
+        leaf data {
+            type binary {
+            length "1..46080";
+          }
+          config false;
+          description
+            "KPI data.";
+        }
+      }
+    }
+  }
+}

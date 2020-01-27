@@ -1,0 +1,991 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-pp4 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-pp4";
+  prefix pp4;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "IPv4.";
+  revision 2020-03-06 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ip-stack";
+  typedef pp4-icmpsec-type {
+    type enumeration {
+      enum "echo" {
+        value 1;
+        description
+          "Type=8, Code=0.";
+      }
+      enum "echo-reply" {
+        value 2;
+        description
+          "Type=0, Code=0.";
+      }
+      enum "fragmentneed-dfset" {
+          value 3;
+        description
+          "Type=3, Code=4.";
+      }
+      enum "host-redirect" {
+          value 4;
+        description
+          "Type=5, Code=1.";
+      }
+      enum "host-tos-redirect" {
+          value 5;
+        description
+          "Type=5, Code=3.";
+      }
+      enum "host-unreachable" {
+          value 6;
+        description
+          "Type=3, Code=1.";
+      }
+      enum "information-reply" {
+          value 7;
+        description
+          "Type=16, Code=0.";
+      }
+      enum "information-request" {
+          value 8;
+        description
+          "Type=15, Code=0.";
+      }
+      enum "net-redirect" {
+          value 9;
+        description
+          "Type=5, Code=0.";
+      }
+      enum "net-tos-redirect" {
+          value 10;
+        description
+          "Type=5, Code=2.";
+      }
+      enum "net-unreachable" {
+          value 11;
+        description
+          "Type=3, Code=0.";
+      }
+      enum "parameter-problem" {
+          value 12;
+        description
+          "Type=12, Code=0.";
+      }
+      enum "port-unreachable" {
+          value 13;
+        description
+          "Type=3, Code=3.";
+      }
+      enum "protocol-unreachable" {
+          value 14;
+        description
+          "Type=3, Code=2.";
+      }
+      enum "reassembly-timeout" {
+          value 15;
+        description
+          "Type=11, Code=1.";
+      }
+      enum "source-quench" {
+        value 16;
+        description
+          "Type=4, Code=0.";
+      }
+      enum "source-route-failed" {
+        value 17;
+        description
+          "Type=3, Code=5.";
+      }
+      enum "timestamp-reply" {
+        value 18;
+        description
+          "Type=14, Code=0.";
+      }
+      enum "timestamp-request" {
+        value 19;
+        description
+          "Type=13, Code=0.";
+      }
+      enum "ttl-exceeded" {
+        value 20;
+        description
+          "Type=11, Code=0.";
+      }
+      enum "user-defined" {
+        value 0;
+        description
+          "User defined.";
+      }
+    }
+    description
+      "PP4 ICMP security type.";
+  }
+  typedef pp4-pkt-action {
+    type enumeration {
+      enum "receive-pkt" {
+        value 0;
+        description
+          "Packet reception.";
+      }
+      enum "send-pkt" {
+        value 1;
+        description
+          "Packet sending.";
+      }
+    }
+    description
+      "PP4 packet action.";
+  }
+  typedef pp4-switch-operation {
+    type enumeration {
+      enum "enable" {
+        value 0;
+        description
+          "Enabling.";
+      }
+      enum "disable" {
+        value 1;
+        description
+          "Disabling.";
+      }
+    }
+    description
+      "PP4 switch operation.";
+  }
+  typedef pp4-option-type {
+    type enumeration {
+      enum "route-alert" {
+        value 0;
+        description
+          "Route-alert option.";
+      }
+      enum "route-record" {
+        value 1;
+        description
+          "Route-record option.";
+      }
+      enum "source-route" {
+        value 2;
+        description
+          "Source-route option.";
+      }
+      enum "time-stamp" {
+        value 3;
+        description
+          "Time-stamp option.";
+      }
+    }
+    description
+      "PP4 option type.";
+  }
+  typedef app-proto-type {
+    type enumeration {
+      enum "management" {
+        value 1;
+        description
+          "Management protocol.";
+      }
+      enum "control" {
+        value 2;
+        description
+          "Control protocol.";
+      }
+    }
+    description
+      "Application protocol type.";
+  }
+  typedef pkt-service-class {
+    type enumeration {
+      enum "te-priority" {
+        value 1;
+        description
+          "TE priority.";
+      }
+    }
+    description
+      "Packet service class.";
+  }
+  typedef pp4-fast-switch {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Host packet fast disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Host packet fast enable.";
+      }
+    }
+    description
+      "PP4 fast switch.";
+  }
+  typedef pp4-icmp-src-type {
+    type enumeration {
+      enum "port-unreachable" {
+        value 1;
+        description
+          "Type=3, Code=3.";
+      }
+      enum "ttl-exceeded" {
+        value 2;
+        description
+          "Type=11, Code=0.";
+      }
+      enum "all-tracert" {
+        value 3;
+        description
+          "Type=11, Code=0 and Type=3, Code=3.";
+      }
+    }
+    description
+      "PP4 ICMP source type.";
+  }
+  typedef app-proto-name {
+    type enumeration {
+      enum "ftp" {
+        value 0;
+        description
+          "Ftp.";
+      }
+      enum "hwtacacs" {
+        value 1;
+        description
+          "Hwtacacs.";
+      }
+      enum "ntp" {
+        value 2;
+        description
+          "Ntp.";
+      }
+      enum "snmp" {
+        value 3;
+        description
+          "Snmp.";
+      }
+      enum "ssh" {
+        value 4;
+        description
+          "Ssh.";
+      }
+      enum "syslog" {
+        value 5;
+        description
+          "Syslog.";
+      }
+      enum "telnet" {
+        value 6;
+        description
+          "Telnet.";
+      }
+      enum "tftp" {
+        value 7;
+        description
+          "Tftp.";
+      }
+      enum "bfd" {
+        value 8;
+        description
+          "Bfd.";
+      }
+      enum "bgp" {
+        value 9;
+        description
+          "Bgp.";
+      }
+      enum "cusp" {
+        value 10;
+        description
+          "Cusp.";
+      }
+      enum "isis" {
+        value 11;
+        description
+          "Isis.";
+      }
+      enum "ldp" {
+        value 12;
+        description
+          "Ldp.";
+      }
+      enum "ospf" {
+        value 13;
+        description
+          "Ospf.";
+      }
+      enum "ospfv3" {
+        value 14;
+        description
+          "Ospfv3.";
+      }
+      enum "rip" {
+        value 15;
+        description
+          "Rip.";
+      }
+    }
+    description
+      "PP4 host protocol packet type.";
+  }
+  container pp4 {
+    description
+      "IPv4.";
+    container global {
+      description
+        "Configure IPv4 global configuration.";
+    leaf reassembling-timeout {
+        type uint32 {
+          range "5..120";
+        }
+        units "s";
+        default "30";
+        description
+          "Configuration of timeout period for reassembling packets. The value is expressed in seconds.";
+    }
+    leaf blacklist-flag {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable IP blacklist option.";
+    }
+    leaf route-aler-switch {
+      type pp4-switch-operation;
+      default "enable";
+      description
+        "Enabling or disabling of global route-aler IP option packet configuration.";
+    }
+    leaf route-record-switch {
+      type pp4-switch-operation;
+      default "enable";
+      description
+        "Enabling or disabling of global route-record IP option packet configuration.";
+    }
+    leaf source-route-switch {
+      type pp4-switch-operation;
+      default "enable";
+      description
+        "Enabling or disabling of global source-route IP option packet configuration.";
+    }
+    leaf time-stamp-switch {
+      type pp4-switch-operation;
+      default "enable";
+      description
+        "Enabling or disabling of global time-stamp IP option packet configuration.";
+    }
+    leaf te-pkt-ctrl-switch {
+      type pp4-switch-operation;
+      default "disable";
+      description
+        "Enabling or disabling of packet control policy.";
+      }
+    }
+    container icmp-securitys {
+      description
+        "List of global ICMP security configuration.";
+      list icmp-security {
+        must "((((icmp-name='echo' and icmp-type='8' and icmp-code='0') or (icmp-name='echo-reply' and icmp-type='0' and icmp-code='0')
+        or (icmp-name='fragmentneed-dfset' and icmp-type='3' and icmp-code='4') or (icmp-name='host-redirect' and icmp-type='5' and icmp-code='1')
+        or (icmp-name='host-tos-redirect' and icmp-type='5' and icmp-code='3') or (icmp-name='host-unreachable' and icmp-type='3' and icmp-code='1')
+        or (icmp-name='information-reply' and icmp-type='16' and icmp-code='0') or (icmp-name='information-request' and icmp-type='15' and icmp-code='0')
+        or (icmp-name='net-redirect' and icmp-type='5' and icmp-code='0') or (icmp-name='net-tos-redirect' and icmp-type='5' and icmp-code='2')
+        or (icmp-name='net-unreachable' and icmp-type='3' and icmp-code='0') or (icmp-name='parameter-problem' and icmp-type='12' and icmp-code='0')
+        or (icmp-name='port-unreachable' and icmp-type='3' and icmp-code='3') or (icmp-name='protocol-unreachable' and icmp-type='3' and icmp-code='2')
+        or (icmp-name='reassembly-timeout' and icmp-type='11' and icmp-code='1') or (icmp-name='source-quench' and icmp-type='4' and icmp-code='0')
+        or (icmp-name='source-route-failed' and icmp-type='3' and icmp-code='5') or (icmp-name='timestamp-reply' and icmp-type='14' and icmp-code='0')
+        or (icmp-name='timestamp-request' and icmp-type='13' and icmp-code='0') or (icmp-name='ttl-exceeded' and icmp-type='11' and icmp-code='0')
+        or icmp-name='user-defined') and action ='receive-pkt') or ((((icmp-name='echo' or icmp-name='user-defined') and icmp-type='8' and icmp-code='0')
+        or ((icmp-name='echo-reply' or icmp-name='user-defined') and icmp-type='0' and icmp-code='0')
+        or ((icmp-name='fragmentneed-dfset' or icmp-name='user-defined') and icmp-type='3' and icmp-code='4')
+        or ((icmp-name='net-unreachable' or icmp-name='user-defined') and icmp-type='3' and icmp-code='0')
+        or ((icmp-name='parameter-problem' or icmp-name='user-defined') and icmp-type='12' and icmp-code='0')
+        or ((icmp-name='port-unreachable' or icmp-name='user-defined') and icmp-type='3' and icmp-code='3')
+        or ((icmp-name='reassembly-timeout' or icmp-name='user-defined') and icmp-type='11' and icmp-code='1')
+        or ((icmp-name='source-route-failed' or icmp-name='user-defined') and icmp-type='3' and icmp-code='5')
+        or ((icmp-name='timestamp-reply' or icmp-name='user-defined') and icmp-type='14' and icmp-code='0')
+        or ((icmp-name='timestamp-request' or icmp-name='user-defined') and icmp-type='13' and icmp-code='0')
+        or ((icmp-name='ttl-exceeded' or icmp-name='user-defined') and icmp-type='11' and icmp-code='0')) and action ='send-pkt'))";
+        key "action icmp-name icmp-type icmp-code";
+        description
+          "Configure global ICMP security function.";
+        leaf action {
+          type pp4-pkt-action;
+          description
+            "Packet reception or packet sending.";
+        }
+        leaf icmp-name {
+          type pp4-icmpsec-type;
+          description
+            "ICMP names.";
+        }
+        leaf icmp-type {
+          type uint32 {
+            range "0..255";
+          }
+          description
+            "ICMP types. For the value of this node, see the description of pp4-icmpsec-type.";
+        }
+        leaf icmp-code {
+          type uint32 {
+            range "0..255";
+          }
+          description
+            "ICMP code. For the value of this node, see the description of pp4-icmpsec-type.";
+        }
+        leaf switch-operation {
+          type pp4-switch-operation;
+          mandatory true;
+          description
+            "Enabling or disabling of ICMP packet security configuration.";
+        }
+      }
+    }
+    container ip-dscps {
+      description
+        "List of DSCP configuration.";
+      list ip-dscp {
+        key "proto-type";
+        max-elements  "2";
+        description
+          "Specify DSCP value.";
+        leaf proto-type {
+          type app-proto-type;
+          description
+            "Protocol type.";
+        }
+        leaf dscp {
+          type uint32 {
+            range "0..63";
+          }
+          description
+            "DSCP priority.";
+        }
+      }
+    }
+    container pkt-fast-reply-ctrl {
+      description
+        "Configure host packet fast reply control.";
+      leaf tcp-action {
+        type pp4-fast-switch;
+        default "enable";
+        description
+          "Host TCP packet fast reply control.";
+      }
+      leaf udp-action {
+        type pp4-fast-switch;
+        default "enable";
+        description
+          "Host UDP packet fast reply control.";
+      }
+      leaf rawip-action {
+        type pp4-fast-switch;
+        default "enable";
+        description
+          "Host Rawip packet fast reply control.";
+      }
+    }
+    container pkt-fast-reply-snd {
+      description
+        "Configure host packet fast send control.";
+      leaf tcp-action {
+        type pp4-fast-switch;
+        default "disable";
+        description
+          "Host TCP packet fast send control.";
+      }
+      leaf udp-action {
+        type pp4-fast-switch;
+        default "disable";
+        description
+          "Host UDP packet fast send control.";
+      }
+      leaf rawip-action {
+        type pp4-fast-switch;
+        default "disable";
+        description
+          "Host Rawip packet fast send control.";
+      }
+    }
+    container host-proto-types {
+      config false;
+      description
+        "List of host protocol type.";
+      list host-proto-type {
+        key "packet-type";
+        description
+          "Operational data of host protocol type.";
+        leaf packet-type {
+          type app-proto-name;
+          description
+            "Application name.";
+        }
+        leaf protocol-type {
+          type app-proto-type;
+          description
+            "Protocol type.";
+        }
+      }
+    }
+    container icmp-stats {
+      config false;
+      description
+        "Statistics of collection of statistics on ICMP packets.";
+      leaf in-bad-fmt {
+        type uint32;
+        description
+          "Count of received ICMP packets whose formats are incorrect.";
+      }
+      leaf in-bad-checksum {
+        type uint32;
+        description
+          "Count of received packets whose checksums are incorrect.";
+      }
+      leaf in-echo {
+        type uint32;
+        description
+          "Count of received ICMP Echo Request packets.";
+      }
+      leaf in-dst-unreach {
+        type uint32;
+        description
+          "Count of received packets whose destination addresses are unreachable.";
+      }
+      leaf in-src-quench {
+        type uint32;
+        description
+          "Count of received source suppression packets.";
+      }
+      leaf in-redirect {
+        type uint32;
+        description
+          "Count of received redirection packets.";
+      }
+      leaf in-echo-reply {
+        type uint32;
+        description
+          "Count of received Echo Reply packets.";
+      }
+      leaf in-para-err {
+        type uint32;
+        description
+          "Count of received packets whose parameters are incorrect.";
+      }
+      leaf in-time-stamp {
+        type uint32;
+        description
+          "Count of received timestamp request packets.";
+      }
+      leaf in-info-request {
+        type uint32;
+        description
+          "Count of received information request packets.";
+      }
+      leaf in-mask-request {
+        type uint32;
+        description
+          "Count of received mask request packets.";
+      }
+      leaf in-mask-reply {
+        type uint32;
+        description
+          "Count of received mask request response packets.";
+      }
+      leaf in-time-exceed {
+        type uint32;
+        description
+          "Count of received ICMP timeout error packets.";
+      }
+      leaf out-echo {
+        type uint32;
+        description
+          "Count of sent Echo Request packets.";
+      }
+      leaf out-dst-unreach {
+        type uint32;
+        description
+          "Count of sent destination-unreachable packets.";
+      }
+      leaf out-src-quench {
+        type uint32;
+        description
+          "Count of sent source suppression packets.";
+      }
+      leaf out-redirect {
+        type uint32;
+        description
+          "Count of sent redirection packets.";
+      }
+      leaf out-echo-reply {
+        type uint32;
+        description
+          "Count of sent Echo Reply packets.";
+      }
+      leaf out-para-err {
+        type uint32;
+        description
+          "Count of sent packets whose parameters are incorrect.";
+      }
+      leaf out-time-stamp {
+        type uint32;
+        description
+          "Count of sent timestamp request packets.";
+      }
+      leaf out-info-request {
+        type uint32;
+        description
+          "Count of sent information request packets.";
+      }
+      leaf out-mask-request {
+        type uint32;
+        description
+          "Count of sent mask request packets.";
+      }
+      leaf out-mask-reply {
+        type uint32;
+        description
+          "Count of sent mask request response packets.";
+      }
+      leaf out-time-exceed {
+        type uint32;
+        description
+          "Count of sent ICMP timeout error packets.";
+      }
+      leaf in-icmp-sum {
+        type uint32;
+        description
+          "Count of received ICMP packets.";
+      }
+      leaf in-icmp-err {
+        type uint32;
+        description
+          "Count of received ICMP packets whose headers are incorrect.";
+      }
+      leaf out-icmp-sum {
+        type uint32;
+        description
+          "Count of sent ICMP packets.";
+      }
+      leaf out-icmp-err {
+        type uint32;
+        description
+          "Count of sent incorrect ICMP packets.";
+      }
+      leaf in-mping-request {
+        type uint32;
+        description
+          "Count of received MPing Request packets.";
+      }
+      leaf out-mping-request {
+        type uint32;
+        description
+          "Count of sent MPing Request packets.";
+      }
+      leaf in-mping-reply {
+        type uint32;
+        description
+          "Count of received MPing Reply packets.";
+      }
+      leaf out-mping-reply {
+        type uint32;
+        description
+          "Count of sent MPing Reply packets.";
+      }
+      leaf in-time-stamp-rep {
+        type uint32;
+        description
+          "Count of received Timestamp Reply packets.";
+      }
+      leaf out-time-stamp-rep {
+        type uint32;
+        description
+          "Count of sent Timestamp Reply packets.";
+      }
+    }
+    container ip-stats {
+      config false;
+      description
+        "Statistics of IP packets.";
+      leaf in-sum {
+        type uint32;
+        description
+          "Total count of received packets.";
+      }
+      leaf in-local {
+        type uint32;
+        description
+          "Total count of packets that are received locally.";
+      }
+      leaf in-bad-proto {
+        type uint32;
+        description
+          "Count of received packets whose protocols are unknown.";
+      }
+      leaf in-bad-opt {
+        type uint32;
+        description
+          "Count of received packets whose options are unknown.";
+      }
+      leaf in-discard-srr {
+        type uint32;
+        description
+          "Count of packets that discard source route options.";
+      }
+      leaf in-discard-rr {
+        type uint32;
+        description
+          "Count of packets that discard route record options.";
+      }
+      leaf in-discard-ra {
+        type uint32;
+        description
+          "Count of packets that discard route alert options.";
+      }
+      leaf in-discard-ts {
+        type uint32;
+        description
+          "Count of packets that discard time stamp options.";
+      }
+      leaf in-ttl-exceed {
+        type uint32;
+        description
+          "Count of received TTL timeout packets.";
+      }
+      leaf out-fwd {
+        type uint32;
+        description
+          "Count of forwarded packets.";
+      }
+      leaf out-no-route {
+        type uint32;
+        description
+          "Count of packets without routes.";
+      }
+      leaf frag-dropped {
+        type uint32;
+        description
+          "Count of discarded packet fragments.";
+      }
+      leaf reass-sum {
+        type uint32;
+        description
+          "Count of reassembled packet fragments.";
+      }
+      leaf reass-timeouts {
+        type uint32;
+        description
+          "Count of packet fragments whose reassembly times out.";
+      }
+      leaf in-bad-fmt {
+        type uint32;
+        description
+          "Count of received packets whose formats are incorrect.";
+      }
+      leaf in-bad-checksum {
+        type uint32;
+        description
+          "Count of received packets whose checksums are incorrect.";
+      }
+      leaf out-local {
+        type uint32;
+        description
+          "Count of packets that are sent locally.";
+      }
+      leaf out-dropped {
+        type uint32;
+        description
+          "Count of discarded packets.";
+      }
+      leaf frag-output {
+        type uint32;
+        description
+          "Count of sent packet fragments.";
+      }
+      leaf pkt-fraged {
+        type uint32;
+        description
+          "Count of fragmented packets.";
+      }
+      leaf frag-forbid {
+        type uint32;
+        description
+          "Count of packets whose fragmenting is prohibited.";
+      }
+      leaf frag-input {
+        type uint32;
+        description
+          "Count of received packet fragments.";
+      }
+      leaf in-hdr-err {
+        type uint32;
+        description
+          "Count of received packets whose headers are incorrect.";
+      }
+    }
+  }
+  augment "/mpls:mpls/mpls:common/mpls:global" {
+    when "mpls:mpls-enable='true'";
+    description
+      "TTL expiration pop enable in MPLS.";
+    container ttl-expiration-pop {
+      description
+        "Configure TTL expiration pop function.";
+      leaf switch-flag {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable TTL expiration pop.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "All configurations of the PP4 under the interface.";
+    container if-icmp-securitys {
+      when "../ifm:type!='NULL' and ../ifm:type!='Cpos' and ../ifm:type!='Atm-Bundle' and ../ifm:type!='E1' and ../ifm:type!='Cpos-Trunk' and ../ifm:type!='IMEth' and ../ifm:type!='Stack-Port' and ../ifm:type!='Sip' and ../ifm:type!='Global-Ima-Group' and ../ifm:type!='Global-VE' and ../ifm:type!='Nve' and ../ifm:type!='ServiceIf' and ../ifm:type!='Virtual-Ethernet'";
+      description
+        "List of ICMP security configuration on interfaces.";
+      list if-icmp-security {
+               must "((((icmp-name='echo' and icmp-type='8' and icmp-code='0') or (icmp-name='echo-reply' and icmp-type='0' and icmp-code='0')
+        or (icmp-name='fragmentneed-dfset' and icmp-type='3' and icmp-code='4') or (icmp-name='host-redirect' and icmp-type='5' and icmp-code='1')
+        or (icmp-name='host-tos-redirect' and icmp-type='5' and icmp-code='3') or (icmp-name='host-unreachable' and icmp-type='3' and icmp-code='1')
+        or (icmp-name='information-reply' and icmp-type='16' and icmp-code='0') or (icmp-name='information-request' and icmp-type='15' and icmp-code='0')
+        or (icmp-name='net-redirect' and icmp-type='5' and icmp-code='0') or (icmp-name='net-tos-redirect' and icmp-type='5' and icmp-code='2')
+        or (icmp-name='net-unreachable' and icmp-type='3' and icmp-code='0') or (icmp-name='parameter-problem' and icmp-type='12' and icmp-code='0')
+        or (icmp-name='port-unreachable' and icmp-type='3' and icmp-code='3') or (icmp-name='protocol-unreachable' and icmp-type='3' and icmp-code='2')
+        or (icmp-name='reassembly-timeout' and icmp-type='11' and icmp-code='1') or (icmp-name='source-quench' and icmp-type='4' and icmp-code='0')
+        or (icmp-name='source-route-failed' and icmp-type='3' and icmp-code='5') or (icmp-name='timestamp-reply' and icmp-type='14' and icmp-code='0')
+        or (icmp-name='timestamp-request' and icmp-type='13' and icmp-code='0') or (icmp-name='ttl-exceeded' and icmp-type='11' and icmp-code='0')
+        or icmp-name='user-defined') and action ='receive-pkt') or ((((icmp-name='echo' or icmp-name='user-defined') and icmp-type='8' and icmp-code='0')
+        or ((icmp-name='echo-reply' or icmp-name='user-defined') and icmp-type='0' and icmp-code='0')
+        or ((icmp-name='fragmentneed-dfset' or icmp-name='user-defined') and icmp-type='3' and icmp-code='4')
+        or ((icmp-name='net-unreachable' or icmp-name='user-defined') and icmp-type='3' and icmp-code='0')
+        or ((icmp-name='parameter-problem' or icmp-name='user-defined') and icmp-type='12' and icmp-code='0')
+        or ((icmp-name='port-unreachable' or icmp-name='user-defined') and icmp-type='3' and icmp-code='3')
+        or ((icmp-name='reassembly-timeout' or icmp-name='user-defined') and icmp-type='11' and icmp-code='1')
+        or ((icmp-name='source-route-failed' or icmp-name='user-defined') and icmp-type='3' and icmp-code='5')
+        or ((icmp-name='timestamp-reply' or icmp-name='user-defined') and icmp-type='14' and icmp-code='0')
+        or ((icmp-name='timestamp-request' or icmp-name='user-defined') and icmp-type='13' and icmp-code='0')
+        or ((icmp-name='ttl-exceeded' or icmp-name='user-defined') and icmp-type='11' and icmp-code='0')) and action ='send-pkt'))";
+        key "action icmp-name icmp-type icmp-code";
+        description
+          "Configure ICMP security configuration on interfaces.";
+        leaf action {
+          type pp4-pkt-action;
+          description
+            "Packet reception or packet sending.";
+        }
+        leaf icmp-name {
+          type pp4-icmpsec-type;
+          description
+            "ICMP names.";
+        }
+        leaf icmp-type {
+          type uint32 {
+            range "0..255";
+          }
+          description
+            "ICMP types. For the value of this node, see the description of pp4-icmpsec-type.";
+        }
+        leaf icmp-code {
+          type uint32 {
+            range "0..255";
+          }
+          description
+            "ICMP code. For the value of this node, see the description of pp4-icmpsec-type.";
+        }
+        leaf switch-operation {
+          type pp4-switch-operation;
+          mandatory true;
+          description
+            "Enabling or disabling of ICMP packet security configuration on interfaces.";
+        }
+      }
+    }
+    container if-ip-opt-securitys {
+      when "../ifm:type!='NULL' and ../ifm:type!='Cpos' and ../ifm:type!='Atm-Bundle' and ../ifm:type!='E1' and ../ifm:type!='Cpos-Trunk' and ../ifm:type!='IMEth' and ../ifm:type!='Stack-Port' and ../ifm:type!='Sip' and ../ifm:type!='Global-Ima-Group' and ../ifm:type!='Global-VE' and ../ifm:type!='Nve' and ../ifm:type!='ServiceIf' and ../ifm:type!='Virtual-Ethernet'";
+      description
+        "List of IP option configuration on interfaces.";
+      list if-ip-opt-security {
+        key "option-type";
+        description
+          "Configure IP option on interfaces.";
+        leaf option-type {
+          type pp4-option-type;
+          description
+            "IP option types on interface.";
+        }
+        leaf switch {
+          type pp4-switch-operation;
+          mandatory true;
+          description
+            "Enabling or disabling of IP option packet configuration on interfaces.";
+        }
+      }
+    }
+    container ip-verify-src-addr {
+      when "../ifm:type!='NULL' and ../ifm:type!='Cpos' and ../ifm:type!='Atm-Bundle' and ../ifm:type!='E1' and ../ifm:type!='Cpos-Trunk' and ../ifm:type!='IMEth' and ../ifm:type!='Stack-Port' and ../ifm:type!='Sip' and ../ifm:type!='Global-Ima-Group' and ../ifm:type!='Global-VE' and ../ifm:type!='Nve' and ../ifm:type!='ServiceIf' and ../ifm:type!='Virtual-Ethernet'";
+      presence "Present if enabled IP verify source-address function.";
+      description
+        "Enable/disable IP verify source-address configuration on interface.";
+    }
+    container ip-fwd-broadcast {
+      presence "Present if enabled IP forward broadcast function.";
+      description
+        "Enable/disable IP forward broadcast configuration on interfaces.";
+      leaf acl-name-or-num {
+        type string {
+          length "1..64";
+        }
+        description
+          "ACL number or ACL name.";
+      }
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance {
+    description
+      "All configurations of the PP4 under the network instance.";
+    container icmp-sourceaddr {
+      must "(type and if-name) or (not (type) and not(if-name))";
+      description
+        "Configure a loopback interface address as a source IP address for an ICMP error packet.";
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Interface Name.";
+      }
+      leaf type {
+        type pp4-icmp-src-type;
+        description
+          "Source selection type.";
+      }
+    }
+  }
+}

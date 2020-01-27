@@ -1,0 +1,377 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-cesacr {
+  namespace "urn:huawei:yang:huawei-clocksync-cesacr";
+  prefix clocksync-cesacr;
+  import huawei-extension {
+    prefix ext;
+  }
+
+  import huawei-ifm {
+    prefix ifm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Clock ces-acr data model define.";
+
+  revision 2020-03-04 {
+    description
+      "Modify the node decsription.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "clksync";
+
+  typedef run-mode {
+    type enumeration {
+      enum "master" {
+        value 0;
+        description
+          "The working mode is master.";
+      }
+      enum "slave" {
+        value 1;
+        description
+          "The working mode is slave.";
+      }
+      enum "recovery-domain" {
+        value 2;
+        description
+          "CES ACR clock recovery domain.";
+      }
+      enum "master-domain" {
+        value 3;
+        description
+          "The working mode is master-domain.";
+      }
+    }
+    description
+      "CES ACR clock run mode.";
+  }
+
+  typedef master-pw-state {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "The master PW status is null.";
+      }
+      enum "wait" {
+        value 1;
+        description
+          "The master PW is in the wait state.";
+      }
+      enum "lock" {
+        value 2;
+        description
+          "The master PW works in lock state.";
+      }
+    }
+    description
+      "Master PW status of the CES service.";
+  }
+
+  typedef recovery-mode {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "The clock recovery mode of the CES service is NONE.";
+      }
+      enum "ces-acr" {
+        value 1;
+        description
+          "The clock recovery mode of the CES service is CES ACR.";
+      }
+      enum "ces-dcr" {
+        value 2;
+        description
+          "The clock recovery mode of the CES service is CES DCR.";
+      }
+    }
+    description
+      "CES ACR clock recovery mode.";
+  }
+
+  container clocksync-cesacr {
+    description
+      "CES ACR clock.";
+    container master-domain-infos {
+      config false;
+      description
+        "List of statistics of master domain information.";
+      list master-domain-info {
+        key "slot-id card-id domain-value";
+        description
+          "Statistics of master domain information.";
+        leaf slot-id {
+          type uint32;
+          description
+            "Slot ID.";
+        }
+        leaf card-id {
+          type uint32;
+          description
+            "Slot ID of the subcard.";
+        }
+        leaf domain-value {
+          type uint32;
+          description
+            "Master domain.";
+        }
+        leaf e1-port {
+          type string {
+            length "1..50";
+          }
+          description
+            "Key master domain port.";
+        }
+        leaf e1-channel-number {
+          type uint32;
+          description
+            "E1 channel number of the master clock domain.";
+        }
+        container e1-master-infos {
+          description
+            "List of statistics of information about the E1 interface that joins the master domain.";
+          list e1-master-info {
+            key "port-name e1-number";
+            description
+              "Statistics of information about the E1 interface that joins the master domain.";
+            leaf port-name {
+              type string {
+                length "1..50";
+              }
+              description
+                "E1 port name.";
+            }
+            leaf e1-number {
+              type uint32;
+              description
+                "E1 port number.";
+            }
+          }
+        }
+      }
+    }
+    container cesacr-sources {
+      description
+        "List of configure CES ACR clock source.";
+      list cesacr-source {
+        key "slot-id card-id recovery-domain-value";
+        description
+          "Configure CES ACR clock source.";
+        leaf slot-id {
+          type uint32 {
+            range "0..255";
+          }
+          description
+            "Slot ID of the interface board.";
+        }
+        leaf card-id {
+          type uint32 {
+            range "0..255";
+          }
+          description
+            "Slot ID of the subcard.";
+        }
+        leaf recovery-domain-value {
+          type uint32 {
+            range "1..8";
+          }
+          description
+            "Clock recovery domain.";
+        }
+      }
+    }
+
+    container recovery-domain-infos {
+      config false;
+      description
+        "List of statistics of details about the clock recovery domain.";
+      list recovery-domain-info {
+        key "slot-id card-id recovery-domain-value";
+        description
+          "Statistics of details about the clock recovery domain.";
+        leaf slot-id {
+          type uint32;
+          description
+            "Slot ID of the interface board.";
+        }
+        leaf card-id {
+          type uint32;
+          description
+            "Slot ID of the subcard.";
+        }
+        leaf recovery-domain-value {
+          type uint32;
+          description
+            "Clock recovery domain.";
+        }
+        leaf pw-port-name {
+          type string {
+            length "1..50";
+          }
+          description
+            "Port name of the master PW.";
+        }
+        leaf pw-channel-id {
+          type uint32;
+          description
+            "Channel ID of the master PW of the CES service.";
+        }
+        leaf pw-status {
+          type master-pw-state;
+          description
+            "Master PW status of the CES service.";
+        }
+        container e1-infos {
+          description
+            "List of statistics of E1 port information.";
+          list e1-info {
+            key "e1-number port-name";
+            description
+              "Statistics of E1 port information.";
+            leaf e1-number {
+              type uint32;
+              description
+                "E1 port number of the clock domain.";
+            }
+            leaf port-name {
+              type string {
+                length "1..50";
+              }
+              description
+                "E1 port name of the clock domain.";
+            }
+            leaf channel-direction {
+              type uint32;
+              description
+                "E1 channel direction, including upstream, downstream, and both upstream and downstream.";
+            }
+            container pw-infos {
+              description
+                "List of statistics of PW information of the CES service.";
+              list pw-info {
+                key "serial-port-name";
+                description
+                  "Statistics of PW information of the CES service.";
+                leaf serial-port-name {
+                  type string {
+                    length "1..50";
+                  }
+                  description
+                    "PW port name of clock domain services.";
+                }
+                leaf channel-id {
+                  type uint32;
+                  description
+                    "PW channel ID of clock domain services.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:link-protocol='tdm'";
+    description
+      "Interface.";
+    container clock-cesacr {
+      description
+        "Configure CES ACR clock domain.";
+      container master-domains {
+        description
+          "List of configure CES ACR clock master domain.";
+        list master-domain {
+          key "port-number";
+          description
+            "Configure CES ACR clock master domain.";
+          leaf port-number {
+            type uint32 {
+              range "1..63";
+            }
+            description
+              "The E1 channel number of CES ACR is 0. The channel number for CPOS interfaces ranges from 1 to 63.";
+          }
+          leaf run-mode {
+            type run-mode;
+            must "((../run-mode='master-domain'))";
+            description
+              "Clock mode.";
+          }
+          leaf domain-value {
+            type uint32 {
+              range "1..32";
+            }
+            default "1";
+            description
+              "Master domain value, Cpos port <0-3> can config domain <1-16>, Cpos port <4-7> can config domain <17-32>.";
+          }
+        }
+      }
+
+      container recovery-domains {
+        description
+          "List of configure CES ACR clock recovery domains.";
+        list recovery-domain {
+          key "port-number";
+          description
+            "Configure CES ACR clock recovery domain.";
+          leaf port-number {
+            type uint32 {
+              range "0..63";
+            }
+            description
+              "The channel ID of an E1 port is 0. The channel ID of a CPOS port ranges from 1 to 63.";
+          }
+          leaf run-mode {
+            type run-mode;
+            must "((../run-mode='recovery-domain'))";
+            description
+              "Clock recovery mode for E1 interfaces.";
+          }
+          leaf domain-value {
+            type uint32 {
+              range "1..8";
+            }
+            default "1";
+            description
+              "Clock recovery domain value of the CES service.";
+          } 
+        }
+      }
+
+      container recovery-modes {
+        description
+          "Configure CES clock recovery mode.";
+        leaf service-mode {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='Serial'";
+          type recovery-mode;
+          default "none";
+          description
+            "Clock recovery mode of the CES service.";
+        }
+      }
+    }
+  }
+}

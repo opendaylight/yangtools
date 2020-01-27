@@ -1,0 +1,622 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-multicast {
+  namespace urn:huawei:yang:huawei-bras-multicast;
+  prefix bras-multicast;
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras multicast.";
+  revision 2020-03-03 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-27 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+
+  container bras-multicast {
+    description
+      "Bras multicast.";
+    container ipv4-multicast-lists {
+      description
+        "List of the IPv4 multicast.";
+      list ipv4-multicast-list {
+        key "index";
+        unique name;
+        max-elements "8192";
+        description
+          "Configure an IPv4 multicast list. The group-address and group-mask combination and source-address and source-mask combination of different instances must not overlap.";
+        leaf index {
+          type uint32 {
+            range "0..8191";
+          }
+          description
+            "Specifies the index of a multicast list.";
+        }
+        leaf name {
+          type string {
+            length "1..32";
+            pattern "[!-~]{1,32}";
+            pattern "([^A-Z\"%'*/:<>\\?@|]{1,32})";
+          }
+          must "../name != '-' and ../name != '--'";
+          mandatory "true";
+          description
+            "Specifies the name of a multicast list.";
+          ext:case-sensitivity lower-only;
+        }
+        leaf source-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Specifies the multicast source address.";
+        }
+        leaf source-mask {
+          when "../source-address";
+          type uint32 {
+            range "1..32";
+          }
+          default "32";
+          description
+            "Specifies the mask of the multicast source IP address.";
+        }
+        leaf group-address {
+          type inet:ipv4-address-no-zone;
+          mandatory "true";
+          description
+            "Specifies the multicast group IP address.";
+        }
+        leaf group-mask {
+          type uint32 {
+            range "1..32";
+          }
+          default "32";
+          description
+            "Specifies the mask of the multicast group IP address.";
+        }
+        leaf vpn-instance {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+          default "_public_";
+          description
+            "Specifies the name of a VPN instance.";
+        }
+      }
+    }
+    container bas-policy {
+      presence "Create bas policy.";
+      description
+        "Configure a multicast BAS policy and displays the policy.";
+      container policys {
+        description
+          "List of the policy and displays the policy.";
+        list policy {
+          key "name";
+          max-elements "1024";
+          description
+            "Configure a policy and displays the policy.";
+          leaf name {
+            type string {
+              length "1..15";
+              pattern "[a-zA-Z0-9_]{1,15}";
+            }
+            description
+              "Specifies a policy name.";
+          }
+          container channels {
+            description
+              "List of the multicast channel and displays the channel.";
+            list channel {
+              key "name";
+              max-elements "128";
+              description
+                "Configure a multicast channel and displays the channel.";
+              leaf name {
+                type string {
+                  length "1..15";
+                  pattern "[a-zA-Z0-9_]{1,15}";
+                }
+                description
+                  "Specifies a multicast channel name.";
+              }
+              container group-sources {
+                description
+                  "List of the any-source or source-specific group range, bandwidth occupied by each group, and level of bandwidth resources that a group consumes.";
+                list group-source {
+                  key "group-address source-address";
+                  max-elements 16;
+                  description
+                    "Configure an any-source or source-specific group range, bandwidth occupied by each group, and level of bandwidth resources that a group consumes. The group-address and group-mask combination and source-address and source-mask combination of different instances must not overlap.";
+                  leaf group-address {
+                    type inet:ipv4-address-no-zone;
+                    description
+                      "Specifies a multicast group address.";
+                  }
+                  leaf source-address {
+                    type inet:ipv4-address-no-zone;
+                    description
+                      "Specifies a multicast source address.";
+                  }
+                  leaf group-mask {
+                    type uint8 {
+                      range "4..32";
+                    }
+                    mandatory "true";
+                    description
+                      "Specifies a mask length for a multicast group address.";
+                  }
+                  leaf source-mask {
+                    when "../source-address!='0.0.0.0'";
+                    type uint8 {
+                      range "8..32";
+                    }
+                    mandatory "true";
+                    description
+                      "Specifies a mask length for a multicast source address.";
+                  }
+                  leaf bandwidth {
+                    type uint32 {
+                      range "1..1048576";
+                    }
+                    mandatory "true";
+                    description
+                      "Specifies the bandwidth occupied by each group.";
+                  }
+                  leaf bandwidth-level {
+                    type enumeration {
+                      enum "level-1" {
+                        value 1;
+                        description
+                          "Indicates that a multicast group consumes the level-1 bandwidth resources.";
+                      }
+                      enum "level-2" {
+                        value 2;
+                        description
+                          "Indicates that a multicast group consumes the level-2 bandwidth resources.";
+                      }
+                    }
+                    mandatory "true";
+                    description
+                      "Indicates the restriction type of multicast bandwidth.";
+                  }
+                }
+              }
+            }
+          }
+          container unspecified-channel-permit {
+            description
+              "Configure users to join multicast programs that are not specified in a multicast bandwidth limit policy and configures the device not to count the bandwidth consumed by such programs. By default, users are not allowed to join multicast programs that are not specified in a multicast bandwidth limit policy.";
+            leaf permit {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable users to join multicast programs that are not specified in a multicast bandwidth limit policy.";
+            }
+          }
+        }
+      }
+    }
+    container ipv4-profiles {
+      description
+        "List of the IPv4 Multicast profiles.";
+      list ipv4-profile {
+        key "name";
+        max-elements "1024";
+        description
+          "Configure an IPv4 Multicast profile.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern "[!-~]{1,32}";
+            pattern "([^A-Z\"%'*/:<>\\?@|]{1,32})";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Configures profile Name.";
+          ext:case-sensitivity lower-only;
+        }
+        container ipv4-multicast-lists {
+          description
+            "List of the IPv4 multicast in an IPv4 multicast profile.";
+          list ipv4-multicast-list {
+            key "index static-flag";
+            description
+              "Configure IPv4 multicast list to an IPv4 multicast profile, the max-elements of the VNE9000-CP is 8, the max-elements of others is 10.";          
+            leaf index {
+              type leafref {
+                path "/bras-multicast:bras-multicast/bras-multicast:ipv4-multicast-lists/bras-multicast:ipv4-multicast-list/bras-multicast:index";
+              }
+              description
+                "Specifies the index of the IPv4 multicast list that is bound to the IPv4 multicast profile.";
+            }
+            leaf static-flag {
+              type boolean;
+              description
+                "Enable/disable static IPv4 multicast lists or dynamic IPv4 multicast lists to an IPv4 multicast profile.";
+            }
+          }
+        }
+        container authentication {
+          description
+            "Configure IPv4 Multicast Authentication.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable IPv4 Multicast Authentication.";
+          }
+        }
+      }
+    }
+    container ipv6-profiles {
+      description
+        "List of the IPv6 Multicast profiles.";
+      list ipv6-profile {
+        key "name";
+        max-elements "1024";
+        description
+          "Configure an IPv6 Multicast profile.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern "[!-~]{1,32}";
+            pattern "([^A-Z\"%'*/:<>\\?@|]{1,32})";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Configures an IPv6 Multicast profile Name.";
+          ext:case-sensitivity lower-only;
+        }
+        container ipv6-multicast-lists {
+          description
+            "List of the IPv6 multicast in an IPv6 multicast profile.";
+          list ipv6-multicast-list {
+            key "index static-flag";
+            description
+              "Configure a IPv6 multicast list to an IPv6 multicast profile, the max-elements of the VNE9000-CP is 8, the max-elements of others is 10.";
+            leaf index {
+              type leafref {
+                path "/bras-multicast:bras-multicast/bras-multicast:ipv6-multicast-lists/bras-multicast:ipv6-multicast-list/bras-multicast:index";
+              }
+              description
+                "Specifies the index of the IPv6 multicast list that is bound to the IPv6 multicast profile.";
+            }
+            leaf static-flag {
+              type boolean;
+              description
+                "Enable/disable binding of static or dynamic IPv6 multicast lists to an IPv6 multicast profile.";
+            }
+          }
+        }
+        container authentication {
+          description
+            "Configure IPv6 Multicast Authentication.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable IPv6 Multicast Authentication.";
+          }
+        }
+      }
+    }
+    container ipv6-multicast-lists {
+      description
+        "List of the IPv6 multicast.";
+      list ipv6-multicast-list {
+        key "index";
+        unique name;
+        max-elements "8192";
+        description
+          "Configure an IPv6 multicast list. The group-address and group-mask combination and source-address and source-mask combination of different instances must not overlap.";
+        leaf index {
+          type uint32 {
+            range "0..8191";
+          }
+          description
+            "Specifies the index of an IPv6 multicast list.";
+        }
+        leaf name {
+          type string {
+            length "1..32";
+            pattern "[!-~]{1,32}";
+            pattern "([^A-Z\"%'*/:<>\\?@|]{1,32})";
+          }
+          must "../name != '-' and ../name != '--'";
+          mandatory "true";
+          description
+            "Specifies the name of an IPv6 multicast list.";
+          ext:case-sensitivity  lower-only;
+        }
+        leaf source-address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Specifies an IPv6 multicast source address.";
+        }
+        leaf source-mask {
+          when "../source-address";
+          type uint32 {
+            range "1..128";
+          }
+          default "128";
+          description
+            "Specifies the length of the prefix of the IPv6 multicast source address.";
+        }
+        leaf group-address {
+          type inet:ipv6-address-no-zone;
+          mandatory "true";
+          description
+            "Specifies an IPv6 multicast group address.";
+        }
+        leaf group-mask {
+          type uint32 {
+            range "8..128";
+          }
+          default "128";
+          description
+            "Specifies the length of the prefix of the IPv6 multicast group address.";
+        }
+        leaf vpn-instance {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";
+          default "_public_";
+          description
+            "Specifies the name of a IPv6 multicast VPN instance.";
+        }
+      }
+    }
+  }
+  
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "Bras domain configuration.";
+    container multicast {
+      description
+        "Configure multicast domain.";
+      container igmp-enable {
+        description
+          "Configure IGMP in a specific domain.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable IGMP in a specific domain.";
+        }
+      }
+      container without-forward {
+        description
+          "Configure the router from copying multicast data.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the router from copying multicast data.";
+        }
+      }
+      container max-list {
+        description
+          "Configure the total maximum number of IPv4 and IPv6 multicast programs that a user is allowed to access at a time.";
+        leaf number {
+          type uint32 {
+            range "1..512";
+          }
+          default "4";
+          description
+            "Specifies the maximum number of multicast programs that a user is allowed to access at a time.";
+        }
+      }
+      container ipv4-profile {
+        description
+          "Configure a multicast profile in the AAA domain.";
+        leaf name {
+          type leafref {
+            path "/bras-multicast:bras-multicast/bras-multicast:ipv4-profiles/bras-multicast:ipv4-profile/bras-multicast:name";
+          }
+          description
+            "Specifies the name of the IPv4 multicast profile.";
+        }
+      }
+      container ipv6-profile {
+        description
+          "Configure a IPv6 multicast profile to the AAA domain.";
+        leaf name {
+          type leafref {
+            path "/bras-multicast:bras-multicast/bras-multicast:ipv6-profiles/bras-multicast:ipv6-profile/bras-multicast:name";
+          }
+          description
+            "Specifies the name of the IPv6 multicast profile.";
+        }
+      }
+      container virtual-scheduling-vpn {
+        description
+          "Configure a multicast user VPN to the AAA domain of a unicast user VPNs.";
+        leaf name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+          description
+            "Binds a multicast user VPN to the AAA domain of a unicast user VPNs.";
+        }
+      }
+      container unicast-reserved-bandwidth {
+        description
+          "Configure the minimum bandwidth reserved for unicast and enable multicast virtual scheduling.";
+        leaf cir {
+          type uint32 {
+            range "128..1000000";
+          }
+          description
+            "Unicast reserved bandwidth committed information rate.";
+        }
+        leaf pir {
+          when "../cir";
+          type uint32 {
+            range "128..1000000";
+          }
+          must "../pir >= ../cir";
+          description
+            "Unicast reserved bandwidth peak information rate.";
+        }
+        leaf coexist-with-copy-by-session {
+          when "../cir";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable multicast virtual scheduling when the session-based multicast replication function is enabled on the BAS interface.";
+        }
+      }
+      container bandwidth-limit-policy {
+        presence "Bandwidth limit policy.";
+        description
+          "Configure a multicast bandwidth limit policy and sets bandwidth limits in an AAA domain.";
+        leaf name {
+          type leafref {
+            path "/bras-multicast:bras-multicast/bras-multicast:bas-policy/bras-multicast:policys/bras-multicast:policy/bras-multicast:name";
+          }
+          mandatory "true";
+          description
+            "Specifies the name of a multicast bandwidth limit policy.";
+        }
+        leaf total {
+          type uint32 {
+            range "1..1048576";
+          }
+          mandatory "true";
+          description
+            "Specifies the total maximum bandwidth available to each user in a specified AAA domain.";
+        }
+        leaf level1 {
+          type uint32 {
+            range "1..1048576";
+          }
+          must "../total >= ../level1";
+          mandatory "true";
+          description
+            "Specifies the maximum level-1 bandwidth available to each user in a specified AAA domain.";
+        }
+      }
+    }
+  }  
+  
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board/bras-basic-access:bras" {
+    description
+      "Bras devm configuration.";
+    container multicast {
+      description
+        "Configure multicast devm.";
+      container bas-policy-cac {
+        description
+          "Configure user-side multicast CAC on a specific interface board.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable user-side multicast CAC on a specific interface board.";
+        }
+      }
+    }
+  }
+
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board/bras-basic-access:bras" {
+    description
+      "Bras devm configuration.";
+    container multicast {
+      description
+        "Configure multicast devm.";
+      container bas-policy-cac {
+        description
+          "Configure user-side multicast CAC on a specific interface board.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable user-side multicast CAC on a specific interface board.";
+        }
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bras" {
+    description
+      "Bras ifm configuration.";
+    container multicast {
+      description
+          "Configure bras multicast.";
+      container bandwidth-limit-policy {
+        when "(../../../ifm:type='GigabitEthernet' or ../../../ifm:type='10GE' or ../../../ifm:type='100GE') and ../../../ifm:class='main-interface'";
+        presence "Bandwidth limit policy.";
+        description
+          "Configure a multicast bandwidth limit policy and sets bandwidth limits on an interface.";
+        leaf name {
+          type leafref {
+            path "/bras-multicast:bras-multicast/bras-multicast:bas-policy/bras-multicast:policys/bras-multicast:policy/bras-multicast:name";
+          }
+          mandatory "true";
+          description
+            "Specifies the name of a multicast bandwidth limit policy.";
+        }
+        leaf total {
+          type uint32 {
+            range "1..10485760";
+          }
+          mandatory "true";
+          description
+            "Specifies the total maximum bandwidth on an interface.";
+        }
+        leaf level1 {
+          type uint32 {
+            range "1..10485760";
+          }
+          must "../total >= ../level1";
+          mandatory "true";
+          description
+            "Specifies the maximum level-1 bandwidth on an interface.";
+        }
+      }
+    }
+  }
+}

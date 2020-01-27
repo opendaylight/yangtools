@@ -1,0 +1,761 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-isis-type {
+  belongs-to huawei-isis {
+    prefix isis;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "ISIS type defined file.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef level-type {
+    type enumeration {
+      enum "level-1" {
+        value 1;
+        description
+          "Level 1.";
+      }
+      enum "level-2" {
+        value 2;
+        description
+          "Level 2.";
+      }
+      enum "level-1-2" {
+        value 3;
+        description
+          "Level 1 and 2.";
+      }
+    }
+    description
+      "ISIS level type.";
+  }
+  typedef level-type-two {
+    type enumeration {
+      enum "level-1" {
+        value 1;
+        description
+          "Level 1.";
+      }
+      enum "level-2" {
+        value 2;
+        description
+          "Level 2.";
+      }
+    }
+    description
+      "ISIS level type.";
+  }
+  typedef level-type-zero {
+    type enumeration {
+      enum "no-set" {
+        value 0;
+        description
+          "Invalid Level.";
+      }
+      enum "level-1" {
+        value 1;
+        description
+          "Level 1.";
+      }
+      enum "level-2" {
+        value 2;
+        description
+          "Level 2.";
+      }
+      enum "level-1-2" {
+        value 3;
+        description
+          "Level 1 and 2.";
+      }
+    }
+    description
+      "ISIS level type with zero.";
+  }
+  typedef auth-cmd-type {
+    type enumeration {
+      enum "area" {
+        value 1;
+        description
+          "Area authentication.";
+      }
+      enum "domain" {
+        value 2;
+        description
+          "Domain authentication.";
+      }
+    }
+    description
+      "ISIS authentication command type.";
+  }
+  typedef auth-type {
+    type enumeration {
+      enum "simple" {
+        value 1;
+        description
+          "Send the unencrypted authentication password.";
+      }
+      enum "md5" {
+        value 2;
+        description
+          "Send the encrypted authentication password.";
+      }
+      enum "keychain" {
+        value 3;
+        description
+          "Send the encrypted authentication password.";
+      }
+      enum "hmac-sha256" {
+        value 4;
+        description
+          "Send the encrypted authentication password.";
+      }
+    }
+    description
+      "ISIS authentication type.";
+  }
+  typedef service-type {
+    type enumeration {
+      enum "ip" {
+        value 1;
+        description
+          "IP authentication service.";
+      }
+      enum "osi" {
+        value 2;
+        description
+          "OSI authentication service.";
+      }
+    }
+    description
+      "ISIS service type.";
+  }
+  typedef cost-style {
+    type enumeration {
+      enum "narrow" {
+        value 1;
+        description
+          "The system can receive or send the routes with the cost type of narrow.";
+      }
+      enum "wide" {
+        value 2;
+        description
+          "The system can receive or send the routes with the cost type of wide.";
+      }
+      enum "transition" {
+        value 3;
+        description
+          "The system can receive or send the routes with the cost type of narrow or wide.";
+      }
+      enum "ntransition" {
+        value 4;
+        description
+          "The system can receive the routes with the cost type of narrow or wide; however, the system can send only the routes with the type of narrow.";
+      }
+      enum "wtransition" {
+        value 5;
+        description
+          "The system can receive the routes with the cost type of narrow or wide; however, the system can send only the routes with the type of wide.";
+      }
+    }
+    description
+      "ISIS cost style.";
+  }
+  typedef af-type {
+    type enumeration {
+      enum "afipv4" {
+        value 1;
+        description
+          "IPv4 address family.";
+      }
+      enum "afipv6" {
+        value 2;
+        description
+          "IPv6 address family.";
+      }
+    }
+    description
+      "ISIS address family type.";
+  }
+  typedef base-topo-v6 {
+    type enumeration {
+      enum "standard" {
+        value 0;
+        description
+          "Standard Topology.";
+      }
+      enum "compatible" {
+        value 1;
+        description
+          "Compatible.";
+      }
+      enum "ipv6" {
+        value 2;
+        description
+          "IPv6.";
+      }
+      enum "cmpt-ipv6spf" {
+        value 3;
+        description
+          "Compatible IPv6 SPF.";
+      }
+    }
+    description
+      "ISIS base topology type.";
+  }
+  typedef wait-type {
+    type enumeration {
+      enum "wait-for-bgp" {
+        value 1;
+        description
+          "Set the duration for the system to retain the overload flag according to the status of BGP convergence.";
+      }
+      enum "start-from-nbr" {
+        value 2;
+        description
+          "Set the duration for the system to retain the overload flag according to the status of the neighbor with the specified system ID.";
+      }
+      enum "no-wait" {
+        value 3;
+        description
+          "This mode takes effect when on startup, start from nbr, or wait for bgp is set.";
+      }
+    }
+    description
+      "ISIS wait type.";
+  }
+  typedef adj-status {
+    type enumeration {
+      enum "init" {
+        value 1;
+        description
+          "The neighbor is in the init state.";
+      }
+      enum "up" {
+        value 2;
+        description
+          "The neighbor is in the up state.";
+      }
+    }
+    description
+      "ISIS adjacency status.";
+  }
+  typedef peer-protocol {
+    type enumeration {
+      enum "ipv4" {
+        value 1;
+        description
+          "IPv4.";
+      }
+      enum "ipv6" {
+        value 2;
+        description
+          "IPv6.";
+      }
+      enum "ipv4-ipv6" {
+        value 3;
+        description
+          "IPv4 IPv6.";
+      }
+      enum "virtual-cluster-access" {
+        value 4;
+        description
+          "Virtual cluster access.";
+      }
+      enum "ipv4-virtual-cluster-access" {
+        value 5;
+        description
+          "IPv4 virtual cluster access.";
+      }
+      enum "ipv6-virtual-cluster-access" {
+        value 6;
+        description
+          "IPv6 virtual cluster access.";
+      }
+      enum "ipv4-ipv6-virtual-cluster-access" {
+        value 7;
+        description
+          "IPv4 IPv6 virtual cluster access.";
+      }
+      enum "virtual-access" {
+        value 8;
+        description
+          "Virtual access.";
+      }
+      enum "ipv4-virtual-access" {
+        value 9;
+        description
+          "IPv4 virtual access.";
+      }
+      enum "ipv6-virtual-access" {
+        value 10;
+        description
+          "IPv6 virtual access.";
+      }
+      enum "ipv4-ipv6-virtual-access" {
+        value 11;
+        description
+          "IPv4 IPv6 virtual access.";
+      }
+    }
+    description
+      "ISIS peer protocol.";
+  }
+  typedef overload-type {
+    type enumeration {
+      enum "no-set" {
+        value 0;
+        description
+          "The OL flag is not set.";
+      }
+      enum "on-startup" {
+        value 1;
+        description
+          "Remain the overload flag within the set duration when the router restarts or a fault occurs.";
+      }
+      enum "maunal" {
+        value 2;
+        description
+          "Manually set the OL flag.";
+      }
+    }
+    description
+      "ISIS overload type.";
+  }
+  typedef auth-usage-type {
+    type enumeration {
+      enum "usage-default" {
+        value 0;
+        description
+          "In this mode, the system encapsulates the authentication information in generated LSPs and SNPs and checks the received LSPs and SNPs.";
+      }
+      enum "authentication-avoid" {
+        value 1;
+        description
+          "In this mode, the system only encapsulates the authentication information in generated LSPs and checks the received LSPs. The system does not perform the same operations to SNPs.";
+      }
+      enum "send-only" {
+        value 2;
+        description
+          "In this mode, the system encapsulates the authentication information in generated LSPs and SNPs, but checks only received LSPs.";
+      }
+      enum "all-send-only" {
+        value 3;
+        description
+          "In this mode, the system encapsulates the authentication information in generated LSPs and SNPs, but does not check received LSPs and SNPs.";
+      }
+    }
+    description
+      "ISIS authentication usage type.";
+  }
+  typedef priority-type {
+    type enumeration {
+      enum "medium" {
+        value 1;
+        description
+          "Set the medium level.";
+      }
+      enum "high" {
+        value 2;
+        description
+          "Set the high level.";
+      }
+      enum "critical" {
+        value 3;
+        description
+          "Set the critical level.";
+      }
+      enum "very-low" {
+        value 4;
+        description
+          "Set the very low level.";
+      }
+    }
+    description
+      "ISIS route priority type.";
+  }
+  typedef ldp-sync-state {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "ISIS LDP synchronization is disabled.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "ISIS LDP synchronization is enabled.";
+      }
+      enum "block" {
+        value 2;
+        description
+          "ISIS LDP synchronization is blocked.";
+      }
+    }
+    description
+      "ISIS LDP sync status.";
+  }
+  typedef import-protocol {
+    type enumeration {
+      enum "direct" {
+	    value 1;
+        description
+          "Import direct routes.";
+      }
+      enum "ospf" {
+	    value 2;
+        description
+          "Import OSPF routes.";
+      }
+      enum "isis" {
+	    value 3;
+        description
+          "Import ISIS routes.";
+      }
+      enum "static" {
+	    value 4;
+        description
+          "Import static routes.";
+      }
+      enum "rip" {
+	    value 5;
+        description
+          "Import RIP routes.";
+      }
+      enum "bgp" {
+	    value 6;
+        description
+          "Import BGP routes.";
+      }
+      enum "ospfv3" {
+	    value 7;
+        description
+          "Import OSPFv3 routes.";
+      }
+      enum "ripng" {
+	    value 8;
+        description
+          "Import RIPng routes.";
+      }
+      enum "unr" {
+	    value 11;
+        description
+          "Import UNR routes.";
+      }
+    }
+    description
+      "ISIS import protocol type.";
+  }
+  typedef is-import-cost {
+    type enumeration {
+      enum "external" {
+        value 1;
+        description
+          "External cost type.";
+      }
+      enum "internal" {
+        value 2;
+        description
+          "Internal cost type.";
+      }
+    }
+    description
+      "ISIS import cost type.";
+  }
+  typedef ecmp-prefer-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "No priority is set.";
+      }
+      enum "te-tunnel" {
+        value 2;
+        description
+          "Preferentially select the routes with a TE tunnel interface as the outbound interface to load-balance ISIS traffic.";
+      }
+      enum "intact" {
+        value 3;
+        description
+          "Preferentially select the routes with a TE tunnel interface as the outbound interface and at least one route with an IPv4 interface as the outbound interface to load-balance ISIS traffic.";
+      }
+    }
+    description
+      "ISIS ecmp prefer type.";
+  }
+  typedef att-adv-mode {
+    type enumeration {
+      enum "no-type" {
+        value 0;
+        description
+          "No type.";
+      }
+      enum "always" {
+        value 1;
+        description
+          "Always advertise the ATT bit.";
+      }
+      enum "never" {
+        value 2;
+        description
+          "Never advertise the ATT bit.";
+      }
+    }
+    description
+      "ISIS att advertise mode.";
+  }
+  typedef pad-type {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Send hello packets in normal mode.";
+      }
+      enum "padding" {
+        value 1;
+        description
+          "Send hello packets with the padding field.";
+      }
+      enum "small" {
+        value 2;
+        description
+          "Send hello packets without the padding field.";
+      }
+    }
+    description
+      "ISIS padding type.";
+  }
+  typedef mesh-group-state {
+    type enumeration {
+      enum "inactive" {
+        value 1;
+        description
+          "The mesh group is inactive.";
+      }
+      enum "blocked" {
+        value 2;
+        description
+          "The mesh group is blocked.";
+      }
+      enum "set" {
+        value 3;
+        description
+          "The mesh group is set.";
+      }
+    }
+    description
+      "ISIS mesh group state.";
+  }
+  typedef p2p-negotiation {
+    type enumeration {
+      enum "2-way" {
+        value 1;
+        description
+          "Apply the two way handshake negotiation model during the establishment of the P2P neighboring relationship.";
+      }
+      enum "3-way" {
+        value 2;
+        description
+          "Apply the three way handshake negotiation model during the establishment of the P2P neighboring relationship.";
+      }
+      enum "3-wayonly" {
+        value 3;
+        description
+          "Apply only the three way handshake negotiation model during the establishment of the P2P neighboring relationship. The backward compatibility is not supported.";
+      }
+    }
+    description
+      "ISIS P2P negotiation.";
+  }
+  typedef bfd-state-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown BFD.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "BFD is in the down state.";
+      }
+      enum "up" {
+        value 2;
+        description
+          "BFD is in the up state.";
+      }
+    }
+    description
+      "ISIS bfd state type.";
+  }
+  typedef bfd-bit-err-type {
+    type enumeration {
+      enum "no-set" {
+        value 0;
+        description
+          "ISIS BFD bit error is not set.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "ISIS BFD bit error is enabled.";
+      }
+      enum "block" {
+        value 2;
+        description
+          "ISIS BFD bit error is blocked.";
+      }
+    }
+    description
+      "ISIS bfd bit error enable type.";
+  }
+  typedef endx-sid-type {
+    type enumeration {
+      enum "no-psp" {
+        value 0;
+        description
+          "No psp.";
+      }
+      enum "psp" {
+        value 1;
+        description
+          "Psp.";
+      }
+    }
+    description
+      "SRv6 End.X sid type.";
+  }
+  typedef peer-flap-status-type {
+    type enumeration {
+      enum "no" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "yes" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "holdmaxcost" {
+        value 2;
+        description
+          "Hold max cost.";
+      }
+      enum "holddown" {
+        value 3;
+        description
+          "Hold down.";
+      }
+    }
+    description
+      "ISIS peer flag suppress status.";
+  }
+  typedef default-mode {
+    type enumeration {
+      enum "always" {
+        value 1;
+        description
+          "Default routes of the always type.";
+      }
+      enum "match-default" {
+        value 2;
+        description
+          "Default routes of the match default type.";
+      }
+      enum "match-any" {
+        value 3;
+        description
+          "Default routes of the match any type.";
+      }
+    }
+    description
+      "ISIS default mode.";
+  }
+  typedef filter-export-type {
+    type enumeration {
+      enum "direct" {
+	    value 1;
+        description
+          "Filter direct routes.";
+      }
+      enum "ospf" {
+	    value 2;
+        description
+          "Filter OSPF routes.";
+      }
+      enum "isis" {
+	    value 3;
+        description
+          "Filter ISIS routes.";
+      }
+      enum "static" {
+	    value 4;
+        description
+          "Filter static routes.";
+      }
+      enum "rip" {
+	    value 5;
+        description
+          "Filter RIP routes.";
+      }
+      enum "bgp" {
+	    value 6;
+        description
+          "Filter BGP routes.";
+      }
+      enum "ospfv3" {
+	    value 7;
+        description
+          "Filter OSPFv3 routes.";
+      }
+      enum "ripng" {
+	    value 8;
+        description
+          "Filter RIPng routes.";
+      }
+      enum "all" {
+	    value 9;
+        description
+          "Filter all routes.";
+      }
+      enum "unr" {
+	    value 11;
+        description
+          "Filter UNR routes.";
+      }
+    }
+    description
+      "ISIS filter export protocol type.";
+  }
+  typedef enable-flag {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "This is used for disabling ISIS configurations.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "This is used for enabling ISIS configurations.";
+      }
+    }
+    description
+      "ISIS enable flag.";
+  }
+}

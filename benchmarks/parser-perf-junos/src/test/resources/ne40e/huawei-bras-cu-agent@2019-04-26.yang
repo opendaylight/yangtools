@@ -1,0 +1,320 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-cu-agent {
+  namespace urn:huawei:yang:huawei-bras-cu-agent;
+  prefix bras-cu-agent;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-monitor-group {
+    prefix monitor-group;
+  }
+  import huawei-route-monitor-group {
+    prefix rmg;
+  }
+  import huawei-bfd {
+    prefix bfd;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "CU agent.";
+  
+  revision 2019-04-26 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+  typedef cu-mode-access-type {
+    type enumeration {
+      enum "layer2" {
+        value 2;
+        description
+          "Layer2 access.";
+      }
+      enum "layer3" {
+        value 3;
+        description
+          "Layer3 access.";
+      }
+      enum "layer3-leased-line" {
+        value 4;
+        description
+          "Layer3 leased line.";
+      }
+    }
+    description
+      "CU mode access type.";
+  }
+  container bras-cu-agent {
+    description
+      "Specify configuration information of CU agent.";
+    container cu-agent {
+      presence "Enable the UP mode so that the current device functions as a vBRAS-UP.";
+      description
+        "Enable/disable the UP mode so that the current device functions as a vBRAS-UP.";
+      container interface-monitoring-groups {
+        description
+          "List of configuring a vBRAS-UP to track the session status of interface monitoring groups to detect network-side link faults.";
+        list interface-monitoring-group {
+          key "name";
+          description
+            "Configure a vBRAS-UP to track the session status of a specified interface monitoring group.";
+          leaf name {
+            type leafref {
+              path "/monitor-group:monitor-group/monitor-group:groups/monitor-group:group/monitor-group:name";
+            }
+            description
+              "Name of an interface monitoring group.";
+          }
+          leaf down-weight {
+            type uint32 {
+              range "1..32000";
+            }
+            mandatory true;
+            description
+              "Interface weight for reporting a network-side fault. A higher weight indicates a higher fault priority.";
+          }
+        }
+      }
+      container route-monitoring-groups {
+        description
+          "List of configuring a vBRAS-UP to track the session status of a route monitoring group to detect network-side link faults.";
+        list route-monitoring-group {
+          key "name";
+          description
+            "Configure a vBRAS-UP to track the session status of a specified route monitoring group.";
+          leaf name {
+            type leafref {
+              path "/rmg:route-monitor-group/rmg:monitor-groups/rmg:monitor-group/rmg:group-name";
+            }
+            description
+              "Name of a route monitoring group.";
+          }
+          leaf down-weight {
+            type uint32 {
+              range "1..32000";
+            }
+            mandatory true;
+            description
+              "Route weight for reporting a network-side fault. A higher weight indicates a higher fault priority.";
+          }
+        }
+      }
+      container bfd-sessions {
+        description
+          "List of configure a vBRAS-UP to track the status of a BFD session to detect access-side faults.";
+        list bfd-session {
+          key "name";
+          description
+            "Configure a vBRAS-UP to track the status of a BFD session.";
+          leaf name {
+            type leafref {
+              path "/bfd:bfd/bfd:sessions/bfd:session/bfd:name";
+            }
+            description
+              "Name of a BFD session.";
+          }
+        }
+      }
+      container up-nqa-detect {
+        presence "Creat up-nqa-detect.";
+        description
+          "Enable/disable NQA dectct to the VXLAN tunnel.";
+        leaf count {
+          type uint32 {
+            range "0..4294967295";
+          }
+          default "3";
+          description
+            "Number of sent Echo Request messages.";
+        }
+        leaf interval {
+          type uint32 {
+            range "1..10000";
+          }
+          units min;
+          default "1";
+          description
+            "Time elapses before a next Echo Request message is sent.";
+        }
+        leaf timeout {
+          type uint32 {
+            range "1..65535";
+          }
+          units min;
+          default "1";
+          description
+            "Timeout period of waiting for an Echo Reply message.";
+        }
+        leaf destination-port {
+          type uint32 {
+            range "1..65535";
+          }
+          mandatory true;
+          description
+            "Destination port number.";
+        }
+      }
+      container up-cusp-agent {
+        config false;
+        description
+          "Operational state of binding a CUSP agent to the vBRAS-UP and the control tunnel between the vBRAS-CP and vBRAS-UP is established.";
+        leaf name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Name of the CUSP agent bound to the control tunnel. After the CUSP agent is bound to the vBRAS-UP, the control tunnel between the vBRAS-CP and vBRAS-UP is established.";
+        }
+      }
+      container up-vxlan-channels {
+        config false;
+        description
+          "List of binding VxLAN Tunnel state.";
+        list up-vxlan-channel {
+          key "vni source-ip-address destination-ip-address";
+          description
+            "Binding VxLAN Tunnel state.";
+          leaf vni {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "VxLAN Network Identify.";
+          }
+          leaf source-ip-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Source IP Address.";
+          }
+          leaf destination-ip-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Destination IP Address.";
+          }
+          leaf vpn-instance-name {
+            type string {
+              length "1..31";
+            }
+            description
+              "VPN Instance Name.";
+          }
+        }
+      }
+    }
+    container up-versions {
+      config false;
+      description
+        "List of Checking CU interface version information on the UP side state.";
+      list up-version {
+        key instance;
+        description
+          "Checking CU interface version information on the UP side state.";
+        leaf instance {
+          type enumeration {
+            enum master {
+              value 0;
+              description
+                "Master type.";
+            }
+            enum slave {
+              value 1;
+              description
+                "Slave type.";
+            }
+            enum no-disaster-environment {
+              value 255;
+              description
+                "Not disaster environment.";
+            }
+          }
+          description
+            "UP connect with multiple CP.";
+        }
+        leaf cp-version {
+          type string {
+            length 1..7;
+          }
+          description
+            "CP version information.";
+        }
+        leaf up-version {
+          type string {
+            length 1..7;
+          }
+          description
+            "UP version information.";
+        }
+        leaf negotiation-result {
+          type string {
+            length 1..15;
+          }
+          description
+            "Negotiation result.";
+        }
+      }
+    } 
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Configure CU agent to interface model.";
+    container cu-agent {
+      description
+        "Configure CU agent to interface model.";
+      container up-ve-track {
+        when "../../ifm:type = 'Virtual-Ethernet'";
+        description
+          "Configure the UP VE port to track the status of the UP/CP channel (including openflow and vxlan).";
+        leaf up-ve-track-tunnel-enable {
+          type empty;
+          description
+            "Enable the UP VE port to track the status of the UP/CP channel (including openflow and vxlan).";
+        }
+      }
+      container cu-multicast-rbp {
+        description
+          "Configure an RBP to a specified interface on a vBRAS-UP.";
+        leaf name {
+          type string {
+            length "1..128";
+          }
+          must "/bras-cu-agent:bras-cu-agent/bras-cu-agent:cu-agent";
+          description
+            "Bind an RBP to a specified interface on a vBRAS-UP.";
+        }
+      }
+      container cu-mode-interface {
+        config false;
+        description
+          "Statistics of the UP mode in the interface and report the interface to the vBRAS-CP for management.";
+        leaf cu-mode-enable {
+          type boolean;
+          description
+            "CU mode enable.";
+        }
+        leaf user-access-type {
+          type cu-mode-access-type;
+          description
+            "Access type of a user.";
+        }
+      }
+    }    
+  }
+}

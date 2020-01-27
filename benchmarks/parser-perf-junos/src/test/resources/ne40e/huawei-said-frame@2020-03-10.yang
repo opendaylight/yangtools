@@ -1,0 +1,380 @@
+/******************************************************
+* Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+* Module description & tree structure
+***************************************************/
+module huawei-said-frame {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-said-frame";
+  prefix sf;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com
+    ";
+  description
+    "SAID frame configurations.";
+  revision 2020-03-10 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef state-type {
+    type enumeration {
+      enum "init" {
+        value 0;
+        description
+          "Init state.";
+      }
+      enum "detecting" {
+        value 1;
+        description
+          "Detecting state.";
+      }
+      enum "diagnosing" {
+        value 2;
+        description
+          "Diagnosing state.";
+      }
+      enum "invalid-diagnose" {
+        value 3;
+        description
+          "Invalid diagnose state.";
+      }
+      enum "recovering" {
+        value 4;
+        description
+          "Recovering state.";
+      }
+      enum "judging" {
+        value 5;
+        description
+          "Judging state.";
+      }
+      enum "exp-judging" {
+        value 6;
+        description
+          "Exception judging state.";
+      }
+    }
+    description
+      "SAID node running states.";
+  }
+  typedef operation-type {
+    type enumeration {
+      enum "common" {
+        value 0;
+        description
+          "Common operation type.";
+      }
+      enum "prevention" {
+        value 1;
+        description
+          "Prevented operation type.";
+      }
+    }
+    description
+      "SAID node operating types.";
+  }
+  typedef said-name-lpu {
+    type enumeration {
+      enum "ping" {
+        value 2;
+        description
+          "SAID ping node.";
+      }
+      enum "ping-trunk" {
+        value 3;
+        description
+          "SAID ping trunk node.";
+      }
+      enum "traffic-fail" {
+        value 4;
+        description
+          "SAID traffic fail node.";
+      }
+      enum "seu-igp" {
+        value 5;
+        description
+          "SAID seuigp node.";
+      }
+      enum "aaa" {
+        value 8;
+        description
+          "SAID aaa node.";
+      }
+      enum "seu-trunk" {
+        value 20;
+        description
+          "SAID seutrunk node.";
+      }
+      enum "seuloop" {
+        value 22;
+        description
+          "SAID seuloop node.";
+      }
+      enum "reset-board" {
+        value 25;
+        description
+          "SAID reset board node.";
+      }
+      enum "cfc" {
+        value 26;
+        description
+          "SAID cfc node.";
+      }
+      enum "ipnice" {
+        value 28;
+        description
+          "SAID ipnice node.";
+      }
+    }
+    description
+      "SAID node name in LPU.";
+  }
+    typedef said-name-mpu {
+    type enumeration {
+      enum "ping" {
+        value 2;
+        description
+          "SAID ping node.";
+      }
+      enum "ping-trunk" {
+        value 3;
+        description
+          "SAID ping trunk node.";
+      }
+      enum "traffic-fail" {
+        value 4;
+        description
+          "SAID traffic fail node.";
+      }
+      enum "seu-igp" {
+        value 5;
+        description
+          "SAID seuigp node.";
+      }
+      enum "aaa" {
+        value 8;
+        description
+          "SAID aaa node.";
+      }
+      enum "seu-trunk" {
+        value 20;
+        description
+          "SAID seutrunk node.";
+      }
+      enum "seuloop" {
+        value 22;
+        description
+          "SAID seuloop node.";
+      }
+      enum "reset-board" {
+        value 25;
+        description
+          "SAID reset board node.";
+      }
+      enum "cfc" {
+        value 26;
+        description
+          "SAID cfc node.";
+      }
+      enum "ipnice" {
+        value 28;
+        description
+          "SAID ipnice node.";
+      }
+    }
+    description
+      "SAID node name in MPU.";
+  }
+  typedef disable-flag {
+    type enumeration {
+      enum "undodisable" {
+        value 0;
+        description
+          "SAID node is enable.";
+      }
+      enum "disable" {
+        value 1;
+        description
+          "SAID node is disable.";
+      }
+    }
+    description
+      "SAID node disable flag.";
+  }
+  typedef enable-flag {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "SAID node is disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "SAID node is enable.";
+      }
+    }
+    description
+      "SAID node enable flag.";
+  }
+  ext:task-name "saidframe";
+  container said-frame {
+    description
+      "SAID frame.";
+    container global-switch {
+      description
+        "Configure SAID global switch.";
+      leaf disable {
+        type disable-flag;
+        default "undodisable";
+        description
+          "SAID global disable flag.";
+      }
+    }
+    container lpu-nodes {
+      config false;
+      description
+        "List of SAID node information in all LPUs.";
+      list lpu-node {
+        key "said-name slot-id";
+        description
+          "Statistics of SAID node information in a LPU.";
+        leaf said-name {
+          type said-name-lpu;
+          description
+            "SAID node name.";
+        }
+        leaf slot-id {
+          type string {
+            length "1..16";
+          }
+          description
+            "Indicates the slot ID of a board.";
+        }
+        leaf operate {
+          type operation-type;
+          description
+            "SAID node operating type.";
+        }
+        leaf state {
+          type state-type;
+          description
+            "SAID node running state.";
+        }
+        leaf cycle {
+          type uint32;
+          description
+            "Detecting cycle.";
+        }
+        leaf enable {
+          type enable-flag;
+          description
+            "SAID node enable flag.";
+        }
+      }
+    }
+    container lpunodecfgs {
+      description
+        "List of SAID node configurations in all LPUs.";
+      list lpunodecfg {
+        key "said-name slot-id";
+        description
+          "Configure SAID node configurations in a LPU.";
+        leaf said-name {
+          type said-name-lpu;
+          description
+            "SAID node name.";
+        }
+        leaf slot-id {
+          type string {
+            length "1..16";
+          }
+          description
+            "Indicates the slot ID of a board.";
+        }
+        leaf disable {
+          type disable-flag;
+          mandatory true;
+          description
+            "Disable flag.";
+        }
+      }
+    }
+    container mpu-nodes {
+      config false;
+      description
+        "List of SAID node information in all MPUs.";
+      list mpu-node {
+        key "said-name";
+        description
+          "Statistics of SAID node information in a MPU.";
+        leaf said-name {
+          type said-name-mpu;
+          description
+            "SAID node name.";
+        }
+        leaf slot-id {
+          type leafref {
+            path "/devm:devm/devm:mpu-boards/devm:mpu-board/devm:position";
+          }
+          description
+            "Slot ID.";
+        }
+        leaf operate {
+          type operation-type;
+          description
+            "SAID node operating type.";
+        }
+        leaf state {
+          type state-type;
+          description
+            "SAID node running state.";
+        }
+        leaf cycle {
+          type uint32;
+          description
+            "Detecting cycle.";
+        }
+        leaf enable {
+          type enable-flag;
+          description
+            "SAID node enable flag.";
+        }
+      }
+    }
+    container mpunodecfgs {
+      description
+        "List of SAID node configurations in all MPUs.";
+      list mpunodecfg {
+        key "said-name";
+        description
+          "Configure SAID node configurations in a MPU.";
+        leaf said-name {
+          type said-name-mpu;
+          description
+            "SAID node name.";
+        }
+        leaf disable {
+          type disable-flag;
+          mandatory true;
+          description
+            "Disable flag.";
+        }
+      }
+    }
+  }
+}

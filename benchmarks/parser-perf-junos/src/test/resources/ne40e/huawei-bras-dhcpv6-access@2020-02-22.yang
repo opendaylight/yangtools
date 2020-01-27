@@ -1,0 +1,495 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-dhcpv6-access {
+  namespace "urn:huawei:yang:huawei-bras-dhcpv6-access";
+  prefix bras-dhcpv6-access;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Configure the DHCPv6 user access.";
+  revision 2020-02-22 {
+    description
+      "Description modification.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-17 {  
+    description  
+      "Second revision.";  
+    reference  
+      "Huawei private.";  
+  }  
+  revision 2019-04-02 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+  grouping vendor-class-group {
+    description
+        "Vendor class group.";
+    container vendor-class {
+      description
+        "Configure a mapping between the vendor-class attribute and a DHCPv6 option a code as well as the offset value.";
+      leaf option-code-value {
+        type uint8 {
+          range "1..255";
+        }
+        default "16";
+        description
+          "Specifies a DHCPv6 option code.";
+      }
+      leaf offset-value {
+        type uint8 {
+          range "1..254";
+        }
+        description
+          "Specifies the offset value of the vendor-class attribute.";
+      }
+    }
+  }
+  grouping option18-interface-group {
+    description
+        "Option 18 interface group.";
+    container option18-interface {
+      description
+        "Configure DHCP Option 18 version3.";
+      leaf interface-id {
+        type string {
+          length "1..64";
+        }
+        description
+          "DHCP Option 18 Interfacevalue self define.";
+      }
+    }
+  }
+  grouping option37-remote-id-group {
+    description
+        "Option 37 remote id group.";
+    container option37-remote-id {
+      description
+        "Configure DHCP Option 37 version3.";
+      leaf remote-id {
+        type string {
+          length "1..64";
+        }
+        description
+          "DHCP Option 37 remote ID value self define.";
+      }
+    }
+  }
+
+  grouping option37-relay-mode-group {
+    description
+      "Option 37 relay mode grouping.";
+    container option37-relay-mode {
+      description
+        "Configure Option 37 relay mode.";
+      leaf delete-enterprise-number-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a device to delete enterprise number carried in the Option 37 field from a DHCPv6 solicit or request message.";
+      }
+    }
+  }
+  container bras-dhcpv6-access {
+    description
+      "Configure the DHCPv6 user access.";
+    container global-option {
+      description
+        "Configure bras DHCPv6 access.";
+      container option37-decode {
+        description
+          "Configure Option 37 in DHCPv6 solicit or request packet decode.";
+        leaf decode-any-format {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Option 37 any format decode.";
+        }
+        leaf conflict-offline {
+          type enumeration {
+            enum "ipv6" {
+              value 0;
+              description
+                "Only detects whether the IPv6 address assigned to a user from a DHCPv6 remote address pool and an IPv6 prefix pool conflicts with that of another user.";
+            }
+            enum "ipv6-and-radius" {
+              value 1;
+              description
+                "Detects whether the IPv6 address assigned to a user from a DHCPv6 remote address pool, an IPv6 prefix pool, or by the RADIUS server conflicts with that of another user.";
+            }
+          }
+          description
+            "The DHCPv6 conflict-ip-address offline user command configures the router to log out an online user and deny access of a new user. It detects that the IPv6 address assigned to the new user from a DHCPv6 remote address pool, an IPv6 prefix pool, or by the RADIUS server is the same as the IPv6 address of the online user.";
+        }
+      }
+    }
+    container global {
+      description
+        "Configure bras DHCPv6 access global.";
+      container option {
+        description
+          "Configure the options.";
+        container option17-decode {
+          description
+            "Configure the device to parse the Option 17 field.";
+          leaf option17-decode {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the device to parse the Option 17 field based on the format defined by the DSL forum.";
+          }
+          leaf wait-request-time {
+            type uint8 {
+              range "5..60";
+            }
+            units "s";
+            default "55";
+            description
+              "Specifies the DHCPv6 wait request time.";
+          }
+          leaf server-option {
+            type uint16 {
+              range "17";
+            }
+            description
+              "The option code retained in DHCPv6 server response messages.";
+          }
+        }
+        container option-priority {
+          description
+            "Configure the highest, medium, and lowest priorities for the DHCPv6 option delivered by the RADIUS server, configure in the domain scenario, and configure in the address pool scenario, respectively.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the highest, medium, and lowest priorities for the DHCPv6 option delivered by the RADIUS server, configure in the domain scenario, and configure in the address pool scenario, respectively.";
+          }
+        }
+        container vendor-class {
+          description
+            "Configure a mapping between the vendor-class attribute and a DHCPv6 option a code as well as the offset value.";
+          leaf option-code{
+            type uint8 {
+              range "1..255";
+            }
+            default "16";
+            description
+              "Specifies a DHCPv6 option code.";
+          }
+          leaf offset-value {
+            type uint8 {
+              range "1..254";
+            }
+            description
+              "Specifies the offset value of the vendor-class attribute.";
+          }
+        }
+      }
+      container user-offline {
+        description
+          "Configure user offLine.";
+        leaf duid-mismatch {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable logging out the online user with the same MAC address but different DUIDs as that of a received DHCPv6 request packet.";
+        }
+      }
+      container client-duid-replace {
+        description
+          "Configure the router that functions as a DHCPv6 relay agent to replace the client DUID in a DHCPv6 message sent from a client with the one it generates for that client before sending the message to a server.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable replace client.";
+        }
+      }
+      container solict-speed {
+        description
+          "Configure DHCPv6 solicit speed.";
+        leaf packet-num {
+          type uint32 {
+            range "1..3000";
+          }
+          must "((../packet-num) and (../second)) or (not(../packet-num) and not(../second))";
+          description
+            "Specifies the maximum number of solicit packets that are received within a specified time period.";
+        }
+        leaf second {
+          type uint32 {
+            range "1..10";
+          }
+          must "((../packet-num) and (../second)) or (not(../packet-num) and not(../second))";
+          description
+            "Specified time period.";
+        }
+      }
+      container through-packet {
+        description
+          "Configure the router to transparently transmit DHCPv6 packets.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable through packet.";
+          }
+      }
+      container rebind-no-user-reply {
+        description
+          "Configure the DHCPv6 rebind no-user action send an reply message in response to a client's DHCPv6 rebind message if a corresponding user entry does not exist on the device.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the DHCPv6 rebind no-user action send an reply message in response to a client's DHCPv6 rebind message if a corresponding user entry does not exist on the device.";
+        }
+      }
+      container reconfigure {
+        presence "Create DHCPv6 reconfigure policy.";
+        description
+          "Enable/disable DHCPv6 reconfigure policy.";
+        leaf retransmit-times {
+          type uint8 {
+            range "1..8";
+          }
+          default "8";
+          description
+            "Set the number of retransmission times of DHCPv6 reconfigure packets sent to users.";
+        }
+      }
+      container lease-management {
+        description
+          "Configure the access frame IPv6 lease manage pool exclude function for remote IPv6 addresses pools.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable to manage the leases of RADIUS-delivered IPv6 addresses that are not in the supported address pools.";
+        }
+      }
+    }
+    container rapid-commit {
+      description
+        "Configure the DHCPv6 server to support a rapid two-message exchange (solicit, reply).";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the DHCPv6 server to support a rapid two-message exchange (solicit, reply).";
+      }
+    }
+    /*interface:EthIf,IfmGEIf,IfmEthTrunkIf,basintf-hide*/
+    container relay {
+      description
+        "Configure DHCPv6 Relay.";
+      container relay-options {
+        description
+          "List of the relay-forward packets. A packet sent to the DHCPv6 server in the bas relay scenario, the Option 18 and Option 37 attributes are inserted according to the OSP format.";
+        list relay-option {
+          key "interface-name";
+          description
+            "Configure the relay-forward packet sent to the DHCPv6 server in the bas relay scenario, the Option 18 and Option 37 attributes are inserted according to the OSP format.";
+          leaf interface-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Specifies an interface name.";
+          }
+          leaf remote-id-type {
+            type enumeration {
+              enum "neba" {
+                value 1;
+                description
+                  "Specifies the remote-id padding to string NEBA.";
+                }
+              enum "vula" {
+                value 2;
+                description
+                "Specifies the remote-id padding to string VULA.";
+               }
+            }
+            default "neba";
+            description
+              "Specifies the remote-id padding to string NEBA or VULA.";
+          }
+        }
+      }
+    }
+    container reconf-timeout-users {
+      config false;
+      description
+        "List of statistics for clients that do not respond to reconfigure messages within the timeout period.";
+      list reconf-timeout-user  {
+        key "index user-id";
+        config false;
+        description
+          "Display the statistics for clients that do not respond to reconfigure messages within the timeout period.";
+        leaf index {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Index of Record.";
+        }
+        leaf user-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "User ID of the client that does not respond to a Reconfigure message within the timeout period.";
+        }
+        leaf user-mac {
+          type pub-type:mac-address {
+            length "0..255";
+          }
+          config false;
+          description
+            "MAC address of the client that does not respond to a Reconfigure message within the timeout period.";
+          ext:support-filter "true";
+        }
+        leaf session-id {
+          type uint32;
+          config false;
+          description
+            "Session ID of the client that does not respond to a Reconfigure message within the timeout period.";
+          ext:support-filter "true";
+        }
+        leaf ipv6-address {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "IPv6 address of the client that does not respond to a Reconfigure message within the timeout period.";
+        }
+        leaf ipv6-prefix {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "Prefix of the IPv6 address of the client that does not respond to a reconfigure message within the timeout period.";
+        }
+        leaf record-time {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Recorded time when client timeouts occur.";
+        }
+      }
+    }
+  }
+  /*****************************************************************
+  * rpc 
+  *****************************************************************/
+  rpc reset-ipv6-reconf-timeout {
+    description
+      "Clears the records of clients that do not respond to reconfigure messages within the timeout period.";
+    input {
+      leaf all-timeout-record {
+        type boolean;
+        mandatory true;
+        description
+          "Clears the information about the clients that do not respond to reconfigure messages within the timeout period.";
+     }
+    }
+  }
+/*****************************************************************
+* augment extension 
+*****************************************************************/
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "Creates a domain and enters the domain scenario; alternatively, you can enter the scenario of an existing domain. Exceptionally, in this module it cannot be deleted or removed to delete its child.";
+    container dhcpv6-access {
+      description
+        "Configure DHCPv6 access.";
+      container packet-policy {
+        description
+          "Configure the router to transparently transmit DHCPv6 packets.";
+        leaf nd-ra-link-prefix {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable to send route advertisement with link prefix for IPoE users.";
+        }
+        leaf circuit-id {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable circuit id.";
+        }
+        leaf remote-id {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable remote id.";
+        }
+      }
+      container zero-lease-v6enhance {
+        description
+          "Configure CoA messages delivered by the RADIUS server.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to log out a dual-stack user from IPv6 stacks and send a DHCPv6 Reconfigure message to the user when the RADIUS server delivers a zero lease in a CoA message.";
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-subscriber/bras-basic-access:layer2-subscriber" {
+    description
+      "Create a BAS interface and display the BAS interface scenario. Exceptionally, in this module it cannot be deleted or removed to delete its child.";
+    container dhcpv6-access {
+      description
+        "Configure DHCPv6 access.";
+      uses vendor-class-group;
+      uses option18-interface-group;
+      uses option37-remote-id-group;
+      uses option37-relay-mode-group;
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-leaseline/bras-basic-access:layer2-leaseline" {
+    description
+      "Create a BAS interface and display the BAS interface scenario. Exceptionally, in this module it cannot be deleted or removed to delete its child.";
+    container dhcpv6-access {
+      description
+        "Configure DHCPv6 access.";
+      uses option18-interface-group;
+      uses option37-remote-id-group;
+      uses option37-relay-mode-group;
+    }
+  }
+}

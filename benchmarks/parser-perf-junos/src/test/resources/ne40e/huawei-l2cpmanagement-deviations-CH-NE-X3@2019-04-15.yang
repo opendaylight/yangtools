@@ -1,0 +1,44 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2cpmanagement-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-l2cpmanagement-deviations-CH-NE-X3";
+  prefix "l2cpmanagement-devs-CH-NE-X3";
+
+  import huawei-l2cpmanagement {
+    prefix l2cpmanagement;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "L2 control protocol management.";
+  revision 2019-04-15 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+
+
+  deviation /l2cpmanagement:l2cpmanagement/l2cpmanagement:link-protocol-global/l2cpmanagement:linkoam-status {
+    deviate not-supported;
+  }
+
+
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/l2cpmanagement:protocol-actions/l2cpmanagement:protocol-action" {
+    deviate add { must "(action='transport' and protocol-type='link-oam') or (action='forwarding' and (protocol-type='link-oam' or protocol-type='c-stp' or protocol-type='s-stp' or protocol-type='elmi' or protocol-type='ptp')) or (action='discard' and protocol-type='bpdu')";}
+  }
+
+}

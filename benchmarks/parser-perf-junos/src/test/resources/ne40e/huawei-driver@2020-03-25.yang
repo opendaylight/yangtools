@@ -1,0 +1,3760 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-driver {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-driver";
+  
+  prefix driver;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-devm {
+    prefix devm; 
+  }
+  import huawei-hardware-type {
+    prefix hardware-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  include huawei-driver-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Configuration of the driver file.";
+  revision 2020-03-25 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "device-mgr";
+  grouping led-flash-time {
+    description
+      "Indicator blinking periods.";
+    leaf flash-time {
+      type uint32 {
+        range "1..5";
+      }
+      units "s";
+      default "3";
+      description
+        "Set the duration in which an indicator blinks.";
+    }
+    leaf alarm-status-time {
+      type uint32 {
+        range "1..5";
+      }
+      units "s";
+      default "3";
+      description
+        "Set the duration in which an indicator does not blink temporarily.";
+    }
+    leaf cancel-time {
+      type uint32 {
+        range "5..60";
+      }
+      units "min";
+      default "10";
+      description
+        "Set the total duration after which an indicator stops blinking.";
+    }
+  }
+  container driver {
+    description
+      "Configuration of the driver.";
+    container global-attribute {
+      description
+        "Configure global attribute.";
+      leaf board-power-on-delay {
+        type uint32 {
+          range "0..65535";
+        }
+        default "0";
+        description
+          "Board Power-on-delay (0 stands for cancel operation).";
+      }
+      leaf card-power-on-delay {
+        type uint32 {
+          range "0..65535";
+        }
+        default "0";
+        description
+          "Pic Power-on-delay (0 stands for cancel operation).";
+      } 
+      leaf dustproof-check {
+        type driver-bool;
+        default "yes";
+        description
+          "Dustproof Gate Check.";
+      }
+      leaf energy-mode {
+        type energy-mode-type;
+        default "basic";
+        description
+          "Energy-saving Mode (which includes basic, standard, deep, optimal. The default value is basic).";
+      }
+      leaf energy-saving-pm {
+        ext:dynamic-default;
+        type energy-saving-pm-type;
+        must "not(../energy-mode='standard' and ../energy-saving-pm='enable')";
+        description
+          "PM Energy-saving Mode (which includes disable, enable. The default value is disable).";
+      }        
+      leaf entity-fault-board-isolate {
+        type driver-entity-bool;
+        default "enable";
+        description
+          "Enable Board Abnormal Reset Detection.";
+      }
+      leaf entity-fault-card-isolate {
+        type driver-entity-bool;
+        default "enable";
+        description
+          "Enable Card Abnormal Reset Detection.";
+      }
+      leaf fault-strategy {
+        type global-card-fault-process-mode;
+        default "reset";
+        description
+          "Global Card-Fault Process-Mode.";
+      }
+      leaf high-temp-switch {
+        type driver-bool;
+        default "yes";
+        description
+          "High Temperature Switch.";
+      }
+      leaf interface-match-check {
+        type driver-interface-match-check-flag;
+        default "disable";
+        description
+          "Used to configure interface matching check functionality.";
+      }
+      leaf least-sfu-number {
+        type uint32 {
+          range "1..8";
+        }
+        default "3";
+        description
+          "Least number of sfu (Dynamic parameter range, which may be smaller).";
+      }
+      leaf offline-function {
+        type offline-function-type;
+        default "enable";
+        description
+          "Offline function mask (which includes disable, enable. The default value is enable).";
+      } 
+      leaf optional-entity-fault-isolate {
+        type entity-fault-isolate-type;
+        default "enable";
+        description
+          "EntFaultIso mode.";
+      } 
+      leaf pic-reload-cycle {
+        type reload-time;
+        default "60min";
+        description
+          "Set the pic reload cycle after the pic failed to register 10 times.";
+      }
+      leaf sampling-period {
+        type sampling-period-type;
+        default "one-hour";
+        description
+          "Power sampling period.";
+      }
+      leaf sfu-switch-mode {
+        type sfu-switch-mode-type;
+        default "disable";
+        description
+          "SfuSwitchMode.";
+      }
+      leaf system-mac-address {
+        type pub-type:mac-address{
+          pattern '[0-9a-f][02468ace][0-9a-f]{2}(-[0-9a-f]{4}){2}';
+        }
+        description
+          "The system MAC address, with the value being a unicast MAC address that is not composed of all 0s. It will take effect only after the system is rebooted.";
+      }
+      leaf system-mac-number {
+        when "../system-mac-address";
+        type uint32 {
+           range "1..32";
+        }
+        default "8";
+        description
+          "The number of system MAC address.";
+      }
+      leaf system-trap {
+        type trap-type;
+        default "base-trap";
+        description
+          "Switch trapType between base-trap and dc-trap.";
+      }
+      leaf temp-query-mode {
+        type mib-query-mode-type;
+        default "default";
+        description
+          "MIB Temperatue Brief Query Mode.";
+      }
+      leaf vlt-query-mode {
+        type mib-query-mode-type;
+        default "default";
+        description
+          "MIB Voltage Brief Query Mode.";
+      }
+      leaf cur-forward-mode {
+        type forwarding-mode;
+        default "compatible";
+        config false;
+        description
+          "Current forward mode, compatible or enhance.";
+      }
+      leaf next-forward-mode {
+        type forwarding-mode;
+        default "compatible";
+        description
+          "Next forward mode, compatible or enhance, which some boards can not support (warning:system will restart after success, and then take effect).";
+      }
+      leaf cur-work-mode {
+        type driver-system-mode;
+        config false;
+        description
+          "Cur work mode, 1+1 or 1:1.";
+      }
+      leaf next-work-mode {
+        type driver-system-mode;
+        config false;
+        description
+          "Next work mode,1+1 or 1:1. The work mode cannot be switched on specific device models or in specific scenarios (warning:system will restart after success, and then take effect).";
+      }
+      leaf warm-backup-states {
+        type warm-backup-status;
+        default "off";
+        config false;
+        description
+          "Cur warm-backup status.";
+      }
+      leaf warm-backup-mode {
+        type warm-backup-mode;
+		must "not((../energy-mode='deep' or ../energy-mode='optimal') and (../warm-backup-mode='enable'))";
+        default "disable";
+        description
+          "Cur warm-backup mode.";
+      }
+      leaf cur-device-work-mode {
+        type driver-work-mode;
+        config false;
+        description
+          "Cur device work mode, base or ptn-iot.";
+      }
+      leaf next-device-work-mode {
+        type driver-work-mode;
+        config false;
+        description
+          "Next device work mode, base or ptn-iot.";
+      }
+      leaf cur-system-mode {
+        type driver-system-mode-type;
+        default "classic";
+        config false;
+        description
+          "Cur System mode, classic or ls.";
+      }
+      leaf next-system-mode {
+        type driver-system-mode-type;
+        default "classic";
+        config false;
+        description
+          "Next System mode, classic or ls (waring:system will restart after success, and then take effect).";
+      }
+      leaf auto-upgrade-model {
+        type driver-upgrade-mode-type;
+        default "open";
+        config false;
+        description
+          "Auto Upgrade Model.";
+      }
+      leaf chassis-last-change-time {
+        type pub-type:time-tick;
+        config false;
+        description
+          "Time when a chassis or an entity is last added or removed, or time when chassis status (administration status, running status, or active/standby status) is last changed. The time is in UTC time.";
+      }
+      leaf cur-chassis-number {
+        type uint32;
+        config false;
+        description
+          "Current number of chassis.";
+      }
+      leaf max-chassis-number {
+        type uint32 {
+          range "1..255";
+        }
+        config false;
+        description
+          "Maximum number of chassis.";
+      }
+      leaf power-consumption {
+        type string {
+          length "1..255";
+        }
+        config false;
+        description
+            "Power Consumption.";
+      }
+      leaf split-resume {
+        type driver-split-resume-mode-type;
+        config false;
+        description
+          "Slave chassis reset mode.";
+      }
+      leaf switch-port-mode {
+        type string {
+          length "1..128";
+        }
+        config false;
+        description
+          "Switch-port Work-mode.";
+      }
+      leaf system-service-type {
+        type string {
+          length "1..128";
+        }
+        config false;
+        description
+          "System Service Type.";
+      }
+      leaf usb-uart-status {
+        type usb-uart-status;
+        config false;
+        description
+          "Usb uart status, open or closed.";
+      }
+      leaf cur-system-mac-address {
+        type pub-type:mac-address;
+        config false;
+        description
+          "Current system MAC address.";
+      }
+      leaf board-channel-check-status {
+        type board-channel-check-type;
+        config false;
+        description
+          "The board-channel-check status.";
+      }
+      leaf energy-saving-pm-status {
+        type energy-saving-pm-type;
+        config false;
+        description
+          "PM energy-saving mode status.";
+      }
+    }
+    
+    container io-inspect-states {
+      config false;
+      description
+        "List of IO inspect state.";
+      list io-inspect-state {
+        key "position index";
+        description
+          "IO inspect state.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";  
+        }
+        leaf index {
+          type uint32;
+          description
+            "Index.";
+        }
+        leaf states {
+          type driver-inspect-state;
+          description
+            "Input status.";
+        }
+        leaf default-states {
+          type driver-inspect-state;
+          description
+            "Default status.";
+        }
+        leaf alarm-name {
+          type string {
+            length "1..16";
+          }
+          description
+            "Alarm name.";
+        }
+        leaf alarm-status {
+          type driver-inspect-alarm-state;
+          description
+            "Alarm status.";
+        }
+      }
+    }
+    
+    container io-inspect-attributes {
+      description
+        "List of IO inspect attributes.";
+      list io-inspect-attribute {
+        key "position index";
+        description
+          "Configure IO inspect attribute.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";  
+        }
+        leaf index {
+          type uint32;
+          description
+            "Index.";
+        }
+        leaf default-states {
+          type driver-default-states;
+          mandatory true;
+          description
+            "Default status.";
+        }
+        leaf alarm-name {
+          ext:operation-exclude update|delete; 
+          type string {
+            length "1..16";
+          }
+          description
+            "Alarm name.";
+        }
+      }
+    }
+    
+    container temperatures {
+      description
+        "List of temperature information about a board.";
+      list temperature {
+        ext:generated-by system;
+        ext:operation-exclude create;
+        key "position i2c address channel";
+        description
+          "Configure temperature information about a board.";
+        leaf position {
+          type string {
+            length "1..50";
+          }
+          description
+            "Location of a board. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf i2c {
+          type uint32;
+          description
+            "I2C bus number of a board.";
+        }
+        leaf address {
+          type string {
+            length "1..50";
+          }
+          description
+            "Sensor address of a board. The address is expressed in the format of a number. For example, 0. Here 0 is an example. The value may vary with devices.";
+        }
+        leaf channel {
+          type uint32;
+          description
+            "ID of the sensor channel of a board.";
+        }
+        leaf minor {
+          type uint32 {
+            range "80..120";
+          }
+          must "(../minor<=../major and ../minor<=../fatal)";
+          description
+            "Minor high temperature alarm threshold of a board.";
+        }
+        leaf major {
+          type uint32 {
+            range "80..120";
+          }
+          must "(../major>=../minor and ../major<=../fatal)";
+          description
+            "Major high temperature alarm threshold of a board.";
+        }
+        leaf fatal {
+          type uint32 {
+            range "80..120";
+          }
+          must "(../fatal>=../minor and ../fatal>=../major)";
+          description
+            "Fatal high temperature alarm threshold of a board.";
+        }
+        leaf fan-tmax {
+          ext:dynamic-default;
+          when "../minor and ../major and ../fatal";
+          type int32 {
+            range "-50..127";
+          }
+          must "(../fan-tmax>=../fan-tmin)";
+          description
+            "Fan Speed Adjust High Threshold.[-50,127]for get operation,[-50,127]for edit operation. Each board has a different default fan-tmax value.";
+        }
+        leaf fan-tmin {
+          ext:dynamic-default;
+          when "../minor and ../major and ../fatal";
+          type int32 {
+            range "-50..127";
+          }
+          must "(../fan-tmin<=../fan-tmax)";
+          description
+            "Fan Speed Adjust Low Threshold.[-50,127]for get operation,[-50,127]for edit operation. Each board has a different default fan-tmin value.";
+        }
+        leaf pcb-name {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Type of a board.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "Index of a board.";
+        }
+        leaf state {
+          type driver-temp-volt-state;
+          config false;
+          description
+            "Sensor status of a board.";
+        }
+        leaf current-temperature {
+          type int32;
+          config false;
+          description
+            "Current temperature of a board.";
+        }
+        leaf minor-alarm-threshold {
+          type int32;
+          config false;
+          description
+            "Lower temperature threshold of a board.";
+        }
+        leaf major-alarm-threshold {
+          type int32;
+          config false;
+          description
+            "Upper temperature threshold of a board.";
+        }
+        leaf fatal-alarm-threshold {
+          type int32;
+          config false;
+          description
+            "Upper limit of the temperature of a board.";
+        }
+        leaf fan-tmax-states {
+          type int32 {
+            range "-50..127";
+          }
+          config false;
+          description
+            "Fan Speed Adjust High Threshold.";
+        }
+        leaf fan-tmin-states {
+          type int32 {
+            range "-50..127";
+          }
+          config false;
+          description
+            "Fan Speed Adjust Low Threshold.";
+        }
+      }
+    }
+    
+    container voltageinfos {
+      description
+        "List of voltage information about a board.";
+      list voltageinfo {
+        ext:generated-by system;
+        ext:operation-exclude create;
+        key "position i2c address channel";
+        description
+          "Configure voltage information about a board.";
+        leaf position {
+          type string {
+            length "1..50";
+          }
+          description
+            "Location of a board. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf i2c {
+          type uint32;
+          description
+            "I2C bus number of a board.";
+        }
+        leaf address {
+          type string {
+            length "1..50";
+          }
+          description
+            "Sensor address of a board. The address is expressed in the format of a number. For example, 0. Here 0 is an example. The value may vary with devices.";
+        }
+        leaf channel {
+          type uint32;
+          description
+            "ID of the sensor channel of a board.";
+        }
+        leaf major-voltage-threshold-low {
+          type uint32 {
+            range "80..120";
+          }
+          must "(../major-voltage-threshold-low<=../major-voltage-threshold-high and ../major-voltage-threshold-low>=../fatal-voltage-threshold-low and ../major-voltage-threshold-low<=../fatal-voltage-threshold-high)";
+          description
+            "The percentage of the major voltage threshold below the default voltage.";
+        }
+        leaf major-voltage-threshold-high {
+          type uint32 {
+            range "80..120";
+          }
+          must "(../major-voltage-threshold-high>=../major-voltage-threshold-low and ../major-voltage-threshold-high>=../fatal-voltage-threshold-low and ../major-voltage-threshold-high<=../fatal-voltage-threshold-high)";
+          description
+            "The percentage of the major voltage threshold above the default voltage.";
+        }
+        leaf fatal-voltage-threshold-low {
+          type uint32 {
+            range "80..120";
+          }
+          must "(../fatal-voltage-threshold-low<=../major-voltage-threshold-low and ../fatal-voltage-threshold-low<=../major-voltage-threshold-high and ../fatal-voltage-threshold-low<=../fatal-voltage-threshold-high)";
+          description
+            "The percentage of the fatal voltage threshold below the default voltage.";
+        }
+        leaf fatal-voltage-threshold-high {
+          type uint32 {
+            range "80..120";
+          }
+          must "(../fatal-voltage-threshold-high>=../major-voltage-threshold-low and ../fatal-voltage-threshold-high>=../major-voltage-threshold-high and ../fatal-voltage-threshold-high>=../fatal-voltage-threshold-low)";
+          description
+            "The percentage of the fatal voltage threshold above the default voltage.";
+        }
+        leaf pcb-name {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Type of a board.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "Index of a board.";
+        }
+        leaf state {
+          type driver-temp-volt-state;
+          config false;
+          description
+            "Voltage sensor status of a board.";
+        }
+        leaf current-voltage {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Current voltage of a board.";
+        }
+        leaf required-voltage {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Basic voltage required by the board.";
+        }
+        leaf major-low-threshold {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Lower or lower threshold of the voltage of a board.";
+        }
+        leaf low-threshold {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Lower threshold of the board voltage.";
+        }
+        leaf major-high-threshold {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "High upper threshold of the voltage of a board.";
+        }
+        leaf high-threshold {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Fatal upper threshold of the board voltage.";
+        }
+        leaf voltage-ratio {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Voltage division ratio of a board.";
+        }
+      }
+    }
+    
+    container interface-match-check-states {
+      config false;
+      description
+        "List of matching detection information about interfaces.";
+      list interface-match-check-state {
+        key "position";
+        description
+          "Statistics of matching detection information about an interface.";
+        leaf position {
+          type string {
+            length "1..30";
+          }
+          description
+            "Enabling position of interface match detection. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf object {
+          type driver-interface-match-check-object;
+          description
+            "Enabling object of interface match detection.";
+        }
+      }
+    }
+    
+    container area-energyinfos {
+      config false;
+      description
+        "List of Area Energy.";
+      list area-energyinfo {
+        key "chassis-position area-id";
+        config false;
+        description
+          "Statistics of Area Energy.";
+        leaf chassis-position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Chassis Position. The chassis-position is expressed in the format of chassisID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf area-id {
+          type uint32;
+          config false;
+          description
+            "Area ID.";
+        }
+        leaf area-rated-power {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Area Rated Power.";
+        }
+        leaf area-assigned-power {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Area assigned Power.";
+        }
+        leaf area-used-power {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Area Used Power.";
+        }
+        leaf area-left-power {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Area Left Power.";
+        }
+        container board-energys {
+          config false;
+          description
+            "List of energy information about a board.";
+          list board-energy {
+            key "position";
+            config false;
+            description
+              "Statistics of energy information about a board.";
+            leaf position {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Board position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+            }
+            leaf entity-index {
+              type uint32;
+              config false;
+              description
+                "Board index.";
+            }
+            leaf pcb-name {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Board type.";
+            }
+            leaf voltage-value {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "Current voltage value.";
+            }
+            leaf electrical-value {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "Current electrical value.";
+            }
+            leaf current-power {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "Current power value.";
+            }
+            leaf rated-power {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "Rated power value.";
+            }
+            leaf power-threshold {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "Power threshold value.";
+            }
+            leaf efficiency {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "Efficiency value.";
+            }
+          }
+        }
+      }
+    }
+    container electronic-labels {
+      config false;
+      description
+        "List of electronic labels.";
+      list electronic-label {
+        key "entity-class position entity-serial-number";
+        config false;
+        description
+          "Statistics of electronic label.";
+        leaf entity-class {
+          type hardware-type:hardware-entityclass-type;
+          config false;
+          description
+            "Entity Class.";
+        }
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf entity-serial-number {
+          type uint32;
+          config false;
+          description
+            "Physical Number.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "Entity Index.";
+        }
+        leaf entity-bomid {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "BOM ID.";
+        }
+        leaf barcode {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Barcode.";
+        }
+        leaf bom-english-desc {
+          type string {
+            length "1..256";
+          }
+          config false;
+          description
+            "English description of a BOM.";
+        }
+        leaf bom-local-desc {
+          type string {
+            length "1..256";
+          }
+          config false;
+          description
+            "Local description of a BOM.";
+        }
+        leaf manufacturer-name {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Manufacturer name.";
+        }
+        leaf manufacturer-date {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Manufacture date.";
+        }
+        leaf manufacturer-code {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Manufacture code.";
+        }
+        leaf board-type {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Board type.";
+        }
+        leaf entity-asset-id {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Asset ID.";
+        }
+        leaf entity-clei-code {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "CLEI code.";
+        }
+        leaf entity-update-log {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Update log.";
+        }
+        leaf archives-info-version {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Archives information version.";
+        }
+        leaf entity-open-bomid {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "The BomId for distribution.";
+        }
+        leaf entity-issue-number {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Issue number.";
+        }
+        leaf entity-model {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "External model of an entity.";
+        }
+        leaf entity-elabel-version {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Elabel version.";
+        }
+        leaf entity-elabel-extend {
+          type string {
+            length "1..270";
+          }
+          config false;
+          description
+            "Extend information.";
+        }
+        leaf silk-screen {
+          type string {
+            length "1..256";
+          }
+          config false;
+          description
+            "Silk screen information.";
+        }
+      }
+    }
+
+    container mbusnodes {
+      config false;
+      description
+        "List of information about all monitoring nodes of the host.";
+      list mbusnode {
+        key "slot-id";
+        config false;
+        description
+          "Statistics of information about a monitoring node.";
+        leaf slot-id {
+          type string {
+            length "1..30";
+          }
+          config false;
+          description
+            "Position. The slot-id is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";  
+        }
+        leaf register {
+          type string {
+            length "1..63";
+          }
+          config false;
+          description
+            "Registration status of the board.";
+        }
+        leaf board-type {
+          type string {
+            length "1..63";
+          }
+          config false;
+          description
+            "Type of the board.";
+        }
+        leaf eeprom-number {
+          type uint32 {
+            range "0..24";
+          }
+          config false;
+          description
+            "Number of EEPROMS on the board.";
+        }
+        leaf temperature-monitor-number {
+          type uint32 {
+            range "0..128";
+          }
+          config false;
+          description
+            "Number of temperature sensors on the board.";
+        }
+        leaf voltage-monitor-number {
+          type uint32 {
+            range "0..128";
+          }
+          config false;
+          description
+            "Number of voltage sensors on the board.";
+        }
+      }
+    }
+    container check-running-software-safes {
+      config false;
+      description
+        "List of checking running software safety.";
+       list check-running-software-safe {
+        key "position item";
+        config false;
+        description
+          "Statistics of checking running software safety.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Board position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+		leaf item {
+          type driver-item-type;
+          config false;
+          description
+            "System Item.";
+        }
+        leaf board-type {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Board type.";
+        }
+        leaf pkgsha256hash {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "The HASH value in the system.";
+        }
+        leaf runsha256hash {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "The HASH value in the board.";
+        }
+		leaf result {
+          type driver-result-type;
+          config false;
+          description
+            "Check Result.";
+        }
+      }
+    } 
+	
+	  container bootinfos {
+      config false;
+      description
+        "List of boot information.";
+       list  bootinfo{
+        key "position";
+        config false;
+        description
+          "Statistics of boot status information.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Board position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf board-type {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Board type.";
+        }
+        leaf rot {
+           type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Boot Status.";
+        }
+      }
+    }	
+    
+    container multi-chassis-attributes {
+      config false;
+      description
+        "List of multiple chassis attributes.";
+      list multi-chassis-attribute {
+        key "current-chassis-id";
+        description
+          "Statistics of multiple chassis attribute.";
+        leaf current-chassis-id {
+          type uint32 {
+            range "1..2";
+          }
+          description
+            "Current chassis id.";
+        }
+        leaf next-chassis-id {
+          type uint32 {
+            range "1..2";
+          }
+          description
+            "Next chassis id.";
+        }
+        leaf chassis-type {
+          type driver-multi-chassis-type;
+          description
+            "Multi chassis type.";
+        }
+      }
+    }
+    
+    container chassis-run-modes {
+      config false;
+      description
+        "List of chassis running modes.";
+      list chassis-run-mode {
+        key "chassis-id";
+        description
+          "Statistics of chassis running mode.";
+        leaf chassis-id {
+          type string {
+            length "1..31";
+          }
+          description
+            "Chassis id. The chassis-id is expressed in the format of chassisID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf current-run-mode {
+          type driver-run-mode-type;
+          description
+            "Current run mode.";
+        }
+        leaf next-run-mode {
+          type driver-run-mode-type;
+          description
+            "Next run mode.";
+        }
+        leaf current-run-cluster {
+          type string {
+            length "1..4";
+          }
+          description
+            "Current cluster id.";
+        }
+        leaf next-run-cluster {
+          type string {
+            length "1..3";
+          }
+          description
+            "Next cluster id.";
+        }
+      }
+    }
+    
+    container stratum-3-clocks {
+      config false;
+      description
+        "List of status information about the stratum-3 clocks of the system.";
+      list stratum-3-clock {
+        key "slot-id";
+        description
+          "Statistics of status information about the stratum-3 clock of the system.";
+        leaf slot-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "ID of the slot where the board resides. The slot-id is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf board-device-type {
+          type driver-board-device-type;
+          description
+            "Type of the board.";
+        }
+        leaf clock-type {
+          type driver-clock-type;
+          description
+            "Type of the clock associated with the board.";
+        }
+        leaf clock-slot-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "ID of the clock associated with the board.";
+        }
+        leaf switch-mode {
+          type driver-switch-mode-type;
+          description
+            "Mode of the clock associated with the board.";
+        }
+      }
+    }
+
+    container system-sync-clocks {
+      config false;
+      description
+        "List of status information about the synchronization clocks of the system.";
+      list system-sync-clock {
+        key "slot-id";
+        description
+          "Statistics of status information about the synchronization clock of the system.";
+        leaf slot-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "ID of the slot where the board resides. The slot-id is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf board-device-type {
+          type driver-board-device-type;
+          description
+            "Type of the board.";
+        }
+        leaf clock-type {
+          type driver-clock-type;
+          description
+            "Type of the clock associated with the board.";
+        }
+        leaf clock-slot-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "ID of the clock associated with the board.";
+        }
+        leaf switch-mode {
+          type driver-switch-mode-type;
+          description
+            "Mode of the clock associated with the board.";
+        }
+        leaf lock-state {
+          type driver-lock-state-type;
+          description
+            "Locking status of the clock.";
+        }
+      }
+    }
+    
+    container rollback-attribute {
+      config false;
+      description
+        "Statistics of rollback information.";
+        leaf rollback-soft-pack {
+          type string {
+            length "1..255";
+          }
+          description
+            "Rollback software package info.";
+        }
+        leaf rollback-patch-file {
+          type string {
+            length "1..255";
+          }
+          description
+            "Rollback patch file info.";
+        }
+        leaf rollback-config-file {
+          type string {
+            length "1..255";
+          }
+          description
+            "Rollback config file info.";
+        }
+        leaf rollback-paf-file {
+          type string {
+            length "1..255";
+          }
+          description
+            "Rollback paf file info.";
+        }
+        leaf rollback-result {
+          type string {
+            length "1..255";
+          }
+          description
+            "Rollback result info.";
+        }
+        leaf rollback-remain-time {
+          type string {
+            length "1..255";
+          }
+          description
+            "Rollback remain time info.";
+        }
+    }
+    
+	 container slave-defaults {
+      config false;
+      description
+        "List of slave default.";
+        list slave-default {
+        key "chassis-id slot-id";
+        description
+          "Statistics of slave default.";
+        leaf chassis-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "Chassis ID. The chassis-id is expressed in the format of chassisID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf slot-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "Slot ID. The slot-id is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf slave-default {
+          type string {
+            length "1..64";
+          }
+          description
+            "Slave Default.";
+        }
+      }
+    }
+
+    container inner-links {
+       config false;
+       description
+         "List of inner links.";
+       list inner-link {
+         key "link-type left-chassis-position right-chassis-position";
+         config false;
+         description
+           "Statistics of inner link.";
+         leaf link-type {
+           type driver-inner-link-type;
+           config false;
+           description
+             "Link type.";
+         }  
+         leaf left-chassis-position {
+           type string {
+             length "1..32";
+           }
+           config false;
+           description
+             "Position of the left chassis.";
+         }
+         leaf right-chassis-position {
+           type string {
+             length "1..32";
+           }
+           config false;
+           description
+             "Position of the right chassis.";
+         }
+         leaf link-name {
+           type string {
+             length "1..64";
+           }
+           config false;
+           description
+             "Inner link name.";
+         }
+         leaf link-index {
+           type string {
+             length "1..64";
+           }
+           config false;
+           description
+             "Inner link index.";
+         }
+         leaf left-chassis-type {
+           type driver-link-chassis-type;
+           config false;
+           description
+             "Type of the left chassis.";
+         }
+         leaf right-chassis-type {
+           type driver-link-chassis-type;
+           config false;
+           description
+             "Type of the right chassis.";
+         }
+         leaf operation-state {
+           type driver-link-state-type;
+           config false;
+           description
+             "Operation state.";
+         }
+         leaf alarm-state {
+           type driver-link-state-type;
+           config false;
+           description
+             "Alarm states whose values inherit HUAWEI-INNER-LINK-MIB.";
+         }
+         container physical-inner-links {
+           config false;
+           description
+             "List of physical inner links.";
+           list physical-inner-link {
+             key "physical-link-name";
+             config false;
+             description
+               "Statistics of physical inner link.";
+             leaf physical-link-name {
+               type string {
+                 length "1..128";
+               }
+               config false;
+               description
+                 "Physical link name. The physical-link-name is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+             }
+             leaf left-port-name {
+               type string {
+                 length "1..128";
+               }
+               config false;
+               description
+                 "Left port name.";
+             }
+             leaf right-port-name {
+               type string {
+                 length "1..128";
+               }
+               config false;
+               description
+                 "Right port name.";
+             }
+             leaf operation-status {
+               type driver-link-state-type;
+               config false;
+               description
+                 "Operation status.";
+             }
+             leaf repair-id {
+               type uint32;
+               config false;
+               description
+                 "Repair ID.";
+             }
+             leaf repair-description {
+               type string {
+                 length "1..255";
+               }
+               config false;
+               description
+                 "Repair description.";
+             }
+             container check-points {
+               config false;
+               description
+                 "List of checking points.";
+               list check-point {
+                 key "index";
+                 config false;
+                 description
+                   "Statistics of checking point.";
+                 leaf index {
+                   type uint32;
+                   config false;
+                   description
+                     "Check point index.";
+                 }
+                 leaf entity-name {
+                   type string {
+                     length "1..255";
+                   }
+                   config false;
+                   description
+                     "Check point name.";
+                 }
+                 leaf entity-class {
+                   type hardware-type:hardware-entityclass-type;
+                   config false;
+                   description
+                     "Check point type.";
+                 }
+                 leaf status {
+                   type driver-link-state-type;
+                   config false;
+                   description
+                     "Check point status.";
+                 }
+                 leaf reason-id {
+                   type uint32;
+                   config false;
+                   description
+                     "Reason ID.";
+                 }
+                 leaf reason-description {
+                   type string {
+                     length "1..255";
+                   }
+                   config false;
+                   description
+                     "Reason description.";
+                 }
+                 leaf repair-id {
+                   type uint32;
+                   config false;
+                   description
+                     "Repair ID.";
+                 }
+                 leaf repair-description {
+                   type string {
+                     length "1..255";
+                   }
+                   config false;
+                   description
+                     "Repair description.";
+                 }
+               }
+             }
+           }
+         }
+      }
+    }
+    
+    container slot-statistics {
+      config false;
+      description
+        "List of slot statistics.";
+      list slot-statistic {
+        key "chassis-id slot-type";
+        description
+          "Statistics of slot.";
+        leaf chassis-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "ChassisId. The chassis-id is expressed in the format of chassisID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf slot-type {
+          type driver-slot-infos-type;
+          description
+            "SlotType.";
+        }
+        leaf total-slot-number {
+          type uint32 {
+            range "1..65535";
+          }
+          description
+            "TotalSlotnum.";
+        }
+        leaf online-slot-number {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "OnlineSlotnum.";
+        }
+      }
+    }
+      
+  }
+    rpc set-usb-uart-stat {
+    description
+      "Set usb uart status.";
+    input {
+      leaf usb-uart-status {
+        type driver-usb-uart;
+        description
+          "Usb uart status, open or close.";
+         }
+        }
+      }
+    rpc power-on-mpu {
+    description
+      "Power On Mpu.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/devm:mpu-boards/devm:mpu-board/devm:position";
+        }
+        mandatory true;
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+   }
+    rpc power-off-mpu {
+    description
+      "Power Off Mpu.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/devm:mpu-boards/devm:mpu-board/devm:position";
+        }
+        mandatory true;
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+      leaf auto-power-on {
+        type empty;
+        description
+          "Auto power on.";
+      }
+    }
+   }
+    rpc power-on-lpu {
+    description
+      "Power On Lpu.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+        }
+        mandatory true;
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+   }
+    rpc power-off-lpu {
+    description
+      "Power Off Lpu.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+        }
+        mandatory true;
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+      leaf auto-power-on {
+        type empty;
+        description
+          "Auto power on.";
+      }
+    }
+   }
+    rpc power-on-sfu {
+    description
+      "Power On Sfu.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/devm:sfu-boards/devm:sfu-board/devm:position";
+        }
+        mandatory true;
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+    rpc power-off-sfu {
+    description
+      "Power Off Sfu.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/devm:sfu-boards/devm:sfu-board/devm:position";
+        }
+        mandatory true;
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+      leaf auto-power-on {
+        type empty;
+        description
+          "Auto power on.";
+      }
+    }
+  }
+    rpc power-on-ecu {
+    description
+      "Power On Ecu.";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+    rpc power-off-ecu {
+    description
+      "Power Off Ecu.";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+      leaf auto-power-on {
+        type empty;
+        description
+          "Auto power on.";
+      }
+    }
+  } 
+    rpc power-on-icu {
+    description
+      "Power On Icu.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/driver:driver/driver:icus/driver:icu/driver:position";
+        }
+        mandatory true;
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+    rpc power-off-icu {
+    description
+      "Power Off Icu.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/driver:driver/driver:icus/driver:icu/driver:position";
+        }
+        mandatory true;
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+      leaf auto-power-on {
+        type empty;
+        description
+          "Auto power on.";
+      }
+    }
+  }
+    rpc reset-lcd {
+    description
+      "Reset Lcd.";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+    rpc reset-ecu-board {
+    description
+      "Reset ECU Board.";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+    rpc reset-icu-board {
+    description
+      "Reset ICU Board.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/driver:driver/driver:icus/driver:icu/driver:position";
+        }
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+    rpc reset-cmu-board {
+    description
+      "Reset CMU Board.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/driver:driver/driver:cmus/driver:cmu/driver:position";
+        }
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+    rpc reset-fan-board {
+    description
+      "Reset Fan.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/driver:driver/driver:fans/driver:fan/driver:position";
+        }
+        description
+          "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+    rpc reset-dustproof-net {
+      description
+        "Clear the running time of the air filter in a specified chassis.";
+      input {
+        leaf chassis-position {
+          type leafref {
+          path "/devm:devm/devm:chassiss/devm:chassis/devm:position";
+        }
+          description
+            "Chassis Position. The chassis-position is expressed in the format of chassisID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+      }
+    }
+    rpc reset-mbus-node {
+      description
+        "Reset mbus node.";
+      input {
+        leaf board-position {
+          type leafref {
+          path "/driver:driver/driver:mbusnodes/driver:mbusnode/driver:slot-id";
+        }
+          description
+            "Board Position. The board-position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+      }
+    }
+    rpc set-slave-default {
+    description
+      "Set slave default.";
+    input {
+      leaf chassis-id {
+          type string {
+            length "1..32";
+          }
+        description
+          "Chassis ID. The chassis-id is expressed in the format of chassisID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+      leaf slave-default {
+        type string {
+          length "1..64";
+        }
+        description
+          "Slave Default. The slave-default is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+
+    rpc set-flash-lock {
+      description
+        "Set-flash-lock.";
+      input {
+        leaf flash-lock {
+          type driver-flash-lock;
+          default "immediately";
+          description
+            "Flash lock.";
+        }
+        leaf days {
+          when "../flash-lock = 'delay' ";
+          type uint32 {
+          range "1..90";
+          }
+          description
+            "Days.";
+        }
+      }
+    }
+	
+    rpc power-on-card {
+    description
+      "Power-on-card.";
+    input {
+      leaf card-position {
+        type leafref {
+          path "/devm:devm/devm:cards/devm:card/devm:position";
+        }
+        mandatory true;
+        description
+          "Card Position. The card-position is expressed in the format of slotID/cardID. For example, 1/0. Here 1/0 is an example. The value may vary with devices.";
+      }
+    }
+  }	
+
+    rpc power-off-card {
+    description
+      "Power-off-card.";
+    input {
+      leaf card-position {
+        type leafref {
+          path "/devm:devm/devm:cards/devm:card/devm:position";
+        }
+        mandatory true;
+        description
+          "Card Position. The card-position is expressed in the format of slotID/cardID. For example, 1/0. Here 1/0 is an example. The value may vary with devices.";
+      }
+      leaf auto-power-on {
+        type empty;
+        description
+          "Auto power on.";
+      }
+    }
+  }
+
+    rpc set-boot-password {
+    description
+      "Set-boot-password.";
+    input {
+      leaf slot-id {
+        type string {
+          length "1..31";
+        }
+        description
+          "Slot ID. The slot-id is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+      leaf old-password {
+        type pub-type:one-input-password-extend {
+          length "1..255";
+        }
+        description
+          "OldPassword.";
+      }
+      leaf new-password {
+        type pub-type:password-extend {
+          length "1..255";
+        }
+        description
+          "NewPassword.";
+      }	
+    }
+  }
+  
+  rpc auto-upgrade-models {
+    description
+      "Set auto upgrade model.";
+    input {
+      leaf auto-upgrade-model {
+        type driver-auto-upgrade-mode;
+        description
+          "Auto upgrade model.";
+      }
+    }
+  }
+  
+  rpc interface-match-check-recovery {
+    description
+      "Used to enable the configuration restoration function.";
+    input {
+      leaf position {
+        type string {
+          length "1..30";
+        }
+        description
+          "Enabling position of configuration restoration function. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  
+  rpc rollback {
+    description
+      "The system will rollback to the previous version, the current configuration will be lost.";
+    input {
+      leaf rollback-choice {
+        type rollback-choice-type;
+        description
+          "Used to rollback to the previous version.";
+      }
+    }
+  }
+  
+  rpc set-multi-chassis-id {
+    description
+      "Set multi chassis id.";
+    input {
+      leaf current-chassis-id {
+        type uint32 {
+          range "1..2";
+        }
+        description
+          "Current chassis id.";
+      }
+      leaf next-chassis-id {
+        type uint32 {
+          range "1..2";
+        }
+        description
+          "Next chassis id.";
+      }
+    }
+  }
+  
+  rpc set-chassis-run-mode {
+    description
+      "Set chassis run mode.";
+    input {
+      leaf chassis-id {
+        type string {
+          length "1..31";
+        }
+        description
+          "Chassis id. The chassis-id is expressed in the format of chassisID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+      leaf next-run-mode {
+        type driver-next-run-mode;
+        mandatory true;
+        description
+          "Next run mode.";
+      }
+      leaf next-run-cluster {
+        when "../next-run-mode='virtual-cluster-chassis'";
+        type string {
+          length "1..3";
+        }
+        description
+          "Next cluster id.";
+      }
+    }
+  }
+  
+  rpc set-next-work-mode {
+    description
+      "Set next work mode, 1+1 or 1:1. The work mode cannot be switched on specific device models or in specific scenarios (warning:system will restart after success, and then take effect).";
+    input {
+      leaf next-work-mode {
+        type driver-system-mode;
+        mandatory true;
+        description
+          "Next work mode, 1+1 or 1:1.";
+      }
+    }
+  }
+  
+  rpc set-split-resume {
+    description
+      "Slave chassis reset mode. It will take effect only both the inter-chassis control link and data link fail in virtual cluster scenarios.";
+    input {
+      leaf split-resume {
+        type driver-split-resume-mode-type;
+        mandatory true;
+        description
+          "Slave chassis reset mode.";
+      }
+    }
+  }
+
+  rpc set-led-flash {
+    description
+      "Set the indicator blinking periods.";
+    input {
+      uses led-flash-time;
+    }
+  }
+
+  rpc set-slot-led-flash {
+    description
+      "Set the board indicator blinking periods.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/devm:mpu-boards/devm:mpu-board/devm:position";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+      uses led-flash-time;
+    }
+  }
+
+  rpc set-npu-led-flash {
+    description
+      "Set the board indicator blinking periods.";
+    input {
+      leaf board-position {
+        type leafref {
+          path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+      uses led-flash-time;
+    }
+  }
+
+  rpc board-channel-check {
+    description
+      "Board channel check.";
+    input {
+      leaf enable {
+        type board-channel-check-type;
+        mandatory true;
+        description
+          "Enable or disable board channel check.";
+      }
+    }
+  }
+
+  rpc set-vsu-service-type {
+    description
+      "Set VSU service type.";
+    input {
+      leaf position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "VSU position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+      leaf service-type {
+        type driver-vsu-service-type;
+        mandatory true;
+        description
+          "VSU service type.";
+      }
+    }
+  }
+
+  rpc check-hardware-compatibility {
+    description
+      "Check hardware compatibility.";
+    input {
+      choice check-type {
+        mandatory true;
+        description
+          "Check type.";
+        case startup {
+          description
+            "Startup.";
+          leaf startup {
+            type empty;
+            description
+              "The startup file.";
+          }
+        }
+        case file {
+          description
+            "File.";
+          leaf file-name {
+            type string {
+              length "4..127";
+            }
+            description
+              "Packet file name in master MPU cfcard, for example:cfcard:/B02D.CC.";
+          }
+        }
+      }
+    }
+    output {
+      container hardware-compatibility-infos {
+        description
+          "List of hardware compatibility information.";
+        list hardware-compatibility-info {
+          key "slot";
+          description
+            "Information of hardware compatibility.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot.";
+          }
+          leaf board-type {
+            type string {
+              length "1..32";
+            }
+            description
+              "Board type.";
+          }
+          leaf result {
+            type string {
+              length "1..32";
+            }
+            description
+              "Result.";
+          }
+          leaf detail {
+            type string {
+              length "1..64";
+            }
+            description
+              "Detail.";
+          }
+        }
+      }
+    }
+  }
+
+  rpc clear-nv-port-bip8-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear nv bip error alarm.";
+    input  {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Remote port index.";
+      }
+    }
+  }
+  rpc clear-nv-port-crc-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear nv crc error alarm.";
+    input  {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Remote port index.";
+      }
+    }
+  }
+  rpc clear-nv-port-input-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear nv input error alarm.";
+    input  {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Remote port index.";
+      }
+    }
+  }
+  rpc clear-nv-port-output-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear nv output error alarm.";
+    input  {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Remote port index.";
+      }
+    }
+  }
+  rpc clear-nv-port-sdh-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear nv sdh error alarm.";
+    input  {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Remote port index.";
+      }
+    }
+  }
+  rpc clear-nv-port-symbol-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear nv symbol error alarm.";
+    input  {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Remote port index.";
+      }
+    }
+  }
+  rpc clear-nv-port-trans-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear remote port tad alarm information.";
+    input  {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Remote port index.";
+      }
+    }
+  }
+  rpc clear-nv-port-tx-pause-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear nv txpause error alarm.";
+    input  {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Remote port index.";
+      }
+    }
+  }
+  rpc clear-port-bip8-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear bip error alarm.";
+    input  {
+      leaf port-position {
+        type leafref {
+          path "/devm:devm/devm:ports/devm:port/devm:position";
+        }
+        description
+          "Port position.";
+      }
+    }
+  }
+  rpc clear-port-tx-pause-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear txPause error alarm.";
+    input  {
+      leaf port-position {
+        type leafref {
+          path "/devm:devm/devm:ports/devm:port/devm:position";
+        }
+        description
+          "Port position.";
+      }
+    }
+  }
+  rpc set-nv-laser-turn {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Set port nv laser.";
+    input  {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        default "0";
+        description
+          "Remote port index.";
+      }
+      leaf laser-shutdown {
+        type enumeration {
+          enum "on" {
+            value 0;
+            description
+              "Laser open.";
+          }
+          enum "off" {
+            value 1;
+            description
+              "Laser close.";
+          }
+        }
+        default "on";
+        description
+          "Laser open or shut.";
+      }
+      leaf laser-test-time {
+        type uint32 {
+          range "200..30000";
+        }
+        description
+          "Laser open time(10ms).";
+      }
+    }
+  }
+  
+  rpc check-lcm-channel {
+    description
+      "Check lcm channel.";
+    output {
+      container check-lcm-channel-slots {
+        description
+          "List of checking results of channels on slots.";
+        list check-lcm-channel-slot {
+          key "slot interface-name link-slot link-interface-name";
+          description
+            "The checking result of channels on slot.";
+          leaf slot {
+            type string {
+              length "1..31";
+            }
+            description
+              "Slot.";
+          }
+          leaf interface-name {
+            type string {
+              length "1..31";
+            }
+            description
+              "Interface name.";
+          }
+          leaf link-slot {
+            type string {
+              length "1..31";
+            }
+            description
+              "Link slot.";
+          }
+          leaf link-interface-name {
+            type string {
+              length "1..31";
+            }
+            description
+              "Link interface name.";
+          }
+          leaf product-type {
+            type string {
+              length "1..31";
+            }
+            description
+              "Product type.";
+          }
+          leaf channel-status {
+            type string {
+              length "1..31";
+            }
+            description
+              "Channel status.";
+          }
+        }
+      }
+    }
+  }
+  
+  rpc multi-level-alarm-boolean {
+    description
+      "Multi level alarm boolean output.";
+    input {
+      leaf operation-flag {
+        type driver-operation-flag;
+        mandatory true;
+        description
+          "Operation flag (which includes disable, enable).";
+      }
+      leaf slot {
+        type string {
+          length "1..31";
+        }
+        mandatory true;
+        description
+          "The available slot. The slot is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+      leaf index {
+        type string {
+          length "1..31";
+        }
+        mandatory true;
+        description
+          "Index id. The index is expressed in the format of a number. For example, 1. Here 1 is an example. The value may vary with devices.";
+      }
+      leaf relation {
+        type driver-relation-type;
+        must "(../operation-flag='enable' and ../relation) or (../operation-flag='disable' and not(../relation))";
+        description
+          "Relation.";
+      }
+      leaf alarm-level {
+        type driver-alarm-level-type;
+        must "(../operation-flag='enable' and ../alarm-level) or (../operation-flag='disable' and not(../alarm-level))";
+        description
+          "Alarm level.";
+      }
+    }
+  }
+  
+    augment "/devm:devm/devm:chassiss/devm:chassis" {
+      description
+        "Adds driver configuration to devm model.";
+      container fan-attribute {
+        must "((./workmode='manual' or ./workmode='minimum-percent') and ./speed) or ((./workmode!='manual' and ./workmode!='minimum-percent') and not(./speed))";
+        description
+          "Configure the working mode and speed of the fan.";
+        leaf workmode {
+          type fan-workmode;
+          default "auto";
+          description
+              "Fan working mode.";
+        }
+        leaf speed {
+          when "../workmode='manual' or ../workmode='minimum-percent'";
+          ext:dynamic-default;
+          type uint32 {
+              range "0..100";
+          }
+          description
+            "Fan speed which is a percentage of the highest speed and the range of value changes with the workmode and the hardtype of fan. The current range is determined by combining the minimum and maximum values of all cases.";
+        }
+      }
+      
+      container power-supply-attribute {
+        description
+          "Configure power supply information.";
+        leaf pm-output-limit {
+          type uint32 {
+            range "0..4294967295";
+          }
+          default "0";
+          description
+            "PM output limited value. The value range of this parameter is dynamically determined by the rated power, used power, and number of PMs.";
+        }
+        leaf pm-input-voltage-110 {
+          type driver-bool;
+          default "no";
+          description
+            "Set pm input voltage 110V.The input voltage 110V mode of the PM can be set only when the power supply type is PHD-3000W or PAC-2700W or PAH-3000W.";
+        }
+        leaf power-supply-mode {
+          type pwr-supply-mode-type;
+          default "standard";
+          description
+            "Power supply mode.";
+        }
+        leaf power-supply-input {
+          when "../power-supply-mode='assign'";
+          type uint32 {
+            range "0..11200";
+          }
+          default "0";
+          description
+            "Power supply input power. The value range of this parameter is dynamically determined by the rated power, used power, and number of power supply partitions.";
+        }
+        leaf power-supply-temp {
+          when "../power-supply-mode='standard'";
+          type pwr-supply-temp-type;
+          default "temphigh";
+          description
+            "Chassis Working Temperature. Some temperature modes are not supported on specific device models or in specific scenarios.";
+        }
+        leaf power-supply-limit {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "Limit Power.";
+        }
+        leaf power-supply-assigned {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Assigned Power.";
+        }
+        leaf power-supply-assigned-utility {
+          type string {
+            length "1..255";
+          }
+          default "0";
+          config false;
+          description
+            "Assigned Power Utility.";
+        }
+        leaf power-supply-left {
+          type int32;
+          default "0";
+          config false;
+          description
+            "Left Power.";
+        }
+        leaf power-supply-real {
+          type uint32;
+          config false;
+          description
+            "Real Power.";
+        }
+        leaf power-supply-real-utility {
+          type string {
+            length "1..255";
+          }
+          default "0";
+          config false;
+          description
+            "Real Power Utility.";
+        }
+      }
+      container dustproof-attribute {
+        description
+          "Configure the state of checking dustproof gate.";
+        leaf dustproofcheck {
+          type dustproof-gate-state;
+          default "enable";
+          description
+              "The state of checking dustproof gate.";
+        }
+      }
+    }     
+  
+    augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+      description
+        "Adds driver configuration to devm model.";
+      container driver {
+        config false;
+        description
+          "Statistics of driver apply."; 
+          container l3-clocks {
+            config false;
+            description
+              "List of l3 clocks.";
+            list l3-clock {
+              key "clock-id";
+              config false;
+              description
+                "Statistics of l3 clock.";
+              leaf clock-id {
+                type string {
+                  length "1..255";
+                }
+                config false;
+                description
+                  "L3 clock ID. The clock-id is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+              }
+              leaf l3-clock-state {
+                type driver-clock-status;
+                config false;
+                description
+                  "L3 clock state.";
+              }
+            }
+          }
+       }
+    }
+  
+  augment "/devm:devm" {
+   description
+     "Adds driver configuration to devm model.";
+   container driver {
+     description
+       "Configure driver apply."; 
+    container cmus {
+      description
+        "List of CMUs.";
+      list cmu {
+        ext:generated-by system;
+        ext:operation-exclude create|delete;
+        key "position";
+        description
+          "Configure CMU.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "CMU position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "CMU supply index.";
+        }
+        leaf board-type {
+          type hardware-type:hardware-hard-type;
+          config false;
+          description
+            "Type of a CMU board.";
+        }
+        leaf sdram-size {
+          type uint32;
+          units "MB";
+          config false;
+          description
+            "SDRAM size.";
+        }
+        leaf flash-size {
+          type uint32;
+          units "MB";
+          config false;
+          description
+            "Flash size.";
+        }
+        leaf up-time {
+          type pub-type:time-tick;
+          config false;
+          description
+            "Up time of an CMU, the unit is timetick.";
+        }
+        leaf role {
+          type driver-cmu-role;
+          config false;
+          description
+            "CMU role.";
+         }
+        container cmu-switchs {
+          description
+            "List of CMU Switch.";
+          list cmu-switch {
+            key "switch-id";
+            description
+              "Configure CMU Switch.";
+            leaf switch-id {
+              type uint32 {
+                range "0..6";
+              }
+              description
+                "Switch ID.";
+            }
+            leaf switch-name {
+              type string {
+                length "1..24";
+              }
+              default "unknown";
+              description
+                "Switch Name.";
+            }
+            leaf alarm-mode {
+              type driver-cmu-alarm-mode;
+              default "undo";
+              description
+                "Alarm Mode.";
+            }
+            leaf switch-fog {
+              type driver-cmu-switch-fog;
+              default "unknown";
+              description
+                "Object.";
+            }
+          }
+        }
+        container cmu-relays {
+          description
+            "List of CMU Relays.";
+          list cmu-relay {
+            key "relay-id";
+            description
+              "Configure CMU Relay.";
+            leaf relay-id {
+              type uint32 {
+                range "0..1";
+              }
+              description
+                "Ralay ID.";
+            }
+            leaf relay-name {
+              type string {
+                length "1..24";
+              }
+              default "unknown";
+              description
+                "Relay Name.";
+            }
+            leaf relay-alarm-mode {
+              type driver-cmu-alarm-mode;
+              default "undo";
+              description
+                "Alarm Mode.";
+            }
+          }
+        }
+        container cmu-analogs {
+          description
+            "List of CMU Analogs.";
+          list cmu-analog {
+            key "analog-id";
+            description
+              "Configure CMU Analog.";
+            leaf analog-id {
+              type uint32 {
+                range "0..1";
+              }
+              description
+                "CMU Analog ID.";
+            }
+            leaf analog-name {
+              type string {
+                length "1..24";
+              }
+              default "unknown";
+              description
+                "CMU Analog Name.";
+            }
+            leaf analog-type {
+              type driver-analog-type;
+              default "unknown";
+              description
+                "Specify cmu analog sensor type.";
+            }
+            leaf analog-object {
+              type driver-analog-object-type;
+              default "unknown";
+              description
+                "Specify object monitored by this cmu analog sensor.";
+            }
+            leaf work-low {
+              type int32 {
+                range "0..10";
+              }
+              default "0";
+              description
+                "Specify cmu analog workLow.";
+            }
+            leaf work-high {
+              type int32 {
+                range "0..10";
+              }
+              default "0";
+              description
+                "Specify cmu analog workHigh.";
+            }
+            leaf wanted {
+              type int32 {
+                range "0..10";
+              }
+              default "0";
+              description
+                "Specify cmu analog cmuWanted.";
+            }
+            leaf alarm-low {
+              type int32 {
+                range "0..10";
+              }
+              default "0";
+              description
+                "Specify cmu analog alrmLow.";
+            }
+            leaf alarm-high {
+              type int32 {
+                range "0..10";
+              }
+              default "0";
+              description
+                "Specify cmu analog alarmHigh.";
+            }
+          }
+        }
+        container cmu-alarms {
+          description
+            "List of CMU alarms.";
+          list cmu-alarm {
+            key "alarm-id";
+            description
+              "Configure CMU alarm.";
+            leaf alarm-id {
+              type uint32 {
+                range "0..1";
+              }
+              description
+                "CMU alarm ID.";
+            }
+            leaf alarm-level {
+              type driver-cmu-alarm-mode;
+              default "undo";
+              description
+                "Alarm Level.";
+            }
+          }
+        }
+      }
+    }
+    
+    container pms {
+      description
+        "List of PM.";
+      list pm {
+        ext:generated-by system;
+        ext:operation-exclude create;
+        key "position serial-number";
+        description
+          "Configure PM.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "PM position. The position is expressed in the format of slotID/pmID. For example, 1/1. Here 1/1 is an example. The value may vary with devices.";
+        }
+        leaf serial-number {
+          type uint32;
+          description
+            "Serial Number.";
+        }
+        leaf single-input {
+          type driver-single-input-type;
+          default "NA";
+          description
+            "Set Single Input. The power supply management mode can be switched only when DC power supply is used.";
+        }
+        leaf board-type {
+          type hardware-type:hardware-board-type;
+          config false;
+          description
+            "Type of a PM board.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "PM index.";
+        }
+        leaf monitor-cable-state {
+          type driver-cable-state;
+          config false;
+          description
+            "State of a PM monitor cable.";
+        }
+        leaf input-voltage-value {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Input voltage value.";
+        }
+        leaf input-electrical-value {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Input electrical value.";
+        }
+        leaf input-power-value {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Input power.";
+        }
+        leaf output-voltage-value {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Output voltage value.";
+        }
+        leaf output-electrical-value {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Output electrical value.";
+        }
+        leaf output-power-value {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Output power.";
+        }
+        leaf pm-area {
+          type string {
+            length "1..16";
+          }
+          config false;
+          description
+            "PM area.";
+        }
+        leaf pm-status {
+          type driver-pm-status;
+          config false;
+          description
+            "PM Status Information.";
+        }
+      }
+    }
+    
+    container ccus {
+      config false;
+      description
+        "Statistics of CCU information.";
+      container ccu {
+      presence "ccu";
+        config false;
+        description
+          "Statistics of CCU information.";
+        leaf software-version {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "CCU version.";
+        }
+      }
+    }
+    
+    container dacss {
+      config false;
+      description
+        "List of DACS.";
+      list dacs {
+        key "position serial-number";
+        config false;
+        description
+          "Statistics of DACS.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "DACS position. The position is expressed in the format of slotID. For example, PDU1. Here PDU1 is an example. The value may vary with devices.";
+        }
+        leaf serial-number {
+          type uint32;
+          config false;
+          description
+            "Serial Number.";
+        }
+        leaf board-type {
+          type hardware-type:hardware-board-type;
+          config false;
+          description
+            "Type of a DACS board.";
+        }
+        leaf dacs-area {
+          type string {
+            length "1..16";
+          }
+          config false;
+          description
+            "DACS area.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "DACS index.";
+        }
+        leaf status {
+          type driver-dacs-status;
+          config false;
+          description
+            "State of a DACS monitor.";
+        }
+        leaf insource-plane {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "InSource plane.";
+        }
+        leaf insource-plane-a {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "InSource A plane value (A).";
+        }
+        leaf insource-plane-b {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "InSource B plane value (B).";
+        }
+        leaf output-voltage-value {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Output voltage value (V).";
+        }
+        leaf output-electrical-value {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Output electrical value (A).";
+        }
+        leaf output-status {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Output Status.";
+        }
+      }
+    }
+    
+    container ecus {
+      config false;
+      description
+        "List of ECU boards.";
+      list ecu {
+        key "position";
+        config false;
+        description
+          "Statistics of ECU board.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "ECU index.";
+        }
+        leaf board-type {
+          type hardware-type:hardware-board-type;
+          config false;
+          mandatory true;
+          description
+            "ECU type.";
+        }
+        leaf sdram-size {
+          type uint32;
+          units "MB";
+          config false;
+          description
+            "SDRAM size.";
+        }
+        leaf flash-size {
+          type uint32;
+          units "MB";
+          config false;
+          description
+            "Flash size.";
+        }
+        leaf up-time {
+          type pub-type:time-tick;
+          config false;
+          description
+            "Up time of an ECU, the unit is timetick.";
+        }
+        leaf ofc-card-number {
+          type uint32;
+          config false;
+          description
+            "Number of OFC cards.";
+        }
+        leaf subcard-slot-number {
+          type uint32;
+          config false;
+          description
+            "Number of slots on a subcard.";
+        }
+      }
+    }
+    
+    container fans {
+      config false;
+      description
+        "List of information about all fans on a device.";
+      list fan {
+        key "position";
+        config false;
+        description
+          "Statistics of fan information on a device.";
+        leaf position {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Position of the fan board. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "Index of the fan board.";
+        }
+        leaf board-type {
+          type hardware-type:hardware-board-type;
+          config false;
+          description
+            "Type of a fan board.";
+        }
+        leaf work-mode {
+          type fan-workmode;
+          default "auto";
+          config false;
+          description
+            "Working mode of a fan.";
+        }
+        leaf speed {
+          type uint32 {
+            range "0..100";
+          }
+          config false;
+          description
+            "Fan speed, which is the highest percentage of the fan speed.";
+        }
+        leaf fan-rate {
+          type uint32;
+          units "r/min";
+          config false;
+          description
+            "Rated rotational speed of the fan.";
+        }
+        leaf monitor-cable-state {
+          type driver-cable-state;
+          config false;
+          description
+            "Monitors the fan status.";
+        }
+        leaf register {
+          type driver-bool;
+          config false;
+          description
+            "Whether the fan is registered.";
+        }
+        leaf present {
+          type driver-bool;
+          config false;
+          description
+            "Check whether the fan is in position.";
+        }
+        leaf fan-number {
+          type uint32;
+          config false;
+          description
+            "Number of fans.";
+        }
+        leaf global-speed {
+          type string {
+            length "1..128";
+          }
+          default "NA";
+          config false;
+          description
+            "Fan speed percentage, which is the percentage of the maximum rate.";
+        }
+      }
+    }
+    
+    container icus {
+      config false;
+      description
+        "List of ICUs.";
+      list icu {
+        key "position";
+        config false;
+        description
+          "Statistics of ICU board.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "ICU position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "ICU index.";
+        }
+        leaf board-type {
+          type hardware-type:hardware-board-type;
+          config false;
+          mandatory true;
+          description
+            "ICU type.";
+        }
+        leaf sdram-size {
+          type uint32;
+          units "MB";
+          config false;
+          description
+            "SDRAM size.";
+        }
+        leaf flash-size {
+          type uint32;
+          units "MB";
+          config false;
+          description
+            "Flash size.";
+        }
+        leaf up-time {
+          type pub-type:time-tick;
+          config false;
+          description
+            "Up time of an ICU, the unit is timetick.";
+        }
+      }
+    } 
+
+    container lcds {
+      config false;
+      description
+        "List of LCDs.";
+      list lcd {
+        key "position";
+        config false;
+        description
+          "Statistics of LCD.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Lcd position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "Lcd supply index.";
+        }
+        leaf board-type {
+          type hardware-type:hardware-board-type;
+          config false;
+          description
+            "Type of a LCD board.";
+        }
+      }
+    }
+    
+    container pmus {
+      config false;
+      description
+        "List of PMU.";
+      list pmu {
+        key "position";
+        config false;
+        description
+          "Statistics of PMU.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "PMU position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "PMU index.";
+        }
+        leaf board-type {
+          type hardware-type:hardware-board-type;
+          config false;
+          description
+            "Type of a PMU board.";
+        }
+        leaf present {
+          type string {
+            length "1..16";
+          }
+          config false;
+          description
+            "Present.";
+        }
+        leaf ha-status {
+          type string {
+            length "1..16";
+          }
+          config false;
+          description
+            "HaStatus.";
+        }
+        leaf register {
+          type string {
+            length "1..16";
+          }
+          config false;
+          description
+            "Register.";
+        }
+        leaf work {
+          type string {
+            length "1..16";
+          }
+          config false;
+          description
+            "Work.";
+        }
+      }
+    }    
+    
+    container power-supplys {
+      config false;
+      description
+        "List of information about all power supplies on a device.";
+      list power-supply {
+        key "position";
+        config false;
+        description
+          "Statistics of power supply information on a device.";
+        leaf position {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Position of the power supply. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "Index of the power supply.";
+        }
+        leaf board-type {
+          type hardware-type:hardware-board-type;
+          config false;
+          description
+            "Hardware type of the power supply.";
+        }
+        leaf work-mode {
+          type driver-power-work-mode;
+          config false;
+          description
+            "Working mode of a power supply board.";
+        }
+        leaf monitor-cable-state {
+          type driver-cable-state;
+          config false;
+          description
+            "Status of the power monitoring point.";
+        }
+        leaf power-state {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Working mode of the power supply.";
+        }
+        leaf abnormal-number {
+          type uint32;
+          config false;
+          description
+            "Number of faulty power modules on a device.";
+        }
+        leaf normal-number {
+          type uint32;
+          config false;
+          description
+            "Number of normal power modules on a device.";
+        }
+        container power-environments {
+          config false;
+          description
+            "List of environment information about the power supply on a device.";
+          list power-environment {
+            key "pem-index";
+            config false;
+            description
+              "Statistics of environment information about the power supply on a device.";
+            leaf pem-index {
+              type uint32;
+              config false;
+              description
+                "Index of the power supply.";
+            }
+            leaf voltage-value {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "Voltage of an existing device.";
+            }
+            leaf electrical-value {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "Current value of an existing device.";
+            }
+            leaf temperature-value {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "Temperature of an existing device.";
+            }
+            leaf power-value {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "Query the current power.";
+            }
+          }
+        }
+      }
+    }
+
+    container dmus {
+      config false;
+      description
+        "List of DMU.";
+      list dmu {
+        key "position";
+        config false;
+        description
+          "Statistics of DMU.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "DMU position. The position is expressed in the format of slotID. For example, PDU1. Here PDU1 is an example. The value may vary with devices.";
+        }
+        leaf entity-index {
+          type uint32;
+          description
+            "DMU index.";
+        }
+        leaf board-type {
+          type hardware-type:hardware-board-type;
+          description
+            "Type of a DMU board.";
+        }
+        leaf present {
+          type string {
+            length "1..16";
+          }
+          description
+            "Present.";
+        }
+        leaf register {
+          type string {
+            length "1..16";
+          }
+          description
+            "Register.";
+        }
+        leaf work {
+          type string {
+            length "1..16";
+          }
+          description
+            "Work.";
+        }
+      }
+    }
+
+    container pdus {
+      config false;
+      description
+        "List of PDU.";
+      list pdu {
+        key "position";
+        config false;
+        description
+          "Statistics of PDU.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "PDU position. The position is expressed in the format of slotID. For example, PDU1. Here PDU1 is an example. The value may vary with devices.";
+        }
+        leaf entity-index {
+          type uint32;
+          description
+            "Index.";
+        }
+        leaf board-type {
+          type hardware-type:hardware-board-type;
+          description
+            "Type of a pdu board.";
+        }
+        leaf work-mode {
+          type driver-power-work-mode;
+          description
+            "Working mode of a pdu board.";
+        }
+        leaf power-state {
+          type string {
+            length "1..255";
+          }
+          description
+            "Power Running State.";
+        }
+        leaf abnormal-number {
+          type string {
+            length "1..255";
+          }
+          description
+            "Abnormal PowerModule Number.";
+        }
+        leaf normal-number {
+          type string {
+            length "1..255";
+          }
+          description
+            "Normal PowerModule Number.";
+        }
+      }
+    }	
+
+    container vsus {
+      config false;
+      description
+        "List of VSU.";
+      list vsu {
+        key "position";
+        description
+          "Statistics of VSU.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "VSU position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf service-type {
+          type driver-vsu-service-type;
+          description
+            "Service type of a VSU board.";
+        }
+      }
+    }
+   }
+  }
+}

@@ -1,0 +1,651 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mac {
+  namespace "urn:huawei:yang:huawei-mac";
+  prefix mac;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-vlan {
+    prefix vlan;
+  }
+  import huawei-bd {
+    prefix bd;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }  
+  import huawei-extension {
+    prefix ext;
+  }  
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "MAC address forwarding.";
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "mac";    
+  typedef suppress-type {
+    type enumeration {
+      enum "broadcast" {
+        value 0;
+        description
+          "Broadcast type.";
+      }
+      enum "multicast" {
+        value 1;
+        description
+          "Multicast type.";
+      }
+      enum "unknown-unicast" {
+        value 2;
+        description
+          "Unknown unicast type.";
+      }
+    }
+    description
+      "Suppress type.";
+  }
+  typedef vsi-direction-type {
+    type enumeration {
+      enum "uni-inbound" {
+        value 0;
+        description
+          "UNI inbound.";
+      }
+      enum "uni-outbound" {
+        value 1;
+        description
+          "UNI outbound.";
+      }
+    }
+    description
+      "Direction type.";
+  }
+  typedef mac-limit-forward {
+    type enumeration {
+      enum "discard" {
+        value 0;
+        description
+          "Discard type.";
+      }
+      enum "forward" {
+        value 1;
+        description
+          "Forward type.";
+      }
+    }
+    description
+      "MAC limit forward type.";
+  }
+  typedef mac-enable-status {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable type.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable type.";
+      }
+    }
+    description
+      "MAC Enable type.";
+  }
+  typedef direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 0;
+        description
+          "Inbound type.";
+      }
+      enum "outbound" {
+        value 1;
+        description
+          "Outbound type.";
+      }
+    }
+    description
+      "Direction type.";
+  }
+  container mac {
+    description
+      "MAC address forwarding.";
+    container global-attribute {
+      description
+        "Configure MAC global attribute.";
+      leaf age-time-enable {
+        type mac-enable-status;
+        default "enable";
+        description
+          "Whether MAC address aging is enabled.";
+      }
+      leaf aging-time {
+        when "../age-time-enable='enable'";
+        type uint32 {
+          range "60..1000000";
+        }
+        units s;
+        default "300";
+        description
+          "Aging time.";
+      }
+    }	
+    container mac-limit-rules {
+      description
+        "List of global MAC address learning limit rule.";
+      list mac-limit-rule {
+        key "name";
+        description
+          "Configure global MAC address learning limit.";
+        leaf name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Global MAC address learning limit rule name.";
+        }
+        leaf maximum {
+          type uint32 {
+            range "0..131072";
+          }
+          must "not(../rate=0) or (../rate=0 and ../maximum>0)";
+          mandatory true;
+          description
+            "Maximum number of MAC addresses that can be learned.";
+        }
+        leaf rate {
+          type uint16 {
+            range "0..1000";
+          }
+          must "not(../maximum=0) or (../maximum=0 and ../rate>0)";
+          default "0";
+          description
+            "Interval at which MAC addresses are learned.";
+        }
+        leaf action {
+          type mac-limit-forward;
+          default "discard";
+          description
+            "Discard or forward after the number of learned MAC addresses reaches the maximum number.";
+        }
+        leaf alarm {
+          type mac-enable-status;
+          default "enable";
+          description
+            "Whether an alarm is generated after the number of learned MAC addresses reaches the maximum number.";
+        }
+      }
+    }	
+  }
+  augment "/vlan:vlan/vlan:vlans/vlan:vlan" {
+    description
+      "MAC attribute of a VLAN.";
+    container mac-limit {
+      when "../vlan:type!='super'";
+      presence "MAC address limit.";
+      description
+        "Configure MAC address limit.";
+      leaf maximum {
+        type uint32 {
+          range "0..2048000";
+        }
+        must "not(../rate=0) or (../rate=0 and ../maximum>0)";
+        mandatory true;
+        description
+          "Maximum number of MAC addresses that can be learned.";
+      }
+      leaf rate {
+        type uint16 {
+          range "0..1000";
+        }
+        must "not(../maximum=0) or (../maximum=0 and ../rate>0)";
+        default "0";
+        description
+          "Interval at which MAC addresses are learned.";
+      }
+      leaf action {
+        type mac-limit-forward;
+        default "discard";
+        description
+          "Discard or forward after the number of learned MAC addresses reaches the maximum number.";
+      }
+      leaf alarm {
+        type mac-enable-status;
+        default "enable";
+        description
+          "Whether an alarm is generated after the number of learned MAC addresses reaches the maximum number.";
+      }
+      leaf up-threshold {
+        when "../maximum>0";
+        type uint8 {
+          range "1..100";
+        }
+        must "(not(../up-threshold) and not(../down-threshold)) or ((../up-threshold and ../down-threshold) and (../up-threshold>=../down-threshold))";
+        description
+          "Upper limit for the number of MAC addresses.";
+      }
+      leaf down-threshold {
+        when "../maximum>0";
+        type uint8 {
+          range "1..100";
+        }
+        must "(not(../up-threshold) and not(../down-threshold)) or ((../up-threshold and ../down-threshold) and (../up-threshold>=../down-threshold))";
+        description
+          "Lower limit for the number of MAC addresses.";
+      }
+    }
+  }
+  augment "/bd:bd/bd:instances/bd:instance" {
+    description
+      "VLAN mac attribute.";
+    container mac-addresss {
+      description
+        "List of BD forwarding entries.";
+      list mac-address {
+        key "address";
+        description
+          "Configure BD forwarding entry.";
+        leaf address {
+          type pub-type:mac-address {
+            pattern '[0-9a-f][0|2|4|6|8|a|c|e][0-9a-f]{2}(-[0-9a-f]{4}){2}';
+          }
+          description
+            "MAC address. Only support unicast MAC address.";
+        }
+        choice mac-type {
+          mandatory true;
+          description
+            "MAC type, black hole or static.";
+          case black-hole {
+            description
+              "Blackhole type.";
+            leaf black-hole {
+             type empty;
+             mandatory true;
+             description
+               "Blackhole type.";
+            }
+          }
+          case static {
+            description
+              "Static type.";
+            choice out-interface-type {
+              mandatory true;
+              description
+                "Outbound type.";
+              case ac {
+                description
+                  "AC type.";
+                leaf out-interface-name {
+                  type leafref {
+                    path "/bd:bd/bd:instances/bd:instance/bd:service-points/bd:service-point/bd:interface-name";
+                  }
+                  must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:untag or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:default or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:dot1q or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:qinqs";
+                  mandatory true;
+                  description
+                    "Outbound interface name.";
+                }
+                leaf untag {
+                  when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../out-interface-name]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:untag";
+                  type empty;
+                  mandatory true;
+                  description
+                    "Packets without VLAN tag.";
+                }
+                leaf pe-default {
+                  when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../out-interface-name]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:default";
+                  type empty;
+                  mandatory true;
+                  description
+                    "PE default VLAN.";
+                }
+                leaf vid {
+                  when "(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../out-interface-name]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:dot1q or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../out-interface-name]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:qinqs)";
+                  type uint16 {
+                    range "1..4094";
+                  }
+                  mandatory true;
+                  description
+                    "Outer VLAN tag.";
+                }
+                leaf ce-default {
+                  when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../out-interface-name]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:qinqs/ethernet:qinq-vid-ce-default";
+                  type empty;
+                  mandatory true;
+                  description
+                    "CE default VLAN.";
+                }
+                leaf ce-vid {
+                  when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../out-interface-name]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:qinqs/ethernet:qinq-vids/ethernet:qinq-vid[ethernet:pe-vlan-id=current()/../vid]/ethernet:ce-vlan-list";
+                  type uint16 {
+                    range "1..4094";
+                  }
+                  mandatory true;
+                  description
+                    "Inner VLAN tag.";
+                }
+              }
+              case tunnel {
+                description
+                  "Tunnel type.";
+                leaf source-ip {
+                  type inet:ipv4-address-no-zone;
+                  mandatory true;
+                  description
+                    "Source IP address.";
+                }
+                leaf peer-ip {
+                  type inet:ipv4-address-no-zone;
+                  mandatory true;
+                  description
+                    "Peer IP address.";
+                }
+                leaf vni {
+                  type uint32 {
+                    range "1..16777215";
+                  }
+                  mandatory true;
+                  description
+                    "VXLAN network identifier.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container mac-limit {
+      presence "BD MAC address limit.";
+      description
+        "Configure BD MAC address limit.";
+      leaf maximum {
+        type uint32 {
+          range "0..2048000";
+        }
+        must "not(../rate=0) or (../maximum>0)";
+        mandatory true;
+        description
+          "Maximum number of MAC addresses that can be learned.";
+      }
+      leaf rate {
+        type uint16 {
+          range "0..1000";
+        }
+        units ms;
+        must "not(../maximum=0) or (../rate>0)";
+        default "0";
+        description
+          "Interval at which MAC addresses are learned.";
+      }
+      leaf action {
+        type mac-limit-forward;
+        default "discard";
+        description
+          "Discard or forward after the number of learned MAC addresses reaches the maximum number.";
+      }
+      leaf up-threshold {
+        when "../maximum>0";
+        type uint8 {
+          range "1..100";
+        }
+        must "(not(../up-threshold) and not(../down-threshold)) or ((../up-threshold and ../down-threshold) and (../up-threshold>=../down-threshold))";
+        description
+          "Upper limit for the number of MAC addresses.";
+      }
+      leaf down-threshold {
+        when "../maximum>0";
+        type uint8 {
+          range "1..100";
+        }
+        must "(not(../up-threshold) and not(../down-threshold)) or ((../up-threshold and ../down-threshold) and (../up-threshold>=../down-threshold))";
+        description
+          "Lower limit for the number of MAC addresses.";
+      }
+    }
+  }
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls" {
+    description
+      "MAC parameters on VSI.";
+    container mac {
+      description
+        "Configure MAC parameters on VSI.";	
+      container uni-suppressions {
+        description
+          "List of VSI traffic suppression.";
+        list uni-suppression {
+          must "cir<=cbs";
+          key "type direction";
+          description
+            "Configure VSI traffic suppression.";
+          leaf type {
+            type suppress-type;
+            description
+              "Traffic suppression type.";
+          }
+          leaf direction {
+            type vsi-direction-type;
+            description
+              "Suppression direction.";
+          }
+          leaf cir {
+            type uint64 {
+              range "0..4294967295";
+            }
+            units kbit/s;
+            mandatory true;
+            description
+              "CIR value.";
+          }
+          leaf cbs {
+            type uint64 {
+              range "0..4294967295";
+            }
+            units Byte;
+            ext:dynamic-default {
+              ext:default-value "../cir*(1500/8)"{
+                when "../cir<100000";
+                description "When cir less then 100000kbit/s,the default value is cir-value * (1500/8)Byte.";
+                }
+              ext:default-value 18750000{
+                when "../cir>=100000";
+                description "When cir more then 100000kbit/s,the default value is 100000 * (1500/8)Byte.";
+                }
+            }
+            description
+              "CBS value. If user does not specify this value, the system will calc a value by CIR value.";
+          }
+        }
+      }
+      container mac-limit {
+        presence "VSI MAC address limit.";
+        description
+          "Enable/disable to limit VSI MAC address.";
+        leaf maximum {
+          type uint32 {
+            range "0..2048000";
+          }
+          must "not(../rate=0) or (../maximum>0)";
+          mandatory true;
+          description
+            "Maximum number of MAC addresses that can be learned in a VSI.";
+        }
+        leaf rate {
+          type uint16 {
+            range "0..1000";
+          }
+          units ms;
+          must "not(../maximum=0) or (../rate>0)";
+          default "0";
+          description
+            "Interval at which MAC addresses are learned in a VSI.";
+        }
+        leaf action {
+          type mac-limit-forward;
+          default "discard";
+          description
+            "Discard or forward after the number of learned MAC addresses reaches the maximum number in a VSI.";
+        }
+        leaf alarm {
+          type mac-enable-status;
+          default "disable";
+          description
+            "Whether an alarm is generated after the number of learned MAC addresses reaches the maximum number in a VSI.";
+        }
+        leaf up-threshold {
+          when "../maximum>0";
+          type uint8 {
+            range "1..100";
+          }
+          must "(not(../up-threshold) and not(../down-threshold)) or ((../up-threshold and ../down-threshold) and (../up-threshold>=../down-threshold))";
+          description
+            "Upper limit for the number of MAC addresses.";
+        }
+        leaf down-threshold {
+          when "../maximum>0";
+          type uint8 {
+            range "1..100";
+          }
+          must "(not(../up-threshold) and not(../down-threshold)) or ((../up-threshold and ../down-threshold) and (../up-threshold>=../down-threshold))";
+          description
+            "Lower limit for the number of MAC addresses.";
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet" {
+    description
+      "MAC attribute of interface.";
+    container mac {
+      description
+        "Configure MAC attribute of interface.";
+      container sub-interface-mac-limit {
+        must "(/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:acs/l2vpn:ac[l2vpn:interface-name=current()/../../../ifm:name]) or (../../../ifm:l2-mode-enable='true')";
+        presence "Sub-interface MAC address limit.";
+        description
+          "Configure sub-interface MAC address limit.";
+        choice limit-type {
+          mandatory true;
+          description
+            "Sub-interface MAC limit type.";
+          case limit-rule-ref {
+            description
+              "Reference global MAC limit rule.";
+            leaf rule-name {
+              type leafref {
+                path "/mac:mac/mac:mac-limit-rules/mac:mac-limit-rule/mac:name";
+              }
+              description
+                "Rule name.";
+            }
+          }
+          case limit-parameters {
+            description
+              "Specify MAC limit parameters.";
+            leaf maximum {
+              type uint32 {
+                range "0..131072";
+              }
+              must "not(../rate=0) or (../maximum>0)";
+              mandatory true;
+              description
+                "Maximum number of MAC addresses that can be learned on a sub-interface.";
+            }
+            leaf rate {
+              type uint16 {
+                range "0..1000";
+              }
+              units ms;
+              must "not(../maximum=0) or (../rate>0)";
+              default "0";
+              description
+                "Interval at which MAC addresses are learned on a sub-interface.";
+            }
+            leaf action {
+              type mac-limit-forward;
+              default "discard";
+              description
+                "Discard or forward after the number of learned MAC addresses reaches the maximum number on a sub-interface.";
+            }
+            leaf alarm {
+              type mac-enable-status;
+              default "enable";
+              description
+                "Whether an alarm is generated after the number of learned MAC addresses reaches the maximum number on a sub-interface.";
+            }		  
+          }
+        }
+      }
+      container sub-interface-suppressions { 
+        description
+          "List of Sub-interface traffic suppression.";
+        list sub-interface-suppression {
+          must "(/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:acs/l2vpn:ac[l2vpn:interface-name=current()/../../../../ifm:name]) or (../../../../ifm:l2-mode-enable='true')";
+          key "type direction";
+          description
+            "Configure Sub-Interface traffic suppression.";
+          leaf type {
+            type suppress-type;
+            description
+              "Suppression type.";
+          }
+          leaf direction {
+            type direction-type;
+            description
+              "Suppression direction.";
+          }
+          leaf cir {
+            type uint64 {
+              range "0..4294967295";
+            }
+            units kbit/s;
+            mandatory true;
+            description
+              "CIR value.";
+          }
+          leaf cbs {
+            type uint64 {
+              range "0..4294967295";
+            }
+            units Byte;
+            ext:dynamic-default {
+              ext:default-value "../cir*(1500/8)"{
+                when "../cir<100000";
+                description "When cir less then 100000kbit/s,the default value is cir-value * (1500/8)Byte.";
+                }
+              ext:default-value 18750000{
+                when "../cir>=100000";
+                description "When cir more then 100000kbit/s,the default value is 100000 * (1500/8)Byte.";
+                }
+            }
+            description
+              "CBS value. If user does not specify this value, the system will calc a value by CIR value.";
+          }
+        }
+      }	  
+    }  
+  }  
+}

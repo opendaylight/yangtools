@@ -1,0 +1,1128 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-rip {
+  namespace "urn:huawei:yang:huawei-rip";
+  prefix rip;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-xpl {
+    prefix xpl;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  include huawei-rip-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "RIP component.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "rip";
+  
+  rpc reset-rip-configuration {
+    description
+      "Reset RIP configuration information.";
+    input {
+      choice process {
+        mandatory "true";
+        description
+          "Reset rip specified process or all processes.";
+        case process-id {
+          description
+            "Specify the RIP process which needs to be reset.";
+          leaf process-id {
+            type uint32 {
+              range "1..4294967295";
+            }
+            description
+              "Specify the RIP process which needs to be reset.";
+          }
+        }
+        case all-process {
+          description
+            "Reset all RIP processes.";
+          leaf all-process { 
+            type rip-enable-flag;
+              default "disable";
+            description
+              "Reset all the processes.";
+          }
+        }
+      }
+    }
+  }
+  rpc reset-rip-import-routes {
+    description
+      "Reset import routes from other protocols into RIP.";
+    input {
+      choice process {
+        mandatory "true";
+        description
+          "Reset rip specified process or all processes.";
+        case process-id {
+          description
+            "Specify the RIP process which needs to be reset.";
+          leaf process-id {
+            type uint32 {
+              range "1..4294967295";
+            }
+            description
+              "Specify the RIP process which needs to be reset.";
+          }
+        }
+        case all-process {
+          description
+            "Reset all RIP processes.";
+          leaf all-process { 
+            type rip-enable-flag;
+              default "disable";
+            description
+              "Reset all the processes.";
+          }
+        }
+      }
+    }
+  }
+  rpc reset-rip-statistics {
+    description
+      "Reset RIP statistical information.";
+    input {
+      choice process {
+        mandatory "true";
+        description
+          "Reset rip specified process or all processes.";
+        case process-id {
+          description
+            "Specify the RIP process which needs to be reset.";
+          leaf process-id {
+            type uint32 {
+              range "1..4294967295";
+            }
+            description
+              "Specify the RIP process which needs to be reset.";
+          }
+        }
+        case all-process {
+          description
+            "Reset all RIP processes.";
+          leaf all-process { 
+            type rip-enable-flag;
+              default "disable";
+            description
+              "Reset all the processes.";
+          }
+        }
+      }
+      leaf interface-all{
+        type rip-enable-flag;
+        description
+          "Reset all interfacce statistics information.";
+      }
+      leaf interface { 
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Specify the interface on which statistics needs to be cleared.";
+      }
+      leaf neighbor-address {
+        type inet:ipv4-address-no-zone;
+        description
+          "Specify the neighbor IP address.";
+      } 
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance" {
+    description
+      "RIP augment to L3VPN.";
+    container rip {
+      when "../l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+      description
+        "Configure RIP component.";
+      container processs {
+        description
+          "List of RIP process.";
+        list process {
+          key "id";
+          description
+            "Configure RIP process.";
+          leaf id {
+            type uint32 {
+              range "1..4294967295";
+            }
+            description
+              "Specify a RIP process ID.";
+          }
+          leaf description {
+            type string {
+              length "1..80";
+            }
+            description
+              "Specify a description for a RIP process. The description is used to identify a RIP process. You can configure a meaningful name, which helps understanding the configuration.";
+          }
+          leaf verify-source {
+            type rip-enable-flag;
+            default "enable";
+            description
+              "You can enable a device to validate the source IP address of the incoming RIP route updates. For all received RIP updates, you can check whether the originator and the receiver belong to the same subnet.
+It is recommended not to disable this feature in normal circumstances.";
+          }
+          leaf threshold-percent {
+            type uint8 {
+              range "0..100";
+            }
+            default "80";
+            description
+              "Specify the percentage of the maximum number of routes after which an alarm is generated. Once RIP learns the maximum number of routes, it will stop learning any new route till the number of routes falls to a value below the threshold-value percentage of the maximum number.";
+          }
+          leaf summary {
+            type rip-summ-enable-flag;
+            default "enable";
+            description
+              "You can enable RIP summarization. 
+When RIP summarization is enabled, the router summarizes subnet routes to a classful route. The summarization is invalid when the split horizon or poison reverse feature is enabled. Therefore, when the summarized routes are sent to the natural network segment.";
+          }
+          leaf host-route {
+            type rip-enable-flag;
+            default "enable";
+            description
+              "In RIPv1 advertisements, there is no subnet information associated with the routes. When routes are learned through RIPv1 packets, the subnet mask is used as follows: 
+1. Classful subnet mask, when the major net of the learned route and that of the received interface do not match. 
+2. Interface's subnet mask, when the major net of the route matches that of the interface. 
+In the second case, when the major net matches, and there is some non-zero part in the route advertisement after applying the interface mask, it will use a host-route mask when the host-route is enabled.";
+          }
+          leaf check-zero {
+            type rip-enable-flag;
+            default "enable";
+            description
+              "In general, RIPv1-enabled routers will reject all the packets containing non-zero bits in the MBZ fields of the RIP packets.
+This configuration is applied only for RIPv1 packets. If the version applicable on the interface is RIP version 2 (RIPv2), then the packets are not checked for MBZ fields.
+If the version is V2-broadcast, then the configuration is applied to any received version 1 packets. And if the version is V1, then the configuration is applied to received RIPv1 packets.";
+          }
+          leaf version {
+            type uint8 {
+              range "1..2";
+            }
+            description
+              "If the configured version is 1, only RIPv1 packets will be sent and received, and RIPv2 packets will be rejected.
+If the configured version is 2, only RIPv2 multicast packets will be sent, and only RIPv2 (multicast/broadcast) packets will be received.
+If the RIP version is changed from version 1 to version 2, or from version 2 to version 1, then all the routes will be deleted from the routing table.";
+          }
+          leaf mib-binding {
+            type rip-enable-flag;
+            default "disable";
+            description
+              "You can run the RIP mib binding command to set binding between the MIB and RIP process ID. All configurations that will be done through SNMP manager will be reflected in this RIP process.
+In the RIP MIB table, there is no way to specify a RIP process ID. Hence the configurations that are done using SNMP, cannot be resolved to the intended process. To facilitate this, run the rip mib-binding command.";
+          }
+          leaf maximum-load-balancing  {
+            type uint8 {
+              range "1..128";
+            }
+            default "64";
+            description
+              "You can configure the maximum number of equal cost routes for load balancing. This does not limit the number of equal-cost routes that RIP can learn. RIP will store all the received ECMP routes.
+The default value of the number of equal-cost routes may vary with products and licenses. You can adjust the default value by purchasing a new license. If the value is configured twice, the second one overrides the first one.";
+          }
+          leaf zero-metric-check {
+            type rip-enable-flag;
+            default "enable";
+            description
+              "Some vendors support the metric of a route as zero. This means a route update packet from other vendors' routers can contain routes with metric field value as zero.";
+          }
+          leaf default-cost {
+            type uint8 {
+              range "0..15";
+            }
+            default "0";
+            description
+              "The default cost is used when RIP imports routes from other routing protocols, and no cost is specified through a route-policy or the cost parameter in the import-route command.
+Triggered update will be sent if the cost of any of the imported route changes due to the default cost configuration.";
+          }
+          leaf silent-interface-all {
+            type rip-enable-flag;
+            default "disable";
+            description
+              "Specify all the RIP enabled interfaces in the process as silent interfaces. A silent RIP interface can receive updates but cannot send any update. If on a silent interface, unicast neighbors are configured, then updates can be sent to those unicast neighbors. A request received from a configured unicast neighbor that falls on a silent interface will be responded with a response message.";
+          }
+          leaf max-routes {
+            type uint32 {
+              range "1..300000";
+            }
+            default "150000";
+            description
+              "A RIP process must have been created before you configure the maximum number of routes.
+On reaching the maximum number of routes, RIP cannot add any further routes into the routing table. By configuring a threshold, the user can get a warning message indicating that the maximum number of routes is being added. On reaching the maximum number of routes even if routes are deleted, no new routes can be added to RIP until the number of routes drops to the threshold value.
+The upper limit on the number of routes that RIP can handle is to ensure that RIP performs within its memory constraints and meets its performance requirements.";
+          }
+          container networks {
+            description
+              "List of networks for each RIP process.";
+            list network {
+              key "address";
+              description
+                "Configure the network.";
+              leaf address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Specified address must be major net address without any subnets.";
+              }
+            }
+          }
+          container filter-imports {
+            description
+              "List of the filter policies. There can be multiple filter policies for each RIP process.";
+            list filter-import {
+              key "interface";
+              description
+                "Configure the filter policies.";
+              leaf interface {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                description
+                  "Specify the name of the interface on which the imported routes are filtered. The specified interface must be bound to the process for which the filter-policy is configured.";
+              }
+              choice policy-type {
+                mandatory "true";
+                description
+                  "Mode of the policy used for import route.";
+                case ip-prefix {
+                  description
+                    "Set a name of the IP prefix list.";
+                  leaf ip-prefix {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    description
+                      "Specify the name of the IP prefix list to be configured along with metricin.";
+                  }
+                  leaf gataway {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    description
+                      "Specify the name of the gateway IP prefix list that is used to filter routes.";
+                  }
+                }
+                case acl-number {
+                  description
+                    "Set a number of the basic ACL.";
+                  leaf acl-number {
+                    type leafref {
+                      path "/acl:acl/acl:groups/acl:group/acl:identity";
+                    }
+                    must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                    description
+                      "Specify the number of the basic ACL to be configured along with metricin.";
+                  }
+                }
+                case acl-name {
+                  description
+                    "Set a name of an basic ACL.";
+                  leaf acl-name {
+                    type leafref {
+                      path "/acl:acl/acl:groups/acl:group/acl:identity";
+                    }
+                    must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                    description
+                      "Specify the name of an basic ACL to be configured along with metricin.";
+                  }
+                }
+              }
+            }
+          }
+          container filter-exports {
+            description
+              "List of the filter policies. There can be multiple filter policies for each RIP process.";
+            list filter-export {
+              key "protocol process-id interface";
+              description
+                "Configure the filter policy.";
+              leaf protocol {
+                type rip-proto-type;
+                must "../interface='NULL0'";
+                description
+                  "Specify the imported external routing protocol. It can be static, direct, BGP, RIP, OSPF, or ISIS.";
+              }
+              leaf process-id {
+                type uint32 {
+                  range "1..4294967295";
+                }
+                must "(../protocol!='ospfv2' and ../protocol!='isis' and ../protocol!='rip' and ../process-id=1)";
+                description
+                  "Specify the process ID. Process-id is required when the imported protocol is RIP, OSPF, or ISIS.";
+              }
+              leaf interface {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "../protocol='none'";
+                description
+                  "Specify the name of the interface on which the imported routes are filtered. The specified interface must be bound to the process for which the filter-policy is configured.";
+              }
+              choice policy-type {
+                mandatory "true";
+                description
+                  "Mode of the policy used for import route.";
+                case ip-prefix {
+                  description
+                    "Set a name of the IP prefix list.";
+                  leaf ip-prefix {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    description
+                      "Specify the name of the IP prefix list to be configured along with metricin.";
+                  }
+                }
+                case acl-number {
+                  description
+                    "Set a number of the basic ACL.";
+                  leaf acl-number {
+                    type leafref {
+                      path "/acl:acl/acl:groups/acl:group/acl:identity";
+                    }
+                    must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                    description
+                      "Specify the number of the basic ACL to be configured along with metricin.";
+                  }
+                }
+                case acl-name {
+                  description
+                    "Set a name of an basic ACL.";
+                  leaf acl-name {
+                    type leafref {
+                      path "/acl:acl/acl:groups/acl:group/acl:identity";
+                    } 
+                    must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                    description
+                      "Specify the name of an basic ACL to be configured along with metricin.";
+                  }
+                }
+              }
+            }
+          }
+          container import-routes {
+            description
+              "List of import routes from multiple protocols.";
+            list import-route {
+              key "protocol process-id";
+              description
+                "Configure import routes from a specified protocol.";
+              leaf protocol {
+                type rip-imp-prototype;
+                description
+                  "Specify the protocol from which routes are imported.";
+              }
+              leaf process-id {
+                type uint32 {
+                  range "1..4294967295";
+                }
+                must "(../protocol!='ospfv2' and ../protocol!='isis' and ../protocol!='rip' and ../process-id=1) or not(../protocol!='ospfv2' and ../protocol!='isis' and ../protocol!='rip' or ../protocol='bgp' or ../protocol='direct' or ../protocol='static' or ../protocol='unr')";
+                description
+                  "Specify the process ID of the protocol from which routes are imported. The value can be RIP, OSPFv2, or ISIS.";
+              }
+              choice policy-type {
+                description
+                  "Mode of the policy used for import route.";
+                case route-policy-name {
+                  description
+                    "Set a route-policy name.";
+                  leaf route-policy-name {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                    }
+                    description
+                      "Specify the name of the route policy to be used during route import.
+                      Redistributing routes from other protocols will import even the direct routes of the source protocol.
+                      The prerequisites for the import route command are as follows:
+                      1. A RIP process has been created. 
+                      2. The policy to be applied has been configured.
+                      Reconfiguration of this command with a new value of process-id or protocol will not affect previous configurations. Reconfiguration of this command with the existing protocol and process-id, regardless of the policy configuration, will overwrite previous configurations. The policy used in the redistribution command can be deleted only when no other configuration is using the policy.";
+                  }
+                }
+                case route-filter-name {
+                  description
+                    "Set a route policy name.";
+                  leaf route-filter-name {
+                    type string {
+                      length "1..1809";
+                    }
+                    description
+                      "Name of a routing Filter The value is a string of 1 to 585 characters.";
+                  }
+                }
+              }
+              leaf cost {
+                type uint16 {
+                  range "0..15";
+                }
+                description
+                  "Specify the cost used for the imported route.
+                   The cost and the tag value of the routes imported to RIP may be specified in the policy. If no cost is specified in the policy, the routes are imported into RIP with the cost specified in the command. If no cost is specified either in the command or policy, the configured default cost is used. If no tag value is specified in the policy, the tag value specified by the RM module is used. If the route tag specified by the RM module overflows 2 bytes, zero is used as the route tag.";
+              }
+              leaf transparent {
+                type rip-enable-flag;
+                must "(../transparent='enable' and ../protocol='bgp') or ../transparent='disable'";
+                default "disable";
+                description
+                  "This is used in case of importing routes from BGP. If this option is selected, the BGP route cost will be directly applied to these imported routes. The configured import route cost will not be considered in this case. If the BGP cost is more than 16, RIP will advertise these routes with cost 16 only.";
+              }
+              leaf permit-ibgp {
+                when "../../../../../../ni:name='_public_'";
+                type rip-enable-flag;
+                must "(../permit-ibgp='enable' and ../protocol='bgp') or ../permit-ibgp='disable'";
+                default "disable";
+                description
+                  "IBGP routes will be imported to the RIP process.";
+              }
+            }
+          }
+          container timer {
+            description
+              "Configure a timer for a process.";
+            leaf garbage {
+              type uint32 {
+                range "1..86400";
+              }
+              default "120";
+              description
+                "Specify the interval for the device to delete a route from the routing table after detecting that the route is unreachable.";
+            }
+            leaf periodic {
+              type uint32 {
+                range "1..86400";
+              }
+              default "30";
+              description
+                "Specify the periodic timer in seconds. RIP will send route updates periodically at this configured interval.";
+            }
+            leaf age {
+              type uint32 {
+                range "1..86400";
+              }
+              default "180";
+              description
+                "Specify the age timer. Routes will be considered unreachable after this interval. In most cases, the age timer is three times the update timer.";
+            }
+            leaf suppress {
+              type uint32 {
+                range "0..86400";
+              }
+              default "0";
+              description
+              "A route is suppressed after it ages and becomes unreachable. During the suppression time, no route update is accepted to prevent route flapping. 
+The values of these timers should follow the rule: update < age and suppress < garbage-collect. For example, when the update timer is longer than the age timer, the router cannot inform its neighbors of the change in time if a RIP route changes during the update timer. 
+This configuration should be used carefully as any parameter change can cause route flapping and can increase the convergence time considerably. If the network is quite stable, you can increase the timer values.";
+            }
+            leaf triggered-flag {
+              type rip-enable-flag;
+              default "disable";
+              description
+                "Enable the triggered timer.";
+            }
+            leaf triggered-min-interval {
+              type uint32 {
+                range "100..5000";
+              }
+              must "../triggered-min-interval='200' or ../triggered-flag='enable'";
+              default "200";
+              description
+                "Specify the minimum interval after which the triggered update can be sent.";
+            }
+            leaf triggered-max-interval {
+              type uint32 {
+                range "200..5000";
+              }
+              must "../triggered-max-interval='5000' or ../triggered-flag='enable'";
+              default "5000";
+              description
+                "Specify the maximum interval after which the triggered update has to be sent, even if the route is still changing.";
+            }
+            leaf triggered-incr-value {
+              type uint32 {
+                range "100..1000";
+              }
+              must "../triggered-incr-value='100' or ../triggered-flag='enable'";
+              default "100";
+              description
+                "Specify the value by which the triggered timer will be incremented in case of frequent route changes.";
+            }
+          }
+          container peers {
+            description
+              "List of the unicast neighbors. There can be multiple unicast neighbors configured for each RIP process.";
+            list peer {
+              key "address";
+            description
+              "Configure the unicast neighbor.";
+              leaf address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Display the address of a neighbor. The neighbor configuration is used when you do not want to send the RIP routing information as broadcast or multicast messages. This is particularly useful on broadcast and multicast networks when we want to send messages to few neighbors. If unicast neighbors are configured on silent interfaces, then updates will be sent to those unicast neighbors.
+                   This configuration will cause RIP to send unicast packets to some destinations. As a result, all the routers on that interface will not be able to hear the advertisement.
+                   If neighbor-address is same as one of the addresses configured on the interface, then the updates are not sent to neighbors.";
+              }
+            }
+          }
+          container silent-interfaces {
+            when "(../silent-interface-all='disable')";
+            description
+              "List of silent interfaces. There can be multiple silent interfaces configured for each RIP process.";
+            list silent-interface {
+              key "if-name";
+              description
+                "Configure the silent interface.";
+              leaf if-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "../../../../../../ni:name=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name";
+                description
+                  "The silent interface configuration is used when you do not want to send the RIP routing information on a specific multicast interface. If neighbor-address is configured on the interface, then the updates are sent to neighbors.";
+              }
+            }
+          }
+          container undo-silent-interfaces {
+            when "(../silent-interface-all='enable')";
+            description
+             "List of silent interfaces disabled. There can be multiple silent interfaces configured for each RIP process.";
+            list undo-silent-interface {
+              key "if-name";
+              description
+                "Configure the silent interface disable.";
+              leaf if-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "../../../../../../ni:name=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name";
+                description
+                  "The silent interface configuration is used when you do not want to send the RIP routing information on a specific multicast interface. If neighbor address is configured on the interface, then the updates are sent to neighbors.";
+              }
+            }
+          }
+          container default-route {
+            presence "Enable default-route.";
+            description
+              "Configure a default route.";
+            leaf cost {
+              type uint8 {
+                range "0..15";
+              }
+              default "0";
+              description
+                "Specify the cost to be used while generating a default route. If a metric out value is applicable on the interface, then the advertised metric value is the sum of the cost (specified in the default-route originate command) and the metric out value.";
+            }
+            leaf tag {
+              type uint16;
+              default "0";
+              description
+                "Specify the tag value to be used while generating a default route.";
+            }
+            leaf avoid-learning {
+              type rip-enable-flag;
+              must "../avoid-learning='disable' or ../route-policy-name";
+              default "disable";
+              description
+                "Prevent the default route from being learned from neighbors.";
+            }
+            choice default-route-mode {
+              mandatory "true";
+              description 
+                "Mode for default route.";
+              case always {
+                description
+                  "Set always.";
+                leaf always {
+                  type empty;
+                  description
+                    "The router configured with the always parameter does not calculate the default routes of other routers.";
+                }
+              }
+              case match-default {
+                description
+                  "Match default route.";
+                leaf match-default {
+                  type empty;
+                  description
+                    "Advertises the default routes (if any) in the routing table generated by other routing protocols or RIP processes to neighbors.";
+                }
+              }
+              case route-policy-name {
+                description
+                  "Specify the name of a route-policy.";
+                leaf route-policy-name {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                  }
+                  description
+                    "Name of a routing policy. Through the routing policy, the device matches the default routing entry generated by the device that does not run RIP in the routing table, and advertises the default route according to the parameters set through the routing policy.";
+                }
+                leaf advertise-tag {
+                  type rip-enable-flag; 
+                  must "../advertise-tag='disable' or ../route-policy-name";
+                  default "disable";
+                  description
+                    "Inherit tag applied through route-policy.";
+                }
+              }
+              case route-filter-name {
+                description
+                  "Specify the name of a route-filter.";
+                leaf route-filter-name {
+                  type leafref {
+                    path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                  }
+                  description
+                    "Name of a routing Filter The value is a string of 1 to 585 characters.";
+                } 
+              }
+            }
+          }
+          container bfd {
+            description
+              "Configure BFD for the process.";
+            leaf enable {
+              type rip-enable-flag;
+              default "disable";
+              description
+                "Enable BFD for the given RIP process.";
+            }
+            leaf min-tx {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Minimum interval for sending BFD packets to the neighbor. The value range and default value are controlled by the PAF.";
+            }
+            leaf min-rx {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Minimum interval for receiving BFD packets from the neighbor. The value range and default value are controlled by the PAF.";
+            }
+            leaf detect-multiplier {
+              type uint32 {
+                range "3..50";
+              }
+              default "3";
+              description
+                "Local detection multiplier.";
+            }
+            leaf min-tx-val {
+              type uint32 {
+                range "1..4294967295";
+              }
+	   	      config false;
+              description
+                "Minimum interval for sending BFD packets to the neighbor. The value range and default value are controlled by the PAF.";
+            }
+            leaf min-rx-val {
+              type uint32 {
+                range "1..4294967295";
+              }
+	   		  config false;
+              description
+                "Minimum interval for receiving BFD packets from the neighbor. The value range and default value are controlled by the PAF.";
+            }
+          }
+          container preference {
+            description
+              "Configure a preference value.";
+            leaf value {
+              type uint8 {
+                range "1..255";
+              }
+              default "100";
+              description
+                "The configured priority applies to the routes to be delivered to the RM module. If RIP has added a route to the RM module, and then the priority is changed, RIP re-adds it with the new priority.
+The prerequisites for the priority configuration are as follows:
+1. A RIP process has been created. 
+2. The policy to be applied has been configured.";
+            }
+            choice policy-type {
+              description
+                "Mode of the policy used for import route.";
+              case route-policy {
+                description
+                  "Set a route policy name.";
+                leaf route-policy {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                  }
+                  description
+                    "You can set a priority for the routes that match the policy, and the result is displayed in the routing table of the RM module.
+                     The prerequisites for the priority configuration are as follows:
+                     1. A RIP process has been created.
+                     2. The policy to be applied has been configured.";
+                }
+              }
+              case route-filter {
+                description
+                  "Set a route policy name.";
+                leaf route-filter {
+                  type string {
+                    length "1..1809";
+                  }
+                  description
+                    "Name of a routing Filter The value is a string of 1 to 585 characters.";
+                }
+              }
+            }
+          }
+          container interfaces {
+            description
+              "List of the interface. There can be multiple interfaces on which RIP is enabled.";
+            list interface {
+              key "name";
+              description
+                "Configure the interface.";
+              leaf name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "../../../../../../ni:name=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name";
+                description
+                  "Specify the name of an interface on which RIP is to be configured.";
+              }
+              choice max-packet-length {
+                default "value";
+                description
+                  "Configure max packet length information.";
+                case value {
+                  description
+                    "Max packet length value.";
+                  leaf value {
+                    type uint16 {
+                      range "32..65535";
+                    }
+                    default "512";
+                    description
+                      "If max packet length is more than the interface MTU, the interface MTU is used.
+          The maximum size of RIP packets is 512 bytes. Using this packet size is not very efficient as it leads to wastage of some bandwidth. If the neighbor on the other side supports RIP packets of a greater size, then you can increase the packet size so that more routes can be sent in one packet.
+          This configuration can increase the RIP packet size. After the packet size is increased, the router may fail to communicate with non-Huawei routers. Therefore, exercise caution when using this command. This command can be configured only if the other side can accept RIP packets of a size greater that 512 bytes.";
+                  }
+                }
+                case mtu {
+                  description
+                    "Configure inteface MTU as max packet length.";
+                  leaf mtu {
+                    type empty;
+                    description
+                      "Specify that the maximum length of packets is equal to the interface MTU.If this is set, interface MTU configuration will be preferred to RIP configuration.";
+                  }
+                }
+              }
+              leaf input {
+                type rip-enable-flag;
+                default "enable";
+                description
+                  "If the input is disabled, then no RIP packets will be received on that interface regardless of the unicast neighbor and silent configuration on that interface. When input is disabled and then enabled, it will send full table request packets.";
+              }
+              leaf output {
+                type rip-enable-flag;
+                default "enable";
+                description
+                  "If output is disabled, then no RIP packets will be sent on that interface regardless of the unicast neighbor and silent configuration on that interface. But if the max-route configuration changes, RIP requests may be sent regardless of the silent configuration on that interface.";
+              }
+              leaf version {
+                type rip-version-type;
+                default "rip-version-default";
+                description
+                  "The version configuration can be done on an interface to receive and advertise RIPv1 and RIPv2 packets. If the user wants to receive both RIPv1 and RIPv2 packets, then RIPv2 broadcast should be configured. But only RIPv2 broadcast packets will be sent. Configure the version based on the version of the neighbors on that interface.";
+              }
+              leaf split-horizon {
+                type rip-enable-flag;
+                default "enable";
+                description
+                  "Split horizon prevents a route from being advertised back on the interface from which was learned. Split horizon is not enabled on NBMA or P2MP interfaces because they have multiple neighbors.";
+              }
+              leaf poison-reverse {
+                type rip-enable-flag;
+                default "disable";
+                description
+                  "Poison reverse is disabled by default. Poison reverse can be enabled to advertise routes with infinite metric (16) on the interface from which the routes were learned. When both split horizon and poison reverse is configured, poison reverse will have a higher priority.";
+              }
+              leaf pkt-transmit-interval {
+                type uint16 {
+                  range "50..500";
+                }
+                default "200";
+                description
+                  "Interval at which packets are transmitted.";
+              }
+              leaf pkt-transmit-bandwidth {
+                type uint8 {
+                  range "1..99";
+                }
+                default "99";
+                description
+                  "Specify the percentage of the interface bandwidth to be used to send RIP updates.";
+              }
+              leaf pkt-transmit-number {
+                type uint8 {
+                  range "25..100";
+                }
+                default "50";
+                description
+                  "Number of packets that can be sent from an interface each time.";
+              }
+              container authentication {
+                description
+                  "Configure the authentication type on the interface.";
+                leaf mode {
+                  type rip-auth;
+                  default "none";
+                  description
+                    "Specify the authentication type configured on this interface.
+Authentication password mismatch between sending and receiving side can cause packet drops on the receiving side.
+While RIP is using keychain authentication, if no valid password exist in keychain, then RIP packets will be sent and received without any authentication. The configuration on an interface has a higher priority over the configuration in a process.
+Before running the ripng authentication-mode command, a RIP process or an interface has been created.";
+                }
+                leaf simple {
+                  when "(../mode='simple') or (../mode='usual')";
+                  type pub-type:password;
+                  mandatory "true";
+                  description
+                    "Specify the password authentication. The password is a string ranging from 1 to 16 characters for a unencrypted password and 24 to 128 characters for a encrypted password.";
+                }
+                leaf key-id {
+                  when "(../mode='md5-keyid') or (../mode='hmac-sha256')";
+                  type uint32 {
+                    range "0..255";
+                  }
+                  mandatory "true";
+                  description
+                    "Specify the ID to identify the key when encrypted authentication is used.";
+                }
+                leaf md5 {
+                  when "(../mode='md5-keyid') or (../mode='hmac-sha256')";
+                  type pub-type:password-extend;
+                  mandatory "true";
+                  description
+                    "Specify the password string when encrypted authentication is used.";
+                }
+              }
+              container metricin {
+                description
+                  "Configure the metricin on the interface.";
+                leaf value {
+                  type uint8 {
+                    range "0..15";
+                  }
+                  default "0";
+                  description
+                    "Metricin is the mechanism to increase the incoming metric of routes learned through RIP.
+When RIP receives a route, the metric value configured on that interface is added before adding it to the RIP routing table. After the metric is added, if the metric is greater than 16, 16 is used as the metric.";
+                }
+                choice policy-type {
+                  description
+                    "Mode of the policy used for import route.";
+                  case ip-prefix {
+                    description
+                      "Set a name of the IP prefix list.";
+                    leaf ip-prefix {
+                      when "../value>0";
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Specify the name of the IP prefix list to be configured along with metricin.";
+                    }
+                  }
+                  case acl-number {
+                    description
+                      "Set a number of the basic ACL.";
+                    leaf acl-number {
+                      when "../value>0";
+                      type leafref {
+                        path "/acl:acl/acl:groups/acl:group/acl:identity";
+                      }
+                      must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Specify the number of the basic ACL to be configured along with metricin.";
+                    }
+                  }
+                  case acl-name {
+                    description
+                      "Set a name of an basic ACL.";
+                    leaf acl-name {
+                      when "../value>0";
+                      type leafref {
+                        path "/acl:acl/acl:groups/acl:group/acl:identity";
+                      }
+                      must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Specify the name of an basic ACL to be configured along with metricin.";
+                    }
+                  }
+                }
+              }
+              container metricout {
+                description
+                  "Configure the metricout on the interface.";
+                leaf value {
+                  type uint8 {
+                    range "1..15";
+                  }
+                  default "1";
+                  description
+                    "When RIP advertises a route, the metric value configured on an interface is added before sending the route. After the metric is added, if the value is greater than 16, 16 is used as the metric.
+When an ACL or IP prefix list is configured in the metricout command, the metric is applied only to those routes that match the ACL or IP prefix list. All other routes are sent with the default cost (1).";
+                }
+                choice policy-type {
+                  description
+                    "Mode of the policy used for import route.";
+                  case ip-prefix {
+                    description
+                      "Set a name of the IP prefix list.";
+                    leaf ip-prefix {
+                      when "../value>1";
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Specify the name of the IP prefix list to be configured along with metric out.";
+                    }
+                  }
+                  case acl-number {
+                    description
+                      "Set a number of the basic ACL.";
+                    leaf acl-number {
+                      when "../value>1";
+                      type leafref {
+                        path "/acl:acl/acl:groups/acl:group/acl:identity";
+                      }
+                      must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Specify the number of the basic ACL to be configured along with metric out.";
+                    }
+                  }
+                  case acl-name {
+                    description
+                      "Set a name of the basic ACL.";
+                    leaf acl-name {
+                      when "../value>1";
+                      type leafref {
+                        path "/acl:acl/acl:groups/acl:group/acl:identity";
+                      }
+                      must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Specify the name of the basic ACL to be configured along with metric out.";
+                    }
+                  }
+                }
+              }
+              container bfd {
+                description
+                  "Configure the BFD configuration on the interface.";
+                leaf type {
+                  type rip-bfd-type;
+                  default "none";
+                  description
+                    "Specify the type of BFD on the interface, dynamic, static, or block.";
+                }
+                leaf min-tx {
+                  type uint32 {
+                    range "1..4294967295";
+                  }
+                  units "ms";
+                  description
+                    "Minimum interval for sending BFD packets to the neighbor. The value range vary with the product.";
+                }
+                leaf min-rx {
+                  type uint32 {
+                    range "1..4294967295";
+                  }
+                  units "ms";
+                  description
+                    "Minimum interval for receiving BFD packets from the neighbor. The value range vary with the product.";
+                }
+                leaf detect-multiplier {
+                  type uint32 {
+                    range "3..50";
+                  }
+                  default "3";
+                  description
+                    "Local detection multiplier.";
+                }
+              }
+              container summarys {
+                description
+                  "List of summary addresses configured for the interface.";
+                list summary {
+                  key "address network-mask";
+                  max-elements "128";
+                  description
+                    "Configure a summary class.";
+                  leaf address {
+                    type inet:ipv4-address-no-zone;
+                    description
+                      "Route summarization improves the scalability and efficiency of routers on large networks and reduces the routing table size. Instead of sending many routes to neighbors, a router sends only the route to the specified summarized address.";
+                  }
+                  leaf network-mask {
+                    type inet:ipv4-address-no-zone;
+                    description
+                      "Specify the mask for the summary address.";
+                  }
+                  leaf avoid-feedback {
+                    type rip-enable-flag;
+                    default "disable";
+                    description
+                      "Prevent summarized routes from being sent back to the interface.";
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      container gtsm {
+        description
+          "Configure RIP GTSM.";
+        leaf hops {
+          type uint8 {
+            range "1..255";
+          }
+          description
+            "Specify the TTL value.";
+        }
+      }
+    }
+  }
+}

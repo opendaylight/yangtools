@@ -1,0 +1,1956 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ospfv3 {
+  namespace "urn:huawei:yang:huawei-ospfv3";
+  prefix ospfv3;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-xpl {
+    prefix xpl;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }  
+  import ietf-inet-types {
+    prefix inet;
+  }
+  include huawei-ospfv3-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "OSPFv3.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ospf";
+  grouping policy-type {
+    description
+      "Type of a filtering rule. The available options are ACL Name or ACL Number or IP Prefix List or Route policy.";
+    choice policy-type {
+      mandatory true;
+      description
+        "Type of a filtering rule.";
+      case basic-acl {
+        description
+          "Apply basic ACL Name or ACL Number.";
+        leaf name-or-num {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+          description
+            "Apply basic ACL Name or ACL Number.";
+        }
+      }
+      case ipv6-prefix {
+        description
+          "Set the name of an IPv6 prefix list.";
+        leaf ipv6-prefix {
+          type leafref {
+            path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+          }
+          description
+            "Set the name of an IPv6 prefix list.";
+        }
+      }
+      case route-policy {
+        description
+          "Set a route policy name.";
+        leaf route-policy {
+          type leafref {
+            path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+          }
+          description
+            "Set a route policy name.";
+        }
+      }
+      case route-filter {
+        description
+          "Set a route filter name.";
+        leaf route-filter {
+          type leafref {
+            path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+          }
+          description
+            "Set a route filter name.";
+        }
+      }
+    }
+  }
+  container ospfv3 {
+    description
+      "Configure OSPFv3 config.";
+    container check-rt-id {
+      description
+        "Configure automatic modification of conflicted router IDs. If enable, check and resolve OSPF router ID conflict.";
+      leaf conflict-flag {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable automatic modification of conflicted router IDs. If enable, check and resolve OSPF router ID conflict.";
+      }
+    }
+    container flush-source-trace {
+      description
+        "Configure OSPF flush source trace globally.";
+      leaf enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable OSPF flush source trace globally.";
+      }
+      leaf port {
+        type uint16 {
+          range "1025..65535";
+        }
+        default "50122";
+        description
+          "Set OSPF flush source trace port allocated by huawei-pp4.The related CLI is 'display ip port info | inc UDP'.";
+      }
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance {
+  description
+    "OSPFv3 augment to L3VPN.";
+  container ospfv3 {
+    description
+      "Configure OSPFv3.";
+    container gtsm {
+      presence "Enable gtsm.";
+      description
+        "Configure the OSPFv3 GTSM.";
+      leaf hops {
+        type uint8 {
+          range "1..255";
+        }
+        mandatory true;
+        description
+          "Specifies the number of TTL hops to be detected.";
+      }
+    }
+    container sites {
+      when "../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";
+      description
+        "List of OSPFv3 instance.";
+      list site {
+        key "process-id";
+        description
+          "Configure OSPFv3 instance.";
+        leaf process-id {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Process ID.";
+        }
+        leaf router-id {
+          type inet:ipv4-address-no-zone;
+          description
+            "Router ID. It is used to set the OSPFv3 private ID.";
+        }
+        leaf fa-mode {
+          type forwarding-address-type;
+		  default "disable";
+          description
+            "Forwarding address mode.";
+        }
+        leaf description {
+          type string {
+            length "1..80";
+            pattern '([^?]*)';
+          }
+          description
+            "Description of an OSPFv3 process.";
+        }
+        leaf rfc1583-compatible {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the route selection rule that is compatible with RFC 1583.";
+        }
+        leaf silent-all-interface {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable to suppress all interfaces in an OSPF process from sending or receiving OSPF packets.";
+        }
+        leaf retransmission-limit {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable maximum retransmission times enable.";
+        }
+        leaf retransmission-limit-value {
+          when "../retransmission-limit='true'";
+          type uint32 {
+            range "2..255";
+          }
+          default "30";
+          description
+            "Maximum retransmission times.";
+        }
+        leaf lsa-refresh {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable refresh the age of LSA with greater lsa age.";
+        }
+        leaf peer-flapping-suppress {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable peer flapping suppress feature.";
+        }
+        leaf qppb-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable QPPB on this process.";
+        }        
+        leaf sham-hello {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable peers keep alive by receiving any valid OSPF packet.";
+        }
+        leaf max-link-cost {
+          type uint16 {
+            range "1..65534";
+          }
+          description
+            "Set OSPFv3 maximum link cost value.";
+        }
+        leaf maxage-lsa {
+          type uint32 {
+            range "0..65535";
+          }
+          units "s";
+          default "20";
+          description
+            "Calculation of route delay when the OSPF LSA frequently flaps.";
+        }
+        container private-net {
+          when "../../../../ni:name!='_public_'";
+          description
+            "Configure private network configuration of OSPFv3.";
+          choice route-tag {
+            description
+              "To set route tag value.";
+            case value {
+              description
+                  "Tag of an imported VPN route.";
+              leaf value {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Tag of an imported VPN route. By default, the first two bytes of the tag value are fixed to be 0xD000, and the last two bytes are the local AS number of the local BGP. For example, if the AS number of BGP is 100, the default tag value in decimal notation is 3489661028.If not configed, the default is 0.";
+              }
+            }
+          }
+          leaf vpn-capability {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable route loop detection and directly calculate routes. When VPN multi instance is supported on the Multi VPN Instance CE (MCE) router, loop detection must be cancelled. It is applicable to only OSPF VPN instances.";        
+          }
+            container domain-id {
+              presence "ID of an OSPF domain.";
+              description
+                "Configure ID of an OSPF domain.";
+              leaf domain-id {
+                type inet:ipv4-address-no-zone;
+                mandatory true;
+                description
+                  "ID of an OSPF domain.";
+              }
+              leaf type {
+                type domain-id-type;
+                default "0x0005";
+                description
+                  "Type of an OSPF domain ID.";
+              }
+              leaf value {
+                type pub-type:hex-binary;
+                default "0x0";
+                description
+                  "Value of an OSPF domain ID type.";
+              }
+            }
+            container domain-id-secondarys {
+              when "../domain-id";
+              description
+                "List of the ID of a secondary domain.";
+              list domain-id-secondary {
+                key "domain-id type value";
+                description
+                  "Configure the ID of a secondary domain.";
+                leaf domain-id {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "ID of an OSPF domain.";
+                }
+                leaf type {
+                  type domain-id-type;
+                  description
+                    "Type of an OSPF domain ID.";
+                }
+                leaf value {
+                  type pub-type:hex-binary;
+                  description
+                    "Value of an OSPF domain ID type.";
+                }
+              }
+            }
+        }
+        container bandwidth {
+          description
+            "Configure bandwidth.";
+          leaf reference-value {
+            type uint32 {
+              range "1..2147483648";
+            }
+            default "100";
+            description
+              "Reference to the calculation of link costs.";
+          }
+        }
+        container timer {
+          description
+            "Configure OSPFv3 timer.";
+          container lsa-arrival {
+            must "((start-interval<=max-interval) and (hold-interval<=max-interval)) or (not(max-interval) and not(start-interval)and not(hold-interval))";
+            description
+              "Configure interval between acceptance for two new instances of the same LSA.";
+            choice timer-type {
+              default "intelligent-timer";
+              description
+                "Interval between acceptance for two new instances of the same LSA.";
+              case timer {
+                description
+                  "Specify an interval.";
+                leaf interval {
+                  type uint32 {
+                    range "0..10000";
+                  }
+                  units ms;
+                  description
+                    "Interval for receiving LSAs.";
+                }
+              }
+              case intelligent-timer {
+                description
+                  "Specify an intelligent timer.";
+                leaf max-interval {
+                  type uint32 {
+                    range "1..120000";
+                  }
+                  units ms;
+                  default "1000";
+                  description
+                    "Maximum interval for receiving OSPFv3 LSAs.";
+                }
+                leaf start-interval {
+                  type uint32 {
+                    range "0..60000";
+                  }
+                  units ms;
+                  default "500";
+                  description
+                    "Initial interval for receiving OSPFv3 LSAs.";
+                }
+                leaf hold-interval {
+                  type uint32 {
+                    range "1..60000";
+                  }
+                  units ms;
+                  default "500";
+                  description
+                    "Hold interval for receiving OSPFv3 LSAs.";
+                }
+              }
+            }
+          }
+          container lsa-arr-supp-flap {
+            description
+              "Configure the delay timer for LSA acceptance.";
+            leaf interval {
+              type uint32 {
+                range "0..600";
+              }
+              units "s";
+              default "10";
+              description
+                "Specifies an interval for suppressing LSA advertising in case of route flapping. The value 0 indicates that LSA advertising is not suppressed.";
+            }
+            leaf threshold-count {
+              type uint32 {
+                range "3..100";
+              }
+              default "30";
+              description
+                "Value of the threshold of LSAs to be suppressed.";
+            }
+          }
+          container lsa-originate {
+            must "((start-interval<=max-interval) and (hold-interval<=max-interval)) or (not(max-interval) and not(start-interval)and not(hold-interval))";
+            description
+              "Configure interval for receiving LSAs either through an intelligent timer or timer.";                
+            leaf other-type-interval {
+              type uint32 {
+                range "0..10";
+              }
+              units s;
+              default "5";
+              description
+                "Specify an updating/originating interval for Type 3, Type 4 and Type 10 LSAs. Interval for updating the LSAs except OSPF router LSAs and network LSAs.";
+            }             
+            choice timer-type {
+              default "interval";
+              description
+              "Specify an updating/originating interval for Type 3, Type 4 and Type 10 LSAs.";
+              case interval {
+                description
+                  "Specify an intelligent timer for router LSA, network LSA, external LSA and NSSA LSA.";
+                leaf max-interval {
+                  type uint32 {
+                    range "1..120000";
+                  }
+                  default "5000";
+                  description
+                    "Maximum interval for updating OSPFv3 LSAs.";
+                }                       
+                leaf start-interval {
+                  type uint32 {
+                    range "0..60000";
+                  }
+                  default "500";
+                  description
+                    "Initial interval for updating OSPFv3 LSAs.";
+                }
+                leaf hold-interval {
+                  type uint32 {
+                    range "1..60000";
+                  }
+                  default "1000";
+                  description
+                    "Hold interval for updating OSPFv3 LSAs.";
+                }
+              }
+            }
+          }
+          container lsa-org-supp-flap {
+            description
+              "Configure the delay timer for LSA generation.";
+            leaf interval {
+              type uint32 {
+                range "0..600";
+              }
+              units "s";
+              default "10";
+              description
+                "Specifies an interval for suppressing LSA advertising in case of route flapping. The value 0 indicates that LSA advertising is not suppressed.";
+            }
+            leaf threshold-count {
+              type uint32 {
+                range "3..100";
+              }
+              default "30";
+              description
+                "Value of the threshold of LSAs to be suppressed.";
+            }
+          }
+          container spf-schedule {          
+            must "((start-interval<=max-interval) and (hold-interval<=max-interval)) or (not(max-interval) and not(start-interval)and not(hold-interval))";
+            description
+              "Configure the interval for SPF calculation.";
+            choice schedule-type {
+              default "intelligent-timer";
+            description
+              "Set the interval for SPF calculation.";
+              case timer {
+                description
+                  "Specify an updating/originating interval for Type 3, Type 4 and Type 10 LSAs.";
+                  leaf type {
+                    type spf-timer-type;
+                    mandatory "true";
+                    description
+                      "SPF timer type.";
+                  }
+                  leaf delay-interval {
+                    type uint32 {
+                      range "0..65535";
+                    }
+                    units s;
+                    default "5";
+                    description
+                      "SPF delay between receiving a change to SPF calculation.";
+                  }
+                  leaf hold-interval-timer {
+                    type uint32 {
+                      range "0..65535";
+                    }
+                    units s;
+                    default "10";
+                    description
+                      "SPF hold time between consecutive SPF calculations.";
+                  }
+              }
+              case intelligent-timer {
+                description
+                  "Specify an intelligent timer.";
+                leaf max-interval {
+                  type uint32 {
+                    range "1..120000";
+                  }
+                  units ms;
+                  must '../start-interval<=../max-interval and ../hold-interval<=../max-interval';
+                  default "5000";
+                  description
+                    "Maximum interval for OSPF SPF calculation set through an intelligent timer. By adjusting the interval for SPF calculation, you can prevent the occupation of too many bandwidths and device resources caused by frequent network changes.";
+                }
+                leaf start-interval {
+                  type uint32 {
+                    range "1..60000";
+                  }
+                  units ms;
+                  must '../start-interval<=../max-interval';
+                  default "50";
+                  description
+                    "Initial interval for OSPF SPF calculation set through an intelligent timer. By adjusting the interval for SPF calculation, you can prevent the occupation of too many bandwidth and router resources caused by frequent network changes.";
+                }
+                leaf hold-interval {
+                  type uint32 {
+                    range "1..60000";
+                  }
+                  units ms;
+                  must '../hold-interval<=../max-interval';
+                  default "200";
+                  description
+                    "Hold interval for OSPF SPF calculation set through an intelligent timer. By adjusting the interval for calculating SPF, you can prevent the occupation of too many bandwidth and router resources caused by frequent network changes.";
+                }
+              }
+              case millisecond {
+                description
+                  "Specify an interval.";               
+                leaf millisecond {
+                  type uint32 {
+                    range "1..10000";
+                  }
+                  units ms;
+                  description
+                    "Interval for OSPF SPF calculation. By adjusting the interval for SPF calculation, you can prevent the occupation of too many bandwidths and device resources caused by frequent network changes.";
+                }
+              }
+            }
+          }
+        }
+        container bfd {
+          description
+            "Configure BFD in a OSPFv3 process.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable BFD in an OSPFv3 process.";
+          }
+          leaf min-rx {
+            type uint32 {
+              range "3..20000";
+            }
+            units ms;
+            description
+              "Minimum interval for receiving BFD packets from the peer end. The value range and default value are controlled by the PAF.";
+          }
+          leaf min-tx {
+            type uint32 {
+              range "3..20000";
+            }
+            units ms;
+            description
+              "Minimum interval for sending BFD packets to the peer end. The value range and default value are controlled by the PAF.";
+          }
+          leaf detect-multiplier {
+            type uint32 {
+              range "3..50";
+            }
+            default "3";
+            description
+              "Local detection multiplier.";
+          }
+          leaf incr-cost {
+            type uint32 {
+              range "1..65535";
+            }
+            description
+              "BFD sync cost.";
+          }
+          leaf frr-binding {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable bind FRR with BFD.";
+          }
+        }
+        container stub-router {
+          description
+            "Configure stub router is used to configure the router as stub router.";
+          leaf flag {
+            type stub-router-flag;
+            default "no-config";
+            description
+              "Stub router. The router configured with the stub router command notifies other OSPF routers of not using the stub router to forward data by increasing the metric greater than 65535 of the links in the LSA that is generated by the router.";
+          }
+          leaf interval {
+            when "../flag='stub-on-boot'";
+            type uint32 {
+              range "5..65535";
+            }
+            default "500";
+            description
+              "Interval for remaining as the stub router during the active/standby switchover of a router.";
+          }
+          leaf include-stub {
+            when "../flag!='no-config'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable maximum cost for router lsa stub link.";
+          }
+          leaf external-lsa {
+            when "../flag!='no-config'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable maximum cost for external lsa.";
+          }
+          leaf external-cost {
+            when "../external-lsa='true'";
+            type uint32 {
+              range "1..16777215";
+            }
+            default "16711680";
+            description
+              "Advertise external LSAs with configured/default overriding metric.";
+          }
+          leaf summary-lsa {
+            when "../flag!='no-config'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable maximum cost for summary lsa.";
+          }
+          leaf summary-cost {
+            when "../summary-lsa='true'";
+            type uint32 {
+              range "1..16777215";
+            }
+            default "16711680";
+            description
+              "Advertise summary LSAs with configured/default overriding metric.";
+          }
+        }
+        container import-limit {
+          presence "Enable import-limit";
+          description
+            "Configure limits the maximum number of routes to be imported.";
+          leaf max-number {
+            type uint32 {
+              range "1..4294967295";
+            }
+            mandatory "true";
+            description
+              "Maximum number of external routes that can be imported.";
+          }
+          leaf threshold-upper {
+            type uint32 {
+              range "1..100";
+            }
+            must '../threshold-upper>=../threshold-lower';
+            default "80";
+            description
+              "Upper threshold of the maximum number of routes that can be imported.";
+          }
+          leaf threshold-lower {
+            type uint32 {
+              range "1..100";
+            }
+            must '../threshold-upper>=../threshold-lower';
+            default "70";
+            description
+              "Lower threshold of the maximum number of routes that can be imported.";
+          }
+        }
+        container spf-control {
+          description
+            "Configure SPF calculation control.";
+          leaf max-load-balancing {
+            type uint32 {
+              range "1..128";
+            }
+            default "128";
+            description
+              "Maximum number of the equal cost routes of the destination address in the routing table. The range and default are based on PAF.";
+          }
+        }
+        container default-para {
+          description
+            "Configure multiple topologies in a process.";
+            leaf cost {
+              type uint32 {
+                range "0..16777214";
+              }
+              default "1";
+              description
+                "Default metric of the external routes imported by OSPFv3.";
+            }
+            leaf tag {
+              type uint32 {
+                range "0..4294967295";
+              }
+              default "1";
+              description
+                "Tag of an external route.";
+            }
+            leaf type {
+              type external-route-type;
+              default "type2";
+              description
+                "Type of an external route.";
+            }
+        }
+        container asbr-summary-prefixs {
+          description
+            "List of aggregate addresses for OSPF (only for ASBR).";
+          list asbr-summary-prefix {
+            key "prefix network-mask";
+            description
+              "Configure aggregate addresses for OSPF (only for ASBR).";
+            leaf prefix {
+              type inet:ipv6-address-no-zone;
+              description
+                "IP address.";
+            }
+            leaf network-mask {
+              type uint32 {
+                range "1..128";
+              }
+              description
+                "IP address mask.";
+            }
+            leaf cost {
+              type uint32 {
+                range "1..16777214";
+              }
+              description
+                "Specifies the cost of the aggregated route. By default, the maximal cost in that of all the routes which are aggregated serves as the cost of the aggregated route.";
+            }
+            leaf tag {
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "Specifies that the tag is mainly used to control advertisement of routes through the routing policy.";
+            }
+            leaf distribute-delay {
+              type uint32 {
+                range "1..65535";
+              }
+              description
+                "Distribute delay interval.";
+            }
+            leaf advertise {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the aggregated route is not advertised.";
+            }
+          }
+        }
+        container default-route {
+          presence "Enable default-route-advertise.";
+          description
+            "Configure default routes to the OSPFv3 routing area.";
+          leaf cost {
+            type uint32 {
+              range "0..16777214";
+            }
+            description
+              "Metric of an ASE LSA.";
+          }
+          leaf tag {
+            type uint32 {
+              range "0..4294967295";
+            }
+            description
+              "Route tag for default imported routes.";
+          }
+          leaf type {
+            type external-route-type;
+            description
+              "Metric type of an ASE LSA for the default routes.";
+          }
+          leaf distribute-delay {
+            when "(../permit-calculate-other or ../always)";
+            type uint32 {
+              range "1..65535";
+            }
+            description
+              "Distribute delay timer used for the local router to calculate the default routes advertised by other routers.";
+          }
+          choice mode {
+            description
+              "Mode for default route.";
+            case permit-calculate-other {
+              description
+                "Set permit calculate other.";
+              leaf permit-calculate-other {
+                type empty;
+                description
+                  "To generate and advertise an ASE LSA that describes the default route only when there are valid default routes of other protocols in the routing table of the host. The router configured with permit calculate other still calculates the default routes of other routers.";
+              }
+            }
+            case always {
+              description
+                "Set always.";
+              leaf always {
+                type empty;
+                description
+                  "The router configured with the always parameter does not calculate the default routes of other routers.";
+              }
+            }
+          }
+          choice policy-type {
+            description
+              "Mode of the policy used for default route.";
+            case route-policy-name {
+              description
+                "Set a route policy name.";
+              leaf route-policy-name {
+                type leafref {
+                  path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                }
+                description
+                  "Name of a routing policy. Through the routing policy, the device matches the default routing entry generated by the device that does not run OSPF in the routing table, and advertises the default route according to the parameters set through the routing policy.";
+              }
+            }
+            case route-filter-name {
+              description
+                "Set a route filter name.";
+              leaf route-filter-name {
+                type leafref {
+                  path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                }
+                description
+                  "Name of a routing Filter.";
+              }
+            }
+          }
+        }
+        container route-preferences {
+          description
+            "List of preference of an OSPF route.";
+          list route-preference {
+            key "route-type";
+            max-elements 4;
+            description
+              "Configure preference of an OSPF route.";
+            leaf route-type {
+              type ospf-route-type;
+              description
+                "Router type.";
+            }
+            leaf preference {
+              type uint32 {
+                range "1..255";
+              }
+              description
+                "Preference of an OSPF route. The default of intra and inter area is 10.And The default of external is 150.";
+            }
+            choice policy-type {
+              description
+                "Type of a filtering rule.";
+              case route-policy-name {
+                description
+                  "Name of a routing policy.";
+                leaf route-policy-name {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                  }
+                  description
+                    "Name of a routing policy.";
+                }
+              }
+              case route-filter-name {
+                description
+                  "Name of a routing Filter.";
+                leaf route-filter-name {
+                  type leafref {
+                    path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                  }
+                  description
+                    "Name of a routing Filter.";
+                }
+              }
+            }
+          }
+        }
+        container nexthop-weights {
+          description
+            "List of preference of an equal cost route.";
+          list nexthop-weight {
+            key "ip-address if-name";
+            description
+              "Configure preference of an equal cost route.";
+            leaf ip-address {
+              type inet:ipv4-address-no-zone;
+              description
+                "The Router ID of the next hop.";
+            }
+            leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Next Hop Interface Name. Only Ethernet, NULL and Pos are used for nexthop.";
+            }
+            leaf weight {
+              type uint32 {
+                range "1..254";
+              }
+              mandatory true;
+              description
+                "Weight of the next hop. After OSPFv3 calculates the equal cost routes, the next hop is chosen from these equal-cost routes based on the value of weight. The smaller the value is, the higher the preference is. By default, the weight is 255. This indicates that load balancing is carried out among equal cost routes and packets are forwarded at the same time without the preference being set.";
+            }
+          }
+        }
+        container prefix-prioritys {
+          description
+            "List of priority of OSPF route.";
+          list prefix-priority {
+            key "priority";
+            description
+              "Configure priority of OSPF route.";
+            leaf priority {
+              type prefix-priority;
+              description
+                "Convergence priority of OSPF routes.";
+            }
+            leaf ip-prefix {
+              type leafref {
+                path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+              }
+              mandatory true;
+              description
+                "IPv6 Prefix List Name in String.";
+            }
+          }
+        }
+        container authentication {
+          description
+            "Configure authentication.";
+          leaf mode {
+            type authen-mode;
+            default "none";
+            description
+              "Set authentication type.";
+          }
+          leaf key-id {
+            when "../mode!='none'";
+            type uint32 {
+              range "1..65535";
+            }
+            mandatory "true";
+            description
+              "Authentication identifier.";
+          }
+          leaf text {
+            when "../mode!='none'";
+            type pub-type:password-extend;
+            mandatory "true";
+            description
+              "Encrypted password.";
+          }
+        }
+        container helper-role {
+          presence "Enable OSPFv3 GR Helper.";
+          description
+            "Configure OSPFv3 GR Helper."; 
+          leaf planned-only {
+            type empty;
+            description
+              "To support only planned GR on routers.";
+          }
+          leaf ignore-external-lsa {
+            type empty;
+            description
+              "Ignore external lsa check (Type5 and Type7 LSAs).";
+          }
+          leaf period {
+            type uint32 {
+              range "1..1800";
+            }
+            default "1800";
+            description
+              "Maximum grace period.";
+          }
+          choice filter-type {
+            description
+              "Basic ACl name or ACL number or IP prefix List.";
+            case acl-name-or-num {
+              description 
+                "Specify the basic ACL number or ACL name for filtering peer.";
+              leaf acl-name-or-num {
+                type leafref {
+                  path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                }
+                must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+                description 
+                  "Specify the basic ACL number or ACL name for filtering peer.";
+              }
+            }
+            case ip-prefix-name {
+              description 
+                "Specify the IP prefix name for filtering peers.";
+              leaf ip-prefix-name {
+                type leafref {
+                  path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                }
+                description 
+                  "Specify the IP prefix name for filtering peers.";
+              }
+            }
+          }
+        }
+        container filter-import {
+	  presence "filter policy import";
+          description
+            "Configure the filter policy import command, you can set the rules for filtering intra area, inter area, and AS external routes of an OSPF process.";
+          choice policy-type {
+	    mandatory "true";
+            description
+              "Type of a filtering rule.";
+            case basic-acl6 {
+              description
+                "Apply basic ACL6 name or ACL6 number.";
+              leaf name-or-num {
+                type leafref {
+                  path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                }
+                must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+                description
+                  "Apply basic ACL6 name or ACL6 number.";
+              }
+            }
+            case ip-prefix6 {
+              description
+                "Set the name of an IP prefix list.";
+              leaf ip-prefix6 {
+                type leafref {
+                  path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                }
+                description
+                  "Set the name of an IP prefix list.";
+              }
+            }
+            case route-policy {
+              description
+                "Set a route policy name.";
+              leaf route-policy {
+                type leafref {
+                  path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                }
+                description
+                  "Set a route policy name.";
+              }
+            }
+            case route-filter {
+              description
+                "Set a route filter name.";
+              leaf route-filter {
+                type leafref {
+                  path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                }
+                description
+                  "Set a route filter name.";
+              }
+            }
+          }
+        }
+        container filter-exports {
+          description
+            "List of the filter policy export command. You can set the rules for filtering the routes imported through the import route (OSPF) command when the routes are advertised in type5 LSAs to the OSPF AS.";
+          list filter-export {
+            key "protocol protocol-id";
+            description
+              "Configure the filter policy export command. You can set the rules for filtering the routes imported through the import route (OSPF) command when the routes are advertised in type5 LSAs to the OSPF AS.";
+            leaf protocol {
+              type filter-rt-protocol;
+              description
+                "Protocol that advertises routes.";
+            }
+            leaf protocol-id {
+              type uint32 {
+                range "1..4294967295";
+              }
+              must "../protocol-id=1 or ../protocol='ospfv3' or ../protocol='isis' or ../protocol='ripng'";
+              description
+                "Process ID when the advertised protocol is RIPng, ISIS, or OSPFv3.";
+            }
+            choice policy-type {
+              mandatory true;
+              description
+                "Type of a filtering rule.";
+              case basic-acl6 {
+                description
+                  "Apply basic ACL6 name or ACL6 number.";
+                leaf name-or-num {
+                  type leafref {
+                    path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                  }
+                  must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+                  description
+                    "Apply basic ACL6 name or ACL6 number.";
+                }
+              }
+              case ip-prefix6 {
+                description
+                  "Set the name of an IP prefix list.";
+                leaf ip-prefix6 {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                  }
+                  description
+                    "Set the name of an IP prefix list.";
+                }
+              }
+            }
+          }
+        }
+        container import-routes {
+          description
+            "List of import the routes learned from other routing protocols.";
+          list import-route {
+            key "protocol process-id";
+            description
+              "Configure import the routes learned from other routing protocols.";
+            leaf protocol {
+              type import-rt-protocol;
+              description
+                "Routing protocol whose routes are imported.";
+            }
+            leaf process-id {
+              type uint32 {
+                range "0..4294967295";
+              }
+              must "../process-id=0 and (../protocol='direct' or ../protocol='static' or ../protocol='bgp' or ../protocol='unr') or ../process-id>0 and (../protocol='ospfv3' or ../protocol='isis' or ../protocol='ripng')";
+              description
+                "Process ID of the routing protocol whose routes are imported. It needs to be set only when the protocol is RIPng, OSPFv3, or ISIS.";
+            }
+            leaf tag {
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "Route tag of an external LSA.";
+            }
+            leaf type {
+              type external-route-type;
+              description
+                "Metric type of an external LSA.";
+            }
+            leaf permit-ibgp {
+              type boolean;
+              must "../permit-ibgp='false' or (../permit-ibgp='true' and ../protocol='bgp')";
+              default "false";
+              description
+                "Enable/disable to import IBGP routes.";
+            }
+            choice cost {
+              description
+                "Route cost.";
+              case inherit-cost {
+                description
+                  "Import the routes with the original cost.";                 
+                leaf inherit-cost {
+                  type empty;
+                  description
+                    "Import the routes with the original cost.";
+                }
+              }
+              case cost-value {
+                description
+                  "Route cost.";
+                leaf cost-value{
+                  type uint32 {
+                    range "0..16777214";
+                  }
+                  description
+                    "Route cost.";
+                }
+              }
+            }
+            choice policy-type {
+              description
+                "Type of a filtering rule.";
+              case route-policy-name {
+                description
+                  "Name of a routing policy.";
+                leaf route-policy-name {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                  }
+                  description
+                    "Name of a routing policy.";
+                }
+              }
+              case route-filter-name {
+                description
+                  "Name of a routing filter.";
+                leaf route-filter-name {
+                  type leafref {
+                    path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                  }
+                  description
+                    "Name of a routing Filter.";
+                }
+              }
+            }
+          }
+        }
+        container frr {
+          description
+            "Configure OSPFv3 FRR.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable FRR for this particular process.";
+          }
+          leaf lfa-enable {
+            type boolean;
+            must "../lfa-enable='false' or ../enable='true'";
+            default "false";
+            description
+              "Enable/disable loop free alternate.";
+          }
+          container tiebreaker {
+            when "../lfa-enable='true'";
+            description
+              "Configure tiebreaker for multiple backups.";
+            leaf node-protect {
+              type uint8 {
+                range "1..255";
+              }
+              default "40";
+              description
+                "Set the value of node protect preference.";
+            }
+            leaf lowest-cost {
+              type uint8 {
+                range "1..255";
+              }
+              default "20";
+              description
+                "Set the value of lowcost preference.";
+            }
+          }
+          container route-policy {
+            when "../enable='true'";
+            presence "Create frr route-policy.";
+            description
+              "Configure FRR route policy.";
+            choice policy-type {
+              description
+                "Type of a filtering rule.";
+              case route-policy-name {
+                description
+                  "Name of a routing policy.";
+                leaf route-policy-name {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                  }
+                  description
+                    "Name of a routing policy.";
+                }
+              }
+              case route-filter-name {
+                description
+                  "Name of a routing filter.";
+                leaf route-filter-name {
+                  type leafref {
+                    path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                  }
+                  description
+                    "Name of a routing filter.";
+                }
+              }
+            }
+          } 
+        }
+        container silent-interfaces {
+          when "../silent-all-interface='false'";
+          description
+            "List of interface. To prevent the OSPF routing information from being received by routers in a network segment and forbid the local router to receive the routing update information that is advertised by other routers in the network segment, you can use the silent interface command to suppress the interface to receive or send the OSPF packets.";
+          list silent-interface {
+            key "if-name";
+            description
+              "Configure interface. To prevent the OSPF routing information from being received by routers in a network segment and forbid the local router to receive the routing update information that is advertised by other routers in the network segment, you can use the silent interface command to suppress the interface to receive or send the OSPF packets.";
+            leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Interface name.";
+            }
+          }
+        }
+        container undo-silent-interfaces {
+          when "../silent-all-interface='true'";
+          description
+            "List of interface. Enables sending and receiving packet on this interface when true. This information is useful when sending and receiving packet is suppressed on all interface on process level and user want it to be enabled on certain interface.";
+          list undo-silent-interface {
+            key "if-name";
+            description
+              "Configure interface. Enables sending and receiving packet on this interface when true. This information is useful when sending and receiving packet is suppressed on all interface on process level and user want it to be enabled on certain interface.";
+            leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Interface name.";
+            }
+          }
+        }
+        container host-name {
+          description
+            "Configure OSPFv3 host name.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable host name.";
+          }
+          leaf name {
+            when "(../enable='true')";
+            type string {
+              length "1..255";
+            }
+            description
+              "Host name.";
+          }
+        }
+        container areas {
+          description
+            "List of OSPFv3 area.";
+          list area {
+            key "area-id";
+            description
+              "Configure OSPFv3 area.";
+            leaf area-id {
+              type inet:ipv4-address-no-zone;
+              description
+                "Area ID.";
+            }
+            leaf area-type {
+              type area-type;
+              default "normal";
+              description
+                "Area type.";
+            }
+            leaf description {
+              type string {
+                length "1..80";
+                pattern '([^?]*)';
+              }
+              description
+                "Description of an OSPFv3 area.";
+            }
+              container stub {
+                when "../area-type='stub'";
+                description
+                  "Configure stub area.";
+                leaf backbone-peer-ignore {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable ignore backbone peer for Stub area.";
+                }
+                leaf no-summary {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable forbid an ABR to Send Summary LSAs to the Stub Area.";
+                }
+                leaf default-cost {
+                  type int32 {
+                    range "0..16777214";
+                  }
+                  default "1";
+                  description
+                    "Cost of the default Type3 routes that are sent by an OSPF process to a stub area or an NSSA area. The value is an integer ranging from 1 to 16777214. This parameter takes effect only when it is configured on the ABR connected to a stub area or an NSSA area. The default is 1.";
+                }
+              }
+              container nssa {
+                when "../area-type='nssa'";
+                description
+                  "Configure nssa area.";
+                leaf no-summary {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable forbid an ABR to Send Summary LSAs to the NSSA Area.";
+                }
+                leaf translator-always {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable the router to act as translator always for NSSA Area.";
+                }
+                leaf default-route-advertise {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable originate Type 7 default into NSSA area.";
+                }
+                leaf backbone-peer-ignore {
+                  when "../default-route-advertise='true'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable ignore backbone peer for Nssa area.";
+                }
+                leaf no-import-route {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable redistribute type 7 LSA into this area.";
+                }
+                leaf set-n-bit {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable setting of 'N' bit in the DD packet.";
+                }
+                leaf suppress-fa {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable the forwarding address as 0 for all translated type 5 LSAs.";
+                }
+                leaf translator-interval {
+                  type uint32 {
+                    range "1..120";
+                  }
+                  default "40";
+                  description
+                    "Translator interval.";
+                }
+                leaf default-cost {
+                  type int32 {
+                    range "0..16777214";
+                  }
+                  default "1";
+                  description
+                    "Cost of the default Type3 routes that are sent by an OSPF process to a stub area or an NSSA area. This parameter takes effect only when it is configured on the ABR connected to a stub area or an NSSA area.";
+                }
+              }
+            container authentication {
+              must 'key-id and auth-text or not(key-id) and not(auth-text)';
+              description
+                "Configure area authentication.";
+              leaf mode {
+                type authen-mode;
+                default "none";
+                description
+                  "Set authentication type.";
+              }
+              leaf key-id {
+                when "../mode='hmac-sha256'";
+                type uint32 {
+                  range "1..65535";
+                }
+                description
+                  "Authentication identifier.";
+              }
+              leaf auth-text {
+                when "../mode='hmac-sha256'";
+                type pub-type:password-extend;
+                description
+                  "Encrypted Password.";
+              }
+            }
+            container abr-summary-prefixs {
+              description
+                "List of abr-summary.";
+              list abr-summary-prefix {
+                key "prefix network-mask";
+                description
+                  "Configure abr-summary.";
+                leaf prefix {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Specifies the IP address in dotted decimal notation.";
+                }
+                leaf network-mask {
+                  type uint32 {
+                    range "1..128";
+                  }
+                  description
+                    "Specifies the mask of the IP address. The mask address is in dotted decimal notation.";
+                }
+                choice cost {
+                  description
+                    "Set the cost. By default, the maximal cost in that of all the routes which are aggregated serves as the cost of the aggregated route.";
+                  case cost-value {
+                    description
+                      "Specifies the cost of the aggregated route.";
+                    leaf cost-value {
+                      type uint32 {
+                       range "0..16777214";
+                      }
+                      description
+                        "Specifies the cost of the aggregated route.";
+                    }
+                  }
+                }
+                leaf hold-max-cost {
+                  type uint32 {
+                    range "10..1800";
+                  }
+                  description
+                    "Hold max cost duration.";
+                }
+                leaf advertise {
+                  type boolean;
+                  default "true";
+                  description
+                    "Enable/disable the aggregated route is advertised.";
+                }
+              }
+            }
+            container filters {
+              description
+                "List of an ABR to filter outgoing or incoming summary LSAs of the local area.";
+              list filter {
+                key "mode";
+                description
+                  "Configure an ABR to filter outgoing or incoming summary LSAs of the local area.";
+                leaf mode {
+                  type area-filter-mode;
+                  description
+                    "Using the filter export command, you can configure an ABR to filter outgoing summary LSAs of the local area. Using the filter import command, you can configure an ABR to filter incoming summary LSAs of the local area.";
+                }
+                uses policy-type;
+              }
+            }
+            container interfaces {
+              description
+                "List of the interface enabled with OSPFv3.";
+              list interface {
+                key "name instance-id";
+                description
+                  "Configure the interface enabled with OSPFv3.";
+                leaf name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  must "../../../../../../../../ni:name=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name";
+                  description
+                    "Interface name. OSPFv3 does not support the configuration of a NULL/LMP/MTUNNEL/RPR/STACKPORT/SIP/ATMBUNDLE/IMAGROUP/Remote-Ap/VBridge interface types.";
+                }
+                leaf instance-id {
+                  type uint32 {
+                    range "0..255";
+                  }
+                  description
+                    "Interface instance ID.";
+                }
+                leaf network-type {
+                  type network-type;
+                  description
+                    "Network type of an OSPFv3 interface. By default, the network type of an interface is determined by the physical interface.
+                     In the same network segment, if only two routers run OSPFv3, you can change the network type of an interface to P2P.";
+                }
+                leaf transmit-delay {
+                  type int32 {
+                    range "1..500";
+                  }
+                  default "1";
+                  description
+                    "Delay for transmitting LSAs on an interface.";
+                }
+                leaf mtu-enable {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable MTU filled in a DD packet when the packet is sent. The default MTU in the DD packet is 0. Using the command, you can manually configure the interface to fill in the MTU field (actual MTU of the interface) when the interface sends DD packets.
+                     After a virtual connection is established through the virtual template or tunnel, different vendors may use different MTUs as default settings. To ensure consistency, the MTU is set to 0 by default when the interface sends DD packets. Thus, the ospf mtu-enable command usually does not need to be configured.
+                     OSPF does not support the preceding configuration on a null interface.";
+                }
+                leaf dr-priority {
+                  type int32 {
+                    range "0..255";
+                  }
+                  default "1";
+                  description
+                    "Priority of the interface that participates in the DR and BDR election. The greater the value is, the higher the priority is. The router whose priority is 0 cannot be elected as a DR or a BDR.";
+                }
+                leaf peer-hold-max-timer {
+                  type uint32 {
+                    range "100..1000000";
+                  }
+                  units "ms";
+                  description
+                    "Config peer hold max cost interval.";
+                }
+                leaf cost {
+                  type uint32 {
+                    range "1..65535";
+                  }
+                  description
+                    "To set the cost of an interface.";
+                }
+                container frr {
+                  description
+                    "Configure FRR.";
+                  leaf frr-disable {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable not use this interface for FRR calculation.";
+                  }
+                }
+                container timer {
+                  description
+                    "Configure timer.";
+                  leaf hello-interval {
+                    type int32 {
+                      range "1..65535";
+                    }
+                    ext:dynamic-default {
+                      ext:default-value "10" {
+                        when "../../network-type = 'p2p' or ../../network-type = 'broadcast'";
+                        description 
+                          "The default value is 10 when network-type is p2p or broadcast.";
+                      }
+                      ext:default-value "30" {
+                        when "../../network-type = 'p2mp' or ../../network-type = 'nbma'";
+                        description 
+                          "The default value is 30 when network-type is p2mp or nbma.";
+                      }
+                    }
+                    description
+                      "Interval for sending Hello packets on an interface.";
+                  }
+                  leaf hello-conser {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable the compensation mechanism of controling the deadtimer to enable.";
+                  }
+                  leaf dead-interval {
+                    type int32 {
+                      range "1..235926000";
+                    }
+                    must '../hello-interval<../dead-interval';
+                    ext:dynamic-default {
+                      ext:default-value "40" {
+                        when "../../network-type = 'p2p' or ../../network-type = 'broadcast'";
+                        description 
+                          "The default value is 40 when network-type is p2p or broadcast.";
+                      }
+                      ext:default-value "120" {
+                        when "../../network-type = 'p2mp' or ../../network-type = 'nbma'";
+                        description 
+                          "The default value is 120 when network-type is p2mp or nbma.";
+                      }
+                    }
+                    description
+                      "Dead interval of an OSPF neighbor.";
+                  }
+                  leaf wait-interval {
+                    type uint32 {
+                      range "1..235926000";
+                    }
+                    ext:dynamic-default {
+                      ext:default-value "40" {
+                        when "../../network-type = 'p2p' or ../../network-type = 'broadcast'";
+                        description 
+                          "The default value is 40 when network-type is p2p or broadcast.";
+                      }
+                      ext:default-value "120" {
+                        when "../../network-type = 'p2mp' or ../../network-type = 'nbma'";
+                        description 
+                          "The default value is 120 when network-type is p2mp or nbma.";
+                      }
+                    }
+                    description
+                      "Wait time.";
+                  }
+                  leaf poll-interval {
+                    type int32 {
+                      range "1..3600";
+                    }
+                    default "120";
+                    description
+                      "Poll interval for sending Hello packets. On the NBMA network, after the neighbor is invalid, the router sends Hello packets periodically according to the interval set through the ospf timer poll command. The poll interval should be at least four times of the interval for sending Hello packets.";
+                  }
+                  leaf retransmit-interval {
+                    type int32 {
+                      range "1..3600";
+                    }
+                    default "5";
+                    description
+                      "Interval for retransmitting LSAs on an interface.";
+                  }
+                }
+                container bfd {
+                  description
+                    "Configure BFD.";
+                  leaf enable {
+                    type boolean;
+                    must "../enable='false' or ../block='false'";
+                    default "false";
+                    description
+                      "Enable/disable BFD.";
+                  }
+                  leaf block {
+                    type boolean;
+                    must "../block='false' or ../enable='false'";
+                    default "false";
+                    description
+                      "Enable/disable to prevent the dynamic establishment of a BFD session on an interface.";
+                  }
+                  leaf detect-multiplier {
+                    type uint32 {
+                      range "3..50";
+                    }
+                    default "3";
+                    description
+                      "Local detection multiplier.";
+                  }
+                  leaf min-tx {
+                    type uint32 {
+                      range "3..20000";
+                    }
+                    description
+                      "Minimum interval for sending BFD packets to the peer end. The value range and default value are controlled by the PAF.";
+                  }
+                  leaf min-rx {
+                    type uint32 {
+                      range "3..20000";
+                    }
+                    description
+                      "Minimum interval for receiving BFD packets from the peer end. The value range and default value are controlled by the PAF.";
+                  }
+                  leaf frr-binding {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable bind FRR with BFD.";
+                  }
+                  choice incr-cost {
+                    description
+                      "Interface BFD sync cost.";
+                    case incr-cost-block {
+                      description
+                        "Interface BFD sync cost block.";
+                      leaf incr-cost-block {
+                        type empty;
+                        description
+                          "Interface BFD sync cost block.";
+                      }
+                    }
+                    case incr-cost-value {
+                      description
+                        "Interface BFD sync cost.";
+                      leaf incr-cost-value {
+                        type uint32 {
+                          range "1..65535";
+                        }
+                        description
+                          "Interface BFD sync cost.";
+                      }
+                    }
+                  }
+                  leaf per-link-flag {
+                    type boolean;
+                    must "../one-arm-echo-flag=../per-link-flag and (../per-link-flag='false' or ../enable='true')";
+                    default "false";
+                    description
+                      "Enable/disable BFD session per link, support only VLANif interface.";
+                  }
+                  leaf one-arm-echo-flag {
+                    type boolean;
+                    must "../one-arm-echo-flag=../per-link-flag";
+                    default "false";
+                    description
+                      "Enable/disable echo detection mode, support only VLANif interface.";
+                  }
+                }
+                container authentication {
+                  must 'key-id and auth-text or not(key-id) and not(auth-text)';
+                  description
+                    "Configure interface authentication.";
+                  leaf mode {
+                    type authen-mode;
+                    default "none";
+                    description
+                      "Set authentication type.";
+                  }
+                  leaf key-id {
+                    when "../mode='hmac-sha256'";
+                    type uint32 {
+                      range "1..65535";
+                    }
+                    description
+                      "Authentication identifier.";
+                  }
+                  leaf auth-text {
+                    when "../mode='hmac-sha256'";
+                    type pub-type:password-extend;
+                    description
+                      "Encrypted Password.";
+                  }
+                }
+                container suppress-flapping {
+                  description
+                    "Configure flapping suppression.";
+                  container peer {
+                    must 'resume-interval>detect-interval';
+                    description
+                      "Configure flapping suppression peer. Not support Loopback.";
+                    leaf enable {
+                      type boolean;
+                      default "true";
+                      description
+                        "Enable/disable interface peer flapping suppress.";
+                    }
+                    leaf detect-interval {
+                      type uint32 {
+                        range "1..300";
+                      }
+                      default "60";
+                      description
+                        "Detecting interval.";
+                    }
+                    leaf threshold {
+                      type uint32 {
+                        range "1..1000";
+                      }
+                      default "10";
+                      description
+                        "Threshold.";
+                    }
+                    leaf resume-interval {
+                      type uint32 {
+                        range "2..1000";
+                      }
+                      default "120";
+                      description
+                        "Resume interval.";
+                    }
+                    leaf hold-down-interval {
+                      type uint32 {
+                        range "1..600";
+                      }
+                      description
+                        "Hold down interval.";
+                    }
+                    leaf hold-max-cost {
+                      type boolean;
+                      default "true";
+                      description
+                        "Enable/disable hold max cost.";
+                    }
+                  }
+                }
+                container peers {
+                    description
+                      "List of the IP address and DR priority of the neighbor router on the NBMA network.";
+                    list peer {
+                      key "nbr-router-id nbr-link-local-addr";
+                      description
+                        "Configure the Link Local address and DR eligibility of the neighbor router on the NBMA network.";
+                      leaf nbr-router-id {
+                        type inet:ipv4-address-no-zone;
+                        description
+                          "Neighbor router ID.";
+                      }
+                      leaf nbr-link-local-addr {
+                        type inet:ipv6-address-no-zone;
+                        description
+                          "Link Local address of the neighbor router.
+                           Link Local Address should be in IPv6 format.
+                           Valid Link Local Address starts with FE80:";
+                      }
+                      leaf cost {
+                        type uint32 {
+                          range "1..65535";
+                        }
+                        description
+                          "Cost to reach P2MP non broadcast neighbor.";
+                      }
+                      leaf dr-eligible {
+                        type boolean;
+                        default "false";
+                        description
+                          "Enable/disable DR Eligibility of the NBMA neighbor.";
+                      }
+                      leaf poll {
+                        type int32 {
+                          range "1..65535";
+                        }
+                        description
+                          "Poll interval for NBMA neighbor.";
+                      }
+                    }
+                  }
+                container flush-source-trace {
+                  description
+                    "Configure OSPF flush source trace function.";
+                  leaf block {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable OSPF flush source trace.";
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  }
+}

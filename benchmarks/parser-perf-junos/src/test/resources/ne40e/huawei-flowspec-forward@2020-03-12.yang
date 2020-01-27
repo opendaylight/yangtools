@@ -1,0 +1,169 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-flowspec-forward {
+  namespace "urn:huawei:yang:huawei-flowspec-forward";
+  prefix flowspec-forward;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Flowspec-forward.";
+  revision 2020-03-12 {
+    description
+      "Descriptive optimization.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-25 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-31 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-18 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-24 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-20 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "qos";
+  container flowspec-forward {
+    description
+      "Configure flowspec forward.";    
+    leaf statistic-enable {
+        type boolean;
+        default "false";
+          description
+            "Enable/disable flowspec statistic.";
+    }
+    leaf vxlan-packet-enable {
+        type boolean;
+        default "false";
+          description
+            "Enable/disable flowspec only for the vxlan packet.";
+    }
+    leaf match-ip-layer {
+        type boolean;
+        default "false";
+          description
+            "Enable/disable flowspec only for the IP layer.";
+    }
+    container protocol-protect-disables {
+      description
+        "List of flowspec protocol-protect disable.";
+      list protocol-protect-disable {
+        key "flow-type";
+        description
+        "Configure protocol-protect disable instance.";
+        leaf flow-type {
+          type enumeration {
+            enum ipv4 {
+              value 0;
+              description
+                "Protocol-protect disable IPv4.";
+            }
+            enum ipv6 {
+              value 1;
+              description
+                "Protocol-protect disable IPv6.";
+            }
+          }
+          description
+            "BGP protocol-protect disable flowtype, The value all is mutually exclusive with IPv4 and IPv6.";
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+            "Flowspec forward.";
+    container flowspec-forward {
+      description
+        "Configure flowspec forward.";
+      container refluence {
+        presence "create flowspec refluence";
+        description
+          "Enable/disable flowspec refluence.";
+      }
+      container tunnel-pop {
+        presence "create tunnel-pop";
+        description
+         "Enable/disable flowspec after tunnel pop."; 
+      }
+      container disables {
+        when "not(../refluence)";
+        description
+          "List of flowspec disables.";
+          list disable {
+            key "flow-type";
+           description
+          "Configure flowspec disable instance.";
+          leaf flow-type {
+            type enumeration {
+              enum ipv4 {
+                value 1;
+                description
+                  "Flowspec disable IPv4.";
+              }
+              enum ipv6 {
+                value 2;
+                description
+                  "Flowspec disable IPv6.";
+              }
+            }
+            description
+              "BGP flowspec disable flowtype, The value all is mutually exclusive with IPv4 and IPv6.";
+          }
+        }
+      }
+    }
+  }
+
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "Flowspec forward.";
+    container flowspec-forward {
+      description
+          "Configure flowspec forward.";
+      container ipv6-flowspec-enable {
+        presence "ipv6-flowspec-enable";
+        description
+          "Enable/disable IPv6-flowspec, if want to support IPv6 flowspec, then IPv6-flowspec-enable must be configured under 5880 board.";
+      }
+    }
+  }
+}

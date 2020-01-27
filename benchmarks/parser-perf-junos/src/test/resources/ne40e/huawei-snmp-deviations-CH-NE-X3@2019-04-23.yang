@@ -1,0 +1,42 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-snmp-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-snmp-deviations-CH-NE-X3";
+  prefix snmp-devs-CH-NE-X3;
+
+  import huawei-snmp {
+    prefix snmp;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "SNMP.";
+
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/snmp:snmp/snmp:system/snmp:source-ipv4-address" {
+    deviate not-supported;
+  }
+  deviation "/snmp:snmp/snmp:target-hosts/snmp:target-host/snmp:is-need-heart-beat" {
+    deviate not-supported;
+  }
+  deviation "/snmp:snmp/snmp:target-hosts/snmp:target-host/snmp:heart-beat-time" {
+    deviate not-supported;
+  }
+  deviation "/snmp:snmp/snmp:target-hosts/snmp:target-host/snmp:status" {
+    deviate not-supported;
+  }
+}

@@ -1,0 +1,408 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-devm-action {
+  belongs-to huawei-devm {
+    prefix devm;
+  }
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-devm-type;
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "The submodule of devm : devm_action.";
+	
+  revision 2019-09-09 {
+    description
+      "Change description.";
+    reference
+      "Huawei private.";
+  }
+
+  revision 2019-04-03 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  rpc reset-board {
+    description
+      "Reset board.";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+  rpc reset-mpu-board {
+    description
+      "Reset MPU.";
+    ext:node-ref "/devm/mpu-boards/mpu-board";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+  rpc reset-lpu-board {
+    description
+      "Reset LPU.";
+    ext:node-ref "/devm/lpu-boards/lpu-board";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+  rpc reset-sfu-board {
+    description
+      "Reset SFU.";
+    ext:node-ref "/devm/sfu-boards/sfu-board"; 
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+
+  rpc reset-card {
+    description
+      "Reset Card.";
+    ext:node-ref "/devm/cards/card";
+    input {
+      leaf card-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Card position.";
+      }
+    }
+  }
+
+  rpc reboot {
+    description
+      "Reboot.";
+    input {
+      leaf save-flag {
+        type boolean;
+        default "true";
+        description
+          "Flag indicating whether to save the configuration. True: save; False: not save.";
+      }
+    }
+  }
+  rpc transfer-pnpp {
+    description
+      "Transfer pnpp files.";
+    input {
+      leaf server-ip-address {
+        type inet:ip-address-no-zone;
+        mandatory true;
+        description
+          "FTP server IP address.";
+      }
+      leaf server-port {
+        type uint32 {
+          range "21..65535";
+        }
+        default "21";
+        description
+          "Server port.";
+      }
+      leaf vpn-instance-name {
+        type string {
+          length "1..128";
+        }
+        description
+          "VPN instance name.";
+      }
+      leaf source-ipv4-address {
+        type inet:ipv4-address-no-zone;
+        description
+          "Source IPv4 address.";
+      }
+      leaf source-interface-name {
+        type pub-type:if-name;
+        description
+          "Source interface name.";
+      }
+      leaf server-type {
+        type server-type;
+        default "ftp";
+        description
+          "Server type.";
+      }
+      leaf command-type {
+        type trans-type;
+        default "put";
+        description
+          "Transmission type.";
+      }
+      leaf user-name {
+        type string {
+          length "1..85";
+        }
+        mandatory true;
+        description
+          "User name.";
+      }
+      leaf password {
+        type pub-type:password;
+        mandatory true;
+        description
+          "Password.";
+      }
+      leaf local-file-name {
+        type string {
+          length "1..128";
+        }
+        default "pnpp.7z";
+        description
+          "Local file name.";
+      }
+      leaf remote-file-name {
+        type string {
+          length "1..128";
+        }
+        description
+          "File name on the FTP server.";
+      }
+      leaf remote-extension {
+        type string {
+          length "1..5";
+        }
+        default ".hw!";
+        description
+          "Temporary file name extension used for reliability.";
+      }
+      container secure-transfer-options {
+        description
+          "Transfer encryption options.";
+        leaf prefer-kex {
+          type prefer-kex-type;
+          description
+            "Encryption algorithm.";
+        }
+        leaf prefer-stoc-cipher {
+          type cipher-type;
+          description
+            "Encryption algorithm for messages from a client to server.";
+        }
+        leaf prefer-ctos-cipher {
+          type cipher-type;
+          description
+            "Encryption algorithm for messages from a server to client.";
+        }
+        leaf prefer-stoc-hmac {
+          type stoc-hmac-type;
+          description
+            "Prefer Stoc Hmac.";
+        }
+        leaf prefer-ctos-hmac {
+          type stoc-hmac-type;
+          description
+            "Prefer Ctos Hmac.";
+        }
+        leaf keep-alive-interval {
+          type uint32 {
+            range "0..60";
+          }
+          default "0";
+          description
+            "Keepalive interval.";
+        }
+        leaf keep-alive-count {
+          type uint32 {
+            range "0..100";
+          }
+          default "0";
+          description
+            "Number of Keepalive packets.";
+        }
+      }
+    }
+  }
+  rpc reset-offline-config {
+    description
+      "Reset offline configuration.";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+  rpc clear-inactive-config {
+    description
+      "Clear Inactive Configuration.";
+    input {
+      leaf entity-class {
+        type offline-class-type;
+        mandatory true;
+        description
+          "Class.";
+      }
+      leaf position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Position.";
+      }
+    }
+  }
+  rpc cold-reset-lpu {
+    description
+      "Cold reset LPU.";
+    ext:node-ref "/devm/lpu-boards/lpu-board";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+  rpc warm-reset-lpu {
+    description
+      "Warm reset LPU.";
+    ext:node-ref "/devm/lpu-boards/lpu-board";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+  rpc cold-reset-mpu {
+    description
+      "Cold reset MPU.";
+    ext:node-ref "/devm/mpu-boards/mpu-board";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+  rpc warm-reset-mpu {
+    description
+      "Warm reset MPU.";
+    ext:node-ref "/devm/mpu-boards/mpu-board";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+  rpc schedule-reboot-at-time {
+    description
+      "Schedule reboot at time.";
+    input {
+      leaf schedule-date {
+        type pub-type:date;
+        mandatory true;
+        description
+          "Date.";
+      }
+      leaf schedule-datetime {
+        type pub-type:time-hhmm;
+        mandatory true;
+        description
+          "Time.";
+      }
+      leaf save-flag {
+          type boolean;
+          default true;
+          description
+            "Flag indicating whether save config.";
+        }
+    }
+  }  
+  rpc schedule-reboot-delay-time {
+    description
+      "Schedule reboot delay time.";
+    input {
+      leaf delay-time {
+        type string {
+          length "1..6";
+        }
+        mandatory true;
+        description
+          "Delay time, total minutes or hours:minutes (mm or hh:mm), the max value is 720 hours.";
+      }
+      leaf save-flag {
+          type boolean;
+          default true;
+          description
+            "Flag indicating whether save config.";
+        }
+    }
+  } 
+  rpc undo-schedule-reboot {
+    description
+      "Undo Schedule reboot.";
+  }
+}

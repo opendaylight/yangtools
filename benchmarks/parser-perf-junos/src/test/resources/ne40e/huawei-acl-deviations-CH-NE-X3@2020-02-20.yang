@@ -1,0 +1,105 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-acl-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-acl-deviations-CH-NE-X3";
+  prefix acl-devs-CH-NE-X3;
+
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-acl-ucl {
+    prefix acl-ucl;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Access Control List (ACL). An ACL is used to identify and select data packets through packet attributes. For example, applying an ACL in the firewall can either permit or discard data packets. Applying an ACL in IPsec can encrypt data packets that match ACL rules and forward those that do not match any ACL rule.";
+
+  revision 2020-02-20 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  typedef group4-type-deviations {
+    type enumeration {
+      enum interface {
+        value 0;
+        description
+          "Interface ACL.";
+      }
+      enum link {
+        value 1;
+        description
+          "Link ACL.";
+      }
+      enum basic {
+        value 2;
+        description
+          "Basic ACL.";
+      }
+      enum advance {
+        value 3;
+        description
+          "Advanced ACL.";
+      }
+      enum mpls {
+        value 7;
+        description
+          "MPLS ACL.";
+      }
+      enum UCL {
+        value 10;
+        description
+          "UCL.";
+      }
+    }
+    description
+      "Type of a rule group.";
+  }
+
+  deviation "/acl:acl/acl:groups/acl:group/acl:type" {
+    deviate replace {
+      type acl-devs-CH-NE-X3:group4-type-deviations;
+    }
+  }
+  deviation "/acl:acl/acl:group6s/acl:group6/acl:rule-basics/acl:rule-basic/acl:source-ipaddr" {
+    deviate add {
+      must '(../source-ipaddr and ../source-wild) or (../source-ipaddr and ../source-mask-len)';
+    }
+  }
+  deviation "/acl:acl/acl:group6s/acl:group6/acl:rule-advances/acl:rule-advance/acl:protocol-type/acl:zero" {
+    deviate not-supported;
+  }
+  ext:deviation-ext "/acl:acl/acl:groups/acl:group/acl:match-order" {
+    ext:deviate-ext "add" {
+      ext:operation-exclude "update" {
+        when '(../acl:rule-basics/acl:rule-basic) or (../acl:rule-advances/acl:rule-advance) or (../acl:rule-ethernets/acl:rule-ethernet) or (../acl:rule-mplss/acl:rule-mpls) or (../acl-ucl:rule-ucls/acl-ucl:rule-ucl) or (../acl:rule-interfaces/acl:rule-interface)';
+        description
+          "When an ACL rule exists, this value can not be changed.";
+      }
+    }
+  }
+  ext:deviation-ext "/acl:acl/acl:group6s/acl:group6/acl:match-order" {
+    ext:deviate-ext "add" {
+      ext:operation-exclude "update" {
+        when '(../acl:rule-basics/acl:rule-basic) or (../acl:rule-advances/acl:rule-advance) or (../acl-ucl:rule-ucls/acl-ucl:rule-ucl) ';
+        description
+          "When an ACL rule exists, this value can not be changed.";
+      }
+    }
+  }
+}

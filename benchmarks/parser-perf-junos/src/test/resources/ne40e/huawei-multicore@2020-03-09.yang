@@ -1,0 +1,96 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-multicore {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-multicore";
+  prefix multicore;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Global Configuration.";
+  revision 2020-03-09 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+
+  ext:task-name "forwarding";
+
+  augment "/devm:devm" {
+    description
+      "Forward CPU alarm.";
+
+    container forward-cpu-alarm {
+      description
+        "Configure forward alarm for the multi-core CPU average usage on a board.";
+
+      leaf threshold {
+        type uint8 {
+          range "40..100";
+        }
+        units %;
+        default "95";
+        description
+          "Specifies the alarm threshold for the multi-core CPU average usage on a board.";
+      }
+
+      leaf log-enable {
+        type boolean;
+        default true;
+        description
+          "Enable/disable log reporting when the multi-core CPU average usage reaches the threshold.";
+        }
+
+      leaf trap-enable {
+        type boolean;
+        default true;
+        description
+          "Enable/disable alarm reporting when the multi-core CPU average usage reaches the threshold.";
+      }
+    }
+
+    container forward-vcpu-alarm {
+      description
+        "Configure forward alarm for the usage of the multi-core's single core.";
+
+      leaf threshold {
+        type uint8 {
+          range "40..100";
+        }
+        units %;
+        default "95";
+        description
+          "Specifies the alarm threshold for the usage of the multi-core's single core.";
+      }
+          
+      leaf log-enable {
+        type boolean;
+        default true;
+        description
+          "Enable/disable log reporting when the CPU usage of the multi-core's single core reaches the threshold.";
+      }
+
+      leaf trap-enable {
+        type boolean;
+        default true;
+        description
+          "Enable/disable alarm reporting when the CPU usage of the multi-core's single core reaches the threshold.";
+      }
+    }
+  }
+}

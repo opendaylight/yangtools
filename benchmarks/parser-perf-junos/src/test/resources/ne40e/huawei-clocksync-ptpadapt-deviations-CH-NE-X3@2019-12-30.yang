@@ -1,0 +1,35 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-ptpadapt-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-clocksync-ptpadapt-deviations-CH-NE-X3";
+  prefix "clocksync-ptpadapt-devs-CH-NE-X3";
+
+  import huawei-clocksync-ptpadapt {
+    prefix "clocksync-ptpadapt";
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "System clock synchronization management, including frequency synchronization and time synchronization.";
+  revision 2019-12-30 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  deviation /clocksync-ptpadapt:clocksync-ptpadapt/clocksync-ptpadapt:ptpa-common/clocksync-ptpadapt:nego-mode {
+    deviate add {
+      must "(../enable='true' and ../device-type='client' and ../nego-mode='atr' and ../freq-profile='timeprofile' and ../hop-by-hop-mode='true' and ../local-ip!='0.0.0.0')";
+    }
+  }
+
+}

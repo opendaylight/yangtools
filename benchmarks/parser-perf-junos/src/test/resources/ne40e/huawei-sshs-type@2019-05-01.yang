@@ -1,0 +1,281 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-sshs-type {
+  belongs-to huawei-sshs {
+    prefix sshs;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of ssh server type submodule.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef sshssrvctype {
+    type enumeration {
+      enum "NotSet" {
+        value 0;
+        description
+          "NotSet.";
+      }
+      enum "stelnet" {
+        value 1;
+        description
+          "Stelnet.";
+      }
+      enum "sftp" {
+        value 2;
+        description
+          "Sftp.";
+      }
+      enum "snetconf" {
+        value 3;
+        description
+          "Snetconf.";
+      }
+      enum "all" {
+        value 4;
+        description
+          "All.";
+      }
+      enum "sftp-snetconf" {
+        value 5;
+        description
+          "Sftp and snetconf.";
+      }
+      enum "stelnet-sftp" {
+        value 6;
+        description
+          "Stelnet and sftp.";
+      }
+      enum "stelnet-snetconf" {
+        value 7;
+        description
+          "Stelnet and snetconf.";
+      }
+      enum "sftp-snetconf-stelnet" {
+        value 8;
+        description
+          "Stelnet, sftp and snetconf.";
+      }
+    }
+    description
+      "SSH server service type list.";
+  }
+  typedef sshsenableflag {
+    type enumeration {
+      enum "Enable" {
+        value 1;
+        description
+          "SSH Server/Service Enable.";
+      }
+      enum "Disable" {
+        value 2;
+        description
+          "SSH Server/Service Disable.";
+      }
+    }
+    description
+      "SSH server bool switch.";
+  }
+  typedef sshsuserauth {
+    type enumeration {
+      enum "NotSet" {
+        value 0;
+        description
+          "NotSet.";
+      }
+      enum "password" {
+        value 1;
+        description
+          "Password.";
+      }
+      enum "rsa" {
+        value 2;
+        description
+          "Rsa.";
+      }
+      enum "all" {
+        value 3;
+        description
+          "All.";
+      }
+      enum "password-rsa" {
+        value 4;
+        description
+          "Password-rsa.";
+      }
+      enum "dsa" {
+        value 5;
+        description
+          "Dsa.";
+      }
+      enum "password-dsa" {
+        value 6;
+        description
+          "Password-dsa.";
+      }
+      enum "ecc" {
+        value 7;
+        description
+          "Ecc.";
+      }
+      enum "password-ecc" {
+        value 8;
+        description
+          "Password-ecc.";
+      }
+      enum "sm2" {
+        value 9;
+        description
+          "Sm2.";
+      }
+      enum "password-sm2" {
+        value 10;
+        description
+          "Password-sm2.";
+      }
+    }
+    description
+      "SSH server user authentication type list.";
+  }
+  typedef sshspubkeytype {
+    type enumeration {
+      enum "NotSet" {
+        value 0;
+        description
+          "NotSet.";
+      }
+      enum "RSA" {
+        value 1;
+        description
+          "RSA.";
+      }
+      enum "DSA" {
+        value 2;
+        description
+          "DSA.";
+      }
+      enum "ECC" {
+        value 3;
+        description
+          "ECC.";
+      }
+      enum "SM2" {
+        value 5;
+        description
+          "SM2.";
+      }
+    }
+    description
+      "SSH server public key encryption type list.";
+  }
+  typedef sshsbooltype {
+    type enumeration {
+      enum "false" {
+        value 0;
+        description
+          "Disabled state.";
+      }
+      enum "true" {
+        value 1;
+        description
+          "Enabled state.";
+      }
+    }
+    description
+      "SSH server enable flag list.";
+  }
+  typedef defauthor {
+    type enumeration {
+      enum "aaa" {
+        value 0;		  
+        description
+          "Aaa.";
+      }
+      enum "root" {
+        value 1;		  
+        description
+          "Root.";
+      }
+    }
+    description
+      "SSH server default authorization list.";
+  }
+  typedef version {
+    type enumeration {
+      enum "sshver2" {
+        value 0;	  
+        description
+          "SSH Protocol Version 2.0.";
+      }
+      enum "sshver1-99" {
+        value 1;	  
+        description
+          "SSH Protocol Version 1.99.";
+      }
+    }
+    description
+      "SSH server version type list.";
+  }
+  typedef sshsbool {
+    type enumeration {
+      enum "Enable" {
+        value 1;
+        description
+          "SSH Server/Service Enable.";
+      }
+      enum "Disable" {
+        value 2;
+        description
+          "SSH Server/Service Disable.";
+      }
+    }
+    description
+      "SSH server bool switch.";
+  }
+  typedef connstate {
+    type enumeration {
+      enum "stop" {
+        value 0;
+        description
+          "Connection is stopped.";
+      }
+      enum "started" {
+        value 1;
+        description
+          "Connection is started.";
+      }
+    }
+    description
+      "SSH server connection state list.";
+  }
+  typedef keyboardflag {
+    type enumeration {
+      enum "enablekeyboard" {
+        value 1;
+        description
+          "Enable Keyboard.";
+      }
+      enum "disablekeyboard" {
+        value 0;
+        description
+          "Disable KeyBoard.";
+      }
+    }
+    description
+      "SSH server keyBoard enable flag list.";
+  }
+}

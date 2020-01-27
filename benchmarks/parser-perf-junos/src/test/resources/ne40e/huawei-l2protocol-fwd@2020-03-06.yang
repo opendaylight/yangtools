@@ -1,0 +1,519 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2protocol-fwd {
+  namespace "urn:huawei:yang:huawei-l2protocol-fwd";
+  prefix l2protocol-fwd;
+
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-bd {
+    prefix bd;
+  }
+  import huawei-evpn {
+    prefix evpn;
+  }
+  import huawei-evpl {
+    prefix evpl;
+  }
+
+  ext:task-name  "l2cpmanagement";
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Forwarding L2 protocol service.";
+
+  revision 2020-03-06 {
+    description
+      "Change description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-15 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  typedef action-type {
+    type enumeration {
+      enum "transport" {
+        value 3;
+        description
+          "Link protocol transport.";
+      }
+      enum "transport-tagged" {
+        value 4;
+        description
+          "Link protocol tagged transport.";
+      }
+      enum "forwarding" {
+        value 1;
+        description
+          "Link protocol forwarding.";
+      }
+      enum "discard" {
+        value 2;
+        description
+          "Link protocol discard.";
+      }
+    }
+    description
+      "Link protocol transport action type.";
+  }
+
+  typedef vlan-action-type {
+    type enumeration {
+      enum "forwarding" {
+        value 1;
+        description
+          "Link protocol forwarding.";
+      }
+    }
+    description
+      "Link protocol transport action type.";
+  }
+
+  typedef mode {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Link protocol transport mode which does not aware VC type.";
+      }
+    }
+    description
+      "Link protocol transport mode.";
+  }
+
+  typedef mode-evpn {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Link protocol transport mode which does not aware VC type.";
+      }
+    }
+    description
+      "Link protocol transport mode.";
+  }
+
+  typedef vlan-protocol-type {
+    type enumeration {
+      enum "lacp" {
+        value 1;
+        description
+          "Link Aggregation Control Protocol.";
+      }
+    }
+    description
+      "Link protocol transport protocol type.";
+  }
+
+  typedef protocol-type {
+    type enumeration {
+      enum "bpdu" {
+        value 4;
+        description
+          "Bridge protocol data unit.";
+      }
+      enum "lacp" {
+        value 1;
+        description
+          "Link Aggregation Control Protocol.";
+      }
+      enum "lldp" {
+        value 2;
+        description
+          "Link Layer Discovery Protocol.";
+      }
+      enum "cdp" {
+        value 5;
+        description
+          "Cisco Discovery Protocol.";
+      }
+      enum "udld" {
+        value 6;
+        description
+          "Unidirectional Link Detection.";
+      }
+    }
+    description
+      "Link protocol transport protocol type.";
+  }
+
+  typedef link-protocol-status {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Link protocol transport function is enabled.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "Link protocol transport function is disabled.";
+      }
+    }
+    description
+      "Link protocol transport state.";
+  }
+
+  grouping slot-linkprotocol-type {
+      description
+        "Transparent transmission of link-layer protocol information.";
+      leaf lldp {
+        type link-protocol-status;
+        default "disable";
+        description
+          "Link Layer Discovery Protocol.";
+      }
+      leaf lacp {
+        type link-protocol-status;
+        default "disable";
+        description
+          "Link Aggregation Control Protocol.";
+      }
+      leaf oam {
+        type link-protocol-status;
+        default "disable";
+        description
+          "Operation, Administration and Maintenance Protocol.";
+      }
+      leaf esmc {
+        type link-protocol-status;
+        default "disable";
+        description
+          "Ethernet Synchronization Messaging Channel.";
+      }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:main-interface/ethernet:l2-attribute" {
+    description
+      "Link protocol transport lacp.";
+    container protocol-actions {
+      when "../../../../ifm:type='Ethernet' or ../../../../ifm:type='GigabitEthernet' or ../../../../ifm:type='Eth-Trunk' or ../../../../ifm:type='100GE' or ../../../../ifm:type='XGigabitEthernet' or ../../../../ifm:type='40GE' or ../../../../ifm:type='10GE' or ../../../../ifm:type='400GE' or ../../../../ifm:type='25GE' or ../../../../ifm:type='FlexE' or ../../../../ifm:type='50GE' or ../../../../ifm:type='50|100GE'";
+      description
+        "List of interface link protocol action.";
+      list protocol-action {
+        must "../../ethernet:pvid or ../../ethernet:trunk-vlans";
+        key "protocol-type action";
+        max-elements 1;
+        description
+          "Configure link-protocol action.";
+        leaf protocol-type {
+          type vlan-protocol-type;
+          description
+            "Protocol type.";
+        }
+        leaf action {
+          type vlan-action-type;
+          description
+            "Protocol action.";
+        }
+      }
+    }
+  }
+
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-ldp/l2vpn:acs/l2vpn:ac" {
+    description
+      "L2 protocol service for VPWS.";
+    container protocol-actions {
+      description
+        "List of interface link protocol action.";
+      list protocol-action {
+        must
+          "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='Ethernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='GigabitEthernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='Eth-Trunk' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='100GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='XGigabitEthernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='40GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='10GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='400GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='25GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='FlexE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='50GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='50|100GE'";
+        key "protocol-type action";
+        description
+          "Configure link-protocol action.";
+        leaf protocol-type {
+          type protocol-type;
+          description
+            "Protocol type.";
+        }
+        leaf action {
+          type action-type;
+          description
+            "Protocol action.";
+        }
+        leaf mode {
+          when "../action='transport'";
+          type mode;
+          mandatory true;
+          description
+            "Link-protocol transport mode.";
+        }
+      }
+    }
+  }
+
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-bgp/l2vpn:acs/l2vpn:ac" {
+    description
+      "L2 protocol service for VPWS BGP.";
+    container protocol-actions {
+      description
+        "List of interface link protocol action.";
+      list protocol-action {
+        must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:class='sub-interface' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:l2-mode-enable='false'";
+        must
+          "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='Ethernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='GigabitEthernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='Eth-Trunk' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='100GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='XGigabitEthernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='40GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='10GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='400GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='25GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='FlexE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='50GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='50|100GE'";
+        key "protocol-type action";
+        description
+          "Configure link-protocol action.";
+        leaf protocol-type {
+          type protocol-type;
+          description
+            "Protocol type.";
+        }
+        leaf action {
+          type action-type;
+          description
+            "Protocol action.";
+        }
+        leaf mode {
+          when "../action='transport'";
+          type mode;
+          mandatory true;
+          description
+            "Link-protocol transport mode.";
+        }
+      }
+    }
+  }
+
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:acs/l2vpn:ac" {
+    description
+      "L2 protocol service for VSI.";
+    container protocol-actions {
+      description
+        "List of interface link protocol action.";
+      list protocol-action {
+        must
+          "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='Ethernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='GigabitEthernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='Eth-Trunk' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='100GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='XGigabitEthernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='40GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='10GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='400GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='25GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='FlexE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='50GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:type='50|100GE'";
+        key "protocol-type action";
+        description
+          "Configure link-protocol action.";
+        leaf protocol-type {
+          type protocol-type;
+          description
+            "Protocol type.";
+        }
+        leaf action {
+          type action-type;
+          description
+            "Protocol action.";
+        }
+        leaf mode {
+          when "../action='transport'";
+          type mode;
+          mandatory true;
+          description
+            "Link-protocol transport mode.";
+        }
+      }
+    }
+  }
+
+  augment "/bd:bd/bd:instances/bd:instance/bd:service-points/bd:service-point" {
+    description
+      "L2 protocol service for BD.";
+    container protocol-actions {
+      description
+        "List of interface link protocol action.";
+      list protocol-action {
+        must
+          "action='transport' and
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:dot1q/ethernet:vlans/ethernet:vlan-list and
+           not (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:flow-action) and
+           not (/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:bds/l2vpn:bd[l2vpn:id=current()/../../../../bd:id])";
+        must
+          "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='Ethernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='GigabitEthernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='Eth-Trunk' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='100GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='XGigabitEthernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='40GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='10GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='400GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='25GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='FlexE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='50GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../bd:interface-name]/ifm:type='50|100GE'";
+        key "protocol-type action";
+        description
+          "Configure link-protocol action.";
+        leaf protocol-type {
+          type protocol-type;
+          description
+            "Protocol type.";
+        }
+        leaf action {
+          type action-type;
+          description
+            "Protocol action.";
+        }
+        leaf mode {
+          when "../action='transport'";
+          type mode-evpn;
+          mandatory true;
+          description
+            "Link-protocol transport mode.";
+        }
+      }
+    }
+  }
+
+  augment "/evpl:evpl/evpl:instances/evpl:instance/evpl:interfaces/evpl:interface" {
+    description
+      "L2 protocol service for EVPL.";
+    container protocol-actions {
+      description
+        "List of interface link protocol action.";
+      list protocol-action {
+        must
+          "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='Ethernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='GigabitEthernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='Eth-Trunk' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='100GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='XGigabitEthernet' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='40GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='10GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='400GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='25GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='FlexE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='50GE' or
+           /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:type='50|100GE'";
+        must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:parent-name and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ifm:l2-mode-enable='false'";
+        key "protocol-type action";
+        description
+          "Configure link-protocol action.";
+        leaf protocol-type {
+          type protocol-type;
+          description
+            "Protocol type.";
+        }
+        leaf action {
+          type action-type;
+          description
+            "Protocol action.";
+        }
+        leaf mode {
+          when "../action='transport'";
+          type mode-evpn;
+          mandatory true;
+          description
+            "Link-protocol transport mode.";
+        }
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/evpn:evpn" {
+    description
+      "L2 protocol service for EVPN.";
+    container protocol-actions {
+      when "(../../ifm:type='Ethernet' or ../../ifm:type='GigabitEthernet' or ../../ifm:type='Eth-Trunk' or ../../ifm:type='100GE' or ../../ifm:type='XGigabitEthernet' or ../../ifm:type='40GE' or ../../ifm:type='10GE' or ../../ifm:type='400GE' or ../../ifm:type='25GE' or ../../ifm:type='FlexE' or ../../ifm:type='50GE' or ../../ifm:type='50|100GE') and ../evpn:name";
+      description
+        "List of interface link protocol action.";
+      list protocol-action {
+        key "protocol-type action";
+        description
+          "Configure link-protocol action.";
+        leaf protocol-type {
+          type protocol-type;
+          description
+            "Protocol type.";
+        }
+        leaf action {
+          type action-type;
+          description
+            "Protocol action.";
+        }
+        leaf mode {
+          when "../action='transport'";
+          type mode-evpn;
+          mandatory true;
+          description
+            "Link-protocol transport mode.";
+        }
+      }
+    }
+  }
+
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "L2 protocol transport configuration.";
+    container link-protocol-transport {
+      description
+        "Configure transparent transmission of link-layer protocol information.";
+      uses slot-linkprotocol-type;
+    }
+  }
+
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+      "L2 protocol transport configuration.";
+    container link-protocol-transport {
+      description
+        "Configure transparent transmission of link-layer protocol information.";
+      uses slot-linkprotocol-type;
+    }
+  }
+
+}

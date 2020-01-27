@@ -1,0 +1,462 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-segment-routing {
+  namespace "urn:huawei:yang:huawei-segment-routing";
+  prefix sr;
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  include huawei-segment-routing-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Segment routing.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "segr";
+  augment /ni:network-instance/ni:instances/ni:instance {
+    description
+        "Segment routing augment to L3VPN.";
+  container segment-routing {
+    when "../ni:name='_public_'";
+    description
+      "Configure segment routing.";
+    leaf enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable segment routing.";
+    }
+    leaf tunnel-prefer {
+      when "../enable='true'";      
+      type enumeration {
+        enum "ldp" {
+          value 1;
+          description
+            "LDP tunnel.";
+        }
+        enum "sr-be" {
+          value 2;
+          description
+            "SR BE tunnel.";
+        }
+      }
+      default "ldp";
+      description
+        "Prefer segment routing tunnel.";
+    }
+    container srlbs {
+      description
+        "List of segment routing local block.";
+      list srlb {
+        key "begin end";
+        max-elements  "1";
+        description
+          "Configure segment routing local block. Currently only one configuration is supported.";
+        leaf begin {
+          type uint32 {
+            range "16..1048575";
+          }
+          description
+            "SRLB begin value. The value range is determined by the PAF file of the corresponding device.
+             special explanation:
+             range: The range comes from PAF.";
+        }
+        leaf end {
+          type uint32 {
+            range "16..1048575";
+          }
+          description
+            "SRLB begin value. The value range is determined by the PAF file of the corresponding device.
+             special explanation:
+             range: The range comes from PAF.";
+        }
+      }
+    }
+    container bfds {   
+      when "../enable='true'";
+      description
+        "List of SRBFDS configuration.";
+      list bfd {
+        key "type mode-type";
+        max-elements  "1";
+        description
+          "Configure SRBFDS configuration.";
+        leaf type {
+            type bfd-type;
+            description
+              "Sets a BFD type.";
+        }
+        leaf mode-type {
+          type enumeration {
+            enum "tunnel" {
+              value 1;
+              description
+                "The type of session mode is tunnel.";
+            }
+          }
+          description
+            "Sets a session mode.";
+        }
+        leaf ip-prefix {
+          type leafref {
+            path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+          }
+          description
+            "Sets a policy name.";
+        }
+        leaf min-rx {
+          type uint32 {
+            range "3..20000";
+          }
+          units ms;
+          default "10";
+          description
+            "Sets a minimum receive interval. Different products have different value ranges.";
+        }
+        leaf min-tx {
+          type uint32 {
+            range "3..1000";
+          }
+          units ms;
+          default "10";
+          description
+            "Sets a minimum transmit interval.";
+        }
+        leaf detect-multiplier {
+          type uint32 {
+            range "3..50";
+          }
+          default "3";
+          description
+            "Sets a detect multiplier.";
+        }
+        leaf effect-sr-lsp {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable effect SR BE tunnel.";
+        }
+        leaf nil-fec {
+          when "../type='bfd'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable use nil FEC.";
+        }
+      }
+    }
+    container traffic-stats {
+        when "../enable='true'";
+      description
+        "Configure the stats of SR traffic.";
+      leaf mode {
+        type enumeration {
+          enum "none" {
+          value 0;
+          description
+            "SRBE traffic statistics are not enabled.";
+          }
+          enum "host" {
+            value 1;
+            description
+              "SRBE traffic statistics host mode.";
+            }
+          enum "ip-prefix" {
+            value 2;
+            description
+              "SRBE traffic statistics host IP prefix mode.";
+          }
+        }
+        default "none";
+        description
+          "The stats mode of SR traffic.";
+      }
+      leaf prefix-name {
+        when "../mode='ip-prefix'";
+        type leafref {
+          path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+        }
+        description
+          "The name of prefix.";
+      }
+    }
+    container adjacency-sid {
+        when "../enable='true'";
+        description
+          "Configure Segment Routing IPv4 static adjacency label.";
+        container globals {
+          description
+            "List of Segment Routing global linkage label.";
+          list global {
+            key "local-ip-address remote-ip-address absolute-sid";
+            description
+              "Configure Segment Routing global linkage label.";
+            leaf local-ip-address {
+              type inet:ipv4-address-no-zone;
+              description
+                "Specifies the ip address of the local interface.";
+            }
+            leaf remote-ip-address {
+              type inet:ipv4-address-no-zone;
+              must "../local-ip-address!=../remote-ip-address";
+              description
+                "Remote ip address.";
+            }
+            leaf absolute-sid {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Segment ID. The value range is determined by the PAF. The yang node is static-label-blocks of huawei-segment-routing.";
+            }
+          }
+        }
+      }
+    container bindings {
+        when "../enable='true'";
+      description
+        "Configure bindings.";
+      container prefix-sid-mappings{
+        description
+          "List of address prefix mapping SID information.";
+        list prefix-sid-mapping {
+          key "ip-address mask-length algorithm";
+          description
+            "Configure address prefix mapping SID information.";
+          leaf ip-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Address prefix.";
+          }
+          leaf mask-length {
+            type uint8 {
+              range 32;
+            }
+            description
+              "Mask length of address, only the 32 bit mask length is supported currently.";
+          }
+          leaf algorithm {
+            type uint32 {
+              range 0;
+            }
+            description
+              "Prefix SID algorithm."; 
+          }
+          leaf start-sid {
+            type uint32 {
+              range "0..65534";
+            }
+            mandatory true;
+            description
+              "Start of SID index range.";
+          }
+          leaf range {
+            type uint16 {
+              range "1..65535";
+            }
+            default "1";
+            description
+              "Number of allocated SIDs.";
+          }
+          leaf attach-flag {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the attach flag.";
+          }
+        }
+      }
+    }
+    container static-label-blocks {
+      config false;
+      description
+        "List of segment routing global block.";
+      list static-label-block {
+        key "lower-sid upper-sid";
+        config false;
+        description
+          "Statistics of segment routing global block. The range of global labels reserved by the local device for segment routing.";
+        leaf lower-sid {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Minimum SID available.";
+        }
+        leaf upper-sid {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Maximum SID available.";
+        }
+        leaf range {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Total number of SIDs available.";
+        }
+      }
+    }
+    container ipv4-state {
+      config false;
+      description
+         "Statistics of IPv4.";
+      container prefix-mpls-forwardings {
+        description
+          "List of label for transmission.";
+        list prefix-mpls-forwarding {
+          key "ip-address mask-length";
+          description
+            "Statistics of label for transmission.";
+          leaf ip-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "The prefix IP address.";
+          }
+          leaf mask-length {
+            type uint8 {
+              range "1..32";
+            }
+            description
+              "The length of prefix mask.";
+          }
+          leaf in-label {
+            type uint32 {
+              range "1..4294967295";
+            }
+            description
+              "In label.";
+          }
+          leaf out-label {
+            type string {
+              length "1..20";
+            }
+            description
+              "Out label.";
+          }
+          leaf if-name {
+            type string {
+              length "1..64";
+            }
+            description
+              "Local interface.";
+          }
+          leaf next-hop {
+            type inet:ipv4-address-no-zone;
+            description
+              "IP address of next hop.";
+          }
+          leaf lsp-xc-role {
+            type string {
+              length "1..50";
+            }
+            description
+              "Label type.";
+          }
+          leaf mpls-mtu {
+            type string {
+              length "1..50";
+            }
+            units Byte;
+            description
+              "MPLS maximum transmission unit (MTU).";
+          }
+          leaf mtu {
+            type uint32 {
+              range "1..4294967295";
+            }
+            units Byte;
+            description
+              "MTU.";
+          }
+          leaf state {
+            type string {
+              length "1..50";
+            }
+            description
+              "Lable state.";
+          }
+        }
+      }
+      container bfd-states {
+        config false;
+        description
+          "List of queries BFD session.";
+        list bfd-state {
+          key "type mode-type ip-address mask-length";
+          config false;
+          description
+            "Statistics of queries BFD session.";
+          leaf type {
+            type bfd-type;
+            description
+              "BFD type.";
+          }
+          leaf mode-type {
+            type enumeration {
+              enum "tunnel" {
+                value 1;
+                description
+                  "The type of session mode is tunnel.";
+              }
+            }
+            description
+              "Session mode.";
+          }
+          leaf ip-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Destination IP address.";
+          }
+          leaf mask-length {
+            type uint8 {
+              range "1..32";
+            }
+            description
+              "IP address mask length.";
+          }
+          leaf state {
+            type string {
+              length "1..64";
+            }
+            description
+              "Session state.";
+          }
+          leaf discriminator {
+            type uint32 {
+              range "0..4294967295";
+            }
+            description
+              "Local discriminator.";
+          }
+        }
+      }
+    }
+  }
+  }
+}

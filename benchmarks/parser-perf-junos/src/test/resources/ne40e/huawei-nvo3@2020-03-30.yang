@@ -1,0 +1,515 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-nvo3 {
+  namespace "urn:huawei:yang:huawei-nvo3";
+  prefix nvo3;
+  import huawei-bd {
+    prefix bd;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-evpl {
+    prefix evpl;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Management for data center network virtualization over Layer 3.";
+  revision 2020-03-30 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+/*****************************************************************
+* type definitions
+*****************************************************************/
+  typedef vni-state {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "The state is down.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "The state is up.";
+      }
+    }
+    description
+      "The state for VNI.";
+  }
+  typedef tunnel-type {
+    type enumeration {
+      enum "dynamic" {
+        value 0;
+        description
+          "Learning via protocols.";
+      }
+      enum "static" {
+        value 1;
+        description
+          "Created by users.";
+      }
+    }
+    description
+      "VXLAN tunnel type.";
+  }
+  typedef tunnel-mode {
+    type enumeration {
+      enum "default-mode" {
+        value 0;
+        description
+          "Default mode.";
+      }
+      enum "cu-mode" {
+        value 1;
+        description
+          "Control-User separation mode.";
+      }
+    }
+    description
+      "VXLAN tunnel mode.";
+  }
+  typedef peer-learning-type {
+    type enumeration {
+      enum "peer" {
+        value 1;
+        description
+          "Learning peers for multicast via BGP.";
+      }
+    }
+    description
+      "The type of peers Learning via BGP.";
+  }
+
+/*****************************************************************
+* data
+*****************************************************************/
+  ext:task-name  "nvo3";
+  container nvo3 {
+    description
+      "Management of NVO3.";
+    container vni-instances {
+      description
+        "List of virtual extensible local area network.";
+      list vni-instance {
+        key "vni source-nve";
+        description
+          "Configure the information of virtual extensible local area network.";
+        leaf vni {
+          type uint32 {
+            range "1..16777215";
+          }
+          description
+            "VXLAN network identifier.";
+        }
+        leaf source-nve {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Nve'";
+          description
+            "The name of interface NVE, as VXLAN tunnel source point.";
+        }
+        leaf state {
+          type vni-state;
+          config false;
+          description
+            "The state of the VNI. When the VTEP address in the VNI is reachable, the state is up, the opposite is down.";
+        }
+        leaf protocol-bgp {
+          type peer-learning-type;
+          description
+            "Learning VTEPs via BGP for communication in a same VNI.";
+        }
+        container static-peers {
+          description
+            "List of VTEPs created by users for multicast in a same VNI.";
+          list static-peer {
+            key "address";
+            description
+              "Configure VTEP by users for multicast.";
+            leaf address {
+              type inet:ipv4-address-no-zone;
+              description
+                "The address of VTEP.";
+            }
+          }
+        }
+        container static-evpl-peers {
+          description
+            "List of VTEPs created by users for ethernet virtual private line in the same VNI.";
+          list static-evpl-peer {
+            key "address";
+            max-elements "1";
+            description
+              "Configure VTEP by users for ethernet virtual private line.";
+            leaf address {
+              type inet:ipv4-address-no-zone;
+               must "(not(../../../static-peers/static-peer) and not(../../../protocol-bgp)) or not(../address)";
+              description
+                "The address of VTEP.";
+            }
+          }
+        }
+      }
+    }
+    container vni-labels {
+      description
+          "List of VXLAN network identifiers.";
+      list vni-label {
+        key "vni";
+        description
+          "Configure VXLAN network identifier.";
+        leaf vni {
+          type uint32 {
+              range "1..16777215";
+            }
+          description
+            "VXLAN network identifier.";
+        }
+      }
+    }
+    container vteps {
+      config false;
+      description
+        "Statistics of VTEPs.";
+      container peers {
+        config false;
+        description
+          "List of VTEPs for multicast in a same VNI.";
+        list peer {
+          key "vni source destination";
+          config false;
+          description
+            "Operational data of VTEPs for multicast with the same VNI.";
+          leaf vni {
+            type uint32 {
+              range "1..16777215";
+            }
+            config false;
+            description
+              "VXLAN network identifier.";
+          }
+          leaf source {
+            type inet:ip-address-no-zone;
+            config false;
+            description
+              "The address of VXLAN tunnel source point.";
+          }
+          leaf destination {
+            type inet:ip-address-no-zone;
+            config false;
+            description
+              "The address of VTEP.";
+          }
+          leaf type {
+            type tunnel-type;
+            config false;
+            description
+              "The type of VXLAN tunnel.";
+          }
+          leaf out-vni {
+            type uint32 {
+              range "1..16777215";
+            }
+            config false;
+            description
+              "VXLAN network identifier for mapping.";
+          }
+        }
+      }
+      container evpl-peers {
+        config false;
+        description
+          "List of VTEPs for ethernet virtual private line in a same VNI.";
+        list evpl-peer {
+          key "id";
+          description
+            "Operational data of VTEPs for Ethernet virtual private lines with the same VNI.";
+          leaf id {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "The identification of the EVPL instance.";
+          }
+          leaf vni {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "Local VNI for communication.";
+          }
+          leaf source {
+            type inet:ip-address-no-zone;
+            description
+              "The address of VXLAN tunnel source point.";
+          }
+          leaf peer {
+            type inet:ip-address-no-zone;
+            description
+              "The address of primary VTEP.";
+          }
+          leaf out-vni {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "Primary VNI for mapping.";
+          }
+          leaf backup-peer {
+            type inet:ip-address-no-zone;
+            description
+              "The address of backup VTEP.";
+          }
+          leaf backup-out-vni {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "Backup VNI for mapping.";
+          }
+          leaf bypass-peer {
+            type inet:ip-address-no-zone;
+            description
+              "The address of bypass VTEP.";
+          }
+          leaf bypass-out-vni {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "Bypass VNI for mapping.";
+          }
+        }
+      }
+    }
+    container tunnels {
+      config false;
+      description
+        "List of VXLAN tunnel information.";
+      list tunnel {
+        key "id";
+        config false;
+        description
+          "Statistics of VXLAN tunnels.";
+        leaf id {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "The identification of VXLAN tunnel.";
+        }
+        leaf source {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "The address of VXLAN tunnel source point.";
+          ext:support-filter "true";
+        }
+        leaf destination {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "The address of VTEP.";
+          ext:support-filter "true";
+        }
+        leaf mode {
+          type tunnel-mode;
+          config false;
+          description
+            "VXLAN tunnel mode.";
+          ext:support-filter "true";
+        }
+        leaf state {
+          type vni-state;
+          config false;
+          description
+            "VXLAN tunnel state. When the address of VTEP is reachable, the state is up, otherwise is down.";
+        }
+        leaf type {
+          type tunnel-type;
+          config false;
+          description
+            "VXLAN tunnel type.";
+        }
+        leaf up-time {
+          type string {
+            length "1..10";
+          }
+          config false;
+          description
+            "The continuous time as VXLAN tunnel is reachable.";
+        }
+      }
+    }
+  }
+
+/*****************************************************************
+* augment extension 
+*****************************************************************/
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "The NVO3 configuration for interface.";
+    container nve {
+      when "../ifm:type='Nve'";
+      description
+        "Configure NVO3 for interface NVE.";
+      container attribute {
+        must "(./source-vtep-ip and ./bypass-vtep-ip and ./source-vtep-ip != ./bypass-vtep-ip) or not(./source-vtep-ip) or not(./bypass-vtep-ip) ";
+        description
+          "Configure VTEPs for interface NVE.";
+        leaf source-vtep-ip {
+          type inet:ipv4-address-no-zone;
+          description
+            "The address of interface NVE, as VXLAN tunnel source point.";
+        }
+        leaf phys-address {
+          type pub-type:mac-address {
+          }
+          description
+            "The interface's address at its protocol sub-layer. For example, for an 802.x interface, this object normally contains a Media Access Control (MAC) address.";
+        }
+        leaf bypass-vtep-ip {
+          type inet:ipv4-address-no-zone;
+          description
+            "The address of interface NVE, as source point in bypass VXLAN tunnel.";
+        }
+      }
+    }
+    container nvo3-gateway {
+      when "../ifm:type='Vbdif'";
+      description
+        "Configure anycast gateway features for NVO3.";
+      leaf vxlan-anycast-gateway {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable VXLAN anycast gateway features.";
+      }
+      leaf common-anycast-gateway {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable common anycast gateway features.";
+      }
+    }
+  }
+  augment "/bd:bd/bd:instances/bd:instance" {
+    description
+      "The NVO3 configuration for bridge domains.";
+    container nvo3 {
+      description
+        "Configure NVO3 for a BD.";
+      list vni-list {
+        key "vni";
+        max-elements "1";
+        description
+          "Configure the list of VNI that a bridge domain corresponds.";
+        leaf vni {
+          type uint32 {
+            range "1..16777215";
+          }
+          description
+            "VXLAN network identifier.";
+        }
+        leaf split-horizon {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable split horizon mode.";
+        }
+      }
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance" {
+    description
+      "The NVO3 configuration for network instances.";
+    container nvo3 {
+      when "../ni:name != '_public_'";
+      description
+        "Configure NVO3 for a network instance.";
+      list vni-list {
+        key "vni";
+        max-elements "1";
+        description
+          "Configure NVO3 for a network instance.";
+        leaf vni {
+          type uint32 {
+            range "1..16777215";
+          }
+          description
+            "VXLAN network identifier.";
+        }
+      }
+    }
+  }
+  augment "/evpl:evpl/evpl:instances/evpl:instance" {
+    when "./evpl:mode = 'vxlan-mode'";
+    description
+      "The NVO3 configuration for EVPL instances.";
+    container nvo3 {
+      description
+        "Configure NVO3 for an EVPL instance.";
+      container attribute {
+        description
+        "Configure the attribute for an EVPL instance in VXLAN mode.";
+        leaf vtep-ip {
+          type inet:ipv4-address-no-zone;
+          description
+            "The address of VXLAN tunnel source point. When not configured, the address of interface NVE is used as default.";
+        }
+      }
+      container vni-lists {
+        description
+          "List of VXLAN network identifiers.";
+        list vni-list {
+          key "vni";
+          max-elements "1";
+          description
+            "Configure a VNI list for an EVPL instance in VXLAN mode.";
+          leaf vni {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "VXLAN network identifier.";
+          }
+        }
+      }
+    }
+  }
+}

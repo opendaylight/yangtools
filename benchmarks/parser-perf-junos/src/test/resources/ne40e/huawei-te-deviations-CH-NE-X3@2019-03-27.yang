@@ -1,0 +1,58 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-te-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-te-deviations-CH-NE-X3";
+  prefix te-devs-CH-NE-X3;
+
+  import huawei-te {
+    prefix te;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+
+  revision 2019-03-27 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  typedef er-hop-mode-deviations {
+    type enumeration {
+      enum ipv4-ipv6-address {
+        value 1;
+        description
+          "IPv4 or IPv6 address.";
+      }
+      enum sid-label {
+        value 2;
+        description
+          "SID label.";
+      }
+    }
+    description
+      "ERHop Mode.";
+  }
+
+  deviation "/te:te/te:explicit-paths/te:explicit-path/te:hops/te:hop/te:mode" {
+    deviate replace {
+      type te-devs-CH-NE-X3:er-hop-mode-deviations;
+    }
+  }
+  deviation "/te:te/te:explicit-paths/te:explicit-path/te:hops/te:hop/te:sid-ipv6" {
+    deviate not-supported;
+  }
+  deviation "/te:te/te:explicit-paths/te:explicit-path/te:hops/te:hop/te:sid-ipv6-label-type" {
+    deviate not-supported;
+  }
+}

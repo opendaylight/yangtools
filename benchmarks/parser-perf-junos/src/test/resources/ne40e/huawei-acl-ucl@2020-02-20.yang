@@ -1,0 +1,684 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-acl-ucl {
+  namespace "urn:huawei:yang:huawei-acl-ucl";
+  prefix acl-ucl;
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-time-range {
+    prefix timerange;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-bras-vas {
+    prefix bras-vas;
+  }  
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }   
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Access Control List (ACL). An ACL is used to identify and select data packets through packet attributes. For example, applying an ACL in the firewall can either permit or discard data packets. Applying an ACL in IPsec can encrypt data packets that match ACL rules and forward those that do not match any ACL rule.";
+  revision 2020-02-20 {
+    description
+      "Add leaf must condition.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-17 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "acl"; 
+  augment "/acl:acl/acl:groups/acl:group" {
+    description
+      "Extend UCL.";  
+     container rule-ucls {
+      when "(../acl:type = 'UCL')";     
+      description
+        "List of UCL rules. The UCL rule group where these rules reside is of the numeric type or name type. For the UCL rule group of the numeric type, the value ranges from 6000 to 9999.";
+      list rule-ucl {		  
+        key "name";
+        unique "id";			
+        description
+          "Configure UCL rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group. When you create or modify a rule, ensure that parameters such as the action and source-ipaddr specified in the ACL rule are different from those specified in an existing ACL rule.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern '[^_\s][^\s]*';
+          }
+          description
+            "Name of an UCL rule. The rule name can be a number of character string without spaces, but cannot start with an underscore (_).";
+        }
+        leaf id {
+          when "../../../acl:match-order = 'config'";		
+          type uint32 {
+            range "0..4294967294";
+          }
+          mandatory true;		  
+          description
+            "ID of an UCL rule in configuration mode.";
+        }
+        leaf action {
+          type acl:rule-action;
+          mandatory true;
+          description
+            "Matching mode of UCL rules. The available options are permit and deny.";
+        }
+        leaf active-status {
+          type pub-type:row-status;
+          default "active";
+          config false;
+          description
+            "Whether a rule is valid at the current time.";
+        }
+        choice protocol-type {
+          mandatory true;
+          description
+            "Protocol type value.";
+          case single {
+            description
+              "Specify the specific protocol.";
+            leaf protocol {
+              type uint8{
+                ext:value-meaning {
+                  ext:item  "0" {
+                    ext:meaning "IP";
+                  }
+                  ext:item  "1" {
+                    ext:meaning "ICMP";
+                  }
+                  ext:item  "2" {
+                    ext:meaning "IGMP";
+                  }
+                  ext:item  "4" {
+                    ext:meaning "IPINIP";
+                  }
+                  ext:item  "6" {
+                    ext:meaning "TCP";
+                  }
+                  ext:item  "17" {
+                    ext:meaning "UDP";
+                  }
+                  ext:item  "47" {
+                    ext:meaning "GRE";
+                  }
+                  ext:item  "89" {
+                    ext:meaning "OSPF";
+                  }
+                }
+              }
+              description
+                "Protocol type value (0: any IPv4 protocol; 1: ICMP; 2: IGMP; 4: IPINIP; 6: TCP; 17: UDP; 47: GRE; 89: OSPF).";
+              ext:support-filter "true";
+            }
+          }
+          case zero {
+            description
+              "Match zero protocol packet.";
+            leaf protocol-zero {
+              type empty;
+              description
+                "Match zero protocol packet.";
+            }
+          }
+        }
+        choice source {
+          description
+            "Specify source parameters.";				
+          case source-ip-any {
+            description
+              "Any source address.";			  
+            leaf source-ip-any {
+              type empty;
+              description
+                "Any source address.";
+            }
+          }
+          case source-ipaddr {
+            description
+              "Source IP address and mask.";				  
+            leaf source-ipaddr {
+              type inet:ipv4-address-no-zone;
+              must "(../source-ipaddr and ../source-wild) or (not (../source-ipaddr) and not (../source-wild))";			  
+              description
+                "Source IP address. The value must equal to the AND calculation result of source-ipaddr and source-wild.";
+            }
+            leaf source-wild {		
+              type inet:ipv4-address-no-zone;
+              must "(../source-ipaddr and ../source-wild) or (not (../source-ipaddr) and not (../source-wild))";
+              description
+                "Wildcard mask of the source IP address.";
+            }
+          }							
+          case source-pool {
+            description
+              "Source IP pool.";			  
+            leaf source-pool-name {
+              type leafref {
+                path "/acl:acl/acl:ip-pools/acl:ip-pool/acl:name";
+              }
+              description
+                "Name of a source pool.";
+            }
+          }
+          case src-user-group-any {
+            description
+              "Any source user group.";			  
+            leaf src-user-group-any {
+              type empty;
+              description
+                "Any source user group.";
+            }				  
+          }
+          case src-user-group {
+            description
+              "Specify source user group.";				  
+            leaf src-user-group-name {
+              type leafref {
+                path  "/bras-basic-access:bras-basic-access/bras-basic-access:user-groups/bras-basic-access:user-group/bras-basic-access:name";
+              }
+              description
+                "Name of a source user group.";
+            }				  
+          }					
+          case src-srv-group-any {
+            description
+              "Any source service group.";			  
+            leaf src-srv-group-any {
+              type empty;
+              description
+                "Any source service group.";
+            }				  
+          }
+          case src-srv-group {
+            description
+              "Specify source service group.";			  
+            leaf src-srv-group-name {
+              type leafref {
+                path  "/bras-vas:bras-vas/bras-vas:service-groups/bras-vas:service-group/bras-vas:name";
+              }
+              description
+                "Name of a source service group.";
+            }			  
+          }			  		
+		}
+
+        choice dest {
+          description
+            "Specify destination parameters.";		
+          case dest-ip-any {
+            description
+              "Any destination address.";			  
+            leaf dest-ip-any {
+              type empty;
+              description
+                "Any destination address.";
+            }
+          }
+          case dest-ipaddr {
+            description
+              "Destination IP address and mask.";				  
+            leaf dest-ipaddr {
+              type inet:ipv4-address-no-zone;
+              must "(../dest-ipaddr and ../dest-wild) or (not (../dest-ipaddr) and not (../dest-wild))";			  
+              description
+                "Destination IP address. The value must equal to the and calculation result of dest-ipaddr and dest-wild.";
+            }
+            leaf dest-wild {
+              type inet:ipv4-address-no-zone;
+              must "(../dest-ipaddr and ../dest-wild) or (not (../dest-ipaddr) and not (../dest-wild))";			  
+              description
+                "Wildcard mask of the destination IP address.";
+            }
+          }	
+          case dest-pool {
+            description
+              "Name of a dest pool.";
+            leaf dest-pool-name {
+              type leafref {
+                path "/acl:acl/acl:ip-pools/acl:ip-pool/acl:name";
+              }
+              description
+                "Name of a dest pool.";
+            }
+          }
+          case dest-user-group-any {
+              description
+                "Any destination user group.";			  
+            leaf dest-user-group-any {
+                type empty;
+                description
+                  "Any destination user group.";
+            }				  
+          }
+          case dest-user-group {
+            description
+              "Specify destination user group.";				  
+            leaf dest-user-group-name {
+              type leafref {
+                path  "/bras-basic-access:bras-basic-access/bras-basic-access:user-groups/bras-basic-access:user-group/bras-basic-access:name";
+              }
+              description
+                "Name of a destination user group.";
+            }				  
+          }	
+          case dest-srv-group-any {
+            description
+              "Any destination service group.";			  
+            leaf dest-srv-group-any {
+              type empty;
+              description
+                "Any destination service group.";
+            }				  
+          }
+          case dest-srv-group {
+            description
+              "Specify destination service group.";			  
+            leaf dest-srv-group-name {
+              type leafref {
+                path  "/bras-vas:bras-vas/bras-vas:service-groups/bras-vas:service-group/bras-vas:name";
+              }
+              description
+                "Name of a destination service group.";
+            }			  
+          }		  
+        }					  
+        choice source-port {
+          description
+            "Specify source port.";				  
+          case range {
+            description
+              "Specify source port number range.";			  
+            leaf source-port-begin {
+              when "../protocol=17 or ../protocol=6";			
+              type uint16 {
+                range "0..65535";
+              }			
+              must "((../source-port-begin and ../source-port-end) and (../source-port-begin<=../source-port-end) and not(../source-port-begin=0 and ../source-port-end=65535)) or (not (../source-port-begin) and not (../source-port-end))";	
+              description
+                "Start port number of the source port.";
+            }
+            leaf source-port-end {
+              when "../protocol=17 or ../protocol=6";			
+              type uint16 {
+                range "0..65535";
+              }							
+              must "((../source-port-begin and ../source-port-end) and (../source-port-begin<=../source-port-end) and not(../source-port-begin=0 and ../source-port-end=65535)) or (not (../source-port-begin) and not (../source-port-end))";
+              description
+                "End port number of the source port.";
+            }
+          }
+        }					  
+        choice dest-port {
+          description
+            "Specify destination port.";			  
+          case range {
+            description
+              "Specify destination port number range.";				  
+            leaf dest-port-begin {
+              when "../protocol=17 or ../protocol=6";			
+              type uint16 {
+                range "0..65535";
+              }
+              must "((../dest-port-begin and ../dest-port-end) and (../dest-port-begin<=../dest-port-end) and not(../dest-port-begin=0 and ../dest-port-end=65535)) or (not (../dest-port-begin) and  not (../dest-port-end))";		
+              description
+                "Start port number of the destination port.";
+            }
+            leaf dest-port-end {
+              when "../protocol=17 or ../protocol=6";        
+              type uint16 {
+                range "0..65535";
+              }
+              must "((../dest-port-begin and ../dest-port-end) and (../dest-port-begin<=../dest-port-end) and not(../dest-port-begin=0 and ../dest-port-end=65535)) or (not (../dest-port-begin) and  not (../dest-port-end))";					
+              description
+                "End port number of the destination port.";
+            }  
+          }
+        }			
+        leaf fragment-type {
+          type acl:fragment-type;
+          description
+            "Type of packet fragmentation.";
+        }
+        choice packets-priority {
+          description
+            "Specify packets priority.";			
+          case tos {
+            description
+              "Specify packets priority.";				  
+            leaf precedence {
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "Data packets can be filtered based on the priority field.";
+            }
+            leaf tos {
+              type uint8 {
+                range "0..15";
+              }
+              description
+                "Tos value on which data packet filtering is based.";
+            }
+          }
+          case dscp {
+            description
+              "Differentiated services code point.";			  
+            leaf dscp {
+              type uint8 {
+                range "0..63";
+              }
+              description
+                "Differentiated services code point.";
+            }
+          }
+        }
+        leaf icmp-type {
+          when "../protocol=1";	
+          type uint16 {
+            range "0..255";
+          }
+          must "(../icmp-type and ../icmp-code) or (not (../icmp-type) and not (../icmp-code))";
+          description
+            "ICMP type. This parameter is available only when the packet protocol is ICMP. If this parameter is not set, packets of all ICMP types are matched.";
+        }
+        leaf icmp-code {
+          when "../protocol=1";
+          type uint16 {
+            range "0..255";
+          }
+          must "(../icmp-type and ../icmp-code) or (not (../icmp-type) and not (../icmp-code))";
+          description
+            "ICMP message code. Data packets can be filtered based on the ICMP message code.";
+        }
+        choice tcp-flag {
+          description
+            "Specify tcp-flag.";
+          case mask {
+            description
+              "Specify tcp-flag and mask.";
+            leaf tcp-flag-value {
+              when "../protocol=6";	
+              type uint16 {
+                range "0..511";
+              }
+              mandatory true;				  
+              description
+                "TCP flag value.";
+            }
+            leaf tcp-flag-mask {
+              when "../protocol=6";
+              type uint16 {
+                range "0..511";
+              }
+              default "511";				  
+              description
+                "TCP flag mask value.";
+            }
+          }
+          case flag-name {
+            description
+              "Specify tcp flag name.";			  
+            leaf tcp-flag-name {
+              when "../protocol=6";	
+              type acl:tcp-flag-name;
+              description
+                "Name of TCP flag.";
+            }
+          }
+        }
+        leaf vlan-id {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "VLAN ID.";
+        }
+        leaf ce-vlan-id {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "CE-VLAN ID.";
+        }
+        leaf time-range-name {
+          type leafref {
+            path "/timerange:time-range/timerange:time-range-instances/timerange:time-range-instance/timerange:name";
+          }
+          description
+            "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+          ext:support-filter "true";
+        }
+        leaf description {
+          type string {
+            length "1..127";
+            pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+          }
+          description
+            "Description about an ACL rule. The value cannot begin or end with a space.";
+        }
+        leaf priority {	
+          type uint32 {
+            range "0..4294967294";
+          }
+          config false;	  		  
+          description
+            "Priority of an UCL rule in configuration mode.";
+        }		
+      }
+    } 
+  }
+  augment "/acl:acl/acl:group6s/acl:group6" {
+    description
+      "Extend UCL."; 
+    container rule-ucls {
+      when "(../acl:type = 'UCL')";
+      description
+        "List of UCL6 rules. The UCL6 rule group where these rules reside is of the numeric type or name type. For the UCL6 rule group of the numeric type, the value ranges from 6000 to 9999.";
+      list rule-ucl {	  
+        key "name";
+        unique "id";		
+        description
+          "Configure UCL6 rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group. When you create or modify a rule, ensure that parameters such as the action and src-user-group-name specified in the ACL rule are different from those specified in an existing ACL rule.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern '[^_\s][^\s]*';
+          }
+          description
+            "Name of an UCL6 rule. The rule name can be a number of character string without spaces, but cannot start with an underscore (_).";
+        }
+        leaf id {
+          when "../../../acl:match-order = 'config'";			
+          type uint32 {
+            range "0..4294967294";
+          }
+          mandatory true;			  
+          description
+            "ID of an UCL6 rule in configuration mode.";
+        }
+        leaf action {
+          type acl:rule-action;
+          mandatory true;
+          description
+            "Matching mode of UCL6 rules. The available options are permit and deny.";
+        }
+        choice protocol-type {
+          mandatory true;
+          description
+            "IPv6 Protocol value.";
+          case single {
+            description
+              "Specify the specific protocol.";
+            leaf protocol {
+              type uint8{
+                ext:value-meaning {
+                  ext:item  "0" {
+                    ext:meaning "IPV6";
+                  }
+                  ext:item  "6" {
+                    ext:meaning "TCP";
+                  }
+                  ext:item  "17" {
+                    ext:meaning "UDP";
+                  }
+                  ext:item  "47" {
+                    ext:meaning "GRE";
+                  }
+                  ext:item  "50" {
+                    ext:meaning "IPV6-ESP";
+                  }
+                  ext:item  "51" {
+                    ext:meaning "IPV6-AH";
+                  }
+                  ext:item  "58" {
+                    ext:meaning "ICMPV6";
+                  }
+                  ext:item  "89" {
+                    ext:meaning "OSPF";
+                  }
+                }
+              }
+              description
+                "Protocol type value (0: any IPv6 protocol; 6: TCP; 17: UDP; 47: GRE; 50: IPv6-ESP; 51: IPv6-AH; 58: ICMPV6; 89: OSPF).";
+              ext:support-filter "true";
+            }
+          }
+          case zero {
+            description
+              "Match zero protocol packet.";
+            leaf hoport {
+              type empty;
+              description
+                "Match zero protocol packet.";
+            }
+          }
+        }
+        choice source {
+          description
+            "Specify source parameters.";								
+          case src-user-group-any {
+            description
+              "Any source user group.";			  
+            leaf src-user-group-any {
+              type empty;
+              description
+                "Any source user group.";
+            }				  
+          }
+          case src-user-group {
+            description
+              "Specify source user group.";				  
+            leaf src-user-group-name {
+              type leafref {
+                path  "/bras-basic-access:bras-basic-access/bras-basic-access:user-groups/bras-basic-access:user-group/bras-basic-access:name";
+              }
+              description
+                "Name of a source user group.";
+            }				  
+          }							
+          case src-srv-group-any {
+            description
+              "Any source service group.";			  
+            leaf src-srv-group-any {
+              type empty;
+              description
+                "Any source service group.";
+            }				  
+          }
+          case src-srv-group {
+            description
+              "Specify source service group.";			  
+            leaf src-srv-group-name {
+              type leafref {
+                path  "/bras-vas:bras-vas/bras-vas:service-groups/bras-vas:service-group/bras-vas:name";
+              }
+              description
+                "Name of a source service group.";
+            }			  
+          }
+        }
+        choice dest {
+          description
+            "Specify destination parameters.";						
+          case dest-user-group-any {
+            description
+              "Any destination user group.";			  
+            leaf dest-user-group-any {
+              type empty;
+              description
+                "Any destination user group.";
+            }				  
+          }
+          case dest-user-group {
+            description
+              "Specify destination user group.";				  
+            leaf dest-user-group-name {
+              type leafref {
+                path  "/bras-basic-access:bras-basic-access/bras-basic-access:user-groups/bras-basic-access:user-group/bras-basic-access:name";
+              }
+              description
+                "Name of a destination user group.";
+            }				  
+          }				
+          case dest-srv-group-any {
+            description
+              "Any destination service group.";			  
+            leaf dest-srv-group-any {
+              type empty;
+              description
+                "Any destination service group.";
+            }				  
+          }
+          case dest-srv-group {
+            description
+              "Specify destination service group.";			  
+            leaf dest-srv-group-name {
+              type leafref {
+                path  "/bras-vas:bras-vas/bras-vas:service-groups/bras-vas:service-group/bras-vas:name";
+              }
+              description
+                "Name of a destination service group.";
+            }			  
+          }			  
+        }	
+        leaf description {
+          type string {
+            length "1..127";
+            pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+          }
+          description
+            "Description about an ACL rule. The value cannot begin or end with a space.";
+        }
+        leaf priority {	
+          type uint32 {
+            range "0..4294967294";
+          }		
+          config false;	  		  
+          description
+            "Priority of an UCL6 rule in configuration mode.";
+        }		
+      }
+    }	  
+  }	  
+}

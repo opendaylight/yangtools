@@ -1,0 +1,46 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-user-manage-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-bras-user-manage-deviations-CH-NE-X3";
+  prefix bras-user-manage-devs-CH-NE-X3;
+
+  import huawei-bras-user-manage {
+    prefix bras-user-manage;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global Configuration.";
+
+  revision 2019-06-25 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+  deviation /devm:devm/devm:lpu-boards/devm:lpu-board/bras-basic-access:bras/bras-user-manage:ip-unr-host-route {
+    deviate not-supported;
+  }
+  deviation /bras-user-manage:bras-user-manage/bras-user-manage:access-tables/bras-user-manage:access-table/bras-user-manage:access-user-l2tp-or-cu-info/bras-user-manage:up-id{
+    deviate not-supported;
+  }
+  deviation /bras-user-manage:bras-user-manage/bras-user-manage:online-fail-or-offline-records/bras-user-manage:online-fail-or-offline-record/bras-user-manage:up-id {
+    deviate not-supported;
+  }
+  deviation /bras-user-manage:bras-user-manage/bras-user-manage:up-backup {
+    deviate not-supported;
+  }
+}

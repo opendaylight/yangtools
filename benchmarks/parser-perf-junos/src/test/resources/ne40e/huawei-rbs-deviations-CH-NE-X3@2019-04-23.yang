@@ -1,0 +1,108 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-rbs-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-rbs-deviations-CH-NE-X3";
+  prefix rbs-devs-CH-NE-X3;
+
+  import huawei-rbs {
+    prefix rbs;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Remote backup service, providing service backup between the master and backup devices, such as ARP entry backup.";
+
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  typedef service-type-deviations {
+    type enumeration {
+      enum bras {
+        value 1;
+        description
+          "BRAS services that can be backed up.";
+      }
+      enum igmp-snooping {
+        value 2;
+        description
+          "IGMP snooping services that can be backed up.";
+      }
+      enum arp {
+        value 5;
+        description
+          "ARP services that can be backed up.";
+      }
+      enum multicast {
+        value 9;
+        description
+          "MULTICAST services that can be backed up.";
+      }
+      enum l2tp {
+        value 10;
+        description
+          "L2TP services that can be backed up.";
+      }
+      enum igmp {
+        value 21;
+        description
+          "IGMP services that can be backed up.";
+      }
+      enum no-host-multicast {
+        value 25;
+        description
+          "No host multicast services that can be backed up.";
+      }
+      enum dhcp-server {
+        value 26;
+        description
+          "DHCP-SERVER services that can be backed up.";
+      }
+      enum ipsec {
+        value 30;
+        description
+          "Ipsec service that can backed up.";
+      }
+      enum nd {
+        value 32;
+        description
+          "Nd service that can backed up.";
+      }
+    }
+    description
+      "RBP service type.";
+  }
+
+  deviation "/rbs:rbs/rbs:profiles/rbs:profile/rbs:service-types/rbs:service-type/rbs:type" {
+    deviate replace {
+      type rbs-devs-CH-NE-X3:service-type-deviations;
+    }
+  }
+  deviation "/rbs:rbs/rbs:profiles/rbs:profile/rbs:name" {
+    deviate add {
+      must "((../rbs:mode='warm' and not (../rbs:service-types/rbs:service-type[rbs:type='nd']) and not (../rbs:service-types/rbs:service-type[rbs:type='arp']) and not (../rbs:service-types/rbs:service-type[rbs:type='ipsec']) and not (../rbs:service-types/rbs:service-type[rbs:type='igmp-snooping'])) or (../rbs:mode='hot')) and ((../rbs:service-types/rbs:service-type[rbs:type='igmp-snooping'] and not (../rbs:vrrps/rbs:vrrp/rbs:id)) or not (../rbs:service-types/rbs:service-type[rbs:type='igmp-snooping']))";
+    }
+  }
+  deviation "/rbs:rbs/rbs:profiles/rbs:profile/rbs:service-types" {
+    deviate add {
+      must "((rbs:service-type[rbs:type='arp'] or rbs:service-type[rbs:type='nd'] or rbs:service-type[rbs:type='ipsec']) and ../rbs:vrrps/rbs:vrrp[rbs:mac-type='none']) or not((rbs:service-type[rbs:type='arp'] or rbs:service-type[rbs:type='nd'] or rbs:service-type[rbs:type='ipsec']))";
+    }
+  }
+  deviation "/rbs:rbs/rbs:profiles/rbs:profile/rbs:track-type/rbs:vrrp/rbs:vrrps" {
+    deviate add {
+      must "((rbs:vrrp[rbs:mac-type='even'] or rbs:vrrp[rbs:mac-type='odd']) and not(../rbs:service-types/rbs:service-type[rbs:type='arp'] or ../rbs:service-types/rbs:service-type[rbs:type='ipsec'] or ../rbs:service-types/rbs:service-type[rbs:type='nd'])) or rbs:vrrp[rbs:mac-type='none']";
+    }
+  }
+}

@@ -1,0 +1,727 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-pcc {
+  namespace "urn:huawei:yang:huawei-pcc";
+  prefix pcc;
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }  
+  import ietf-yang-types {
+    prefix yang;
+  }  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Path Computation Client (PCC).";
+  revision 2020-03-24 {
+    description
+      "Fixed some problems.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-10 {
+    description
+      "Fixed some nodes description and condition.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-06-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "pce";
+  typedef pce-client-fsm-state {
+    type enumeration {
+      enum "idle" {
+        value 0;
+        description
+          "The FSM status of a PCE client is idle.";
+      }
+      enum "tcp-pending" {
+        value 1;
+        description
+          "The FSM status of a PCE client is pending.";
+      }
+      enum "open-wait" {
+        value 2; 
+        description
+          "The FSM status of a PCE client is open-wait.";
+      }
+      enum "keep-wait" {
+        value 3;
+        description
+          "The FSM status of a PCE client is keep-wait.";
+      }
+      enum "up" {
+        value 4;
+        description
+          "The FSM status of a PCE client is Up.";
+      }
+    }
+    description
+      "PCE FSM state.";
+  }
+  typedef pce-client-ssn-down-reason-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "no-explaination" {
+        value 1;
+        description
+          "No explanation.";
+      }
+      enum "hold-timer-expired" {
+        value 2;
+        description
+          "Hold timer expired.";
+      }
+      enum "malformed-msg-received" {
+        value 3;
+        description
+          "Malformed message received.";
+      }
+      enum "max-unknow-req-received" {
+        value 4;
+        description
+          "Maximum unknown request/reply messages received.";
+      }
+      enum "max-unknow-msg-received" {
+        value 5;
+        description
+          "Maximum unknown messages received.";
+      }
+      enum "reset-session-received" {
+        value 6;
+        description
+          "Reset session received from administrator.";
+      }
+      enum "session-source-address-change" {
+        value 7;
+        description
+          "Session source address changed.";
+      }
+      enum "protocol-error-msg-received" {
+        value 8;
+        description
+          "Protocol error message received.";
+      }
+      enum "protocol-close-msg-received" {
+        value 9;
+        description
+          "Protocol close message received.";
+      }
+      enum "sock-error-msg-received" {
+        value 10;
+        description
+          "Socket close/error message received.";
+      }
+      enum "open-msg-up-session" {
+        value 11;
+        description
+          "Protocol open message received during session Up.";
+      }
+      enum "mandatory-tlv-miss" {
+        value 12;
+        description
+          "Mandatory TLV/object missing.";
+      }
+      enum "multiple-connections-received" {
+        value 13;
+        description
+          "Multiple connections received.";
+      }
+      enum "association-format-changed" {
+        value 14;
+        description
+          "Association Format Changed.";
+      }
+    }
+    description
+      "Time when session became active.";
+  }
+  typedef pce-server-status-type {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "PCE Server Status is Normal.";
+      }
+      enum "overloaded" {
+        value 1;
+        description
+          "PCE Server Status is Overloaded.";
+      }
+    }
+    description
+      "PCE server status.";
+  }
+  typedef pce-client-lsp-delegate-state {
+    type enumeration {
+      enum "no" {
+        value 0;
+        description
+          "LSP is not delegated.";
+      }
+      enum "yes" {
+        value 1;
+        description
+          "LSP is delegated.";
+      }
+      enum "returned" {
+        value 2;
+        description
+          "LSP delegation is returned.";
+      }
+    }
+    description
+      "LSP Delegate State.";
+  }
+  typedef pce-client-lsp-state-type {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "Down.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "Up.";
+      }
+      enum "active" {
+        value 2;
+        description
+          "Active.";
+      }
+      enum "going-down" {
+        value 3;
+        description
+          "Going Down.";
+      }
+      enum "going-up" {
+        value 4;
+        description
+          "Going Up.";
+      }
+    }
+    description
+      "LSP State.";
+  }
+  typedef pce-client-lsp-init-type {
+    type enumeration {
+      enum "pcc-initiated" {
+        value 0;
+        description
+          "LSP is created by PCC.";
+      }
+      enum "pce-initiated" {
+        value 1;
+        description
+          "LSP is created by PCE.";
+      }
+    }
+    description
+      "LSP Creator Type.";
+  }
+  typedef pce-client-segment-type {
+    type enumeration {
+      enum "node" {
+        value 0;
+        description
+          "Node.";
+      }
+      enum "adjacency" {
+        value 1;
+        description
+          "Adjacency.";
+      }
+      enum "none" {
+        value 2;
+        description
+          "None.";
+      }
+    }
+    description
+      "Segment Type.";
+  }
+  container pcc {
+    presence "Enter pce-client view.";
+    description
+      "Path Computation Client (PCC).";
+    container attribute {
+      description
+        "Configure attribute of a PCE client.";
+      leaf sr-capability {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable segment routing capability.";
+      }
+      leaf multi-delegate {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Multi-delegate support.";
+      }
+      leaf stitch-label-capability {
+        when "../sr-capability='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Label Stitch capability.";
+      }
+      leaf initiated-capability {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable PCE initiated capability.";
+      }
+      leaf association-type-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable New Association based on IETF.";
+      }
+    }
+    container timer {
+      must "hold-time>=keepalive-time";
+      description
+        "Configure timer of PCE client.";
+      leaf hold-time {
+        type uint16 {
+          range "0..255";
+        }
+        units s;
+        default "120";
+        description
+          "Time to declare PCE session dead.";
+      }          
+      leaf keepalive-time {
+        type uint16 {
+          range "0..255";
+        }
+        units s;
+        default "30";
+        description
+          "Time to send Keepalive messages on active PCE sessions.";
+      }
+      leaf delegate-hold-time {
+        type uint16 {
+          range "30..255";
+        }
+        units s;
+        default "30";
+        description
+          "LSP delegate timer sets the LSP delegate keep
+           time when the connection with server is break or when the higher preference server session is Up.";
+      }
+      leaf state-timeout-time {
+        type uint16 {
+          range "0..1800";
+        }
+        units s;
+        default "30";
+        description
+          "Time to declare PCE learnt LSP state as invalid.";
+      }
+    }
+    container connect-servers {
+      description
+        "List of connect-servers of a PCE client.";
+      list connect-server {
+        key "ip-address";
+        description
+          "Configure connect-server of a PCE client.";
+        leaf ip-address {
+          type inet:ip-address;
+          description
+            "IP address of a PCE.";
+        }
+        leaf preference {
+          type uint32 {
+            range "0..7";
+          }
+          default "0";
+          description
+            "Configure preference of connect-server.";
+        }
+        container authentication {
+          description
+            "Configure authentication on PCE client.";
+          choice auth-type-selection {
+            description
+              "Options for expressing authentication setting.";
+            case auth-key-chain {
+              description
+                "Auth key chain.";
+              leaf keychain-name {
+                type string {
+                  length "1..47";
+                }
+                ext:case-sensitivity upper2lower;
+                description
+                  "Keychain name.";
+              } 
+            }
+          }
+        }
+      }
+    }
+    container lsps {
+      config false;
+      description
+        "List of PCE LSP information on client.";
+      list lsp {
+        key "symbolic-path-name plsp-id";
+        description
+          "Operational data of PCE LSP information on client.";
+        leaf symbolic-path-name {
+          type string {
+            length "1..256";
+          }
+          description
+            "Symbolic path name.";
+        }
+        leaf plsp-id {
+          type uint32 {
+            range "1..1048574";
+          }
+          description
+            "PLSP ID.";
+        }
+        leaf tunnel-id {
+          type uint16;
+          description
+            "Tunnel ID.";
+        }
+        leaf lsp-id {
+          type uint16;
+          description
+            "LSP ID.";
+        }
+        leaf state {
+          type pce-client-lsp-state-type;
+          description
+            "LSP state.";
+        }
+        leaf initiated-type {
+          type pce-client-lsp-init-type;
+          description
+            "LSP init type.";
+        }
+        leaf ingress-address {
+          type inet:ip-address;
+          description
+            "Ingress IP address.";
+        }
+        leaf egress-address {
+          type inet:ip-address;
+          description
+            "Egress IP address.";
+        }
+        leaf delegate-flag {
+          type pce-client-lsp-delegate-state;
+          description
+            "Delegation state.";
+        }
+      }
+    }
+    container sessions {
+      config false;
+      description
+        "List of PCE session information on client.";
+      list session {
+        key "ip-address";
+        description
+          "Operational data of PCE session information on client.";
+        leaf ip-address {
+          type inet:ip-address-no-zone;
+          description
+            "IP address of a PCE session.";
+        }
+        leaf msd {
+          type uint8;
+          description
+            "Maximum segment depth.";
+        }
+        leaf state {
+          type pce-client-fsm-state;
+          description
+            "PCE session status.";
+        }
+        leaf pce-status {
+          type pce-server-status-type;
+          description
+            "PCE server status.";
+        }
+        leaf session-id {
+          type uint8;
+          description
+            "ID of a PCE session.";
+        }
+        leaf ssl-policy-name {
+          type string {
+              length "1..23";
+          }
+          description
+            "Ssl policy name.";
+        }
+        leaf is-preferred {
+          type boolean;
+          description
+            "Preferred session.";
+        }
+        leaf hold-time {
+          type uint8;
+          description
+            "Hold time of PCE sessions.";
+        }
+        leaf keepalive-time {
+          type uint8;
+          description
+            "Keepalive time of PCE sessions.";
+        }
+        leaf peer-hold-time {
+          type uint8;
+          description
+            "Hold time of PCE sessions on peer.";
+        }
+        leaf peer-keepalive-time {
+          type uint8;
+          description
+            "Keepalive time of PCE sessions on peer.";
+        }
+        leaf session-active-time {
+          type yang:date-and-time;
+          description
+            "Time when session became active.";
+        }
+        leaf session-preference {
+          type uint8;
+          description
+            "Session preference value.";
+        }
+        leaf stitch-label-base {
+          type uint32;
+          description
+            "Label base value.";
+        }
+        leaf stitch-label-size {
+          type uint32;
+          description
+            "Number of stitch labels.";
+        }
+        leaf last-down-reason {
+          type pce-client-ssn-down-reason-type;
+          description
+            "Reason of PCE session down.";
+        }
+        container statistics {
+          description
+            "Statistics of PCE sessions.";
+          leaf open-msg-recv-count {
+            type uint32;
+            description
+              "Number of open messages received.";
+          }
+          leaf open-msg-sent-count {
+            type uint32;
+            description
+              "Number of open messages sent.";
+          }
+          leaf keepalive-msg-recv-count {
+            type uint32;
+            description
+              "Number of keepalive messages received.";
+          }
+          leaf keepalive-msg-sent-count {
+            type uint32;
+            description
+              "Number of keepalive messages sent.";
+          }
+          leaf lsp-update-recv-count {
+            type uint32;
+            description
+              "Number of LSP update messages received.";
+          }
+          leaf lsp-update-sent-count {
+            type uint32;
+            description
+              "Number of LSP update messages sent.";
+          }
+          leaf lsp-report-recv-count {
+            type uint32;
+            description
+              "Number of LSP report messages received.";
+          }
+          leaf lsp-report-sent-count {
+            type uint32;
+            description
+              "Number of LSP report messages sent.";
+          }
+          leaf lsp-init-recv-count {
+            type uint32;
+            description
+              "Number of LSP initiate messages received.";
+          }
+          leaf lsp-init-sent-count {
+            type uint32;
+            description
+              "Number of LSP initiate messages sent.";
+          }
+          leaf pce-error-msg-recv-count {
+            type uint32;
+            description
+              "Number of path computation error messages received.";
+          }
+          leaf pce-error-msg-sent-count {
+            type uint32;
+            description
+              "Number of path computation error messages sent.";
+          }
+          leaf close-msg-recv-count {
+            type uint32;
+            description
+              "Number of close messages received.";
+          }
+          leaf close-msg-sent-count {
+            type uint32;
+            description
+              "Number of close messages sent.";
+          }
+          leaf unknown-msg-recv-count {
+            type uint32;
+            description
+              "Number of unknown messages received.";
+          }
+          leaf unknown-msg-req-recv-count {
+            type uint32;
+            description
+              "Number of unknown request messages received.";
+          }
+          leaf total-msg-recv-count {
+            type uint32;
+            description
+              "Number of all messages received.";
+          }
+          leaf total-msg-sent-count {
+            type uint32;
+            description
+              "Number of all messages sent.";
+          }
+          leaf max-computation-time {
+            type string {
+              length "1..15";
+              pattern '([^?]*)';
+            }
+            description
+              "Maximum time taken for computation.";
+          }
+          leaf min-computation-time {
+            type string {
+              length "1..15";
+              pattern '([^?]*)';
+            }
+            description
+              "Minimum time taken for computation.";
+          }
+          leaf label-report-sent-count {
+            type uint32;
+            description
+              "Number of label report sent.";
+          }
+          leaf label-update-recv-count {
+            type uint32;
+            description
+              "Number of label update received.";
+          }
+          leaf path-request-timeout-count {
+            type uint32;
+            description
+              "Number of path computation request timeouts.";
+          }
+          leaf path-compute-success-count {
+            type uint32;
+            description
+              "Number of successful path computations.";
+          }
+          leaf path-compute-fail-count {
+            type uint32;
+            description
+              "Number of path computation failures.";
+          }
+          leaf path-compute-req-msg-recv-count {
+            type uint32;
+            description
+              "Number of path computation request messages received.";
+          }
+          leaf path-compute-req-msg-sent-count {
+            type uint32;
+            description
+              "Number of path computation request messages sent.";
+          }
+          leaf path-compute-reply-msg-recv-count {
+            type uint32;
+            description
+              "Number of path computation reply messages received.";
+          }
+          leaf path-compute-reply-msg-sent-count {
+            type uint32;
+            description
+              "Number of path computation reply messages sent.";
+          }
+          leaf path-compute-notify-msg-recv-count {
+            type uint32;
+            description
+              "Number of notification messages received.";
+          }
+          leaf path-compute-notify-msg-sent-count {
+            type uint32;
+            description
+              "Number of notification messages sent.";
+          }
+        }
+        container capability {
+          description
+            "Operational data of PCE session capability.";
+          leaf stateful {
+            type boolean;
+            description
+              "Stateful capability of PCE session.";
+          }
+          leaf stitch-label {
+            type boolean;
+            description
+              "Stitch label capability of PCE session.";
+          }
+          leaf segment-routing {
+            type boolean;
+            description
+              "Segmant routing capability of PCE session.";
+          }
+          leaf pce-initiated-lsp {
+            type boolean;
+            description
+              "PCE initiated LSP capability of PCE session.";
+          } 
+        }
+      }
+    }
+  }
+}

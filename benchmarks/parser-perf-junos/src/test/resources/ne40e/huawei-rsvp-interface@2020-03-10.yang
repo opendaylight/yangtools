@@ -1,0 +1,161 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-rsvp-interface {
+  namespace "urn:huawei:yang:huawei-rsvp-interface";
+  prefix rsvp-interface;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-mpls-te {
+    prefix mpls-te;
+  }
+  import huawei-te-interface {
+    prefix te-interface;
+  }
+  import huawei-te {
+    prefix te;
+  }
+  include huawei-rsvp-interface-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the traffic engineering configuration.";
+  revision 2020-03-10 {
+    description
+      "Fixed some nodes condition.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-07-29 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mpls-te";
+  /*
+   * augment-stmt
+   */
+  augment /ni:network-instance/ni:instances/ni:instance/mpls:mpls/mpls-te:te {
+    when "/mpls:mpls/mpls-te:te/mpls-te:rsvp/mpls-te:enable='true'";
+    description
+      "TE Configuration information augment to network instance.";
+    container rsvp-interfaces {
+      description
+        "List of RSVP interface configuration.";
+      list rsvp-interface {
+        must "../../../../te:te/te-interface:interfaces/te-interface:interface[te-interface:name=current()/name]/te-interface:mpls-te-enable='true'";
+        key "name";
+        description
+          "Configure RSVP interface.";
+        leaf name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Interface name. The name is case-insensitive.";
+        }
+        leaf hello-enable {
+          when "/mpls:mpls/mpls-te:te/mpls-te:rsvp/mpls-te:global/mpls-te:hello-enable='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Hello function.";
+        }
+        leaf graceful-shutdown-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable graceful shutdown for interface.";
+        }
+        leaf srefresh-compatible-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable summary refresh feature for interface.";
+        }
+        container authentication {
+          description
+            "Configure neighbor of RSVP TE authentication.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the state of RSVP TE interface authentication.";
+          }
+          leaf type {
+            when "../enable='true'";
+            type rsvp-authentication-type;
+            mandatory true;
+            description
+              "Authentication type on an RSVP-TE interface.";
+          }
+          leaf keychain-name {
+            when "../enable='true' and ../type='keychain'";
+            type string {
+              length "1..47";
+            }
+            mandatory true;
+            description
+              "Keychain name. The name is case insensitive.";
+          }            
+          leaf md5-key {
+            when "../enable='true' and ../type!='keychain'";
+            type pub-type:password-extend {
+              pattern '[^ ]+';
+            }
+            mandatory true;
+            description
+              "Authentication key of an RSVP TE interface. When the key is configured, the RSVP packets that the interface sends out carry the authentication information that are calculated based on the authentication key by using the MD5 algorithm. The packets the interface receives are also verified based on the authentication key. The two ends of a TE link must be configured with the same authentication key, otherwise, RSVP packets cannot pass through the link. The password is a string ranging from 1 to 255 characters for a simple text password and 20 to 432 characters for a ciphertext password.";
+          }
+          leaf life-time {
+            when "../enable='true'";
+            type pub-type:time-tick {
+              range "1..86399";
+            }
+            units s;
+            default "1800";
+            description
+              "Authentication lifetime. During authentication lifetime, RSVP authentication lifetime will be reset after a RSVP packet is received. If no RSVP packet is received when the authentication lifetime times out, the RSVP neighbor will delete the authentication relationship to prevent persistent authentication.";
+          }
+          leaf handshake-enable {
+            when "../enable='true'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the handshake authentication. When RSVP packet authentication is out of order, a handshake will be initiated and authentication will be re-negotiated.";
+          }
+          leaf window-size {
+            when "../enable='true' and ../handshake-enable='true'";
+            type uint32 {
+              range "1..64";
+            }
+            default "1";
+            description
+              "Size of an authentication window that is set to prevent information loss caused by packet disorder. If the packet sequence number exceeds the window size, the packet is considered to be out of order.";
+          }
+        }
+      }
+    }
+  }
+}

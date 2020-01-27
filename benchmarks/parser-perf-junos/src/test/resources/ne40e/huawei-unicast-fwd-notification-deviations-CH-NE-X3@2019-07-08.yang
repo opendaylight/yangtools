@@ -1,0 +1,52 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-unicast-fwd-notification-deviations-CH-NE-X3{
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-unicast-fwd-notification-deviations-CH-NE-X3";
+  prefix unicast-fwd-notification-devs-CH-NE-X3;
+  import huawei-unicast-fwd-notification {
+    prefix unicast-fwd-notification;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of unicast-fwd-notification-deviations-CH-NE-X3.";
+  revision 2019-07-08 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  deviation /unicast-fwd-notification:forward-arp-alarm {
+    deviate not-supported;
+  }
+  deviation /unicast-fwd-notification:forward-arp-alarm-resume {
+    deviate not-supported;
+  }
+  deviation /unicast-fwd-notification:forward-fib-alarm {
+    deviate not-supported;
+  }
+  deviation /unicast-fwd-notification:forward-fib-alarm-resume {
+    deviate not-supported;
+  }
+  deviation /unicast-fwd-notification:forward-resource-lack-for-license {
+    deviate not-supported;
+  }
+  deviation "/unicast-fwd-notification:forward-resource-lack-for-license-resume" {
+    deviate not-supported;
+  }
+  deviation /unicast-fwd-notification:seu-igp-down-risking {
+    deviate not-supported;
+  }
+  deviation /unicast-fwd-notification:seu-igp-down-risking-resume {
+    deviate not-supported;
+  }
+}

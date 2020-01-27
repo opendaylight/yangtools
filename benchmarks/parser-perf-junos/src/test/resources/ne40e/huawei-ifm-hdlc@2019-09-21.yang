@@ -1,0 +1,119 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifm-hdlc {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-ifm-hdlc";
+  prefix ifm-hdlc;
+
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "High-level data link control protocol.";
+
+  revision 2019-09-21 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "hdlc";
+  typedef damp-level {
+    type enumeration {
+      enum "light" {
+        value 0;
+        description
+          "Light weight.";
+      }
+      enum "middle" {
+        value 1;
+        description
+          "Middle weight.";
+      }
+      enum "heavy" {
+        value 2;
+        description
+          "Heavy weight.";
+      }
+      enum "manual" {
+        value 3;
+        description
+          "Manually configure the parameters.";
+      }
+    }
+    description
+      "HDLC damp level.";
+  }
+  augment "/ifm:ifm" {
+    description "Configure extend interface attributes.";
+      container hdlc-damp {
+      must "(damp-level='manual' and suppress and reuse and max-suppress-time and half-lifeperiod) or (damp-level!='manual')";
+      description
+        "Configure HDLC link status damping, the suppress value must be less than the value of reuse x (2 to the power of (max-suppress-time/half-lifeperiod)).";
+      leaf enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the HDLC link status damping.";
+      }
+      leaf damp-level {
+        when "../enable='true'";
+        type damp-level;
+        default "light";
+        description
+          "HDLC link status damping level.";
+      }
+      leaf suppress {
+        when "../enable='true' and ../damp-level='manual'";
+        type uint32 {
+          range "1..20000";
+        }
+        units "s";
+        must "../suppress>../reuse";
+        description
+          "1000 times of suppress threshold.";
+      }
+      leaf reuse {
+       when "../enable='true' and ../damp-level='manual'";
+        type uint32 {
+          range "1..20000";
+        }
+        units "s";
+        must "../suppress>../reuse";
+        description
+          "1000 times of reuse threshold.";
+      }
+      leaf max-suppress-time {
+        when "../enable='true' and ../damp-level='manual'";
+        type uint16 {
+          range "1..255";
+        }
+        units "s";
+        description
+          "Max suppress time.";
+      }
+      leaf half-lifeperiod {
+        when "../enable='true' and ../damp-level='manual'";
+        type uint16 {
+          range "1..60";
+        }
+        units "s";
+        description
+          "HDLC protocol status damping half life time.";
+      }
+    }
+  }
+}

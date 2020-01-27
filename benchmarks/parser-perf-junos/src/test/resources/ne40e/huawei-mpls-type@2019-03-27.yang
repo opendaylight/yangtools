@@ -1,0 +1,179 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-mpls-type {
+  belongs-to huawei-mpls {
+    prefix mpls;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+  revision 2019-03-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  /*
+   * typedef-stmt
+   */
+  typedef label-advertise {
+    type enumeration {
+      enum "explicit-null" {
+        value 0;
+        description
+          "Allocates the label 0 to the penultimate hop by the end node.";
+      }
+      enum "implicit-null" {
+        value 1;
+        description
+          "Allocates the label 3 to the penultimate hop by the end node.";
+      }
+      enum "non-null" {
+        value 2;
+        description
+          "Indicates that the end node does not allocate a null label to the penultimate hop.";
+      }
+    }
+    description
+      "Label Advertise.";
+  }
+  typedef mpls-ttl-mode-type {
+    type enumeration {
+      enum "uniform" {
+        value 1;
+        description
+          "Uniform Mode.";
+      }
+      enum "pipe" {
+        value 2;
+        description
+          "Pipe Mode.";
+      }
+    }
+    description
+      "MPLS TTL Mode Type.";
+  }
+  typedef mpls-min-label-type {
+    type enumeration {
+      enum "0" {
+        value 0;
+        description
+          "Specifies the minimum start label.";
+      }
+      enum "256K" {
+        value 262144;
+        description
+          "Specifies the minimum start label.";
+      }
+      enum "512K" {
+        value 524288;
+        description
+          "Specifies the minimum start label.";
+      }
+      enum "768K" {
+        value 786432;
+        description
+          "Specifies the minimum start label.";
+      }
+    }
+    description
+      "MPLS Min Label Type.";
+  }
+  typedef diff-serv-mode-type {
+    type enumeration {
+      enum "uniform" {
+        value 2;
+        description
+          "Uniform Mode.";
+      }
+      enum "pipe" {
+        value 1;
+        description
+          "Pipe Mode.";
+      }
+    }
+    description
+      "MPLS DiffServ Mode Type.";
+  }
+  typedef mpls-lsp-type {
+    type enumeration {
+      enum "static-lsp" {
+        value 0;
+        description
+          "Static LSP.";
+      }
+      enum "static-crlsp" {
+        value 1;
+        description
+          "Static CR-LSP.";
+      }
+      enum "ldp-lsp" {
+        value 2;
+        description
+          "Label Distribution Protocol (LDP) label switched path (LSP).";
+      }
+      enum "rsvp-crlsp" {
+        value 3;
+        description
+          "RSVP CR-LSP.";
+      }
+      enum "bgp-lsp" {
+        value 4;
+        description
+          "Border Gateway Protocol (BGP) label switched path (LSP).";
+      }
+      enum "asbr-lsp" {
+        value 5;
+        description
+          "Autonomous system boundary router (ASBR) label switched path (LSP).";
+      }
+      enum "bgp-ipv6-lsp" {
+        value 6;
+        description
+          "Border Gateway Protocol (BGP) IPv6label switched path (LSP).";
+      }
+      enum "l3vpn-ipv6-lsp" {
+        value 7;
+        description
+          "Layer 3 virtual private network (L3VPN) IPv6 label switched path (LSP).";
+      }
+      enum "lsp" {
+        value 8;
+        description
+          "Label switched path (LSP).";
+      }
+      enum "crlsp" {
+        value 9;
+        description
+          "Constraint-based routed label switched path (CR-LSP).";
+      }
+    }
+    description
+      "MPLS LSP Type.";
+  }
+  typedef outgoing-tunnel-type {
+    type enumeration {
+      enum "bgp" {
+        value 2;
+        description
+          "BGP Tunnel.";
+      }
+      enum "srbe" {
+        value 41;
+        description
+          "SRBE Tunnel.";
+      }
+    }
+    description
+      "Stick Tunnel Type.";
+  }
+}

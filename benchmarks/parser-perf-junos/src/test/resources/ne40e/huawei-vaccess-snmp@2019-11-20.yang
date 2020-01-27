@@ -1,0 +1,351 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-vaccess-snmp {
+  namespace "urn:huawei:yang:huawei-vaccess-snmp";
+  prefix nvsnmp;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-vaccess {
+    prefix vaccess;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+  prefix ext;
+  }
+  import huawei-snmp {
+    prefix snmp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "SNMP configuration of virtual access.";
+  revision 2019-11-20 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "snmp";
+  typedef snmp-notify {
+    type enumeration {
+      enum "trap" {
+        value 1;
+        description
+          "Trap.";
+      }
+    }
+    description
+      "SNMP notify type enum.";
+  }
+  augment "/vaccess:vaccess" {
+      description
+        "The configuration of vaccess.";
+    container snmp {
+        description
+        "Configure of SNMP in virtual access.";
+        container system {
+            description
+                "Configure SNMP parameters.";
+            leaf agent-enable {
+                type boolean;
+                default "false";
+                description
+                "Enable/disable SNMP agent enable switch.";
+            }
+            leaf ext-err-code-enable {
+                type boolean;
+                default "false";
+                description
+                    "Enable/disable Extend error code enable switch.";
+            }
+        }
+        container engine {
+            description
+                "Configure SNMP engine parameters.";
+            leaf version {
+                type snmp:snmp-version;
+                default "v3";
+                description
+                    "Version supported by SNMP engine.";
+            }
+              }
+        container mib-views {
+            description
+                "List of configure Name of MIB entry policy.";
+            list mib-view {
+                key "view-name sub-tree";
+                description
+                "Configure Name of MIB entry policy.";
+                leaf view-name {
+                    type string {
+                        length "1..32";
+                    }
+                    description
+                        "Name of subtree's MIB entry.";
+                }
+                leaf sub-tree {
+                    type string {
+                        length "1..255";
+                    }
+                    description
+                        "MIB subtree.";
+                }
+                leaf type {
+                    type snmp:snmp-filter;
+                    mandatory true;
+                    description
+                        "Filter (include/exclude).";
+                    ext:support-filter "true";
+                }
+            }
+        }
+        container communitys {
+            description
+            "List of To configure SNMP communtiy for SNMPv1 and SNMPv2.";
+            list community {
+                key "index";
+                unique "name";
+                max-elements  "25";
+                description
+                "Configure SNMP communtiy for SNMPv1 and SNMPv2.";
+                leaf index {
+                    type string {
+                        length "1..32";
+                    }
+                    description
+                        "Unique index to identify the community.";
+                }
+                leaf name {
+                    type pub-type:password-extend {
+                        length "8..32 | 48 | 68..168";
+                    }
+                    mandatory true;
+                    description
+                        "Unique name to identify the community.";
+                    ext:support-filter "true";
+                }
+                leaf access-right {
+                    type snmp:snmp-access;
+                    mandatory true;
+                    description
+                        "Access right (read/write).";
+                    ext:support-filter "true";
+                }
+                leaf view-name {
+                    type leafref {
+                        path "/vaccess:vaccess/nvsnmp:snmp/nvsnmp:mib-views/nvsnmp:mib-view/nvsnmp:view-name";
+                    }
+                    description
+                        "Name.";
+                ext:support-filter "true";
+                }
+            }
+        }
+        container target-hosts {
+            description
+                "List of configure target host for traps.";
+            list target-host {
+                key "nms-name";
+                unique "address";
+                max-elements  "20";
+                description
+                "Configure target host entry policy.";
+                leaf nms-name {
+                    type string {
+                        length "1..32";
+                    }
+                    description
+                        "Unique name to identify target host entry.";
+                }
+                leaf address {
+                    type inet:ipv4-address-no-zone;
+                    mandatory true;
+                    description
+                        "Network address.";
+                }
+                leaf notify-type {
+                    type snmp-notify;
+                    mandatory true;
+                    description
+                        "Notify type about alarm message.";
+                    ext:support-filter "true";
+                }
+                choice params {
+                    mandatory true;
+                    description
+                          "This choice is augmented with case nodes containing configuration parameters specific to the security model.";
+                    case v1 {
+                        description
+                            "Security model SNMPv1.";
+                        leaf security-name-v1 {
+                            type pub-type:password-extend {
+                                length "1..32 | 48 | 68..168";
+                            }
+                            mandatory true;
+                            description
+                                "SNMPV1 security name.";
+                        }
+                    }
+                    case v2c {
+                        description
+                            "Security model v2c.";
+                        leaf security-name-v2c {
+                            type pub-type:password-extend {
+                                length "1..32 | 48 | 68..168";
+                            }
+                            mandatory true;
+                            description
+                                "SNMPV2c security name.";
+                        }
+                    }
+                    case usm {
+                        description
+                            "Security model SNMPv3.";
+                        leaf usm-name {
+                            type string {
+                                length "1..32";
+                            }
+                            mandatory true;
+                            description
+                                "Usm name.";
+                        }
+                        leaf security-level {
+                            type snmp:snmp-security-level;
+                            mandatory true;
+                            description
+                                "Security level indicating whether to use authentication and encryption.";
+                        }
+                    }
+                }
+                leaf private-netmanager {
+                    type boolean;
+                    default "false";
+                    description
+                        "Enable/disable private VB's for target host.";
+                }
+                leaf ext-vb {
+                    type boolean;
+                    default "false";
+                    description
+                        "Enable/disable extended VB's for target host.";
+                }
+            }
+        }
+        container usm-users {
+            description
+                "List of To configure USM users for SNMPv3.";
+            list usm-user {
+                key "user-name";
+                max-elements  "20";
+                description
+                    "Configure USM user entry policy.";
+                leaf user-name {
+                    type string {
+                        length "1..32";
+                    }
+                description
+                    "Unique name to identify the USM user.";
+                }
+                leaf group-name {
+                    type string {
+                        length "1..32";
+                    }
+                    description
+                        "Name of the group where user belongs to.";
+                    ext:support-filter "true";
+                }
+                leaf auth-protocol {
+                    type snmp:snmp-authenmode;
+                    default "noAuth";
+                    description
+                        "Authentication protocol.";
+                    ext:support-filter "true";
+                }
+                leaf auth-key {
+                    when "../auth-protocol != 'noAuth'";
+                    type pub-type:password-extend {
+                        length "1..432";
+                    }
+                    mandatory true;
+                    description
+                        "The authentication password.";
+                }
+                leaf priv-protocol {
+                    type snmp:snmp-privacy;
+                    must "../priv-protocol='noPriv' or not(../auth-protocol='noAuth')";
+                    default "noPriv";
+                    description
+                        "Encryption protocol.";
+                    ext:support-filter "true";
+                }
+                leaf priv-key {
+                    when "../auth-protocol!='noAuth' and ../priv-protocol!='noPriv'";
+                    type pub-type:password-extend {
+                        length "1..432";
+                    }
+                    mandatory true;
+                    description
+                        "The encryption password.";
+                }
+            }
+        }
+        container v3-groups {
+            description
+            "List of SNMPv3 groups.";
+            list v3-group {
+                key "group-name security-level";
+                max-elements  "20";
+                description
+                "Configure SNMPv3 group entry policy.";
+                leaf group-name {
+                    type string {
+                        length "1..32";
+                    }
+                    description
+                        "Unique name to identify the SNMPv3 group.";
+                }
+                leaf security-level {
+                    type snmp:snmp-security-level;
+                    description
+                        "Security level indicating whether to use authentication and encryption.";
+                }
+                leaf read-view-name {
+                    type leafref {
+                        path "/vaccess:vaccess/nvsnmp:snmp/nvsnmp:mib-views/nvsnmp:mib-view/nvsnmp:view-name";
+                    }
+                    description
+                        "MIB name for read access permission.";
+                    ext:support-filter "true";
+                }
+                leaf write-view-name {
+                    type leafref {
+                        path "/vaccess:vaccess/nvsnmp:snmp/nvsnmp:mib-views/nvsnmp:mib-view/nvsnmp:view-name";
+                    }
+                    description
+                        "MIB name for write access permission.";
+                    ext:support-filter "true";
+                }
+                leaf notify-view-name {
+                    type leafref {
+                        path "/vaccess:vaccess/nvsnmp:snmp/nvsnmp:mib-views/nvsnmp:mib-view/nvsnmp:view-name";
+                    }
+                    description
+                        "MIB name for notification access permission.";
+                    ext:support-filter "true";
+                }
+            }
+        }
+    }
+  }
+}

@@ -1,0 +1,1244 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-radius-type {
+  belongs-to huawei-radius {
+    prefix radius;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Radius.";
+  revision 2020-03-05 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-04 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef bras-radius-server-type {
+    type enumeration {
+      enum "authentication" {
+        value 0;
+        description
+          "Server type as authentication server.";
+      }
+      enum "accounting" {
+        value 1;
+        description
+          "Server type as accounting server.";
+      }
+    }
+    description
+      "Radius server type.";
+  }
+  typedef radius-attribute-table {
+    type enumeration {
+      enum "user-name" {
+        value 1;
+        description
+          "User name.";
+      }
+      enum "user-password" {
+        value 2;
+        description
+          "User password.";
+      }
+      enum "chap-password" {
+        value 3;
+        description
+          "Only valid for the CHAP authentication.";
+      }
+      enum "nas-ip-address" {
+        value 4;
+        description
+          "Device address.";
+      }
+      enum "nas-port" {
+        value 5;
+        description
+          "Physical port for user access.";
+      }
+      enum "service-type" {
+        value 6;
+        description
+          "Service type.";
+      }
+      enum "framed-protocol" {
+        value 7;
+        description
+          "The value of Framed-Protocol is set to 1 for non-administrator users, indicating the PPP type. The value of Framed-Protocol is set to 6 for the administrator.";
+      }
+      enum "framed-ip-address" {
+        value 8;
+        description
+          "IP address of the user.";
+      }
+      enum "framed-ip-netmask" {
+        value 9;
+        description
+          "Subnet mask delivered by the RADIUS server to PPP users.";
+      }
+      enum "filter-id" {
+        value 11;
+        description
+          "This attribute is used to carry a user group name.";
+      }
+      enum "framed-mtu" {
+        value 12;
+        description
+          "It indicates the maximum transmission unit delivered by the RADIUS server.";
+      }
+      enum "login-ip-host" {
+        value 13;
+        description
+          "It indicates the IP address of an administrator.";
+      }
+      enum "login-service" {
+        value 14;
+        description
+          "The type of the service used by the login user.";
+      }
+      enum "reply-message" {
+        value 15;
+        description
+          "This attribute can be carried in RADIUS Access-Accept packets to indicate an authentication success or RADIUS Access-Reject packets to indicate an authentication failure.";
+      }
+      enum "callback-number" {
+        value 16;
+        description
+          "The information delivered from the authentication server can be displayed to users, such as the mobile numbers.";
+      }
+      enum "framed-route" {
+        value 17;
+        description
+          "Routing information provided by the RADIUS server to users through the NAS.";
+      }
+      enum "state" {
+        value 18;
+        description
+          "If the RADIUS Access-Challenge packet sent by the RADIUS server carries the State attribute, it must be carried in subsequent RADIUS Access-Request packets.";
+      }
+      enum "class" {
+        value 19;
+        description
+          "If the RADIUS Access-Accept packet sent by the RADIUS server to the NAS carries the Class attribute, the Class attribute must also be carried in the subsequent RADIUS Accounting-Request packets sent from the NAS to the RADIUS server. A RADIUS Access-Accept packet can carry zero to eight Class attributes.";
+      }
+      enum "vendor-specific" {
+        value 20;
+        description
+          "The attribute specified by a vendor.";
+      }
+      enum "session-timeout" {
+        value 21;
+        description
+          "In Access-Accept packets, the attribute indicates the remaining online time of users, in seconds.";
+      }
+      enum "idle-timeout" {
+        value 22;
+        description
+          "Idle-cut time of a user, in seconds.";
+      }
+      enum "termination-action" {
+        value 23;
+        description
+          "The specified mode for terminating the NAS service, such as re-authentication or forcing a user to log out.";
+      }
+      enum "called-station-id" {
+        value 24;
+        description
+          "The attribute is valid only for LNS users.";
+      }
+      enum "calling-station-id" {
+        value 25;
+        description
+          "The attribute is used by the NAS to carry user information.";
+      }
+      enum "nas-identifier" {
+        value 26;
+        description
+          "Name of the NAS or the sysname (host name).";
+      }
+      enum "proxy-state" {
+        value 27;
+        description
+          "The attribute is carried in CoA and DM Request and Response packets.";
+      }
+      enum "acct-status-type" {
+        value 28;
+        description
+          "Type of the Accounting-Request packet.";
+      }
+      enum "acct-delay-time" {
+        value 29;
+        description
+          "Time spent to send an Accounting Request packet, excluding the network transmission duration, in seconds.";
+      }
+      enum "acct-input-octets" {
+        value 30;
+        description
+          "Number of upstream bytes.";
+      }
+      enum "acct-output-octets" {
+        value 31;
+        description
+          "Number of downstream bytes.";
+      }
+      enum "acct-session-id" {
+        value 32;
+        description
+          "Session id of the Accounting-Request packet.";
+      }
+      enum "acct-authentic" {
+        value 33;
+        description
+          "The attribute indicates the authentication type.";
+      }
+      enum "acct-session-time" {
+        value 34;
+        description
+          "Online time of a user, in seconds.";
+      }
+      enum "acct-input-packets" {
+        value 35;
+        description
+          "Number of upstream packets.";
+      }
+      enum "acct-output-packets" {
+        value 36;
+        description
+          "Number of downstream packets.";
+      }
+      enum "acct-terminate-cause" {
+        value 37;
+        description
+          "Reason for session interruption.";
+      }
+      enum "acct-multi-session-id" {
+        value 38;
+        description
+          "If tunnel users are configured in the system, the attribute indicates the accounting ID of an L2TP tunnel user.";
+      }
+      enum "acct-input-gigawords" {
+        value 39;
+        description
+          "Number of upstream bytes.";
+      }
+      enum "acct-output-gigawords" {
+        value 40;
+        description
+          "Number of downstream bytes.";
+      }
+      enum "event-timestamp" {
+        value 41;
+        description
+          "Time when an Accounting-Request packet was generated.";
+      }
+      enum "chap-challenge" {
+        value 42;
+        description
+          "Indicates the value of Challenge. Only valid for the CHAP authentication.";
+      }
+      enum "nas-port-type" {
+        value 43;
+        description
+          "NAS port type, which can be configured in the BAS interface.";
+      }
+      enum "port-limit" {
+        value 44;
+        description
+          "Number of port users.";
+      }
+      enum "tunnel-type" {
+        value 45;
+        description
+          "Tunnel protocol type.";
+      }
+      enum "tunnel-medium-type" {
+        value 46;
+        description
+          "Type of the tunnel bearer medium.";
+      }
+      enum "tunnel-client-endpoint" {
+        value 47;
+        description
+          "IP address of the local end of the tunnel.";
+      }
+      enum "tunnel-server-endpoint" {
+        value 48;
+        description
+          "IP address of the tunnel server.";
+      }
+      enum "acct-tunnel-connection" {
+        value 49;
+        description
+          "Accounting ID of the tunnel server.";
+      }
+      enum "tunnel-password" {
+        value 50;
+        description
+          "Authentication password of the tunnel.";
+      }
+      enum "connect-info" {
+        value 51;
+        description
+          "When the device functions as the LNS, the RADIUS Connect-Info attribute is used to report the L2TP Tx Connect Speed (avp24) and Rx Connect Speed (avp38).";
+      }
+      enum "eap-message" {
+        value 52;
+        description
+          "Used to carry the EAP packet.";
+      }
+      enum "message-authenticator" {
+        value 53;
+        description
+          "Encryption information about EAP packets in EAPoR authentication.";
+      }
+      enum "remanent-volume" {
+        value 54;
+        description
+          "Remaining traffic (in KB) available to a user.";
+      }
+      enum "tariff-switch-interval" {
+        value 55;
+        description
+          "Interval between the latest tariff switching time and the current time, in seconds.";
+      }
+      enum "tunnel-assignment-id" {
+        value 56;
+        description
+          "Tunnel ID.";
+      }
+      enum "tunnel-preference" {
+        value 57;
+        description
+          "Tunnel preference.";
+      }
+      enum "acct-interim-interval" {
+        value 58;
+        description
+          "Real-time accounting interval, in seconds.";
+      }
+      enum "acct-tunnel-packets-lost" {
+        value 59;
+        description
+          "Number of packets lost on a given link.";
+      }
+      enum "nas-port-id" {
+        value 60;
+        description
+          "Slot ID, subslot ID, port number, and VLAN ID of the user access interface.";
+      }
+      enum "framed-pool" {
+        value 61;
+        description
+          "Address pool delivered to PPP and DHCP users.";
+      }
+      enum "chargeable-user-identity" {
+        value 62;
+        description
+          "The attribute is used to identify a user.";
+      }
+      enum "tunnel-client-auth-id" {
+        value 63;
+        description
+          "Name of the local end of a tunnel delivered in tunnel authentication.";
+      }
+      enum "tunnel-server-auth-id" {
+        value 64;
+        description
+          "Name of the remote end of a tunnel delivered in tunnel authentication.";
+      }
+      enum "nas-ipv6-address" {
+        value 65;
+        description
+          "IPv6 address of the NAS.";
+      }
+      enum "framed-interface-id" {
+        value 66;
+        description
+          "Interface ID assigned to a user.";
+      }
+      enum "framed-ipv6-prefix" {
+        value 67;
+        description
+          "IPv6 prefix assigned to a user in NDRA mode.";
+      }
+      enum "framed-ipv6-route" {
+        value 69;
+        description
+          "IPv6 routing information provided by the RADIUS server to users through the NAS.";
+      }
+      enum "framed-ipv6-pool" {
+        value 70;
+        description
+          "Pool name of an IPv6 user.";
+      }
+      enum "error-cause" {
+        value 71;
+        description
+          "Logout cause.";
+      }
+      enum "in-kb-before-t-switch" {
+        value 72;
+        description
+          "Number of bytes (in KB) received by a user before tariff switching.";
+      }
+      enum "out-kb-before-t-switch" {
+        value 73;
+        description
+          "Number of bytes (in KB) received by a user before tariff switching.";
+      }
+      enum "in-pkts-before-t-switch" {
+        value 74;
+        description
+          "Number of bytes (in KB) received by a user before tariff switching.";
+      }
+      enum "out-pkts-before-t-switch" {
+        value 75;
+        description
+          "Number of packets received by a user before tariff switching.";
+      }
+      enum "in-kb-after-t-switch" {
+        value 76;
+        description
+          "Number of bytes (in KB) sent by a user after tariff switching.";
+      }
+      enum "out-kb-after-t-switch" {
+        value 77;
+        description
+          "Number of bytes (in KB) received by a user after tariff switching.";
+      }
+      enum "in-pkts-after-t-switch" {
+        value 78;
+        description
+          "Number of packets sent by a user after tariff switching.";
+      }
+      enum "out-pkts-after-t-switch" {
+        value 79;
+        description
+          "Number of packets received by a user after tariff switching.";
+      }
+      enum "input-peak-rate" {
+        value 80;
+        description
+          "Upstream burst rate (PIR), in bit/s.";
+      }
+      enum "input-average-rate" {
+        value 81;
+        description
+          "Upstream average rate (CIR), in bit/s.";
+      }
+      enum "delegated-ipv6-prefix" {
+        value 82;
+        description
+          "IPv6 PD prefixes assigned to routed CPEs.";
+      }
+      enum "output-peak-rate" {
+        value 83;
+        description
+          "Downstream burst rate (PIR), in bit/s.";
+      }
+      enum "output-average-rate" {
+        value 84;
+        description
+          "Downstream average rate (CIR), in bit/s.";
+      }
+      enum "online-user-id" {
+        value 85;
+        description
+          "Connection index of a user.";
+      }
+      enum "connect-port" {
+        value 86;
+        description
+          "Feature of a physical port for user access.";
+      }
+      enum "ascend-client-primary-dns" {
+        value 87;
+        description
+          "IP address of the primary DNS server delivered after user authentication is successful.";
+      }
+      enum "ascend-client-secondary-dns" {
+        value 88;
+        description
+          "IP address of the secondary DNS delivered after user authentication is successful.";
+      }
+      enum "ds-lite-tunnel-name" {
+        value 89;
+        description
+          "IPv6 tunnel name in a CGN scenario.";
+      }
+      enum "hw-input-committed-burst-size" {
+        value 90;
+        description
+          "Upstream CBS, in bits.";
+      }
+      enum "hw-input-committed-information-rate" {
+        value 91;
+        description
+          "Upstream CIR, in bit/s.";
+      }
+      enum "hw-input-peak-information-rate" {
+        value 92;
+        description
+          "Upstream PIR, in bit/s.";
+      }
+      enum "hw-output-committed-burst-size" {
+        value 93;
+        description
+          "Downstream CBS, in bits.";
+      }
+      enum "hw-output-committed-information-rate" {
+        value 94;
+        description
+          "Downstream CIR, in bit/s.";
+      }
+      enum "hw-output-peak-information-rate" {
+        value 95;
+        description
+          "Downstream PIR, in bit/s.";
+      }
+      enum "hw-input-kilobytes-before-tariff-switch" {
+        value 96;
+        description
+          "Number of bytes sent by a user before tariff switching, in KB.";
+      }
+      enum "hw-output-kilobytes-before-tariff-switch" {
+        value 97;
+        description
+          "Number of bytes received by a user before tariff switching, in KB.";
+      }
+      enum "hw-input-packets-before-tariff-switch" {
+        value 98;
+        description
+          "Number of packets sent by a user before tariff switching.";
+      }
+      enum "hw-output-packets-before-tariff-switch" {
+        value 99;
+        description
+          "Number of packets received by a user before tariff switching.";
+      }
+      enum "hw-input-kilobytes-after-tariff-switch" {
+        value 100;
+        description
+          "Number of bytes sent by a user after tariff switching, in KB.";
+      }
+      enum "hw-output-kilobytes-after-tariff-switch" {
+        value 101;
+        description
+          "Number of bytes received by a user after tariff switching, in KB.";
+      }
+      enum "hw-input-packets-after-tariff-switch" {
+        value 102;
+        description
+          "Number of packets sent by a user after tariff switching.";
+      }
+      enum "hw-output-packets-after-tariff-switch" {
+        value 103;
+        description
+          "Number of packets received by a user after tariff switching.";
+      }
+      enum "hw-remanent-volume" {
+        value 104;
+        description
+          "In Access-Accept packet, the attribute indicates the remaining traffic volume available to a user, in KB.";
+      }
+      enum "hw-tariff-switch-interval" {
+        value 105;
+        description
+          "Interval between the latest tariff switching time and the current time, in seconds.";
+      }
+      enum "hw-subscriber-qos-profile" {
+        value 106;
+        description
+          "Home QoS profile.";
+      }
+      enum "hw-command" {
+        value 107;
+        description
+          "Currently, the attribute value can only be Terminate-Request (value=2), indicating user logoff.";
+      }
+      enum "hw-priority" {
+        value 108;
+        description
+          "Service priority of a user.";
+      }
+      enum "hw-connect-id" {
+        value 111;
+        description
+          "Connection index of a user.";
+      }
+      enum "hw-portal-url" {
+        value 112;
+        description
+          "URL to which user is redirected after being authenticated.";
+      }
+      enum "hw-ftp-directory" {
+        value 113;
+        description
+          "Initial directory of an FTP user.";
+      }
+      enum "hw-exec-privilege" {
+        value 114;
+        description
+          "Authorized level of administrative users, such as Telnet users.";
+      }
+      enum "hw-qos-profile-name" {
+        value 115;
+        description
+          "QoS profile delivered by the RADIUS server.";
+      }
+      enum "hw-sip-server" {
+        value 116;
+        description
+          "SIP server address or name delivered to DHCP users.";
+      }
+      enum "hw-user-password" {
+        value 117;
+        description
+          "Re-authentication password contained in HW-Command-Mode delivered through CoA packets. PAP and CHAP modes are supported.";
+      }
+      enum "hw-command-mode" {
+        value 118;
+        description
+          "Command mode, which is differentiated by the first character.";
+      }
+      enum "hw-renewal-time" {
+        value 119;
+        description
+          "Interval at which addresses of DHCP users are renewed.";
+      }
+      enum "hw-rebinding-time" {
+        value 120;
+        description
+          "Rebinding time of addresses of DHCP users.";
+      }
+      enum "hw-igmp-enable" {
+        value 121;
+        description
+          "Whether IGMP is enabled for users.";
+      }
+      enum "hw-nas-startup-time-stamp" {
+        value 122;
+        description
+          "Time when the device was started.";
+      }
+      enum "hw-ip-host-address" {
+        value 123;
+        description
+          "User IP address and MAC address carried in the authentication request packet and accounting request packet.";
+      }
+      enum "hw-up-priority" {
+        value 124;
+        description
+          "Priority of upstream services.";
+      }
+      enum "hw-down-priority" {
+        value 125;
+        description
+          "Priority of downstream services.";
+      }
+      enum "hw-tunnel-vpn-instance" {
+        value 126;
+        description
+          "Name of the VPN instance on the local end of a tunnel.";
+      }
+      enum "hw-user-date" {
+        value 127;
+        description
+          "Date when a user account was opened.";
+      }
+      enum "hw-user-class" {
+        value 128;
+        description
+          "User level.";
+      }
+      enum "hw-subnet-mask" {
+        value 129;
+        description
+          "Subnet mask.";
+      }
+      enum "hw-gateway-address" {
+        value 130;
+        description
+          "Gateway IP address.";
+      }
+      enum "hw-lease-time" {
+        value 131;
+        description
+          "Lease time.";
+      }
+      enum "hw-ascend-client-primary-wins" {
+        value 132;
+        description
+          "Primary WINS address.";
+      }
+      enum "hw-ascend-client-second-win" {
+        value 133;
+        description
+          "Secondary WINS address.";
+      }
+      enum "hw-input-peak-burst-size" {
+        value 134;
+        description
+          "Upstream PBS.";
+      }
+      enum "hw-output-peak-burst-size" {
+        value 135;
+        description
+          "Downstream PBS.";
+      }
+      enum "hw-tunnel-session-limit" {
+        value 136;
+        description
+          "Number of sessions over a tunnel.";
+      }
+      enum "hw-data-filter" {
+        value 137;
+        description
+          "Dynamically delivered ACL rule.";
+      }
+      enum "hw-access-service" {
+        value 138;
+        description
+          "Access service template.";
+      }
+      enum "hw-accounting-level" {
+        value 139;
+        description
+          "Accounting level.";
+      }
+      enum "hw-portal-mode" {
+        value 140;
+        description
+          "Portal modes.";
+      }
+      enum "hw-policy-route" {
+        value 141;
+        description
+          "Next hop address in the policy-based routing.";
+      }
+      enum "hw-framed-pool" {
+        value 142;
+        description
+          "Same as the standard No. 88 attribute.";
+      }
+      enum "hw-l2tp-terminate-cause" {
+        value 143;
+        description
+          "L2TP user logout cause.";
+      }
+      enum "hw-multicast-profile-name" {
+        value 144;
+        description
+          "Name of a multicast profile.";
+      }
+      enum "hw-vpn-instance" {
+        value 145;
+        description
+          "Name of a VPN instance to which a user belongs.";
+      }
+      enum "hw-policy-name" {
+        value 146;
+        description
+          "Name of a value-added service policy.";
+      }
+      enum "hw-tunnel-group-name" {
+        value 147;
+        description
+          "Name of an L2TP or GRE group.";
+      }
+      enum "hw-client-primary-dns" {
+        value 148;
+        description
+          "Primary DNS server's IP address delivered after a user is authenticated.";
+      }
+      enum "hw-client-secondary-dns" {
+        value 149;
+        description
+          "Secondary DNS server's IP address delivered after a user is authenticated.";
+      }
+      enum "hw-domain-name" {
+        value 150;
+        description
+          "Domain name used in user authentication.";
+      }
+      enum "hw-http-redirect-url" {
+        value 152;
+        description
+          "URL of a page where a user will be redirected if the user fails to be authenticated.";
+      }
+      enum "hw-qos-profile-type" {
+        value 153;
+        description
+          "Type of the QoS profile delivered by the RADIUS server, valid only for LNS users.";
+      }
+      enum "hw-max-list-num" {
+        value 154;
+        description
+          "Maximum number of multicast programs that a user can order.";
+      }
+      enum "hw-acct-ipv6-input-octets" {
+        value 155;
+        description
+          "Volume of IPv6 upstream traffic.";
+      }
+      enum "hw-acct-ipv6-output-octets" {
+        value 156;
+        description
+          "Volume of IPv6 downstream traffic.";
+      }
+      enum "hw-acct-ipv6-input-packets" {
+        value 157;
+        description
+          "Number of IPv6 upstream packets.";
+      }
+      enum "hw-acct-ipv6-output-packets" {
+        value 158;
+        description
+          "Number of IPv6 downstream packets.";
+      }
+      enum "hw-acct-ipv6-input-gigawords" {
+        value 159;
+        description
+          "Number of IPv6 upstream bytes.";
+      }
+      enum "hw-acct-ipv6-output-gigawords" {
+        value 160;
+        description
+          "Number of IPv6 downstream bytes.";
+      }
+      enum "hw-dhcpv6-option37" {
+        value 161;
+        description
+          "The attribute identifies user location information.";
+      }
+      enum "hw-dhcpv6-option38" {
+        value 162;
+        description
+          "Content of DHCPv6 Option 38.";
+      }
+      enum "hw-user-mac" {
+        value 163;
+        description
+          "The attribute carries a user MAC address or Option 61 information.";
+      }
+      enum "hw-dns-server-ipv6-address" {
+        value 164;
+        description
+          "IPv6 address of the DNS server.";
+      }
+      enum "hw-dhcpv4-option121" {
+        value 165;
+        description
+          "Routing information of IPoE users.";
+      }
+      enum "hw-dhcpv4-option43" {
+        value 166;
+        description
+          "The attribute carries the Option 43 information in the DHCP reply packet sent to the DHCPv4 user, and is delivered in the Access-Accept packet.";
+      }
+      enum "hw-framed-pool-group" {
+        value 167;
+        description
+          "The attribute carries the name of the address pool group and is delivered in the Access-Accept packet.";
+      }
+      enum "hw-framed-ipv6-address" {
+        value 168;
+        description
+          "Carries an address assigned by a DHCPv6 server using identity association for non-temporary addresses (IA_NA).";
+      }
+      enum "hw-acct-update-address" {
+        value 169;
+        description
+          "The attribute is carried in accounting update packets.";
+      }
+      enum "hw-nat-policy-name" {
+        value 170;
+        description
+          "NAT policy template delivered in the user authentication response packet. This template is saved locally.";
+      }
+      enum "hw-nat-ip-address" {
+        value 171;
+        description
+          "Public network IP address after network address translation (NAT).";
+      }
+      enum "hw-nat-start-port" {
+        value 172;
+        description
+          "Start port of the public network IP address after NAT in a centralized BRAS scenario.";
+      }
+      enum "hw-nat-end-port" {
+        value 173;
+        description
+          "End port of the public network IP address after NAT in a centralized BRAS scenario.";
+      }
+      enum "hw-nat-port-forwarding" {
+        value 174;
+        description
+          "Port-Forwarding delivered and reported by the RADIUS server in a centralized BRAS scenario.";
+      }
+      enum "hw-nat-port-range-update" {
+        value 175;
+        description
+          "Port-Forwarding delivered and reported by the RADIUS server in a centralized BRAS scenario.";
+      }
+      enum "hw-ds-lite-tunnel-name" {
+        value 176;
+        description
+          "IPv6 tunnel name in a CGN scenario.";
+      }
+      enum "hw-pcp-server-name" {
+        value 177;
+        description
+          "PCP Server Name.";
+      }
+      enum "hw-public-ip-addr-state" {
+        value 178;
+        description
+          "Status of the public IP address pool in a NAT444 scenario.";
+      }
+      enum "hw-auth-type" {
+        value 179;
+        description
+          "Authentication type.";
+      }
+      enum "hw-acct-terminate-subcause" {
+        value 180;
+        description
+          "Sub-code for a session disconnection.";
+      }
+      enum "hw-down-qos-profile-name" {
+        value 181;
+        description
+          "QoS profile delivered by the RADIUS server.";
+      }
+      enum "hw-port-mirror" {
+        value 182;
+        description
+          "Upstream and downstream interface mirroring enabling flag delivered by the RADIUS server, which is used to control whether interface mirroring is enabled in the upstream and downstream directions.";
+      }
+      enum "hw-account-info" {
+        value 183;
+        description
+          "Account information.";
+      }
+      enum "hw-service-info" {
+        value 184;
+        description
+          "Service information.";
+      }
+      enum "hw-avpair" {
+        value 185;
+        description
+          "Attribute-value pair, which is the framework attribute of extensible sub-attributes.";
+      }
+      enum "hw-dhcp-option" {
+        value 186;
+        description
+          "DHCP options delivered by the RADIUS server after a user is being authenticated.";
+      }
+      enum "hw-delegated-ipv6-prefix-pool" {
+        value 187;
+        description
+          "Address pool from which PD prefixes are allocated.";
+      }
+      enum "hw-ipv6-prefix-lease" {
+        value 188;
+        description
+          "IPv6 prefix lease.";
+      }
+      enum "hw-ipv6-address-lease" {
+        value 189;
+        description
+          "IPv6 address lease.";
+      }
+      enum "hw-ipv6-policy-route" {
+        value 190;
+        description
+          "IPv6 policy-based routing.";
+      }
+      enum "hw-mng-ipv6" {
+        value 191;
+        description
+          "Whether IPv6 address management is used for users is determined by the RADIUS server based on the authentication result (whether IPv6 addresses are assigned) and CPE information (that specifies IPv6 address management).";
+      }
+      enum "hw-web-url" {
+        value 192;
+        description
+          "URL to which a web authentication user is redirected.";
+      }
+      enum "hw-version" {
+        value 193;
+        description
+          "Version of a device.";
+      }
+      enum "hw-product-id" {
+        value 194;
+        description
+          "Product ID of a device.";
+      }
+      enum "ms-chap-response" {
+        value 195;
+        description
+          "Response to the MS-CHAP authentication challenge.";
+      }
+      enum "ms-chap-error" {
+        value 196;
+        description
+          "Error information that is carried in an MS-CHAP Access-Reject packet.";
+      }
+      enum "ms-chap-cpw-2" {
+        value 197;
+        description
+          "Changed MS-CHAP V2 password.";
+      }
+      enum "ms-chap-nt-enc-pw" {
+        value 198;
+        description
+          "New MS-CHAP password, which is obtained by encrypting the old MS-CHAP password.";
+      }
+      enum "ms-chap-challenge" {
+        value 199;
+        description
+          "MS-CHAP challenge.";
+      }
+      enum "ms-mppe-send-key" {
+        value 200;
+        description
+          "A RADIUS server delivers an Microsoft Point-to-Point Encryption (MPPE) key to a NAS.";
+      }
+      enum "ms-mppe-recv-key" {
+        value 201;
+        description
+          "A RADIUS server delivers an Microsoft Point-to-Point Encryption (MPPE) key to a NAS.";
+      }
+      enum "ms-chap2-response" {
+        value 202;
+        description
+          "Response to the MS-CHAP2 authentication challenge.";
+      }
+      enum "ms-chap2-success" {
+        value 203;
+        description
+          "Authentication success code.";
+      }
+      enum "ms-chap2-cpw" {
+        value 204;
+        description
+          "Changed MS-CHAP2 password.";
+      }
+      enum "ms-primary-dns-server" {
+        value 205;
+        description
+          "Address of the primary DNS server of a specified user after user authentication is successful.";
+      }
+      enum "ms-secondary-dns-server" {
+        value 206;
+        description
+          "Address of the secondary DNS server of a specified user after user authentication is successful.";
+      }
+      enum "forward-policy" {
+        value 207;
+        description
+          "This attribute is used to carry a user group name.";
+      }
+      enum "bb-caller-id" {
+        value 208;
+        description
+          "The original option82.";
+      }
+      enum "npm-service-id" {
+        value 209;
+        description
+          "Indicates service name.";
+      }
+      enum "http-redirect-profile-name" {
+        value 210;
+        description
+          "Configured user URL profile name.";
+      }
+      enum "http-redirect-url" {
+        value 211;
+        description
+          "Redirection URL.";
+      }
+      enum "hw-own-nas-identify-sim" {
+        value 212;
+        description
+          "Own attribute. Name of the NAS or the sysname (host name).";
+      }
+      enum "hw-own-nas-port-new" {
+        value 213;
+        description
+          "Own attribute. Physical port for user access.";
+      }
+      enum "hw-own-nas-port-identify-old" {
+        value 214;
+        description
+          "Own attribute. Slot ID, subslot ID, port number, and VLAN ID of the user access interface.";
+      }
+      enum "hw-own-calling-station-id-old" {
+        value 215;
+        description
+          "Own attribute. The attribute is used by the NAS to carry user information.";
+      }
+      enum "hw-own-nas-port-id-uppercase" {
+        value 216;
+        description
+          "Own attribute. Slot ID, subslot ID, port number, and VLAN ID of the user access interface.";
+      }
+      enum "hw-own-nas-port-cid" {
+        value 217;
+        description
+          "Own attribute. Physical port for user access.";
+      }
+      enum "connect-port-new" {
+        value 218;
+        description
+          "Own attribute. Feature of a physical port for user access.";
+      }
+      enum "hw-own-nas-port-qinq" {
+        value 219;
+        description
+          "Own attribute. Physical port for user access.";
+      }
+      enum "nas-port-id-qinq-reverse" {
+        value 220;
+        description
+          "Own attribute. Slot ID, subslot ID, port number, and VLAN ID of the user access interface.";
+      }
+      enum "agent-circuit-id" {
+        value 221;
+        description
+          "ID of the line from an online user to the access device.";
+      }
+      enum "agent-remote-id" {
+        value 222;
+        description
+          "Unique identifier for the association between an online user and the line.";
+      }
+      enum "actual-data-rate-upstream" {
+        value 223;
+        description
+          "Actual upstream rate of the line corresponding to the online user.";
+      }
+      enum "actual-data-rate-downstream" {
+        value 224;
+        description
+          "Actual downstream rate of the line corresponding to the online user.";
+      }
+      enum "minimum-data-rate-upstream" {
+        value 225;
+        description
+          "Minimum upstream rate configured for the online user.";
+      }
+      enum "minimum-data-rate-downstream" {
+        value 226;
+        description
+          "Minimum downstream rate configured for the online user.";
+      }
+      enum "attainable-data-rate-upstream" {
+        value 227;
+        description
+          "Attainable upstream rate for the online user.";
+      }
+      enum "attainable-data-rate-downstream" {
+        value 228;
+        description
+          "Attainable downstream rate for the online user.";
+      }
+      enum "maximum-data-rate-upstream" {
+        value 229;
+        description
+          "Maximum upstream rate configured for the online user.";
+      }
+      enum "maximum-data-rate-downstream" {
+        value 230;
+        description
+          "Maximum downstream rate configured for the online user.";
+      }
+      enum "minimum-data-rate-upstream-low-power" {
+        value 231;
+        description
+          "Minimum upstream rate for the online user at low voltage.";
+      }
+      enum "minimum-data-rate-downstream-low-power" {
+        value 232;
+        description
+          "Minimum downstream rate for the online user at low voltage.";
+      }
+      enum "maximum-interleaving-delay-upstream" {
+        value 233;
+        description
+          "Maximum delay for the upstream traffic per channel.";
+      }
+      enum "actual-interleaving-delay-upstream" {
+        value 234;
+        description
+          "Actual delay for the upstream traffic per channel.";
+      }
+      enum "maximum-interleaving-delay-downstream" {
+        value 235;
+        description
+          "Maximum delay for the downstream traffic per channel.";
+      }
+      enum "actual-interleaving-delay-downstream" {
+        value 236;
+        description
+          "Actual delay for the downstream traffic per channel.";
+      }
+      enum "access-loop-encapsulation" {
+        value 237;
+        description
+          "Line encapsulation type for the access user.";
+      }
+      enum "hw-usr-group-name" {
+        value 238;
+        description
+          "User group name which is applicable for the user.";
+      }
+      enum "hw-usr-service-type" {
+        value 239;
+        description
+          "The service type of the user.";
+      }
+      enum "cmcc-nas-type" {
+        value 240;
+        description
+          "China Mobile-proprietary attibute, used to distinguish between a non-forwarding-control separation device and a forwarding-control separation device.";
+      }
+    }
+    description
+      "Radius attribute.";
+  }
+  typedef bras-radius-aaa-route-infos-type {
+    type enumeration {
+      enum "no" {
+        value 0;
+        description
+          "State type as no.";
+      }
+      enum "yes" {
+        value 1;
+        description
+          "State type as yes.";
+      }
+    }
+    description
+      "State type.";
+  }
+}

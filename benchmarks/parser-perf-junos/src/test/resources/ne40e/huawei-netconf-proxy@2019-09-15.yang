@@ -1,0 +1,68 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-netconf-proxy {
+  namespace "urn:huawei:yang:huawei-netconf-proxy";
+  prefix ncp;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+
+  description
+    "NETCONF Proxy Protocol Data Types and Protocol Operations.
+     This YANG module describe how to define a netconf proxy.";
+
+  revision 2019-09-15 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "netconf";
+  container proxy {
+    config false;
+      description
+        "CANNOT_FIND_CONTAINER_NAME:proxy in config file.";
+      
+    list target-list {
+      key "target";
+      description
+        "Statistics of target list information.";
+
+      leaf target{
+        type string{
+          length 1..127;
+        }
+        description
+          "Target name.";
+      }
+      
+      leaf target-id{
+        ext:support-filter true;
+        type string{
+          length 1..127;
+        }
+        description
+          "Target Identifier.";
+      }
+           
+      leaf target-type{
+        ext:support-filter true;
+        type string{
+          length 1..127;
+        }
+        description
+          "The type of the target.";
+      }           
+    }
+  }
+}

@@ -1,0 +1,84 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-sshc-type {
+  belongs-to huawei-sshc {
+    prefix sshc;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of ssh client type submodule.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef sshcenableflag {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Accept connection request from unknown or unauthentic clients.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "Do not accept connection request from unknown or unauthentic clients.";
+      }
+    }
+    description
+      "SSH client bool switch.";
+  }
+  typedef sshsshcbooltype {
+    type enumeration {
+      enum "false" {
+        value 0;
+        description
+          "Disabled state.";
+      }
+      enum "true" {
+        value 1;
+        description
+          "Enabled state.";
+      }
+    }
+    description
+      "SSH client.";
+  }
+  typedef pubkeytype {
+    type enumeration {
+      enum "RSA" {
+        value 1;
+        description
+          "RSA.";
+      }
+      enum "DSA" {
+        value 2;
+        description
+          "DSA.";
+      }
+      enum "ECC" {
+        value 3;
+        description
+          "ECC.";
+      }
+      enum "SM2" {
+        value 5;
+        description
+          "SM2.";
+      }
+    }
+    description
+      "SSH client public key encryption type list.";
+  }
+}

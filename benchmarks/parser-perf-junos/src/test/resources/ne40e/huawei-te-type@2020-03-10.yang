@@ -1,0 +1,150 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-te-type {
+  belongs-to huawei-te {
+    prefix te;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Te Description of Type.";
+  revision 2020-03-10 {
+    description
+      "Fixed some descriptions.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-06-14 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  /*
+   * typedef-stmt
+   */
+  typedef er-hop-mode {
+    type enumeration {
+      enum "ipv4-ipv6-address" {
+        value 1;
+        description
+          "IPv4 or IPv6 address.";
+      }
+      enum "sid-label" {
+        value 2;
+        description
+          "SID label.";
+      }
+      enum "sid-ipv6" {
+        value 3;
+        description
+          "SID IPv6 label.";
+      }
+    }
+    description
+      "ERHop Mode.";
+  }
+  typedef er-hop-type {
+    type enumeration {
+      enum "include-strict" {
+        value 1;
+        description
+          "Strictly included.";
+      }
+      enum "include-loose" {
+        value 2;
+        description
+          "Loosely included.";
+      }
+      enum "exclude" {
+        value 3;
+        description
+          "Exclude.";
+      }
+    }
+    description
+      "ErHop Type.";
+  }
+  typedef er-hop-interface-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Not configured.";
+      }
+      enum "incoming" {
+        value 1;
+        description
+          "Incoming interface.";
+      }
+      enum "outgoing" {
+        value 2;
+        description
+          "Outgoing interface.";
+      }
+    }
+    description
+      "ErHop Int Type.";
+  }
+  typedef te-hop-address-type {
+    type enumeration {
+      enum "ipv4" {
+        value 1;
+        description
+          "IPv4 type.";
+      }
+    }
+    description
+      "Te Hop Address Type.";
+  }
+  typedef er-sid-label-type {
+    type enumeration {
+      enum "adjacency" {
+        value 1;
+        description
+          "Adjacency label.";
+      }
+      enum "prefix" {
+        value 2;
+        description
+          "Prefix label.";
+      }
+      enum "binding" {
+        value 3;
+        description
+          "Binding label.";
+      }
+    }
+    description
+      "ERHop SID Label Type.";
+  }
+  typedef er-sid-ipv6-label-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "adjacency" {
+        value 1;
+        description
+          "Adjacency label.";
+      }
+      enum "prefix" {
+        value 2;
+        description
+          "Prefix label.";
+      }
+    }
+    description
+      "ERHop SID IPv6 Label Type.";
+  }
+}

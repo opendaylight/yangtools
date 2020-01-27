@@ -1,0 +1,799 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls-te-cr-static {
+  namespace "urn:huawei:yang:huawei-mpls-te-cr-static";
+  prefix mpls-te-cr-static;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-mpls-te {
+    prefix mpls-te;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-tunnel-management {
+    prefix tnlm;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-te {
+    prefix te;
+  }
+  import huawei-te-interface {
+    prefix te-interface;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+  revision 2020-03-10 {
+    description
+      "Modify the must condition and the type range of the node tunnel-group.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-21 {
+    description
+      "Modify the must condition of the node cr-static.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-14 {
+    description
+      "Modify the value range of the node tunnel-id.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-10 {
+    description
+      "Static bidirectional CR-LSPs, cr-static tunnels, and cr-static tunnel protection groups are added.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-25 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mpls-te";
+  typedef static-mode-type {
+    type enumeration {
+      enum "bidirectional" {
+        value 1;
+        description
+          "Bidirectional.";
+      }
+      enum "passive-tunnel" {
+        value 2;
+        description
+          "MPLS passive-tunnel.";
+      }
+    }
+    description
+      "The static tunnel mode.";
+  }
+  typedef lsr-role {
+    type enumeration {
+      enum "ingress" {
+        value 1;
+        description
+          "Ingress node.";
+      }
+      enum "transit" {
+        value 2;
+        description
+          "Transit node.";
+      }
+      enum "egress" {
+        value 3;
+        description
+          "Egress node.";
+      }
+    }
+    description
+      "Lsr Role.";
+  }
+  typedef revert-type {
+    type enumeration {
+      enum "norevertive" {
+        value 0;
+        description
+          "Traffic does not switch to the primary LSP after the primary LSP is Up.";
+      }
+      enum "revertive" {
+        value 1;
+        description
+          "Traffic switches to the primary LSP after the primary LSP is Up.";
+      }
+    }
+    description
+      "MPLS TE Tunnle Hot Standby Revert Mode.";
+  }
+  augment /mpls:mpls/mpls-te:te {
+    when "/mpls:mpls/mpls-te:te/mpls-te:enable='true'";
+    description
+      "MPLS static and MPLS ring configuration information augment to module MPLS TE.";
+    container static-cr-lsps {
+      description
+        "List of static CR-LSPs.";
+      list static-cr-lsp {
+        key "lsp-name";
+        unique "lsr-type/transit/transit/in-label";
+        unique "lsr-type/egress/egress/in-label";
+        unique "lsr-type/egress/egress/ingress-lsr-id lsr-type/egress/egress/tunnel-id";
+        description
+          "Configure static CR-LSP.";
+        leaf lsp-name {
+          type string {
+            length "1..19";
+          }
+          description
+            "The name of a static CR-LSP, same as the tunnel interface name.";
+        }
+        choice lsr-type {
+          mandatory true;
+          description
+            "The LSR role of a static CR-LSP.";
+          case ingress {
+            description
+              "The lsr-type is ingress.";
+            container ingress {
+              must "../lsp-name=tunnel-interface-name or not(tunnel-interface-name)";
+              must "next-hop or out-interface-name";
+              must "bandwidth<=pir";
+              description
+                "Configure the ingress of a static CR-LSP.";
+              leaf destination {
+                type inet:ipv4-address-no-zone;
+                mandatory true;
+                description
+                  "The destination IP address.";
+              }
+              leaf next-hop {
+                type inet:ipv4-address-no-zone;
+                description
+                  "The next-hop IP address.";
+              }
+              leaf out-label {
+                type uint32 {
+                  range "16..1048575";
+                }
+                mandatory true;
+                description
+                  "The value of an outgoing label.";
+              }
+              leaf tunnel-interface-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                description
+                  "The name of an staitc CR-LSP, same as the current tunnel interface name.";
+              }
+              leaf out-interface-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_'";
+                must "/ni:network-instance/ni:instances/ni:instance[ni:name='_public_']/te:te/te-interface:interfaces/te-interface:interface[te-interface:name=current()]/te-interface:attribute/te-interface:bandwidth/te-interface:bc0>=../pir";
+                description
+                  "The outgoing interface.";
+              }
+              leaf bandwidth {
+                type uint32 {
+                  range "0..4000000000";
+                }
+                units "kbit/s";
+                default "0";
+                description
+                  "The value of bandwidth.";
+              }
+              leaf pir {
+                type uint32 {
+                  range "0..4000000000";
+                }
+                units "kbit/s";
+                default "0";
+                description
+                  "The value of peak information.";
+              }
+            }
+          }
+          case transit {
+            description
+              "The lsr-type is transit.";
+            container transit {
+              must "next-hop or out-interface-name";
+              must "bandwidth<=pir";
+              description
+                "Configure the transit of a static CR-LSP.";
+              leaf in-label {
+                type uint32 {
+                  range "16..1048575";
+                }
+                must "count(../../../static-cr-lsp[egress/in-label=current()])=0";
+                mandatory true;
+                description
+                  "The value of an incoming label. The maximum value range of this object is dynamically set for different devices.";
+              }
+              leaf in-interface-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_'";
+                description
+                  "The incoming interface.";
+              }
+              leaf out-interface-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_'";
+                must "/ni:network-instance/ni:instances/ni:instance[ni:name='_public_']/te:te/te-interface:interfaces/te-interface:interface[te-interface:name=current()]/te-interface:attribute/te-interface:bandwidth/te-interface:bc0>=../pir";
+                description
+                  "The outgoing interface.";
+              }
+              leaf next-hop {
+                type inet:ipv4-address-no-zone;
+                description
+                  "The next-hop IP address.";
+              }
+              leaf out-label {
+                type uint32 {
+                  range "16..1048575";
+                }
+                mandatory true;
+                description
+                  "The value of an outgoing label.";
+              }
+              leaf ingress-lsr-id {
+                type inet:ipv4-address-no-zone;
+                description
+                  "The CR-LSP ingress LSR ID.";
+              }
+              leaf egress-lsr-id {
+                when "../ingress-lsr-id";
+                type inet:ipv4-address-no-zone;
+                mandatory "true";
+                description
+                  "The CR-LSP egress LSR ID.";
+              }
+              leaf tunnel-id {
+                when "../ingress-lsr-id and ../egress-lsr-id";
+                type uint16 {
+                  range "1..65535";
+                }
+                mandatory "true";
+                description
+                  "The ingress session ID.";
+              }
+              leaf bandwidth {
+                type uint32 {
+                  range "0..4000000000";
+                }
+                units "kbit/s";
+                default "0";
+                description
+                  "The value of bandwidth.";
+              }
+              leaf pir {
+                type uint32 {
+                  range "0..4000000000";
+                }
+                units "kbit/s";
+                default "0";
+                description
+                  "The value of peak information.";
+              }
+            }
+          }
+          case sr-te-simulate-transit {
+            description
+              "Simulate the SR-TE forwarding capability through a static CR-LSP.";
+            container sr-te-simulate-transit {
+              description
+                "Configure the SR-TE forwarding capability through a static CR-LSP.";
+              leaf sid {
+                type uint32 {
+                  range "16..1048575";
+                }
+                mandatory true;
+                description
+                  "Segment ID. The maximum value range of this object is dynamically set for different devices.";
+              }
+              leaf incoming-interface-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                mandatory true;
+                description
+                  "Incoming interface name.";
+              }
+              leaf outgoing-interface-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                mandatory true;
+                description
+                  "Outgoing interface name.";
+              }
+              leaf next-hop {
+                type inet:ip-address;
+                mandatory true;
+                description
+                  "Next hop IP address.";
+              }
+            }
+          }
+          case egress {
+            description
+              "The lsr-type is egress.";
+            container egress {
+              description
+                "Configure the egress of a static CR-LSP.";
+              leaf in-label {
+                type uint32 {
+                  range "16..1048575";
+                }
+                must "count(../../../static-cr-lsp[transit/in-label=current()])=0";
+                mandatory true;
+                description
+                  "The value of an incoming label. The maximum value range of this object is dynamically set for different devices.";
+              }
+              leaf in-interface-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_'";
+                description
+                  "The incoming interface.";
+              }
+              leaf ingress-lsr-id {
+                type inet:ipv4-address-no-zone;
+                description
+                  "The CR-LSP ingress LSR ID.";
+              }
+              leaf tunnel-id {
+                when "../ingress-lsr-id";
+                type uint16 {
+                  range "1..65535";
+                }
+                mandatory "true";
+                description
+                  "The ingress session ID.";
+              }
+            }
+          }
+        }
+      }
+    }
+    container bidirection-static-cr-lsps {
+      description
+        "List of bidirectional static CR-LSPs.";
+      list bidirection-static-cr-lsp {
+        key "lsp-name";
+        unique "lsr-type/ingress/ingress/backward/in-label";
+        unique "lsr-type/transit/transit/forward/in-label";
+        unique "lsr-type/transit/transit/backward/in-label";
+        unique "lsr-type/egress/egress/forward/in-label";
+        description
+          "Configure bidirectional static CR-LSP.";
+        leaf lsp-name {
+          type string {
+            length "1..19";
+          }
+          description
+            "The name of a bidirectional static CR-LSP.";
+        }
+        leaf description {
+          type string {
+            length "1..128";
+          }
+          description
+            "Specifies the description information.";
+        }
+        leaf hard-pipe-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to use a static PW over a static bidirectional co-routed CR-LSP as a public network CR-LSP for an IP hard pipe.";
+        }
+        choice lsr-type {
+          mandatory true;
+          description
+            "The LSR role of a bidirectional static CR-LSP.";
+          case ingress {
+            description
+              "Ingress.";
+            container ingress {
+              presence "Specifies ingress as the lsr role.";
+              description
+                "Enable/disable ingress as the lsr role of bidirectional static cr lsp.";
+              container forward {
+                must "(out-interface-name or (not(out-interface-name) and ../../hard-pipe-enable='false'))";
+                must "(bandwidth-ct0 and pir and bandwidth-ct0<=pir) or not(bandwidth-ct0)";
+                presence "Specifies ingress forward configuration.";
+                description
+                  "Configure the ingress forward function.";
+                leaf next-hop {
+                  type inet:ipv4-address-no-zone;
+                  mandatory true;
+                  description
+                    "The forward next-hop ip address.";
+                }
+                leaf out-label {
+                  type uint32 {
+                    range "16..1048575";
+                  }
+                  mandatory true;
+                  description
+                    "The value of an outgoing label.";
+                }
+                leaf out-interface-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_'";
+                  must "(../pir and /ni:network-instance/ni:instances/ni:instance[ni:name='_public_']/te:te/te-interface:interfaces/te-interface:interface[te-interface:name=current()]/te-interface:attribute/te-interface:bandwidth/te-interface:bc0>=../pir) or not(../pir)";
+                  description
+                    "The forward outgoing interface.";
+                }
+                leaf bandwidth-ct0 {
+                  type uint32 {
+                    range "1..4000000000";
+                  }
+                  units "kbit/s";
+                  description
+                    "The value of forward bandwidth ct0.";
+                }
+                leaf pir {
+                  type uint32 {
+                    range "1..4000000000";
+                  }
+                  units "kbit/s";
+                  must "../../../hard-pipe-enable='false'";
+                  description
+                    "The value of forward peak information.";
+                }
+              }
+              container backward {
+                must "(egress-lsr-id and tunnel-id) or (not(egress-lsr-id) and not(tunnel-id))";
+                presence "Specifies ingress backward configuration.";
+                description
+                  "Configure the ingress backward function.";
+                leaf in-label {
+                  type uint32 {
+                    range "16..1048575";
+                  }
+                  must "count(../../../../bidirection-static-cr-lsp[transit/forward/in-label=current()])=0 and count(../../../../bidirection-static-cr-lsp[transit/backward/in-label=current()])=0 and count(../../../../bidirection-static-cr-lsp[egress/forward/in-label=current()])=0";
+                  mandatory true;
+                  description
+                    "The value of an incoming label. The maximum value range of this object is dynamically set for different devices.";
+                }
+                leaf egress-lsr-id {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "The bidirectional static CR-LSP backward egress lsr id.";
+                }
+                leaf tunnel-id {
+                  type uint16 {
+                    range "1..65535";
+                  }
+                  description
+                    "The ingress session id.";
+                }
+              }
+            }
+          }
+          case transit {
+            description
+              "Transit.";
+            container transit {
+              presence "Specifies transit as the lsr role.";
+              description
+                "Enable/disable transit as the lsr role of bidirectional static cr lsp.";
+              container forward {
+                must "(next-hop or out-interface-name)";
+                must "(ingress-lsr-id and egress-lsr-id and tunnel-id) or (not(ingress-lsr-id) and not(egress-lsr-id) and not(tunnel-id))";
+                must "(bandwidth-ct0 and pir and bandwidth-ct0<=pir) or not(bandwidth-ct0)";
+                presence "Specifies transit forward configuration.";
+                description
+                  "Configure the transit forward function.";
+                leaf in-label {
+                  type uint32 {
+                    range "16..1048575";
+                  }
+                  must "count(../../../../bidirection-static-cr-lsp[ingress/backward/in-label=current()])=0 and count(../../../../bidirection-static-cr-lsp[transit/backward/in-label=current()])=0 and count(../../../../bidirection-static-cr-lsp[egress/forward/in-label=current()])=0";
+                  mandatory true;
+                  description
+                    "The value of an incoming label. The maximum value range of this object is dynamically set for different devices.";
+                }
+                leaf out-label {
+                  type uint32 {
+                    range "16..1048575";
+                  }
+                  mandatory true;
+                  description
+                    "The value of an outgoing label.";
+                }
+                leaf next-hop {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "The forward next-hop ip address.";
+                }
+                leaf out-interface-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_'";
+                  must "(../pir and /ni:network-instance/ni:instances/ni:instance[ni:name='_public_']/te:te/te-interface:interfaces/te-interface:interface[te-interface:name=current()]/te-interface:attribute/te-interface:bandwidth/te-interface:bc0>=../pir) or not(../pir)";
+                  description
+                    "The forward outgoing interface.";
+                }
+                leaf ingress-lsr-id {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "The bidirectional static CR-LSP forward ingress lsr id.";
+                }
+                leaf egress-lsr-id {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "The bidirectional static CR-LSP forward egress lsr id.";
+                }
+                leaf tunnel-id {
+                  type uint16 {
+                    range "1..65535";
+                  }
+                  description
+                    "The ingress session id.";
+                }
+                leaf bandwidth-ct0 {
+                  type uint32 {
+                    range "1..4000000000";
+                  }
+                  units "kbit/s";
+                  description
+                    "The value of forward ct0 bandwidth.";
+                }
+                leaf pir {
+                  type uint32 {
+                    range "1..4000000000";
+                  }
+                  units "kbit/s";
+                  must "../../../hard-pipe-enable='false'";
+                  description
+                    "The value of forward peak information.";
+                }
+              }
+              container backward {
+                must "(next-hop or out-interface-name)";
+                must "(bandwidth-ct0 and pir and bandwidth-ct0<=pir) or not(bandwidth-ct0)";
+                presence "Specifies transit backward configuration.";
+                description
+                  "Configure the transit backward function.";
+                leaf in-label {
+                  type uint32 {
+                    range "16..1048575";
+                  }
+                  must "count(../../../../bidirection-static-cr-lsp[ingress/backward/in-label=current()])=0 and count(../../../../bidirection-static-cr-lsp[transit/forward/in-label=current()])=0 and count(../../../../bidirection-static-cr-lsp[egress/forward/in-label=current()])=0";
+                  mandatory true;
+                  description
+                    "The value of an incoming label. The maximum value range of this object is dynamically set for different devices.";
+                }
+                leaf out-label {
+                  type uint32 {
+                    range "16..1048575";
+                  }
+                  mandatory true;
+                  description
+                    "The value of an outgoing label.";
+                }
+                leaf next-hop {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "The backward next-hop ip address.";
+                }
+                leaf out-interface-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_'";
+                  must "(../pir and /ni:network-instance/ni:instances/ni:instance[ni:name='_public_']/te:te/te-interface:interfaces/te-interface:interface[te-interface:name=current()]/te-interface:attribute/te-interface:bandwidth/te-interface:bc0>=../pir) or not(../pir)";
+                  description
+                    "The outgoing interface.";
+                }
+                leaf bandwidth-ct0 {
+                  type uint32 {
+                    range "1..4000000000";
+                  }
+                  units "kbit/s";
+                  description
+                    "The value of forward ct0 bandwidth.";
+                }
+                leaf pir {
+                  type uint32 {
+                    range "1..4000000000";
+                  }
+                  units "kbit/s";
+                  must "../../../hard-pipe-enable='false'";
+                  description
+                    "The value of forward peak information.";
+                }
+              }
+            }
+          }
+          case egress {
+            description
+              "Egress.";
+            container egress {
+              presence "Specifies egress as the lsr role.";
+              description
+                "Enable/disable egress as the lsr role of bidirectional static cr lsp.";
+              container forward {
+                must "(ingress-lsr-id and tunnel-id) or (not(ingress-lsr-id) and not(tunnel-id))";
+                presence "Specifies egress forward configuration.";
+                description
+                  "Configure the egress forward function.";
+                leaf in-label {
+                  type uint32 {
+                    range "16..1048575";
+                  }
+                  must "count(../../../../bidirection-static-cr-lsp[ingress/backward/in-label=current()])=0 and count(../../../../bidirection-static-cr-lsp[transit/forward/in-label=current()])=0 and count(../../../../bidirection-static-cr-lsp[transit/backward/in-label=current()])=0";
+                  mandatory true;
+                  description
+                    "The value of an incoming label. The maximum value range of this object is dynamically set for different devices.";
+                }
+                leaf ingress-lsr-id {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "The bidirectional static CR-LSP forward ingress lsr id.";
+                }
+                leaf tunnel-id {
+                  type uint16 {
+                    range "1..65535";
+                  }
+                  description
+                    "The ingress session id.";
+                }
+              }
+              container backward {
+                must "(bandwidth-ct0 and pir and bandwidth-ct0<=pir) or not(bandwidth-ct0)";
+                presence "Specifies egress backward configuration.";
+                description
+                  "Configure the egress backward function.";
+                leaf next-hop {
+                  type inet:ipv4-address-no-zone;
+                  mandatory true;
+                  description
+                    "The backward next-hop ip address.";
+                }
+                leaf out-label {
+                  type uint32 {
+                    range "16..1048575";
+                  }
+                  mandatory true;
+                  description
+                    "The value of an outgoing label.";
+                }
+                leaf out-interface-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_'";
+                  must "(../pir and /ni:network-instance/ni:instances/ni:instance[ni:name='_public_']/te:te/te-interface:interfaces/te-interface:interface[te-interface:name=current()]/te-interface:attribute/te-interface:bandwidth/te-interface:bc0>=../pir) or not(../pir)";
+                  description
+                    "The outgoing interface.";
+                }
+                leaf bandwidth-ct0 {
+                  type uint32 {
+                    range "1..4000000000";
+                  }
+                  units "kbit/s";
+                  description
+                    "The value of forward ct0 bandwidth.";
+                }
+                leaf pir {
+                  type uint32 {
+                    range "1..4000000000";
+                  }
+                  units "kbit/s";
+                  must "../../../hard-pipe-enable='false'";
+                  description
+                    "The value of forward peak information.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  augment /ifm:ifm/ifm:interfaces/ifm:interface/tnlm:tunnel-protocol/tnlm:type/mpls-te:mpls-te/mpls-te:te-tunnel {
+    description
+      "MPLS Static Tunnel Configuration.";
+    container cr-static {
+      when "../mpls-te:common-attributes/mpls-te:signal-protocol='cr-static'";
+      must "not(direction and reverse-lsp-name)";
+      description
+        "Configure the static tunnel.";
+      leaf direction {
+        type static-mode-type;
+        description
+          "Tunnel static mode.";
+      }
+      leaf binding-bidirection-name {
+        when "../direction='passive-tunnel'";
+        type leafref {
+          path "/mpls:mpls/mpls-te:te/mpls-te-cr-static:bidirection-static-cr-lsps/mpls-te-cr-static:bidirection-static-cr-lsp/mpls-te-cr-static:lsp-name";
+        }
+        must "/mpls:mpls/mpls-te:te/mpls-te-cr-static:bidirection-static-cr-lsps/mpls-te-cr-static:bidirection-static-cr-lsp[mpls-te-cr-static:lsp-name=current()]/mpls-te-cr-static:egress";
+        description
+          "Binding bidirectional static-cr-lsp egress lsr id.";
+      }
+      leaf reverse-lsp-name {
+        type leafref {
+          path "/mpls:mpls/mpls-te:te/mpls-te-cr-static:static-cr-lsps/mpls-te-cr-static:static-cr-lsp/mpls-te-cr-static:lsp-name";
+        }
+        must "/mpls:mpls/mpls-te:te/mpls-te-cr-static:static-cr-lsps/mpls-te-cr-static:static-cr-lsp[mpls-te-cr-static:lsp-name=current()]/mpls-te-cr-static:egress/mpls-te-cr-static:in-label";
+        description
+          "Backward LSP name of a static tunnel.";
+      }
+      container tunnel-group {
+        description
+          "Configure the tunnel group.";
+        leaf protection-tunnel-id {
+          type uint16 {
+            range "1..32768";
+          }
+          must "../../../mpls-te:common-attributes/mpls-te:tunnel-id and ../../../mpls-te:common-attributes/mpls-te:tunnel-id!=../protection-tunnel-id";
+          must "../../direction or ../../reverse-lsp-name";
+          description
+            "Name of a protection tunnel in a protection group. The name is case-insensitive.";
+        }
+        leaf revertive-mode {
+          when "../protection-tunnel-id";
+          type revert-type;
+          default "revertive";
+          description
+            "Revertive mode.";
+        }
+        leaf wtr {
+          when "../revertive-mode='revertive'";
+          type uint16 {
+            range "0..60";
+          }
+          units min;
+          default "24";
+          description
+            "Wtr value(30s).";
+        }
+        leaf hold-off {
+          when "../protection-tunnel-id";
+          type uint16 {
+            range "0..100";
+          }
+          units "100 ms";
+          default "0";
+          description
+            "Delay period. The value ranges from 0 to 100. Steps is 100ms.";
+        }
+      }
+    }
+  }
+}

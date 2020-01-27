@@ -1,0 +1,910 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-srv6 {
+  namespace "urn:huawei:yang:huawei-srv6";
+  prefix srv6;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-evpl {
+    prefix evpl;
+  }
+  import huawei-bd {
+    prefix bd;
+  }
+  
+  include huawei-srv6-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Segment routing IPv6.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "segr";
+  augment /ni:network-instance/ni:instances/ni:instance {
+    description
+        "Segment routing IPv6 augment to L3VPN.";
+    container srv6 {
+      when "../ni:name='_public_'";
+      description
+        "Configure segment routing IPv6.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable segment routing IPv6.";
+        }
+        leaf te-frr-enable {
+          type boolean;
+          must "../te-frr-enable='false' or ../enable='true'";
+          default "false";
+          description
+            "Enable/disable SR TE FRR.";
+        }
+        leaf end-x-delay-time {
+          when "../enable='true'";
+          type uint32 {
+            range "0..600000";
+          }
+          default "0";
+          description
+            "End.X delay time.";
+        }
+        leaf path-mtu {
+          when "../enable='true'";
+          type uint32 {
+            range "1280..9600";
+          }
+          default "1500";
+          description
+            "Path MTU value.";
+        }		
+        container encapsulation {
+          when "../enable='true'";
+          description
+            "Configure IPv6 encapsulation configuation.";
+          leaf source-address {
+            type inet:ipv6-address-no-zone;
+            description
+              "SRv6 VPN encapsulation source address.";
+          }
+          leaf hop-limit {
+            when "../source-address";
+            type uint8 {
+              range "1..255";
+            }
+            default "255";
+            description
+              "Encapsulation IPv6 header TTL value.";
+          }
+      }
+      container locators {
+          when "../enable='true'";
+        description
+          "List of SRv6 locator configuration.";
+        list locator {
+          key "name";
+          unique "prefix";
+          description
+            "Configure SRv6 locator configuration.";
+          leaf name {
+            type string {
+              length "1..31";
+            }
+            description
+              "Locator name.";
+          }
+          leaf prefix {
+            ext:operation-exclude update;
+            type inet:ipv6-address-no-zone;
+            mandatory true;
+            description
+              "IPv6 prefix.";
+          }
+          leaf prefix-length {
+            ext:operation-exclude update;
+            type uint8 {
+              range "32..120";
+            }
+            must "../prefix-length+../static-length+../args-length<=128";
+            mandatory true;
+            description
+              "Mask length. The maximum sum value of the mask length, static segment length, and argument segment length is 128.";
+          }
+          leaf static-length {
+            ext:operation-exclude update;
+            type uint8 {
+              range "0..96";
+            }
+            must "../prefix-length+../static-length+../args-length<=128";
+            default "0";
+            description
+              "The static segment length determines the range of opcode. The maximum sum value of the mask length, static segment length, and argument segment length is 128.";
+          }
+          leaf args-length {
+            ext:operation-exclude update;
+            type uint8 {
+              range "0..64";
+            }
+			must "../prefix-length+../static-length+../args-length<=128";
+            default "0";
+            description
+              "Argument segment length. The maximum sum value of the mask length, static segment length, and argument segment length is 128.";
+          }
+          container opcodes {
+            when "../static-length>0";
+            description
+              "Configure SRv6 opcodes configuration.";
+            container ends {
+              description
+                "List of End type opcode configuration.";
+              list end {
+                key "value";
+                max-elements  "1";
+                description
+                  "Configure End type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+              }
+            }
+            container end-psps {
+              description
+                "List of End psp type opcode configuration.";
+              list end-psp {
+                key "value";
+                max-elements  "1";
+                description
+                  "Configure End psp type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+              }
+            }
+            container end-ops {
+              description
+                "List of End.OP type opcode configuration.";
+              list end-op {
+                key "value";
+                max-elements  "1";
+                description
+                  "Configure End.OP type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+              }
+            }
+            container end-xs {
+              description
+                "List of End.X type opcode configuration.";
+              list end-x {
+                key "value if-name next-hop";
+                description
+                  "Configure End.X type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf if-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Interface name.";
+                }
+                leaf next-hop {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Nexthop address.";
+                }
+              }
+            }
+            container end-x-psps {
+              description
+                "List of End.X psp type opcode configuration.";
+              list end-x-psp {
+                key "value if-name next-hop";
+                description
+                  "Configure End.X psp type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf if-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Interface name.";
+                }
+                leaf next-hop {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "NextHop address.";
+                }
+              }
+            }
+            container end-dt2us {
+              description
+                "List of End.DT2U type opcode configuration.";
+              list end-dt2u {
+                key "value";
+                unique "bd-id";
+                description
+                  "Configure End.DT2U type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf bd-id {
+                  type leafref {
+                    path "/bd:bd/bd:instances/bd:instance/bd:id";
+                  }
+                  mandatory "true";
+                  description
+                    "Bridge domain ID.";
+                  ext:support-filter "true";
+                }
+              }
+            }
+            container end-dt2uls {
+              description
+                "List of End.DT2UL type opcode configuration.";
+              list end-dt2ul {
+                key "value";
+                unique "bd-id";
+                description
+                  "Configure End.DT2UL type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf bd-id {
+                  type leafref {
+                    path "/bd:bd/bd:instances/bd:instance/bd:id";
+                  }
+                  mandatory "true";
+                  description
+                    "Bridge domain ID.";
+                  ext:support-filter "true";
+                }
+              }
+            }
+            container end-dt2ms {
+              description
+                "List of End.DT2M type opcode configuration.";
+              list end-dt2m {
+                key "value";
+                unique "bd-id";
+                description
+                  "Configure End.DT2M type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf bd-id {
+                  type leafref {
+                    path "/bd:bd/bd:instances/bd:instance/bd:id";
+                  }
+                  mandatory "true";
+                  description
+                    "Bridge domain ID.";
+                  ext:support-filter "true";
+                }
+              }
+            }
+            container end-dx2s {
+              description
+                "List of End.DX2 type opcode configuration.";
+              list end-dx2 {
+                key "value";
+                unique "evpl-id";
+                description
+                  "Configure End.DX2 type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf evpl-id {
+                  type leafref {
+                    path "/evpl:evpl/evpl:instances/evpl:instance/evpl:id";
+                  }
+                  must "/evpl:evpl/evpl:instances/evpl:instance[evpl:id=current()]/evpl:mode='srv6-mode'";
+                  mandatory "true";
+                  description
+                    "EVPL instance ID.";
+                }
+              }
+            }
+            container end-dx2ls {
+              description
+                "List of End.DX2L type opcode configuration.";
+              list end-dx2l {
+                key "value";
+                unique "evpl-id";
+                description
+                  "Configure End.DX2L type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf evpl-id {
+                  type leafref {
+                    path "/evpl:evpl/evpl:instances/evpl:instance/evpl:id";
+                  }
+                  must "/evpl:evpl/evpl:instances/evpl:instance[evpl:id=current()]/evpl:mode='srv6-mode'";
+                  mandatory "true";
+                  description
+                    "EVPL instance ID.";
+                }
+              }
+            }
+            container end-dt4s {
+              description
+                "List of End.DT4 type opcode configuration.";
+              list end-dt4 {
+                key "value vpn-name";
+                description
+                  "Configure End.DT4 type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf vpn-name {
+                  type leafref {
+                    path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                  }
+                  description
+                    "VPN name.";
+                }
+                leaf protocol {
+                  type protocol-type;
+                  default "null"; 
+                  description
+                    "Protocol type.";
+                }
+              }
+            }
+            container end-dt6s {
+              description
+                "List of End.DT6 type opcode configuration.";
+              list end-dt6 {
+                key "value vpn-name";
+                description
+                  "Configure End.DT6 type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf vpn-name {
+                  type leafref {
+                    path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                  }
+                  description
+                    "VPN name.";
+                }
+                leaf protocol {
+                  type protocol-type;
+                  default "evpn"; 
+                  description
+                    "Protocol type.";
+                }
+              }
+            }
+            container end-ms {
+              description
+                "List of End.M type opcode configuration.";
+              list end-m {
+                key "value mirror-prefix mirror-mask";
+                description
+                  "Configure End.M type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf mirror-prefix {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Mirror locator prefix.";
+                }
+                leaf mirror-mask {
+                  type uint8 {
+                    range "32..120";
+                  }
+                  description
+                  "Mirror locator mask.";
+                }
+              }
+            }
+            container end-dx4s {
+              description
+                "List of End.DX4 type opcode configuration.";
+              list end-dx4 {
+                key "value vpn-name if-name next-hop";
+                description
+                  "Configure End.DX4 type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf vpn-name {
+                  type leafref {
+                    path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                  }
+                  must "../vpn-name!='_public_'";
+                  description
+                    "VPN name.";
+                }
+                leaf if-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Interface name. Only support physical port.";
+                }
+                leaf next-hop {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "NextHop address.";
+                }
+                leaf protocol {
+                  type protocol-type; 
+                  mandatory true;
+                  description
+                    "Protocol type.";
+                }
+              }
+            }
+            container end-dx6s {
+              description
+                "List of End.DX6 type opcode configuration.";
+              list end-dx6 {
+                key "value vpn-name if-name next-hop";
+                description
+                  "Configure End.DX6 type opcode configuration.";
+                leaf value {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Opcode value. The value ranges from ::1 to ::XX, in which XX is an IPv6 address translated from 2^static-length minus 1.";
+                }
+                leaf vpn-name {
+                  type leafref {
+                    path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                  }
+                  must "../vpn-name!='_public_'";
+                  description
+                    "VPN name.";
+                }
+                leaf if-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Interface name. Only support physical port.";
+                }
+                leaf next-hop {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Nexthop address.";
+                }
+                leaf protocol {
+                  type protocol-type; 
+                  mandatory true; 
+                  description
+                    "Protocol type.";
+                }
+              }
+            }
+          }
+        }
+      }
+      container remote-end-ops {
+        when "../enable='true'";
+        description
+          "List of remote End.OTP configuration.";
+        list remote-end-op {
+          key "sid";
+          description
+            "Configure remote End.OTP configuration.";
+          leaf sid {
+            type inet:ipv6-address-no-zone;
+            description
+              "Remote End.OTP SID.";
+          }
+          leaf prefix-length {
+            type uint8 {
+              range "1..128";
+            }
+            mandatory true;
+            description
+              "Remote End.OTP SID prefix length.";
+          }
+        }
+      }
+      container local-sids {
+        config false;
+        description
+          "Statistics of segment routing IPv6 local SID list.";
+        container ends {
+          description
+            "List of segment routing IPv6 End local SID list.";
+          list end{
+            key "value";
+            description
+              "Statistics of segment routing IPv6 End local SID list.";
+            leaf value {
+              type inet:ipv6-address-no-zone;
+              description
+                "End SID value.";
+            }
+            leaf locator-name {
+              type string {
+                length "1..32";
+              }
+              description
+                "Locator name.";
+            }
+          }
+        }
+        container end-psps {
+          description
+            "List of segment routing IPv6 End psp local SID list.";
+          list end-psp{
+            key "value";
+            description
+              "Statistics of segment routing IPv6 End psp local SID list.";
+            leaf value {
+              type inet:ipv6-address-no-zone;
+              description
+                "End SID value.";
+            }
+            leaf locator-name {
+              type string {
+                length "1..32";
+              }
+              description
+                "Locator name.";
+            }
+          }
+        }
+        container end-ops {
+          description
+            "List of segment routing IPv6 End.OP local SID list.";
+          list end-op {
+            key "value";
+            description
+              "Statistics of segment routing IPv6 End.OP local SID list.";
+            leaf value {
+              type inet:ipv6-address-no-zone;
+              description
+                "End.OP SID value.";
+            }
+            leaf locator-name {
+              type string {
+                length "1..32";
+              }
+              description
+                "Locator name.";
+            }
+          }
+        }
+        container end-xs {
+          description
+            "List of segment routing IPv6 End.X local SID list.";
+          list end-x {
+            key "value";
+            description
+              "Statistics of segment routing IPv6 End.X local SID list.";
+            leaf value {
+              type inet:ipv6-address-no-zone;
+              description
+                "End.X SID value.";
+            }
+            leaf locator-name {
+              type string {
+                length "1..32";
+              }
+              description
+                "Locator name.";
+            }
+            container  next-hops {
+              description
+                "List of next hop information.";
+              list next-hop {
+                key "if-name next-hop";
+                description
+                  "Statistics of next hop information.";
+                leaf if-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Exit interface.";
+                }
+                leaf next-hop {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Next hop IPv6 address.";
+                }
+              }
+            }
+          }
+        }
+        container end-x-psps {
+          description
+            "List of segment routing IPv6 End.X psp local SID list.";
+          list end-x-psp {
+            key "value";
+            description
+              "Statistics of segment routing IPv6 End.X psp local SID list.";
+            leaf value {
+              type inet:ipv6-address-no-zone;
+              description
+                "End.X SID value.";
+            }
+            leaf locator-name {
+              type string {
+                length "1..32";
+              }
+              description
+                "Locator name.";
+            }
+            container  next-hops {
+              description
+                "List of next hop information.";
+              list next-hop {
+                key "if-name next-hop";
+                description
+                  "Statistics of next hop information.";
+                leaf if-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Exit interface.";
+                }
+                leaf next-hop {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "Next hop IPv6 address.";
+                }
+              }
+            }
+          }
+        }
+        container end-dt4s {
+          description
+            "List of segment routing IPv6 End.DT4 local SID list.";
+          list end-dt4 {
+            key "value";
+            description
+              "Statistics of segment routing IPv6 End.DT4 local SID list.";
+            leaf value {
+              type inet:ipv6-address-no-zone;
+              description
+                "End.DT4 SID value.";
+            }
+            leaf vpn-name {
+              type string {
+                length "1..32";
+              }
+              description
+                "VPN name.";
+            }
+            leaf locator-name {
+              type string {
+                length "1..32";
+              }
+              description
+                "Locator name.";
+            }
+          }
+        }
+        container end-dt6s {
+          description
+            "List of segment routing IPv6 End.DT6 local SID list.";
+          list end-dt6 {
+            key "value";
+            description
+              "Statistics of segment routing IPv6 End.DT6 local SID list.";
+            leaf value {
+              type inet:ipv6-address-no-zone;
+              description
+                "End.DT6 SID value.";
+            }
+            leaf vpn-name {
+              type string {
+                length "1..32";
+              }
+              description
+                "VPN name.";
+            }
+            leaf locator-name {
+              type string {
+                length "1..32";
+              }
+              description
+                "Locator name.";
+            }
+          }
+        }
+        container end-ms {
+          config false;
+          description
+            "List of segment routing IPv6 End.M local SID list.";
+          list end-m{
+            key "value";
+            config false;
+            description
+              "Statistics of segment routing IPv6 End.M local SID list.";
+            leaf value {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "End.M SID value.";
+            }
+            leaf flavor {
+              type string {
+                length "1..64";
+              }
+              config false;
+              description
+                "End SID flavor value.";
+            }
+            leaf locator-name {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Locator name.";
+            }
+            leaf mirror-locator-number {
+              type uint32;
+              config false;
+              description
+                "Mirror locator number.";
+            }
+            leaf mirror-locator-set {
+              type string {
+                length "1..360";
+              }
+              config false;
+              description
+                "Mirror locator address set.";
+            }
+          }
+        }
+        container end-dx4s {
+          config false;
+          description
+            "List of segment routing IPv6 End.DX4 local SID list.";
+          list end-dx4 {
+            key "value";
+            config false;
+            description
+              "Statistics of segment routing IPv6 End.DX4 local SID list.";
+            leaf value {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "End.DX4 SID value.";
+            }
+            leaf vpn-name {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "VPN name.";
+            }
+            leaf locator-name {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Locator name.";
+            }
+            leaf if-name {
+              type string {
+                length "1..32";
+              }
+              description
+                "Exit interface.";
+            }
+            leaf next-hop {
+              type inet:ipv4-address-no-zone;
+              description
+                "Next hop IPv4 address.";
+            }
+          }
+        }
+        container end-dx6s {
+          config false;
+          description
+            "List of segment routing IPv6 End.DX6 local SID list.";
+          list end-dx6 {
+            key "value";
+            config false;
+            description
+              "Statistics of segment routing IPv6 End.DX6 local SID list.";
+            leaf value {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "End.DX6 SID value.";
+            }
+            leaf vpn-name {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "VPN name.";
+            }
+            leaf locator-name {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Locator name.";
+            }
+            leaf if-name {
+              type string {
+                length "1..32";
+              }
+              description
+                "Exit interface.";
+            }
+            leaf next-hop {
+              type inet:ipv6-address-no-zone;
+              description
+                "Next hop IPv6 address.";
+            }
+          }
+        } 
+      }
+    }
+  }
+}

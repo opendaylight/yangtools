@@ -1,0 +1,519 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2vpn-vpls-ext {
+  namespace "urn:huawei:yang:huawei-l2vpn-vpls-ext";
+  prefix l2vpn-vpls-ext;
+  
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "L2VPN VPLS ext.";
+  revision 2020-03-09 {
+    description
+      "Add pipe type.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-17 {
+    description
+      "Modify container reserve-if-switch.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-13 {
+    description
+      "Modify container name and description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-15 {
+    description
+      "Modify typedef defination.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-23 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  typedef l2vpn-pipe-mode {
+    type enumeration {
+      enum "pipe" {
+        value 1;
+        description
+          "The L2VPN pipe mode is pipe.";
+      }
+      enum "shortPipe" {
+        value 2;
+        description
+          "The L2VPN pipe mode is short pipe.";
+      }
+      enum "uniform" {
+        value 3;
+        description
+          "The L2VPN pipe mode is uniform.";
+      }
+    }
+    description
+      "L2VPN pipe mode.";
+  }
+
+  typedef l2vpn-service-class {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "Specify the CoS as BE.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "Specify the CoS as AF1.";
+      }
+      enum "af2" {
+        value 2;
+        description
+          "Specify the CoS as AF2.";
+      }
+      enum "af3" {
+        value 3;
+        description
+          "Specify the CoS as AF3.";
+      }
+      enum "af4" {
+        value 4;
+        description
+          "Specify the CoS as AF4.";
+      }
+      enum "ef" {
+        value 5;
+        description
+          "Specify the CoS as EF.";
+      }
+      enum "cs6" {
+        value 6;
+        description
+          "Specify the CoS as CS6.";
+      }
+      enum "cs7" {
+        value 7;
+        description
+          "Specify the CoS as CS7.";
+      }
+    }
+    description
+      "Description of CoS.";
+  }
+  typedef l2vpn-color {
+    type enumeration {
+      enum "green" {
+        value 0;
+        description
+          "Specify the packet color as green.";
+      }
+      enum "yellow" {
+        value 1;
+        description
+          "Specify the packet color as yellow.";
+      }
+      enum "red" {
+        value 2;
+        description
+          "Specify the packet color as red.";
+      }
+    }
+    description
+      "Description of packet color.";
+  }
+  typedef l2vpn-trust-type {
+    type enumeration {
+      enum "outpri" {
+        value 0;
+        description
+          "Specify the trust type as OUTTER-VLAN-8021P.";
+      }
+      enum "inpri" {
+        value 1;
+        description
+          "Specify the trust type as INNER-VLAN-8021P.";
+      }
+      enum "ipdscp" {
+        value 2;
+        description
+          "Specify the trust type as IP-DSCP.";
+      }
+    }
+    description
+      "Description of trust type.";
+  }
+  ext:task-name "forwarding";
+  augment "/l2vpn:l2vpn/l2vpn:common" {
+    description "L2VPN common parameters.";
+    container l2vpn-ext {
+      description
+        "Configure the extension of L2VPN.";
+      leaf vpls-ldp-fast-switch {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the flag of VPLS LDP fast-switch.";
+      }
+      leaf pw-source-tunnel-check {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the flag of L2VPN pw-source-tunnel check.";
+      }
+      leaf flow-label-hash {
+        type enumeration {
+          enum "L2" {
+              value 2;
+          description
+              "L2.";
+          }
+          enum "L3" {
+              value 1;
+          description
+              "L3.";
+          }
+          enum "L4" {
+              value 0;
+          description
+              "L4.";
+          }
+        }
+        default "L4";
+        description
+          "The flag of flowLabel.";
+      }
+      leaf convergence-separate-in-system {
+        type boolean;
+        /* must "../../l2vpn:l2vpn-global/enable='true'"; */
+        default "false";
+        description
+          "Enable/disable the flag of VPLS convergence separate in systerm.";
+      }
+      leaf vpls-tm-prune-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the flag of TM prune mode.";
+      }
+    }
+  }
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls" {
+    description "Vpls instances.";
+    container vsi-pipe {
+      description
+        "Configure the diffserv mode of VPLS.";
+      leaf split-mode {
+        type boolean;
+        must "((../split-mode='false' and not(../ingress-pipe-mode) and not(../egress-pipe-mode) and ../pipe-mode) or (../split-mode='true' and not(../pipe-mode) and ../ingress-pipe-mode and ../egress-pipe-mode and not(../ingress-pipe-mode='uniform' and ../egress-pipe-mode='uniform')))";
+        default "false";
+        description
+          "Enable/disable split mode.";
+      }
+      leaf pipe-mode {
+        when "../split-mode='false'";
+        type l2vpn-pipe-mode;
+        must "(../split-mode='false') and ((../pipe-mode='pipe' and (../service-class) and (../color)) or (../pipe-mode='shortPipe' and (../service-class) and (../color) and (../domain-name)) or (../pipe-mode='uniform'))";
+        default "uniform";
+        description
+          "VSI pipe mode.";
+      }
+      leaf ingress-pipe-mode {
+        when "../split-mode='true'";
+        type l2vpn-pipe-mode;
+        must "((../split-mode='true') and (((../service-class) and (../color) and (../ingress-pipe-mode='shortPipe' or ../ingress-pipe-mode='pipe')) or (../ingress-pipe-mode='uniform' and ../egress-pipe-mode!='uniform')))";
+        default "uniform";
+        description
+          "VSI ingress pipe mode.";
+      }
+      leaf egress-pipe-mode {
+        when "../split-mode='true'";
+        type l2vpn-pipe-mode;
+        must "((../split-mode='true') and (((../domain-name) and (../trust-type) and (../egress-pipe-mode='shortPipe')) or (../egress-pipe-mode='pipe') or (../egress-pipe-mode='uniform' and ../ingress-pipe-mode!='uniform')))";
+        default "uniform";
+        description
+          "VSI egress pipe mode.";
+      }
+      leaf service-class {
+        when "(../pipe-mode='pipe' or ../pipe-mode='shortPipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortPipe')";
+        type l2vpn-service-class;
+        must "(../pipe-mode='pipe' or ../pipe-mode='shortPipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortPipe')";
+        default "be";
+        description
+          "VSI service class.";
+      }
+      leaf color {
+        when "(../pipe-mode='pipe' or ../pipe-mode='shortPipe'  or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortPipe')";
+        type l2vpn-color;
+        must "(../pipe-mode='pipe' or ../pipe-mode='shortPipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortPipe')";
+        default "green";
+        description
+          "Packet color.";
+      }
+      leaf domain-name {
+        when "(../pipe-mode='shortPipe'  or ../egress-pipe-mode='shortPipe')";
+        type leafref {
+          path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+        }
+        must "(../pipe-mode='shortPipe' or ../egress-pipe-mode='shortPipe')";
+        default "default";
+        description
+          "Domain name.";
+      }
+      leaf trust-type {
+        when "../egress-pipe-mode='shortPipe'";
+        type l2vpn-trust-type;
+        must "../egress-pipe-mode='shortPipe'";
+        default "outpri";
+        description
+          "VSI trust type.";
+      }
+    }
+    container vpls-ext {
+      description
+        "Configure VPLS common extension.";
+      leaf vsi-multicast-switch {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the flag of VPLS multicast fast switching.";
+      }
+      leaf pw-packet-type-traffic-statistic {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function to collect packet-type traffic statistics.";
+      }
+      leaf convergence-separate {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the flag of VPLS convergence separate in VSI.";
+      }
+    }
+  }
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:acs/l2vpn:ac" {
+    description "VPLS AC.";
+    container vpls-ac-suppression {
+      config false;
+      description
+        "Statistics of the VSI AC suppression.";
+      leaf time {
+        type string {
+          length "1..60";
+        }
+        config false;
+        description
+          "AC suppression time.";
+      }
+      leaf unicast-in-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Unicast inbound suppression flag.";
+      }
+      leaf unicast-in-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast packets passed in the inbound direction of an AC interface.";
+      }
+      leaf unicast-in-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast bytes passed in the inbound direction of an AC interface.";
+      }
+      leaf unicast-in-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast packets dropped in the inbound direction of an AC interface.";
+      }
+      leaf unicast-in-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast bytes dropped in the inbound direction of an AC interface.";
+      }
+      leaf unicast-out-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Unicast outbound suppression flag.";
+      }
+      leaf unicast-out-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast packets passed in the outbound direction of an AC interface.";
+      }
+      leaf unicast-out-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast bytes passed in the outbound direction of an AC interface.";
+      }
+      leaf unicast-out-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast packets dropped in the outbound direction of an AC interface.";
+      }
+      leaf unicast-out-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast bytes dropped in the outbound direction of an AC interface.";
+      }
+      leaf multicast-in-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Multicast inbound suppression flag.";
+      }
+      leaf multicast-in-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of multicast packets passed in the inbound direction of an AC interface.";
+      }
+      leaf multicast-in-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of multicast bytes passed in the inbound direction of an AC interface.";
+      }
+      leaf multicast-in-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of multicast packets dropped in the inbound direction of an AC interface.";
+      }
+      leaf multicast-in-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of multicast bytes dropped in the inbound direction of an AC interface.";
+      }
+      leaf multicast-out-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Multicast outbound suppression flag.";
+      }
+      leaf multicast-out-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of multicast packets passed in the outbound direction of an AC interface.";
+      }
+      leaf multicast-out-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of multicast bytes passed in the outbound direction of an AC interface.";
+      }
+      leaf multicast-out-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of multicast packets dropped in the outbound direction of an AC interface.";
+      }
+      leaf multicast-out-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of multicast bytes dropped in the outbound direction of an AC interface.";
+      }
+      leaf broadcast-in-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Broadcast inbound suppression flag.";
+      }
+      leaf broadcast-in-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast packets passed in the inbound direction of an AC interface.";
+      }
+      leaf broadcast-in-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast bytes passed in the inbound direction of an AC interface.";
+      }
+      leaf broadcast-in-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast packets dropped in the inbound direction of an AC interface.";
+      }
+      leaf broadcast-in-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast bytes dropped in the inbound direction of an AC interface.";
+      }
+      leaf broadcast-out-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Broadcast outbound suppression flag.";
+      }
+      leaf broadcast-out-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast packets passed in the outbound direction of an AC interface.";
+      }
+      leaf broadcast-out-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast bytes passed in the outbound direction of an AC interface.";
+      }
+      leaf broadcast-out-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast packets dropped in the outbound direction of an AC interface.";
+      }
+      leaf broadcast-out-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast bytes dropped in the outbound direction of an AC interface.";
+      }
+    }
+  }
+}

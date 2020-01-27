@@ -1,0 +1,825 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-etrunk {
+  namespace "urn:huawei:yang:huawei-etrunk";
+  prefix etrunk;
+  import huawei-bfd {
+    prefix bfd;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ifm-trunk {
+    prefix ifm-trunk;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Enhanced Trunk (E-Trunk) is a mechanism that controls and implements link aggregation among multiple devices. E-Trunk implements device-level not board-level link reliability.";
+  revision 2020-02-19 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "etrunk";
+  typedef etrunk-state {
+    type enumeration {
+      enum "init" {
+        value 1;
+        description
+          "The E-Trunk state is init.";
+      }
+      enum "backup" {
+        value 2;
+        description
+          "The E-Trunk state is backup.";
+      }
+      enum "master" {
+        value 3;
+        description
+          "The E-Trunk state is master.";
+      }
+    }
+    description
+      "E-Trunk status.";
+  }
+  typedef ethtrunk-state {
+    type enumeration {
+      enum "negotiation" {
+        value 3;
+        description
+          "Negotiation state.";
+      }
+      enum "master" {
+        value 2;
+        description
+          "Master state.";
+      }
+      enum "backup" {
+        value 1;
+        description
+          "Backup state.";
+      }
+    }
+    description
+      "Eth-Trunk status.";
+  }
+  typedef etrunk-causation {
+    type enumeration {
+      enum "priority-change" {
+        value 1;
+        description
+          "The E-Trunk state is changed because the priority is changed.";
+      }
+      enum "timeout" {
+        value 2;
+        description
+          "The E-Trunk state is changed because the local device fails to receive any hello packet before the timeout period expires.";
+      }
+      enum "bfd-down" {
+        value 3;
+        description
+          "The E-Trunk state is changed because the BFD is down on the local device.";
+      }
+      enum "peer-timeout" {
+        value 4;
+        description
+          "The E-Trunk state is changed because the peer device fails to receive any hello packet before the timeout period expires.";
+      }
+      enum "peer-bfd-down" {
+        value 5;
+        description
+          "The E-Trunk state is changed because the BFD is down on the peer device.";
+      }
+      enum "init-all-member-down" {
+        value 6;
+        description
+          "The E-Trunk state is changed because all members are down and the E-Trunk enters the initialized state.";
+      }
+      enum "init" {
+        value 7;
+        description
+          "The E-Trunk state is changed because the E-Trunk is initialized.";
+      }
+      enum "peer-node-down" {
+        value 8;
+        description
+          "The E-Trunk state is changed because the peer device is down.";
+      }
+    }
+    description
+      "E-Trunk status reason.";
+  }
+  typedef ethtrunk-causation {
+    type enumeration {
+      enum "force-backup" {
+        value 1;
+        description
+          "Forcible backup.";
+      }
+      enum "force-master" {
+        value 2;
+        description
+          "Forcible master.";
+      }
+      enum "etrunk-init" {
+        value 3;
+        description
+          "The E-Trunk state is initialized.";
+      }
+      enum "etrunk-backup" {
+        value 4;
+        description
+          "The E-Trunk state is backup.";
+      }
+      enum "etrunk-master" {
+        value 5;
+        description
+          "The E-Trunk state is master.";
+      }
+      enum "peer-member-down" {
+        value 6;
+        description
+          "The physical state of the peer member is down.";
+      }
+      enum "peer-member-up" {
+        value 7;
+        description
+          "The physical state of the peer member is up.";
+      }
+      enum "active-active" {
+        value 8;
+        description
+          "The physical state of members at both ends is up.";
+      }
+      enum "degraded-active" {
+        value 9;
+        description
+          "The physical state of E-Trunk members (Eth-Trunk interfaces) is degraded active.";
+      }
+      enum "peerlink-down" {
+        value 10;
+        description
+          "The peer link is down.";
+      }
+      enum "link-down" {
+        value 11;
+        description
+          "The local link is down.";
+      }
+      enum "all-active" {
+        value 12;
+        description
+          "The redundancy mode of EVPN instance that E-Trunk member is bound to is all-active.";
+      }
+      enum "peer-bandwidth-large" {
+        value 13;
+        description
+          "The available bandwidth of peer member is large.";
+      }
+      enum "local-bandwidth-large" {
+        value 14;
+        description
+          "The available bandwidth of local member is large.";
+      }
+    }
+    description
+      "Eth-Trunk status reason.";
+  }
+  typedef phy-state {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "The physical state is up.";
+      }
+      enum "down" {
+        value 2;
+        description
+          "The physical state is down.";
+      }
+    }
+    description
+      "Eth-Trunk physical status.";
+  }
+  typedef password-type {
+    type enumeration {
+      enum "simple" {
+        value 1;
+        description
+          "Simple password.";
+      }
+      enum "cipher" {
+        value 2;
+        description
+          "Ciphertext password.";
+      }
+    }
+    description
+      "E-Trunk password type.";
+  }
+  typedef authen-mode {
+    type enumeration {
+      enum "hmac-sha1" {
+        value 1;
+        description
+          "Configure authentication mode as hmac-sha1.";
+      }
+      enum "hmac-sha256" {
+        value 2;
+        description
+          "Configure authentication mode as hmac-sha256.";
+      }
+      enum "enhanced-hmac-sha256" {
+        value 3;
+        description
+          "Configure authentication mode as enhanced-hmac-sha256.";
+      }
+    }
+    description
+      "E-Trunk authentication mode.";
+  }
+  typedef revert-enable {
+    type enumeration {
+      enum "enable" {
+        value 0;
+        description
+          "Enable revert mode.";
+      }
+      enum "disable" {
+        value 1;
+        description
+          "Disable revert mode.";
+      }
+    }
+    description
+      "E-Trunk switchback enabling flag.";
+  }
+  typedef sequence-enable {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable sequence mode.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "Disable sequence mode.";
+      }
+    }
+    description
+      "E-Trunk sequence enabling flag.";
+  }
+  typedef etrunk-mode {
+    type enumeration {
+      enum "auto" {
+        value 1;
+        description
+          "Automatic mode.";
+      }
+      enum "force-backup" {
+        value 2;
+        description
+          "Forcible backup.";
+      }
+      enum "force-master" {
+        value 3;
+        description
+          "Forcible master.";
+      }
+    }
+    description
+      "E-Trunk working mode.";
+  }
+  typedef select-mode {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Calculate the active/standby mode according to the default mode.";
+      }
+      enum "link-number" {
+        value 1;
+        description
+          "Calculate the active/standby mode according to the active link number.";
+      }
+      enum "bandwidth" {
+        value 2;
+        description
+          "Calculate the active/standby mode according to the available bandwidth.";
+      }
+    }
+    description
+      "E-Trunk select mode.";
+  }
+  typedef bfd-state {
+    type enumeration {
+      enum "up" {
+        value 2;
+        description
+          "The BFD state is up.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "The BFD state is down.";
+      }
+      enum "unknown" {
+        value 0;
+        description
+          "The BFD state is unknown.";
+      }
+    }
+    description
+      "BFD session status.";
+  }
+  container etrunk {
+    description
+      "Enhanced Trunk (E-Trunk) is a mechanism that controls and implements link aggregation among multiple devices. E-Trunk implements device-level not board-level link reliability.";
+    container global {
+      description
+        "Configure E-Trunk global configuration.";
+      leaf lacp-priority {
+        type uint16 {
+          range "0..65535";
+        }
+        default "32768";
+        description
+          "Global LACP system priority.";
+      }
+      leaf lacp-sys-id {
+        ext:dynamic-default;
+        type pub-type:mac-address;
+        description
+          "Global LACP system MAC address. The default value is the mac address of the system bridge MAC address.";
+      }
+      leaf udp-port {
+        type uint16 {
+          range "1025..65535";
+        }
+        default "1025";
+        description
+          "UDP port used for global E-Trunk communication.";
+      }
+      leaf udp6-port {
+        type uint16 {
+          range "1025..65535";
+        }
+        default "1025";
+        description
+          "UDP6 port used for global E-Trunk communication.";
+      }
+      leaf recv-id-errs {
+        type uint64;
+        config false;
+        description
+          "Receive E-Trunk ID errors.";
+      }
+      leaf recv-length-errs {
+        type uint64;
+        config false;
+        description
+          "Receive length errors.";
+      }
+      leaf all-num {
+        type uint32;
+        config false;
+        description
+          "All E-Trunk number.";
+      }
+      leaf master-num {
+        type uint32;
+        config false;
+        description
+          "E-Trunk master number.";
+      }
+      leaf backup-num {
+        type uint32;
+        config false;
+        description
+          "E-Trunk backup number.";
+      }
+      leaf init-num {
+        type uint32;
+        config false;
+        description
+          "E-Trunk init number.";
+      }
+    }
+    container instances {
+      description
+        "List of E-Trunk.";
+      list instance {
+        must "(peer-addr and source-addr and peer-addr != source-addr) or (not(peer-addr) and not(source-addr))";
+        key "id";
+        description
+          "Configure E-Trunk instance.";
+        leaf id {
+          type uint16 {
+            range "1..128";
+          }
+          description
+            "An integer that uniquely identifies an E-Trunk link.";
+        }
+        leaf priority {
+          type uint16 {
+            range "1..254";
+          }
+          default "100";
+          description
+            "The E-Trunk priority determines the master/backup status of two devices in an aggregation group.";
+        }
+        leaf ni-name {
+          when "../peer-addr and ../source-addr";
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af/l3vpn:type";
+          default "_public_";
+          description
+            "VPN instance name. If peer-addr and source-addr are set to IPv4, the IPv4 address family needs to be configured for the VPN instance. If peer-addr and source-addr are set to IPv6, the IPv6 address family needs to be configured for the VPN instance.";
+        }
+        leaf peer-addr {
+          type inet:ip-address-no-zone;
+          
+          description
+            "Configure peer IPv4/IPv6 address, peer-addr and source-addr must be of the same type, either IPv4 or IPv6.";
+        }
+        leaf source-addr {
+          type inet:ip-address-no-zone;
+          description
+            "Configure source IPv4/IPv6 address, peer-addr and source-addr must be of the same type, either IPv4 or IPv6.";
+        }
+        choice bfd-session {
+          description
+            "BFD session choices.";
+          case static-bfd {
+            description
+              "BFD session choice case as static BFD.";
+            leaf bfd-session-name {
+              type leafref {
+                path "/bfd:bfd/bfd:sessions/bfd:session/bfd:name";
+              }
+              must "/bfd:bfd/bfd:sessions/bfd:session[bfd:name=current()]/bfd:local-discriminator";
+              description
+                "Bind the BFD session to an E-Trunk.";
+            }
+          }
+          case dyn-bfd { 
+            description
+              "Dynamic BFD session binding to an E-Trunk.";
+            container e-trunkbfd {
+              description
+                "Configure dynamic BFD information.";
+              leaf bfd-enable {
+                when "/bfd:bfd";
+                type empty;
+                description
+                  "E-Trunk creates BFD session automatically.";
+              }
+              leaf detect-multi {
+                when "../bfd-enable";
+                type uint32 {
+                  range "3..50";
+                }
+                units s;
+                default "3";
+                description
+                  "BFD hello packet detection multiplier.";
+              }
+              leaf min-rx-interval {
+                when "../bfd-enable";
+                type uint32 {
+                  range "3..20000";
+                }
+                units s;
+                default "10";
+                description
+                  "Interval at which BFD hello packets are received.";
+              }
+              leaf min-tx-interval {
+                when "../bfd-enable";
+                type uint32 {
+                  range "3..20000";
+                }
+                units s;
+                default "10";
+                description
+                  "Interval at which BFD hello packets are sent.";
+              }
+              leaf if-name {
+                when "../bfd-enable";
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                description
+                  "Tracked interface name. The interface must be a physical main interface or Eth-Trunk interface.";
+              }
+              leaf bfd-state {
+                type bfd-state;
+                config false;
+                description
+                  "Dynamic BFD state.";
+              }
+            }
+          }
+        }
+        leaf security-key-type {
+          type password-type;
+          must "(../security-key-type='cipher' and ../security-key) or ../security-key-type='simple'";
+          default "simple";
+          description
+            "Configure a password type: simple/cipher.";
+        }
+        leaf security-key {
+          type pub-type:password-extend;
+          description
+            "Configure a password for encrypted packets. The password is a string ranging from 1 to 255 characters for a unencrypted password and 24 characters for an old encrypted password and 20 to 432 characters for a encrypted password.";
+        }
+        leaf authen-mode {
+          type authen-mode;
+          default "enhanced-hmac-sha256";
+          description
+            "Configure an authentication mode for an E-Trunk.";
+        }
+        leaf timer-hello {
+          type uint8 {
+            range "5..100";
+          }
+          units "100 ms";
+          default "10";
+          description
+            "Configure the interval at which hello packets are sent.";
+        }
+        leaf timer-multi {
+          type uint16 {
+            range "3..300";
+          }
+          units "100 ms";
+          default "20";
+          description
+            "Configure the multiplier for detecting hello packets.";
+        }
+        leaf revert-enable {
+          type revert-enable;
+          default "enable";
+          description
+            "Configure revert enable.";
+        }
+        leaf timer-revert-delay {
+          type uint16 {
+            range "0..10800";
+          }
+          units s;
+          default "120";
+          description
+            "Configure the switchback delay time.";
+        }
+        leaf sequence-enable {
+          type sequence-enable;
+          default "disable";
+          description
+            "Configure sequence enable.";
+        }
+        leaf description {
+          type pub-type:description-string {
+            length "1..242";
+            pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+          }
+          description
+            "Configure a description for an E-Trunk.";
+        }
+        leaf select-mode {
+          type select-mode;
+          default "default";
+          description
+            "The mode of E-Trunk that is used for calculate the active or standby status.";
+        }
+        leaf sys-id {
+          type pub-type:mac-address;
+          config false;
+          description
+            "Local system MAC address.";
+        }
+        leaf state {
+          type etrunk-state;
+          config false;
+          description
+            "Local E-Trunk state.";
+        }
+        leaf causation {
+          type etrunk-causation;
+          config false;
+          description
+            "The reason for local E-Trunk state change.";
+        }
+        leaf recv-pkts {
+          type uint64;
+          config false;
+          description
+            "Statistics about received packets.";
+        }
+        leaf send-pkts {
+          type uint64;
+          config false;
+          description
+            "Statistics about sent packets.";
+        }
+        leaf recv-drop-pkts {
+          type uint64;
+          config false;
+          description
+            "Statistics about dropped received packets statistics.";
+        }
+        leaf send-drop-pkts {
+          type uint64;
+          config false;
+          description
+            "Statistics about dropped sent packets.";
+        }
+        leaf peer-priority {
+          type uint16;
+          config false;
+          description
+            "The E-Trunk peer priority determines the master/backup status of two devices in an aggregation group.";
+        }
+        leaf peer-sys-id {
+          type pub-type:mac-address;
+          config false;
+          description
+            "Peer system MAC address.";
+        }
+        leaf peer-fail-time {
+          type uint32;
+          units "s";
+          config false;
+          description
+            "Peer timeout period. Timeout period = peer sending period x Multiplier.";
+        }
+        container interfaces {
+          description
+            "List of E-Trunk member.";
+          list interface {
+            key "if-name";
+            max-elements  "64";
+            description
+              "Configure E-Trunk member.
+              Special explanation: Before adding an interface to an E-Trunk, you must create the interface based on localTrunkId and type.";
+            leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              must "(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()]/ifm:type = 'Eth-Trunk' and (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()]/ifm-trunk:trunk/ifm-trunk:work-mode = 'static' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()]/ifm-trunk:trunk/ifm-trunk:work-mode = 'manual')) or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()]/ifm:type = 'Global-VE'";
+              description
+                "Local Eth-Trunk name or Global-VE name.";
+            }
+            leaf remote-trunk-id {
+              type uint32;
+              description
+                "Remote Eth-Trunk ID. The remote Eth-Trunk ID can not be modified or deleted independently.";
+            }
+            leaf mode {
+              type etrunk-mode;
+              default "auto";
+              description
+                "E-Trunk member working mode.";
+            }
+            leaf phy-state {
+              type phy-state;
+              config false;
+              description
+                "E-Trunk member physical state.";
+            }
+            leaf state {
+              type ethtrunk-state;
+              config false;
+              description
+                "E-Trunk member state.";
+            }
+            leaf causation {
+              type ethtrunk-causation;
+              config false;
+              description
+                "The reason for E-Trunk member state change.";
+            }
+            container lacp-syscfg {
+              must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()/../if-name]/ifm:type = 'Eth-Trunk' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()/../if-name]/ifm-trunk:trunk/ifm-trunk:work-mode = 'static'";
+              description
+                "Configure Eth-Trunk LACP configuration.";
+              leaf lacp-priority {
+                type uint16 {
+                  range "0..65535";
+                }
+                description
+                  "LACP system priority of the Eth-Trunk.";
+              }
+              leaf lacp-sysid {
+                type pub-type:mac-address;
+                description
+                  "LACP system MAC of the Eth-Trunk. The default value is generated by LACP.";
+              }
+              leaf negotiate-delay {
+                type uint16 {
+                  range "0..1800";
+                }
+                default "0";
+                description
+                  "Set the value of negotiating delay time.";
+              }
+            }
+          }
+        }
+        container pkts-statistics {
+          config false;
+          description
+            "E-Trunk packet statistics.";
+          leaf priority-err-pkts {
+            type uint64;
+            config false;
+            description
+              "Receive priority error packets statistics.";
+          }
+          leaf fail-time-pkts {
+            type uint64;
+            config false;
+            description
+              "Receive failtime error packets statistics.";
+          }
+          leaf state-err-pkts {
+            type uint64;
+            config false;
+            description
+              "Receive state error packets statistics.";
+          }
+          leaf reason-err-pkts {
+            type uint64;
+            config false;
+            description
+              "Receive state reason error packets statistics.";
+          }
+          leaf peer-err-pkts {
+            type uint64;
+            config false;
+            description
+              "Receive peer IP error packets statistics.";
+          }
+          leaf auth-err-pkts {
+            type uint64;
+            config false;
+            description
+              "Receive authentication mode error packets statistics.";
+          }
+          leaf tlv-err-pkts {
+            type uint64;
+            config false;
+            description
+              "Receive TLV error packets statistics.";
+          }
+          leaf sysid-err-pkts {
+            type uint64;
+            config false;
+            description
+              "Receive system ID error packets statistics.";
+          }
+          leaf bfd-err-pkts {
+            type uint64;
+            config false;
+            description
+              "Receive BFD protection error packets statistics.";
+          }
+          leaf seq-err-pkts {
+            type uint64;
+            config false;
+            description
+              "Receive sequence check error packets statistics.";
+          }
+        }
+      }
+    }
+  }
+}

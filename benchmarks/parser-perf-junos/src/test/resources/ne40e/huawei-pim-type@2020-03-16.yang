@@ -1,0 +1,498 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-pim-type {
+  belongs-to huawei-pim {
+    prefix pim;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "PIM type.";
+
+  revision 2020-03-16 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-03 {
+    description
+      "Modify grammatical errors and word misspellings of some node description in the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-06 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef addr-family-type {
+    type enumeration {
+      enum "ipv4unicast" {
+        value 1;
+        description
+          "IPv4 unicast address.";
+      }
+      enum "ipv6unicast" {
+        value 2;
+        description
+          "IPv6 unicast address.";
+      }
+    }
+    description
+      "Unicast address.";
+  }
+  typedef bfd-status {
+    type enumeration {
+      enum "admin-down" {
+        value 0;
+        description
+          "A session is in the administratively Down state because the shutdown command is run in the BFD session.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "A session is in the Down state not because the shutdown command is run in the BFD session.";
+      }
+      enum "init" {
+        value 2;
+        description
+          "The local end can communicate with the remote end and wants the session status to be Up.";
+      }
+      enum "up" {
+        value 3;
+        description
+          "The BFD session is set up successfully and detection messages are periodically exchanged.";
+      }
+      enum "bfd-session-number-exceed" {
+        value 4;
+        description
+          "The number of BFD session discriminators exceeds the upper limit.";
+      }
+    }
+    description
+      "Status of a PIM BFD session.";
+  }
+  typedef pim-mode {
+    type enumeration {
+      enum "sparse" {
+        value 0;
+        description
+          "PIM-SM Mode.";
+      }
+      enum "dense" {
+        value 1;
+        description
+          "PIM-DM Mode.";
+      }
+    }
+    description
+      "PIM Mode.";
+  }
+  typedef bsr-boundary {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Disable BSR boundary.";
+      }
+      enum "both" {
+        value 1;
+        description
+          "Enable BSR boundary.";
+      }
+      enum "incoming" {
+        value 2;
+        description
+          "Enable BSR boundary in the inbound direction.";
+      }
+    }
+    description
+      "Whether to enable BSR boundary.";
+  }
+  typedef rp-prefer-type {
+    type enumeration {
+      enum "not-prefer" {
+        value 0;
+        description
+          "Disable the static RP from being preferred.";
+      }
+      enum "prefer" {
+        value 1;
+        description
+          "Enable the static RP to be preferred.";
+      }
+    }
+    description
+      "Whether to enable the static RP to be preferred.";
+  }
+  typedef bsr-state {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "The state machine is in the Unknown state.";
+      }
+      enum "accept-any" {
+        value 1;
+        description
+          "The state machine is in the Accept-Any state.";
+      }
+      enum "accept-preferred" {
+        value 2;
+        description
+          "The state machine is in the Accept-Preferred state.";
+      }
+      enum "candidate" {
+        value 3;
+        description
+          "The state machine is in the Candidate state.";
+      }
+      enum "pending" {
+        value 4;
+        description
+          "The status is Pending.";
+      }
+      enum "elected" {
+        value 5;
+        description
+          "The status is Elected.";
+      }
+    }
+    description
+      "The state machine.";
+  }
+  typedef bsr-scope {
+    type enumeration {
+      enum "not-scoped" {
+        value 0;
+        description
+          "Domain in which C-BSRs are not configured.";
+      }
+      enum "global" {
+        value 1;
+        description
+          "The router is a C-BSR in the global domain. By default, no C-BSR is configured in the global domain.";
+      }
+      enum "admin-scope" {
+        value 2;
+        description
+          "A PIM-SM domain is divided into multiple BSR administrative domains to implement RP-Set advertisement. By default, no BSR administrative domain is configured, sot that there is only one BSR in each PIM-SM domain.";
+      }
+    }
+    description
+      "BSR administrative domain.";
+  }
+  typedef c-bsr-valid-type {
+    type enumeration {
+      enum "valid" {
+        value 0;
+        description
+          "A router participates in BSR election.";
+      }
+      enum "invalid" {
+        value 1;
+        description
+          "A router does not participate in BSR election.";
+      }
+    }
+    description
+      "Whether a router participates in BSR election.";
+  }
+  typedef interface-state {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "The interface status is Down.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "The interface status is Up.";
+      }
+      enum "backup" {
+        value 2;
+        description
+          "The interface status is Up (hot backup).";
+      }
+    }
+    description
+      "The interface status.";
+  }
+  typedef ipsec-type {
+    type enumeration {
+      enum "for-all" {
+        value 0;
+        description
+          "All messages are supported.";
+      }
+      enum "for-hello" {
+        value 1;
+        description
+          "Only Hello messages are supported.";
+      }
+    }
+    description
+      "The support message type.";
+  }
+  typedef rt-attribute-state {
+    type enumeration {
+      enum "unsafe" {
+        value 0;
+        description
+          "Unsafe state.";
+      }
+      enum "safe" {
+        value 1;
+        description
+          "Safe state.";
+      }
+    }
+    description
+      "The attribute state of vector in PIM routing table.";
+  }
+  typedef sg-rpt-ds-state {
+    type enumeration {
+      enum "NOINFO" {
+        value 1;
+        description
+          "The state machine is in the No-info state.";
+      }
+      enum "pruned" {
+        value 2;
+        description
+          "The Register state machine is in the Pruned state.";
+      }
+      enum "prune-pending" {
+        value 3;
+        description
+          "The state machine is in the Pruned-Pending state.";
+      }
+      enum "MAX" {
+        value 4;
+        description
+          "The state machine is in the Invalid state.";
+      }
+    }
+    description
+      "The SG RPT downstream state machine.";
+  }
+  typedef assert-state {
+    type enumeration {
+      enum "NOINFO" {
+        value 1;
+        description
+          "The state machine is in the No-info state.";
+      }
+      enum "winner" {
+        value 2;
+        description
+          "The state machine is in the Winner state.";
+      }
+      enum "loser" {
+        value 3;
+        description
+          "The state machine is in the Loser state.";
+      }
+    }
+    description
+      "State of the assert state machine.";
+  }
+  typedef sg-down-state {
+    type enumeration {
+      enum "NOINFO" {
+        value 1;
+        description
+          "The state machine is in the No-info state.";
+      }
+      enum "prune-pending" {
+        value 2;
+        description
+          "The state machine is in the Pruned-Pending state.";
+      }
+      enum "joined" {
+        value 3;
+        description
+          "The state machine is in the Joined state.";
+      }
+      enum "pruned" {
+        value 4;
+        description
+          "The state machine is in the Pruned state.";
+      }
+    }
+    description
+      "State of the state machine.";
+  }
+  typedef dr-register-state {
+    type enumeration {
+      enum "NOINFO" {
+        value 1;
+        description
+          "The Register state machine is in the NoInfo state.";
+      }
+      enum "join" {
+        value 2;
+        description
+          "The Register state machine is in the Joined state.";
+      }
+      enum "join-pending" {
+        value 3;
+        description
+          "The Register state machine is in the Pruned state.";
+      }
+      enum "prune" {
+        value 4;
+        description
+          "The Register state machine is in the Join-Pending state.";
+      }
+    }
+    description
+      "The Register state machine.";
+  }
+  typedef rpt-up-state {
+    type enumeration {
+      enum "not-pruned" {
+        value 1;
+        description
+          "The upstream state machine is in the NotPruned state.";
+      }
+      enum "not-joined" {
+        value 2;
+        description
+          "The upstream state machine is in the NotJoined state.";
+      }
+      enum "pruned" {
+        value 3;
+        description
+          "The upstream state machine is in the Pruned state.";
+      }
+      enum "max" {
+        value 4;
+        description
+          "The upstream state machine is in the Invalid state.";
+      }
+    }
+    description
+      "The SG RPT upstream state machine.";
+  }
+  typedef sg-up-state {
+    type enumeration {
+      enum "not-joined" {
+        value 1;
+        description
+          "The upstream state machine is in the NotJoined state.";
+      }
+      enum "joined" {
+        value 2;
+        description
+          "The upstream state machine is in the Joined state.";
+      }
+      enum "forward" {
+        value 3;
+        description
+          "The upstream state machine is in the Forward state.";
+      }
+      enum "pruned" {
+        value 4;
+        description
+          "The upstream state machine is in the Pruned state.";
+      }
+      enum "ack-pend" {
+        value 5;
+        description
+          "The upstream state machine is in the AckPend state.";
+      }
+    }
+    description
+      "State of the upstream state machine.";
+  }
+  typedef rp-type {
+    type enumeration {
+      enum "fixed" {
+        value 1;
+        description
+          "Fixed.";
+      }
+      enum "static" {
+        value 2;
+        description
+          "Static.";
+      }
+      enum "config-ssm" {
+        value 3;
+        description
+          "Configure SSM.";
+      }
+      enum "bsr" {
+        value 4;
+        description
+          "Bootstrap router (BSR).";
+      }
+      enum "auto-rp" {
+        value 5;
+        description
+          "Auto-rendezvous point.";
+      }
+      enum "embedded" {
+        value 6;
+        description
+          "Embedded-RP.";
+      }
+      enum "other" {
+        value 7;
+        description
+          "Other.";
+      }
+    }
+    description
+      "RP mode type.";
+  }
+  typedef sg-mode {
+    type enumeration {
+      enum "none" {
+        value 1;
+        description
+          "No protocol.";
+      }
+      enum "pim-asm" {
+        value 2;
+        description
+          "Protocol Independent Multicast-Sparse Mode.";
+      }
+      enum "pim-dm" {
+        value 3;
+        description
+          "Protocol Independent Multicast-Dense Mode.";
+      }
+      enum "pim-bidir" {
+        value 4;
+        description
+          "Bidirectional Protocol Independent Multicast.";
+      }
+      enum "pim-ssm" {
+        value 5;
+        description
+          "Protocol-Independent Multicast Source-specific Multicast.";
+      }
+      enum "other" {
+        value 6;
+        description
+          "Other protocols.";
+      }
+    }
+    description
+      "SG mode.";
+  }
+}

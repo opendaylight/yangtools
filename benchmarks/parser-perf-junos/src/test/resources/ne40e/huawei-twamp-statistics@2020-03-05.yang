@@ -1,0 +1,73 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-twamp-statistics {
+  namespace "urn:huawei:yang:huawei-twamp-statistics";
+  prefix twamp-statistics;
+
+  import huawei-twamp-controller {
+    prefix twamp-controller;
+  }
+
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "TWAMP statistics.";
+ revision 2020-03-05 {
+    description
+      "Modify initial revision's description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-05 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  ext:task-name "twampclient";
+
+  augment "/twamp-controller:twamp-controller/twamp-controller:client/twamp-controller:sessions/twamp-controller:session" {
+    description
+    "TWAMP augment.";
+    container statistics {
+      config false;
+      description
+        "TWAMP statistics.";
+      leaf avg-delay {
+      type uint32;
+      units "us";
+      description
+        "The average delay.";
+      }
+      leaf avg-jitter {
+      type uint32;
+      units "us";
+      description
+        "The average jitter.";
+      }
+      leaf loss-count {
+      type uint32;
+      description
+        "The loss count.";
+      }
+      leaf send-count {
+      type uint32;
+      description
+        "The send count.";
+      }
+    }
+  }
+}

@@ -1,0 +1,89 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-dynacl {
+  namespace "urn:huawei:yang:huawei-bras-dynacl";
+  prefix bras-dynacl;
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras dynacl.";
+
+  revision 2019-04-10 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference "Huawei private.";
+  }
+  ext:task-name "aaa-access";
+  container bras-dynacl {
+    description
+      "Bras dynacl.";
+    container remote-download-acl {
+      description
+        "Configure the RADIUS server to create dynamic ACLs.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the RADIUS server to create dynamic ACLs.";
+      }
+    }
+    container remote-download-user-group {
+      description
+        "Configure the RADIUS server to create dynamic user groups.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the RADIUS server to create dynamic user groups.";
+      }
+    }
+    container remote-user-group-check-interval {
+      description
+        "Configure an interval at which a device checks whether dynamic user groups created by the RADIUS server are used by online users or dynamic ACLs.";
+      leaf interval-value {
+        type uint32 {
+          range "1..65535";
+        }
+        units min;
+        default "10";
+        description
+          "Specifies an interval at which the device checks whether a dynamic user group is in use.";
+      }
+    }
+    container remote-download-acl-alarm-threshold {
+      description
+        "Configure the alarm threshold for the usage of classifier-behavior pairs dynamically delivered by the RADIUS server.";
+      leaf threshold-value {
+        type uint32 {
+          range "1..100";
+        }
+        units %;
+        default "80";
+        description
+          "Specifies an alarm threshold.";
+      }
+    }
+    container support-all-operate {
+      description
+        "Configure a BRAS to support all operation types of a dynamic ACL delivered using a RADIUS authentication response packet when a user goes online.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a BRAS to support all operation types of a dynamic ACL delivered using a RADIUS authentication response packet when a user goes online.";
+      }
+    }
+  }
+}

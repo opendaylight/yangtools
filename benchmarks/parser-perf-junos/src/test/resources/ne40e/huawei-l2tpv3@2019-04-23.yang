@@ -1,0 +1,365 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2tpv3 {
+  namespace "urn:huawei:yang:huawei-l2tpv3";
+  prefix l2tpv3;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-ip {
+    prefix ip;
+  }
+  import huawei-extension {
+    prefix ext;
+  }  
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "L2TPv3.";
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "l2tpv3";  
+  typedef cookie-length {
+    type enumeration {
+      enum "4-bytes" {
+        value 4;
+        description
+          "4 bytes.";
+      }
+      enum "8-bytes" {
+        value 8;
+        description
+          "8 bytes.";
+      }
+    }
+    description
+      "Cookie length.";
+  }
+  typedef instance-type {
+    type enumeration {
+      enum "local-connect" {
+        value 1;
+        description
+          "Local connect type.";
+      }
+    }
+    description
+      "Instance type.";
+  }
+  typedef pw-role-type {
+    type enumeration {
+      enum "primary" {
+        value 1;
+        description
+          "Primary tunnel.";
+      }
+      enum "injected" {
+        value 2;
+        description
+          "Injected tunnel.";
+      }
+    }
+    description
+      "PW role type.";
+  }
+  typedef state {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "Up state.";
+      }
+      enum "down" {
+        value 2;
+        description
+          "Down state.";
+      }
+    }
+    description
+      "L2TPv3 state.";
+  }
+  container l2tpv3 {
+    presence "Enable L2TPv3.";
+    description
+      "L2TPv3 configurations.";
+    container pws {
+      description
+        "List of L2TPv3 tunnels.";
+      list pw {
+        key "name";
+        unique "ip-type/ipv4/source-ip ip-type/ipv4/destination-ip local-session-id";
+        unique "ip-type/ipv6/source-ipv6 ip-type/ipv6/destination-ipv6";
+        description
+          "Configure L2TPv3 tunnel.";
+        leaf name {
+          type string {
+            length "1..19";
+            pattern '[a-zA-Z]([^\s]*)';
+          }
+          description
+            "Name of a tunnel.";
+        }
+        leaf source-interface {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          must "(../source-interface and (../source-ip or ../source-ipv6)) or (not (../source-interface) and not (../source-ip or ../source-ipv6))";
+          description
+            "Source interface name.";
+        }
+        choice ip-type {
+          description
+            "Source and destination configuration.";
+          case ipv4 {
+            description
+              "IPv4 type.";
+            leaf source-ip {
+              when "../source-interface";
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../source-interface]/ip:ipv4/ip:addresses/ip:address/ip:ip";
+              }
+              must "(../source-interface and ../source-ip) or (not (../source-interface) and not (../source-ip))";
+              mandatory true;
+              description
+                "Source IP address of tunnel.";
+            }
+            leaf destination-ip {
+              type inet:ipv4-address-no-zone;
+              description
+                "Destination IP address of tunnel.";
+            }
+          }
+          case ipv6 {
+            description
+              "IPv6 type.";
+            leaf source-ipv6 {
+              when "../source-interface";
+              type inet:ipv6-address-no-zone;
+              must "(../source-interface and ../source-ipv6) or (not (../source-interface) and not (../source-ipv6))";
+              mandatory true;
+              description
+                "Source IPv6 address of tunnel. If the source inferface is a physical interface, the source IPv6 address references the IPv6 address of the physical interface. If the source inferface is a loopback interface, the source IPv6 address must be on the same network segment as the IPv6 address of the loopback interface.";
+            }
+            leaf destination-ipv6 {
+              type inet:ipv6-address-no-zone;
+              description
+                "Destination IPv6 address of tunnel.";
+            }
+          }
+        }
+        leaf local-session-id {
+          type uint32 {
+            range "1..4294967295";
+          }
+          default "4294967295";
+          description
+            "Local session ID.";
+        }
+        leaf remote-session-id {
+          type uint32 {
+            range "1..4294967295";
+          }
+          default "4294967295";
+          description
+            "Remote session ID.";
+        }
+        choice local-cookie {
+          description
+            "The local cookie.";
+          case cipher {
+            description
+              "Local ciphertext cookie.";
+            leaf local-cookie-cipher {
+              type pub-type:password {
+                length "1..108";
+              }
+              description
+                "The value of the local ciphertext cookie.";
+            }
+          }
+          case plain {
+            description
+              "Local plaintext cookie.";
+            leaf local-cookie-length {
+              type cookie-length;
+              description
+                "The length of the local cookie.";
+            }
+            leaf local-cookie-low {
+              when "../local-cookie-length";
+              type pub-type:hex-binary {
+                pattern '(0x)[0-9a-f]+';
+              }
+              mandatory true;
+              description
+                "The value of the lower 4 bytes of the local cookie.";
+
+            }
+            leaf local-cookie-high {
+              when "../local-cookie-length='8-bytes'";
+              type pub-type:hex-binary {
+                pattern '(0x)[0-9a-f]+';
+              }
+              mandatory true;
+              description
+                "The value of the upper 4 bytes of the local cookie.";
+            }
+          }
+        }
+        choice local-secondary-cookie {
+          description
+            "The local secondary cookie.";
+          case cipher {
+            description
+              "Local secondary ciphertext cookie.";
+            leaf local-secondary-cookie-cipher {
+              when "../local-cookie-cipher or ../local-cookie-length";
+              type pub-type:password {
+                length "1..108";
+              }
+              description
+                "The value of the local secondary ciphertext cookie.";
+            }
+          }
+          case plain {
+            description
+              "Local secondary plaintext cookie.";
+            leaf local-secondary-cookie-length {
+              when "../local-cookie-cipher or ../local-cookie-length";
+              type cookie-length;
+              description
+                "The length of the local secondary cookie.";
+            }
+            leaf local-secondary-cookie-low {
+              when "../local-secondary-cookie-length";
+              type pub-type:hex-binary {
+                pattern '(0x)[0-9a-f]+';
+              }
+              mandatory true;
+              description
+                "The value of the lower 4 bytes of the local secondary cookie.";
+
+            }
+            leaf local-secondary-cookie-high {
+              when "../local-secondary-cookie-length='8-bytes'";
+              type pub-type:hex-binary {
+                pattern '(0x)[0-9a-f]+';
+              }
+              mandatory true;
+              description
+                "The value of the upper 4 bytes of the local secondary cookie.";
+            }
+          }
+        }
+        choice remote-cookie {
+          description
+            "The remote cookie.";
+          case cipher {
+            description
+              "Remote ciphertext cookie.";
+            leaf remote-cookie-cipher {
+              type pub-type:password {
+                length "1..108";
+              }
+              description
+                "The value of the remote ciphertext cookie.";
+            }
+          }
+          case plain {
+            description
+              "Remote plaintext cookie.";
+            leaf remote-cookie-length {
+              type cookie-length;
+              description
+                "The length of the remote cookie.";
+            }
+            leaf remote-cookie-low {
+              when "../remote-cookie-length";
+              type pub-type:hex-binary {
+                pattern '(0x)[0-9a-f]+';
+              }
+              mandatory true;
+              description
+                "The value of the lower 4 bytes of the remote cookie.";
+
+            }
+            leaf remote-cookie-high {
+              when "../remote-cookie-length='8-bytes'";
+              type pub-type:hex-binary {
+                pattern '(0x)[0-9a-f]+';
+              }
+              mandatory true;
+              description
+                "The value of the upper 4 bytes of the remote cookie.";
+            }
+          }
+        }
+      }
+    }
+    container instances {
+      description
+        "List of L2TPv3 instances.";
+      list instance {
+        key "name type";
+        unique "interface-name";
+        unique "out-interface-name";
+        description
+          "Configure L2TPv3 instance.";
+        leaf name {
+          type string {
+            length "1..31";
+            pattern '[a-zA-Z]([^\s]*)';
+          }
+          description
+            "Instance name.";
+        }
+        leaf type {
+          type instance-type;
+          description
+            "Instance type.";
+        }
+        leaf interface-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:default or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:dot1q/ethernet:vlans/ethernet:vlan-list and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:flow-action/ethernet:action-type='pop-outer') or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:qinqs/ethernet:qinq-vids/ethernet:qinq-vid/ethernet:ce-vlan-list and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:flow-action/ethernet:action-type='pop-double')";
+          mandatory true;
+          description
+            "Name of a sub-interface.";
+        }
+        leaf out-interface-name {
+          when "../type='local-connect'";
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:default or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:dot1q/ethernet:vlans/ethernet:vlan-list and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:flow-action/ethernet:action-type='pop-outer') or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:qinqs/ethernet:qinq-vids/ethernet:qinq-vid/ethernet:ce-vlan-list and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ethernet:ethernet/ethernet:l2-sub-interface/ethernet:flow-action/ethernet:action-type='pop-double')";
+          mandatory true;
+          description
+            "Name of a sub-interface.";
+        }
+      }
+    }
+  }
+}

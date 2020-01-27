@@ -1,0 +1,1918 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-acl {
+  namespace "urn:huawei:yang:huawei-acl";
+  prefix acl;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-time-range {
+    prefix timerange;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Access Control List (ACL). An ACL is used to identify and select data packets through packet attributes. For example, applying an ACL in the firewall can either permit or discard data packets. Applying an ACL in IPsec can encrypt data packets that match ACL rules and forward those that do not match any ACL rule.";
+  revision 2020-02-20 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "acl";   
+  typedef match-order {
+    type enumeration {
+      enum "config" {
+        value 0;
+        description
+          "Rules in a rule group are matched in the order they are configured.";
+      }
+      enum "auto" {
+        value 1;	  
+        description
+          "Rules in a rule group are automatically matched based on the depth-first principle.";
+      }
+    }
+    description
+      "Matching order.";
+  }
+  typedef rule-action {
+    type enumeration {
+      enum "permit" {
+        value 0;
+        description
+          "Permit packets.";
+      }
+      enum "deny" {
+        value 1;	  
+        description
+          "Deny packets.";
+      }
+    }
+    description
+      "Matching mode of basic ACL rules. The available options are permit and deny.";
+  }  
+  typedef fragment-type {
+    type enumeration {
+      enum "fragment-subseq" {
+        value 0;	  	  
+        description
+          "Non-first fragment in fragmentation.
+Flag of checking the non-first fragment in fragmentation.";
+      }
+      enum "fragment" {
+        value 1;	  	  
+        description
+          "Non-first fragmented packet.
+Flag of checking the non-first fragmented packets.";
+      }
+      enum "non-fragment" {
+        value 2;	  
+        description
+          "Non-fragmented packet.
+Flag of checking the non-fragment packets.";
+      }
+      enum "non-subseq" {
+        value 3;	  
+        description
+          "First fragment or non-fragment packets.
+Flag of checking the first fragment or non-fragment packets.";
+      }
+      enum "fragment-spe-first" {
+        value 4;	  
+        description
+          "First fragment of a packet.
+Flag of checking the first fragment of the fragmented packets.";
+      }
+    }
+    description
+      "Type of packet fragmentation.";
+  }  
+  typedef fragment-ipv6-type {
+    type enumeration {
+      enum "fragment" {
+        value 1;		  
+        description
+          "IPv6 non-first fragmented packet.
+Flag of checking the non-first fragmented packets.";
+      }
+    }
+    description
+      "Type of packet fragmentation.";
+  }  
+  typedef range-type {
+    type enumeration {
+      enum "neq" {
+        value 4;		  
+        description
+          "Not equal to the given port number.";
+      }
+      enum "range" {
+        value 5;		  
+        description
+          "Between two port numbers.";
+      }
+    }
+    description
+      "Range type.";
+  }  
+  typedef acl6-identity {
+    type string {
+      length "1..64";
+      pattern '([1-3]\d{3})|([6-9]\d{3})|([0-9a-zA-Z]([^\s]*))';
+    }
+    description
+      "ACL6-identity is begin with a-z or A-Z or 0-9.";
+  }  
+
+  typedef offset-begin {
+    type enumeration {
+      enum "l2-head" {
+        value 1;	  
+        description
+          "Layer 2 header.";
+      }
+      enum "ipv4-head" {
+        value 2;	  
+        description
+          "IPv4 header.";
+      }
+      enum "l4-head" {
+        value 3;	  
+        description
+          "Layer 4 header.";
+      }
+      enum "inner-ipv4-head" {
+        value 5;	  
+        description
+          "Inner IPv4 header.";
+      }
+    }
+    description
+      "Position of the start offset.";
+  }
+  typedef encap-type {
+    type enumeration {
+      enum "ether-ii" {
+        value 1;		  
+        description
+          "Ethernet-II encapsulation.";
+      }
+      enum "802.3" {
+        value 2;		  
+        description
+          "802.3 encapsulation.";
+      }
+      enum "snap" {
+        value 3;		  
+        description
+          "SNAP encapsulation.";
+      }
+    }
+    description
+      "Encapsulation type.";
+  }
+  typedef group4-type {
+    type enumeration {
+      enum "interface" {
+        value 0;		  
+        description
+          "Interface ACL.";
+      }
+      enum "link" {
+        value 1;		  
+        description
+          "Link ACL.";
+      }
+      enum "basic" {
+        value 2;		  
+        description
+          "Basic ACL.";
+      }
+      enum "advance" {
+        value 3;		  
+        description
+          "Advanced ACL.";
+      }
+      enum "mpls" {
+        value 7;		  
+        description
+          "MPLS ACL.";
+      }
+      enum "user" {
+        value 8;		  
+        description
+          "User ACL.";
+      }
+      enum "ARP" {
+        value 9;		  
+        description
+          "ARP ACL.";
+      }
+      enum "UCL" {
+        value 10;		  
+        description
+          "UCL.";
+      }
+    }
+    description
+      "Type of a rule group.";
+  }
+  typedef group6-type {
+    type enumeration {
+      enum "basic" {
+        value 4;		  
+        description
+          "Basic ACL.";
+      }
+      enum "advance" {
+        value 5;		  
+        description
+          "Advanced ACL.";
+      }
+      enum "interface" {
+        value 6;		  
+        description
+          "Interface ACL.";
+      }
+      enum "UCL" {
+        value 11;		  
+        description
+          "UCL.";
+      }
+    }
+    description
+      "Type of a rule group.";
+  }
+  typedef ttl-range-type {
+    type enumeration {
+      enum "lt" {
+        value 1;		  
+        description
+          "Less than the given number.";
+      }
+      enum "eq" {
+        value 2;		  
+        description
+          "Equal to the given number.";
+      }
+      enum "gt" {
+        value 3;		  
+        description
+          "Greater than the given number.";
+      }
+      enum "range" {
+        value 5;		  
+        description
+          "Between two numbers.";
+      }
+    }
+    description
+      "TTL range type.";
+  }
+  typedef packet-mode {
+    type enumeration {
+      enum "request" {
+        value 0;	  
+        description
+          "Specify ARP request packet.";
+      }
+      enum "reply" {
+        value 1;	  
+        description
+          "Specify ARP reply packet.";
+      }
+    }
+    description
+      "Packet type of ARP packet, request or reply.";
+  }
+  typedef tcp-flag-name {
+    type enumeration {
+      enum "fin" {
+        value 1;	  
+        description
+          "FIN.";
+      }	 
+      enum "syn" {
+        value 2;	  
+        description
+          "SYN.";
+      }
+      enum "rst" {
+        value 4;	  
+        description
+          "RST.";
+      }	
+      enum "psh" {
+        value 8;	  
+        description
+          "PSH.";
+      }
+      enum "ack" {
+        value 16;	  
+        description
+          "ACK.";
+      }
+      enum "urg" {
+        value 32;	  
+        description
+          "URG.";
+      }	 
+      enum "ece" {
+        value 64;	  
+        description
+          "ECE.";
+      }
+      enum "cwr" {
+        value 128;	  
+        description
+          "CWR.";
+      }
+      enum "ns" {
+        value 256;	  
+        description
+          "NS.";
+      }
+      enum "established" {
+        value 512;	  
+        description
+          "Established.";
+      }
+    }
+    description
+      "TCP flag name.";
+  }
+  typedef vpn-type {
+    type enumeration {
+      enum "all" {
+        value 0;		  
+        description
+          "ALL VPN instances.";
+      }
+      enum "all-private" {
+        value 1;		  
+        description
+          "All private VPN instances.";
+      }
+      enum "single" {
+        value 2;		  
+        description
+          "Single VPN instance.";
+      }
+    }
+    description
+      "VPN type.";
+  }
+  
+  typedef acl4-identity {
+    type string {
+      length "1..64";
+      pattern '([1-9]\d{3})|(10[0-9]{3})|(23[0-9]{3})|(99999)|([0-9a-zA-Z]([^\s]*))';
+    }
+    description
+      "ACL4-identity is begin with a-z or A-Z or 0-9.";
+  }
+  
+  container acl {
+    description
+      "Specify ACL configuration information. An ACL is used to identify and select data packets through packet attributes. For example, applying an ACL in the firewall can either permit or discard data packets. Applying an ACL in IPsec can encrypt data packets that match ACL rules and forward those that do not match any ACL rule.";
+    container groups {
+      description
+        "List of all ACL rule groups.";
+      list group {
+        key "identity";
+        description
+          "Configure ACL rule group, which is a collection of rules. Other features can use the ACL control by referring to the ACL rule group name.";
+        leaf identity {
+          type acl4-identity;
+          description
+            "ACL number or name. An ACL number ranges from 1000 to 10999 or 23000 to 23999. An ACL name must start with a letter or a digital, spaces not supported, and can not be a number. The number of an interface-based ACL ranges from 1000 to 1999. The number of a basic ACL ranges from 2000 to 2999. The number of an advanced ACL ranges from 3000 to 3999, and an advanced ACL can start with a letter. The number of an Ethernet frame header-based ACL ranges from 4000 to 4999. The number of a user-defined ACL ranges from 5000 to 5999. The number of an UCL ranges from 6000 to 9999. The number of an MPLS-based ACL ranges from 10000 to 10999. The number of an ARP-based ACL ranges from 23000 to 23999.";
+        }
+        leaf type {
+          type group4-type;
+          mandatory true; 
+          description
+            "ACL type. When identity is a number, this value can not be merged. If number ranges from 1000 to 1999, the type value is interface. If number ranges from 2000 to 2999, the type value is basic. If number ranges from 3000 to 3999, the type value is advance. If number ranges from 4000 to 4999, the type value is link. If number ranges from 5000 to 5999, the type value is user. If number ranges from 6000 to 9999, the type value is UCL. If number ranges from 10000 to 10999, the type value is MPLS. If number ranges from 23000 to 23999, the type value is ARP.";
+          ext:support-filter "true";          
+        }
+        leaf match-order {
+          ext:operation-exclude update|delete {
+            when "../rule-basics or ../rule-advances or ../rule-ethernets or ../rule-interfaces or ../rule-mplss or ../rule-ucls";
+            description "The 'match-order' cannot be updated, when rule exists.";
+          }
+          type match-order;
+          must "../match-order!='auto' or ../type!='mpls'";
+          default "config";
+          description
+            "Matching order of ACL rules. ACL rules can be matched in depth first or configuration order. When an ACL rule exists, this value can not be changed.";
+          ext:support-filter "true";	  
+        }
+        leaf step {
+          type uint32 {
+            range "1..20";
+          }
+          default "5";
+          description
+            "ACL step. The value can not be changed.";          
+          ext:operation-exclude update|delete {
+            description
+              "The value can not be changed.";				  
+          }            
+        }
+        leaf description {
+          type string {
+            length "1..127";
+            pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+          }
+          description
+            "ACL description. The value cannot begin or end with a space.";          
+        }
+        leaf number {
+          type uint32 {
+            range "1000..23999";
+          }
+          description
+            "ACL number. The number value can be configured only when the value of identity starts with a-z or A-Z. The number value cannot be modified or deleted. After a numberd ACL is configured, it is not allowed to create a named ACL and then specify the same number. If a named ACL is configured and the number value is specified, the numbered ACL cannot be configured. If a named ACL is created but the number value is not specified, no number value can be specified for the named ACL.";         
+        }
+	
+        container rule-basics {
+          when "(../type = 'basic')";
+          description
+            "List of basic ACL rules. The basic ACL rule group where these rules reside is of the numeric type or name type. For the basic ACL rule group of the numeric type, the value ranges from 2000 to 2999.";
+          list rule-basic {		  
+            key "name";
+            unique "id";			
+            description
+              "Configure basic ACL rule, used to permit or deny packets. Other features can use these rules through a rule group to match source IP addresses. When you create or modify a rule, ensure that parameters such as the action and source-ipaddr specified in the ACL rule are different from those specified in an existing ACL rule.";
+            leaf name {
+              type string {
+                length "1..32";
+                pattern '[^_\s][^\s]*';
+              }
+              description
+                "Name of a basic ACL rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf id {
+              when "../../../match-order = 'config'";			
+              type uint32 {
+                range "0..4294967294";
+              }
+              mandatory true;
+              description
+                "ID of a basic ACL rule in configuration mode.";
+              ext:support-filter "true";
+            }
+            leaf action {
+              type rule-action;
+              mandatory true;
+              description
+                "Matching mode of basic ACL rules. The available options are permit and deny.";
+              ext:support-filter "true";
+            }
+            leaf active-status {
+              type pub-type:row-status;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            leaf source-ipaddr {
+              type inet:ipv4-address-no-zone;
+              must "(../source-ipaddr and ../source-wild) or (not (../source-ipaddr) and not (../source-wild))";			  
+              description
+                "Source IP address. The value must equal to the AND calculation result of source-ipaddr and source-wild.";
+              ext:support-filter "true";
+            }
+            leaf source-wild {	
+              type inet:ipv4-address-no-zone;	
+              must "(../source-ipaddr and ../source-wild) or (not (../source-ipaddr) and not (../source-wild))";	
+              description
+                "Wildcard mask of a source IP address.";
+              ext:support-filter "true";
+            }
+            leaf fragment-type {
+              type fragment-type;
+              description
+                "Type of packet fragmentation.";
+              ext:support-filter "true";
+            }
+            choice vpn {
+              default vpn-instance;
+              description
+                  "VPN instance of rule.";
+              case vpn-instance	{
+                description
+                  "Specify one VPN instance.";				  
+                leaf vpn-name {
+                  type leafref {
+                    path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                  }
+                  must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+                  default "_public_";
+                  description
+                    "VPN instance name. Data packets can be filtered based on VPN instance names.";
+                  ext:support-filter "true";                  
+                }			  
+			  }		  
+              case vpn-any {
+                description
+                  "Specify any VPN instance.";			  
+                leaf vpn-any {
+                  type empty;
+                  description
+                    "Any VPN Instance.";
+                }
+              }
+            }
+            leaf time-range-name {
+              type leafref {
+                path "/timerange:time-range/timerange:time-range-instances/timerange:time-range-instance/timerange:name";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+            }
+            leaf description {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+            }
+            container match-statistics {
+              config false;
+              description
+              "Operational state of basic ACL rules are matched.";
+              leaf match-count {
+                type uint64;
+                description
+                  "Number of times when a basic ACL rule is matched.";
+              }
+            }
+            leaf priority {		
+              type uint32 {
+                range "0..4294967294";
+              }
+              config false;			  
+              description
+                "Priority of a basic ACL rule in configuration mode.";
+            }			
+          }
+        }
+        container rule-advances {
+          when "(../type = 'advance')";
+          description
+            "List of advanced ACL rules. The advanced ACL rule group where these rules reside is of the numeric type or name type. For the advanced ACL rule group of the numeric type, the value ranges from 3000 to 3999.";
+          list rule-advance {			  
+            key "name";
+            unique "id";			
+            description
+              "Configure advanced ACL rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group. When you create or modify a rule, ensure that parameters such as the action and source-ipaddr specified in the ACL rule are different from those specified in an existing ACL rule.";
+            leaf name {
+              type string {
+                length "1..32";
+                pattern '[^_\s][^\s]*';
+              }
+              description
+                "Name of an advanced ACL rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf id {
+              when "../../../match-order = 'config'";			
+              type uint32 {
+                range "0..4294967294";
+              }
+              mandatory true;			  
+              description
+                "ID of an advanced ACL rule in configuration mode.";
+              ext:support-filter "true";              
+            }
+            leaf action {
+              type rule-action;
+              mandatory true;
+              description
+                "Matching mode of advanced ACL rules. The available options are permit and deny.";
+              ext:support-filter "true";
+            }
+            leaf active-status {
+              type pub-type:row-status;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            choice protocol-type {
+              mandatory true;
+              description
+                "Protocol type value.";
+              case single {
+                description
+                  "Specify the specific protocol.";
+                leaf protocol {
+                  type uint8{
+                    ext:value-meaning {
+                      ext:item  "0" {
+                        ext:meaning "IP";
+                      }
+                      ext:item  "1" {
+                        ext:meaning "ICMP";
+                      }
+                      ext:item  "2" {
+                        ext:meaning "IGMP";
+                      }
+                      ext:item  "4" {
+                        ext:meaning "IPINIP";
+                      }
+                      ext:item  "6" {
+                        ext:meaning "TCP";
+                      }
+                      ext:item  "17" {
+                        ext:meaning "UDP";
+                      }
+                      ext:item  "47" {
+                        ext:meaning "GRE";
+                      }
+                      ext:item  "89" {
+                        ext:meaning "OSPF";
+                      }
+                    }
+                  }
+                  description
+                    "Protocol type value (0: any IPv4 protocol; 1: ICMP; 2: IGMP; 4: IPINIP; 6: TCP; 17: UDP; 47: GRE; 89: OSPF).";
+                  ext:support-filter "true";
+                }
+              }
+              case zero {
+                description
+                  "Match zero protocol packet.";
+                leaf protocol-zero {
+                  type empty;
+                  description
+                    "Match zero protocol packet.";
+                }
+              }
+            }
+            choice source {
+              description
+                "Specify source parameters.";			
+              case ip {
+                description
+                  "Source IP and mask.";			  
+                leaf source-ipaddr {
+                  type inet:ipv4-address-no-zone;
+                  must "(../source-ipaddr and ../source-wild) or (not (../source-ipaddr) and not (../source-wild))";				  
+                  description
+                    "Source IP address. The value must equal to the AND calculation result of source-ipaddr and source-wild.";
+                  ext:support-filter "true";
+                }
+                leaf source-wild {				
+                  type inet:ipv4-address-no-zone;
+                  must "(../source-ipaddr and ../source-wild) or (not (../source-ipaddr) and not (../source-wild))";			  
+                  description
+                    "Wildcard mask of the source IP address.";
+                  ext:support-filter "true";
+                }
+              }
+              case ip-pool {
+                description
+                  "Source IP pool.";			  
+                leaf source-pool-name {
+                  type leafref {
+                    path "../../../../../ip-pools/ip-pool/name";
+                  }
+                  description
+                    "Name of a source pool.";
+                }
+              }			  
+            }
+            choice dest {
+              description
+                "Specify destination parameters.";				
+              case ip {
+                description
+                  "Destination IP and mask.";			  
+                leaf dest-ipaddr {				
+                  type inet:ipv4-address-no-zone;
+                  must "(../dest-ipaddr and ../dest-wild) or (not (../dest-ipaddr) and not (../dest-wild))";					  
+                  description
+                    "Destination IP address. The value must equal to the and calculation result of dest ipaddr and dest wild.";
+                  ext:support-filter "true";
+                }
+                leaf dest-wild {				
+                  type inet:ipv4-address-no-zone;
+                  must "(../dest-ipaddr and ../dest-wild) or (not (../dest-ipaddr) and not (../dest-wild))";				  
+                  description
+                    "Wildcard mask of a destination IP address.";
+                  ext:support-filter "true";
+                }               
+              }
+              case ip-pool {
+                description
+                  "Destination IP pool.";
+                leaf dest-pool-name {
+                  type leafref {
+                    path "../../../../../ip-pools/ip-pool/name";
+                  }
+                  description
+                    "Name of a destination pool.";
+                }            
+              }
+            }
+            choice packets-priority {
+              description
+                "Specify packets priority.";
+              case tos {
+                description
+                  "Specify packets priority.";
+                leaf precedence {
+                  type uint8 {
+                    range "0..7";
+                  }
+                  description
+                    "Data packets can be filtered based on the priority field.";
+                }
+                leaf tos {
+                  type uint8 {
+                    range "0..15";
+                  }
+                  description
+                    "Tos value on which data packet filtering is based.";
+                }
+              }
+              case dscp {
+                description
+                  "Differentiated services code point.";
+                leaf dscp {
+                  type uint8 {
+                    range "0..63";
+                  }
+                  description
+                    "Differentiated services code point.";
+                }
+              }
+            }
+            choice vpn {
+              default vpn-instance;
+              description
+                  "VPN instance of rule.";
+              case vpn-instance{
+                description
+                  "Specify one VPN instance.";				  
+                leaf vpn-name {
+                  type leafref {
+                    path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                  }
+                  must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";				  
+                  default "_public_";
+                  description
+                    "VPN instance name. Data packets can be filtered based on VPN instance names.";
+                  ext:support-filter "true";
+                 }			  
+			  }	
+			  case vpn-any {
+                description
+                  "Specify any VPN instance.";				  
+                leaf vpn-any {
+                  type empty;
+                  description
+                    "Any VPN instance.";
+                }			  
+              }
+            }
+            choice tcp-flag {
+              description
+                "Specify TCP-flag.";			  
+              case mask {
+                description
+                  "Specify TCP-flag and mask.";			  
+                leaf tcp-flag-value { 
+			      when "../protocol=6";				
+                  type uint8 {
+                    range "0..63";
+                  }
+                  mandatory true;
+                  description
+                    "TCP header flag.";
+                }
+                leaf tcp-flag-mask {
+			      when "../protocol=6";
+                  type uint16 {
+                    range "0..63";
+                  }
+                  default "63";
+                  description
+                    "Mask of TCP header flag.";
+                }
+              }
+              case established {
+               description
+                  "Specify established.";				  
+                leaf established {
+                  when "../protocol=6";					
+                  type empty;					
+                  description
+                    "Match established connections.";
+                }
+              }
+            }
+            choice source-port {
+              description
+                "Specify source port.";				  
+              case range {
+                description
+                  "Specify source port number range.";			  
+                leaf source-port-begin {
+                  when "../protocol=17 or ../protocol=6";			
+                  type uint16 {
+                    range "0..65535";
+                  }			
+                  must "((../source-port-begin and ../source-port-end) and (../source-port-begin<=../source-port-end) and not(../source-port-begin=0 and ../source-port-end=65535)) or (not (../source-port-begin) and not (../source-port-end))";
+                  must "(not (../fragment-type) or (../fragment-type!='fragment' and ../fragment-type!='fragment-subseq'))";				  
+                  description
+                    "Start port number of the source port.";
+                }
+                leaf source-port-end {
+                  when "../protocol=17 or ../protocol=6";			
+                  type uint16 {
+                    range "0..65535";
+                  }							
+                  must "((../source-port-begin and ../source-port-end) and (../source-port-begin<=../source-port-end) and not(../source-port-begin=0 and ../source-port-end=65535)) or (not (../source-port-begin) and not (../source-port-end))";
+                  must "(not (../fragment-type) or (../fragment-type!='fragment' and ../fragment-type!='fragment-subseq'))";				                    
+                  description
+                    "End port number of the source port.";
+                }
+              }
+              case not-equal {
+                description
+                  "Specify source port number by not equal.";
+                leaf source-port-value {
+                  when "../protocol=17 or ../protocol=6";
+                  type uint16 {
+                    range "0..65535";
+                  }
+                  description
+                    "Port number of the source port.";
+                }
+              }
+            }
+            choice dest-port {
+              description
+                "Specify destination port.";			  
+              case range {
+                description
+                  "Specify destination port number range.";				  
+                leaf dest-port-begin {
+                  when "../protocol=17 or ../protocol=6";			
+                  type uint16 {
+                    range "0..65535";
+                  }
+                  must "((../dest-port-begin and ../dest-port-end) and (../dest-port-begin<=../dest-port-end) and not(../dest-port-begin=0 and ../dest-port-end=65535)) or (not (../dest-port-begin) and  not (../dest-port-end))";	
+                  must "(not (../fragment-type) or (../fragment-type!='fragment' and ../fragment-type!='fragment-subseq'))";
+                  description
+                    "Start port number of the destination port.";
+                }
+                leaf dest-port-end {
+                  when "../protocol=17 or ../protocol=6";        
+                  type uint16 {
+                    range "0..65535";
+                  }
+                  must "((../dest-port-begin and ../dest-port-end) and (../dest-port-begin<=../dest-port-end) and not(../dest-port-begin=0 and ../dest-port-end=65535)) or (not (../dest-port-begin) and  not (../dest-port-end))";		
+                  must "(not (../fragment-type) or (../fragment-type!='fragment' and ../fragment-type!='fragment-subseq'))";				  
+                  description
+                    "End port number of the destination port.";
+                }  
+              }
+              case not-equal {
+                description
+                  "Specify destination port number by not equal.";
+                leaf dest-port-value {
+                  when "../protocol=17 or ../protocol=6";
+                  type uint16 {
+                    range "0..65535";
+                  }
+                  description
+                    "Port number of the dest port.";
+                }
+              }
+            }
+            choice ttl {
+              description
+                "Specify TTL value.";			
+              case range {
+                description
+                  "Specify TTL value range.";			  
+                leaf ttl-begin {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  must "((../ttl-begin<=../ttl-end) and not(../ttl-begin=1 and ../ttl-end=255))";
+                  mandatory true;
+                  description
+                    "Start TTL value.";
+                }
+                leaf ttl-end {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  must "((../ttl-begin<=../ttl-end) and not(../ttl-begin=1 and ../ttl-end=255))";
+                  mandatory true;
+                  description
+                    "End TTL value.";
+                }
+              }
+              case not-equal {
+                description
+                  "Specify TTL value by not equal.";			  
+                leaf ttl-value {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  description
+                    "TTL value.";
+                }
+              }
+            }
+            leaf description {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";              
+            }
+            leaf fragment-type {
+              type fragment-type;
+              must "(../fragment-type!='fragment' and ../fragment-type!='fragment-subseq') or ((../fragment-type='fragment' or ../fragment-type='fragment-subseq') and (not(../dest-port-begin) and not(../source-port-begin) and not(../dest-port-end) and not(../source-port-end)))";
+              description
+                "Type of packet fragmentation.";
+              ext:support-filter "true";
+            }
+            choice packet-length {
+              description
+                "Specify packet length value range."; 			
+              case range {
+                 description
+                  "Specify packet length value range."; 			  
+                leaf packet-len-begin {
+                  type uint16 {
+                    range "0..65535";
+                  }
+                  must "((../packet-len-begin and ../packet-len-end) and (../packet-len-begin<=../packet-len-end) and not(../packet-len-begin=0 and ../packet-len-end=65535)) or (not (../packet-len-begin) and not (../packet-len-end))";				  
+                  description
+                    "Start packet length value.";
+                }
+                leaf packet-len-end {
+                  type uint16 {
+                    range "0..65535";
+                  }
+                  must "((../packet-len-begin and ../packet-len-end) and (../packet-len-begin<=../packet-len-end) and not(../packet-len-begin=0 and ../packet-len-end=65535)) or (not (../packet-len-begin) and not (../packet-len-end))";					  
+                  description
+                    "End packet length value.";
+                }
+              }
+              case not-equal {
+                 description
+                  "Specify packet length value by not equal.";                			  
+                leaf packet-len-value {
+                  type uint16 {
+                    range "0..65535";
+                  }
+                  description
+                    "Packet length value.";
+                }
+              }
+            }
+
+            leaf icmp-type {
+              when "../protocol=1";					
+              type uint16 {
+                range "0..255";
+              }
+              description
+                "ICMP type. This parameter is available only when the packet protocol is ICMP. If this parameter is not set, packets of all ICMP types are matched.";
+            }
+            leaf icmp-type-end {
+              when "../protocol=1 and ../icmp-type";
+              type uint16 {
+                range "0..255";
+              }
+              must "../icmp-type<../icmp-type-end";
+              description
+                "ICMP type end. This parameter is available only when the packet protocol is ICMP. If this parameter is not set, it indicates that the packets of all ICMP types can match.";
+            }
+            leaf icmp-code {
+              when "../protocol=1 and ../icmp-type";					
+              type uint16 {
+                range "0..255";
+              }
+              description
+                "ICMP message code. Data packets can be filtered based on the ICMP message code. Some well known ICMP-names: address-mask-reply type=18, code=0; address-mask-request type=17, code=0; echo type=8, code=0; echo-reply type=0, code=0; fragmentneed-dfset type=3, code=4; host-redirect type=5, code=1; host-tos-redirect type=5, code=3; host-unreachable type=3, code=1; information-reply type=16, code=0; information-request type=15, code=0; net-redirect type=5, code=0; net-tos-redirect type=5, code=2; net-unreachable type=3, code=0; parameter-problem type=12, code=0; port-unreachable type=3, code=3; protocol-unreachable type=3, code=2; reassembly-timeout type=11, code=1; source-quench type=4, code=0; source-route-failed type=3, code=5; timestamp-reply type=14, code=0; timestamp-request type=13, code=0; ttl-exceeded type=11, code=0.";
+            }
+            leaf vni {
+              when "../protocol=17";
+              type uint32 {
+                range "1..16777215";
+              }
+              description
+                "VXLAN ID.";
+            }			
+            leaf priority {		
+              type uint32 {
+                range "0..4294967294";
+              }		
+              config false;	 			  
+              description
+                "Priority of an advanced ACL rule in configuration mode.";            
+            }
+            leaf time-range-name {
+              type leafref {
+                path "/timerange:time-range/timerange:time-range-instances/timerange:time-range-instance/timerange:name";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+            }
+            container match-statistics {
+              config false;
+              description
+                "Operational state of advanced ACL rules are matched.";
+              leaf match-count {
+                type uint64;
+                config false;
+                description
+                  "Number of times when an advance ACL rule is matched.";
+              }
+            }
+          }
+        }
+        container rule-ethernets {
+          when "(../type = 'link')";
+          description
+            "List of Ethernet frame header-based ACL rules. The ACL rule group where these rules reside is of the numeric type or name type. For the Ethernet frame header-based ACL rule group of the numeric type, the value ranges from 4000 to 4999.";
+          list rule-ethernet {				  
+            key "name";
+            unique "id";			
+            description
+              "Configure Ethernet frame header-based ACL rule, used to permit or deny packets. Other features can use these rules through a rule group to match source IP addresses. When you create or modify a rule, ensure that parameters such as the action and frame-type specified in the ACL rule are different from those specified in an existing ACL rule.";
+            leaf name {
+              type string {
+                length "1..32";
+                pattern '[^_\s][^\s]*';
+              }
+              description
+                "Name of an Ethernet frame header-based ACL rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf id {
+              when "../../../match-order = 'config'";
+              type uint32 {
+                range "0..4294967294";
+              }
+              mandatory true;			  
+              description
+                "ID of an Ethernet frame header-based ACL rule in configuration mode.";
+              ext:support-filter "true";              
+            }
+            leaf action {
+              type rule-action;
+              mandatory true;
+              description
+                "Matching mode of Ethernet frame header-based ACL rules. The available options are permit and deny.";
+              ext:support-filter "true";
+            }
+            leaf active-status {
+              type pub-type:row-status;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            leaf frame-type {
+              type string {
+                length "3..6";
+                pattern '0[xX][a-fA-F0-9]{1,4}';
+              }
+              description
+                "Type of layer 2 Ethernet frame header protocols. The value must equal to the and calculation result of frame-type and frame-mask.";              
+            }
+            leaf frame-mask {
+              when "../frame-type";
+              type string {
+                length "3..6";
+                pattern '0[xX][a-fA-F0-9]{1,4}';
+              }
+              default "0xffff";
+              description
+                "Mask of the layer 2 Ethernet frame header protocols.";              
+            }
+            leaf source-mac {
+              type pub-type:mac-address;
+              description
+                "Source MAC address of an Ethernet frame. The value must equal to the and calculation result of source-mac and source-mac-mask.";              
+            }
+            leaf source-mac-mask {
+              when "../source-mac";			
+              type pub-type:mac-address;
+              default "ffff-ffff-ffff";			  
+              description
+                "Source MAC address of an Ethernet frame.";              
+            }
+            leaf dest-mac {
+              type pub-type:mac-address;
+              description
+                "Destination MAC address of an Ethernet frame. The value must equal to the and calculation result of dest-mac and dest-mac-mask.";              
+            }
+            leaf dest-mac-mask {
+              when "../dest-mac";			
+              type pub-type:mac-address;
+              default "ffff-ffff-ffff";	
+              description
+                "Destination MAC address mask of an Ethernet frame.";              
+            }
+            leaf ce-vlan-value-8021p {
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "802.1p priority in the CE-VLAN tag.";
+            }
+            leaf time-range-name {
+              type leafref {
+                path "/timerange:time-range/timerange:time-range-instances/timerange:time-range-instance/timerange:name";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+            }
+            leaf description {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";              
+            }
+            leaf priority {
+              type uint32 {
+                range "0..4294967294";
+              }
+              config false;
+              description
+                "Priority of an Ethernet frame header-based ACL rule in configuration mode.";            
+            }			
+            container match-statistics {
+              config false;
+              description
+                "Operational state of times Ethernet frame header-based ACL rules are matched.";
+              leaf match-count {
+                type uint64;
+                config false;
+                description
+                  "Number of times when an user ACL rule is matched.";
+              }
+            }
+          }
+        }
+        container rule-interfaces {
+          when "(../type = 'interface')";
+          description
+            "List of interface-based ACL rules. The ACL rule group where these rules reside is of the numeric type or name type. For the interface-based ACL rule group of the numeric type, the value ranges from 1000 to 1999.";
+          list rule-interface {
+            key "name";
+            unique "id";
+            description
+              "Configure interface-based ACL rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group.";
+            leaf name {
+              type string {
+                length "1..32";
+                pattern '[^_\s][^\s]*';
+              }
+              description
+                "Name of an interface-based ACL rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf id {
+              when "../../../match-order = 'config'";
+              type uint32 {
+                range "0..4294967294";
+              }
+              mandatory true;
+              description
+                "ID of an interface-based ACL rule in configuration mode.";
+              ext:support-filter "true";
+            }
+            leaf action {
+              type rule-action;
+              mandatory true;
+              description
+                "Matching mode of interface-based ACL rules. The available options are permit and deny.";
+              ext:support-filter "true";
+            }
+            choice interface {
+              mandatory true;
+              description
+                "Specify interface parameter.";
+              case interface-any {
+                description
+                  "Specify interface any.";
+                leaf if-any {
+                  type empty;
+                  description
+                    "Any interface.";
+                }
+              }
+              case interface-name {
+                description
+                  "Specify interface name.";
+                leaf if-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Name of the interface into which the data packets come.";
+                }
+              }
+            }
+            leaf time-range-name {
+              type leafref {
+                path "/timerange:time-range/timerange:time-range-instances/timerange:time-range-instance/timerange:name";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+            }
+            leaf active-status {
+              type pub-type:row-status;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            leaf description {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+            }
+            container match-statistics {
+              config false;
+              description
+                "Operational state of times interface-based ACL rules are matched.";
+              leaf match-count {
+                type uint64;
+                config false;
+                description
+                  "Number of times when an user ACL rule is matched.";
+              }
+            }
+          }
+        }
+        container rule-mplss {
+          when "(../type = 'mpls')";
+          description
+            "List of MPLS ACL rules. The MPLS ACL rule group where these rules reside is of the numeric type, with the value ranging from 10000 to 10999.";
+          list rule-mpls {
+            key "name";
+            unique "id";
+            description
+              "Configure MPLS ACL rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group. When you create or modify a rule, ensure that parameters such as the action and lables specified in the ACL rule are different from those specified in an existing ACL rule.";
+            leaf name {
+              type string {
+                length "1..32";
+                pattern '[^_\s][^\s]*';
+              }
+              description
+                "Name of a MPLS ACL rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf id {
+              when "../../../match-order = 'config'";
+              type uint32 {
+                range "0..4294967294";
+              }
+              mandatory true;
+              description
+                "ID of an advanced ACL rule in configuration mode.";
+              ext:support-filter "true";
+            }
+            leaf action {
+              type rule-action;
+              mandatory true;
+              description
+                "Matching mode of advanced ACL rules. The available options are permit and deny.";
+              ext:support-filter "true";
+            }
+            leaf description {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+            }		
+            leaf priority {
+              type uint32 {
+                range "0..4294967294";
+              }
+              config false;
+              description
+                "Priority of an MPLS ACL rule in configuration mode.";            
+            }				
+            container lables {
+              description
+                "List of MPLS label configuration of rule.";
+              list lable {
+                must "(./exp-value)";
+                key "sequence";
+                description
+                  "Configure MPLS label configuration of rule.";
+                leaf sequence {
+                  type uint8 {
+                    range "1..4";
+                  }
+                  description
+                    "Sequence number.";
+                }
+                leaf exp-value {
+                  type uint8 {
+                    range "0..7";
+                  }
+                  description
+                    "EXP value.";
+                }				
+              }
+            }				
+          }
+        }      
+	  }
+    }
+    container group6s {
+      description
+        "List of ACL6 rule groups.";
+      list group6 {
+        key "identity";
+        description
+          "Configure ACL6 rule group, which is a collection of multiple ACL6 rules. Other features can use the ACL6 control by referring to the ACL6 rule group name.";
+        leaf identity {
+          type acl6-identity;
+          description
+            "ACL6 number or name. An ACL6 number ranges from 1000 to 3999. An ACL name must start with a letter or a digital, spaces not supported, and can not be a number. The number of an interface-based ACL6 ranges from 1000 to 1999. The number of a basic ACL6 ranges from 2000 to 2999. The number of an advanced ACL6 ranges from 3000 to 3999, and an advanced ACL can start with a letter.";
+        }
+        leaf type {
+          type group6-type;
+          mandatory true; 		  
+          description
+            "ACL Type. When identity is a number, this value can not be merged. If number ranges from 1000 to 1999, the type value is interface, If number ranges from 2000 to 2999, the type value is basic, If number ranges from 3000 to 3999, the type value is advance.";
+          ext:support-filter "true";
+        }
+        leaf match-order {
+          ext:operation-exclude update|delete {
+            when "../rule-basics or ../rule-advances or ../rule-ucls";
+            description "The 'match-order' cannot be updated, when rule exists.";
+          }
+          type match-order;
+          default "config";
+          description
+            "Matching order of an ACL6 rule. ACL rules can be matched in the order of depth or configuration. When an ACL rule exists, this value can not be changed.";
+          ext:support-filter "true";
+        }
+        leaf step {
+          type uint32 {
+            range "1..20";
+          }
+          default "5";
+          description
+            "Step of an ACL6 rule. The value can not be changed.";
+          ext:operation-exclude update|delete {
+            description
+              "The value can not be changed.";				  
+          }
+        }		
+        leaf description {
+          type string {
+            length "1..127";
+            pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+          }
+          description
+            "Description about an ACL6 rule group. The value cannot begin or end with a space.";
+        }
+        container rule-basics {
+          when "(../type = 'basic')";
+          description
+            "List of basic ACL6 rules. The ACL6 rule group where these rules reside is of the numeric type or name type. For the basic ACL6 rule group of the numeric type, the value ranges from 2000 to 2999.";
+          list rule-basic {
+            key "name";
+            unique "id";
+            description
+              "Configure basic ACL6 rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group.";
+            leaf name {
+              type string {
+                length "1..32";
+                pattern '[^_\s][^\s]*';
+              }
+              description
+                "Name of an ACL6 rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf id {
+              when "../../../match-order = 'config'";
+              type uint32 {
+                range "0..4294967294";
+              }
+              mandatory true;
+              description
+                "ID of an ACL6 rule in configuration mode.";
+              ext:support-filter "true";
+            }
+            leaf action {
+              type rule-action;
+              mandatory true;
+              description
+                "Matching mode of ACL6 rules. The available options are permit and deny.";
+              ext:support-filter "true";
+            }
+            leaf active-status {
+              type pub-type:row-status;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            leaf source-ipaddr {
+              type inet:ipv6-address-no-zone;
+              description
+                "Source IPv6 address.";
+              ext:support-filter "true";
+            }
+            choice source-ip-mask {
+              description
+                "Source mask.";
+              case positive-mask-len {
+                description
+                  "Source IPv6 address mask.";
+                leaf source-mask-len {
+                  type uint32 {
+                    range "1..128";
+                  }
+                  must "../source-ipaddr and ../source-mask-len";
+                  description
+                    "Source IPv6 address mask.";
+                }
+              }
+              case negative-mask {
+                description
+                  "Wildcard mask of a source IPv6 address.";
+                leaf source-wild {
+                  type inet:ipv6-address-no-zone;
+                  must "../source-ipaddr and ../source-wild";
+                  description
+                    "Wildcard mask of a source IPv6 address.";
+                }
+              }
+            }
+            leaf fragment-type {
+              type fragment-ipv6-type;
+              description
+                "Type of packet fragmentation.";
+              ext:support-filter "true";
+            }
+            choice vpn {
+              default vpn-instance;
+              description
+                  "VPN instance of rule.";
+              case vpn-instance {
+                description
+                  "Specify one VPN instance."; 
+                leaf vpn-name {
+                  type leafref {
+                    path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                  }
+                  must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";
+                  default "_public_";
+                  description
+                    "VPN instance name. Data packets can be filtered based on VPN instance names.";
+                  ext:support-filter "true";
+                }
+              }
+              case vpn-any {
+                description
+                  "Specify any VPN instance.";
+                leaf vpn-any {
+                  type empty;
+                  description
+                    "Any VPN Instance.";
+                  ext:support-filter "true";
+                }
+              }
+            }
+            leaf time-range-name {
+              type leafref {
+                path "/timerange:time-range/timerange:time-range-instances/timerange:time-range-instance/timerange:name";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+            }
+            leaf description {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+            }
+            container match-statistics {
+              config false;
+              description
+                "Operational state of times ACL6 rules are matched.";
+              leaf match-count {
+                type uint64;
+                config false;
+                description
+                  "Information about the rule matched count.";
+              }
+            }
+          }
+        }
+        container rule-advances {
+          when "(../type = 'advance')";
+          description
+            "List of advanced ACL6 rules. The ACL6 rule group where these rules reside is of the numeric type or name type. For the ACL6 rule group of the numeric type, the value ranges from 3000 to 3999.";
+          list rule-advance {
+            key "name";
+            unique "id";			
+            description
+              "Configure advanced ACL6 rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group. When you create or modify a rule, ensure that parameters such as the action and source-ipaddr specified in the ACL rule are different from those specified in an existing ACL rule.";
+            leaf name {
+              type string {
+                length "1..32";
+                pattern '[^_\s][^\s]*';
+              }
+              description
+                "Name of an advanced ACL6 rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf id {
+              when "../../../match-order = 'config'";			
+              type uint32 {
+                range "0..4294967294";
+              }
+              mandatory true;			  
+              description
+                "ID of an advanced ACL6 rule in configuration mode.";
+              ext:support-filter "true";
+            }
+            leaf action {
+              type rule-action;
+              mandatory true;
+              description
+                "Matching mode of advanced ACL6 rules. The available options are permit and deny.";
+              ext:support-filter "true";
+            }
+            choice protocol-type {
+              mandatory true;
+              description
+                "IPv6 Protocol value.";
+              case single {
+                description
+                  "Specify the specific protocol.";
+                leaf protocol {
+                  type uint8{
+                    ext:value-meaning {
+                      ext:item  "0" {
+                        ext:meaning "IPV6";
+                      }
+                      ext:item  "6" {
+                        ext:meaning "TCP";
+                      }
+                      ext:item  "17" {
+                        ext:meaning "UDP";
+                      }
+                      ext:item  "47" {
+                        ext:meaning "GRE";
+                      }
+                      ext:item  "50" {
+                        ext:meaning "IPV6-ESP";
+                      }
+                      ext:item  "51" {
+                        ext:meaning "IPV6-AH";
+                      }
+                      ext:item  "58" {
+                        ext:meaning "ICMPV6";
+                      }
+                      ext:item  "89" {
+                        ext:meaning "OSPF";
+                      }
+                    }
+                  }
+                  description
+                    "Protocol type value (0: any IPv6 protocol; 6: TCP; 17: UDP; 47: GRE; 50: IPv6-ESP; 51: IPv6-AH; 58: ICMPV6; 89: OSPF).";
+                  ext:support-filter "true";
+                }
+              }
+              case zero {
+                description
+                  "Match zero protocol packet.";
+                leaf hoport {
+                  type empty;
+                  description
+                    "Match zero protocol packet.";
+                }
+              }
+            }
+            choice source {
+              description
+                "Specify source parameters.";			
+              case ip {
+                description
+                  "Source IP and mask.";			  
+                leaf source-ipaddr {
+                  type inet:ipv6-address-no-zone;
+                  mandatory true;					  
+                  description
+                    "Source IPv6 address. The value must equal to the AND calculation result of source-ipaddr and source-mask-len.";
+                }
+                choice source-ipaddr-mask {
+                  mandatory true;
+                  description
+                    "Source IP mask.";					  
+                  case positive-mask-len {
+                    description
+                      "Mask of the source IP address.";				  
+                    leaf source-mask-len {
+                      type uint32 {
+                        range "1..128";
+                      }				  
+                      description
+                        "Mask of the source IP address.";
+                    }
+                  }
+                }
+              }
+            }
+            choice dest {
+              description
+                "Destination parameters.";				
+              case ip {
+                description
+                  "Destination IPv6 address.";			  
+                leaf dest-ipaddr {
+                  type inet:ipv6-address-no-zone;
+                  mandatory true;					  
+                  description
+                    "Destination IPv6 address. The value must equal to the and calculation result of dest-ipaddr and dest-mask-len.";
+                }
+                choice dest-ipaddr-mask {
+                  mandatory true;
+                  description
+                    "Specify destination mask.";								  
+                  case positive-mask-len {
+                    description
+                      "Mask of the destination IP address.";				  
+                    leaf dest-mask-len {
+                      type uint32 {
+                        range "1..128";
+                      }				  
+                      description
+                        "Mask of the destination IP address.";
+                    }
+                  }
+                }
+              }
+            }				
+            choice vpn {			
+              default vpn-instance;	
+              description
+                "VPN instance of rule.";
+              case vpn-instance {
+                description
+                  "Specify one VPN instance.";			  
+                leaf vpn-name {
+                  type leafref {
+                    path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                  }
+                  must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";				  
+                  default "_public_";
+                  description
+                    "VPN instance name. Data packets can be filtered based on VPN instance names.";
+                  ext:support-filter "true";
+                }
+              }
+              case vpn-any {
+                description
+                  "Specify any VPN instance.";			  
+                leaf vpn-any {
+                  type empty;
+                  description
+                    "Any VPN instance.";
+                }
+              }
+            }	
+            choice tcp-flag {
+              description
+                "Specify TCP-flag.";						
+              case established {
+                description
+                  "Specify established.";			  
+                leaf established {
+                  when "../protocol=6";
+                  type empty;
+                  description
+                    "Match established connections.";
+                }
+              }
+            }			
+            choice dest-port {
+              description
+                "Specify destination port.";				  
+              case range {
+                description
+                  "Specify destination port.";				  
+                leaf dest-port-begin {
+                  when "../protocol=6 or ../protocol=17";
+                  type uint16 {
+                    range "0..65535";
+                  }
+                  must "((../dest-port-begin and ../dest-port-end) and (../dest-port-begin<=../dest-port-end) and not(../dest-port-begin=0 and ../dest-port-end=65535)) or (not (../dest-port-begin) and  not (../dest-port-end))";	
+                  must "(not(../fragment-type))";				  
+                  description
+                    "Start port number of the destination port.";
+                }
+                leaf dest-port-end {
+                  when "../protocol=6 or ../protocol=17";
+                  type uint16 {
+                    range "0..65535";
+                  }				  
+                  must "((../dest-port-begin and ../dest-port-end) and (../dest-port-begin<=../dest-port-end) and not(../dest-port-begin=0 and ../dest-port-end=65535)) or (not (../dest-port-begin) and  not (../dest-port-end))";
+                  must "(not(../fragment-type))";				  
+                  description
+                    "End port number of the destination port.";
+                }
+              }
+            }
+            leaf description {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+            }			
+            leaf fragment-type {
+              type fragment-ipv6-type;
+              must "(not(../dest-port-begin) and not(../dest-port-end))";
+              description
+                "Type of packet fragmentation.";
+              ext:support-filter "true";
+            }
+            leaf priority {
+              type uint32 {
+                range "0..4294967294";
+              }
+              config false;
+              description
+                "Priority of an advanced ACL rule in configuration mode.";            
+            }				
+          }
+        }
+      } 
+    }
+    container ip-pools {
+      description
+        "List of all ACL pools.";
+      list ip-pool {
+        must "not(apply-bgp-ipv4-peer) or apply-bgp-ipv4-peer='false' or (apply-bgp-ipv4-peer='true' and not(ipaddrs))";
+        key "name";
+        max-elements  "256";
+        description
+          "Configure ACL pool, which is a collection of IP addresses.";
+        leaf name {
+          type string {
+            length "1..32";
+          }
+          description
+            "Name of an ACL pool.";
+        }
+        leaf apply-bgp-ipv4-peer {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable all BGP IPv4 peers.";
+          ext:support-filter "true";
+        }
+        leaf bgp-peer-vpn {
+          when "(../apply-bgp-ipv4-peer='true')";
+          type vpn-type;
+          default "all";
+          description
+            "Apply BGP IPv4 peer VPN type.";
+          ext:support-filter "true";
+        }
+        leaf bgp-peer-vpn-name {
+          when "(../bgp-peer-vpn='single')";
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "../bgp-peer-vpn-name='_public_' or not(../../ip-pool[bgp-peer-vpn-name=current()])";
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+          default "_public_";
+          description
+            "Apply BGP IPv4 peer VPN name.";
+          ext:support-filter "true";
+        }
+		
+        container ipaddrs {
+          must "not(../apply-bgp-ipv4-peer) or (../apply-bgp-ipv4-peer='false')";
+          description
+            "List of all IP addresses for ACL pools.";
+          list ipaddr {
+            key "address mask";
+            description
+              "Configure IP addresses in a pool.";
+            leaf address {
+              type inet:ipv4-address-no-zone;
+              description
+                "IP address.";
+            }
+            leaf mask {
+              type inet:ipv4-address-no-zone;
+              description
+                "IP address wildcard mask.";
+            }
+          }
+        }
+      }
+    }	
+    container port-pools {
+      description
+        "List of all ACL port pools.";
+      list port-pool {
+        key "name";
+        max-elements  "256";
+        description
+          "Configure ACL port pool, which is a collection of port number range.";
+        leaf name {
+          type string {
+            length "1..32";
+          }
+          description
+            "Name of an ACL port pool.";
+        }
+        container ports {
+          description
+            "List of all port number range for ACL port pools.";
+          list port {
+            must "(operation='range' and (number-begin<=number-end)) or (operation='neq' and (number-begin=number-end))";
+            key "operation number-begin number-end";
+            description
+              "Configure port number range in a pool.";
+            leaf operation {
+              type range-type;
+              description
+                "Range type of the port.";
+            }
+            leaf number-begin {
+              type uint16 {
+                range "0..65535";
+              }
+              description
+                "Begin number of the port.";
+            }
+            leaf number-end {
+              type uint16 {
+                range "0..65535";
+              }
+              description
+                "End number of the port.";
+            }
+          }
+        }
+      }
+    }
+  } 
+}

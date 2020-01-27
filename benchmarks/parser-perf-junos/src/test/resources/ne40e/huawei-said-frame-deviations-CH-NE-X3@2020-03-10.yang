@@ -1,0 +1,45 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-said-frame-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-said-frame-deviations-CH-NE-X3";
+  prefix said-frame-devs-CH-NE-X3;
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-said-frame {
+    prefix sf;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com
+    ";
+  description
+    "Said frame.";
+  revision 2020-03-10 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  deviation /sf:said-frame/sf:lpu-nodes/sf:lpu-node/sf:slot-id {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+  deviation /sf:said-frame/sf:lpunodecfgs/sf:lpunodecfg/sf:slot-id {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+}

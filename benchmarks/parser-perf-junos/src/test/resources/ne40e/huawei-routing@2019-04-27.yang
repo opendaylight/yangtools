@@ -1,0 +1,1424 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-routing {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-routing";
+  prefix rt;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-bfd {
+    prefix bfd;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-xpl {
+    prefix xpl;
+  }
+  import huawei-tunnel-management {
+    prefix tnlm;
+  }
+
+  include huawei-routing-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "This YANG module defines essential components for the management
+    of a routing subsystem.";
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "route-base";
+
+  grouping import-rib-policy-type {
+    description
+      "Import rib policy configuration.";
+    choice policy-type {
+      description
+        "When routes are imported from other routing protocols, the Route-Policy filter specified by the parameter can be used to filter the routes and change the route attributes.";
+      case rtp-ref {
+        description
+          "Route policy.";
+        leaf policy-name {
+          type leafref {
+            path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+          }
+          description
+            "Specify an import rib route policy name.";
+        }
+      }
+      case xpl-ref {
+        description
+          "Route policy.";
+        leaf filter-name {
+          type leafref {
+            path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+          }
+          description
+            "Specify an import rib route filter name.";
+        }
+        leaf filter-parameter {
+          when "../filter-name";
+          type xpl:filter-parameter-type;
+          description
+            "Specify an import rib route filter parameter.";
+        }
+      }
+    }    
+  }
+  grouping routing-statistics-num {
+    description
+      "Route statistics.";
+      leaf total-num {
+        type uint32;
+        description
+          "Number of routes in the routing table.";
+      }
+      leaf active-num {
+        type uint32;
+        description
+          "Number of active routes in the routing table.";
+      }
+      leaf added-num {
+        type uint32;
+        description
+          "Number of active and inactive routes added to the routing table.";
+      }
+      leaf deleted-num {
+        type uint32;
+        description
+          "Number of routes deleted from the routing table.";
+      }
+      leaf freed-num {
+        type uint32;
+        description
+          "Number of routes that are permanently released from the routing table.";
+      }
+  }
+  container routing {
+    description
+      "Configuration parameters for the routing module.";
+    container routing-manage {
+      description
+        "Configure the routing management module to store and select optimal routes.";
+      container relay-tunnel {
+        description
+          "Configure route recursion to tunnel.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable route recursion to tunnel. By default, this configuration takes effect for all routes. If an IP prefix list is configured, the configuration takes effect only for the routes that match the IP prefix list. If a tunnel policy is configured, routes carry the tunnel policy information when recursing to a tunnel.";
+        }
+        leaf ipv4-prefix-ref {
+          when "../enable='true'";
+          type leafref {
+            path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+          }
+          must "../enable='true' or not(../ipv4-prefix-ref)";
+          description
+            "Name of an IPv4 prefix list.";
+        }
+        leaf tunnel-policy-ref {
+          when "../enable='true'";
+          type leafref {
+            path "/tnlm:tunnel-management/tnlm:tunnel-policys/tnlm:tunnel-policy/tnlm:name";
+          }
+          must "../enable='true' or not(../tunnel-policy-ref)";
+          description
+            "Name of a tunnel policy.";
+        }
+      }
+      container relay-label {
+        description
+          "Configure route recursion to remotely leaked VPN routes globally.";
+        leaf ipv4-set {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of recursing IPv4 unicast routes to remotely leaked VPN routes.";
+        }
+        leaf ipv6-set {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of recursing IPv6 unicast routes to remotely leaked VPN routes.";
+        }
+      }
+      container ipv4-threshold {
+        must "upper-percent>lower-percent";
+        description
+          "Configure thresholds (one alarm threshold and one clear alarm threshold) for the number of IPv4 route prefixes.";
+        leaf upper-percent {
+          type uint8 {
+            range "1..100";
+          }
+          units "%";
+          default "80";
+          description
+            "Upper limit for the number of IPv4 route prefixes.";
+        }
+        leaf lower-percent {
+          type uint8 {
+            range "1..100";
+          }
+          units "%";
+          default "70";
+          description
+            "Lower limit for the number of IPv4 route prefixes.";
+        }
+      }
+      container ipv6-threshold {
+        must "upper-percent>lower-percent";
+        description
+          "Configure thresholds (one alarm threshold and one clear alarm threshold) for the number of IPv6 route prefixes.";
+        leaf upper-percent {
+          type uint8 {
+            range "1..100";
+          }
+          units "%";
+          default "80";
+          description
+            "Set the upper limit percent of the IPv6 prefix threshold.";
+        }
+        leaf lower-percent {
+          type uint8 {
+            range "1..100";
+          }
+          units "%";
+          default "70";
+          description
+            "Set the lower limit percent of the IPv6 prefix threshold.";
+        }
+      }
+      container iterative-restrain {
+        description
+         "Configure suppression periods for recursion.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable suppression on recursion.";
+        }
+        leaf start-time {
+          type uint32 {
+            range "500..2000";
+          }
+          units "ms";
+          default "500";
+          description
+            "Specifies the time of the first route or tunnel iteration suppression.";
+        }
+        leaf increase-time {
+          type uint32 {
+            range "1000..5000";
+          }
+          units "ms";
+          default "1000";
+          description
+            "Specifies the incremental suppression duration of route or tunnel iteration.";
+        }
+        leaf max-time {
+          type uint32 {
+            range "5000..60000";
+          }
+          units "ms";
+          default "30000";
+          description
+            "Specifies the maximum suppression duration of route or tunnel iteration.";
+        }
+      }
+      container relay-default-routes {
+        description
+          "List of routes that recurse to the default route globally.";
+        list relay-default-route {
+          key "address-family protocol-type";
+          description
+            "Configure route recursion to the default route globally.";
+          leaf address-family {
+            type enumeration {
+              enum "ipv4-unicast" {
+                value 1;
+                description
+                  "IPv4 unicast.";
+              }
+              enum "ipv6-unicast" {
+                value 2;
+                description
+                  "IPv6 unicast.";
+              }
+            }
+            must "../address-family='ipv4-unicast' or (not(../protocol-type='msr') and ../address-family='ipv6-unicast')";
+            description
+              "Set an address family.";
+          }
+          leaf protocol-type {
+            type enumeration {
+              enum "msr" {
+                value 2;
+                description
+                  "MSR protocol.";
+              }
+              enum "static" {
+                value 3;
+                description
+                  "Static protocol.";
+              }
+            }
+            must "../protocol-type='static' or (../protocol-type='msr' and ../address-family='ipv4-unicast')";
+            description
+              "Protocol.";
+          }
+        }
+      }
+      container ipv4-vpn-route-statisticss {
+        config false;
+        description
+          "List of statistics about routes of all VPN instances in the IPv4 routing table.";
+        list ipv4-vpn-route-statistics {
+          key "protocol-type";
+          description
+            "All IPv4 VPN Instance route statistics.";
+          leaf protocol-type {
+            type statistic-protocol-type;
+            description
+              "Protocol.";
+          }
+          leaf total-num {
+            type uint32;
+            description
+              "Number of routes in the routing table.";
+          }
+          leaf active-num {
+            type uint32;
+            description
+              "Number of active routes in the routing table.";
+          }
+          leaf added-num {
+            type uint32;
+            description
+              "Number of active and inactive routes added to the routing table.";
+          }
+          leaf deleted-num {
+            type uint32;
+            description
+              "Number of routes deleted from the routing table.";
+          }
+          leaf freed-num {
+            type uint32;
+            description
+              "Number of routes that are permanently released from the routing table.";
+          }
+        }
+      }
+      container ipv6-vpn-route-statisticss {
+        config false;
+        description
+          "List of statistics about routes of all VPN instances in the IPv6 routing table.";
+        list ipv6-vpn-route-statistics {
+          key "protocol-type";
+          description
+            "All IPv6 VPN Instance route statistics.";
+          leaf protocol-type {
+            type ipv6-statistic-protocol-type;
+            description
+              "Protocol.";
+          }
+          leaf total-num {
+            type uint32;
+            description
+              "Number of routes in the routing table.";
+          }
+          leaf active-num {
+            type uint32;
+            description
+              "Number of active routes in the routing table.";
+          }
+          leaf added-num {
+            type uint32;
+            description
+              "Number of active and inactive routes added to the routing table.";
+          }
+          leaf deleted-num {
+            type uint32;
+            description
+              "Number of routes deleted from the routing table.";
+          }
+          leaf freed-num {
+            type uint32;
+            description
+              "Number of routes that are permanently released from the routing table.";
+          }
+        }
+      }
+    }
+    container static-routing {
+      description
+        "Configure a basic service package for static routes.";
+      container ipv4-site {
+        description
+          "Configure parameters for IPv4 static routes.";
+        leaf preference {
+          ext:dynamic-default;
+          type uint32 {
+            range "1..255";
+          }
+          description
+            "Default priority of IPv4 static routes. The default value can be controlled by the PAF file and varies according to hardware. To query the default value, you can perform a get operation.";
+        }
+        leaf relay-switch {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of selecting static routes based on recursion depths.";
+        }
+        leaf min-tx-interval {
+          ext:dynamic-default;
+          type uint32;
+          units "ms";
+          description
+            "Default minimum interval expected at which IPv4 BFD packets are sent to the peer end. The default value can be controlled by the PAF file and varies according to hardware.";
+        }
+        leaf min-rx-interval {
+          ext:dynamic-default;
+          type uint32;
+          units "ms";
+          description
+            "Default minimum interval expected at which IPv4 BFD packets are received from the peer end. The default value can be controlled by the PAF file and varies according to hardware.";
+        }
+        leaf multiplier {
+          type uint32 {
+            range "3..50";
+          }
+          default "3";
+          description
+            "IPv4 Local detection multiplier.";
+        }
+        leaf relay-remote {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable the function of recursing IPv4 unicast static routes to remotely leaked VPN routes.";
+        }
+        leaf relay-arp-vlink {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of recursing IPv4 unicast static routes to ARP Vlink routes.";
+        }
+        leaf inherit-cost-switch {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of comparing the costs of inherited routes during static route selection.";
+        }
+        leaf current-route-num {
+          type uint32;
+          config false;
+          description
+            "Number of IPv4 static routes that have been configured.";
+        }
+        leaf max-route-num {
+          type uint32;
+          config false;
+          description
+            "Maximum number of IPv4 static routes that can be configured.";
+        }
+      }
+      container ipv4-relay-tunnel {
+        description
+          "Configure route recursion to tunnel.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable route recursion to tunnel. By default, this configuration takes effect for all routes. If an IP prefix list is configured, the configuration takes effect only for the routes that match the IP prefix list. If a tunnel policy is configured, routes carry the tunnel policy information when recursing to a tunnel.";
+        }
+        leaf ipv4-prefix-ref {
+          when "../enable='true'";
+          type leafref {
+            path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+          }
+          must "../enable='true' or not(../ipv4-prefix-ref)";
+          description
+            "Name of an IPv4 prefix list.";
+        }
+        leaf tunnel-policy-ref {
+          when "../enable='true'";
+          type leafref {
+            path "/tnlm:tunnel-management/tnlm:tunnel-policys/tnlm:tunnel-policy/tnlm:name";
+          }
+          must "../enable='true' or not(../tunnel-policy-ref)";
+          description
+            "Name of a tunnel policy.";
+        }
+      }
+      container ipv6-site {
+        description
+          "Configure parameters for IPv6 static routes.";
+        leaf preference {
+          ext:dynamic-default;
+          type uint32 {
+            range "1..255";
+          }
+          description
+            "Default priority of IPv6 static routes. The default value can be controlled by the PAF file and varies according to hardware. To query the default value, you can perform a get operation.";
+        }
+        leaf min-tx-interval {
+          ext:dynamic-default;
+          type uint32;
+          units "ms";
+          description
+            "Default minimum interval expected at which IPv6 BFD packets are sent to the peer end. The default value can be controlled by the PAF file and varies according to hardware.";
+        }
+        leaf min-rx-interval {
+          ext:dynamic-default;
+          type uint32;
+          units "ms";
+          description
+            "Default minimum interval expected at which IPv6 BFD packets are received from the peer end. The default value can be controlled by the PAF file and varies according to hardware.";
+        }
+        leaf multiplier {
+          type uint32 {
+            range "3..50";
+          }
+          default "3";
+          description
+            "IPv6 Local detection multiplier.";
+        }
+        leaf current-route-num {
+          type uint32;
+          config false;
+          description
+            "Number of IPv6 static routes that have been configured.";
+        }
+        leaf max-route-num {
+          type uint32;
+          config false;
+          description
+            "Maximum number of IPv6 static routes that can be configured.";
+        }
+      }
+      container max-route-number {
+        config false;
+        description
+          "Statistics of static routes that can be configured, including IPv4 routes and IPv6 routes.";
+        leaf num {
+          type uint32;
+          description
+            "Maximum number of IPv4 and IPv6 static routes that can be configured.";
+        }
+      }
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af {
+    description
+      "Augment the huawei-network-instance model to add routing specific configuration.";
+    container routing {
+      description
+        "Configure routing management.";
+      container routing-manage {
+        description
+          "Configure a basic service package for routing management.";
+        container option {
+          description
+            "Configure routing management options.";
+          leaf frr-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable inter-protocol FRR. In the case where primary and secondary links are created between different protocols, if the primary link is faulty, services can be quickly switched to the secondary link.";
+          }
+          leaf prefix-limit-number {
+            type uint32 {
+              range "1..4294967295";
+            }
+            must "../prefix-simply-alert or ../prefix-alert-percent or not(../prefix-limit-number)";
+            description
+              "Maximum number of prefixes supported by a VPN instance.";
+          }
+          choice prefix-alert-type {
+            description
+              "Set prefix limit.";
+            case percent {
+              description
+                "Percent.";
+              leaf prefix-alert-percent {
+                when "../prefix-limit-number";
+                type uint32 {
+                  range "1..100";
+                }
+                units "%";
+                description
+                  "Percentage of the maximum number of route prefixes. When the maximum number of route prefixes in a VPN instance reaches the value obtained through the formula (number * alert-percent)/100, the system generates an alarm. In this case, subsequent VPN routes can still be added to the routing table of the VPN instance. After the number of route prefixes reaches the specified number, the subsequent routes are discarded.";
+              }
+              leaf route-unchanged {
+                when "../prefix-limit-number and ../prefix-alert-percent";
+                type empty;
+                description
+                  "When the alert-percent parameter is specified and the number of routes in the routing table reaches the upper limit and then a smaller upper limit is specified. there are the following results:
+                  If route-unchanged is specified, the routes in the routing table remain unchanged;
+                  if route-unchanged is not specified, all routes in the routing table are deleted, and routes are re-added.";
+              }
+            }
+            case alert {
+              description
+                "Alert.";
+              leaf prefix-simply-alert {
+                when "../prefix-limit-number";
+                type empty;
+                description
+                  "When the number of VPN route prefixes exceeds the specified number, subsequent VPN routes can still be added to the routing table of the VPN instance and the system only generates an alarm. After the total number of VPN route prefixes and public network route prefixes reaches the limit on the total number of unicast routes specified in the license, the subsequent VPN routes are discarded.";
+              }
+            }
+          }
+          leaf route-limit-number {
+            when "../../../../../../ni:name!='_public_'";
+            type uint32 {
+              range "1..4294967295";
+            }
+            must "../route-alert-percent or ../route-simply-alert or not(../route-limit-number)";
+            description
+             "Maximum number of routes supported by a VPN instance.";
+          }
+          choice route-alert-type {
+            description
+              "Set routing-table limit.";
+            case percent {
+              description
+                "Percent.";
+              leaf route-alert-percent {
+                when "../route-limit-number";
+                type uint32 {
+                  range "1..100";
+                }
+                units "%";
+                description
+                  "Percentage of the maximum number of routes. When the maximum number of routes in a VPN instance reaches the value obtained through the formula (number * alert-percent)/100, the system generates an alarm. In this case, subsequent VPN routes can still be added to the routing table of the VPN instance. After the number of routes reaches the specified number, the subsequent routes are discarded.";
+              }
+            }
+            case alert {
+              description
+                "Alert.";
+            leaf route-simply-alert {
+                when "../route-limit-number";
+                type empty;
+              description
+                "When the number of VPN routes exceeds the specified number, subsequent VPN routes can still be added to the routing table of the VPN instance and the system only generates an alarm. After the total number of VPN routes and public network routes reaches the limit on the total number of unicast routes specified in the license, the subsequent VPN routes are discarded.";
+              }
+            }
+          }
+        }
+        container topologys {
+          description
+            "List of topology instances.";
+          list topology {
+            key "name";
+            max-elements 32;
+            description
+              "Configure a topology instance. Different logical topologies can be planned on a physical network for different services.";
+            leaf name {
+              type string {
+                length "1..31";
+              }
+              must "../../../../../../../ni:name='_public_' or ../name='base'";
+              description
+                "Topology name. The base topology cannot be deleted. The letters in the topology name should be lowercase.";
+            }
+            container routes {
+                    config false;
+                    description
+                          "Operational data of a routing table.";
+            container ipv4-unicast-routes {
+              description
+                "List of routing entries in the basic IPv4 routing table.";
+              list ipv4-unicast-route {
+                key "prefix mask-length protocol-type interface-name process-id direct-nexthop";
+                description
+                  "Operational data of the IPv4 routing table.";
+                leaf prefix {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Destination IP address.";
+                }
+                leaf mask-length {
+                  type uint8 {
+                    range "0..32";
+                  }
+                  description
+                    "Mask length of an IP address.";
+                }
+                leaf protocol-type {
+                  type rt:protocol-type;
+                  description
+                    "Protocol type.";
+                }
+                leaf interface-name {
+                  type string {
+                    length "1..63";
+                  }
+                  description
+                    "Outbound interface whose next hop is reachable.
+1.If a VPN instance is specified for the outbound interface of routes, the VPN instance name is displayed in this field.
+2.If a tunnel is specified for the outbound interface of routes, the tunnel name or tunnel outbound interface is displayed in this field.
+3.If a physical interface is specified as the outbound interface of routes, the physical interface name is displayed in this field.
+4.Under conditions other than the preceding ones, this field is displayed as --.";
+                }
+                leaf process-id {
+                  type uint32;
+                  description
+                    "Process ID.";
+                }
+                leaf direct-nexthop {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Direct next hop.";
+                }
+                leaf nexthop {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Next hop.";
+                }
+                leaf frr-type {
+                  type rt:frr-type;
+                  description
+                    "FRR type.";
+                }
+                leaf preference {
+                  type uint32 {
+                    range "0..255";
+                  }
+                  description
+                    "Priority of a route. During route selection, the route with the highest priority is selected.";
+                }
+                leaf cost {
+                  type uint32;
+                  description
+                    "Cost.";
+                }
+                leaf flag {
+                  type rt:route-flag;
+                  description
+                    "Flag.";
+                }
+                leaf qos-id {
+                  type pub-type:hex-binary;
+                  description
+                    "QoS information.";
+                }
+                leaf active {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable the flag indicating whether routes are active.";
+                }
+                leaf tag {
+                  type uint32;
+                  description
+                    "Route tag.";
+                }
+                leaf priority {
+                  type rt:route-priority;
+                  description
+                    "Route convergence priority, which can be low, medium, high, or critical.";
+                }
+                leaf label {
+                  type uint32;
+                  description
+                    "Label that is used for traffic forwarding along a tunnel.";
+                }
+                leaf indirect-id {
+                  type pub-type:hex-binary;
+                  description
+                    "IID index of a route.";
+                }
+                leaf state {
+                  type rt:route-state;
+                  description
+                    "Route states. The following route states are supported:
+                    Active: Indicates that a route is activated. 
+                    Invalid: Indicates that a route is invalid. 
+                    Inactive: Indicates that a route is inactive.
+                    No advertise: Indicates that route advertisement is prohibited. 
+                    Advertise: Indicates that a route can be advertised. 
+                    Relied: Indicates that a route can be iterated to the next hop or the outbound interface, or iterated to a tunnel. 
+                    Stale: Indicates that routes with this tag are used in GR.";
+                }
+                leaf neighbour {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Neighbor.";
+                }
+                leaf age {
+                  type string {
+                    length "0..20";
+                  }
+                  description
+                    "Keepalive time.";
+                }
+                leaf sub-protocol-type {
+                  type rt:sub-protocol-type;
+                  description
+                    "Sub protocol type.";
+                }
+              }
+            }
+            container ipv6-unicast-routes {
+              description
+                "List of routing entries in the basic IPv6 routing table.";
+              list ipv6-unicast-route {
+                key "prefix mask-length protocol-type interface-name process-id direct-nexthop";
+                description
+                  "Operational data of the IPv6 routing table.";
+                leaf prefix {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Destination IP address.";
+                }
+                leaf mask-length {
+                  type uint8 {
+                    range "0..128";
+                  }
+                  description
+                    "Mask length of an IP address.";
+                }
+                leaf protocol-type {
+                  type ipv6-protocol-type;
+                  description
+                    "Protocol type.";
+                }
+                leaf interface-name {
+                  type string {
+                    length "1..63";
+                  }
+                  description
+                    "Outbound interface whose next hop is reachable.
+1.If a VPN instance is specified for the outbound interface of routes, the VPN instance name is displayed in this field.
+2.If a tunnel is specified for the outbound interface of routes, the tunnel name or tunnel outbound interface is displayed in this field.
+3.If a physical interface is specified as the outbound interface of routes, the physical interface name is displayed in this field.
+4.Under conditions other than the preceding ones, this field is displayed as --.";
+                }
+                leaf process-id {
+                  type uint32;
+                  description
+                    "Process ID.";
+                }
+                leaf direct-nexthop {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Direct next hop.";
+                }
+                leaf nexthop {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Next hop.";
+                }
+                leaf frr-type {
+                  type rt:frr-type;
+                  description
+                    "FRR type.";
+                }
+                leaf preference {
+                  type uint32 {
+                    range "0..255";
+                  }
+                  description
+                    "Priority of a route. During route selection, the route with the highest priority is selected.";
+                }
+                leaf cost {
+                  type uint32;
+                  description
+                    "Cost.";
+                }
+                leaf flag {
+                  type rt:route-flag;
+                  description
+                    "Flag.";
+                }
+                leaf qos-id {
+                  type pub-type:hex-binary;
+                  description
+                    "QoS information.";
+                }
+                leaf active {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable the flag indicating whether routes are active.";
+                }
+                leaf tag {
+                  type uint32;
+                  description
+                    "Route tag.";
+                }
+                leaf priority {
+                  type rt:route-priority;
+                  description
+                    "Route convergence priority, which can be low, medium, high, or critical.";
+                }
+                leaf label {
+                  type uint32;
+                  description
+                    "Label that is used for traffic forwarding along a tunnel.";
+                }
+                leaf indirect-id {
+                  type pub-type:hex-binary;
+                  description
+                    "IID index of a route.";
+                }
+                leaf state {
+                  type rt:route-state;
+                  description
+                    "Route states. The following route states are supported:
+                    Active: Indicates that a route is activated. 
+                    Invalid: Indicates that a route is invalid. 
+                    Inactive: Indicates that a route is inactive.
+                    No advertise: Indicates that route advertisement is prohibited. 
+                    Advertise: Indicates that a route can be advertised. 
+                    Relied: Indicates that a route can be iterated to the next hop or the outbound interface, or iterated to a tunnel. 
+                    Stale: Indicates that routes with this tag are used in GR.";
+                }
+                leaf neighbour {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Neighbor.";
+                }
+                leaf age {
+                  type string {
+                    length "0..20";
+                  }
+                  description
+                    "Keepalive time.";
+                }
+                leaf sub-protocol-type {
+                  type rt:sub-protocol-type;
+                  description
+                    "Sub protocol type.";
+                }
+              }
+            }
+            container ipv4-route-statistics {
+              description
+                "List of route statistics in the basic IPv4 routing table.";
+              list ipv4-route-statistic {
+                key "protocol-type";
+                description
+                "Route statistics.";
+                leaf protocol-type {
+                type statistic-protocol-type;
+                  description
+                    "Route protocol.";
+                }
+                uses routing-statistics-num;
+                }
+            }
+            container ipv6-route-statistics {
+              description
+                "List of route statistics in the basic IPv6 routing table.";
+              list ipv6-route-statistic {
+                key "protocol-type";
+                description
+                "Route statistics.";
+                leaf protocol-type {
+                type ipv6-statistic-protocol-type;
+                  description
+                    "Route protocol.";
+                }
+                uses routing-statistics-num;
+              }
+            }
+          }
+          }
+        }
+      }
+      container direct-routing {
+        description
+          "Configure a direct route.";
+        container import-ribs {
+          description
+            "List of routes imported from a VPN instance into the public network routing table.";
+          list import-rib {
+            key "source-vpn";
+            description
+              "Configure the import of routes from a VPN instance into the public network routing table.";
+            leaf source-vpn {
+              type leafref {
+                path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+              }
+              must "../../../../../../../ni:name != current()";
+              description
+                "VPN instance name. It uniquely identifies a VPN instance. The name is a string of case-sensitive characters.";
+            }
+            uses import-rib-policy-type;
+          }
+        }
+        container interfaces {
+          description
+            "List of configure direct route attributes on the interface.";
+          list interface {
+            must "cost or binding-topologys";
+            key "name";
+            description
+              "Configure direct route attributes on the interface.";
+            leaf name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Name of an interface.";
+            }
+            leaf cost {
+              when "(../../../../../l3vpn:type='ipv4-unicast' and (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='VBridge' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='Remote-Ap')) or ((/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='Global-VE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='Virtual-Ethernet') and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:class='sub-interface')";
+              type uint32{
+                range "1..4294967295";
+              }
+              description
+                "Cost configured for direct routes on a specified interface.";
+            }
+            container binding-topologys {
+              when "../../../../../../../ni:name='_public_' and (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:class='sub-interface' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='Serial' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='100GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='10GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='25GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='40GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='Eth-Trunk' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='Ethernet' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='GigabitEthernet' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='Ip-Trunk' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='LoopBack' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='Mp-group' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../rt:name]/ifm:type='Pos')";
+              description
+              "The list of Interface binding topology.";
+              list binding-topology {
+                key "topology-name";
+                description
+                  "Configure interface bound to a topology. To add direct routes or IS-IS routes to the multiple-topology network, the interfaces of the direct routes or IS-IS routes must be bound to specified topology instances. By default, interfaces are bound to only base topology instances and cannot be unbound or re-bound. One interface can be bound to multiple topology instances, and multiple interfaces can be bound to one topology instance.";
+                leaf topology-name {
+                  type leafref {
+                    path "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/rt:routing/rt:routing-manage/rt:topologys/rt:topology/rt:name";
+                  }
+                  description
+                    "Name of the topology to which an interface is bound. Topologies must have been created before the interfaces of direct routes or IS-IS routes are bound to the topologies.";
+                }
+              }
+            }
+          }
+        }
+      }
+      container static-routing {
+        description
+          "Configure a basic service package for static routes.";
+         container import-ribs {
+          description
+            "List of routes imported from a VPN instance into the public network routing table.";
+          list import-rib {
+            key "source-vpn";
+            description
+              "Configure the import of routes from a VPN instance into the public network routing table.";
+                  leaf source-vpn {
+                      type leafref {
+                        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                      }
+                      must "../../../../../../../ni:name != current()";
+                      description
+                        "VPN instance name. It uniquely identifies a VPN instance. The name is a string of case-sensitive characters.";
+                    }
+            leaf valid-route {
+                      type boolean;
+                      default "false";
+                      description
+                      "Enable/disable the function of importing only the valid routes of a specified route type.";
+                    }
+            uses import-rib-policy-type;   
+          }            
+        }
+        container unicast-routes {
+          description
+            "List of configured static routes.";
+          list unicast-route {
+            key "topology-name prefix mask-length interface-name vpn-destination-name next-hop";
+            description
+              "Configure static routes. Static routes can be configured on a network with a simple topology to ensure normal running of the network, and can be configured when a router cannot run dynamic routing protocols or cannot generate routes to destination networks. Reasonable configuration of static routes can improve network performance and ensure bandwidths for important services.";
+            leaf topology-name {
+              type leafref {
+                path "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/rt:routing/rt:routing-manage/rt:topologys/rt:topology/rt:name";
+              }
+              must "../vpn-destination-name='_public_' or ../topology-name='base'";
+              description
+                "Name of the specified topology.";
+            }
+            leaf prefix {
+              type inet:ip-address-no-zone;
+              description
+                "Destination IP address.";
+            }
+            leaf mask-length {
+              type uint8 {
+                range "0..128";
+              }
+              description
+                "Mask length of an IP address.";
+            }
+            leaf interface-name {
+              type string {
+                length "0..63";
+              }
+              must "(../interface-name!='') or not(../next-hop='0.0.0.0')";
+              description
+                "Transmission interface of a route.";
+            }
+            leaf vpn-destination-name {
+              type leafref {
+                path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+              }
+              must "../topology-name='base' or ../vpn-destination-name='_public_'";
+              description
+                "Name of the destination VPN instance.";
+            }
+            leaf next-hop {
+              type inet:ip-address-no-zone;
+              description
+                "Next hop IP address of a route.";
+            }
+            leaf preference {
+              ext:dynamic-default;
+              type int32 {
+                range "1..255";
+              }
+              description
+                "Priority of a static route. If the parameter is not configured, the global default value is used.
+To change the global default priority of IPv4 static routes, use the /rt:routing/rt:static-routing/rt:ipv4-site/rt:preference object or the PAF file. The global default priority varies according to hardware. To query the default value, you can perform a get operation.
+To change the global default priority of IPv6 static routes, use the /rt:routing/rt:static-routing/rt:ipv6-site/rt:preference object or the PAF file. The global default priority varies according to hardware. To query the default value, you can perform a get operation.";
+            }
+            leaf description {
+              type string {
+                length "1..150";
+              }
+              description
+                "Description of a static route.";
+            }
+            leaf tag {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Tag of a static route.";
+            }
+            leaf cost {
+              when "../interface-name and ../interface-name!=''";
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Cost of static route.";
+            }
+            leaf inherit-cost {
+              type boolean;
+              must "(../interface-name='' and ../next-hop!='0.0.0.0') or ../inherit-cost='false'";
+              default "false";
+              description
+                "Enable/disable the function of allowing a static route to inherit the cost of a recursive route. The cost of the static route changes according to the cost of the recursive route.";
+            }
+            leaf permanent {
+              type boolean;
+              must "(../../../../../l3vpn:type='ipv4-unicast' and ../next-hop!='0.0.0.0' and ../topology-name='base') or ../permanent='false'";
+              default "false";
+              description
+                "Enable/disable permanent advertisement of a static route.";
+            }
+            leaf no-advertise {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the function of preventing a static route from being advertised.";
+            }
+            leaf no-install {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the function of preventing a static route from being delivered to the FIB.";
+            }
+            leaf relay-host-route {
+              type boolean;
+              must "(../interface-name='' and ../next-hop!='0.0.0.0') or ../relay-host-route='false'";
+              default "false";
+              description
+                "Enable/disable the function of recursing a static route to a host route.";
+            }
+            leaf dhcp-enable {
+              type boolean;
+              must "(../interface-name!='' and ../next-hop='0.0.0.0' and ../ldp-sync='false') or ../dhcp-enable='false'";
+              default "false";
+              description
+                "Enable/disable the function of associating a static route with DHCP.";
+            }
+            leaf ldp-sync {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the synchronization between LDP and a static route.";
+            }
+            leaf inter-protocol-ecmp {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable inter-protocol load balancing among a static route and the routes of dynamic routing protocols.";
+            }
+            leaf bfd-enable {
+              type boolean;
+              must "../bfd-enable='false' or (../permanent='false' and ../inherit-cost='false' and ../topology-name='base')";
+              default "false";
+              description
+                "Enable/disable the function of binding a dynamic BFD session to a static route. Dynamic BFD sessions can quickly detect link changes for static routes, which improves network reliability. Precaution: When enabling BFD for a single static route, you need to check whether BFD parameters are set for the static route.";
+            }
+            choice track-setting {
+              description
+                "Track set.";
+              case bfd {
+                description
+                  "Track BFD.";
+                leaf session-name {
+                  type leafref {
+                    path "/bfd:bfd/bfd:sessions/bfd:session/bfd:name";
+                  }
+                  must "(../permanent='false' and ../inherit-cost='false' and ../topology-name='base') or not(../session-name)";
+                  description
+                    "Bind a static BFD session to a static route. The static BFD session can detect the session link status and quickly detect link status changes, which improves network reliability.";
+                }
+              }
+              case efm {
+                description
+                  "Track EFM.";
+                leaf name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  must "../../../../../l3vpn:type='ipv4-unicast' and ../next-hop!='0.0.0.0' and ../inherit-cost='false' and ../permanent='false' and ../topology-name='base'" ;
+                  description
+                    "Track EFM Interface Name.";
+                }
+              }
+            }
+          }
+        }
+        container ipv4-multicast-routes {
+          when "../../../l3vpn:type='ipv4-unicast'";
+          description
+            "List of multicast static routes.";
+          list ipv4-multicast-route {
+            key "prefix mask-length next-hop interface-name";
+            description
+              "Configure a multicast static route. The RPF check is performed based on multicast static routes. An RPF interface and an RPF neighbor can be specified for a packet source on the local device by configuring a multicast static route. Multicast static routes can provide two functions in different scenarios:
+              1. Changing an RPF route: When the multicast topology is the same as the unicast topology on a network, the paths for transmitting multicast data are consistent with that for transmitting unicast data. The RPF route can be configured as a multicast route to work as a transmission path different from unicast transmission paths. 
+              2. Connecting an RPF route: This method is used on a network where unicast routes are blocked, no multicast static route is configured, and therefore no RFP route can be used to forward packets. An RPF multicast static route can be configured after an RPF check, and then can be used to forward packets.";
+            leaf prefix {
+              type inet:ipv4-address-no-zone;
+              description
+                "Destination IP address.";
+            }
+            leaf mask-length {
+              type uint8 {
+                range "0..32";
+              }
+              description
+                "Mask length of the destination IP address.";
+            }
+            leaf next-hop {
+              type inet:ipv4-address-no-zone;
+              description
+                "Next hop IP address of a route.";
+            }
+            leaf interface-name {
+              type string {
+                length "0..63";
+              }
+              must "(../interface-name!='' and ../next-hop='0.0.0.0') or (not(../next-hop='0.0.0.0') and ../interface-name='')";
+              description
+                "Transmission interface of a route.";
+            }
+            leaf preference {
+              type uint32 {
+                range "1..255";
+              }
+              default "1";
+              description
+                "Priority of a route.";
+            }
+            leaf interface-state {
+              type string {
+                length "1..8";
+              }
+              config false;
+              description
+                "Interface status.";
+            }
+            leaf bfd-detect {
+              type string {
+                length "1..36";
+              }
+              config false;
+              description
+                "Establishment status of a BFD session:
+                Disable: indicates that the BFD session is not enabled.
+                Up: indicates that the BFD session is established successfully.
+                Down: indicates that the BFD session fails to be established.";
+            }
+            leaf state {
+              type string {
+                length "1..20";
+              }
+              config false;
+              description
+                "Route selection result:
+                Active Primary: indicates an active primary route.
+                Active Backup: indicates an active backup route.
+                Inactive Valid: indicates a route that takes part in the route selection but is not preferred.
+                Inactive Invalid: indicates a route that cannot take part in the route selection.";
+            }
+            leaf indirect-id {
+              type pub-type:hex-binary;
+              config false;
+              description
+                "Keyword of indirect next hop.";
+            }
+            leaf local-address {
+              type inet:ip-address-no-zone;
+              config false;
+              description
+                "IP address of the local interface. If no IP address is configured for the local interface, this item is displayed as 0.0.0.0.";
+            }
+            leaf remote-ip {
+              type inet:ip-address-no-zone;
+              config false;
+              description
+                "IP address of the remote P2P interface. If no IP address is configured for the remote P2P interface, this item is displayed as 0.0.0.0.";
+            }
+            leaf relay-nexthop {
+              type inet:ip-address-no-zone;
+              config false;
+              description
+                "Next hop address to which a static route is iterated. If the static route is iterated to a tunnel, this item is displayed as 0.0.0.0.";
+            }
+            leaf relay-interface {
+              type string {
+                length "0..63";
+              }
+              config false;
+              description
+                "Name of an iteration outbound interface. If the static route is iterated to a tunnel, this item is displayed as a tunnel name.";
+            }
+            leaf tunnel-id {
+              type string {
+                length "1..21";
+              }
+              config false;
+              description
+                "ID of a tunnel.";
+            }
+          }
+        }
+        container bfd-templates {
+          description
+            "List of parameters configured in a BFD template.";
+          list bfd-template {
+            key "interface-name nexthop";
+            description
+              "Configure a dynamic BFD template and related parameters for static routes. When configuring dynamic BFD for a single static route, check whether a BFD template has been configured for the static route. If the BFD template is not configured, dynamic BFD for the static route fails to be enabled. You can search for the corresponding BFD template based on the static route's outbound interface, next hop, and VPN instance to which the next hop belongs.";
+            leaf interface-name {
+              type string {
+                length "0..63";
+              }
+              description
+                "Transmission interface of a route. When configured on a private network, the private network bound to the interface must be consistent with it.";
+            }
+            leaf nexthop {
+              type inet:ip-address-no-zone;
+              description
+                "Next hop address.";
+            }
+            leaf local-address {
+              type inet:ip-address-no-zone;
+              must "(../local-address!='0.0.0.0') or not(../interface-name='')";
+              default "0.0.0.0";
+              description
+                "Local address.";
+            }
+            leaf min-tx-interval {
+              ext:dynamic-default;
+              type uint32 {
+                range "3..4294967295";
+              }
+              units "ms";
+              description
+                "Minimum interval at which BFD packets are sent to the peer end. If no minimum interval is specified, the global default minimum value is used.
+To change the global default priority of IPv4 BFD templates, use the /rt:routing/rt:static-routing/rt:ipv4-site/rt:min-tx-interval object or the PAF file. The global default priority varies according to hardware. To query the default value, you can perform a get operation.
+To change the global default priority of IPv6 BFD templates, use the /rt:routing/rt:static-routing/rt:ipv6-site/rt:min-tx-interval object or the PAF file. The global default priority varies according to hardware. To query the default value, you can perform a get operation.";
+            }
+            leaf min-rx-interval {
+              ext:dynamic-default;
+              type uint32 {
+                range "3..4294967295";
+              }
+              units "ms";
+              description
+                "Minimum interval at which BFD packets are received from the peer end. If no minimum interval is specified, the global default value is used.
+To change the global default priority of IPv4 BFD templates, use the /rt:routing/rt:static-routing/rt:ipv4-site/rt:min-rx-interval object or the PAF file. The global default priority varies according to hardware. To query the default value, you can perform a get operation.
+To change the global default priority of IPv6 BFD templates, use the /rt:routing/rt:static-routing/rt:ipv6-site/rt:min-rx-interval object or the PAF file. The global default priority varies according to hardware. To query the default value, you can perform a get operation.";
+            }
+            leaf multiplier {
+              ext:dynamic-default;
+              type uint32 {
+                range "3..50";
+              }
+              description
+                "Local detection multiplier. If no detection multiplier is specified locally, the global default value is used.
+To change the global default priority of IPv4 BFD templates, use the /rt:routing/rt:static-routing/rt:ipv4-site/rt:multiplier object. To query the default value, you can perform a get operation.
+To change the global default priority of IPv6 BFD templates, use the /rt:routing/rt:static-routing/rt:ipv6-site/rt:multiplier object. To query the default value, you can perform a get operation.";
+            }
+            leaf dhcp-enable {
+              type boolean;
+              must "../../../../../l3vpn:type='ipv4-unicast' and ../interface-name!='' and ../nexthop='0.0.0.0' and ../dhcp-enable='true'";
+              default "false";
+              description
+                "Enable/disable the function of associating static routes with DHCP.";
+            }
+          }
+        }
+        container route-frr-set {
+          description
+            "Configure FRR.";
+          leaf unicast-route-frr-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable FRR. Before configuring FRR for VPN static routes, you need to configure VPN instances.";
+          }
+          leaf multicast-route-frr-enable {
+            when "../../../../l3vpn:type='ipv4-unicast'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable FRR. Before configuring FRR for multicast VPN static routes, you need to configure VPN instances.";
+          }
+        }
+      }
+    }
+  }
+}

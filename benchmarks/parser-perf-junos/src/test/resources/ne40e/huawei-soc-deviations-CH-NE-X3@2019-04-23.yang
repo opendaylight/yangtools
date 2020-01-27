@@ -1,0 +1,556 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-soc-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-soc-deviations-CH-NE-X3";
+  prefix "soc-devs-CH-NE-X3";
+
+  import huawei-soc {
+    prefix "soc";
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Policies for global management and service plane protection.";
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef protocol-name-deviations {
+    type enumeration {
+      enum "802.1ag" {
+        value 48;
+        description
+          "802.1AG protocol.";
+      }
+      enum "white-list" {
+        value 55;
+        description
+          "Whitelist.";
+      }
+      enum "arp" {
+        value 0;
+        description
+          "ARP protocol.";
+      }
+      enum "bfd" {
+        value 33;
+        description
+          "BFD protocol.";
+      }
+      enum "bgp" {
+        value 9;
+        description
+          "BGP protocol.";
+      }
+      enum "bgpv6" {
+        value 58;
+        description
+          "BGPv6 protocol.";
+      }
+      enum "dhcp" {
+        value 2;
+        description
+          "DHCP protocol.";
+      }
+      enum "dhcpv6" {
+        value 73;
+        description
+          "DHCPv6 protocol.";
+      }
+      enum "dns-client" {
+        value 38;
+        description
+          "DNS client protocol.";
+      }
+      enum "dnsv6" {
+        value 43;
+        description
+          "DNSv6 protocol.";
+      }
+      enum "eapol" {
+        value 69;
+        description
+          "EAPOL protocol.";
+      }
+      enum "fib-miss" {
+        value 75;
+        description
+          "IPv4 fib miss packets.";
+      }
+      enum "fib-missv6" {
+        value 76;
+        description
+          "IPv6 fib miss packets.";
+      }
+      enum "ftp-client" {
+        value 23;
+        description
+          "FTP client protocol.";
+      }
+      enum "ftp-server" {
+        value 4;
+        description
+          "FTP server protocol.";
+      }
+      enum "ftpv6-client" {
+        value 59;
+        description
+          "FTPv6 client protocol.";
+      }
+      enum "ftpv6-server" {
+        value 60;
+        description
+          "FTPv6 server protocol.";
+      }
+      enum "hgmp" {
+        value 57;
+        description
+          "Huawei group management protocol.";
+      }
+      enum "hwtacacs" {
+        value 29;
+        description
+          "HWTACACS protocol.";
+      }
+      enum "icmp" {
+        value 1;
+        description
+          "ICMP protocol.";
+      }
+      enum "icmpv6" {
+        value 42;
+        description
+          "ICMPv6 protocol.";
+      }
+      enum "igmp" {
+        value 18;
+        description
+          "IGMP protocol.";
+      }
+      enum "ipv6" {
+        value 66;
+        description
+          "IPv6 protocol.";
+      }
+      enum "isis" {
+        value 20;
+        description
+          "ISIS protocol.";
+      }
+      enum "l2tp" {
+        value 72;
+        description
+          "L2TP protocol.";
+      }
+      enum "lacp" {
+        value 50;
+        description
+          "LACP protocol.";
+      }
+      enum "ldp" {
+        value 10;
+        description
+          "LDP protocol.";
+      }
+      enum "lspping" {
+        value 30;
+        description
+          "LSPPING protocol.";
+      }
+      enum "mld" {
+        value 19;
+        description
+          "ICMPv6 MLD protocol.";
+      }
+      enum "ipfpm" {
+        value 61;
+        description
+          "IPFPM protocol.";
+      }
+      enum "mpls-oam" {
+        value 46;
+        description
+          "MPLS-OAM protocol.";
+      }
+      enum "msdp" {
+        value 16;
+        description
+          "MSDP protocol.";
+      }
+      enum "multicast" {
+        value 63;
+        description
+          "Multicast protocol.";
+      }
+      enum "multicastv6" {
+        value 64;
+        description
+          "IPv6 multicast protocol.";
+      }
+      enum "nd" {
+        value 74;
+        description
+          "ICMPv6 ND protocol.";
+      }
+      enum "ntp" {
+        value 27;
+        description
+          "NTP protocol.";
+      }
+      enum "ospfv2" {
+        value 12;
+        description
+          "OSPFv2 protocol.";
+      }
+      enum "ospfv3" {
+        value 15;
+        description
+          "OSPFv3 protocol.";
+      }
+      enum "pim" {
+        value 17;
+        description
+          "PIM protocol.";
+      }
+      enum "pimv6" {
+        value 21;
+        description
+          "PIMv6 protocol.";
+      }
+      enum "portal" {
+        value 70;
+        description
+          "Portal protocol.";
+      }
+      enum "pppoe" {
+        value 3;
+        description
+          "PPPoE protocol.";
+      }
+      enum "radius" {
+        value 28;
+        description
+          "Radius protocol.";
+      }
+      enum "rip" {
+        value 13;
+        description
+          "RIP protocol.";
+      }
+      enum "rrpp" {
+        value 47;
+        description
+          "RRPP protocol.";
+      }
+      enum "rsvp" {
+        value 11;
+        description
+          "RSVP protocol.";
+      }
+      enum "sftp-client" {
+        value 26;
+        description
+          "SFTP client protocol.";
+      }
+      enum "sftp-server" {
+        value 22;
+        description
+          "SFTP server protocol.";
+      }
+      enum "snmp" {
+        value 6;
+        description
+          "SNMP protocol.";
+      }
+      enum "snmpv6" {
+        value 62;
+        description
+          "SNMPv6 protocol.";
+      }
+      enum "ssh-client" {
+        value 25;
+        description
+          "SSH client protocol.";
+      }
+      enum "ssh-server" {
+        value 5;
+        description
+          "SSH server protocol.";
+      }
+      enum "sshv6-server" {
+        value 44;
+        description
+          "SSHv6 server protocol.";
+      }
+      enum "tcp" {
+        value 67;
+        description
+          "TCP protocol.";
+      }
+      enum "telnet-client" {
+        value 24;
+        description
+          "TELNET client protocol.";
+      }
+      enum "telnet-server" {
+        value 7;
+        description
+          "TELNET server protocol.";
+      }
+      enum "telnetv6-client" {
+        value 40;
+        description
+          "TELNETv6 client protocol.";
+      }
+      enum "telnetv6-server" {
+        value 39;
+        description
+          "TELNETv6 server protocol.";
+      }
+      enum "tftp" {
+        value 8;
+        description
+          "TFTP protocol.";
+      }
+      enum "tftpv6-client" {
+        value 41;
+        description
+          "TFTPv6 client protocol.";
+      }
+      enum "ttl-expired" {
+        value 77;
+        description
+          "IPv4 TTL expired packets.";
+      }
+      enum "ttl-expiredv6" {
+        value 78;
+        description
+          "IPv6 hop-limit expired packets.";
+      }
+      enum "udp" {
+        value 68;
+        description
+          "UDP protocol.";
+      }
+      enum "unknown" {
+        value 54;
+        description
+          "Unknown protocol.";
+      }
+      enum "vgmp" {
+        value 31;
+        description
+          "VGMP protocol.";
+      }
+      enum "vrrp" {
+        value 32;
+        description
+          "VVRRP protocol.";
+      }
+      enum "web" {
+        value 71;
+        description
+          "Web protocol.";
+      }
+      enum "lldp" {
+        value 80;
+        description
+          "LLDP protocol.";
+      }
+      enum "bfdv6" {
+        value 81;
+        description
+          "BFDv6 protocol.";
+      }
+      enum "arpmiss" {
+        value 82;
+        description
+          "ARP miss packets.";
+      }
+      enum "pim-mc" {
+        value 83;
+        description
+          "PIM multicast packets.";
+      }
+      enum "openflow" {
+        value 84;
+        description
+          "Openflow protocol.";
+      }
+      enum "ra" {
+        value 85;
+        description
+          "ICMPv6-RA protocol.";
+      }
+      enum "rs" {
+        value 86;
+        description
+          "ICMPv6-RS protocol.";
+      }
+      enum "na" {
+        value 87;
+        description
+          "ICMPv6-NA protocol.";
+      }
+      enum "ns" {
+        value 88;
+        description
+          "ICMPv6-NS protocol.";
+      }
+      enum "web-auth-server" {
+        value 89;
+        description
+          "Web authentication server protocol.";
+      }
+      enum "diameter" {
+        value 90;
+        description
+          "Diameter protocol.";
+      }
+      enum "http-redirect-chasten" {
+        value 91;
+        description
+          "Http-redirect packet of chasten user.";
+      }
+      enum "atm-inarp" {
+        value 92;
+        description
+          "ATM inARP protocol.";
+      }
+      enum "unicast-vrrp" {
+        value 93;
+        description
+          "Unicast VRRP protocol.";
+      }
+      enum "tcp-65410" {
+        value 97;
+        description
+          "Packet with TCP port number 65410.";
+      }
+      enum "padi" {
+        value 98;
+        description
+          "PADI protocol.";
+      }
+      enum "mka" {
+        value 99;
+        description
+          "MKA protocol.";
+      }
+      enum "icmp-broadcast-address-echo" {
+        value 100;
+        description
+          "ICMP broadcast address echo-request packet.";
+      }
+      enum "dlp-rsvp" {
+        value 101;
+        description
+          "Whitelist RSVP packet.";
+      }
+      enum "dlp-isis" {
+        value 102;
+        description
+          "Whitelist ISIS packet.";
+      }
+      enum "dlp-radius" {
+        value 103;
+        description
+          "Whitelist radius packet.";
+      }
+      enum "dlp-ipv6-bgp" {
+        value 104;
+        description
+          "Whitelist BGPv6 packet.";
+      }
+      enum "dlp-ipv6-ospf" {
+        value 105;
+        description
+          "Whitelist OSPFv3 packet.";
+      }
+      enum "dcn-pkt-fin" {
+        value 106;
+        description
+          "DCN-PKT-FIN packet.";
+      }
+      enum "dlp-bgp" {
+        value 94;
+        description
+          "DLP-BGP packet.";
+      }
+      enum "dlp-ldp" {
+        value 95;
+        description
+          "DLP-LDP packet.";
+      }
+      enum "dlp-ospf" {
+        value 96;
+        description
+          "DLP-OSPF packet.";
+      }
+      enum "pcep" {
+        value 107;
+        description
+          "Pcep packet.";
+      }
+      enum "vrrpv6" {
+        value 108;
+        description
+          "Vrrpv6 packet.";
+      }
+      enum "radiusv6" {
+        value 109;
+        description
+          "Radiusv6 packet.";
+      }
+      enum "hwtacacsv6" {
+        value 110;
+        description
+          "Hwtacacsv6 packet.";
+      }
+      enum "lsppingv6" {
+        value 111;
+        description
+          "Lsppingv6 packet.";
+      }
+      enum "syslogv6" {
+        value 112;
+        description
+          "Syslogv6 packet.";
+      }
+      enum "web-auth-serverv6" {
+        value 113;
+        description
+          "Web-auth-serverv6 packet.";
+      }
+      enum "ipv6-ndh-miss" {
+        value 115;
+        description
+          "IPv6-ndh-miss packet.";
+      }
+    }
+    description
+      "Protocol name.";
+  }
+  deviation "/devm:devm/devm:mpu-boards/devm:mpu-board/soc:soc" {
+    deviate not-supported;
+  }
+  deviation "/soc:soc/soc:security-operation-center/soc:attack-detect/soc:threshold/soc:protocol-cars/soc:protocol-car/soc:protocol-name" {
+    deviate replace {
+      type soc-devs-CH-NE-X3:protocol-name-deviations;
+    }
+  }
+}

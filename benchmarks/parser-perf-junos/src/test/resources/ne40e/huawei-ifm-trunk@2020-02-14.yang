@@ -1,0 +1,486 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifm-trunk {
+  namespace "urn:huawei:yang:huawei-ifm-trunk";
+  prefix ifm-trunk;
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Define the trunk bundling technology that bundles multiple physical interfaces into a logical interface.";
+    
+  revision 2020-02-14 {
+    description
+      "Modify the description of nodes.";
+    reference
+      "Huawei private.";
+  }
+
+  revision 2019-06-30 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "trunk";
+
+  typedef trunk-member-role {
+    type enumeration {
+      enum slave {
+        value 0;
+        description
+          "Configure the slave interface in the Eth-Trunk interface working in 1:1 master/slave mode.";
+      }
+      enum master {
+        value 1;
+        description
+          "Configure the master interface in the Eth-Trunk interface working in 1:1 master/slave mode.";
+      }
+      enum common {
+        value 3;
+        description
+          "Trunk member interface.";
+      }
+    }
+    description
+      "Trunk member role.";
+  }
+
+  typedef trunk-type {
+    type enumeration {
+      enum eth-trunk {
+        value 1;
+        description
+          "Indicate that an Eth-Trunk link consists of only Ethernet links.";
+      }
+      enum ip-trunk {
+        value 2;
+        description
+          "Indicate that an IP-Trunk link consists of only the Packet over SONET/SDH (POS) links.";
+      }
+    }
+    description
+      "Trunk interface type.";
+  }
+
+  typedef member-status {
+    type enumeration {
+      enum down {
+        value 0;
+        description
+          "The interface is in the down state.";
+      }
+      enum up {
+        value 1;
+        description
+          "The interface is in the up state.";
+      }
+    }
+    description
+      "Trunk member state.";
+  }
+
+  typedef trunk-mode {
+    type enumeration {
+      enum manual {
+        value 1;
+        description
+          "Specify the manual load balancing mode. It is a basic link aggregation mode. In this mode, you must manually create a trunk interface, add interfaces to the trunk interface, and specify active member interfaces. LACP is not involved.";
+      }
+      enum dynamic {
+        value 2;
+        description
+          "Specify the dynamic LACP mode. In dynamic LACP mode, if the Eth-Trunk interface has not be configured on the other end and the physical interfaces on two ends are both Up, dynamic LACP mode will set Eth-Trunk member interfaces to Indep, indicating the physical interfaces of the server and of the device are independent. This ensures that physical interfaces of the device can forward data to the server.";
+      }
+      enum static {
+        value 3;
+        description
+          "Specify the static LACP mode. In this mode, you must manually add interfaces to the Eth-Trunk interface. Different from link aggregation in manual load balancing mode, active member interfaces are selected based on LACP packets.";
+      }
+      enum backup {
+        value 4;
+        description
+          "Specify the 1:1 active/standby load balancing mode. In this mode, an Eth-Trunk interface contains only two member interfaces (one active interface and one standby interface).";
+      }
+      enum invalid {
+        value 5;
+        description
+          "Nonexistent trunk working mode.";
+      }
+    }
+    description
+      "Trunk work mode.";
+  }
+
+  typedef trunk-hash-type {
+    type enumeration {
+      enum ip {
+        value 1;
+        description
+          "Specify the IP-address-based per-destination load balancing mode. In this mode, data flows are differentiated based on IP addresses of packets to ensure that the packets of the same data flow are transmitted over the same member link.";
+      }
+      enum mac {
+        value 2;
+        description
+          "Specify the MAC-address-based per-destination load balancing mode. In this mode, data flows are differentiated based on MAC addresses of packets to ensure that the packets of the same data flow are transmitted over the same member link.";
+      }
+      enum packet-all {
+        value 3;
+        description
+          "Specifies the per-packet load balancing mode. In this mode, one packet (not a data flow) is regarded as a unit, and packets are dispersed and transmitted among different member links.";
+      }
+      enum des-ip {
+        value 4;
+        description
+          "Load balancing based on the destination IP address. In this mode, the system obtains the specified three bits from each of the destination IP address and the TCP or UDP port number in outgoing packets to perform the Exclusive-OR calculation, and then selects the outbound interface from the Eth-Trunk table based on the calculation result.";
+      }
+      enum des-mac {
+        value 5;
+        description
+          "Load balancing based on the destination MAC address. In this mode, the system obtains the specified three bits from each of the destination MAC address, VLAN ID, Ethernet type, and inbound interface information to perform the Exclusive-OR calculation, and then selects the outbound interface from the Eth-Trunk table based on the calculation result.";
+      }
+      enum src-ip {
+        value 6;
+        description
+          "Load balancing based on the source IP address. In this mode, the system obtains the specified three bits from each of the source IP address and the TCP or UDP port number in incoming packets to perform the Exclusive-OR calculation, and then selects the outbound interface from the Eth-Trunk table based on the calculation result.";
+      }
+      enum src-mac {
+        value 7;
+        description
+          "Load balancing based on the source MAC address. In this mode, the system obtains the specified three bits from each of the source MAC address, VLAN ID, Ethernet type, and inbound interface information to perform the Exclusive-OR calculation, and then selects the outbound interface from the Eth-Trunk table based on the calculation result.";
+      }
+      enum enhanced {
+        value 8;
+        description
+          "Load balancing mode based on the enhanced profile.";
+      }
+      enum resilient {
+        value 9;
+        description
+          "Load balancing mode based on the enhanced resilient profile.";
+      }
+      enum invalid {
+        value 10;
+        description
+          "Nonexistent hash type of trunk interfaces.";
+      }
+      enum l4 {
+        value 11;
+        description
+          "According to source/destination IP, source/destination port and protocol hash arithmetic.";
+      }
+      enum random {
+        value 12;
+        description
+          "Load balancing mode based on random selects the outbound interface from the Eth-Trunk.";
+      }
+      enum round-robin {
+        value 13;
+        description
+          "Load balancing mode based on round-robin selects the outbound interface from the Eth-Trunk.";
+      }
+      enum symmetric {
+        value 14;
+        description
+          "Symmetric hash arithmetic.";
+      }
+      enum symmetric-complement {
+        value 15;
+        description
+          "Symmetric complement hash arithmetic.";
+      }
+    }
+    description
+      "Trunk hash type.";
+  }
+
+  typedef trunk-lacp-negotiation-mode {
+    type enumeration {
+      enum active {
+        value 1;
+        description
+          "Active mode.";
+      }
+      enum passive {
+        value 2;
+        description
+          "Passive mode.";
+      }
+    }
+    description
+      "Lacp negotiation mode.";
+  }
+
+  container ifm-trunk {
+    description
+      "Define the trunk bundling technology. It bundles multiple physical interfaces into a logical interface.";
+    container global {
+      description
+        "Configure trunk global system attributes.";
+      leaf trunk-member-trap-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable trunk member trap.";
+      }
+    }
+  }
+  rpc trunk-switch {
+    description
+      "1:1 trunk switch.";
+    input {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Interface name.";
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    when "ifm:type='Eth-Trunk' or ifm:type='Ip-Trunk'";
+    description
+      "Active when the interface is set to type Eth-Trunk or Ip-Trunk.";
+    container trunk {
+      description
+        "Configure the trunk bundling technology that bundles multiple physical interfaces into a logical interface.";
+      leaf min-up-num {
+        when "../work-mode!='backup'";
+        type uint16 {
+          range "1..64";
+        }
+        default "1";
+        description
+          "Specify the minimum number of Up member links of a trunk interface.";
+      }
+      leaf min-up-bandwidth {
+        when "not(../../ifm:type='Eth-Trunk' and ../work-mode='backup')";
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Specify the minimum bandwidth of Up member links of a trunk interface.";
+      }
+      leaf max-up-num {
+        when "../work-mode!='backup' and ../../ifm:type='Eth-Trunk'";
+        type uint16 {
+          range "1..64";
+        }
+        ext:dynamic-default;
+        description
+          "Maximum number of links that affect the actual bandwidth of the Layer 2 Eth-Trunk interface.";
+      }
+      leaf type {
+        type trunk-type;
+        status deprecated;
+        ext:dynamic-default;
+        description
+          "Specify the trunk interface types. The default value of this node varies according to different interface types.";
+      }
+      leaf hash-type {
+        type trunk-hash-type;
+        must "(../../ifm:type='Ip-Trunk' and (../hash-type='ip' or ../hash-type='packet-all')) or (../../ifm:type='Eth-Trunk' and (../work-mode='manual' or ../work-mode='static' or ../work-mode='dynamic')) or (../../ifm:type='Eth-Trunk' and ../work-mode='backup' and ../hash-type='mac')";
+        ext:dynamic-default;
+        description
+          "Configure the hash algorithm for a forwarding table.";
+      }
+      leaf work-mode {
+        type trunk-mode;
+        must "(../../ifm:type='Eth-Trunk' and ../work-mode='backup') or (../../ifm:type='Eth-Trunk' and (../work-mode='manual' or ../work-mode='static' or ../work-mode='dynamic')) or (../../ifm:type='Ip-Trunk' and ../work-mode='manual') or (../../ifm:type!='Eth-Trunk' and ../../ifm:type!='Ip-Trunk') or (not (../../ifm:type))";
+        default "manual";
+        description
+          "Configure the working mode for a trunk interface.";
+      }
+      leaf smart-link-flush-vlan {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "Specify the ID of the VLAN to which Smart-link flush packets are sent. Only Layer 2 interface supports the node.";
+      }
+      leaf inactive-port-shutdown {
+        type boolean;
+         must "../work-mode='backup' and ../preempt-enable='false' or ../inactive-port-shutdown='false'";
+        default "false";
+        description
+          "Enable/disable the laser auto shutdown function on the backup interface of the Eth-Trunk interface working in 1:1 master/backup mode.
+           After this function is enabled, the backup interface will be shut down. By default, the laser auto shutdown function is disabled.";
+      }
+      leaf preempt-enable {
+        type boolean;
+        must "../inactive-port-shutdown='false' and ../work-mode='backup' or ../preempt-enable='false'";
+        default "false";
+        description
+          "Enable/disable delay switchback for the master member interface of an Eth-Trunk interface working in 1:1 master/backup mode. By default, this function is disabled. This function works together with revert delay time that can be configured only after this function is enabled.
+           After this function is enabled, the restored master interface automatically takes over traffic of the backup interface when the revert delay time expires.";
+      }
+      leaf preempt-delay-minutes {
+        type uint16 {
+          range "0..30";
+        }
+        units "min";
+        must "../preempt-delay-minutes=0 or ../preempt-enable='true'";
+        default "0";
+        description
+          "Specify the delay interval (in minutes) at which the master interface of an Eth-Trunk interface working 1:1 master/backup mode switches back to the master state. Value 0 indicates that a master interface immediately switches back to the master state once it is restored. This time can be configured only after delay switchback is enabled.
+           After this time is configured, the restored master interface switches back to the master state only after the time expires, preventing frequent interface flappings and traffic loss.";
+      }
+      leaf preempt-delay-seconds {
+        type uint8 {
+          range "0..59";
+        }
+        units "s";
+        must "../preempt-delay-seconds=0 or ../preempt-enable='true'";
+        default "0";
+        description
+          "Specify the delay interval (in seconds) at which the master interface of an Eth-Trunk interface working 1:1 master/backup mode switches back to the master state. Value 0 indicates that a master interface immediately switches back to the master state once it is restored. This time can be configured only after delay switchback is enabled.
+           After this time is configured, the restored master interface switches back to the master state only after the time expires, preventing frequent interface flappings and traffic loss.";
+      }
+      leaf preempt-delay-milliseconds {
+        type uint16 {
+          range "0..999";
+        }
+        units "ms";
+        must "../preempt-delay-milliseconds=0 or ../preempt-enable='true'";
+        default "0";
+        description
+          "Specify the delay interval (in million-seconds) at which the master interface of an Eth-Trunk interface working 1:1 master/backup mode switches back to the master state. Value 0 indicates that a master interface immediately switches back to the master state once it is restored. This time can be configured only after delay switchback is enabled.
+           After this time is configured, the restored master interface switches back to the master state only after the time expires, preventing frequent interface flappings and traffic loss.";
+      }
+      leaf up-member-num {
+        when "../../ifm:type='Eth-Trunk' and ../work-mode='backup' or ../../ifm:type='Eth-Trunk' and ../work-mode='manual' or ../../ifm:type='Eth-Trunk' and ../work-mode='static' or ../../ifm:type='Ip-Trunk'";
+        type uint16 {
+          range "0..128";
+        }
+        config false;
+        description
+          "Specify the number of member interfaces in the Up state.";
+      }
+      leaf online-member-num {
+        type uint16 {
+          range "0..128";
+        }
+        config false;
+        description
+          "Specify the number of member interfaces in the Online state.";
+      }
+      leaf member-num {
+        when "../../ifm:type='Eth-Trunk' and ../work-mode='backup' or ../../ifm:type='Eth-Trunk' and ../work-mode='manual' or ../../ifm:type='Eth-Trunk' and ../work-mode='static' or ../../ifm:type='Ip-Trunk'";
+        type uint16 {
+          range "0..128";
+        }
+        config false;
+        description
+          "Specify the number of trunk member interfaces.";
+      }
+      leaf max-bandwidth {
+        when "../../ifm:type='Eth-Trunk' and ../work-mode='backup' or ../../ifm:type='Eth-Trunk' and ../work-mode='manual' or ../../ifm:type='Eth-Trunk' and ../work-mode='static' or ../../ifm:type='Ip-Trunk'";
+        type uint64;
+        units "bit/s";
+        config false;
+        description
+          "Specify the maximum bandwidth of a trunk interface.";
+      }
+      container members {
+        description
+          "List of trunk member interfaces.";
+        list member {
+          key "name";
+          max-elements 128;
+          description
+            "Configure trunk member interfaces.";
+          leaf name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            must "(../../../../ifm:type='Eth-Trunk' and (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Ethernet' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='GigabitEthernet' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='100GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='40GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='10GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='GEBrief' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='4x10GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='10x10GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='3x40GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='4x25GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='25GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='XGigabitEthernet' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='50GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='400GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='50|100GE')) or (../../../../ifm:type='Ip-Trunk' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Pos')";
+            description
+              "Configure the name of a trunk member interface.";
+          }
+          leaf weight {
+            type uint16 {
+              range "1..128";
+            }
+            default "1";
+            description
+              "Set the weight for a trunk member interface.";
+          }
+          leaf status {
+            type member-status;
+            config false;
+            description
+              "Display the status of a trunk member interface.";
+          }
+          leaf is-master {
+            type boolean;
+            must "../../../../ifm:type='Eth-Trunk' and ../../../work-mode='backup' or ../is-master='false'";
+            default "false";
+            description
+              "Enable/disable a trunk member interface as the master interface.";
+          }
+          leaf role {
+            type trunk-member-role;
+            default "slave";
+            config false;
+            description
+              "Display the role of a trunk member interface.";
+          }
+          leaf lacp-negotiation-mode {
+            when "../../../work-mode='static' or ../../../work-mode='dynamic'";
+            type trunk-lacp-negotiation-mode;
+            default "active";
+            description
+              "LACP negotiation mode.";
+          }
+        }
+      }
+      container forwardings {
+        when "../../ifm:type='Eth-Trunk' and ../work-mode='backup' or ../../ifm:type='Eth-Trunk' and ../work-mode='manual' or ../../ifm:type='Eth-Trunk' and ../work-mode='static' or ../../ifm:type='Ip-Trunk'";
+        config false;
+        description
+          "List of the trunk forwarding table.";
+        list forwarding {
+          key "id";
+          description
+            "Operational data of the trunk forwarding table.";
+          leaf id {
+            type uint32;
+            description
+              "ID of a trunk forwarding item.";
+          }
+          leaf master-port {
+            type pub-type:if-name;
+            description
+              "Specify the name of the master interface in the trunk forwarding table.";
+          }
+          leaf slave-port {
+            type pub-type:if-name;
+            description
+              "Specify the name of the slave interface in the trunk forwarding table.";
+          }
+        }
+      }
+    }
+  }
+}

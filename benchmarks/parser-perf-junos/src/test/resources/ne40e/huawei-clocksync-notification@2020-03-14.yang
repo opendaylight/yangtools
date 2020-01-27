@@ -1,0 +1,2069 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-clocksync-notification";
+  prefix clocksync-notification;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-clocksync-1588v2 {
+    prefix clocksync-1588v2;
+  }
+  import huawei-clocksync-phy {
+    prefix clocksync-phy;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of clocksync-notification.";
+
+  revision 2020-03-14 {
+    description
+      "Modify the node description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-04 {
+    description
+      "Modify the node description and add gnss-model-type.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-16 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  ext:task-name  "clksync";
+  
+  typedef clock-lock-state {
+    type enumeration {
+      enum "unlock" {
+        value 0;
+        description
+          "Clock not in locked state.";
+      }
+      enum "lock" {
+        value 1;   
+        description
+          "Clock in locked state.";
+      }
+    }
+    description
+      "Clock lock state.";
+  }
+  typedef cluster-sync-type {
+    type enumeration {
+      enum "frequency" {
+        value 1;
+        description
+          "Inter-chassis synchronization type is frequency.";
+      }
+      enum "time" {
+        value 2;   
+        description
+          "Inter-chassis synchronization type is time.";
+      }
+    }
+    description
+      "Inter-chassis synchronization type.";
+  }
+  typedef cluster-topo-type {
+    type enumeration {
+      enum "inlink" {
+        value 1;
+        description
+          "Synchronization topo type is interlink.";
+      }
+      enum "extinject" {
+        value 2;   
+        description
+          "Synchronization topo type is externInject.";
+      }
+    }
+    description
+      "Inter-chassis synchronization topo type.";
+  }
+  typedef cluster-link-type {
+    type enumeration {
+      enum "bits" {
+        value 1;
+        description
+          "Synchronization link type is bits.";
+      }
+      enum "port" {
+        value 2;   
+        description
+          "Synchronization link type is port.";
+      }
+    }
+    description
+      "Inter-chassis synchronization link type.";
+  }
+  typedef cluster-sync-topo-state {
+    type enumeration {
+      enum "fail" {
+        value 1;
+        description
+          "Topo status is fail.";
+      }
+      enum "success" {
+        value 2;   
+        description
+          "Topo status is success.";
+      }
+    }
+    description
+      "Inter-chassis synchronization topo status.";
+  }
+
+  typedef clock-pll-id {
+    type enumeration {
+      enum "system" {
+        value 1;
+        description
+          "Pll id is system.";
+      }
+      enum "sync2m1" {
+        value 2;   
+        description
+          "Pll id is sync2M1.";
+      }
+      enum "sync2m2" {
+        value 3;   
+        description
+          "Pll id is sync2M2.";
+      }
+    }
+    description
+      "The id of pll.";
+  }
+  typedef clock-lock-mode {
+    type enumeration {
+      enum "freerun" {
+        value 0;
+        description
+          "Lock mode is freerun.";
+      }
+      enum "fastlock" {
+        value 1;
+        description
+          "Lock mode is fastlock.";
+      }
+      enum "lock" {
+        value 2;
+        description
+          "Lock mode is lock.";
+      }
+      enum "hold" {
+        value 3;
+        description
+          "Lock mode is hold.";
+      }
+    }
+    description
+      "Lock mode of system clock.";
+  }
+  typedef clock-src-type {
+    type enumeration {
+      enum "bits" {
+        value 1;
+        description
+          "Clock source type is bits.";
+      }
+      enum "ptp" {
+        value 2;
+        description
+          "Clock source type is ptp.";
+      }
+      enum "interface" {
+        value 3;
+        description
+          "Clock source type is interface.";
+      }
+      enum "cesacr" {
+        value 4;
+        description
+          "Clock source type is cesacr.";
+      }
+    }
+    description
+      "Index of the clock source type.";
+  }
+  typedef clock-src-state {
+    type enumeration {
+      enum "initial" {
+        value 0;
+        description
+          "Clock source state is initial.";
+      }
+      enum "normal" {
+        value 1;
+        description
+          "Clock source state is normal.";
+      }
+      enum "abnormal" {
+        value 2;
+        description
+          "Clock source state is abnormal.";
+      }
+      enum "wtr" {
+        value 3;
+        description
+          "Clock source state is wtr.";
+      }
+      enum "holdoff" {
+        value 4;
+        description
+          "Clock source state is holdoff.";
+      }
+    }
+    description
+      "The state of the current clock source.";
+  }
+  typedef fre-check-result {
+    type enumeration {
+      enum "abnormal" {
+        value 0;
+        description
+          "Frequency check is abnormal.";
+      }
+      enum "normal" {
+        value 1;
+        description
+          "Frequency check is normal.";
+      }
+    }
+    description
+      "Result of the check of frequency.";
+  }
+  typedef sync-state {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "The state is normal.";
+      }
+      enum "abnormal" {
+        value 1;
+        description
+          "The state is abnormal.";
+      }
+    }
+    description
+      "State of synchoronization.";
+  }
+  typedef time-port-state {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Port state is normal.";
+      }
+      enum "portdown" {
+        value 1;
+        description
+          "Port state is portdown.";
+      }
+    }
+    description
+      "Port status of the external Time.";
+  }
+  typedef ext-time-port-type {
+    type enumeration {
+      enum "bits0" {
+        value 0;
+        description
+          "The external time port type is bits0.";
+      }
+      enum "bits1" {
+        value 1;
+        description
+          "The external time port type is bits1.";
+      }
+      enum "bits2" {
+        value 2;
+        description
+          "The external time port type is bits2.";
+      }
+      enum "bits1slot4" {
+        value 1025;
+        description
+          "The external time port type is bits1slot4.";
+      }
+      enum "bits1slot5" {
+        value 1281;
+        description
+          "The external time port type is bits1slot5.";
+      }
+      enum "bits1slot6" {
+        value 1537;
+        description
+          "The external time port type is bits1slot6.";
+      }
+      enum "bits1slot7" {
+        value 1793;
+        description
+          "The external time port type is bits1slot7.";
+      }
+      enum "bits1slot8" {
+        value 2049;
+        description
+          "The external time port type is bits1slot8.";
+      }
+      enum "bits1slot9" {
+        value 2305;
+        description
+          "The external time port type is bits1slot9.";
+      }
+      enum "bits1slot10" {
+        value 2561;
+        description
+          "The external time port type is bits1slot10.";
+      }
+      enum "bits1slot11" {
+        value 2817;
+        description
+          "The external time port type is bits1slot11.";
+      }
+      enum "bits1slot12" {
+        value 3073;
+        description
+          "The external time port type is bits1slot12.";
+      }
+      enum "bits1slot15" {
+        value 3841;
+        description
+          "The external time port type is bits1slot15.";
+      }
+      enum "bits1slot16" {
+        value 4097;
+        description
+          "The external time port type is bits1slot16.";
+      }
+      enum "bits1slot17" {
+        value 4353;
+        description
+          "The external time port type is bits1slot17.";
+      }
+      enum "bits1slot18" {
+        value 4609;
+        description
+          "The external time port type is bits1slot18.";
+      }
+      enum "bits1slot19" {
+        value 4865;
+        description
+          "The external time port type is bits1slot19.";
+      }
+      enum "bits1slot20" {
+        value 5121;
+        description
+          "The external time port type is bits1slot20.";
+      }
+      enum "bits1slot21" {
+        value 5377;
+        description
+          "The external time port type is bits1slot21.";
+      }
+      enum "bits1slot22" {
+        value 5633;
+        description
+          "The external time port type is bits1slot22.";
+      }
+    }
+    description
+      "Port type of the external Time.";
+  }
+  typedef ptp-packet-type {
+    type enumeration {
+      enum "announce" {
+        value 8;
+        description
+          "The packet type is announce.";
+      }
+      enum "sync" {
+        value 1;
+        description
+          "The packet type is sync.";
+      }
+      enum "delay-resp" {
+        value 6;
+        description
+          "The packet type is delay-resp.";
+      }
+      enum "pdelay-resp" {
+        value 4;
+        description
+          "The packet type is pdelay-resp.";
+      }
+    }
+    description
+      "The packet type.";
+  }
+  typedef clock-sync-state {
+    type enumeration {
+      enum "unsync" {
+        value 1;
+        description
+          "The status is unsynchoronization.";
+      }
+      enum "sync" {
+        value 2;
+        description
+          "The status is synchoronization.";
+      }
+    }
+    description
+      "Indicate that the status of the equipment.";
+  }
+  typedef clock-ssm-level {
+    type enumeration {
+      enum "unk" {
+        value 0;
+        description
+          "Unknown SSM level (UNK).";
+      }
+      enum "prc" {
+        value 2;
+        description
+          "SSM level of the G.811 clock (PRC).";
+      }
+      enum "ssua" {
+        value 4;
+        description
+          "G.812 transit clock (SSUA).";
+      }
+      enum "ssub" {
+        value 8;
+        description
+          "G.812 local clock (SSUB).";
+      }
+      enum "sec" {
+        value 11;
+        description
+          "SDH (sec).";
+      }
+      enum "dnu" {
+        value 15;
+        description
+          "The quality level of the clock source is unavailable (DNU).";
+      }
+      enum "invaild" {
+        value 255;
+        description
+          "Invalid SSM level.";
+      }
+    }
+    description
+      "SSM level type.";
+  }
+  typedef ptpa-ptsf-type {
+    type enumeration {
+      enum "loss-announce" {
+        value 1;
+        description
+          "The PTSF type is loss-announce.";
+      }
+      enum "loss-sync-followup" {
+        value 2;
+        description
+          "The PTSF type is loss-Sync-followup.";
+      }
+      enum "loss-resp" {
+        value 3;
+        description
+          "The PTSF type is loss-resp.";
+      }
+      enum "unusable" {
+        value 4;
+        description
+          "The PTSF type is unusable.";
+      }
+    }
+    description
+      "The PTSF type of PTP adaptive clock synchronization.";
+  }
+  typedef ptpa-ptsf-state {
+    type enumeration {
+      enum "true" {
+        value 1;
+        description
+          "The PTSF state is true.";
+      }
+      enum "false" {
+        value 2;
+        description
+          "The PTSF state is false.";
+      }
+    }
+    description
+      "The PTSF state of PTP adaptive clock synchronization.";
+  }
+  typedef ptp-port-status {
+    type enumeration {
+      enum "master" {
+        value 1;
+        description
+          "Master.";
+      }
+      enum "slave" {
+        value 2;
+        description
+          "Slave.";
+      }
+      enum "passive" {
+        value 3;
+        description
+          "Passive.";
+      }
+      enum "listening" {
+        value 4;
+        description
+          "Listening.";
+      }
+      enum "faulty" {
+        value 5;
+        description
+          "Faulty.";
+      }
+      enum "initializing" {
+        value 6;
+        description
+          "Initializing.";
+      }
+      enum "premaster" {
+        value 7;
+        description
+          "Premaster.";
+      }
+      enum "disabled" {
+        value 8;
+        description
+          "Disabled.";
+      }
+      enum "uncalibrated" {
+        value 9;
+        description
+          "Uncalibrated.";
+      }
+    }
+    description
+      "State of ptp port.";
+  }
+  typedef ptpa-client-state {
+    type enumeration {
+      enum "added" {
+        value 0;
+        description
+          "The client status is connected.";
+      }
+      enum "deleted" {
+        value 1;
+        description
+          "The client status is disconnected.";
+      }
+    }
+    description
+      "Indicate the client status.";
+  }
+  typedef ptpa-nego-state {
+    type enumeration {
+      enum "init" {
+        value 0;
+        description
+          "The Initial state.";
+      }
+      enum "success" {
+        value 1;
+        description
+          "Negotiation successful.";
+      }
+      enum "error" {
+        value 2;
+        description
+          "Negotiation failure.";
+      }
+      enum "none" {
+        value 3;
+        description
+          "Indicates that the server IP address is unavailable.";
+      }
+    }
+    description
+      "Indicates the negotiation status of the client with server.";
+  }
+  typedef ptpa-nego-fail-reason {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "delete-link" {
+        value 1;
+        description
+          "Delete link.";
+      }
+      enum "announce-timeout" {
+        value 2;
+        description
+          "Announce timeout.";
+      }
+      enum "announce-nego-timeout" {
+        value 3;
+        description
+          "Announce negotiation timeout.";
+      }
+      enum "announce-nego-deny" {
+        value 4;
+        description
+          "Announce timeout.";
+      }
+      enum "sync-nego-failed" {
+        value 5;
+        description
+          "Announce negotiation timeout.";
+      }
+      enum "sync-nego-timeout" {
+        value 6;
+        description
+          "Announce negotiation timeout.";
+      }
+      enum "delayresp-nego-timeout" {
+        value 7;
+        description
+          "Delay response negotiation timeout.";
+      }
+      enum "delayresp-nego-deny" {
+        value 8;
+        description
+          "Delay response negotiation deny.";
+      }
+      enum "if-not-support" {
+        value 9;
+        description
+          "Interface not support.";
+      }
+      enum "service-mode-not-support" {
+        value 10;
+        description
+          "Service mode not support.";
+      }
+      enum "route-unreach" {
+        value 11;
+        description
+          "Route unreach.";
+      }
+      enum "bmc-failed" {
+        value 12;
+        description
+          "BMC failed.";
+      }
+      enum "master-sync-fault" {
+        value 13;
+        description
+          "Master synchronization fault.";
+      }
+    }
+    description
+      "Indicates causes of the negotiation failure.";
+  }
+  typedef ptpa-server-id {
+    type enumeration {
+      enum "server1" {
+        value 1;
+        description
+          "Server1.";
+      }
+      enum "server2" {
+        value 2;
+        description
+          "Server2.";
+      }
+    }
+    description
+      "Indicates the server ID.";
+  }
+  typedef ptpa-sync-server-src {
+    type enumeration {
+      enum "local" {
+        value 0;
+        description
+          "Clock source is Local.";
+      }
+      enum "server1" {
+        value 1;
+        description
+          "Clock source is server1.";
+      }
+      enum "server2" {
+        value 2;
+        description
+          "Clock source is server2.";
+      }
+    }
+    description
+      "Clock source that the client has traced.";
+  }
+  typedef gnss-model-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "gps" {
+        value 1;
+        description
+          "Gps.";
+      }
+      enum "glonass" {
+        value 2;
+        description
+          "Glonass.";
+      }
+      enum "beidou" {
+        value 3;
+        description
+          "Beidou.";
+      }
+      enum "gps-glonass" {
+        value 4;
+        description
+          "Gps-glonass.";
+      }
+      enum "gps-beidou" {
+        value 5;
+        description
+          "Gps-beidou.";
+      }
+    }
+    description
+      "Type of gnss model.";
+  }
+  
+  notification clock-ces-acr-lock-fail {
+    description
+      "The clock source of CES ACR is not in locked mode.";
+    leaf slot {
+      type uint32;
+      description
+        "Slot id of the clock source.";
+    }
+    leaf card {
+      type uint32;
+      description
+        "Card id of the clock source.";
+    }
+    leaf domain {
+      type uint32;
+      description
+        "Recovery domain of the clock source.";
+    }
+    leaf lock-state {
+      type clock-lock-state;
+      description
+        "Lock state of the clock source.";
+    }
+  }
+  notification clock-ces-acr-lock-fail-resume {
+    description
+      "The clock source of CES ACR is in locked mode.";
+    leaf slot {
+      type uint32;
+      description
+        "Slot id of the clock source.";
+    }
+    leaf card {
+      type uint32;
+      description
+        "Card id of the clock source.";
+    }
+    leaf domain {
+      type uint32;
+      description
+        "Recovery domain of the clock source.";
+    }
+    leaf lock-state {
+      type clock-lock-state;
+      description
+        "Lock state of the clock source.";
+    }
+  }
+  notification clock-cluster-topo-fail {
+    description
+      "Clock cluster inter-chassis synchronization topo compute failed.";
+    leaf sync-type {
+      type cluster-sync-type;
+      description
+        "Inter-chassis synchronization type.";
+    }
+    leaf topo-type {
+      type cluster-topo-type;
+      description
+        "Inter-chassis synchronization topo type.";
+    }
+    leaf topo-link-type {
+      type cluster-link-type;
+      description
+        "Inter-chassis synchronization link type.";
+    }
+    leaf topo-status {
+      type cluster-sync-topo-state;
+      description
+        "Inter-chassis synchronization topo status.";
+    }
+  }
+  notification clock-cluster-topo-fail-resume {
+    description
+      "Clock cluster inter-chassis synchronization topo compute successfully.";
+    leaf sync-type {
+      type cluster-sync-type;
+      description
+        "Inter-chassis synchronization type.";
+    }
+    leaf topo-type {
+      type cluster-topo-type;
+      description
+        "Inter-chassis synchronization topo type.";
+    }
+    leaf topo-link-type {
+      type cluster-link-type;
+      description
+        "Inter-chassis synchronization link type.";
+    }
+    leaf topo-status {
+      type cluster-sync-topo-state;
+      description
+        "Inter-chassis synchronization topo status.";
+    }
+  }
+  notification clock-fm-switch {
+    description
+      "Clock select mode is force or manual.";
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis id of the clock source.";
+    }
+    leaf pll-id {
+      type clock-pll-id;
+      description
+        "The id of pll.";
+    }
+  }
+  notification clock-fm-switch-resume {
+    description
+      "Clock select mode is automative.";
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis id of the clock source.";
+    }
+    leaf pll-id {
+      type clock-pll-id;
+      description
+        "The id of pll.";
+    }
+  }
+  notification clock-not-in-locked-mode {
+    description
+      "The work mode of system clock source out trace.";
+    leaf chassis-index {
+      type uint32;
+      description
+        "Indicates the index of the chassis where the non-PTP clock source is located. In the case of a single chassis, the index is 1. For a chassis where a PTP clock source is located, the index is invalid.";
+    }
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis id of the clock source.";
+    }
+    leaf lock-mode {
+      type clock-lock-mode;
+      description
+        "Lock mode of system clock.";
+    }
+  }
+  notification clock-in-locked-mode {
+    description
+      "The work mode of system clock source resume.";
+    leaf chassis-index {
+      type uint32;
+      description
+        "Indicates the index of the chassis where the non-PTP clock source is located. In the case of a single chassis, the index is 1. For a chassis where a PTP clock source is located, the index is invalid.";
+    }
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis id of the clock source.";
+    }
+    leaf lock-mode {
+      type clock-lock-mode;
+      description
+        "Lock mode of system clock.";
+    }
+  }
+  notification clock-port-non-support {
+    description
+      "In current link mode, the hardware, such as boards and optical modules, do not support physical-layer clock synchronization.";
+    leaf chassis-id {
+      type uint32;
+      description
+        "The chassis ID.";
+    }
+    leaf ifindex {
+      type uint32;
+      description
+        "Port index.";
+    }
+    leaf source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "The current clock source name.";
+    }
+  }
+  notification clock-port-non-support-resume {
+    description
+      "The alarm that the hardware do not support physical-layer clock synchronization is resumed.";
+    leaf chassis-id {
+      type uint32;
+      description
+        "The chassis ID.";
+    }
+    leaf ifindex {
+      type uint32;
+      description
+        "Port index.";
+    }
+    leaf source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "The current clock source name.";
+    }
+  }
+  notification clock-source-failed {
+    description
+      "The state of clock source is abnormal.";
+    leaf chassis-index {
+      type uint32;
+      description
+        "Indicates the index of the chassis where the non-PTP clock source is located. In the case of a single chassis, the index is 1. For a chassis where a PTP clock source is located, the index is invalid.";
+    }
+    leaf source-type-index {
+      type clock-src-type;
+      description
+        "Index of the clock source type.";
+    }
+    leaf source-index {
+      type uint32;
+      description
+        "Index of the clock source.";
+    }
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis id.";
+    }
+    leaf source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Name of the current clock source.";
+    }
+    leaf source-state {
+      type clock-src-state;
+      description
+        "The state of the current clock source.";
+    }
+  }
+  notification clock-source-valid {
+    description
+      "The state of clock source is normal.";
+    leaf chassis-index {
+      type uint32;
+      description
+        "Indicates the index of the chassis where the non-PTP clock source is located. In the case of a single chassis, the index is 1. For a chassis where a PTP clock source is located, the index is invalid.";
+    }
+    leaf source-type-index {
+      type clock-src-type;
+      description
+        "Index of the clock source type.";
+    }
+    leaf source-index {
+      type uint32;
+      description
+        "Index of the clock source.";
+    }
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis id.";
+    }
+    leaf source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Name of the current clock source.";
+    }
+    leaf source-state {
+      type clock-src-state;
+      description
+        "The state of the current clock source.";
+    }
+  }
+  notification clock-source-freq-check {
+    description
+      "The check of frequence abnormal notification.";
+    leaf chassis-index {
+      type uint32;
+      description
+        "Indicates the index of the chassis where the non-PTP clock source is located. In the case of a single chassis, the index is 1. For a chassis where a PTP clock source is located, the index is invalid.";
+    }
+    leaf source-type-index {
+      type clock-src-type;
+      description
+        "Index of the clock source type.";
+    }
+    leaf source-index {
+      type uint32;
+      description
+        "Index of the clock source.";
+    }
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis id.";
+    }
+    leaf result {
+      type fre-check-result;
+      description
+        "Result of the check of frequency.";
+    }
+    leaf source-descr {
+      type string {
+        length "1..63";
+      }
+      description
+        "The description of clock source.";
+    }
+  }
+  notification clock-source-freq-check-resume {
+    description
+      "The check of frequence normal notification.";
+    leaf chassis-index {
+      type uint32;
+      description
+        "Indicates the index of the chassis where the non-PTP clock source is located. In the case of a single chassis, the index is 1. For a chassis where a PTP clock source is located, the index is invalid.";
+    }
+    leaf source-type-index {
+      type clock-src-type;
+      description
+        "Index of the clock source type.";
+    }
+    leaf source-index {
+      type uint32;
+      description
+        "Index of the clock source.";
+    }
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis id.";
+    }
+    leaf result {
+      type fre-check-result;
+      description
+        "Result of the check of frequency.";
+    }
+    leaf source-descr {
+      type string {
+        length "1..63";
+      }
+      description
+        "The description of clock source.";
+    }
+  }
+  notification clock-source-input-below-threshold {
+    description
+      "The SSM of input below threshold notification.";
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis index of the clock source.";
+    }
+    leaf pll-id {
+      type clock-pll-id;
+      description
+        "Id of the clock source type.";
+    }
+    leaf threshold {
+      type clocksync-1588v2:ssm-level;
+      must "(../threshold='prc' or ../threshold='ssua' or ../threshold='ssub' or ../threshold='sec' or ../threshold='dnu')";
+      description
+        "Threshold of the external clock source input.";
+    }
+    leaf attr-chassis-index {
+      type uint32;
+      description
+        "Indicates the index of the chassis where the non-PTP clock source is located. In the case of a single chassis, the index is 1. For a chassis where a PTP clock source is located, the index is invalid.";
+    }
+    leaf ssm {
+      type clocksync-1588v2:ssm-level;
+      description
+        "SSM of the clock source.";
+    }
+    leaf chassis-index {
+      type uint32;
+      description
+        "Chassis index of the clock source.";
+    }
+    leaf source-type-index {
+      type clock-src-type;
+      description
+        "Index of the clock source type.";
+    }
+    leaf source-index {
+      type uint32;
+      description
+        "Index of the clock source.";
+    }
+  }
+  notification clock-source-input-below-threshold-resume {
+    description
+      "The SSM of input above or equal threshold notification.";
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis index of the clock source.";
+    }
+    leaf pll-id {
+      type clock-pll-id;
+      description
+        "Id of the clock source type..";
+    }
+    leaf threshold {
+      type clocksync-1588v2:ssm-level;
+      must "(../threshold='prc' or ../threshold='ssua' or ../threshold='ssub' or ../threshold='sec' or ../threshold='dnu')";
+      description
+        "Threshold of the external clock source input.";
+    }
+    leaf attr-chassis-index {
+      type uint32;
+      description
+        "Indicates the index of the chassis where the non-PTP clock source is located. In the case of a single chassis, the index is 1. For a chassis where a PTP clock source is located, the index is invalid.";
+    }
+    leaf ssm {
+      type clocksync-1588v2:ssm-level;
+      description
+        "SSM of the clock source.";
+    }
+    leaf chassis-index {
+      type uint32;
+      description
+        "Chassis index of the clock source.";
+    }
+    leaf source-type-index {
+      type clock-src-type;
+      description
+        "Index of the clock source type.";
+    }
+    leaf source-index {
+      type uint32;
+      description
+        "Index of the clock source.";
+    }
+  }
+  notification clock-source-output-below-threshold {
+    description
+      "The SSM of output below threshold notification.";
+    leaf attr-chassis-index {
+      type uint32;
+      description
+        "Indicates the index of the chassis where the non-PTP clock source is located. In the case of a single chassis, the index is 1. For a chassis where a PTP clock source is located, the index is invalid.";
+    }
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis id of the clock source.";
+    }
+    leaf pll-id {
+      type clock-pll-id;
+      description
+        "Id of the clock source type. values: System(1), system PLL. sync2M-1(2), 2M PLL-1. sync2M-2(3), 2M PLL-2.";
+    }
+    leaf threshold {
+      type clocksync-1588v2:ssm-level;
+      must "(../threshold='prc' or ../threshold='ssua' or ../threshold='ssub' or ../threshold='sec' or ../threshold='dnu')";
+      description
+        "Threshold of the external Clock output.";
+    }
+    leaf value {
+      type clocksync-1588v2:ssm-level;
+      must "(../value='prc' or ../value='ssua' or ../value='ssub' or ../value='sec' or ../value='dnu')";
+      description
+        "SSM of the external Clock output.";
+    }
+    leaf source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Name of the curent clock source.";
+    }
+  }
+  notification clock-source-output-below-threshold-resume {
+    description
+      "The SSM of output above threshold notification.";
+    leaf attr-chassis-index {
+      type uint32;
+      description
+        "Indicates the index of the chassis where the non-PTP clock source is located. In the case of a single chassis, the index is 1. For a chassis where a PTP clock source is located, the index is invalid.";
+    }
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis id of the clock source.";
+    }
+    leaf pll-id {
+      type clock-pll-id;
+      description
+        "Id of the clock source type. values: System(1), system PLL. sync2M-1(2), 2M PLL-1. sync2M-2(3), 2M PLL-2.";
+    }
+    leaf threshold {
+      type clocksync-1588v2:ssm-level;
+      must "(../threshold='prc' or ../threshold='ssua' or ../threshold='ssub' or ../threshold='sec' or ../threshold='dnu')";
+      description
+        "Threshold of the external Clock output.";
+    }
+    leaf value {
+      type clocksync-1588v2:ssm-level;
+      must "(../value='prc' or ../value='ssua' or ../value='ssub' or ../value='sec' or ../value='dnu')";
+      description
+        "SSM of the external Clock output.";
+    }
+    leaf source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Name of the curent clock source.";
+    }
+  }
+  notification clock-ssm-pkt-los {
+    description
+      "The ssm packet of clock source is lost.";
+    leaf source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Name of the current clock source.";
+    }
+  }
+  notification clock-ssm-pkt-los-resume {
+    description
+      "The ssm packet of clock source is normal.";
+    leaf source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Name of the current clock source.";
+    }
+  }
+  notification clock-sync-bad {
+    description
+      "Clock frequency synchronization bad.";
+    leaf chassis-id {
+      type int32;
+      description
+        "The chassis ID.";
+    }
+  }
+  notification clock-sync-bad-resume {
+    description
+      "Clock frequency synchronization bad resume.";
+    leaf chassis-id {
+      type int32;
+      description
+        "The chassis ID.";
+    }
+  }
+  notification ptp-acr-sync-bad {
+    description
+      "1588 ACR synchronization state is bad.";
+    leaf state {
+      type sync-state;
+      description
+        "State of synchoronization.";
+    }
+  }
+  notification ptp-acr-sync-bad-resume {
+    description
+      "1588 ACR synchronization state resume at present.";
+    leaf state {
+      type sync-state;
+      description
+        "State of synchoronization.";
+    }
+  }
+  notification ptp-ext-time-port-lost {
+    description
+      "The external Time Port status changed.";
+    leaf port-status {
+      type time-port-state;
+      description
+        "Port status of the external Time.";
+    }
+    leaf port-type {
+      type ext-time-port-type;
+      description
+        "Port type of the external Time.";
+    }
+  }
+  notification ptp-ext-time-port-lost-resume {
+    description
+      "The external Time Port status resumed.";
+    leaf port-status {
+      type time-port-state;
+      description
+        "Port status of the external Time.";
+    }
+    leaf port-type {
+      type ext-time-port-type;
+      description
+        "Port type of the external Time.";
+    }
+  }
+  notification ptp-frequency-lock-fail {
+    description
+      "Current lock status of clock frequency synchronization failed.";
+    leaf lock-status {
+      type clock-lock-state;
+      description
+        "Lock status of clock frequency.";
+    }
+  }
+  notification ptp-frequency-lock-resume {
+    description
+      "Current lock status of clock frequency synchronization resumed.";
+    leaf lock-status {
+      type clock-lock-state;
+      description
+        "Lock status of clock frequency.";
+    }
+  }
+  notification ptp-passive-measure-overflow {
+    description
+      "The time offset of the passive port is abnormal.";
+    leaf ifindex {
+      type uint32;
+      description
+        "Index of the current port.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Name of the current port.";
+    }
+    leaf change-value {
+      type uint32;
+      description
+        "New time deviation value of the current port caused by the change of optical fiber length. (unit:ns)";
+    }
+    leaf value-flag {
+      type clocksync-1588v2:ptp-sign-flag;
+      description
+        "Sign of the new time deviation value.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "The time offset threshold configured on the Passive port.";
+    }
+  }
+  notification ptp-passive-measure-overflow-resume {
+    description
+      "The time offset of the passive port is normal.";
+    leaf ifindex {
+      type uint32;
+      description
+        "Index of the current port.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Name of the current port.";
+    }
+    leaf change-value {
+      type uint32;
+      description
+        "New time deviation value of the current port caused by the change of optical fiber length. (unit:ns)";
+    }
+    leaf value-flag {
+      type clocksync-1588v2:ptp-sign-flag;
+      description
+        "Sign of the new time deviation value of the current port.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "The time offset threshold configured on the Passive port.";
+    }
+  }
+  notification ptp-pkt-los {
+    description
+      "The ptp packet of the trace source is lost.";
+    leaf pkt-type {
+      type ptp-packet-type;
+      description
+        "The packet type.";
+    }
+  }
+  notification ptp-pkt-los-resume {
+    description
+      "The ptp packet of the trace port is normal.";
+    leaf pkt-type {
+      type ptp-packet-type;
+      description
+        "The packet type.";
+    }
+  }
+  notification ptp-port-non-support {
+    description
+      "In current link mode, the hardware, such as boards and optical modules, do not support PTP time synchronization.";
+    leaf chassis-id {
+      type uint32;
+      description
+        "Indicates the chassis ID.";
+    }
+    leaf ifindex {
+      type uint32;
+      description
+        "Indicates the port index.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Indicates the port name.";
+    }
+  }
+  notification ptp-port-non-support-resume {
+    description
+      "The alarm that the hardware do not support PTP time synchronization is resumed.";
+    leaf chassis-id {
+      type uint32;
+      description
+        "Indicates the chassis ID.";
+    }
+    leaf ifindex {
+      type uint32;
+      description
+        "Indicates the port index.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Indicates the port name.";
+    }
+  }
+  notification ptp-ring-fiber-length-change {
+    description
+      "The optical fiber length of the ring-network is changed.";
+    leaf ifindex {
+      type uint32;
+      description
+        "Index of the current port.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Name of the current port.";
+    }
+    leaf change-value {
+      type uint32;
+      description
+        "New time deviation value of the current port caused by the change of optical fiber length. (unit:ns)";
+    }
+    leaf value-flag {
+      type clocksync-1588v2:ptp-sign-flag;
+      description
+        "Sign of the new time deviation value.";
+    }
+  }
+  notification ptp-ring-fiber-length-change-resume {
+    description
+      "The length change value of the ring-network optical fiber is determined.";
+    leaf ifindex {
+      type uint32;
+      description
+        "Index of the current port.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Name of the current port.";
+    }
+    leaf change-value {
+      type uint32;
+      description
+        "New time deviation value of the current port caused by the change of optical fiber length. (unit:ns)";
+    }
+    leaf value-flag {
+      type clocksync-1588v2:ptp-sign-flag;
+      description
+        "Sign of the new time deviation value.";
+    }
+  }
+  notification ptp-standard-time-offset-over {
+    description
+      "The ptp standard time offset is abnormal.";
+    leaf offset {
+      type uint32;
+      description
+        "The standard time offset.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "Threshold of the standard time offset.";
+    }
+  }
+  notification ptp-standard-time-offset-over-resume {
+    description
+      "The ptp standard time offset is normal.";
+    leaf offset {
+      type uint32;
+      description
+        "The standard time offset.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "Threshold of the standard time offset.";
+    }
+  }
+  notification ptp-time-lock-fail {
+    description
+      "The time lock status is failed.";
+    leaf lock-status {
+      type clock-lock-state;
+      description
+        "Time lock status.";
+    }
+  }
+  notification ptp-time-lock-fail-resume {
+    description
+      "Time lock is resumed at present.";
+    leaf lock-status {
+      type clock-lock-state;
+      description
+        "Time lock status.";
+    }
+  }
+  notification ptp-time-offset-sum-over {
+    description
+      "The ptp time offset sum is abnormal.";
+    leaf offset-sum {
+      type uint32;
+      description
+        "Accumulated and peak time offset values.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "Threshold of the sum of time offset.";
+    }
+  }
+  notification ptp-time-offset-sum-over-resume {
+    description
+      "The ptp time offset sum is normal.";
+    leaf offset-sum {
+      type uint32;
+      description
+        "Accumulated and peak time offset values.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "Threshold of the sum of time offset.";
+    }
+  }
+  notification ptp-time-sync-faulty {
+    description
+      "Time source traced status is faulty.";
+    leaf sync-status {
+      type clock-sync-state;
+      description
+        "Indicate that the status of the equipment is synchronization or unsynchoronization.";
+    }
+  }
+  notification ptp-time-sync-resume {
+    description
+      "Time source traced status is normal.";
+    leaf sync-status {
+      type clock-sync-state;
+      description
+        "Indicate that the status of the equipment is synchronization or unsynchoronization.";
+    }
+  }
+  
+  notification clock-ces-acr-master-pw-change {
+    description
+      "The master PW in the CES ACR clock domain changed.";
+    leaf slot {
+      type uint32;
+      description
+        "Slot ID of the clock source.";
+    }
+    leaf card {
+      type uint32;
+      description
+        "Card ID of the clock source.";
+    }
+    leaf domain {
+      type uint32;
+      description
+        "Clock source recovery domain.";
+    }
+    leaf old-pw-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Name of the old master PW of CES ACR clock source.";
+    }
+    leaf pw-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Name of the new master PW of CES ACR clock source.";
+    }
+  }
+  notification clock-source-state-change {
+    description
+      "The status of the clock source changed.";
+    leaf chassis-id {
+      type int32;
+      description
+        "Chassis ID. In the case of a single chassis, the value is 1.";
+    }
+    leaf source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Name of the current clock source.";
+    }
+    leaf old-source-state {
+      type clock-src-state;
+      description
+        "Clock source state before the change.";
+    }
+    leaf chassis-index {
+      type int32;
+      description
+        "Index of the chassis where the clock source is located. In the case of a single chassis, the index is 1.";
+    }
+    leaf source-type-index {
+      type clock-src-type;
+      description
+        "Index of the interface type.";
+    }
+    leaf source-index {
+      type uint32;
+      description
+        "Index of the clock source.";
+    }
+    leaf source-state {
+      type clock-src-state;
+      description
+        "Status of the current clock source.";
+    }
+  }
+  notification clock-source-sys-clk-lock-mode-change {
+    description
+      "The working mode of the system clock changed.";
+    leaf chassis-id {
+      type int32;
+      description
+        "Indicates the ID of the chassis where the clock source resides, The index is always 1 for a single chassis.";
+    }
+    leaf old-lock-mode {
+      type uint32 {
+        range "0..3";
+      }
+      description
+        "Indicates the old lock mode of the clock source.";
+    }
+    leaf attr-chassis-index {
+      type int32;
+      description
+        "Index of the chassis where the clock source is located. In the case of a single chassis, the index is 1.";
+    }
+    leaf lock-mode {
+      type clock-lock-mode;
+      description
+        "Indicates the lock mode of the system clock.";
+    }
+  }
+  notification clock-gnss-model-change {
+    description
+      "Gnss model change notification.";
+    leaf ifindex {
+      type int32;
+      description
+        "Specifies the index of the port on which the working mode is changed.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Specifies the name of the port on which the working mode is changed.";
+    }
+    leaf model {
+      type gnss-model-type;
+      must "(../model='gps' or ../model='glonass' or ../model='beidou' or ../model='gps-glonass' or ../model='gps-beidou')";
+      description
+        "Specifies the new working mode.";
+    }
+    leaf old-model {
+      type gnss-model-type;
+      must "(../old-model='gps' or ../old-model='glonass' or ../old-model='beidou' or ../old-model='gps-glonass' or ../old-model='gps-beidou')";
+      description
+        "Specifies the old working mode.";
+    }
+  }
+  notification clock-source-ssm-change {
+    description
+      "The SSM level of the clock source was changed.";
+    leaf chassis-id {
+      type uint32;
+      description
+        "Chassis ID. The value is 1 in single chassis scenarios.";
+    }
+    leaf source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Name of the current clock source.";
+    }
+    leaf old-ssm {
+      type clock-ssm-level;
+      description
+        "SSM level before the change.";
+    }
+    leaf ssm {
+      type clock-ssm-level;
+      description
+        "Current SSM level.";
+    }
+  }
+  notification clock-source-switch {
+    description
+      "The working mode of the system clock changed.";
+    leaf chassis-id {
+      type int32;
+      description
+        "Indicates the ID of the chassis where the clock source resides, The value is 1 in single chassis scenarios.";
+    }
+    leaf pll-id {
+      type clock-pll-id;
+      description
+        "Indicates the clock source type ID.";
+    }
+    leaf old-source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Indicates the last clock source name.";
+    }
+    leaf source-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Indicates the current clock source name.";
+    }
+    leaf chassis-index {
+      type int32;
+      description
+        "Indicates the index of the chassis where the clock source resides,.The value is 1 in single chassis scenarios.";
+    }
+    leaf src-type {
+      type clock-pll-id;
+      description
+        "Indicates the type of clock source selection.";
+    }
+    leaf src-mode {
+      type clocksync-phy:source-selection-mode;
+      description
+        "Indicates the mode of clock source selection.";
+    }
+  }
+  notification ptp-adaptive-ptsf-state-change {
+    description
+      "The PTSF status of PTP adaptive clock synchronization is changed.";
+    leaf server-index {
+      type int32;
+      description
+        "Server index for the PTSF status change.";
+    }
+    leaf ptsf-type {
+      type ptpa-ptsf-type;
+      description
+        "PTSF type.";
+    }
+    leaf ptsf-state {
+      type ptpa-ptsf-state;
+      description
+        "New PTSF status.";
+    }
+  }
+  notification ptp-clock-source-change {
+    description
+      "This trap was generated when the clock source changed.";
+    leaf old-clock-id {
+      type string {
+        length "16";
+      }
+      description
+        "Indicates the ID of the old master clock.";
+    }
+    leaf clock-id {
+      type string {
+        length "16";
+      }
+      description
+        "Indicates the ID of the current master clock.";
+    }
+    leaf ifindex {
+      type uint32;
+      description
+        "Indicates the port index of the current clock source.";
+    }
+    leaf old-port-num {
+      type int32;
+      description
+        "Indicates the port number of the original clock source.";
+    }
+    leaf port-num {
+      type int32;
+      description
+        "Indicates the port number of the current clock source.";
+    }
+    leaf old-ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Indicates the port name of the original clock source.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Indicates the port name of the current clock source.";
+    }
+  }
+  notification ptp-passive-fiber-length-change {
+    description
+      "The optical fiber length on the Passive port was changed.";
+    leaf ifindex {
+      type int32;
+      description
+        "Index of the current port.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Name of the current port.";
+    }
+    leaf change-value {
+      type int32;
+      description
+        "New time offset caused by the fiber length change of the current port.";
+    }
+    leaf value-flag {
+      type clocksync-1588v2:ptp-sign-flag;
+      description
+        "Positive or negative sign of the new time offset.";
+    }
+  }
+  notification ptp-port-bmc-info-change {
+    description
+      "The PTP port clock source information is changed. The clock source ID, clock source port number, or clock source's hop count received on a port was changed.";
+    leaf ifindex {
+      type int32;
+      description
+        "Port index.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Port name.";
+    }
+    leaf clock-id {
+      type string {
+        length "16";
+      }
+      description
+        "Clock source ID received on a port.";
+    }
+    leaf port-num {
+      type int32;
+      description
+        "Clock source port number received on a port.";
+    }
+    leaf steps {
+      type int32;
+      description
+        "Clock source's hop count received on a port.";
+    }
+    leaf master-clock-id {
+      type string {
+        length "16";
+      }
+      description
+        "ID of the current master clock source.";
+    }
+  }
+  notification ptp-port-state-change {
+    description
+      "The alarm was generated when the interface status changed.";
+    leaf ifindex {
+      type int32;
+      description
+        "Interface index.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Name of the port whose state has changed.";
+    }
+    leaf port-state {
+      type ptp-port-status;
+      description
+        "Current status of the interface.";
+    }
+    leaf old-port-state {
+      type ptp-port-status;
+      description
+        "Old status of the interface.";
+    }
+  }
+  notification ptp-adaptive-client-list-change {
+    description
+      "The status of the client list was refreshed.";
+    leaf client-ip-list {
+      type inet:ipv4-address-no-zone;
+      description
+        "Indicates the IP address of the client.";
+    }
+    leaf client-ip-change-flag {
+      type ptpa-client-state;
+      description
+        "Indicate the client status.";
+    }
+    leaf client-index {
+      type uint32;
+      description
+        "Indicates the Index of the client.";
+    }
+    leaf client-id {
+      type uint32;
+      description
+        "Indicates the ID of the client.";
+    }
+  }
+  notification ptp-adaptive-nego-info-change {
+    description
+      "The negotiation status of the client with server 1 and with server 2 changed.";
+    leaf server-id {
+      type ptpa-server-id;
+      description
+        "Indicates the server ID.";
+    }
+    leaf nego-state {
+      type ptpa-nego-state;
+      description
+        "Indicates the negotiation status of the client with server.";
+    }
+    leaf error-reason {
+      type ptpa-nego-fail-reason;
+      description
+        "Indicates causes of the negotiation failure.";
+    }
+  }
+  notification ptp-adaptive-trace-source-change {
+    description
+      "The clock source traced by the client changed.";
+    leaf old-trace-source {
+      type ptpa-sync-server-src;
+      description
+        "Historical clock source that the client has traced.";
+    }
+    leaf trace-source {
+      type ptpa-sync-server-src;
+      description
+        "Current clock source that the client is synchroniazation.";
+    }
+  }
+  notification ptp-pdv-limit-exceed {
+    description
+      "The value of State can be: normal(0), indicating that 1588 ACR/ATR PDV data performance is normal. limitExceed(1), indicating that 1588 ACR/ATR PDV data performance exceeds the threshold.";
+    leaf state {
+      type uint32;
+      description
+        "1588 ACR/ATR PDV data threshold-crossing event occurred.";
+    }
+  }
+}

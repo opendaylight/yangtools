@@ -1,0 +1,50 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-qos-notification-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-qos-notification-deviations-CH-NE-X3";
+  prefix qos-notification-devs-CH-NE-X3;
+
+  import huawei-qos-notification {
+    prefix qos-notification;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "QoS notification.";
+  revision 2019-07-08 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+
+
+
+  deviation /qos-notification:xqos-hard-pipe-apply-user-queue-fail-alarm {
+    deviate not-supported;
+  }
+  deviation /qos-notification:xqos-hard-pipe-apply-user-queue-fail-alarm-resume {
+    deviate not-supported;
+  }
+  deviation /qos-notification:xqos-hard-pipe-bandwidth-alarm {
+    deviate not-supported;
+  }
+  deviation /qos-notification:xqos-hard-pipe-bandwidth-alarm-resume {
+    deviate not-supported;
+  }
+  deviation /qos-notification:xqos-tm-performance-alarm {
+    deviate not-supported;
+  }
+  deviation /qos-notification:xqos-tm-performance-alarm-resume {
+    deviate not-supported;
+  }
+}

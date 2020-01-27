@@ -1,0 +1,37 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-unicast-fwd-srv6-deviations-CH-NE-X3{
+  namespace "urn:huawei:yang:huawei-unicast-fwd-srv6-deviations-CH-NE-X3";
+  prefix "unicast-fwd-srv6-devs-CH-NE-X3";
+  import huawei-network-instance {
+    prefix "ni";
+  }
+  import huawei-srv6 {
+    prefix "srv6";
+  }
+  import huawei-unicast-fwd-srv6 {
+    prefix "unicast-fwd-srv6";
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Unicast forward SRv6 configuration deviations.";
+  revision 2020-03-19 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/unicast-fwd-srv6:global-ipv6uc-attribute/unicast-fwd-srv6:forward-mode-through" {
+    deviate not-supported;
+  }
+  
+}

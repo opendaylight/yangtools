@@ -1,0 +1,1198 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-igmp-mld-snooping {
+  namespace "urn:huawei:yang:huawei-igmp-mld-snooping";
+  prefix ims;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-vlan {
+    prefix vlan;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-acl {
+    prefix acl;
+  }  
+  import huawei-multicast {
+    prefix mc;
+  }
+  import huawei-bd {
+    prefix bd;
+  }  
+  import huawei-evpn {
+    prefix evpn;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "The module defines a collection of YANG definitions common for all Internet Group Management Protocol (IGMP) and Multicast Listener Discovery (MLD) Snooping devices.";
+  revision 2020-03-04 {
+    description
+      "Modify units.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-21 {
+    description
+      "Modify the type of remote-peer from IPv4IPv6 to IPv4.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-12 {
+    description
+      "Add new leaves; Modify units of some leaves; Modify ssm-mapping-policy type from leafref to string, Leafref should be used together with require-instance When version 1.1 is supported.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-30 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "l2mc"; 
+
+  typedef snooping-mode {
+    type enumeration {
+      enum "asm-ssm" {
+        value 1;
+        description
+          "A device learns multicast entries with group addresses in the ASM and SSM address ranges.";
+      }
+      enum "asm-only" {
+        value 2;
+        description
+          "A device only learns multicast entries with group addresses in the ASM address range.";
+      }
+      enum "ssm-only" {
+        value 3;
+        description
+          "A device only learns multicast entries with group addresses in the SSM address range.";
+      }
+    }
+    description
+      "Snooping mode.";
+  }
+  typedef copy-mode {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid value, do not copy.";
+      }
+      enum "by-vlan" {
+        value 1;
+        description
+          "By VLAN.";
+      }
+      enum "by-unicast-mac" {
+        value 2;
+        description
+          "By unicast MAC.";
+      }
+    }
+    description
+      "Multicast copy mode.";
+  }
+  augment "/bd:bd/bd:instances/bd:instance" {
+    when "/mc:multicast/ims:igmp-snooping/ims:global-enable";
+    description "Adds configuration to the bd module.";
+    container igmp-snooping {
+      description
+        "Configure IGMP snooping in the BD.";      
+      container global {
+        description
+          "Configure IGMP snooping in the BD.";
+        leaf ssm-acl {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+          description
+            "SSM group range policy.";
+        }
+        leaf version {
+          type uint32 {
+            range "1..3";
+          }
+          default "2";
+          description
+            "IGMP version on an interface.";
+        }
+        leaf ssm-mapping-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable SSM mapping.";
+        }
+        leaf ssm-mapping-policy {
+          when "../ssm-mapping-enable='true'";
+          type string {
+            length "1..31";
+          }
+          description
+            "Configure a policy for SSM Mapping.";
+        }
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable IGMP snooping in the bridge domain.";
+        }
+        leaf group-policy-acl {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          description
+            "IGMP group policy.";
+        }
+        leaf group-policy-version {
+          when "../group-policy-acl";
+          type uint32 {
+            range "1..3";
+          }
+          description
+            "A group policy applies only to a specified IGMP version.";
+        }
+        leaf max-response-time {
+          type uint32 {
+            range "1..25";
+          }
+          units "s";		  
+          default "10";
+          description
+            "Maximum response time for an IGMP Query message. This time is used to control the deadline for user hosts to send Report messages.";
+        }
+        leaf immediately-leave {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable prompt-leave. Prompt-Leave allows an interface to immediately delete a group record after receiving a Leave message for this group, without sending a last-member query message.";
+        }
+        leaf immediately-leave-acl {
+          when "../immediately-leave='true'";
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          description
+            "ACL used to control the applicable range of IGMP prompt-leave.";
+        }
+        leaf proxy-enable {
+          type boolean;
+          must "../proxy-enable='false' or (../report-suppress='false' and ../querier-enable='false')";
+          default "false";
+          description
+            "Enable/disable IGMP snooping proxy.";
+        }
+        leaf multicast-group-model {
+          type snooping-mode;
+          default "asm-ssm";
+          description
+            "IGMP group join mode.";
+        }
+        leaf ip-policy-acl {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          description
+            "IP filter policy.";
+        }
+        leaf query-ip-policy-acl {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          description
+            "Querier IP policy.";
+        }
+        leaf querier-election {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable IGMP querier election.";
+        }
+        leaf proxy-router-protocol-pass {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable an IGMP snooping proxy-enabled device to transparently transmit IGMP Report messages.";
+        }
+        leaf querier-enable {
+          type boolean;
+          must "(../proxy-enable='false' and not (../../../evpn:evpn)) or (../querier-enable='false')";
+          default "false";
+          description
+            "Enable/disable an IGMP querier.";
+        }
+        leaf query-interval {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";			  
+          default "60";
+          description
+            "Interval at which a router sends General Query messages.";
+        }
+        leaf require-router-alert {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to permit only IGMP messages that contain the Router-Alert option in the IP header. By default, IGMP messages that do not carry the Router-Alert option are also permitted.";
+        }
+        leaf send-router-alert {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable a device to send IGMP messages that contain the Router-Alert option in the IP header.";
+        }
+        leaf robustness {
+          type uint32 {
+            range "2..5";
+          }
+          default "2";
+          description
+            "Number of times for retransmitting a message to avoid packet loss.";
+        }
+        leaf router-aging-time {
+          type uint32 {
+            range "1..1000";
+          }
+          units "s";
+          default "180";
+          description
+            "Aging time of dynamic router ports. By default, the aging time of a dynamic router port is 180 seconds or equals the holdtime value contained in a PIM Hello packet.";
+        }
+        leaf router-port-learning {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable dynamic router port learning.";
+        }
+        leaf query-suppress-time {
+          type uint32 {
+            range "0..300";
+          }
+          units "s";
+          default "10";
+          description
+            "Time during which IGMP Report messages are suppressed.";
+        }
+        leaf last-member-query-interval {
+          type uint32 {
+            range "1..5";
+          }
+          units "s";
+          default "1";
+          description
+            "Interval at which a last-member query message is sent.";
+        }
+        leaf static-group-suppress-dynamic-join {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a Layer 2 device from sending IGMP Report and Leave messages of a group that has been configured as a static group on the upstream device.";
+        }
+        leaf report-suppress {
+          type boolean;
+          must "(../proxy-enable='false' and not (../../../evpn:evpn)) or (../report-suppress='false')";		  
+          default "false";
+          description
+            "Enable/disable the function of suppressing IGMP Report messages.";
+        }
+        leaf source-life-time {
+          type uint32 {
+            range "60..1000";
+          }
+          units "s";
+          default "210";
+          description
+            "Aging time for entries triggered by multicast flows.";
+        }
+        leaf designated-vlan {
+          type uint32 {
+            range "1..4094";
+          }
+          must "(not (../../../evpn:evpn)) or (not (../designated-vlan))";
+          description
+            "Specify the IGMP snooping VLAN in which multicast messages and data are transparently transmitted.";
+        }
+        leaf signal-smet-disable {
+          type boolean;
+          must "(../../../evpn:evpn) or ../signal-smet-disable='false'";
+          default "false";
+          description
+            "Enable/disable the function of signal-smet.";
+        }
+        leaf signal-synch-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of signal-synch. Configuration prerequisite for the leaf: The BD instance is associated with an EVPN instance, and IGMP snooping proxy is enabled for the BD or IGMP is enabled on the VBDIF interface of the BD.";
+        }
+        leaf signal-ignore-df-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of signal-ignore-df. Configuration prerequisite for the leaf: The BD instance is associated with an EVPN instance, and IGMP snooping proxy is enabled for the BD or IGMP is enabled on the VBDIF interface of the BD.";
+        }
+      }
+    }
+  }
+  augment "/mc:multicast" {
+    description
+      "Adds igmp/mld snooping configuration to the multicast module.";
+    container igmp-snooping {
+      description
+        "Configure igmp-snooping features.";
+      container global-enable {
+        presence "igmp-snooping enable";
+        description
+          "Enable/disable global IGMP snooping.";
+        leaf send-query {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of sending Layer 2 multicast Query messages.";
+        }
+        leaf send-query-source-address {
+          type inet:ipv4-address-no-zone {
+            pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+          }
+          default "192.168.0.1";
+          description
+            "Source IP address for Layer 2 multicast General Query messages.";
+        }
+      }
+      container global-channel {
+        presence "L2-multicast-channel.";
+        description
+          "Enable/disable L2-multicast CAC.";
+        leaf unspecified-channel-deny {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to filter out multicast data for undefined groups in a channel. Specify the unspecified channel, deny the join of multicast group that does not belong to any channel.";
+        }
+      }
+    }
+    container mld-snooping {
+      description
+        "Configure MLD snooping features.";
+      container global-enable {
+        presence "mld-snooping enable";
+        description
+          "Enable/disable global MLD snooping.";
+        leaf send-query {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of sending Layer 2 multicast Query messages.";
+        }
+        leaf send-query-source-address {
+          type inet:ipv6-address-no-zone {
+            pattern '([Ff][Ee]80:)(([0]{1,4}:){0,2})(((:[0-9A-Fa-f]{1,4}){1,4})|(:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:)|([Ff][Ee]80:)(([0]{1,4}:){3})((((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)|(([0-9A-Fa-f]{1,4}:)(((:[0-9A-Fa-f]{1,4}){1,2})|(:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|((([0-9A-Fa-f]{1,4}:){2})((:[0-9A-Fa-f]{1,4})|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){3}(([0-9A-Fa-f]{1,4})|:)))';
+          }
+          default "FE80::";
+          description
+            "Source IP address for Layer 2 multicast General Query messages.";
+        }
+      }
+    } 	
+  }
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls" {
+    description
+      "Adds configuration to the L2VPN module.";
+    container igmp-snooping {
+      description
+        "Configure Layer 2 multicast configurations in the VSI.";
+      container global {
+        when "/mc:multicast/ims:igmp-snooping/ims:global-enable and (../../l2vpn:ldp-signaling/l2vpn:vsi-id or ../../l2vpn:bgp-signaling or ../../l2vpn:bgp-multi-homing-signaling) and ../../l2vpn:work-mode='normal'";
+        description
+          "Configure Layer 2 multicast in the VSI.";
+        leaf version {
+          type uint32 {
+            range "1..3";
+          }
+          default "2";
+          description
+            "Layer 2 multicast version on an interface.";
+        }
+        leaf ssm-mapping-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable SSM mapping.";
+        }
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Layer 2 multicast snooping in the VSI.";
+        }
+        leaf max-response-time {
+          type uint32 {
+            range "1..127";
+          }
+          units "s";
+          default "10";
+          description
+            "Maximum response time for a Layer 2 multicast Query message. This time is used to control the deadline for user hosts to send Report messages.";
+        }
+        leaf immediately-leave {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable prompt-leave. Prompt-Leave allows an interface to immediately delete a group record after receiving a Leave message for this group, without sending a last-member query message.";
+        }
+        leaf proxy-enable {
+          type boolean;
+          must "../proxy-enable='false' or (../querier-enable='false' and ../report-suppress='false')";
+          default "false";
+          description
+            "Enable/disable Layer 2 multicast snooping proxy.";
+        }
+        leaf multicast-group-model {
+          type snooping-mode;
+          default "asm-ssm";
+          description
+            "Layer 2 multicast group join mode.";
+        }
+        leaf querier-election {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Layer 2 multicast querier election.";
+        }
+        leaf proxy-router-protocol-pass {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a Layer 2 multicast snooping proxy-enabled device to transparently transmit Layer 2 multicast Report messages.";
+        }
+        leaf querier-enable {
+          type boolean;
+          must "../querier-enable='false' or ../proxy-enable='false'";
+          default "false";
+          description
+            "Enable/disable a Layer 2 multicast querier.";
+        }
+        leaf query-interval {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "60";
+          description
+            "Interval at which a router sends General Query messages.";
+        }
+        leaf require-router-alert {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to permit only Layer 2 multicast messages that contain the Router-Alert option in the IP header.";
+        }
+        leaf send-router-alert {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable a device to permit only Layer 2 multicast messages that contain the Router-Alert option in the IP header.";
+        }
+        leaf robustness {
+          type uint32 {
+            range "2..5";
+          }
+          default "2";
+          description
+            "Number of times for retransmitting a message to avoid packet loss.";
+        }
+        leaf router-aging-time {
+          type uint32 {
+            range "1..1000";
+          }
+          units "s";
+          default "180";
+          description
+            "Aging time of dynamic router ports. The aging time of a dynamic router port is default value or equals to the holdtime value contained in a PIM Hello packet.";
+        }
+        leaf router-port-learning {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable dynamic router port learning.";
+        }
+        leaf last-member-query-interval {
+          type uint32 {
+            range "1..5";
+          }
+          units "s";
+          default "1";
+          description
+            "Interval at which a last-member query message is sent.";
+        }
+        leaf static-group-suppress-dynamic-join {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a Layer 2 device from sending Layer 2 multicast Report and Leave messages of a group that has been configured as a static group on the upstream device.";
+        }
+        leaf report-suppress {
+          type boolean;
+          must "../report-suppress='false' or ../proxy-enable='false'";
+          default "false";
+          description
+            "Enable/disable the function of suppressing Layer 2 multicast Report messages.";
+        }
+        leaf source-life-time {
+          type uint32 {
+            range "60..1000";
+          }
+          units "s";
+          default "210";
+          description
+            "Aging time for entries triggered by multicast flows.";
+        }
+        leaf limit-max-entry {
+          type uint32 {
+            range "1..16384";
+          }
+          description
+            "Maximum number of entries that can be generated.";
+        }
+        leaf backup-query-forward {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of forwarding Layer 2 multicast query packet to backup PW.";
+        }
+        leaf backup-query-source-mac-replace {
+          when "../backup-query-forward='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of replacing MAC address when forwarding query packet to backup PW.";
+        }
+        leaf backup-report-forward {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of forwarding report packet received from backup PW.";
+        }
+        leaf backup-report-source-mac-replace {
+          when "../backup-report-forward='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of replacing MAC address when forwarding report packet received from backup PW.";
+        }
+        leaf dynamic-trunk-bandwidth-lose-mode {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable dynamic Eth-Trunk bandwidth limit lose mode.";
+        }
+        leaf pim-forward-to-router-port-only {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable PIM messages forwarding to router port only.";
+        }
+        leaf qinq-stacking-listen {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable listening report from qinq-stacking interface in the VSI, by default, igmp-snooping enable in the VSI will be conflict with the qinq-stacking interface binding vsi.";
+        }
+        leaf qinq-stacking-copy-mode {
+          when "../qinq-stacking-listen='true'";
+          type copy-mode;
+          default "invalid";
+          description
+            "Specify the qinq-stacking interface copy mode, by default, the traffic will not be forward to the qinq-stacking interface.";
+        }
+        leaf qinq-mapping-listen {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable listening report from qinq-mapping interface in the VSI, by default, igmp-snooping enable in the VSI will be conflict with the qinq-mapping interface binding vsi.";
+        }
+        leaf qinq-mapping-copy-mode {
+          when "../qinq-mapping-listen='true'";
+          type copy-mode;
+          default "invalid";
+          description
+            "Specify the qinq-mapping interface copy mode, by default, the traffic will not be forward to the qinq-mapping interface.";
+        }
+        leaf user-info-delete-delay-time {
+          type uint32 {
+            range "0..300";
+          }
+          units "s";
+          default "70";
+          description
+            "The user information delete delay time of qinq statcking and qinq mapping interface.";
+        }
+        leaf pw-fast-control {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable PW fast control, do not delete entries fot PW ports when the PW state become down.";
+        }
+        leaf packet-encapsulation-raw {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to reserve the original tag and add a new tag to the IGMP Report packets when the packets are forwarded from L2VE sub-interface to L3VE QinQ termination sub-interface.";
+        }
+      }
+      container static-router-port {
+        description
+          "Configure static router port.";
+        container ldp-pws {
+          when "/mc:multicast/ims:igmp-snooping/ims:global-enable and ../../../l2vpn:ldp-signaling/l2vpn:vsi-id and ../../../l2vpn:work-mode='normal'";
+          description
+            "List of router ports for VSIs.";
+          list ldp-pw {
+            key "remote-peer negotiation-vc-id";
+            description
+              "Configure a router port for a VSI.";
+            leaf remote-peer {
+              type inet:ipv4-address-no-zone;
+              description
+                "IP address of the peer end.";
+            }
+            leaf negotiation-vc-id {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Negotiation VC ID.";
+            }
+          }
+        }
+        container bgp-ad-pws {
+          when "/mc:multicast/ims:igmp-snooping/ims:global-enable and ../../../l2vpn:ipmsi/l2vpn:leaf";
+          description
+            "Configure router ports for VSIs.";
+          leaf-list remoter-peer {
+            type inet:ipv4-address-no-zone;
+            description
+              "Configure IP address of the peer end.";
+          }
+        }
+      }
+    }
+    container mld-snooping {
+      description
+        "Configure Layer 2 multicast MLD snooping in the VSI.";
+      container global {
+        when "/mc:multicast/ims:mld-snooping/ims:global-enable and ../../l2vpn:ldp-signaling/l2vpn:vsi-id and ../../l2vpn:work-mode='normal'";
+        description
+          "Configure Layer 2 multicast in the VSI.";
+        leaf version {
+          type uint32 {
+            range "1..2";
+          }
+          default "2";
+          description
+            "Layer 2 multicast version on an interface.";
+        }
+        leaf ssm-mapping-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable SSM mapping.";
+        }
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Layer 2 multicast snooping in the VSI.";
+        }
+        leaf max-response-time {
+          type uint32 {
+            range "1..25";
+          }
+          units "s";
+          default "10";
+          description
+            "Maximum response time for a Layer 2 multicast Query message. This time is used to control the deadline for user hosts to send Report messages.";
+        }
+        leaf immediately-leave {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable prompt-leave. Prompt-Leave allows an interface to immediately delete a group record after receiving a Leave message for this group, without sending a last-member query message.";
+        }
+        leaf proxy-enable {
+          type boolean;
+          must "../proxy-enable='false' or (../querier-enable='false' and ../report-suppress='false')";
+          default "false";
+          description
+            "Enable/disable Layer 2 multicast snooping proxy.";
+        }
+        leaf multicast-group-model {
+          type snooping-mode;
+          default "asm-ssm";
+          description
+            "Layer 2 multicast group join mode.";
+        }
+        leaf querier-election {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Layer 2 multicast querier election.";
+        }
+        leaf proxy-router-protocol-pass {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a Layer 2 multicast snooping proxy-enabled device to transparently transmit Layer 2 multicast Report messages.";
+        }
+        leaf querier-enable {
+          type boolean;
+          must "../querier-enable='false' or ../proxy-enable='false'";
+          default "false";
+          description
+            "Enable/disable a Layer 2 multicast querier.";
+        }
+        leaf query-interval {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "125";
+          description
+            "Interval at which a router sends General Query messages.";
+        }
+        leaf require-router-alert {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to permit only Layer 2 multicast messages that contain the Router-Alert option in the IP header.";
+        }
+        leaf send-router-alert {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable a device to permit only Layer 2 multicast messages that contain the Router-Alert option in the IP header.";
+        }
+        leaf robustness {
+          type uint32 {
+            range "2..5";
+          }
+          default "2";
+          description
+            "Number of times for retransmitting a message to avoid packet loss.";
+        }
+        leaf router-aging-time {
+          type uint32 {
+            range "1..1000";
+          }
+          units "s";
+          default "180";
+          description
+            "Aging time of dynamic router ports. The aging time of a dynamic router port is default value or equals to the holdtime value contained in a PIM Hello packet.";
+        }
+        leaf router-port-learning {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable dynamic router port learning.";
+        }
+        leaf last-member-query-interval {
+          type uint32 {
+            range "1..5";
+          }
+          units "s";
+          default "1";
+          description
+            "Interval at which a last-member query message is sent.";
+        }
+        leaf static-group-suppress-dynamic-join {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a Layer 2 device from sending Layer 2 multicast Report and Leave messages of a group that has been configured as a static group on the upstream device.";
+        }
+        leaf report-suppress {
+          type boolean;
+          must "../report-suppress='false' or ../proxy-enable='false'";
+          default "false";
+          description
+            "Enable/disable the function of suppressing Layer 2 multicast Report messages.";
+        }
+        leaf source-life-time {
+          type uint32 {
+            range "60..1000";
+          }
+          units "s";
+          default "210";
+          description
+            "Aging time for entries triggered by multicast flows.";
+        }
+        leaf packet-encapsulation-raw {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to reserve the original tag and add a new tag to the IGMP Report packets when the packets are forwarded from L2VE sub-interface to L3VE QinQ termination sub-interface.";
+        }
+      }
+      container static-router-port {
+        description
+          "Configure static router ports.";
+        container ldp-pws {
+          when "/mc:multicast/ims:mld-snooping/ims:global-enable and ../../../l2vpn:ldp-signaling/l2vpn:vsi-id and ../../../l2vpn:work-mode='normal'";
+          description
+            "List of router ports for VSIs.";
+          list ldp-pw {
+            key "remote-peer negotiation-vc-id";
+            description
+              "Configure a router port for a VSI.";
+            leaf remote-peer {
+              type inet:ipv4-address-no-zone;
+              description
+                "IP address of the peer end.";
+            }
+            leaf negotiation-vc-id {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Negotiation VC ID.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment "/vlan:vlan/vlan:vlans/vlan:vlan" {
+    description
+      "Adds configuration to the VLAN module.";
+    container igmp-snooping {
+      when "/mc:multicast/ims:igmp-snooping/ims:global-enable";
+      description
+        "Configure Layer 2 multicast in the VLAN.";
+      container global {
+        must "proxy-enable='false' or (querier-enable='false' and report-suppress='false')";
+        must "(../../vlan:type='common') or (../../vlan:type='super' and ( proxy-enable='false' or (not (/vlan:vlan/vlan:vlans/vlan:vlan[vlan:super-vlan=current()/../../vlan:id]/ims:igmp-snooping/ims:global/ims:querier-enable='true') and not (/vlan:vlan/vlan:vlans/vlan:vlan[vlan:super-vlan=current()/../../vlan:id]/ims:igmp-snooping/ims:global/ims:report-suppress='true')))) or (../../vlan:type='sub' and (proxy-enable='false' or (not (/vlan:vlan/vlan:vlans/vlan:vlan[vlan:id=current()/../../vlan:super-vlan]/ims:igmp-snooping/ims:global/ims:querier-enable='true') and not(/vlan:vlan/vlan:vlans/vlan:vlan[vlan:id=current()/../../vlan:super-vlan]/ims:igmp-snooping/ims:global/ims:report-suppress='true') and not(/vlan:vlan/vlan:vlans/vlan:vlan[vlan:super-vlan=current()/../../vlan:super-vlan]/ims:igmp-snooping/ims:global/ims:querier-enable='true') and not(/vlan:vlan/vlan:vlans/vlan:vlan[vlan:super-vlan=current()/../../vlan:super-vlan]/ims:igmp-snooping/ims:global/ims:report-suppress='true'))))";
+        description
+          "Configure Layer 2 multicast in the VLAN.";
+        leaf ssm-acl {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+          description
+            "SSM group range policy.";
+        }
+        leaf version {
+          type uint32 {
+            range "1..3";
+          }
+          default "2";
+          description
+            "Layer 2 multicast version on an interface.";
+        }
+        leaf ssm-mapping-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable SSM mapping.";
+        }
+        leaf ssm-mapping-policy {
+          when "../ssm-mapping-enable='true'";
+          type string {
+            length "1..31";
+          }
+          description
+            "Configure a policy for SSM mapping.";
+        }
+        leaf report-suppress {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of suppressing report messages.";
+        }
+        leaf static-group-suppress-dynamic-join {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a Layer 2 device from sending Layer 2 multicast report and leave messages of a group that has been configured as a static group on the upstream device.";
+        }
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Layer 2 multicast snooping in the VLAN.";
+        }
+        leaf group-policy-acl {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          description
+            "Configure a policy for filtering multicast groups on an interface to control the range of multicast groups that hosts can join.";
+        }
+        leaf group-policy-version {
+          when "../group-policy-acl";
+          type uint32 {
+            range "1..3";
+          }
+          description
+            "A group policy applies only to a specified Layer 2 multicast version.";
+        }
+        leaf max-response-time {
+          type uint32 {
+            range "1..25";
+          }
+          units "s";
+          default "10";
+          description
+            "Maximum response time for a Layer 2 multicast Query message. This time is used to control the deadline for user hosts to send report messages.";
+        }
+        leaf immediately-leave {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable prompt-leave. Prompt-Leave allows an interface to immediately delete a group record after receiving a leave message for this group, without sending a last-member query message.";
+        }
+        leaf immediately-leave-acl {
+          when "../immediately-leave='true'";
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          description
+            "ACL used to control the applicable range of Layer 2 multicast prompt-leave.";
+        }
+        leaf proxy-enable {
+          type boolean;
+          //must "(../../../vlan:type='common' and (../proxy-enable='false' or (../querier-enable='false' and ../report-suppress='false'))) or (../../../vlan:type='super' and ( ../proxy-enable='false' or (not (/vlan:vlan/vlan:vlans/vlan:vlan[vlan:super-vlan=current()/../../../vlan:id]/ims:igmp-snooping/ims:global/ims:querier-enable='true' ) and not (/vlan:vlan/vlan:vlans/vlan:vlan[vlan:super-vlan=current()/../../../vlan:id]/ims:igmp-snooping/ims:global/ims:report-suppress='true' )))) or (../../../vlan:type='sub' and (../proxy-enable='false' or (not (/vlan:vlan/vlan:vlans/vlan:vlan[vlan:id=current()/../../../vlan:super-vlan]/ims:igmp-snooping/ims:global/ims:querier-enable='true') and not(/vlan:vlan/vlan:vlans/vlan:vlan[vlan:id=current()/../../../vlan:super-vlan]/ims:igmp-snooping/ims:global/ims:report-suppress='true') and not(/vlan:vlan/vlan:vlans/vlan:vlan[vlan:super-vlan=current()/../../../vlan:super-vlan]/ims:igmp-snooping/ims:global/ims:querier-enable='true') and not(/vlan:vlan/vlan:vlans/vlan:vlan[vlan:super-vlan=current()/../../../vlan:super-vlan]/ims:igmp-snooping/ims:global/ims:report-suppress='true'))))";		          
+          default "false";
+          description
+            "Enable/disable Layer 2 multicast snooping proxy.";
+        }
+        leaf multicast-group-model {
+          type snooping-mode;
+          default "asm-ssm";
+          description
+            "Layer 2 multicast group join mode.";
+        }
+        leaf ip-policy-acl {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";		  
+          description
+            "IP filter policy.";
+        }
+        leaf query-ip-policy-acl {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";		  
+          description
+            "Querier IP policy.";
+        }
+        leaf querier-election {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Layer 2 multicast querier election.";
+        }
+        leaf proxy-router-protocol-pass {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a Layer 2 multicast snooping proxy-enabled device to transparently transmit Layer 2 multicast report messages.";
+        }
+        leaf querier-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a Layer 2 multicast querier.";
+        }
+        leaf query-interval {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "60";
+          description
+            "Interval at which a router sends general query messages.";
+        }
+        leaf require-router-alert {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to permit only Layer 2 multicast messages that contain the router-alert option in the IP header.";
+        }
+        leaf send-router-alert {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable a device to send Layer 2 multicast router alert.";
+        }
+        leaf robustness {
+          type uint32 {
+            range "2..5";
+          }
+          default "2";
+          description
+            "Number of times for retransmitting a message to avoid packet loss.";
+        }
+        leaf last-member-query-interval {
+          type uint32 {
+            range "1..5";
+          }
+          units "s";
+          default "1";
+          description
+            "Interval at which a last-member query message is sent.";
+        }
+        leaf router-aging-time {
+          type uint32 {
+            range "1..1000";
+          }
+          units "s";
+          default "180";
+          description
+            "Aging time of dynamic router ports. The aging time of a dynamic router port is default value or equals to the holdtime value contained in a PIM hello packet.";
+        }
+        leaf router-port-learning {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable dynamic router port learning.";
+        }
+        leaf source-life-time {
+          type uint32 {
+            range "60..1000";
+          }
+          units "s";
+          default "210";
+          description
+            "Aging time for entries triggered by multicast flows.";
+        }
+        leaf pim-forward-to-router-port-only {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable PIM messages forwarding to router port only.";
+        }
+      }
+    }
+  }
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:acs/l2vpn:ac" {
+    description
+      "Adds configuration to the L2VPN module.";
+    container igmp-snooping {
+      description
+        "Configure IGMP-snooping on VPLS AC interface.";
+      container limit-max-entry {
+        description
+          "Configure Layer 2 multicast entry limit of an AC interface.";
+        leaf config-entry {
+          type uint32 {
+            range "1..16384";
+          }
+          description
+            "Maximum number of entries that can be generated. VLANIF or IMETH interface does not support.";
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Adds configuration to the ifm module.";
+    container igmp-snooping {
+      description
+        "Configure Layer 2 multicast in the VLAN interface.";
+      leaf learning-disable-vlans {
+        when "/mc:multicast/ims:igmp-snooping/ims:global-enable";
+        type pub-type:vlan-range;
+        description
+          "Whether dynamic entry learning is enabled on an interface.";
+      }
+      leaf static-router-port-vlans {
+        when "/mc:multicast/ims:igmp-snooping/ims:global-enable";
+        type pub-type:vlan-range;
+        description
+          "List of VLANs for static router ports.";
+      }
+      leaf limit-max-entry {
+        type uint32 {
+          range "1..16384";
+        }
+        description
+          "Maximum number of entries that can be generated.";
+      }
+      leaf except-acl {
+        when "../limit-max-entry>0";
+        type leafref {
+          path "/acl:acl/acl:groups/acl:group/acl:identity";
+        }
+        must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+        description
+          "ACL used to prevent groups from being counted against the multicast group number limit. A basic ACL filters both (*, G) and (S, G) multicast entries, while an advanced ACL filters only (S, G) multicast entries.";
+      }
+      container number-limits {
+        description
+          "List of limit configurations of interfaces.";
+        list number-limit {
+          must "vlan-id-end>=vlan-id-begin";
+          must "../../../ethernet:ethernet/ethernet:main-interface/ethernet:l2-attribute";
+          key "limit-max-entry vlan-id-begin vlan-id-end";
+          description
+            "Configure limit of an interface. The newly configured VLAN tag range may be combined with the existing VLAN tag range.";
+          leaf limit-max-entry {
+            type uint32 {
+              range "1..16384";
+            }
+            description
+              "Maximum number of entries that can be generated.";
+          }
+          leaf vlan-id-begin {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "Begin VLAN ID in batch configuration.";
+          }
+          leaf vlan-id-end {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "End VLAN ID in batch configuration.";
+          }
+        }
+      }
+    }
+  }  
+}

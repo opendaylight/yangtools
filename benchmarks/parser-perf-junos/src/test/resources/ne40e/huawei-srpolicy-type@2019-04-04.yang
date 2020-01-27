@@ -1,0 +1,481 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-srpolicy-type {
+  belongs-to huawei-srpolicy {
+    prefix srpolicy;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Segment-routing type defined file.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef bfd-enable-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "sbfd-enable" {
+        value 1;
+        description
+          "SBFD enable.";
+      }
+    }
+    description
+      "BFD enable type.";
+  }
+  typedef dataplane-type {
+    type enumeration {
+      enum mpls {
+        value 1;
+        description
+          "Segment-routing MPLS.";
+      }
+      enum srv6 {
+        value 2;
+        description
+          "Segment-routing IPv6.";
+      }
+    }
+    description
+      "Dataplane type of the segments.";
+  }
+  typedef sid-value-type {
+    type union {
+      type uint32 {
+        range "16..1048575";
+      }
+      type inet:ipv6-address-no-zone;
+    }
+    description
+      "The sid value type.";
+  }
+  typedef path-type {
+    type enumeration {
+      enum "primary" {
+        value 1;
+        description
+          "Primary path.";
+      }
+      enum "backup" {
+        value 2;
+        description
+          "Backup path.";
+      }
+      enum "no-active" {
+        value 3;
+        description
+          "No active path.";
+      }
+    }
+    description
+      "Path type.";
+  }
+  typedef protocol-origin-type {
+    type enumeration {
+      enum "pcep" {
+        value 10;
+        description
+          "PCEP config.";
+      }
+      enum "bgp" {
+        value 20;
+        description
+          "BGP config.";
+      }
+      enum "configuration" {
+        value 30;
+        description
+          "Manual config.";
+      }
+    }
+    description
+      "Protocol origin type.";
+  }
+  typedef policy-bfd-enable-type {
+    type enumeration {
+      enum "not-configured" {
+        value 0;
+        description
+          "Not configured.";
+      }
+      enum "sbfd-enable" {
+        value 1;
+        description
+          "SBFD enable.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "BFD enable type for SR Policy.";
+  }
+  typedef enable-3types {
+    type enumeration {
+      enum "not-configured" {
+        value 0;
+        description
+          "Not configured.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Enable 3 types.";
+  }
+  typedef pipe-mode-type {
+    type enumeration {
+      enum "pipe" {
+        value 1;
+        description
+          "Pipe Mode.";
+      }
+      enum "uniform" {
+        value 2;
+        description
+          "Uniform Mode.";
+      }
+    }
+    description
+      "Pipe mode types.";
+  }
+  typedef serv-class-disp-types {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "BE service-class.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "AF1 service-class.";
+      }
+      enum "af2" {
+        value 2;
+        description
+          "AF2 service-class.";
+      }
+      enum "af3" {
+        value 3;
+        description
+          "AF3 service-class.";
+      }
+      enum "af4" {
+        value 4;
+        description
+          "AF4 service-class.";
+      }
+      enum "ef" {
+        value 5;
+        description
+          "EF service-class.";
+      }
+      enum "cs6" {
+        value 6;
+        description
+          "CS6 service-class.";
+      }
+      enum "cs7" {
+        value 7;
+        description
+          "CS7 service-class.";
+      }
+      enum "none" {
+        value 8;
+        description
+          "None service-class.";
+      }
+    }
+    description
+      "Service class types.";
+  }
+  typedef serv-color-disp-types {
+    type enumeration {
+      enum "green" {
+        value 0;
+        description
+          "Green.";
+      }
+      enum "yellow" {
+        value 1;
+        description
+          "Yellow.";
+      }
+      enum "red" {
+        value 2;
+        description
+          "Red.";
+      }
+      enum "none" {
+        value 3;
+        description
+          "None service-color.";
+      }
+    }
+    description
+      "Service color types.";
+  }
+  typedef serv-class-types {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "BE service-class.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "AF1 service-class.";
+      }
+      enum "af2" {
+        value 2;
+        description
+          "AF2 service-class.";
+      }
+      enum "af3" {
+        value 3;
+        description
+          "AF3 service-class.";
+      }
+      enum "af4" {
+        value 4;
+        description
+          "AF4 service-class.";
+      }
+      enum "ef" {
+        value 5;
+        description
+          "EF service-class.";
+      }
+      enum "cs6" {
+        value 6;
+        description
+          "CS6 service-class.";
+      }
+      enum "cs7" {
+        value 7;
+        description
+          "CS7 service-class.";
+      }
+    }
+    description
+      "Service class types.";
+  }
+  typedef serv-color-types {
+    type enumeration {
+      enum "green" {
+        value 0;
+        description
+          "Green.";
+      }
+      enum "yellow" {
+        value 1;
+        description
+          "Yellow.";
+      }
+      enum "red" {
+        value 2;
+        description
+          "Red.";
+      }
+    }
+    description
+      "Service color types.";
+  }
+  typedef address-family-type {
+    type enumeration {
+      enum "ipv4" {
+        value 4;
+        description
+          "IPv4.";
+      }
+      enum "ipv6" {
+        value 6;
+        description
+          "IPv6.";
+      }
+    }
+    description
+      "Address family type.";
+  }
+  typedef segment-type {
+    type enumeration {
+      enum segment-type-1 {
+        value 1;
+        description
+          "SR-MPLS label.";
+      }
+      enum segment-type-2 {
+        value 2;
+        description
+          "SRv6 sid.";
+      }
+      enum segment-type-3 {
+        value 3;
+        description
+          "IPv4 Prefix with optional SR Algorithm.";
+      }
+      enum segment-type-4 {
+        value 4;
+        description
+          "IPv6 Global Prefix with optional SR Algorithm for SR-MPLS.";
+      }
+      enum segment-type-5 {
+        value 5;
+        description
+          "IPv4 Prefix with Local Interface ID.";
+      }
+      enum segment-type-6 {
+        value 6;
+        description
+          "IPv4 Addresses for link endpoints as Local, Remote pair.";
+      }
+      enum segment-type-7 {
+        value 7;
+        description
+          "IPv6 Prefix and Interface ID for link endpoints as Local, Remote pair for SR-MPLS.";
+      }
+      enum segment-type-8 {
+        value 8;
+        description
+          "IPv6 Addresses for link endpoints as Local, Remote pair for SR-MPLS.";
+      }
+      enum segment-type-9 {
+        value 9;
+        description "IPv6 Global Prefix with optional SR Algorithm for SRv6.";
+      }
+      enum segment-type-10 {
+        value 10;
+        description
+          "IPv6 Prefix and Interface ID for link endpoints as Local, Remote pair for SRv6.";
+      }
+      enum segment-type-11 {
+        value 11;
+        description 
+          "IPv6 Addresses for link endpoints as Local, Remote pair for SRv6.";
+      }
+    }
+    description
+      "SR segment type.";
+  }
+  typedef path-state-type {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid.";
+      }
+      enum "valid" {
+        value 1;
+        description
+          "Valid.";
+      }
+    }
+    description
+      "Policy candidate-path state.";
+  }
+  
+  typedef enable-type {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Backup hot-standby enable types.";
+  }
+  typedef tunnel-type {
+    type enumeration {
+      enum "SRV6-TE-POLICY" {
+        value 52;
+        description
+          "SRV6.";
+      }
+      enum "SR-MPLS-TE-POLICY-GROUP" {
+        value 51;
+        description
+          "SR group.";
+      }
+      enum "SR-MPLS-TE-POLICY" {
+        value 50;
+        description
+          "SR.";
+      }
+    }
+    description
+      "Policy tunnel types.";
+  }
+  typedef policy-state-type {
+    type enumeration {
+      enum "active" {
+        value 1;
+        description
+          "Active.";
+      }
+      enum "deactive" {
+        value 2;
+        description
+          "Deactive.";
+      }
+    }
+    description
+      "Policy state types.";
+  }
+  typedef state-type {
+    type enumeration {
+      enum "up" {
+        value 0;
+        description
+          "Up.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "Down.";
+      }
+      enum "overrun" {
+        value 2;
+        description
+          "OverRun.";
+      }
+    }
+    description
+      "SR Policy state.";
+  }
+}

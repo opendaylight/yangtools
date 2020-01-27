@@ -1,0 +1,42 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-telnets-type {
+  belongs-to huawei-telnets {
+    prefix telnets;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of telnet server type submodule.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef telnetsbool {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "TELNET Server/Service Enable.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "TELNET Server/Service Disable.";
+      }
+    }
+    description
+      "TELNET server bool switch.";
+  }
+}

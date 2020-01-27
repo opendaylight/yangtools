@@ -1,0 +1,68 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bier-fwd {
+  namespace "urn:huawei:yang:huawei-bier-fwd";
+  prefix bier-fwd;
+  
+  import huawei-bier {
+    prefix bier;
+  }
+  
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bier forward.";
+  revision 2020-02-13 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }  
+  ext:task-name "bier";
+  
+  augment "/bier:bier" {
+    description
+      "Configure global attributes to the BIER.";
+    container forward {
+      description
+        "Configure global attributes to the BIER.";
+      container reserve-interface-enhancement {
+        description
+          "Configure reserve-interface enhancement.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable reserve-interface enhancement.";
+        }
+      }
+    }
+  }
+  augment "/bier:bier/bier:sub-domains/bier:sub-domain" {
+    description
+      "Configure pipe mode ttl value.";
+    container pipe-mode-ttl {
+      description
+        "Configure pipe mode ttl value.";
+      leaf ttl-value {
+        type uint8 {
+          range "1..255";
+        }
+        description
+          "Bier pipe mode ttl value.";
+      }
+    }
+  }
+}

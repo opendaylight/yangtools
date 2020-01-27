@@ -1,0 +1,1060 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-ipv4-address-manage {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bras-ipv4-address-manage";
+  prefix bras-ipv4-address-manage;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-bras-dhcp-server {
+    prefix bras-dhcp-server;
+  }
+  import huawei-radius {
+    prefix radius;
+  }
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "IPv4 address management.";
+  revision 2020-02-22 {
+    description
+      "Description modification.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-17 {  
+    description  
+      "Second revision.";  
+    reference  
+      "Huawei private.";  
+  }  
+  revision 2019-04-09 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ippool";
+/****************************type definitions*************************************/
+  typedef pool-type {
+    type enumeration {
+      enum "local" {
+        value 0;
+        description
+          "Local type.";
+      }
+      enum "remote" {
+        value 1;
+        description
+          "Remote type.";
+      }
+      enum "dynamic" {
+        value 2;
+        description
+          "Dynamic type.";
+      }
+    }
+    description
+      "IPv4 pool type.";
+  }
+  typedef reserved-ip-address {
+    type enumeration {
+      enum "lease" {
+        value 1;
+        description
+          "Reserve IP address by lease.";
+      }
+      enum "mac" {
+        value 2;
+        description
+          "Reserve IP address by mac.";
+      }
+    }
+    description
+      "IP address reserve type.";
+  }
+  typedef ip-status {
+    type enumeration {
+      enum "conflict" {
+        value 1;
+        description
+          "Set IP status to conflict.";
+      }
+      enum "idle" {
+        value 2;
+        description
+          "Set IP status to idle.";
+      }
+    }
+    description
+      "IP address status.";
+  }
+/*****************************type definitions************************************/
+
+/********************************groupings***************************************/
+  grouping specified-up {
+    description
+      "Configure an IP address pool to be exclusively used by a vBRAS-UP or UP backup policy profile in CU separation multi-instance scenarios.";
+    container occupied-policy {
+      must "(master-up and slave-up and master-up != slave-up) or (not (master-up) and not (slave-up))";
+      description
+        "Configure a specific policy to specify the address pool to be occupied.";
+      choice occupied-policy {
+        description
+          "Specify a specific policy to specify the address pool to be occupied.";
+        case hot-standby-up-group {
+          description
+            "The specified address pool is exclusive to be used by vBRAS-UP hot backup groups.";
+          leaf master-up {
+            type uint16 {
+              range "1024..1279";
+            }
+            description
+              "Specify the ID of the vBRAS-UP where the master interface in a vBRAS-UP hot backup group resides.";
+          }
+          leaf slave-up {
+            type uint16 {
+              range "1024..1279";
+            }
+            description
+              "Specify the ID of the vBRAS-UP where the slave interface in a vBRAS-UP hot backup group resides.";
+          }
+        }
+      }
+    }
+  }
+  grouping gateway {
+    description
+      "Configure the gateway and gate mask for the IP address pool.";
+    leaf gate-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Specify a gateway address.";
+    }
+    leaf gate-mask {
+      type inet:ipv4-address-no-zone;
+      description
+        "Specify the subnet mask of the gateway.";
+    }
+  }
+  grouping vpn-instance {
+    description
+      "Specify the name of vpn-instance binded.";
+    container vpn-instance {
+      description
+        "Configure the VPN instance name.";
+      leaf name {
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        must "../name!='_public_'";
+        must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+        description
+          "The name of vpn-instance binded.";
+      }
+    }
+  }
+  grouping rui-slave {
+    description
+      "Indicate RUI-slave address pools.";
+    leaf rui-slave {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable RUI-slave address pools.";
+    }
+  }
+  grouping dhcp-server-group {
+    description
+      "Bind a dhcp-server group to an IP address pool.";
+    leaf name {
+      type leafref {
+        path "/bras-dhcp-server:bras-dhcp-server/bras-dhcp-server:dhcp-server-groups/bras-dhcp-server:dhcp-server-group/bras-dhcp-server:name";
+    }
+    description
+      "The dhcp-server group command associates the address pool with the DHCPv4 server group.";
+    }
+  }
+  grouping reserved-ip-address {
+    description
+      "Configure the reservation type of an IP address for a user, either leased-based IP address reservation or MAC-address-based IP address reservation.";
+    container reserved-ip-address {
+      description
+        "Configure the reservation type of an IP address for a user, either leased-based IP address reservation or MAC-address-based IP address reservation.";
+      leaf type {
+        type reserved-ip-address;
+        description
+          "Specify the type of reserved IP address.";
+      }
+    }
+  }
+  grouping lease-management {
+    description
+      "Enables the lease management function for IP address pool.";
+    container lease-management {
+      description
+        "Configure the lease management function for IP address pool.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the lease management function for IP address pool.";
+      }
+    }
+  }  
+  grouping common-config {
+    description
+      "The configuration for all type IP address pool.";
+    container export-route {
+      description
+        "Configure export host routes from the current address pool.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable export host routes from the current address pool.";
+      }
+    }
+    container unr-tag {
+      description
+        "Configure a route tag for an IP address pool.";
+      leaf value {
+        type uint32 {
+          range "0..4294967294";
+        }
+        description
+          "Configure a route tag for an IP address pool.";
+      }
+    }
+    container dns-server {
+      description
+        "Configure a DNS server address.";
+      leaf-list ip-address {
+        type inet:ipv4-address-no-zone;
+        max-elements  "8";
+        description
+          "Configure the IP address of DNS server.";
+      }
+    }
+  }
+  grouping time-default-config {
+    description
+      "Define the time include day hour and minute.";
+    leaf day {
+      type uint16 {
+        range "0..999";
+      }
+      units d;
+      default "3";
+      description
+        "Specify the number of days.";
+    }
+    leaf hour {
+      type uint8 {
+        range "0..23";
+      }
+      units h;
+      default "0";
+      description
+        "Specify the number of hours.";
+    }
+    leaf minute {
+      type uint8 {
+        range "0..59";
+      }
+      units min;
+      default "0";
+      description
+        "Specify the number of minutes.";
+    }
+  }
+  grouping ip-address-number  {
+    description
+      "Statistics of IP address.";
+    leaf total-number {
+      type uint32;
+      description
+        "The IP address total number of subnet segment.";
+    }
+    leaf used-number {
+      type uint32;
+      description
+        "The IP address used number of subnet segment.";
+    }
+    leaf idle-number {
+      type uint32;
+      description
+        "The IP address idle number of subnet segment.";
+    }
+    leaf conflict-number {
+      type uint32;
+      description
+        "The IP address conflict number of subnet segment.";
+    }
+    leaf disable-number {
+      type uint32;
+      description
+        "The IP address disable number of subnet segment.";
+    }
+    leaf reserved-number {
+      type uint32;
+      description
+        "The IP address reserved number of subnet segment.";
+    }
+    leaf static-bind-number {
+      type uint32;
+      description
+        "The IP address static-bind number of subnet segment.";
+    }
+  }  
+  
+  grouping ip-pool-usage {
+    description
+      "The usage of IP address.";
+    leaf total-number {
+      type uint32;
+      description
+        "The total number of IP address.";
+    }
+    leaf used-number {
+      type uint32;
+      description
+        "The used number of IP address.";
+    }
+    leaf ratio {
+      type uint8 {
+        range "0..100";
+      }
+      units "%";
+      description
+        "The used ratio of IP address.";
+    }
+  }
+  grouping ip-pool-max-usage {
+    description
+      "The max usage of IP address.";
+    leaf total-number {
+      type uint32;
+      description
+        "The total number of IP address.";
+    }
+    leaf used-number {
+      type uint32;
+      description
+        "The used number of IP address.";
+    }
+    leaf time {
+      type yang:date-and-time;
+      description
+        "Time when the maximum number of addresses were used.";
+    }
+  }
+/*********************************groupings**************************************/
+
+  container bras-ipv4-address-manage {
+    description
+      "Bras IPv4 address management.";
+    container ipv4-pools {
+      description
+        "List of IPv4 address pools.";
+      list ipv4-pool {
+        must "./rui-slave != 'true' or ./type != 'dynamic'";
+        key "name";
+        max-elements 16384;
+        description
+          "Configure an IPv4 address pool.";
+        leaf name {
+          ext:case-sensitivity lower-only;
+          type string {
+            length "1..128";
+            pattern "[a-z0-9._-]{1,128}";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Specify the name of the IP address pool.";
+        }
+        leaf type {
+          ext:operation-exclude update;
+          type pool-type;
+          mandatory true;
+          description
+            "Specify the type of the IP address pool.";
+        }
+        leaf rui-slave {
+          ext:operation-exclude update|delete {
+            when "../type != 'remote'";
+            description
+              "The 'rui-slave' cannot be updated or deleted, when IPv4 pool type is not 'remote'.";
+          }
+          type boolean;
+          default "false";
+          description
+            "Enable/disable RUI-slave address pools.";
+        }
+        container local {
+          when "../type = 'local'";
+          description
+            "Configure the information for the local IP address pool.";
+          uses specified-up;
+          uses vpn-instance;
+          container gateway {
+            must "(./gate-ip and ./gate-mask) or (not(./gate-ip) and not(./gate-mask))";
+            description
+              "Configure the IP address pool gateway and gateMask.";
+            uses gateway;
+          }
+          container sections {
+            when "../gateway/gate-ip";
+            description
+              "List of address segments in an IP address pool. The section address segments cannot have overlapping IP addresses.";
+            list section {
+              must 'not(./start-ip-address=../../gateway/gate-ip and ./end-ip-address=../../gateway/gate-ip)';
+              key "number";
+              unique "start-ip-address";
+              unique "end-ip-address";
+              max-elements "256";
+              description
+                "Configure an address segment in an IP address pool. The section address segments cannot have overlapping IP addresses.";
+              leaf number {
+                type uint16 {
+                  range "0..255";
+                }
+                description
+                  "Specify the address segment number.";
+              }
+              leaf start-ip-address {
+                type inet:ipv4-address-no-zone;
+                mandatory true;
+                description
+                  "Specify the start IP address of the address segment in the dotted decimal format.";
+              }
+              leaf end-ip-address {
+                type inet:ipv4-address-no-zone;
+                mandatory true;
+                description
+                  "Specify the end IP address of the address segment in the dotted decimal format.";
+              }
+              container excluded-ip-addresss {
+                  description
+                    "List of range of IP addresses that do not take part in automatic address assignment.";
+                  list excluded-ip-address {
+                    key "start-ip-address end-ip-address";
+                    description
+                      "Configure the range of IP addresses that do not take part in automatic address assignment.";
+                    leaf start-ip-address {
+                      type inet:ipv4-address-no-zone;
+                      must 'not(../start-ip-address=../../../../../gateway/gate-ip)';
+                      description
+                        "Specify the start IP address which must be in the IP address segment specified in the section.";
+                    }
+                    leaf end-ip-address {
+                      type inet:ipv4-address-no-zone;
+                      description
+                        "Specify the end IP address which must be in the IP address segment specified in the section.";
+                    }
+                  }
+                }
+                container statistic {
+                  config false;
+                  description
+                    "Statistics of IP pool sections.";
+                    uses ip-address-number;
+                }
+            }
+          }
+          container dhcp-server-group {
+            when "../../rui-slave = 'true' and ../gateway/gate-ip";
+            description
+              "Configure to bind a dhcp-server group to an IP address pool.";
+            uses dhcp-server-group;
+          }
+          uses common-config;
+          container lease {
+            description
+              "Configure lease of IP pool, include day, hour and minute.";
+            uses time-default-config;
+          }
+          uses reserved-ip-address;
+          uses lease-management;
+        }
+        container remote {
+          when "../type = 'remote'";
+          description
+            "Configure the information for the remote IP address pool.";
+          uses specified-up;
+          uses vpn-instance;
+          container gateway {
+            must "(./gate-ip and ./gate-mask) or (not(./gate-ip) and not(./gate-mask))";
+            description
+              "Configure the gate IP address and gate mask for the remote IP address pool.";
+            uses gateway;
+          }
+          container dhcp-server-group {
+            when "../gateway/gate-ip";
+            description
+              "Configure an IP address pool bound to a dhcp-server group.";
+            uses dhcp-server-group;
+          }
+          container ip-loose-check {
+            description
+              "Configure a BRAS checking whether the IP addresses assigned by the DHCP server are on the network segment to which the gateway address of the remote address pool belongs.";
+            leaf enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable check remote IP Loose.";
+            }
+          }
+          uses common-config;
+          uses reserved-ip-address;
+        }
+        container dynamic {
+          when "../type = 'dynamic'";
+          description
+            "Configure the information for the dynamic IP address pool.";
+          uses vpn-instance;
+          uses common-config;
+          container lease {
+            description
+              "Configure lease of IP pool, include day, hour and minute.";
+              uses time-default-config;
+          }
+          container detect-interval {
+            description
+              "Configure the number of retransmission times and a retransmission interval for detecting address segment availability in a dynamic address pool.";
+            leaf retransmit-times {
+              type uint16 {
+                range "1..10";
+              }
+              default "3";
+              description
+                "Specify the number of retransmission times.";
+            }
+            uses time-default-config;
+          }
+          container bind-radius-server-group {
+            description
+              "Configure a dynamic address pool bound to a RADIUS server group.";
+            leaf name {
+              type leafref {
+                path "/radius:radius/radius:radius-server-groups/radius:radius-server-group/radius:name";
+              }
+              description
+                "Specify a RADIUS server group for a dynamic address pool.";
+            }
+          }
+          uses lease-management;
+          container used-threshold {
+            must "./upper-limit > ./lower-limit";
+            description
+              "Configure upper and lower address usage thresholds of a dynamic address pool.";
+            leaf upper-limit {
+              type uint32 {
+                range "1..100";
+              }
+              default "80";
+              description
+                "Specify an upper threshold for address segment application, in percentage.";
+            }
+            leaf lower-limit {
+              type uint32 {
+                range "0..99";
+              }
+              default "20";
+              description
+                "Specify a lower threshold for address segment release, in percentage. lower-limit must be smaller than upper-limit.";
+            }
+          }
+          container authentication {
+            must "(./name and ./password) or (not(./name) and not(./password))";
+            description
+              "Configure an authentication name and a password for the BRAS to apply to a RADIUS server for dynamic address segments.";
+            leaf name {
+              type string {
+                length "1..253";
+              }
+              description
+                "Specify an authentication name used for applying for dynamic address segments.";
+            }
+            leaf password {
+              type pub-type:password-extend {
+                length "1..128";
+              }
+              description
+                "The password is a string ranging from 1 to 16 characters for a simple password or 1 to 128 characters for a ciphertext password.";
+            }
+          }
+          container subnet-segments {
+            config false;
+            description
+              "List of statistics for dynamic IP address pool.";
+            list subnet-segment {
+              key "subnet-index";
+              description
+                "Get the subnet total statistics for dynamic IP address pool.";
+              leaf subnet-index {
+                type uint16;
+                description
+                  "The subnet index of dynamic pool.";
+              }
+              leaf start-ip-address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "The start IP address of subnet segment.";
+              }
+              leaf end-ip-address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "The end IP address of subnet segment.";
+              }
+            }
+          }
+        }
+        container pool-statistic {
+          config false;
+          description
+            "Get the statistics for IP address pool.";
+          leaf pool-index {
+            type uint16;
+            description
+              "The index of IP address pool.";
+            ext:support-filter "true";
+          }
+          leaf total-idle-number {
+            type uint32;
+            description
+              "The total number of idle IP address.";
+          }
+          leaf time-out-count {
+            type uint32;
+            description
+              "The number of no responses from the address pool.";
+          }
+          leaf option-number {
+            type uint32;
+            description
+              "The number of option.";
+          }
+          leaf sub-option-number {
+            type uint32;
+            description
+              "The number of sub-option.";
+          }
+          leaf blocked-time {
+            type uint32;
+            description
+              "The number of times that the address pool is isolated.";
+          }
+        }
+      }
+    }
+    container pool-groups {
+      description
+        "List of address pool groups.";
+      list pool-group {
+        key "name";
+        max-elements 512;
+        description
+          "Configure an address pool group.";
+        leaf name {
+          ext:case-sensitivity lower-only;
+          type string {
+            length "1..128";
+            pattern "[a-z0-9._-]{1,128}";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Specify the name of an address pool group.";
+        }
+        uses vpn-instance;
+        container bind-pools {
+          description
+            "Configure the address pool used by the IP pool-group or changes the ID of the address pool.";
+          leaf-list pool-name {
+            type leafref {
+              path "/bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:ipv4-pools/bras-ipv4-address-manage:ipv4-pool/bras-ipv4-address-manage:name";
+            }
+            max-elements 1024;
+            //ordered-by user;
+            description
+              "Configure the name of the IP address pool bound to IP pool group.";
+          }
+        }
+      }
+    }
+    container auto-refresh {
+      description
+        "Configure the ip-pool route auto-refresh disable command disables auto-refresh of address pool routes.";
+      leaf enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable auto-refresh of address pool routes.";
+      }
+    }
+    container ip-unr-route-tag {
+      description
+        "Configure route tags for IPv4 users.";
+      leaf local-pool-tag {
+        type uint32;
+        default "0";
+        description
+          "Specify the route tag of the network segment generated by an IPv4 local address pool.";
+      }
+      leaf framed-route-tag {
+        type uint32;
+        default "0";
+        description
+          "Specify the route tag of the network segment generated based on the Framed-Route attribute delivered by the RADIUS server.";
+      }
+      leaf framed-ip-netmask-tag {
+        type uint32;
+        default "0";
+        description
+          "Specify the route tag of the network segment generated based on the IP-Netmask attribute delivered by the RADIUS server.";
+      }
+      leaf framed-ip-address-tag {
+        type uint32;
+        default "0";
+        description
+          "Specify the route tag of the host route generated based on the IPv4 address delivered by the RADIUS server.";
+      }
+      leaf remote-pool-tag {
+        type uint32;
+        default "0";
+        description
+          "Specify the route tag of the network segment generated by an IPv4 remote address pool.";
+      }
+      leaf dynamic-pool-tag {
+        type uint32;
+        default "0";
+        description
+          "Specify the route tag of the network segment generated by an IPv4 dynamic address pool.";
+      }
+    }
+    container pool-select-algorithm {
+      description
+        "Configure an algorithm to device which IP address pool to online users.";
+      leaf local-round-robin {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the round robin algorithm for local IP address pool.";
+      }
+      choice remote-algorithm {
+        description
+          "The algorithm for remote IP address pool.";
+        case remote-round-robin {
+          description
+            "Configure the round robin algorithm for remote IP address pool.";
+          leaf remote-round-robin {
+            type empty;
+            description
+              "The round robin algorithm for remote IP address pool.";
+          }
+        }
+        case remote-loading-share {
+          description
+            "Configure the restrain period and timeout threshold to select the IP address pool according to the weight algorithm.";
+          container remote-loading-share {
+            presence "Create remote-loading-share.";
+            description
+              "Enable/disable the restrain period and timeout threshold to select the IP address pool according to the weight algorithm.";
+            leaf restrain-period {
+              type uint8 {
+                range "1..60";
+              }
+              units "min";
+              default "10";
+              description
+                "The restrain period.";
+            }
+            leaf timeout-threshold {
+              type uint8 {
+                range "1..255";
+              }
+              default "10";
+              description
+                "The timeout threshold.";
+            }
+          }
+        }
+      }
+    }
+    container dhcp-decline {
+      description
+        "Configure the action taken by the NE40E on the user IP address after the device receives a DHCP decline packet from the user.";
+      leaf ip-address-status {
+        type ip-status;
+        default "conflict";
+        description
+          "Set IP address status.";
+      }
+    }
+    container constant-index {
+      description
+        "Configure pool constant index.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function to configure a constant index for the IPv4 address pool.";
+      }
+    }
+    container remote-id-strip {
+      description
+        "Configure the functional strip remote-id of Option 82 in dhcp request packet.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the functional strip remote-id of Option 82 in dhcp request packet.";
+      }
+    }
+    container frame-ip-reply-option82 {
+      description
+        "Configure a device to insert Option 82 attributes into Offer and ACK messages.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a device to insert Option 82 attributes into Offer and ACK messages.";
+      }
+    }
+    container auto-block {
+      description
+        "Configure automatic isolation of address pools.";
+      leaf enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable automatic isolation of address pools.";
+      }
+    }
+    container pool-usage-statistics {
+      config false;
+      description
+        "List of usage statistics for all IPv4 address pools, including the local and remote address pools.";
+      list pool-usage-statistic {
+        key "pool-name";
+        description
+          "Display the usage statistics for all IPv4 address pools, including the local and remote address pools.";
+        leaf pool-name {
+          type string {
+            length "1..128";
+          }
+          description
+            "Name of a pool.";
+        }
+        leaf vpn-name {
+          type pub-type:vrf-name {
+            length "1..31";
+          }
+          default "_public_";
+          description
+            "Name of an vpn.";
+          ext:support-filter "true";
+        }
+        leaf total-num {
+          type uint32;
+          description
+            "Total number of IPv4 addresses in the pool.";
+        }
+        leaf used-num {
+          type uint32;
+          description
+            "Number of used IPv4 addresses in the pool.";
+        }
+        leaf ratio {
+          type uint8;
+          description
+            "Usage of the IPv4 address pool of the pool.";
+        }
+      }
+    }
+    container global-statistic {
+      config false;
+      description
+        "Get the total statistics for IP address pool.";
+      leaf pool-number {
+        type int32;
+        description
+          "Number of configured addresses pools.";
+      }
+      leaf idle-number {
+        type int32;
+        description
+          "Number of idle addresses on the equipment.";
+      }
+      leaf used-number {
+        type int32;
+        description
+          "Number of addresses in use on the equipment.";
+      }
+      leaf conflict-number {
+        type int32;
+        description
+          "Number of conflicting addresses on the equipment.";
+      }
+      leaf exclude-number {
+        type int32;
+        description
+          "Number of excluded addresses on the equipment.";
+      }
+      leaf total-number {
+        type int32;
+        description
+          "The total number of IP address.";
+      }
+      leaf used-percent {
+        type int32;
+        description
+          "The percent of used IP address.";
+      }
+    }
+    container statistics-by-domains {
+      config false;
+      description
+        "List of domain-based statistics.";
+      list statistics-by-domain {
+        key "domain-name";
+        description
+          "Domain-based statistics.";
+        leaf domain-name {
+          type leafref {
+            path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+          }
+          description
+            "Specify the name of a domain.";
+        }
+        container usages { /*only support CU*/
+          description
+            "Statistics of IP address.";
+          container upid-statistics {
+            description
+              "List of IP address by UP ID statistics.";
+            list upid-statistic {
+              key "up-id";
+              description
+                "IP address by UP ID statistics.";
+              leaf up-id {
+                type uint32 {
+                  range "1024..1279";
+                }
+                description
+                  "The UP ID.";
+              }
+              uses ip-pool-usage;
+            }
+          }
+        }
+        container max-usage {
+          description
+            "Display historical maximum usage statistics for IPv4 addresses base on domain.";
+          uses ip-pool-max-usage;
+        }
+        container cu-max-usages { /*only support CU*/
+          description
+            "List of usage statistics for IPv4 addresses base on domain.";
+          list cu-max-usage {
+            key "up-group-id";
+            description
+              "Display historical maximum usage statistics for IPv4 addresses base on domain.";
+            leaf up-group-id {
+              type uint32;
+              description
+                "The instance ID.";
+            }
+            uses ip-pool-max-usage;
+          }
+        }
+        container usage-status {
+          description
+            "Display statistics for public IP address pool status in a specified domain.";
+          uses ip-pool-usage;
+          leaf pool-status {
+            type uint8;
+            description
+              "Public IP address pool status can be 0, 1, or 2.
+              If the IP address pool usage is greater than the lower threshold and less than the upper threshold, the value is 1 (warning).
+              If the IP address pool usage is greater than or equal to the upper threshold, the value is 2 (danger).";
+          }
+        }
+        container cu-usage-statuss { /*only support CU*/
+          description
+            "List of statistics for public IP address pool status in a specified domain.";
+          list cu-usage-status {
+            key "up-group-id";
+            description
+              "Display statistics for public IP address pool status in a specified domain.";
+            leaf up-group-id {
+              type uint32;
+              description
+                "The instance ID.";
+            }
+            uses ip-pool-usage;
+            leaf pool-status {
+              type uint8;
+              description
+                "Public IP address pool status can be 0, 1, or 2.
+                If the IP address pool usage is greater than the lower threshold and less than the upper threshold, the value is 1 (warning).
+                If the IP address pool usage is greater than or equal to the upper threshold, the value is 2 (danger).";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af"  {
+    description
+      "Define the configuration under the vpn-instance which configued the IPv4-family.";
+    container bas {
+      description
+        "Configure the bas under vpn-instance.";
+      container ipv4-address-manage {
+        when "../../l3vpn:type='ipv4-unicast' and ../../../../ni:name!='_public_'";
+        description
+           "Configure the bas-pool information about vpn-instance.";
+        container warning-threshold {
+          description
+             "Configure the warning threshold of IPv4 pools who bound with the vpn instance.";
+          leaf percent-value {
+             type uint8 {
+                range "0..100";
+              }
+              default "80";
+              description
+                "The percentage of IPv4 pools warning threshold.";
+          }
+        }
+      }
+    }
+  }
+}

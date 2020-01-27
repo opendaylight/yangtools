@@ -1,0 +1,53 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-segment-routing-type {
+  belongs-to huawei-segment-routing {
+    prefix sr;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Segment routing type defined file.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef bfd-type {
+    type enumeration {
+      enum "seamless-bfd" {
+        value 1;
+        description
+          "The BFD type is seamless BFD.";
+      }
+      enum "bfd" {
+        value 2;
+        description
+          "The BFD type is BFD.";
+      }
+    }
+    description
+      "Segment routing bfd session type.";
+  }
+  typedef bfd-session-mode-type {
+    type enumeration {
+      enum "tunnel" {
+        value 1;
+        description
+          "The type of session mode is tunnel.";
+      }
+    }
+    description
+      "Segment routing type for bfd.";
+  }
+}

@@ -1,0 +1,454 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ripng {
+  namespace "urn:huawei:yang:huawei-ripng";
+  prefix ripng;
+
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-xpl {
+    prefix xpl;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ripng-type;
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "RIPng Component.";
+
+  revision 2019-11-25 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+  ext:task-name "ripng";
+
+  augment "/ni:network-instance/ni:instances/ni:instance" {
+    description
+      "RIPng augment to L3VPN.";
+    container ripng {
+      when "../l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";
+      description
+        "Configure RIPng Component.";
+      container processs {
+        description
+          "List of RIPng processes.";
+        list process {
+          key "id";
+          description
+            "Configure a RIPng process.";
+          leaf id {
+            type uint32 {
+              range "1..4294967295";
+            }
+            description
+              "Specify a RIPng process ID.";
+          }
+          leaf description {
+            type string {
+              length "1..80";
+            }
+            description
+              "Specify a description for a RIPng process.
+               The description is used to identify a RIPng process. You can configure a meaningful name, which helps understanding the configuration.";
+          }
+          leaf check-zero {
+            type enable-flag;
+            default "enable";
+            description
+              "In general, RIPng routers will reject all the RIPngv1 packets containing non-zero bits in the MBZ fields.
+               This configuration is applied only for RIPngv1 packets.";
+          }
+          leaf maximum-load-balancing {
+            type uint8 {
+              range "1..128";
+            }
+            default "64";
+            description
+              "You can configure the maximum number of equal-cost routes for load balancing. This does not limit the number of equal-cost routes that RIPng can learn. RIPng will store all the received ECMP routes.
+               The default value of the number of equal-cost routes may vary with products and licenses. You can adjust the default value by purchasing a new license. If the value is configured twice, the second one overrides the first one.";
+          }
+          leaf default-cost {
+            type uint8 {
+              range "0..15";
+            }
+            default "0";
+            description
+              "The default cost is used when RIPng imports routes from other routing protocols, and no cost is specified through a route-policy or the cost parameter.
+               Triggered update will be sent if the cost of any of the imported route changes due to the default cost configuration.";
+          }
+          container import-routes {
+            description
+              "List of routes which learned from multiple routing protocols can be imported to one RIPng process.";
+            list import-route {
+              key "protocol process-id";
+              description
+                "Configure the protocol from which routes are imported.";
+              leaf protocol {
+                type import-protocol-type;
+                description
+                  "Specify the type of routing protocol imported to RIPng process.";
+              }
+              leaf process-id {
+                type uint32 {
+                  range "1..4294967295";
+                }
+                must "(../protocol!='isis' and ../protocol!='ospfv3' and ../protocol!='ripng' and ../process-id=1) or not(../protocol!='isis' and ../protocol!='ospfv3' and ../protocol!='ripng' or ../protocol='bgp' or ../protocol='direct' or ../protocol='static' or ../protocol='unr')";
+                description
+                  "Specify the process ID of the protocol from which routes are imported. The value can be RIPng OSPFv3 or IS-IS.";
+              }                  
+              choice policy-type {           
+                description
+                  "Specify the policy type for import route.";
+                case route-policy {
+                  description
+                    "Set a route-policy name.";
+                  leaf route-policy {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                    }
+                  description
+                    "Specify the name of the route policy to be used during route import.";
+                  } 
+                }
+                case route-filter {
+                  description
+                    "Set a route policy name.";
+                  leaf route-filter {
+                    type leafref {
+                      path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                    }
+                    description
+                      "Name of a routing Filter The value is a string of 1 to 585 characters.";
+                  }
+                }
+              }                  
+              choice cost-type {           
+                description
+                  "Specify the cost used for the imported route.";
+                case cost {
+                  description
+                    "Specify the cost used for the imported route.";
+                  leaf cost {
+                    type uint16 {
+                      range "0..15";
+                    }
+                    description
+                      "Specify the cost used for the imported route.
+      The cost and the tag value of the routes imported to RIPng may be specified in the policy. If no cost is specified in the policy, the routes are imported into RIPng with the cost specified in the command. If no cost is specified either in the command or policy, the configured default cost is used. If no tag value is specified in the policy, the tag value specified by the RM module is used. If the route tag specified by the RM module overflows 2 bytes, zero is used as the route tag.";
+                  }
+                }
+                case inherit-cost{
+                  description
+                    "Retain the original cost of the imported route.";
+                  leaf inherit-cost {
+                    type enable-flag;
+                    default "disable";
+                    description
+                      "Retain the original cost of the imported route.";
+                  }    
+                }
+              }
+              leaf permit-ibpg {
+                type enable-flag;
+                must "../protocol='bgp' and ../../../../../../ni:name='_public_'";
+                description
+                  "IBGP routes will be imported to the RIPng process.";
+              }
+            }
+          }
+          container timer {
+            description
+              "Configure a timer for a process.";
+            leaf garbage {
+              type uint32 {
+                range "1..86400";
+              }
+              default "120";
+              description
+                "When the specified device detects that the route is unreachable,specify the interval for the device to delete a route from the routing table.";
+            }
+            leaf periodic {
+              type uint32 {
+                range "1..86400";
+              }
+              default "30";
+              description
+                "Specify the periodic timer in seconds. RIPng will send route updates periodically at this configured interval.";
+            }
+            leaf age {
+              type uint32 {
+                range "1..86400";
+              }
+              units "s";
+              default "180";
+              description
+                "Specify the age timer. Routes will be considered unreachable after this interval. In most cases, the age timer is three times the update timer.";
+            }
+            leaf suppress {
+              type uint32 {
+                range "0..86400";
+              }
+              default "0";
+              description
+                "A route is suppressed after it ages and becomes unreachable. During the suppression time, no route update is accepted to prevent route flapping. 
+                 The values of these timers should follow the rule: update < age and suppress < garbage-collect. For example, when the update timer is longer than the age timer, the router cannot inform its neighbors of the change in time if a RIPng route changes during the update timer. 
+                 This configuration should be used carefully as any parameter change can cause route flapping and can increase the convergence time considerably. If the network is quite stable, you can increase the timer values.";
+            }
+          }
+          container preference {
+            description
+              "Configure a preference value.";
+            leaf value {
+              type uint8 {
+                range "1..255";
+              }
+              default "100";
+              description
+                "The configured priority applies to the routes to be delivered to the RM module. If RIP has added a route to the RM module, and then the priority is changed, RIP re-adds it with the new priority.
+The prerequisites for the priority configuration are as follows:
+1. A RIP process has been created. 
+2. The policy to be applied has been configured.";
+          }
+            choice policy-type {
+              description
+                "Specify the policy type for prefererence.";
+              case route-policy {
+                  description
+                    "Set a route policy name.";
+                leaf route-policy {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                  }
+                  description
+                    "You can set a priority for the routes that match the policy, and the result is displayed in the routing table of the RM module.
+    The prerequisites for the priority configuration are as follows:
+    1. A RIP process has been created.
+    2. The policy to be applied has been configured.";
+                }
+              }
+              case route-filter {
+                description
+                  "Set a route filter name.";
+                leaf route-filter {
+                  type leafref {
+                    path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                  }
+                  description
+                    "Name of a routing Filter The value is a string of 1 to 585 characters.";
+                }
+              }
+            }
+          }
+          container interfaces {
+            description
+              "List of the interfaces in a RIPng process.";
+            list interface {
+              key "name";
+              description
+                "Configure a RIPng interface.";
+              leaf name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "../../../../../../ni:name=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name";
+                description
+                  "Specify the name of the interface on which RIPng is to be configured.";
+              }
+              leaf input {
+                type enable-flag;
+                default "enable";
+                description
+                  "If the input is disabled, then no RIPng packets will be received on that interface regardless of the unicast neighbor and silent configuration on that interface. When input is disabled and then enabled, it will send full table request packets.";
+              }
+              leaf output {
+                type enable-flag;
+                default "enable";
+                description
+                  "If output is disabled, then no RIPng packets will be sent on that interface regardless of the unicast neighbor and silent configuration on that interface. But if the max-route configuration changes, RIPng requests may be sent regardless of the silent configuration on that interface.";
+              }
+              leaf split-horizon {
+                type enable-flag;
+                default "enable";
+                description
+                  "Split horizon prevents a route from being advertised back on the interface from which was learned. Split horizon is not enabled on NBMA or P2MP interfaces because they have multiple neighbors.";
+              }
+              leaf poison-reverse {
+                type enable-flag;
+                default "disable";
+                description
+                  "Poison reverse is disabled by default. Poison reverse can be enabled to advertise routes with infinite metric (16) on the interface from which the routes were learned. When both split horizon and poison reverse is configured, poison reverse will have a higher priority.";
+              }
+              leaf pkt-transmit-interval {
+                type uint16 {
+                  range "50..500";
+                }
+                default "200";
+                description
+                  "Interval at which packets are transmitted.";
+              }
+              leaf pkt-transmit-number {
+                type uint8 {
+                  range "25..100";
+                }
+                default "30";
+                description
+                  "Number of packets that can be sent from an interface each time.";
+              }
+              leaf default-route-type {
+                type default-route;
+                default "none";
+                description
+                  "Configure the router to generate a default route and to advertise the route to its neighbors.
+                   If a router generates a default route by itself, it does not receive the default route sent by its neighbor.
+                   You can send a default route to RIPng neighbors only if a default route exists in the routing table (provided the default route in routing table was not added by the same RIPng process). In addition, if a router has learned the default route from a neighbor, then upon originating a default route the learned route is deleted.";
+              }
+              leaf default-route-cost {
+                when "not(../default-route-type='none')";
+                type uint8 {
+                  range "0..15";
+                }
+                default "0";
+                description
+                  "Specify the cost to be used while generating a default route. If a metric out value is applicable on the interface, then the advertised metric value is the sum of the cost and the metric out.";
+              }
+              leaf default-route-tag {
+                when "not(../default-route-type='none')";
+                type uint16 {
+                  range "0..65535";
+                }
+                default "0";
+                description
+                  "Define a tag value for the default route's identification.";
+              }
+              container metricin {
+                description
+                  "Configure the metric configured on a RIPng interface.";
+                leaf value {
+                  type uint8 {
+                    range "0..15";
+                  }
+                  default "0";
+                  description
+                    "Metricin is the mechanism to increase the incoming metric of routes learned through RIPng.
+                     When RIPng receives a route, the metric value configured on that interface is added before adding it to the RIPng routing table. After the metric is added, if the metric is greater than 16, 16 is used as the metric.";
+                }
+              }
+              container metricout {
+                description
+                  "Configure the metricout on a RIPng interface.";
+                leaf value {
+                  type uint8 {
+                    range "1..15";
+                  }
+                  default "1";
+                  description
+                    "When RIPng advertises a route, the metric value configured on an interface is added before sending the route. After the metric is added, if the value is greater than 16, 16 is used as the metric.
+                     When an ACL or IP prefix list is configured in the metricout command, the metric is applied only to those routes that match the ACL or IP prefix list. All other routes are sent with the default cost (1).";
+                }
+                choice policy-type {
+                  description
+                    "Mode of the policy used for import route.";
+                  case ip-prefix {
+                    description
+                      "Set a name of the IP prefix list.";
+                    leaf ip-prefix {
+                      when "../value>1";
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Specify the name of the IP prefix list to be configured along with metric out.";
+                    }
+                  }
+                  case acl-number {
+                    description
+                      "Set a number of the basic ACL.";
+                    leaf acl-number {
+                      when "../value>1";
+                      type leafref {
+                        path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                      }
+                      must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Specify the number of the basic ACL to be configured along with metric out.";
+                    }
+                  }
+                  case acl-name {
+                    description
+                      "Set a name of the basic ACL.";
+                    leaf acl-name {
+                      when "../value>1";
+                      type leafref {
+                        path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                      }
+                      must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Specify the name of the basic ACL to be configured along with metric out.
+                         When an ACL or IP prefix list is configured in the metricout command, the metric is applied only to those routes that match the ACL or IP prefix list. All other routes are sent with the default cost (1).";
+                    }
+                  }
+                }
+              }
+              container summarys {
+                description
+                  "List of summary addresses configured for the interface.";
+                list summary {
+                  key "address network-mask";
+                  max-elements "128";
+                  description
+                    "Configure a summary class.";
+                  leaf address {
+                    type inet:ipv6-address-no-zone;
+                    description
+                      "Route summarization improves the scalability and efficiency of routers on large networks and reduces the routing table size. Instead of sending many routes to neighbors, a router sends only the route to the specified summarized address.";
+                  }
+                  leaf network-mask {
+                    type uint8 {
+                      range "0..128";
+                    }
+                    description
+                      "Specify the mask for the summary address.";
+                  }
+                  leaf avoid-feedback {
+                    type enable-flag;
+                    default "disable";
+                    description
+                      "Prevent summarized routes from being sent back to the interface.";
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

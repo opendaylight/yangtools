@@ -1,0 +1,183 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-nqa-reflector {
+  yang-version 1;
+  belongs-to huawei-nqa {
+    prefix nqa;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of submodule nqa-reflector.";
+
+  revision 2019-10-16 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  typedef reflect-type {
+    type enumeration {
+      enum flow-general {
+        value 2;
+        description
+          "General flow.";
+      }
+    }
+    description
+      "Description of reflect-type.";
+  }
+
+  grouping reflectors-type {
+    description
+      "Reflector table.";
+    list reflector {
+      key "reflector-id";
+      description
+        "Configure reflector table.";
+      leaf reflector-id {
+        type uint32 {
+          range "1..65535";
+        }
+        description
+          "Reflector ID.";
+      }
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Reflector interface name.";
+      }
+      leaf reflector-type {
+        type reflect-type;
+        mandatory true;
+        description
+          "Reflector type.";
+      }
+      leaf exchange-port {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable reflector UDP port exchange.";
+      }
+      leaf pe-vlan {
+        type uint16 {
+          range "1..4094";
+        }
+        must "../reflector-type='flow-general' and ../pe-vlan and ../ce-vlan";
+        description
+          "Reflector PE VLAN ID.";
+      }
+      leaf ce-vlan {
+        type uint16 {
+          range "1..4094";
+        }
+        must "../reflector-type='flow-general'";
+        description
+          "Reflector CE VLAN ID.";
+      }
+      leaf source-port {
+	    when "../reflector-type='flow-general'";
+        type uint16 {
+          range "0..65535";
+        }
+        default "49184";
+        description
+          "Reflector Source Port.";
+      }
+      leaf dest-port {
+	    when "../reflector-type='flow-general'";
+        type uint16 {
+          range "0..65535";
+        }
+        default "7";
+        description
+          "Reflector Destination Port.";
+      }
+      leaf end-time {
+        type yang:date-and-time;
+        mandatory true;
+        description
+          "Absolute time of reflector aging.";
+      }
+      leaf share-mode {
+        type boolean;
+        must "../share-mode = 'false' or ../reflector-type='flow-general'";
+        default "false";
+        description
+          "Enable/disable the share mode on the reflector.";
+      }
+      choice address {
+        description
+        "Reflector Address.";
+        case ipv4-address{
+          description
+          "Reflector IPv4 Address.";
+          leaf ipv4-address {
+            type inet:ipv4-address-no-zone;
+            must "../reflector-type='flow-general'";
+            description
+            "Reflector IPv4 Address.";
+          }
+        }
+        case simulate-ipv4-address {
+          description
+            "Reflector Simulate IPv4 Address.";
+          leaf simulate-ipv4-address {
+            type inet:ipv4-address-no-zone;
+            must "../reflector-type='flow-general'";
+            description
+            "Reflector Simulate IPv4 Address.";
+          }
+        }
+        case mac-address {
+          description
+          "Reflector MAC Address.";
+          leaf mac-address {
+            type pub-type:mac-address;
+            must "../reflector-type='flow-general'";
+            description
+            "Reflector MAC Address.";
+          }
+        }
+      }
+      leaf survival-time {
+        type uint32;
+        units "s";
+        config false;
+        description
+          "Reflector survival time.";
+      }
+      leaf recommended-test-mac {
+        type pub-type:mac-address;
+        config false;
+        description
+          "Reflector Recommended MAC Address.";
+      }
+    }
+  }
+}

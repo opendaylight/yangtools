@@ -1,0 +1,88 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-http {
+  namespace "urn:huawei:yang:huawei-http";
+  prefix http;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ssl {
+    prefix ssl;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "HTTP server and client.";
+  revision 2020-01-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  typedef http-servertype {
+    type enumeration {
+      enum "restconf" {
+        value 1;
+        description
+          "Restconf: restconf service type.";
+      }
+      enum "omi" {
+        value 2;
+        description
+          "Omi: omi service type.";
+      }
+      enum "web" {
+        value 3;
+        description
+          "Web: web service type.";
+      }
+    }
+    description
+      "Http service type.";
+  }
+
+  ext:task-name  "https";
+  container http {
+    description
+      "Http.";
+    container comp-enable {
+      description
+        "Configure http enable.";
+        leaf comp-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable http enable.";
+        }
+    }
+    container client {
+      when "../comp-enable/comp-enable = 'true'";
+      description
+        "Configure http client.";
+        leaf ssl-policy-name {
+          type leafref {
+            path "/ssl:ssl/ssl:ssl-policys/ssl:ssl-policy/ssl:policy-name";
+          }
+          description
+            "Ssl policy name.";
+        }
+        leaf ssl-verify-type {
+          when "../ssl-policy-name";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable ssl verify peer.";
+        }
+    }
+  }
+}

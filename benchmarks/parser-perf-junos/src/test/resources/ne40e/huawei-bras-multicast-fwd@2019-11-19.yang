@@ -1,0 +1,41 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-multicast-fwd {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bras-multicast-fwd";
+  prefix bras-multicast-fwd;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-bras-multicast {
+    prefix bras-multicast;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Configure bras attribute.";
+  revision 2019-11-19 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forwarding";
+  augment "/bras-multicast:bras-multicast" {
+    description
+      "Configure bras attribute.";  
+    container bandwidth-enable {
+      presence "multicastbandwidth enable";
+      description
+        "Enable/disable multicast bandwidth.";
+    }	
+  }
+}

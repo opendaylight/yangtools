@@ -1,0 +1,1639 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-qos-bd {
+  namespace "urn:huawei:yang:huawei-qos-bd";
+  prefix qos-bd;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-bd {
+    prefix bd;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Quality of service for BD management.";
+  revision 2020-04-01 {
+    description
+      "Add new nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-05 {
+    description
+      "Add new nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "qos";
+  typedef qos-policy-apply-layer {
+    type enumeration {
+      enum "none" {
+        value 0; 
+        description
+          "Default classification.";
+      }
+      enum "link" {
+        value 1; 
+        description
+          "Classification based on layer 2 information.";
+      }
+      enum "all" {
+        value 2; 
+        description
+          "Classification based on all information.";
+      }
+      enum "mpls" {
+        value 3; 
+        description
+          "Classification based on MPLS information.";
+      }
+    }
+    description
+      "None/link/MPLS/all.";
+  }
+  typedef operate-type {
+    type enumeration {
+      enum "disable" {
+        value 0; 
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1; 
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Disable/enable.";
+  }
+  container qos-bd {
+    config false;
+    description
+      "QoS.";
+    container qos-query {
+      description
+        "List of birdge-domain traffic policy statistics.";
+      container policy-statisticss {
+        description
+          "List of traffic policy statistics.";
+          list policy-statistics {
+            key "domain-id direction policy-name interface-name";
+          description
+            "Traffic policy statistics.";
+          leaf domain-id {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "BD ID.";
+          }
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+          leaf policy-name {
+            type leafref {
+              path "/qos:qos/qos:classifier-template/qos:traffic-policys/qos:traffic-policy/qos:name";
+            }
+            description
+              "Policy name.";
+          }
+          leaf interface-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+            "Interface name.";
+          }
+          leaf apply-time {
+            type yang:date-and-time;
+            description
+              "Time of applying a policy.";
+          }
+          leaf statistics-enable-time {
+            type yang:date-and-time;
+            description
+              "Time of enabling/disabling statistics.";
+          }
+          leaf clear-time {
+            type yang:date-and-time;
+            description
+              "Time of clearing statistics.";
+          }
+          leaf clear-flag {
+            type boolean;
+            description
+              "Flag of clearing statistics.";
+          }
+          leaf match-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of matched packets.";
+          }
+          leaf match-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of matched bytes.";
+          }
+          leaf match-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of matched packets (unit: packet/s).";
+          }
+          leaf match-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of matched bytes (unit: byte/s).";
+          }
+          leaf miss-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of unmatched packets.";
+          }
+          leaf miss-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of unmatched bytes.";
+          }
+          leaf match-pass-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of matched and passed packets.";
+          }
+          leaf match-pass-bytes {
+            type uint64;
+            units "Byte/s";
+            description
+              "Number of matched and passed bytes.";
+          }
+          leaf match-drop-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of matched but discarded packets.";
+          }
+          leaf match-drop-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of matched but discarded bytes.";
+          }
+          leaf miss-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets that do not match the policy (unit: packet/s).";
+          }
+          leaf miss-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes that do not match the policy (unit: byte/s).";
+          }
+          leaf match-pass-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets that match the policy and passed (unit: packet/s).";
+          }
+          leaf match-pass-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes that match the policy and passed (unit: byte/s).";
+          }
+          leaf match-drop-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets that match the policy but are discarded (unit: packet/s).";
+          }
+          leaf match-drop-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes that match the policy but are discarded (unit: byte/s).";
+          }
+          container classifier-statisticss {
+            description
+              "List of traffic classifier statistics.";
+            list classifier-statistics {
+              key "classifier-name"; 
+              description
+                "Traffic classifier statistics.";
+              leaf classifier-name {
+                type string {
+                  length "1..127";
+                }
+                description
+                  "Name of a traffic classifier.";
+              }
+              leaf match-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of matched packets.";
+              }
+              leaf match-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of matched bytes.";
+              }
+              leaf match-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of matched packets (unit: packet/s).";
+              }
+              leaf match-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of matched bytes (unit: byte/s).";
+              }
+              leaf match-pass-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of matched and passed packets.";
+              }
+              leaf match-pass-bytes {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Number of matched and passed bytes.";
+              }
+              leaf match-drop-packets {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Number of matched but discarded packets.";
+              }
+              leaf match-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of matched but discarded bytes.";
+              }
+              leaf match-pass-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the packets that match the policy and passed (unit: packet/s).";
+              }
+              leaf match-pass-byte-rate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the bytes that match the policy and passed (unit: byte/s).";
+              }
+              leaf match-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the packets that match the policy but are discarded (unit: packet/s).";
+              }
+              leaf match-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the bytes that match the policy but are discarded (unit: byte/s).";
+              }
+              leaf filter-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of filtered packets.";
+              }
+              leaf filter-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of filtered bytes.";
+              }
+              leaf filter-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of filtered packets.";
+              }
+              leaf filter-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of filtered bytes.";
+              }
+              leaf urpf-drop-packets {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of bytes discarded by URPF.";
+              }
+              leaf urpf-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the discarded bytes by URPF check.";
+              }
+              leaf urpf-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the discarded packets by URPF check.";
+              }
+              leaf urpf-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the discarded bytes by URPF check.";
+              }
+              leaf car-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the processed packets by car.";
+              }
+              leaf car-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the processed bytes by car.";
+              }
+              leaf car-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the passed packets by car.";
+              }
+              leaf car-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the passed bytes by car.";
+              }
+              leaf car-pass-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the passed packets by CAR.";
+              }
+              leaf car-pass-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the passed bytes by CAR.";
+              }
+              leaf car-drop-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Rate of the discarded packets by CAR.";
+              }
+              leaf car-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Rate of the discarded bytes by CAR.";
+              }
+              leaf car-pass-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the passed packets CAR.";
+              }
+              leaf car-pass-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the passed bytes by CAR.";
+              }
+              leaf car-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the discarded packets by CAR.";
+              }
+              leaf car-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the discarded bytes by CAR.";
+              }
+              leaf car-green-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of green packets by CAR.";
+              }
+              leaf car-green-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the bytes of green packets by CAR.";
+              }
+              leaf car-green-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of green packets by CAR.";
+              }
+              leaf car-green-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the bytes of green packets by CAR.";
+              }
+              leaf car-yellow-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of yellow packets by CAR.";
+              }
+              leaf car-yellow-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the bytes of yellow packets by CAR.";
+              }
+              leaf car-yellow-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of yellow packets by CAR.";
+              }
+              leaf car-yellow-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the bytes of yellow packets by CAR.";
+              }
+              leaf car-red-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of red packets by CAR.";
+              }
+              leaf car-red-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the bytes of red packets by CAR.";
+              }
+              leaf car-red-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of red packets by CAR.";
+              }
+              leaf car-red-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the bytes of red packets by CAR.";
+              }
+               leaf unknownunisup-pass-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the passed packets by Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-pass-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the passed bytes by Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-pass-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the passed packets Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-pass-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the passed bytes by Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-drop-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the discarded packets by Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the discarded bytes by Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the discarded packets by Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the discarded bytes by Unknown Unicast Suppression.";
+              }
+              leaf multicastsup-pass-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the passed packets by Multicast Suppression.";
+              }
+              leaf multicastsup-pass-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the passed bytes by Multicast Suppression.";
+              }
+              leaf multicastsup-pass-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the passed packets Multicast Suppression.";
+              }
+              leaf multicastsup-pass-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the passed bytes by Multicast Suppression.";
+              }
+              leaf multicastsup-drop-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the discarded packets by Multicast Suppression.";
+              }
+              leaf multicastsup-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the discarded bytes by Multicast Suppression.";
+              }
+              leaf multicastsup-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the discarded packets by Multicast Suppression.";
+              }
+              leaf multicastsup-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the discarded bytes by Multicast Suppression.";
+              }
+              leaf broadcastsup-pass-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the passed packets by Broadcast Suppression.";
+              }
+              leaf broadcastsup-pass-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the passed bytes by Broadcast Suppression.";
+              }
+              leaf broadcastsup-pass-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the passed packets Broadcast Suppression.";
+              }
+              leaf broadcastsup-pass-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the passed bytes by Broadcast Suppression.";
+              }
+              leaf broadcastsup-drop-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the discarded packets by Broadcast Suppression.";
+              }
+              leaf broadcastsup-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the discarded bytes by Broadcast Suppression.";
+              }
+              leaf broadcastsup-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the discarded packets by Broadcast Suppression.";
+              }
+              leaf broadcastsup-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the discarded bytes by Broadcast Suppression.";
+              }
+            }
+          }
+        }
+      }
+      container user-queue-statisticss {
+        description
+          "List of user queue statistics.";
+        list user-queue-statistics {
+          key "domain-id direction policy-name classifier-name";
+          description
+            "User queue statistics.";
+          leaf domain-id {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "BD ID.";
+          }
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+          leaf policy-name {
+            type leafref {
+              path "/qos:qos/qos:classifier-template/qos:traffic-policys/qos:traffic-policy/qos:name";
+            }
+            description
+              "Policy name.";
+          }
+          leaf classifier-name {
+            type string {
+              length "1..127";
+            }
+            description
+              "Name of a traffic classifier.";
+          }
+          leaf interface-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+            "Interface name.";
+          }
+          leaf service-class {
+            type qos:hqos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf slot-id {
+            type string {
+              length "1..32";
+              pattern '(c[cl]c\d+/)?\d+';
+            }
+            description
+              "Slot id.";
+          }
+          leaf pass-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of passed packets.";
+          }
+          leaf pass-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of passed bytes.";
+          }
+          leaf pass-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets passed during the latest 30 seconds.";
+          }
+          leaf pass-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes passed during the latest 30 seconds.";
+          }
+          leaf drop-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of dropped packets.";
+          }
+          leaf drop-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of dropped bytes.";
+          }
+          leaf drop-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets dropped during the latest 30 seconds.";
+          }
+          leaf drop-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes dropped during the latest 30 seconds.";
+          }
+          leaf buffer-total {
+            type uint32;
+            units "kB";
+            description
+              "Size of buffer.";
+          }
+          leaf buffer-used {
+            type uint32;
+            units "kB";
+            description
+              "Size of used buffer.";
+          }
+        }
+      }
+      container vxlan-mode-policy-statisticss{
+        description
+          "List of vxlan policy statistics.";
+        list vxlan-mode-policy-statistics {
+          key "bd-id direction policy-name slot-id";
+          description
+            "Traffic policy statistics.";
+          leaf bd-id {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "BD ID.";
+          }
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+          leaf policy-name {
+            type leafref {
+              path "/qos:qos/qos:classifier-template/qos:traffic-policys/qos:traffic-policy/qos:name";
+            }
+            description
+              "Policy name.";
+          }
+          leaf slot-id {
+            type string {
+              length "1..32";
+              pattern '(c[cl]c\d+/)?\d+';
+            }
+            description
+              "Slot id. The chassis id must also be specified when have multi chassis, such as 3, clc1/3 or ccc1/3.";
+          }
+          leaf apply-time {
+            type yang:date-and-time;
+            description
+              "Time of applying a policy.";
+          }
+          leaf stat-enable-time {
+            type yang:date-and-time;
+            description
+              "Time of enabling/disabling statistics.";
+          }
+          leaf stat-clear-time {
+            type yang:date-and-time;
+            description
+              "Time of clearing statistics.";
+          }
+          leaf stat-clear-flag {
+            type boolean;
+            description
+              "Flag of clearing statistics.";
+          }
+          leaf match-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of matched packets.";
+          }
+          leaf match-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of matched bytes.";
+          }
+          leaf match-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of matched packets.";
+          }
+          leaf match-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of matched bytes.";
+          }
+          leaf miss-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of unmatched packets.";
+          }
+          leaf miss-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of unmatched bytes.";
+          }
+          leaf match-pass-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of matched and passed packets.";
+          }
+          leaf match-pass-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of matched and passed bytes.";
+          }
+          leaf match-drop-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of matched but discarded packets.";
+          }
+          leaf match-drop-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of matched but discarded bytes.";
+          }
+          leaf miss-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets that do not match the policy.";
+          }
+          leaf miss-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes that do not match the policy.";
+          }
+          leaf match-pass-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets that match the policy and passed.";
+          }
+          leaf match-pass-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes that match the policy and passed.";
+          }
+          leaf match-drop-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets that match the policy but are discarded.";
+          }
+          leaf match-drop-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes that match the policy but are discarded.";
+          }
+          container vxlan-mode-classifier-statisticss {
+            description
+              "List of traffic classifier statistics.";
+            list vxlan-mode-classifier-statisticss {
+              key "classifier-name";
+              description
+                "Traffic classifier statistics.";
+              leaf classifier-name {
+                type string {
+                  length "1..127";
+                }
+                description
+                  "Name of a traffic classifier.";
+              }
+              leaf match-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of matched packets.";
+              }
+              leaf match-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of matched bytes.";
+              }
+              leaf match-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of matched packets.";
+              }
+              leaf match-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of matched bytes.";
+              }
+              leaf match-pass-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of matched and passed packets.";
+              }
+              leaf match-pass-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of matched and passed bytes.";
+              }
+              leaf match-drop-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of matched but discarded packets.";
+              }
+              leaf match-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of matched but discarded bytes.";
+              }
+              leaf match-pass-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the packets matching the traffic classifier and passed.";
+              }
+              leaf match-pass-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the bytes matching the traffic classifier and passed.";
+              }
+              leaf match-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the packets matching the traffic classifier but discarded.";
+              }
+              leaf match-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the bytes matching the traffic classifier but discarded.";
+              }
+              leaf filter-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of filtered bytes.";
+              }
+              leaf filter-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of filtered packets.";
+              }
+              leaf filter-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of filtered packets.";
+              }
+              leaf filter-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of filtered bytes.";
+              }
+              leaf urpf-drop-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the discarded packets by URPF check.";
+              }
+              leaf urpf-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the discarded bytes by URPF check.";
+              }
+              leaf urpf-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the discarded packets by URPF check.";
+              }
+              leaf urpf-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the discarded bytes by URPF check.";
+              }
+              leaf car-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the processed packets by CAR.";
+              }
+              leaf car-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the processed bytes by CAR.";
+              }
+              leaf car-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the passed packets by CAR.";
+              }
+              leaf car-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the passed bytes by CAR.";
+              }
+              leaf car-pass-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the passed packets by CAR.";
+              }
+              leaf car-pass-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the passed bytes by CAR.";
+              }
+              leaf car-drop-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Rate of the discarded packets by CAR.";
+              }
+              leaf car-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Rate of the discarded bytes by CAR.";
+              }
+              leaf car-pass-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the passed packets CAR.";
+              }
+              leaf car-pass-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the passed bytes by CAR.";
+              }
+              leaf car-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the discarded packets by CAR.";
+              }
+              leaf car-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the discarded bytes by CAR.";
+              }
+              leaf car-green-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of green packets by CAR.";
+              }
+              leaf car-green-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the bytes of green packets by CAR.";
+              }
+              leaf car-yellow-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of yellow packets by CAR.";
+              }
+              leaf car-yellow-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the bytes of yellow packets by CAR.";
+              }
+              leaf car-red-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of red packets by CAR.";
+              }
+              leaf car-red-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the bytes of red packets by CAR.";
+              }
+              leaf car-green-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of green packets by CAR.";
+              }
+              leaf car-green-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the bytes of green packets by CAR.";
+              }
+              leaf car-yellow-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of yellow packets by CAR.";
+              }
+              leaf car-yellow-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the bytes of yellow packets by CAR.";
+              }
+              leaf car-red-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of red packets by CAR.";
+              }
+              leaf car-red-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the bytes of red packets by CAR.";
+              }
+              leaf unknownunisup-pass-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the passed packets by Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-pass-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the passed bytes by Unknown Unicast Suppression.";
+              }
+             leaf unknownunisup-drop-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the discarded packets by Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the discarded bytes by Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-pass-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the passed packets Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-pass-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the passed bytes by Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the discarded packets by Unknown Unicast Suppression.";
+              }
+              leaf unknownunisup-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the discarded bytes by Unknown Unicast Suppression.";
+              }
+              leaf multicastsup-pass-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the passed packets by Multicast Suppression.";
+              }
+              leaf multicastsup-pass-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the passed bytes by Multicast Suppression.";
+              }
+              leaf multicastsup-drop-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the discarded packets by Multicast Suppression.";
+              }
+              leaf multicastsup-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the discarded bytes by Multicast Suppression.";
+              }
+              leaf multicastsup-pass-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the passed packets Multicast Suppression.";
+              }
+              leaf multicastsup-pass-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the passed bytes by Multicast Suppression.";
+              }
+              leaf multicastsup-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the discarded packets by Multicast Suppression.";
+              }
+              leaf multicastsup-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the discarded bytes by Multicast Suppression.";
+              }
+              leaf broadcastsup-pass-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the passed packets by Broadcast Suppression.";
+              }
+              leaf broadcastsup-pass-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the passed bytes by Broadcast Suppression.";
+              }
+              leaf broadcastsup-drop-packets {
+                type uint64;
+                units "packet";
+                description
+                  "Number of the discarded packets by Broadcast Suppression.";
+              }
+              leaf broadcastsup-drop-bytes {
+                type uint64;
+                units "Byte";
+                description
+                  "Number of the discarded bytes by Broadcast Suppression.";
+              }
+              leaf broadcastsup-pass-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the passed packets Broadcast Suppression.";
+              }
+              leaf broadcastsup-pass-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the passed bytes by Broadcast Suppression.";
+              }
+              leaf broadcastsup-drop-packet-rate {
+                type uint64;
+                units "pps";
+                description
+                  "Rate of the discarded packets by Broadcast Suppression.";
+              }
+              leaf broadcastsup-drop-byte-rate {
+                type uint64;
+                units "Byte/s";
+                description
+                  "Rate of the discarded bytes by Broadcast Suppression.";
+              }
+            }
+          }
+        }
+      }      
+    }
+  }
+  rpc reset-policy-apply-statistics {
+    description
+      "To clear traffic policy statistics.";
+    ext:node-ref "/qos-bd:qos-bd/qos-bd:qos-query/qos-bd:policy-statisticss";
+    input {
+      leaf domain-id {
+        type leafref {
+          path "/bd:bd/bd:instances/bd:instance/bd:id";
+        }
+        mandatory true;
+        description
+          "Bridge domain ID.";
+      }
+      leaf interface-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Interface name.";
+      }
+      leaf direction {
+        type qos:qos-direction-type;
+        mandatory true;
+        description
+          "Direction.";
+      }
+      leaf policy-name {
+        type leafref {
+          path "/qos:qos/qos:classifier-template/qos:traffic-policys/qos:traffic-policy/qos:name";
+        }
+        mandatory true;
+        description
+          "Policy name.";
+      }
+    }
+  }//rpc reset-interface-traffic-policy-statistics
+  rpc reset-policy-apply-statistics-vxlan {
+    description
+      "To clear traffic policy statistics.";
+    ext:node-ref "/qos-bd:qos-bd/qos-bd:qos-query/qos-bd:vxlan-mode-policy-statisticss";
+    input {
+      leaf domain-id {
+        type leafref {
+          path "/bd:bd/bd:instances/bd:instance/bd:id";
+        }
+        mandatory true;
+        description
+          "Bridge domain ID.";
+      }
+      leaf direction {
+        type qos:qos-direction-type;
+        mandatory true;
+        description
+          "Direction.";
+      }
+    }
+  }
+  augment "/bd:bd/bd:instances/bd:instance" {
+    description
+      "Adds qos configuration to the board.";
+    container qos {
+      description
+        "Configure QoS application.";
+      container domain-service-classs {
+        description
+          "Configure forced traffic classification.";
+        container domain-service-class {
+          presence "create domain-service-classs";
+          description
+            "Enable/disable forced traffic classification.";
+          leaf service-class {
+            type qos:qos-service-class;
+            mandatory true;
+            description
+              "Class of service.";
+          }
+        }
+      }
+      container domain-policy-applys {
+        description
+          "List of traffic policy applications.";
+        list domain-policy-apply {
+          key "direction policy-name layer";
+          max-elements  "2";
+          description
+            "Configure application of a traffic policy.";
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+          leaf policy-name {
+            type leafref {
+              path "/qos:qos/qos:classifier-template/qos:traffic-policys/qos:traffic-policy/qos:name";
+            }
+            description
+              "Policy name.";
+          }
+          leaf layer {
+            type qos-policy-apply-layer;
+            description
+              "Classification based on layer 2 or layer 3 information.";
+          }
+        }
+      }
+      container trusts {
+        description
+          "List of trust diffserv domain or 8021p.";
+        list trust {
+          key "trust-type direction";
+          description
+            "Configure trust diffserv domain or 8021p list.";
+          leaf trust-type {
+            type qos:trust-type;
+            description
+              "To select trusting DS domain, 8021p or all.";
+          }
+          leaf direction {
+            type qos:trust-direction-type;
+            description
+              "Direction.";
+          }
+          leaf diffserv-domain-name {
+            when "../trust-type='ip-dscp'";
+            type leafref {
+              path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+            }
+            mandatory true;
+            description
+              "Name of a ds domain.";
+          }
+        }
+      }
+      container phb-vxlans {
+        description
+          "Configure the PHB operation.";
+        container phb-vxlan {
+          presence "create phb-vxlan ";
+          description
+            "Enable/disable PHB operation.";
+          leaf operate-type {
+            type operate-type;
+            mandatory true;
+            description
+              "To select enable or disable phb.";
+          }
+          leaf diffserv-domain-name {
+            when "not(../operate-type='disable')";
+            type leafref {
+              path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+            }
+            description
+              "Name of a DS domain.";
+          }
+        }
+      }
+      container phbs {
+        description
+          "List of the PHB operation.";
+        list phb {
+          must "(./map-type='none' and not (../phb[map-type!='none'])) or (./map-type!='none' and not (../phb[map-type='none']))";
+          key "operate-type map-type";
+          description
+            "Configure PHB operation.";
+          leaf operate-type {
+            type operate-type;
+            description
+              "To select enable or disable phb.";
+          }
+          leaf map-type {
+            type qos:map-type;
+            description
+              "To select disable type.";
+          }
+          leaf diffserv-domain-name {
+            when "not(../operate-type='disable')";
+            type leafref {
+              path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+            }
+            description
+              "Name of a DS domain.";
+          }
+        }
+      }
+      container car-vxlan-modes {
+        description
+          "List of the car operation.";
+        list car-vxlan-mode {
+          must "((./exclude-mode='no-exclude' and not (../car-vxlan-mode[exclude-mode='exclude'])) or (./exclude-mode!='no-exclude' and not(../car-vxlan-mode[exclude-mode='no-exclude'])))";
+          key "slot";
+          description
+            "Configure CAR operation.";
+          leaf slot {
+            type string {
+              length "0..32";
+            }
+            description
+              "Car disable slot.";
+          }
+          leaf exclude-mode {
+            type qos:exclude-type;
+            mandatory true;
+            description
+              "Exclude Mode.";
+            ext:operation-exclude update {
+              description "After the configuration is created, the node cannot be modified.";
+            }
+          }
+        }
+      }
+      container vxlan-mode-policy-applys {
+        description
+          "List of traffic policy application.";
+        list vxlan-mode-policy-apply {
+          key "direction";
+          description
+            "Configure the application of a traffic policy.";
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+          leaf policy-name {
+            type leafref {
+              path "/qos:qos/qos:classifier-template/qos:traffic-policys/qos:traffic-policy/qos:name";
+            }
+            mandatory true;
+            description
+              "Policy name.";
+            ext:operation-exclude update {
+              description "After the configuration is created, the node cannot be modified.";
+            }
+          }
+          leaf layer {
+            when "../direction='inbound'";
+            type qos:policy-apply-vxlan-layer-type;
+            description
+              "Classification based on Layer 2 or Layer 3 information.";
+            ext:operation-exclude update {
+              description "After the configuration is created, the node cannot be modified.";
+            }
+          }
+        }
+      }
+      container vxlan-mode-trusts {
+        description
+          "List of trust diffserv domain or 8021p.";
+        list vxlan-mode-trust {
+          key "trust-type";
+          description
+            "Configure trust diffserv domain or 8021p.";
+          leaf trust-type {
+            type qos:vxlan-trust-type;
+            description
+              "To select trusting diffserv domain, 8021p.";
+          }
+          leaf ds-name {
+            when "../trust-type='upstream'";
+            type leafref {
+              path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+            }
+            mandatory true;
+            description
+              "Name of a DS domain.";
+          }
+        }
+      }      
+    }//augment bd:instances/bd:qos
+  }//augment bd:instances
+}

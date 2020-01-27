@@ -1,0 +1,71 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-macacc {
+  namespace "urn:huawei:yang:huawei-macacc";
+  prefix macacc;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-bd {
+    prefix bd;
+  }
+  ext:task-name  "mac";
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "MAC accounting.";
+  revision 2020-03-06 {
+    description
+      "Change description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-15 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls" {
+    description
+      "VSI MAC accounting.";
+    container mac-accounting {
+      when "../l2vpn:work-mode='normal'";
+      description
+        "Configure VSI MAC accounting.";
+      leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the flag of VSI MAC accounting.";
+      }
+    }
+  }
+  augment "/bd:bd/bd:instances/bd:instance" {
+    description
+      "BD MAC accounting.";
+    container mac-accounting {
+      description
+        "Configure BD MAC accounting.";
+      leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the flag of BD MAC accounting.";
+      }
+    }
+  }
+}

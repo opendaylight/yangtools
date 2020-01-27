@@ -1,0 +1,190 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bfd-static-vpls {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bfd-static-vpls";
+  prefix bfd-static-vpls;
+  import huawei-bfd {
+    prefix bfd;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bidirectional Forwarding Detection (BFD) is a detection mechanism used uniformly on the entire network. BFD is used to rapidly detect and monitor the connectivity of links or IP routes on a network.";
+  
+  revision 2019-12-30 {
+    description
+      "Units correct.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-06-25 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  /*****************************************************************
+  * type definitions
+  *****************************************************************/
+  
+  /*****************************************************************
+  * data
+  *****************************************************************/
+  ext:task-name "bfd";
+  augment "/bfd:bfd/bfd:sessions/bfd:session/bfd:session-type/bfd:static/bfd:static-session-link-type" {
+    description
+      "Configure bfd for vsi pw.";
+    case vsi-pw {
+      description
+        "List of BFD statistic session configurations for vsi-pw.";
+      leaf min-tx-interval-static-vsi-pw {
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between sending packets.";
+      }
+      leaf min-rx-interval-static-vsi-pw {
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between receiving packets.";
+      }
+      leaf local-discriminator-static-vsi-pw {
+        when "not(../is-group-static-vsi-pw='true')";
+        type uint32 {
+          range "1..16384";
+        }
+        description
+          "Local discriminator of a BFD session. Note that the local discriminator must correspond to the remote discriminator on the peer of the BFD session.";
+      }
+      leaf remote-discriminator-static-vsi-pw {
+        when "not(../is-group-static-vsi-pw='true')";
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote discriminator of a BFD session. Note that the remote discriminator must correspond to the local discriminator on the peer of the BFD session.";
+      }
+      leaf use-default-ip-static-vsi-pw {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a multicast address to be used as the destination address for sending BFD packets. You must specify an outbound interface.";
+      }
+      leaf vsi-name-static-vsi-pw {
+        type leafref {
+          path "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:name";
+        }
+        mandatory true;
+        description
+          "Name of a VSI.";
+      }
+      leaf peer-ip-static-vsi-pw {
+        type leafref {
+          path "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:ldp-signaling/l2vpn:pws/l2vpn:pw/l2vpn:peer-ip";
+        }
+        mandatory true;
+        description
+          "Peer IP address of a VSI.";
+      }
+      leaf vc-id-static-vsi-pw {
+        type leafref {
+          path "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:ldp-signaling/l2vpn:pws/l2vpn:pw/l2vpn:negotiation-vc-id";
+        }
+        description
+          "Specify a VC ID.";
+      }
+      leaf remote-peer-static-vsi-pw {
+        when "../use-default-ip-static-vsi-pw='false'";
+        type inet:ipv4-address-no-zone;
+        description
+          "Remote address of the VSI.";
+      }
+      leaf auto-calc-ttl-static-vsi-pw {
+        when "../remote-peer-static-vsi-pw";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable automatically calculate the VSI TTL.";
+      }
+      leaf pw-ttl-static-vsi-pw {
+        when "../remote-peer-static-vsi-pw and ../auto-calc-ttl-static-vsi-pw='false'";
+        type uint16 {
+          range "1..255";
+        }
+        mandatory true;
+        description
+          "Specify the VSI TTL.";
+      }
+      leaf is-group-static-vsi-pw {
+        when "../auto-calc-ttl-static-vsi-pw='false'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Session Group.";
+      }
+    }
+  }
+  augment "/bfd:bfd/bfd:sessions/bfd:session" {
+    description
+      "Configure bfd group for vpls pw.";
+    container vpls-groups {
+      when "../is-group-static-vsi-pw='true'";
+      description
+        "List of BFD sub-session.";
+      list vpls-group {
+        key "sub-local-discriminator";
+        description
+          "Configure BFD sub-session.";
+        leaf sub-local-discriminator {
+          type uint32 {
+            range "1..16384";
+          }
+          description
+            "Local discriminator of a BFD session. When the BFD session is created in static auto-negotiation mode, you do not need to set this parameter. Note that the local discriminator must correspond to the remote discriminator on the peer of the BFD session. That is, the value of the local discriminator must be the same as the value of the remote discriminator.";
+        }
+        leaf sub-remote-discriminator {
+          type uint32 {
+            range "1..4294967295";
+          }
+          mandatory true;
+          description
+            "Remote discriminator of a BFD session. When the BFD session is created in static auto-negotiation mode, you do not need to set this parameter. Note that the remote discriminator must correspond to the local discriminator on the peer of the BFD session. That is, the value of the remote discriminator must be the same as the value of the local discriminator.";
+        }
+        leaf sub-select-slot-id {
+          type string {
+            length "1..19";
+          }
+          mandatory true;
+          description
+            "ID of the slot for forcible board selection.";
+        }
+      }
+    }
+  }
+}

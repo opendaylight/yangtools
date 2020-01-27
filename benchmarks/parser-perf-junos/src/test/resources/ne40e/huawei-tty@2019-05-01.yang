@@ -1,0 +1,364 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-tty {
+  namespace "urn:huawei:yang:huawei-tty";
+  prefix tty;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  include huawei-tty-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "TTY Component.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "tty";
+  container tty {
+    description
+      "TTY Component.";
+    container console {
+      description
+        "Configure Console configuration container.";
+        leaf idle-time-out-min {
+          type uint16 {
+            range "1..1440";
+          }
+          default "5";
+          description
+            "To set the idle timeout minute.";
+        }
+        leaf idle-time-out-sec {
+          type uint16 {
+            range "0..59";
+          }
+          default "0";
+          description
+            "To set the idle timeout seconds.";
+        }
+        leaf auth-mode {
+          type ttyauthmodetype;
+          default "init";
+          description
+            "Sets the authentication mode.";
+        }
+        leaf auth-password {
+        when "../auth-mode='password'";
+          type pub-type:password {
+            length "8..128";
+          }
+          description
+            "Sets the password. The password is a string ranging from 8 to 16 characters for a plaintext password and 48 to 128 characters for a ciphertext password.";
+        }
+        leaf privilege-level {
+          type uint8 {
+            range "0..15";
+          }
+          default "3";
+          description
+            "To set the privilege level.";
+        }
+        leaf history-cmd-size {
+          type uint16 {
+            range "0..256";
+          }
+          default "10";
+          description
+            "History command buffer size. Describes the number of commands will be stored in history.";
+        }
+        leaf screen-length {
+          type uint16 {
+            range "0..512";
+          }
+          default "24";
+          description
+            "Sets the screen length.";
+        }
+        leaf shell-enable {
+          type ttybooltype;
+          default "true";
+          config false;
+          description
+            "Whether to enable the shell function.";
+        }
+        leaf speed {
+          type uint64 {
+            range "300..115200";
+          }
+          must "../speed = 300 or ../speed = 600 or ../speed = 1200 or ../speed = 2400 or ../speed = 4800 or ../speed = 9600 or ../speed = 19200 or ../speed = 38400 or ../speed = 57600 or ../speed = 115200";
+          default "9600";
+          description
+            "Speed for the tty device. Supported speeds are 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600 and 115200.";
+        }
+        leaf flow-control {
+          type ttyflwcntrltype;
+          default "none";
+          description
+            "To set the flow control of the TTY device.";
+        }
+        leaf stop-bits {
+          type ttystpbitstype;
+          default "1";
+          description
+            "To set the stop bits of the TTY devices.";
+        }
+        leaf data-bits {
+          type ttydatabitstype;
+          default "8";
+          description
+            "Set the databits of the TTY devices.";
+        }
+        leaf parity {
+          type ttyparitytype;
+          default "none";
+          description
+            "Parity of the TTY devices.";
+        }
+        leaf shutdown-enble {
+          type ttybooltype;
+          default "false";
+          description
+            "Shutdown the specified user-interface.";
+        }
+    }
+    container aux {
+      description
+        "Configure AUX configuration container.";
+        leaf idle-time-out-min {
+          type uint16 {
+            range "1..1440";
+          }
+          default "5";
+          description
+            "To set the idle timeout minute.";
+        }
+        leaf idle-time-out-sec {
+          type uint16 {
+            range "0..59";
+          }
+          default "0";
+          description
+            "To set the idle timeout seconds.";
+        }
+        leaf auth-mode {
+          type ttyauthmodetype;
+          default "init";
+          description
+            "Sets the authentication mode.";
+        }
+        leaf auth-password {
+          when "../auth-mode='password'";
+          type pub-type:password {
+            length "8..128";
+          }
+          description
+            "Sets the password. The password is a string ranging from 8 to 16 characters for a plaintext password and 48 to 128 characters for a ciphertext password.";
+        }
+        leaf privilege-level {
+          type uint8 {
+            range "0..15";
+          }
+          default "0";
+          description
+            "To set the privilege level.";
+        }
+        leaf history-cmd-size {
+          type uint16 {
+            range "0..256";
+          }
+          default "10";
+          description
+            "History command buffer size. Describes the number of commands will be stored in history.";
+        }
+        leaf screen-length {
+          type uint16 {
+            range "0..512";
+          }
+          default "24";
+          description
+            "Sets the screen length.";
+        }
+        leaf shell-enable {
+          type ttybooltype;
+          default "true";
+          description
+            "Whether to enable the shell function.";
+        }
+        leaf speed {
+          type uint64 {
+            range "300..115200";
+          }
+          must "../speed = 300 or ../speed = 600 or ../speed = 1200 or ../speed = 2400 or ../speed = 4800 or ../speed = 9600 or ../speed = 19200 or ../speed = 38400 or ../speed = 57600 or ../speed = 115200";
+          default "9600";
+          description
+            "Speed for the tty device. Supported speeds are 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600 and 115200.";
+        }
+        leaf flow-control {
+          type ttyflwcntrltype;
+          default "none";
+          description
+            "To set the flow control of the TTY device.";
+        }
+        leaf stop-bits {
+          type ttystpbitstype;
+          default "1";
+          description
+            "To set the stop bits of the TTY devices.";
+        }
+        leaf data-bits {
+          type ttydatabitstype;
+          default "8";
+          description
+            "Set the databits of the TTY devices.";
+        }
+        leaf parity {
+          type ttyparitytype;
+          default "none";
+          description
+            "Parity of the TTY devices.";
+        }
+        leaf acl4-outbound {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          description
+            "Acl outbound name or number for IPv4 protocol.";
+        }
+        leaf acl6-outbound {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+          description
+            "Acl outbound name or number for IPv6 protocol.";
+        }
+        leaf acl4-outbound-num {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          status deprecated;
+          description
+            "Acl outbound number for IPv4 protocol.";
+        }
+        leaf acl6-outbound-num {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+          status deprecated;
+          description
+            "Acl outbound number for IPv6 protocol.";
+        }
+    }
+    container user-interfaces {
+      config false;
+      description
+        "List of Terminal user interfaces.";
+      list user-interface {
+        key "line-index";
+        config false;
+        description
+          "Operational state of Terminal user interface status and configuration information.";
+        leaf line-index {
+          type uint32 {
+            range "0..164";
+          }
+          config false;
+          description
+            "Absolute index of UIs.";
+        }
+        leaf line-type {
+          type ttycamllinetype;
+          config false;
+          ext:support-filter "true";
+          description
+            "Type and relative index of UIs.";
+        }
+        leaf relative-index {
+          type uint32;
+          config false;
+          ext:support-filter "true";
+          description
+            "Relative index for the line type.";
+        }
+        leaf privileage {
+          type uint32;
+          config false;
+          ext:support-filter "true";
+          description
+            "The privilege of UIs.";
+        }
+        leaf modemstatus {
+          type string {
+            length "0..8";
+          }
+          config false;
+          ext:support-filter "true";
+          description
+            "Status of the modem connected.";
+        }
+        leaf location {
+          type string {
+            length "0..32";
+          }
+          config false;
+          ext:support-filter "true";
+          description
+            "The physical location of UIs.";
+        }
+        leaf speed {
+          type string {
+            length "0..7";
+          }
+          config false;
+          ext:support-filter "true";
+          description
+            "Speed of the interface terminal.";
+        }
+        leaf connect-status {
+          type ttycamlconnstate;
+          config false;
+          ext:support-filter "true";
+          description
+            "Current UI is active.";
+        }
+        leaf auth-mode {
+          type ttyauthmodetype;
+          config false;
+          ext:support-filter "true";
+          description
+            "The authentication mode of UIs.";
+        }
+        leaf actual-privileage {
+          type string {
+            length "0..5";
+          }
+          config false;
+          ext:support-filter "true";
+          description
+            "The actual privilege of user-interface.";
+        }
+      }
+    }
+  }
+}

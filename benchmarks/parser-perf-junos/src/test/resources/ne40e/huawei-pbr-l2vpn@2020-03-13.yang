@@ -1,0 +1,65 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-pbr-l2vpn {
+  namespace "urn:huawei:yang:huawei-pbr-l2vpn";
+  prefix pbr-l2vpn;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-pbr {
+    prefix pbr;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "PBR-L2VPN module.";
+  revision 2020-03-13 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "qos";
+  augment "/qos:qos/qos:classifier-template/qos:traffic-behaviors/qos:traffic-behavior/pbr:pbr" {
+    description
+      "Traffic behavior.";
+    container pbr-l2vpn {
+      description 
+        "Configure redirect to PBR-L2VPN.";
+      container redirect-vsi {
+        must "not(../../pbr:redirect-lsp or ../../pbr:redirect-vpn-group or ../../pbr:pbr-ipv4/pbr:redirect-tunnel or ../../pbr:pbr-ipv4/pbr:redirect-mldp-tunnel
+        or ../../pbr:pbr-ipv4/pbr:redirect-public-network or ../../pbr:pbr-ipv4/pbr:redirect-srv6-te-policy or ../../pbr:pbr-ipv4/pbr:redirect-to-interface/pbr:if-name
+        or ../../pbr:pbr-ipv4/pbr:ipv4-nexthop or (count(../../pbr:pbr-ipv4/pbr:ipv4-multinhp-interface/pbr:multi-nhp-interfaces/pbr:multi-nhp-interface)>0)
+        or (count(../../pbr:pbr-ipv4/pbr:ipv4-multinhp/pbr:multi-nhps/pbr:multi-nhp)>0) or (count(../../pbr:pbr-ipv4/pbr:ipv4-multinhp-vpn/pbr:multi-vpns/pbr:multi-vpn)>0)
+        or (count(../../pbr:pbr-ipv4/pbr:ipv4-multinhp-nqa/pbr:multi-nqas/pbr:multi-nqa)>0) )";
+        presence 
+          "create redirect-VSI";
+        description
+          "Enable/disable action of redirecting to VSIs.";
+        leaf vsi-name {
+          type leafref {
+            path "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:name";
+          }
+          must "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance[l2vpn:name=current()][l2vpn:type='vpls']";
+          mandatory true;
+          description
+            "Name of VSI.";
+        }
+      }
+    }
+  }
+}

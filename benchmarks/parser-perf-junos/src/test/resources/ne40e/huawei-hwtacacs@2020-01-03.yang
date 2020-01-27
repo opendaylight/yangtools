@@ -1,0 +1,747 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-hwtacacs {
+  namespace "urn:huawei:yang:huawei-hwtacacs";
+  prefix hwtacacs;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Huawei Terminal Access Controller Access-Control System.";
+  revision 2020-01-03 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef hwtacacs-server-state {
+    type enumeration {
+      enum "up" {
+        value 0;
+        description
+          "The server is active.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "The server is inactive.";
+      }
+    }
+    description
+      "The type of hwtacacs server state.";
+  }
+  typedef hwtacacs-server-type {
+    type enumeration {
+      enum "authentication" {
+        value 0;
+        description
+          "The server is an authentication server.";
+      }
+      enum "authorization" {
+        value 1;
+        description
+          "The server is an authorization server.";
+      }
+      enum "accounting" {
+        value 2;
+        description
+          "The server is an accounting server.";
+      }
+      enum "common" {
+        value 3;
+        description
+          "The server is a common server.";
+      }
+    }
+    description
+      "The type of hwtacacs server.";
+  }
+  typedef hwtacacs-domain-include {
+    type enumeration {
+      enum "domain-exclude" {
+        value 0;
+        description
+          "User name excludes domain.";
+      }
+      enum "domain-include" {
+        value 1;
+        description
+          "User name includes domain.";
+      }
+      enum "original" {
+        value 2;
+        description
+          "User name same as user input.";
+      }
+    }
+    description
+      "The type of domain mode.";
+  }
+  ext:task-name "hwtacacs";
+  container hwtacacs {
+    description
+      "Huawei Terminal Access Controller Access-Control System.";
+    container global {
+      description
+        "Configure HWTACACS global.";
+      leaf is-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the HWTACACS server.";
+      }
+      leaf service-name {
+        type string {
+          length "1..32";
+        }
+        description
+          "HWTACACS service name.";
+      }
+      leaf default-remote-address {
+        type string {
+          length "1..31";
+        }
+        description
+          "Default remote address of HWTACACS server.";
+      }
+    }
+    container templates {
+      description
+        "List of HWTACACS templates.";
+      list template {
+        key "name";
+        description
+          "Configure HWTACACS template.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern "[a-z0-9._-]+";
+          }
+          ext:case-sensitivity lower-only;
+          description
+            "Name of a HWTACACS template. The template name can have alphabets a to z and numbers from 0 to 9 or symbols ('.', '-' and '_').";
+        }
+        leaf response-timeout {
+          type uint32 {
+            range "1..300";
+          }
+          units "s";
+          default "5";
+          description
+            "Server response timeout period.";
+        }
+        leaf quiet-time {
+          type uint32 {
+            range "1..255";
+          }
+          units "min";
+          default "5";
+          description
+            "Time period after which the primary server restores to active. The time period can be modified no matter whether users are using the HWTACACS template.";
+        }
+        leaf shared-key {
+          type pub-type:password-extend {
+            length "1..432";
+          }
+          description
+            "Shared key for a HWTACACS server, which is a string ranging from 1 to 255 characters for a unencrypted key and 20 to 432 characters for a encrypted key. Configuring a shared key improves the communication security between a router and HWTACACS server. By default, no shared key is configured.";
+        }
+        choice source-address {
+          description "Source IP address of the packets sent to the server.";
+          case ip {
+            description "IP case."; 
+            leaf source-ip-address {
+              type inet:ipv4-address;
+              description "IP address."; 
+            }
+          }
+        }
+        leaf domain-mode {
+          type hwtacacs-domain-include;
+          default "domain-include";
+          description
+            "To configure domain Mode.";
+        }
+        container ipv4-servers {
+          description
+            "List of HWTACACS servers.";
+          list ipv4-server {
+            key "server-ip-address server-type is-secondary-server vpn-name is-public-net";
+            max-elements  "32";
+            description
+              "Configure HWTACACS IPv4 server.";
+            leaf server-ip-address {
+              type inet:ipv4-address-no-zone;
+              description
+                "Server IPv4 address. Must be a valid unicast IP address.";
+            }
+            leaf server-type {
+              type hwtacacs-server-type;
+              description
+                "Server type (authentication, authorization, accounting, common).";
+            }
+            leaf is-secondary-server {
+              type boolean;
+              description
+                "Enable/disable whether the server is secondary. By default, a server is a secondary server. A template does not support multiple primary servers of the same type.";
+            }
+            leaf vpn-name {
+              type string {
+                length "1..31";
+              }
+              must "not(../is-public-net='true') or (../is-public-net='true' and ../vpn-name='_public_')";
+              description
+                "VPN instance name. It must be an existing VPN instance.";
+            }
+            leaf is-public-net {
+              type boolean;
+              description
+                "Enable/disable the public-net.";
+            }
+            leaf server-port {
+              type uint32 {
+                range "1..65535";
+              }
+              default "49";
+              description
+                "Server port.";
+            }
+            leaf is-mux-mode-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the MUX mode for the server.";
+            }
+            leaf shared-key {
+              type pub-type:password-extend {
+                length "1..432";
+              }
+              description
+                "Shared key for a HWTACACS server, which is a string ranging from 1 to 255 characters for a unencrypted key and 20 to 432 characters for a encrypted key. Configuring a shared key improves the communication security between a router and HWTACACS server. By default, no shared key is configured.";
+            }
+            leaf authen-server-open-num{
+              type uint32;
+              config false;
+              description
+                "Number of times that the HWTACACS client connected to the authentication server.";
+            }
+            leaf authen-server-close-num {
+              type uint32;
+              config false;
+              description
+                "Number of times that the HWTACACS client disconnected from the authentication server.";
+              }
+            leaf authen-req-num {
+              type uint32;
+              config false;
+              description
+                "Number of authentication requests.";
+            }
+            leaf authen-rsp-num {
+              type uint32;
+              config false;
+              description
+                "Number of authentication responses.";
+            }
+            leaf author-server-open-num {
+              type uint32;
+              config false;
+              description
+                "Number of times that the HWTACACS client connected to the authorization server.";
+            }
+            leaf author-server-close-num {
+              type uint32;
+              config false;
+              description
+                "Number of times that the HWTACACS client disconnected from the authorization server.";
+            }
+            leaf author-req-num {
+              type uint32;
+              config false;
+              description
+                "Number of authorization requests.";
+            }
+            leaf author-rsp-num {
+              type uint32;
+              config false;
+              description
+                "Number of authorization responses.";
+            }
+            leaf acct-req-num {
+              type uint32;
+              config false;
+              description
+                "Number of accounting requests.";
+            }
+            leaf acct-rsp-num {
+              type uint32;
+              config false;
+              description
+                "Number of accounting responses.";
+            }
+            leaf acct-server-open-num {
+              type uint32;
+              config false;
+              description
+                "Number of times that the HWTACACS client connected to the accounting server.";
+            }
+            leaf acct-server-close-num {
+              type uint32;
+              config false;
+              description
+                "Number of times that the HWTACACS client disconnected from the accounting server.";
+            }
+            leaf server-current-state {
+              type hwtacacs-server-state;
+              config false;
+              description
+                "Server running status.";
+            }
+            leaf is-current-server {
+              type boolean;
+              config false;
+              description
+                "Whether the server is being used.";
+            }
+          }
+        }
+        container ipv6-servers {
+          description
+            "List of HWTACACS servers.";
+          list ipv6-server {
+            key "server-ip-address server-type is-secondary-server vpn-name";
+            max-elements  "32";
+            description
+              "Configure HWTACACS IPv6 server.";
+            leaf server-ip-address {
+              type inet:ipv6-address-no-zone;
+              description
+                "Server IPv6 address. Must be a valid unicast IP address.";
+            }
+            leaf server-type {
+              type hwtacacs-server-type;
+              description
+                "Server type (authentication, authorization, accounting, common).";
+            }
+            leaf is-secondary-server {
+              type boolean;
+              description
+                "Enable/disable whether the server is secondary. By default, a server is a secondary server. A template does not support multiple primary servers of the same type.";
+            }
+            leaf vpn-name {
+              type string {
+                length "1..31";
+              }
+              description
+                "Configure the vpn-instance name. It must be an existing VPN instance.";
+            }
+            leaf server-port {
+              type uint32 {
+                range "1..65535";
+              }
+              default "49";
+              description
+                "Server port.";
+            }
+            leaf is-mux-mode-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the MUX mode for the server. By default, the MUX mode is disabled.";
+            }
+            leaf shared-key {
+              type pub-type:password-extend {
+                length "1..432";
+              }
+              description
+                "Shared key for a HWTACACS server, which is a string ranging from 1 to 255 characters for a unencrypted key and 20 to 432 characters for a encrypted key. Configuring a shared key improves the communication security between a router and HWTACACS server. By default, no shared key is configured.";
+            }
+          }
+        }
+        container status {
+          config false;
+          description
+            "Statistics of HWTACACS template status.";
+          leaf pri-authen-server {
+            type string {
+              length "1..255";
+            }
+            description
+              "IP address of the primary authentication server.";
+          }
+          leaf pri-author-server {
+            type string {
+              length "1..255";
+            }
+            description
+              "IP address of the primary authorization server.";
+          }
+          leaf pri-common-server {
+            type string {
+              length "1..255";
+            }
+            description
+              "IP address of the primary common server.";
+          }
+          leaf cur-authen-server {
+            type string {
+              length "1..255";
+            }
+            description
+              "IP address of the authentication server being used.";
+          }
+          leaf cur-author-server {
+            type string {
+              length "1..255";
+            }
+            description
+              "IP address of authorization server being used.";
+          }
+          leaf sec-authen-server-num {
+            type uint32;
+            description
+              "Total number of configured secondary authentication servers in the template.";
+          }
+          leaf sec-common-server-num {
+            type uint32;
+            description
+              "Total number of configured secondary common servers in the template.";
+          }
+          leaf sec-author-server-num {
+            type uint32;
+            description
+              "Total number of configured secondary authorization servers in the template.";
+          }
+          leaf pri-authen-port {
+            type uint32;
+            description
+              "Port of the primary authentication server.";
+          }
+          leaf pri-common-port {
+            type uint32;
+            description
+              "Port of the primary common server.";
+          }
+          leaf pri-author-port {
+            type uint32;
+            description
+              "Port of the primary authorization server.";
+          }
+          leaf cur-authen-port {
+            type uint32;
+            description
+              "Authentication server port being used.";
+          }
+          leaf cur-author-port {
+            type uint32;
+            description
+              "Authorization server port being used.";
+          }
+          leaf authen-server-open-num {
+            type uint32;
+            description
+              "Number of times that the HWTACACS client connected to the authentication server.";
+          }
+          leaf authen-server-close-num {
+            type uint32;
+            description
+              "Number of times that the HWTACACS client disconnected from the authentication server.";
+          }
+          leaf authen-req-num {
+            type uint32;
+            description
+              "Number of authentication requests.";
+          }
+          leaf authen-rsp-num {
+            type uint32;
+            description
+              "Number of authentication responses.";
+          }
+          leaf authen-unknown-num {
+            type uint32;
+            description
+              "Number of unknown authentication packets received by the HWTACACS client.";
+          }
+          leaf authen-timeout-num {
+            type uint32;
+            description
+              "Number of times that authentication times out.";
+          }
+          leaf authen-pkt-drop-num {
+            type uint32;
+            description
+              "Number of times that authentication packets are dropped.";
+          }
+          leaf authen-change-password-num {
+            type uint32;
+            description
+              "Number of times that the password is changed for authentication.";
+          }
+          leaf authen-login-num {
+            type uint32;
+            description
+              "Number of authentication logins.";
+          }
+          leaf authen-send-num {
+            type uint32;
+            description
+              "Number of authentication requests sent to server.";
+          }
+          leaf authen-send-password-num {
+            type uint32;
+            description
+              "Number of authentication password requests sent to the server.";
+          }
+          leaf authen-abort-num {
+            type uint32;
+            description
+              "Number of authentication abort requests sent to server.";
+          }
+          leaf authen-connect-num {
+            type uint32;
+            description
+              "Number of authentication connection requests sent to server.";
+          }
+          leaf authen-rsp-err-num {
+            type uint32;
+            description
+              "Number of authentication error responses received from server.";
+          }
+          leaf authen-rsp-fail-num {
+            type uint32;
+            description
+              "Number of authentication response failures received from server.";
+          }
+          leaf authen-follow-num {
+            type uint32;
+            description
+              "Number of authentication Follow responses received from server.";
+          }
+          leaf authen-get-data-num {
+            type uint32;
+            description
+              "Number of authentication date responses received from server.";
+          }
+          leaf authen-get-password-num {
+            type uint32;
+            description
+              "Number of authentication password responses received from server.";
+          }
+          leaf authen-get-user-num {
+            type uint32;
+            description
+              "Number of authentication user responses received from server.";
+          }
+          leaf authen-rsp-pass-num {
+            type uint32;
+            description
+              "Number of authentication-pass responses received from server.";
+          }
+          leaf authen-restart-num {
+            type uint32;
+            description
+              "Number of authentication-restart responses received from server.";
+          }
+          leaf authen-not-proc-req-num {
+            type uint32;
+            description
+              "Number of authentication requests that are not processed.";
+          }
+          leaf authen-round-trip-time {
+            type uint32;
+            units "s";
+            description
+              "Time (in tick) taken to complete the authentication.";
+          }
+          leaf authen-malform-num {
+            type uint32;
+            description
+              "Number of authentication errors.";
+          }
+          leaf author-server-open-num {
+            type uint32;
+            description
+              "Number of times that the HWTACACS client connected to the authorization server.";
+          }
+          leaf author-server-close-num {
+            type uint32;
+            description
+              "Number of times that the HWTACACS client disconnected from the authorization server.";
+          }
+          leaf author-req-num {
+            type uint32;
+            description
+              "Number of authorization requests.";
+          }
+          leaf author-rsp-num {
+            type uint32;
+            description
+              "Number of authorization responses.";
+          }
+          leaf author-unknown-num {
+            type uint32;
+            description
+              "Number of unknown authorization packets received by HWTACACS client.";
+          }
+          leaf author-timeout-num {
+            type uint32;
+            description
+              "Number of times that authorization times out.";
+          }
+          leaf author-pkt-drop-num {
+            type uint32;
+            description
+              "Number of times that authorization packets are dropped.";
+          }
+          leaf author-exec-num {
+            type uint32;
+            description
+              "Number of authorization requests for EXEC.";
+          }
+          leaf author-ppp-num {
+            type uint32;
+            description
+              "Number of authorization requests for PPP.";
+          }
+          leaf author-vpdn-num {
+            type uint32;
+            description
+              "Number of authorization requests for VPDN.";
+          }
+          leaf author-rsp-err-num {
+            type uint32;
+            description
+              "Number of authorization error responses.";
+          }
+          leaf author-rsp-exec-num {
+            type uint32;
+            description
+              "Number of authorization EXEC responses.";
+          }
+          leaf author-rsp-ppp-num {
+            type uint32;
+            description
+              "Number of authorization PPP responses.";
+          }
+          leaf author-rsp-vpdn-num {
+            type uint32;
+            description
+              "Number of authorization VPDN responses.";
+          }
+          leaf author-round-trip-time {
+            type uint32;
+            units "s";
+            description
+              "Time (in tick) taken to complete authorization.";
+          }
+          leaf author-not-proc-req-num {
+            type uint32;
+            description
+              "Number of authorization requests that are not processed.";
+          }
+          leaf author-malform-num {
+            type uint32;
+            description
+              "Number of authorization errors.";
+          }
+          leaf sec-account-server-num {
+            type uint32;
+            description
+              "Number of secondary accounting servers in the template.";
+          }
+          leaf cur-account-port {
+            type uint32;
+            description
+              "Accounting server port being used.";
+          }
+          leaf pri-account-port {
+            type uint32;
+            description
+              "Port of the primary accounting server.";
+          }
+          leaf cur-account-server {
+            type string {
+              length "1..255";
+            }
+            description
+              "Accounting server port being used.";
+          }
+          leaf pri-account-server {
+            type string {
+              length "1..255";
+            }
+            description
+              "Primary accounting server.";
+          }
+          leaf acct-stop-pkt-num {
+            type uint32;
+            description
+              "Number of responses to accounting-stop packets.";
+          }
+          leaf acct-rsp-pass-num {
+            type uint32;
+            description
+              "Number of responses to accounting-pass packets.";
+          }
+          leaf acct-rsp-num {
+            type uint32;
+            description
+              "Number of responses to accounting requests.";
+          }
+          leaf acct-server-open-num {
+            type uint32;
+            description
+              "Number of times that the HWTACACS client connected to the accounting server.";
+          }
+          leaf acct-start-pkt-num {
+            type uint32;
+            description
+              "Number of responses to accounting-start packets.";
+          }
+          leaf acct-req-num {
+            type uint32;
+            description
+              "Number of accounting requests sent to the server.";
+          }
+          leaf acct-server-close-num {
+            type uint32;
+            description
+              "Number of times that the HWTACACS client disconnected from the accounting server.";
+          }
+          leaf acct-rsp-err-num {
+            type uint32;
+            description
+              "Number of abnormal accounting responses received from the server.";
+          }
+          leaf acct-follow-num {
+            type uint32;
+            description
+              "Number of accounting Follow responses received from server.";
+          }
+          leaf acct-not-proc-req-num {
+            type uint32;
+            description
+              "Number of accounting requests that are not processed.";
+          }
+        }
+      }
+    }
+  }
+}

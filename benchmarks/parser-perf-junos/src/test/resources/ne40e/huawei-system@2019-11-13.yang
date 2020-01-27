@@ -1,0 +1,159 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-system {
+  namespace "urn:huawei:yang:huawei-system";
+  prefix system;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "System.";
+  revision 2019-11-13 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "system";
+  container system {
+    description
+      "System.";
+    container system-info {
+      description
+        "Configure system information.";
+      leaf sys-name {
+        type string {
+          length "1..246";
+        }
+        default "HUAWEI";
+        description
+          "System name.";
+      }
+      leaf sys-contact {
+        type string {
+          length "1..255";
+        }
+        default "R&D Beijing, Huawei Technologies co.,Ltd.";
+        description
+          "System contact information.";
+      }
+      leaf sys-location {
+        type string {
+          length "1..255";
+        }
+        default "Beijing China";
+        description
+          "System location information.";
+      }
+      leaf sys-desc {
+        type string {
+          length "0..255";
+        }
+        config false;
+        description
+          "Textual description of an entity.";
+      }
+      leaf sys-object-id {
+        type string {
+          length "0..255";
+        }
+        config false;
+        description
+          "Entity OID.";
+      }
+      leaf system-gmt-time {
+        type uint32;
+        config false;
+        description
+          "Current system time in UTC seconds.";
+      }
+      leaf sys-uptime {
+        type pub-type:time-tick;
+        config false;
+        description
+          "Time elapses since the system is running.";
+      }
+      leaf sys-service {
+        type uint8;
+        config false;
+        description
+          "Integer value which indicates the set of services that this entity offers.";
+      }
+      leaf platform-name {
+        type string {
+          length "0..255";
+        }
+        config false;
+        description
+          "Name of a platform. For example, Huawei Versatile Routing Platform.";
+      }
+      leaf platform-version {
+        type string {
+          length "1..255";
+        }
+        config false;
+        description
+          "Version of a platform. For example, VRP (R) Software, Version 8.10.";
+      }
+      leaf product-name {
+        type string {
+          length "0..255";
+        }
+        config false;
+        description
+          "Name of a product. For example, Quidway NetEngine 5000E.";
+      }
+      leaf product-version {
+        type string {
+          length "1..255";
+        }
+        config false;
+        description
+          "Product version. The version format is VxxRxxCxxSPxxx, for example, V800R002C01SPC001.";
+      }
+      leaf patch-version {
+        type string {
+          length "1..255";
+        }
+        config false;
+        description
+          "Latest patch version. The version format is CPxxx/HPxxx, for example, CP001.";
+      }
+      leaf esn {
+        type string {
+          length "0..511";
+        }
+        config false;
+        description
+          "Product ESN number.";
+      }
+      leaf mac {
+        type pub-type:mac-address;
+        config false;
+        description
+          "System MAC address.";
+      }
+      leaf software-name {
+        type string {
+          length "4..255";
+        }
+        config false;
+        description
+          "System software name. For example, VRPV800R019C10B210D1111_nos.cc.";
+      }
+    }
+  }
+}

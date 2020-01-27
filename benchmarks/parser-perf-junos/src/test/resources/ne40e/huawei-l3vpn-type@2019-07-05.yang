@@ -1,0 +1,125 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-l3vpn-type {
+  belongs-to huawei-l3vpn {
+    prefix l3vpn;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Defines type definitions associated with the huawei-network-instance modules.";
+  revision 2019-07-05 {
+    description
+      "Modify descriptions of the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef vpn-target-type {
+    type enumeration {
+      enum "export-extcommunity" {
+        value 2;
+        description
+          "Specifies the value of the extended community attribute 
+           of the route from an outbound interface to the destination
+           VPN.";
+      }
+      enum "import-extcommunity" {
+        value 3;
+        description
+          "Receives routes that carry the specified extended community attribute value.";
+      }
+    }
+    description
+      "The type of vpn target.";
+  }
+
+  typedef label-mode-type {
+    type enumeration {
+      enum "per-instance" {
+        value 1;
+        description
+          "Labels are assigned to VPN instances in 'one label per 
+           instance' mode, that is, all routes in a VPN instance 
+           are assigned with the same label.";
+      }
+      enum "per-route" {
+        value 0;
+        description
+          "Labels are assigned to routes in the 'one label per route' mode,
+           that is, each route is assigned with one label.";
+      }
+      enum "per-nexthop" {
+        value 2;
+        description
+          "Labels are assigned to routes in the 'one label per nexthop' 
+           mode, that is, all routes with the same nexthop are assigned 
+           with the same label.";
+      }
+    }
+    description
+      "The Mode of l3vpncommonLabel.";
+  }
+  typedef af-type {
+    type enumeration {
+      enum "ipv4-unicast" {
+        value 1;
+        description
+          "IPv4 unicast address family.";
+      }
+      enum "ipv6-unicast" {
+        value 5;
+        description
+          "IPv6 unicast address family.";
+      }
+    }
+    description
+      "The type of l3vpncommonL3vpnPrefix.";
+  }
+  typedef vpn-status-type {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "VPN Instance status Up.";
+      }
+      enum "down" {
+        value 2;
+        description
+          "VPN Instance status Down.";
+      }
+    }
+    description
+      "The status of the vpn-instance.";
+  }
+  typedef lsp-operation-type {
+    type enumeration {
+      enum "pop" {
+        value 0;
+        description
+          "Label Operation Mode: POP.";
+      }
+      enum "pop-go" {
+        value 1;
+        description
+          "Label Operation Mode: POPGO.";
+      }
+    }
+    description
+      "The label operation mode of the l3vpncommon.";
+  }
+}

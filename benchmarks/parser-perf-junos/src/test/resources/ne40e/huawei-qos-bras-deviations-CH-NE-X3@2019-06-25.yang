@@ -1,0 +1,40 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-qos-bras-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-qos-bras-deviations-CH-NE-X3";
+  prefix "qos-bras-devs-CH-NE-X3";
+
+  import huawei-qos-bras{
+    prefix qos-bras;
+  }
+  import huawei-aaa{
+    prefix aaa;
+  }
+  import huawei-bras-basic-access{
+    prefix bras-basic-access;
+  }
+  import huawei-bras-qos{
+    prefix bras-qos;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Quality of service for bras.";
+  revision 2019-06-25 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  deviation /aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas/bras-qos:bras-qos/qos-bras:l2-user-priority {
+    deviate not-supported;
+  }
+}

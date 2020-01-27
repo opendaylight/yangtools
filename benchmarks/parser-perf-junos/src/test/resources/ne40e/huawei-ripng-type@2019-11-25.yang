@@ -1,0 +1,112 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ripng-type {
+  belongs-to huawei-ripng {
+    prefix ripng;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "RIPng type defined file.";
+
+  revision 2019-11-25 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef import-protocol-type {
+    type enumeration {
+      enum "direct" {
+        value 1;
+        description
+          "Import direct routes.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "Import ISIS routes.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Import static routes.";
+      }
+      enum "bgp" {
+        value 6;
+        description
+          "Import BGP routes.";
+      }
+      enum "ospfv3" {
+        value 7;
+        description
+          "Import OSPFv3 routes.";
+      }
+      enum "ripng" {
+        value 8;
+        description
+          "Import RIPng routes.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "Specify UNR routes.";
+      }
+    }
+    description
+      "RIPng import protocol type.";
+  }
+  typedef enable-flag {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable RIPng configurations.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable RIPng configurations.";
+      }
+    }
+    description
+      "RIPng enable flag.";
+  }
+
+  typedef default-route {
+    type enumeration {
+      enum "only" {
+        value 1;
+        description
+          "Configure the router to generate a default route and to advertise the route to its neighbors.
+           If a router generates a default route by itself, it does not receive the default route sent by its neighbor.
+           You can send a default route to RIPng neighbors only if a default route exists in the routing table (provided the default route in routing table was not added by the same RIPng process). In addition, if a router has learned the default route from a neighbor, then upon originating a default route the learned route is deleted.";
+      }
+      enum "originate" {
+        value 2;
+        description
+          "Configure the router to generate a default route and to advertise the route to its neighbors.
+           If a router generates a default route by itself, it does not receive the default route sent by its neighbor.
+           You can send a default route to RIPng neighbors only if a default route exists in the routing table (provided the default route in routing table was not added by the same RIPng process). In addition, if a router has learned the default route from a neighbor, then upon originating a default route the learned route is deleted.";
+      }
+      enum "none" {
+        value 4;
+        description
+          "Configure the router to generate a default route and to advertise the route to its neighbors.
+           If a router generates a default route by itself, it does not receive the default route sent by its neighbor.
+           You can send a default route to RIPng neighbors only if a default route exists in the routing table (provided the default route in routing table was not added by the same RIPng process). In addition, if a router has learned the default route from a neighbor, then upon originating a default route the learned route is deleted.";
+      }
+    }
+    description
+      "RIPng default route.";
+  }
+}

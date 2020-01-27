@@ -1,0 +1,683 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-msdp {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-msdp";
+  prefix msdp;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3-multicast {
+    prefix l3mc;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Multicast Source Discovery Protocol.";
+
+  revision 2020-03-16 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+
+  revision 2019-03-30 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef msdp-password-type {
+    type enumeration {
+      enum "cipher" {
+        value 0;
+        description
+          "A cipher password is used for MD5 authentication.";
+      }
+      enum "simple" {
+        value 1;
+        description
+          "A simple password is used for MD5 authentication.";
+      }
+    }
+    description
+      "MSDP password type.";
+  }
+  typedef msdp-peer-status {
+    type enumeration {
+      enum "up" {
+        value 5;
+        description
+          "The MSDP peer is in the Up state.";
+      }
+      enum "listen" {
+        value 4;
+        description
+          "The MSDP peer is in the Listen state.";
+      }
+      enum "connect" {
+        value 3;
+        description
+          "The MSDP peer is in the Connect state.";
+      }
+      enum "shutdown" {
+        value 2;
+        description
+          "The MSDP peer is in the Shutdown state.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "The MSDP peer is in the Down state.";
+      }
+    }
+    description
+      "MSDP peer status.";
+  }
+  typedef msdp-encap-type {
+    type enumeration {
+      enum "ENCAPNONE" {
+        value 0;
+        description
+          "None encapsulation type.";
+      }
+      enum "ENCAPTCP" {
+        value 1;
+        description
+          "TCP encapsulation type.";
+      }
+    }
+    description
+      "MSDP encapsulation type.";
+  }
+  augment /ni:network-instance/ni:instances/ni:instance {
+    when "./l3mc:multicast/l3mc:ipv4";
+    description
+      "Adds MSDP configuration to the L3vpn module.";
+    container msdp {
+      description
+        "Configure MSDP configurations.";
+      container global {
+        presence "msdp";
+        description
+          "Enable/disable MSDP.";
+        leaf cache-sa-enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable SA cache to cache (S, G) entries in received SA messages.";
+        }
+        leaf encap-data-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to encapsulate multicast data messages into SA messages.";
+        }
+        leaf originating-rp-interface {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          must "../../../ni:name=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name";
+          description
+            "To replace the original RP address with the interface IP address.";
+        }
+        leaf retry-interval {
+          type uint32 {
+            range "1..60";
+          }
+          units "s";
+          default "30";
+          description
+            "Interval at which a connection request is sent.";
+        }
+        leaf import-source-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable prevent active source information carried in an SA message from being advertised when the SA message is created.";
+        }
+        container peers {
+          description
+            "List of configure MSDP peer.";
+          list peer {
+            key "address";
+            description
+              "Configure MSDP peer.";
+            leaf address {
+              type inet:ipv4-address-no-zone;
+              description
+                "Address of a peer.";
+            }
+            leaf connect-interface {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              must "../../../../../ni:name=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name";
+              mandatory true;
+              description
+                "Name of the local interface that establishes a connection.";
+            }
+            leaf minimum-ttl {
+              type uint32 {
+                range "0..255";
+              }
+              default "0";
+              description
+                "TTL threshold for multicast data messages that can be encapsulated in SA message and forwarded to a specified MSDP peer.";
+            }
+            leaf description {
+              type string {
+                length "0..80";
+              }
+              description
+                "Description for an MSDP peer.";
+            }
+            leaf mesh-group-name {
+              type string {
+                length "0..32";
+              }
+              description
+                "Add an MSDP peer to a full-mesh group.";
+            }
+            leaf sa-cache-maximum {
+              type uint32 {
+                range "1..4294967295";
+              }
+              default "8192";
+              description
+                "Limit the maximum number of (S, G) entries that are learned from the specified MSDP peer and cached in the router buffer. Setting such a limit for all MSDP peers on the network that is vulnerable to DoS attacks is recommended.";
+            }
+            leaf request-sa-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable a router to immediately send an SA request message to the MSDP peer after receiving a new Join message from a group. By default, a router does not send an SA request message to MSDP peer immediately after receiving a new Join message, but waits to receive the next SA message.";
+            }
+            leaf is-shutdown {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable a connection with a peer. By default, the connection with a peer does not torn down after being established.";
+            }
+            choice authentication-type {
+              description
+                "Authentication attributes.";
+              case keychain {
+                description
+                  "Reference to a keychain.";
+                leaf keychain-name {
+                  type string {
+                    length "1..47";
+                  }
+                  description
+                    "Keychain name. Configuring keychain authentication can improve the TCP connection security. Keychain authentication takes effect only if it is configured on both ends of MSDP peers. Note that encryption algorithms and passwords configured for keychain authentication on both peers must be the same; otherwise, the TCP connection cannot be set up between MSDP peers and MSDP messages cannot be transmitted. Before configuring MSDP keychain authentication, ensure that the keychain specified by the keychain name has been configured. Otherwise, a TCP connection cannot be set up.";
+                }
+              }
+              case md5 {
+                description
+                  "Password for MD5 authentication.";
+                leaf md5-password {
+                  type pub-type:password-extend;
+                  must "(../md5-password and ../md5-simple-flag) or (not(../md5-password) and not(../md5-simple-flag))";
+                  description
+                    "Password for MD5 authentication. The value is a case-sensitive string of 1 to 255 characters in simple mode or of 20 to 392 characters in ciphertext mode. Configuring authentication improves the TCP connection security. Note that authentication passwords configured on the MSDP peers must be the same; otherwise, the TCP connection cannot be set up between MSDP peers and MSDP messages cannot be transmitted.";
+                }
+                leaf md5-simple-flag {
+                  type msdp-password-type;
+                  must "(../md5-password and ../md5-simple-flag) or (not(../md5-password) and not(../md5-simple-flag))";
+                  description
+                    "Flag indicating the password type, which can be simple or cipher. A cipher password is sent in ciphertext mode and a simple password is sent in plaintext mode.";
+                }
+              }
+            }
+            leaf static-rpf-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable RPF check.";
+            }
+            leaf sa-policy-export-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable forward SA messages to a specified MSDP peer. By default, SA messages to be forwarded are not filtered, which means that all (S, G) SA messages can be forwarded.";
+            }
+            leaf sa-policy-import-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable receive SA messages from a specified MSDP peer. By default, SA messages to be received are not filtered, which means that all (S, G) SA messages can be received.";
+            }
+            leaf sa-request-policy-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable configure a filtering policy used by a router to respond to SA Request messages received from a specified MSDP peer. Once an SA request message passes the filtering, the router responds to the SA message immediately. By default, a router responds to all SA Request messages sent by all MSDP peers.";
+            }
+            leaf holdtime {
+              type uint8 {
+                range "3..150";
+              }
+              units "s";
+              default "90";
+              description
+                "Peer holdtime.";
+            }
+            leaf keep-alive-interval {
+              type uint8 {
+                range "1..60";
+              }
+              units "s";
+              default "60";
+              description
+                "Peer keepalive interval.";
+            }
+            container status {
+              config false;
+              description
+                "Operational state of MSDP peer.";
+              leaf as-num {
+                type string {
+                  length "0..11";
+                }
+                description
+                  "AS number of an MSDP peer. A question mark indicates that the AS number cannot be obtained.";
+              }
+              leaf state {
+                type msdp-peer-status;
+                description
+                  "Status of an MSDP connection. Up: The connection is established. Listen: The local end acts as the server and is in the listening state. The connection is established. Connect: The local end acts as the client and is in the connection state. The connection is not established. Shutdown: The session between MSDP peers is shut down. Down: The connection fails to be established.";
+              }
+              leaf up-or-down-time {
+                type pub-type:time-tick;
+                description
+                  "Time when a connection becomes Up or Down, in seconds.";
+              }
+              leaf connection-interface-address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Address of a connect-interface. It is used to establish a TCP connection with the peer address.";
+              }
+              leaf send-message-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of packets sent through the connection by MSDP.";
+              }
+              leaf receive-message-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of packets received through the connection by MSDP.";
+              }
+              leaf discard-message-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of discarded packets that are to be sent.";
+              }
+              leaf elapsed-time {
+                type pub-type:time-tick;
+                description
+                  "Difference between the current time and the last time when statistics, resetting information, and inputting and outputting information about the MSDP peer are cleared. The value is expressed in seconds.";
+              }
+              leaf sa-learned-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of cached entries for SA messages from an MSDP peer.";
+              }
+              leaf input-queue-size {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Length of the data in the input cache.";
+              }
+              leaf output-queue-size {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Length of the data in the output cache.";
+              }
+              leaf rpf-check-fail-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of SA messages that are discarded because they do not pass the RPF check.";
+              }
+              leaf receive-sa-message-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received SA messages.";
+              }
+              leaf send-sa-message-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent SA messages.";
+              }
+              leaf receive-sa-requeset-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received SA Request messages.";
+              }
+              leaf send-sa-request-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent SA Request messages.";
+              }
+              leaf receive-sa-response-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received SA Response messages.";
+              }
+              leaf send-sa-response-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent SA Response messages.";
+              }
+              leaf receive-data-packet-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received SA messages that carry encapsulated data.";
+              }
+              leaf send-data-packet-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent SA messages that carry encapsulated data.";
+              }
+              leaf reset-count {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Reset times, including the resets due to the receiving of notifications or the timeout of the holdtimer.";
+              }
+              leaf fsm-estab-trans {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of times that the MSDP FSM enters the Established state.";
+              }
+              leaf fsm-estab-time {
+                type pub-type:time-tick;
+                description
+                  "Time when the MSDP FSM enters or quits the Established state.";
+              }
+              leaf last-receive-message-time {
+                type pub-type:time-tick;
+                description
+                  "Last time of receiving MSDP messages.";
+              }
+              leaf remote-port {
+                type uint32 {
+                  range "0..65535";
+                }
+                description
+                  "Remote port.";
+              }
+              leaf local-port {
+                type uint32 {
+                  range "0..65535";
+                }
+                description
+                  "Local port.";
+              }
+              leaf encap-type {
+                type msdp-encap-type;
+                description
+                  "Type of encapsulated data into SA messages.";
+              }
+              leaf connect-attempts {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of connection attempts.";
+              }
+            }
+            container control-message-counters {
+              config false;
+              description
+                "Statistics of MSDP messages.";
+              leaf sa-received {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received Source-Active messages.";
+              }
+              leaf sa-sent {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent Source-Active messages.";
+              }
+              leaf sa-invalid {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of invalid Source-Active messages.";
+              }
+              leaf sa-request-received {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received Source-Active Request messages.";
+              }
+              leaf sa-request-sent {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent Source-Active Request messages.";
+              }
+              leaf sa-request-invalid {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of invalid Source-Active Request messages.";
+              }
+              leaf sa-response-received {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received Source-Active Response messages.";
+              }
+              leaf sa-response-sent {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent Source-Active Response messages.";
+              }
+              leaf sa-response-invalid {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of invalid Source-Active Response messages.";
+              }
+              leaf keep-alive-received {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received Keepalive messages.";
+              }
+              leaf keep-alive-sent {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent Keepalive messages.";
+              }
+              leaf keep-alive-invalid {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of invalid Keepalive messages.";
+              }
+              leaf notification-received {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received Notification messages.";
+              }
+              leaf notification-sent {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent Notification messages.";
+              }
+              leaf notification-invalid {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of invalid Notification messages.";
+              }
+              leaf traceroute-request-received {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received Traceroute Request messages.";
+              }
+              leaf traceroute-request-sent {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent Traceroute Request messages.";
+              }
+              leaf traceroute-request-invalid {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of invalid Traceroute Request messages.";
+              }
+              leaf traceroute-reply-received {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received Traceroute Reply messages.";
+              }
+              leaf traceroute-reply-sent {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent Traceroute Reply messages.";
+              }
+              leaf traceroute-reply-invalid {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of invalid Traceroute Reply messages.";
+              }
+              leaf data-received {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received Data messages messages.";
+              }
+              leaf data-sent {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent Data messages messages.";
+              }
+              leaf data-invalid {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of invalid Data messages messages.";
+              }
+              leaf unknown-received {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of received Unknown Type messages.";
+              }
+              leaf unknown-sent {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of sent Unknown Type messages.";
+              }
+              leaf unknown-invalid {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Number of invalid Unknown Type messages.";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  ext:task-name "msdp";
+}

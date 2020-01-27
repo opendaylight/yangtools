@@ -1,0 +1,70 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-multicast-forward-ext {
+  namespace "urn:huawei:yang:huawei-multicast-forward-ext";
+  prefix multicast-forward-ext;
+ 
+  import huawei-multicast-forward {
+    prefix multicast-forward;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "L2 control protocol management ext.";
+  revision 2020-03-06 {
+    description
+      "Change description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-23 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forwarding";
+  typedef mac-suppression-status {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Specify mac-suppression-status disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Specify mac-suppression-status enable.";
+      }
+    }
+    description
+      "Description of mac-suppression-status.";
+  }
+  augment "/multicast-forward:multicast-forward" {
+    description
+      "L2 control protocol management.";
+    container stand-group-mac-suppressions {
+      description
+        "Configure standard-group MAC-Address suppression configuration.";
+      leaf stand-group-mac-suppression {
+        type mac-suppression-status;
+        default "disable";
+        description
+          "Specify standard-group MAC-address suppression configuration information.";
+      }
+    }
+  }  
+    
+}

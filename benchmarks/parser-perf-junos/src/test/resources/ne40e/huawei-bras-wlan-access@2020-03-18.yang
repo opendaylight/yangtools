@@ -1,0 +1,138 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-wlan-access {
+  namespace urn:huawei:yang:huawei-bras-wlan-access;
+  prefix bras-wlan-access;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras-wlan-access.";
+  revision 2020-03-18 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-26 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+  container bras-wlan-access {
+    description
+      "Bras wlan access.";
+    container nas-serial-number {
+      description
+        "Configure the AC serial number.";
+      leaf number {
+        type string {
+          length "1..31";
+          pattern '[!-~]{1,31}';
+          pattern "([^A-Z\"%'*/:<>\\?@|]{1,31})";
+        }
+        must "../number != '-' and ../number != '--'";
+        description
+          "Specifies the AC serial number.";
+        ext:case-sensitivity lower-only;
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-subscriber/bras-basic-access:layer2-subscriber" {
+    description
+      "Wlan access augment layer2 subscriber.";
+    container ssid {
+      description
+        "Configure an (service set ID) SSID for WLAN services on a BAS interface. With this SSID, a fat access point (AP) can be connected to the BAS interface. By default, no SSID is configured on a BAS interface.";
+      leaf name {
+        type string {
+          length "1..32";
+          pattern '[!-~]{1,32}';
+          pattern '([^%?]{1,32})';
+        }
+        description
+          "Indicates the service set ID.";
+      }
+    }
+    container wlan-option82-decode-ap-mac {
+      description
+        "Configure a BAS interface to parse the AP MAC address in Option 82.";
+      choice mode {
+        description
+          "Parse AP MAC address mode.";
+        case huawei {
+          description
+            "Parse AP MAC address by huawei mode.";
+          leaf huawei {
+            type empty;
+            description
+              "Indicates the AP MAC address to the huawei mode.";
+          }
+        }
+        case other {
+          description
+            "Parse AP MAC address by other mode.";
+          leaf cisco {
+            type empty;
+            description
+              "Indicates the AP MAC address to the Cisco mode.";
+          }
+          leaf ruskus {
+            type empty;
+            description
+              "Indicates the AP MAC address to the Ruskus mode.";
+          }
+        }
+      }
+    }
+    container wlan-option82-decode-ssid {
+      description
+        "Configure a BAS interface to parse the SSID in Option 82.";
+      choice mode {
+        description
+          "Parse SSID mode.";
+        case huawei {
+          description
+            "Parse SSID by huawei mode.";
+          leaf huawei {
+            type empty;
+            description
+              "Indicates the ssid to the huawei mode.";
+          }
+        }
+        case other {
+          description
+            "Parse SSID by other mode.";
+          leaf cisco {
+            type empty;
+            description
+              "Indicates the ssid to the Cisco mode.";
+          }
+          leaf ruskus {
+            type empty;
+            description
+              "Indicates the ssid to the Ruskus mode.";
+          }
+        }
+      }
+    }
+  }
+}

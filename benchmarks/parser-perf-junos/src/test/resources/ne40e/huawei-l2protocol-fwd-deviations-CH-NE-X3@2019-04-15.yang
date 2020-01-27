@@ -1,0 +1,108 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2protocol-fwd-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-l2protocol-fwd-deviations-CH-NE-X3";
+  prefix "l2protocol-fwd-devs-CH-NE-X3";
+
+  import huawei-l2protocol-fwd {
+    prefix l2protocol-fwd;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-evpl {
+    prefix evpl;
+  }
+  import huawei-evpn {
+    prefix evpn;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Forwarding L2 protocol service.";
+  revision 2019-04-15 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+
+
+  deviation /devm:devm/devm:mpu-boards/devm:mpu-board/l2protocol-fwd:link-protocol-transport {
+    deviate not-supported;
+  }
+
+
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-bgp/l2vpn:acs/l2vpn:ac/l2protocol-fwd:protocol-actions/l2protocol-fwd:protocol-action" {
+    deviate add { must "action='transport' or (action='transport-tagged' and (protocol-type='lacp' or protocol-type='lldp'))";}
+  }
+
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-bgp/l2vpn:acs/l2vpn:ac/l2protocol-fwd:protocol-actions/l2protocol-fwd:protocol-action" {
+    deviate add { must "(action='transport' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:vlan-type-dot1q) or action='transport-tagged'";}
+  }
+
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:acs/l2vpn:ac/l2protocol-fwd:protocol-actions/l2protocol-fwd:protocol-action" {
+    deviate add { must "action='transport' or (action='forwarding' and protocol-type='lacp')";}
+  }
+
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:acs/l2vpn:ac/l2protocol-fwd:protocol-actions/l2protocol-fwd:protocol-action" {
+    deviate add { must "(action='transport' and
+            /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:parent-name and
+            /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:vlan-type-dot1q) or
+           (action='forwarding' and
+            not (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:parent-name))";}
+  }
+
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-ldp/l2vpn:acs/l2vpn:ac/l2protocol-fwd:protocol-actions/l2protocol-fwd:protocol-action" {
+    deviate add { must "action='transport' or (action='transport-tagged' and (protocol-type='lacp' or protocol-type='lldp')) or (action='discard' and protocol-type='lacp')";}
+  }
+
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-ldp/l2vpn:acs/l2vpn:ac/l2protocol-fwd:protocol-actions/l2protocol-fwd:protocol-action" {
+    deviate add { must "(action='transport' and
+            /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:parent-name and
+            /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:l2-mode-enable='false' and
+            /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:vlan-type-dot1q) or
+           (action='transport-tagged' and
+            /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:parent-name and
+            /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:l2-mode-enable='false') or
+           (action='discard' and
+            not (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../l2vpn:interface-name]/ifm:parent-name))";}
+  }
+
+  deviation "/evpl:evpl/evpl:instances/evpl:instance/evpl:interfaces/evpl:interface/l2protocol-fwd:protocol-actions/l2protocol-fwd:protocol-action" {
+    deviate add { must "(action='transport' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../evpl:name]/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:vlan-type-dot1q) or (action='transport-tagged' and (protocol-type='lacp' or protocol-type='lldp'))";}
+  }
+
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/evpn:evpn/l2protocol-fwd:protocol-actions/l2protocol-fwd:protocol-action" {
+    deviate add { must "action='transport' or
+           (action='forwarding' and protocol-type='lacp')";}
+  }
+
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/evpn:evpn/l2protocol-fwd:protocol-actions/l2protocol-fwd:protocol-action" {
+    deviate add { must "(action='transport' and
+            ../../../ifm:parent-name and
+            ../../../ifm:l2-mode-enable='false' and
+            ../../../ethernet:ethernet/ethernet:l3-sub-interface/ethernet:vlan-type-dot1q) or
+           (action='forwarding' and not (../../../ifm:parent-name))";}
+  }
+
+}

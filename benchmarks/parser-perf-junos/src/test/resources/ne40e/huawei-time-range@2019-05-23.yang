@@ -1,0 +1,143 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-time-range {
+  namespace "urn:huawei:yang:huawei-time-range";
+  prefix timerange;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }  
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specify a time range. It includes periodic time ranges within one week and absolute time ranges. These time ranges determine application validity.";
+  revision 2019-05-23 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "acl";
+  container time-range {
+    description
+      "Specify a time range. It includes periodic time ranges within one week and absolute time ranges. These time ranges determine application validity.";
+    container time-range-instances {
+      description
+        "List of time ranges.";
+      list time-range-instance {
+        key "name";
+        max-elements  "256";
+        description
+          "Configure the time range instance.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern '([a-zA-Z]([^\s]*))';
+          }
+          description
+            "Specify the name of a time range. To avoid ambiguity, do not use the name 'all'.";
+        }
+        leaf status {
+          type pub-type:row-status;
+          config false;
+          description
+            "Identify whether the time range is valid.";
+        }
+        container absolute-ranges {
+          description
+            "List of all absolute time ranges.";
+          list absolute-range {
+            key "start-time end-time";
+            max-elements  "12";
+            description
+              "Specify the period of time, which is not cyclic and has no cycle.";
+            leaf start-time {
+              type yang:date-and-time;
+              description
+                "Specify the start time and date. The start time must be earlier than the end time.";
+            }
+            leaf end-time {
+              type yang:date-and-time;
+              description
+                "Specify the end time and date. The end time must be later than the start time.";
+            }
+          }
+        }
+        container period-ranges {
+          description
+            "List of all periodic time ranges.";
+          list period-range {
+            key "day-of-week start-time end-time";
+            max-elements  "32";
+            description
+              "Specify the period of time taken by a cycle, which is cyclic.";
+            leaf day-of-week {
+              type bits {
+                bit sunday {
+                  description
+                    "Sunday.";
+                }
+                bit monday {
+                  description
+                    "Monday.";
+                }
+                bit tuesday {
+                  description
+                    "Tuesday.";
+                }
+                bit wednesday {
+                  description
+                    "Wednesday.";
+                }			
+                bit thursday {
+                  description
+                    "Thursday.";
+                }			
+                bit friday {
+                  description
+                    "Friday.";
+                }				
+                bit saturday {
+                  description
+                    "Saturday.";
+                }			
+              }
+              description
+                "Specify the day on which a configured time range is valid.";
+            }
+            leaf start-time {
+              type pub-type:time-hhmm {
+                length "5";
+                pattern '(([0-1][0-9])|(2[0-3])):[0-5][0-9]';
+              }
+              description
+                "Specify the start time of a time range.";
+            }
+            leaf end-time {
+              type pub-type:time-hhmm {
+                length "5";
+                pattern '(([0-1][0-9])|(2[0-3])):[0-5][0-9]';
+              }
+              description
+                "Specify the end time of a time range.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

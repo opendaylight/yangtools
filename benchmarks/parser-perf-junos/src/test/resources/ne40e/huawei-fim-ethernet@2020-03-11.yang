@@ -1,0 +1,114 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-fim-ethernet {
+  namespace "urn:huawei:yang:huawei-fim-ethernet";
+  prefix fim-ethernet;
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm-trunk {
+    prefix ifm-trunk;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Common interface management, which includes the public configuration of interfaces.";
+  reference
+    "Huawei private.";
+  revision 2020-03-11 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forwarding";
+  typedef enable-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable type.";
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface" {
+      description
+       "FIM configuration to the IFM module.";
+    container mode-channel {
+      when "(/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:vlan-type-dot1q)";
+      description
+        "Configure the mode Channel sub-interface.";
+      leaf mode-channel-enable {
+        type enable-type;
+        default "disable";
+        description
+          "Enable or disable mode channel sub-interface.";
+      }
+      leaf bandwidth {
+        when "../mode-channel-enable='enable'";
+        type uint32 {
+          range "100..1000000";
+        }
+        units "Mbit/s";
+        default "100";
+      
+        description
+          "Specify bandwidth of an mode channel sub-interface (Mbit/s).";
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:main-interface" {
+      description
+        "FIM configuration to the IFM module.";
+    container fim-main {
+      when "not((../../../ifm:name) = (/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk/ifm-trunk:members/ifm-trunk:member/ifm-trunk:name)) and ../../../ifm:type!='FlexE-200GE' and ../../../ifm:type!='FlexE-50G' and ../../../ifm:type!='FlexE-100G' and ../../../ifm:type!='FlexE-50|100G'";
+      description
+        "Configure the FIM configuration to the main interface.";
+      leaf outer-vlan-enable {
+        type enable-type;
+        default "disable";
+        description
+          "Modify one tag ethernet type.";
+      }
+    }
+  }
+
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l2-sub-interface" {
+      description
+        "FIM configuration to the IFM module.";
+    container fim-l2-sub {
+      description
+        "Configure the FIM configuration to L2 sub interface.";
+      leaf egress-strict-filter {
+        type enable-type;
+        default "disable";
+        description
+          "Enable or disable strict filter on an EVC sub-interface.";
+      }
+    }
+  }
+}

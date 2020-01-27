@@ -1,0 +1,245 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-qos {
+  namespace urn:huawei:yang:huawei-bras-qos;
+  prefix bras-qos;
+  import huawei-radius {
+    prefix radius;
+  }  
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-time-range {
+    prefix timerange;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras-qos.";
+  revision 2020-03-03 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-03 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-radius";
+
+  grouping trust-8021p {
+    description
+      "The command sets a BAS interface to trust the 802.1p priority of VLAN packets."; 
+    container trust-8021p-protocol {
+      description
+        "Configure a BAS interface to trust the 802.1p priority of VLAN packets.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable configuration of the 802.1p value.";
+      }
+    }
+  }
+
+  grouping user-bandwidth-auto-adapt {
+    description
+      "The command enables the automatic peak information rate (PIR) bandwidth adjustment function for DHCPv4, DHCPv6 and PPPoE users.";
+    container user-bandwidth-auto-adapt{
+      description
+        "Configure the automatic peak information rate (PIR) bandwidth adjustment function for DHCPv4, DHCPv6 and PPPoE users.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable automatic PIR bandwidth adjustment for DHCPv4, DHCPv6 and PPPoE users.";
+      }
+      leaf type1  {
+       type boolean;
+        default "false";
+        description
+          "Enable/disable the type of generating user-bandWidth to adapt. This element will not take effect independently unless the user's bandwidth adjusting function is enabled.";
+      }
+    }
+  }
+  
+  container bras-qos {
+    description
+      "Bras qos.";
+    container user-qos-cir-zero {
+      must "not(cir-zero-unlimit='true' and user-cir) and not(cir-zero-unlimit='false' and not(user-cir))";
+      description
+        "Configure the CAR of user traffic when the CIR and PIR delivered by the RADIUS server are both 0s.";
+      leaf cir-zero-unlimit {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the CAR when the CIR and PIR delivered by the RADIUS server are both 0s.";
+      }
+      leaf user-cir {
+        when "../cir-zero-unlimit = 'false'";
+        type uint32;
+        units bit/s;
+        description
+          "Specifies the CAR when the CIR and PIR delivered by the RADIUS server are both 0s.";
+      }
+    }
+    container user-queue-resource-policy  {
+      description
+        "Configure a policy when user queue resources fail to be allocated.";
+      leaf allocate-fail-policy {
+        type enumeration {
+          enum "online" {
+          value 0;
+          description
+            "Allows users to keep online.";
+          }
+          enum "offline" {
+          value 1;
+          description
+            "Users get offline.";
+          }
+        }
+        default "online";
+        description
+          "Specifies the case that if the user queue resources fail to be allocated, the user then is no longer provided with the online service.";
+      }
+    }
+  }
+
+  augment "/radius:radius/radius:radius-server-groups/radius:radius-server-group" {
+    description
+      "Bras qos model in radius-server group.";
+    container bras-qos {
+      description
+        "Configure the Bas-qos model in radius-server group.";
+      container qos-profile-case-sensitive {
+        description
+          "Configure a RADIUS server to support case-sensitive RADIUS qos profile attribute.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a RADIUS server to support case-sensitive RADIUS qos profile attribute.";
+        }
+      }
+      container qos-profile-no-exist-policy {
+        description
+          "Configure a policy whether to allow users to keep online when the QoS profile delivered by the RADIUS server is not configured.";
+        leaf user-online-policy {
+          type enumeration {
+            enum "offline" {
+              value 0;
+              description
+                "Users get offline.";
+            }
+            enum "online" {
+              value 1;
+              description
+                "Allows users to keep online.";
+            }
+          }
+          default "offline";
+          description
+            "Configures a policy whether to allow users to keep online when the QoS profile delivered by the RADIUS server is not configured.";
+        }
+      }
+      container server-class {
+        must "not(class-as-car='false' and pir-enable = 'true')";
+        description
+          "Configure a packet to carry the CAR value using class attribute.";
+        leaf class-as-car {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a packet to carry the CAR value using class attribute.";
+        }
+        leaf pir-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable that the PIR is valid.";
+        }
+      }
+    }
+  }
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "Bras qos model in domain.";
+    container bras-qos {
+      description
+        "Configure the Bas-qos model in domain.";
+      container time-range-qos-enable {
+        description
+          "Configure the time range during which a QoS profile takes effect.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable time range qos profile.";
+        }
+      }
+      container time-range-qos-profiles {
+        description
+          "List of the QoS profile to take effect during a time range for users in the AAA domain.";
+        list time-range-qos-profile {
+          key "range-name";
+          description
+            "Configure the QoS profile to take effect during a time range for users in the AAA domain.";
+          leaf range-name {
+            type leafref {
+              path "/timerange:time-range/timerange:time-range-instances/timerange:time-range-instance/timerange:name";
+            }
+            description
+              "Specifies the name of a time range.";
+          }
+          leaf qos-profile-name {
+            type leafref {
+              path "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile/qos:name";
+            }
+            must "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile[qos:name=current()]/qos:mode='normal'";
+            mandatory true;
+            description
+              "Specifies the name of a QoS profile.";
+          }
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-subscriber/bras-basic-access:layer2-subscriber" {
+    description
+      "Bras qos in bas layer2-subscriber.";
+    uses trust-8021p;
+    uses user-bandwidth-auto-adapt;
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-leaseline/bras-basic-access:layer2-leaseline" {
+    description
+      "Bras qos in bas layer2-leaseline.";
+    uses trust-8021p;
+    uses user-bandwidth-auto-adapt; 
+  }
+}

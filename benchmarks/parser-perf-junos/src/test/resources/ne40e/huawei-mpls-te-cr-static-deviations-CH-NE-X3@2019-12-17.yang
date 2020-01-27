@@ -1,0 +1,48 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls-te-cr-static-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-mpls-te-cr-static-deviations-CH-NE-X3";
+  prefix mpls-te-cr-static-devs-CH-NE-X3;
+
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-mpls-te {
+    prefix mpls-te;
+  }
+  import huawei-mpls-te-cr-static {
+    prefix mpls-te-cr-static;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+
+  revision 2019-12-17 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/mpls:mpls/mpls-te:te/mpls-te-cr-static:static-cr-lsps/mpls-te-cr-static:static-cr-lsp/mpls-te-cr-static:lsr-type/mpls-te-cr-static:transit/mpls-te-cr-static:transit/mpls-te-cr-static:ingress-lsr-id" {
+    deviate not-supported;
+  }
+  deviation "/mpls:mpls/mpls-te:te/mpls-te-cr-static:static-cr-lsps/mpls-te-cr-static:static-cr-lsp/mpls-te-cr-static:lsr-type/mpls-te-cr-static:transit/mpls-te-cr-static:transit/mpls-te-cr-static:egress-lsr-id" {
+    deviate not-supported;
+  }
+  deviation "/mpls:mpls/mpls-te:te/mpls-te-cr-static:static-cr-lsps/mpls-te-cr-static:static-cr-lsp/mpls-te-cr-static:lsr-type/mpls-te-cr-static:transit/mpls-te-cr-static:transit/mpls-te-cr-static:tunnel-id" {
+    deviate not-supported;
+  }
+  deviation "/mpls:mpls/mpls-te:te/mpls-te-cr-static:bidirection-static-cr-lsps/mpls-te-cr-static:bidirection-static-cr-lsp/mpls-te-cr-static:description" {
+    deviate not-supported;
+  }
+}

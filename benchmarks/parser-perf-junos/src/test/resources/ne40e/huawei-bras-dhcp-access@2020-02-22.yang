@@ -1,0 +1,1286 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-dhcp-access {
+  namespace "urn:huawei:yang:huawei-bras-dhcp-access";
+  prefix bras-dhcp-access;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Configure the DHCP user access.";
+  revision 2020-02-22 {
+    description
+      "Description modification.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-26 {
+    description
+      "Third revision.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-17 {
+    description
+      "Second revision.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-03 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+  /*****************************************************************
+  * groupings
+  *****************************************************************/
+  grouping server-ack-group {
+    description "Server ack group.";
+    container server-ack {
+      description
+        "Configure the router to process ACK packets that are destined for gateways and proactively sent by a DHCP server when users are online.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the router to process ACK packets that are destined for gateways and proactively sent by a DHCP server when users are online.";
+      }
+    }
+  }
+  grouping parse-qos-profile-group {
+    description "Parse-qos-profile-group.";
+    container parse-qos-profile {
+      must "parse='true' or (separator='|' and segment='2')";
+      must "not (parse='true' and /bras-basic-access:bras-basic-access/bras-basic-access:dhcp-multiple-sessions/bras-basic-access:enable='true')";
+      description
+        "Configure an Option 64 parsing mode for the router to parse QoS profile names carried in ACK packets from a DHCP server.";
+      leaf parse{
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Option 64 parsing mode.";
+      }
+      leaf separator {
+        ext:case-sensitivity upper2lower;
+        type string {
+          length "1";
+        }
+        default "|";
+        description
+          "Delimiter that divides an Option 64 value into several segments. The value is one case-insensitive character, spaces unsupported.";
+      }
+      leaf segment {
+        type uint8 {
+          range "1..3";
+        }
+        default "2";
+        description
+          "Segment which is divided from an Option 64 value and is specified as the QoS profile name to be delivered.";
+      }
+    }
+  }
+  grouping through-packet-group {
+    description "Through packet group.";
+    container through-packet {
+      description
+        "Configure the router to transparently transmit Dynamic Host Configuration Protocol (DHCPv4) packets.";
+      leaf enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the router to transparently transmit Dynamic Host Configuration Protocol (DHCPv4) packets.";
+      }
+    }
+  }
+  grouping ipoe-service-group {
+    description
+      "IPoE service group.";
+    container ipoe-service {
+      description
+        "Configure IPoE service.";
+      leaf type {
+        type enumeration {
+          enum "ipv4" {
+            value 1;
+            description
+              "IPv4.";
+          }
+          enum "ipv6" {
+            value 2;
+            description
+              "IPv6.";
+          }
+        }
+        description
+          "IPoE service type.";
+      }
+    }
+  }
+  grouping extern-templete-group {
+    description "Extern templete group.";
+    choice templete-mode {
+      description
+        "Choose the external templete mode broadcast or reply trust.";
+      case broadcast {
+        description
+          "DHCP broadcast.";
+      container broadcast {
+        description
+          "Configure DHCP broadcast.";
+        leaf enable {
+          type empty;
+          description
+            "Enables DHCP broadcast.";
+          }
+        }
+      }
+      case reply-trust {
+        description
+          "Reply-trust.";
+        container reply-trust {
+          description
+            "Configure reply trust.";
+          leaf enable {
+            type empty;
+            description
+             "Enables a device to use the broadcast flag value in a DHCP request packet.";
+          }
+        }
+      }
+    }
+  }
+  grouping option-update-group {
+    description "Option update group.";
+    container option-update {
+      description
+        "Configure the function of updating Option 82 when a user is online.";
+      leaf enable {
+        type empty;
+        description
+          "Enable the function of updating Option 82 when a user is online.";
+      }
+    }
+  }
+  grouping session-mismatch-group {
+    description "Session mismatch group.";
+    container session-mismatch {
+      description
+        "Configure session mismath.";
+      leaf action {
+        type enumeration {
+          enum "offline" {
+            value 1;
+            description
+              "Offline type.";
+          }
+          enum "roam-ipv4" {
+            value 2;
+            description
+              "Triggers to modify the VLAN and interface information of the online user who has sent discover or request packet on roaming.";
+          }
+          enum "roam-ipv6" {
+            value 3;
+            description
+              "Triggers to modify the VLAN and interface information of the online user who has sent solicit packet on roaming.";
+          }
+          enum "roam-ipv4-ipv6" {
+            value 4;
+            description
+              "Triggers to modify the VLAN and interface information of the online user who has sent discover or request and solicit packet on roaming.";
+          }
+          enum "roam-nd" {
+            value 5;
+            description
+              "Triggers to modify the VLAN and interface information of the online user who has sent RS packet on roaming.";
+          }
+          enum "roam-nd-ipv4" {
+            value 6;
+            description
+              "Triggers to modify the VLAN and interface information of the online user who has sent discover or request and RS packet on roaming.";
+          }
+          enum "roam-nd-ipv6" {
+            value 7;
+            description
+              "Triggers to modify the VLAN and interface information of the online user who has sent solicit and RS packet on roaming.";
+          }
+          enum "roam-nd-ipv4-ipv6" {
+            value 8;
+            description
+              "Triggers to modify the VLAN and interface information of the online user who has sent discover or request and solicit and RS packet on roaming.";
+          }
+        }
+        description
+          "Logs out online users to go offline or roam.";
+      }
+    }
+  }
+  grouping force-renew-group {
+    description "Forcerenew group.";
+    container force-renew {
+      description
+        "Configure DHCPv4 forcerenew.";
+      leaf interval {
+        type uint16 {
+          range "1..300";
+        }
+        default "30";
+        description
+          "Specifies the retransmission delay of a forcerenew message.";
+      }
+      leaf time {
+        type uint16 {
+          range "1..10";
+        }
+        default "3";
+        description
+          "Specifies the retransmission times of a forcerenew message.";
+      }
+    }
+  }
+  grouping ip-ttl-group {
+    description "IP TTL group.";
+    container ip-ttl {
+      description
+        "Configure the Time to Live (TLL) value of DHCP response packets.";
+      leaf value {
+        type uint8 {
+          range "1..255";
+        }
+        description
+          "TTL value of DHCP response packets.";
+      }
+    }
+  }
+  grouping option61-group {
+    description "Option 61 group.";
+    container option61 {
+      description
+        "Configure the value of the Option 61 field.";
+      leaf hardware-type {
+        type enumeration {
+          enum "string" {
+            value 0;
+            description
+              "Encapsulates the MAC address in the character string format into the Option 61 field.";
+          }
+          enum "hex" {
+            value 1;
+            description
+              "Encapsulates the MAC address in the hexadecimal format into the Option 61 field.";
+          }
+        }
+        description
+          "Sets the value of the Option 61 field.";
+      }
+    }
+  }
+  grouping rebuild-group {
+    description "Rebuild group.";
+    container rebuild {
+      description
+        "Configure DHCP Option 82 version3 flag.";
+      choice type {
+        description
+          "Sets DHCP Option 82 version3 type.";
+        case self-define {
+          description
+            "Configure self-define rebuild type.";
+          leaf circuit-id {
+            type string {
+              length "1..64";
+            }
+            description
+              "DHCP Option 82 circuit ID value self define.";
+          }
+          leaf remote-id {
+            type string {
+              length "1..64";
+            }
+            description
+              "DHCP Option 82 remote ID value self define.";
+          }
+          leaf inner-vlan {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "DHCP Option 82 inner VLAN value self define.";
+          }
+          leaf out-vlan {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "DHCP Option 82 out VLAN value self define.";
+          }
+        }
+        case version3 {
+          description
+            "Configure version3 rebuild type.";
+          leaf version3-option37-type {
+            type enumeration {
+              enum "version3option37neba" {
+                value 0;
+                description
+                  "Specifies the type of DHCP Option 82 as version3 Option 37 as NEBA.";
+              }
+              enum "version3option37vula" {
+                value 1;
+                description
+                  "Specifies the type of DHCP Option 82 as version3 Option 37 as VULA.";
+              }
+            }
+            description
+              "Specifies the type of dhcp Option 82 as version3 Option 37.";
+          }
+        }
+        case version4 {
+          description
+            "Configure version4 rebuild type.";
+          leaf version4 {
+            type empty;
+            description
+              "Configure version4 rebuild type.";
+          }
+        }
+      }
+    }
+  }
+  /*****************************************************************
+  * data
+  *****************************************************************/
+  container bras-dhcp-access {
+    description "Configure the DHCP user access.";
+    container global {
+      description "Configure DHCP user access global.";
+      uses server-ack-group;
+      uses parse-qos-profile-group;
+      container request-packet-check {
+        description
+          "Configure check of DHCP request packets with Option 50 fields.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable check of DHCP request packets with Option 50 fields.";
+        }
+      }
+      container dhcp-request {
+        description
+          "Configure a TTL value for DHCP packets sent to a remote DHCP server.";
+        leaf ttl {
+          type uint8 {
+            range "1..255";
+          }
+          default "16";
+          description
+            "Global TTL value.";
+        }
+      }
+      container redirect-ds-domain {
+        must "((option-code) and (option-string-redirect)) or (not(option-code) and not(option-string-redirect))";
+        description
+          "Configure the router to identify enterprise users and redirect them to a specified BA classification domain.";
+        leaf option-code {
+          type uint8 {
+            range "224..254";
+          }
+          description
+            "Specifies an option code.";
+        }
+        leaf option-string-redirect {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies a character string in the option field.";
+        }
+      }
+      container client-packet-check {
+        description
+          "Configure DHCP client packet check type.";
+        leaf strict {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable strict check.";
+        }
+        leaf layer2-ip-loose {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable loose check for layer2 destination ip.";
+        }
+      }
+      container option82-access {
+        description
+          "Configure Option 82 access to radius by bras.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Option 82 access to radius.";
+        }
+      }
+      uses through-packet-group;
+      container wait-request {
+        description
+          "Configure the DHCPv4 wait request time.";
+        leaf time-value {
+          type uint8 {
+            range "5..60";
+          }
+          default "25";
+          description
+            "Specifies the DHCPv4 wait request time.";
+        }
+      }
+      container through-nak {
+        description
+          "Configure the router to transparently transmit Dynamic Host Configuration Protocol (DHCPv4) NAK packets.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the router to transparently transmit Dynamic Host Configuration Protocol (DHCPv4) NAK packets.";
+        }
+      }
+      container option61-insert {
+        description
+          "Configure encapsulate the Option 61 field into packets.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable encapsulate the Option 61 field into packets.";
+        }
+      }
+      container invalid-server-detect {
+        description
+          "Configure an interval at which the router checks the invalid DHCPv4 server.";
+        leaf interval {
+          type uint32 {
+            range "0..65535";
+          }
+          default "0";
+          description
+            "The interval value.";
+        }
+      }
+      container option82-location {
+        description
+          "Configure the router to encapsulate Option 82 behind all options in the DHCP Offer and ACK messages replied to DHCP clients.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable encapsulate Option 82 behind all options.";
+        }
+      }
+      container release-packet {
+        description
+          "Configure the source IP address in the header of the DHCPv4 release packet.";
+        leaf source-ip-type {
+          type enumeration {
+            enum "subscriber-ip" {
+              value 0;
+              description
+                "Subscriber ip.";
+            }
+            enum "interface-ip" {
+              value 1;
+              description
+                "Interface ip.";
+            }
+          }
+          default "interface-ip";
+          description
+            "Sets the source IP address in the header of the DHCPv4 release packet.";
+        }
+      }
+      container discover-speed {
+        must "(./packet-value and ./second-value) or (not(./packet-value) and not(./second-value))";
+        description  "Configure the speed threshold at which discover packets are received.";
+        leaf packet-value {
+          type uint32 {
+            range "1..3000";
+          }
+          description
+            "Specifies the maximum number of discover packets that are received within a specified time period.";
+        }
+        leaf second-value {
+          type uint32 {
+            range "1..10";
+          }
+          units s;
+          description
+            "Specified time period.";
+        }
+      }
+      container giaddr-packet-discard {
+        description
+          "Configure the router to discard DHCP packets with a non-zero GiAddr address sent from Layer3 remote DHCP clients so that these clients cannot go online.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable DHCP packets with a non-zero GiAddr address.";
+        }
+      }
+      container user-threshold {
+        description
+          "Configure an alarm threshold for DHCP users allowed to access.";
+        leaf slot-warning-value {
+          type uint8 {
+            range "1..100";
+          }
+          default "100";
+          description
+            "Sets an alarm threshold for DHCP users allowed to access an interface board.";
+        }
+        leaf entire-warning-value {
+          type uint8 {
+            range "1..100";
+          }
+          default "100";
+          description
+            "Sets an alarm threshold for DHCP users allowed to access the entire.";
+        }
+      }
+      container lease-end-time-orignal {
+        description
+          "Configure the router to apply the original lease time for DHCPv4 users that go online again after going offline abnormally. By default, the lease time for DHCPv4 users is reset after they abnormally go offline and then go online again.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the router to apply the original lease time for DHCPv4 users that go online again after going offline abnormally.";
+        }
+      }
+      container strict-check-request-server-ip {
+        description
+          "Configure strict check for DHCP server IP addresses in DHCP request messages.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable strict check for DHCP server IP addresses in DHCP request messages.";
+        }
+      }
+      container discard-release-packet {
+        description
+          "Configure the backup device to discard DHCPv4 release messages in RUI scenarios.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the backup device to discard DHCPv4 release messages in RUI scenarios.";
+        }
+      }
+      container ppp-server-packet-check {
+        description
+          "Configure loose check for PPP or L2TP user ip from server.";
+        leaf loose-mode {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable loose check for PPP or L2TP user ip from server.";
+        }
+      }
+      container server-packet {
+        description
+          "Configure strict or lose check on replay packets received from the DHCPv4 server.";
+        leaf check-mode {
+          type enumeration {
+            enum "loose" {
+              value 0;
+              description
+                "Indicates the loose check of the reply packet from the DHCPv4 server.";
+            }
+            enum "strict" {
+              value 1;
+              description
+                "Indicates the strict check of the reply packet from the DHCPv4 server.";
+            }
+          }
+          default "strict";
+          description
+            "Indicates the loose or strict check of the reply packet from the DHCPv4 server.";
+        }
+        leaf loose-include-option3 {
+          when "../check-mode='loose'";
+          type empty;
+          description
+            "Indicates the option value. Only Option 3 can be specified. If this parameter is not configured, the router does not conduct loose check on reply packets that do not carry Option 3 from the DHCPv4 server. If this parameter is configured, the router conducts loose check on all reply packets from the DHCPv4 server, including those carrying option 3.";
+        }
+      }
+      container frame-ip-not-in-pool-range {
+        description
+          "Configure lease management for IPv6 addresses delivered by the RADIUS server that are not in the domain address pool for layer 2 DHCPv6 users.";
+        leaf unnumbered-loopback-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable gateway unnumbered so that Layer 2 DHCP users can use IP addresses delivered by the RADIUS server that are not in the domain address pool to go online.";
+        }
+        leaf exclude-leasemanage-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable lease management for IPv6 addresses delivered by the RADIUS server that are not in the domain address pool for Layer 2 DHCPv6 users.";
+        }
+      }
+      container conflict-ip-offline {
+        description
+          "Configure DHCP conflict ip address offline.";
+        leaf online-user{
+          type boolean;
+          default "false";
+          description
+            "Enable/disable triggers an online user to go offline if the IP address used by the online user is the same as the IP address assigned to a new user by the remote DHCP server.";
+        }
+        leaf include-new-user {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the router to log out an online user and deny access of a new user if it detects that the IP address assigned to the new user from a remote address pool.";
+        }
+        leaf new-user-include-frame-ip {
+          when "../include-new-user='true'";
+          type empty;
+          description
+            "The new user by the RADIUS server is the same as the IP address of the online user.";
+        }
+      }
+      container vendor-class-or-option60 {
+        description
+          "Configure the vendor-class (DHCPv4 Option 60/DHCPv6 Option 16) attribute of DHCP packets. Then, the router can allocate IP addresses in the address pool based on the domain name. You can configure partial match or complete match for the content containing the domain name.";
+        leaf option-type {
+          type enumeration {
+            enum "dhcp-option60" {
+              value 0;
+              description
+              "Specifies the config type by DHCP Option 60.";
+            }
+            enum "vendor-class" {
+              value 1;
+              description
+              "Specifies the config type by vendor-class.";
+            }
+          }
+          description
+            "Specifies the config type by DHCP Option 60 or vendor-class.";
+        }
+        leaf include-domain-type {
+          when "../option-type";
+          type enumeration {
+            enum "domain-include" {
+              value 0;
+              description
+                "Indicates that the vendor-class option contains the domain name.";
+            }
+            enum "domain-patial-include" {
+              value 1;
+              description
+                "Indicates that the vendor-class option contains a partial domain name.";
+            }
+          }
+          default "domain-include";
+          description
+            "Indicates that the vendor-class option contains the domain name or a partial domain name.";
+        }
+        leaf match-type {
+          when "../option-type";
+          type enumeration {
+            enum "exact-match" {
+              value 0;
+              description
+                "Indicates the content of the vendor-class string complete match.";
+            }
+            enum "partial-match" {
+              value 1;
+              description
+                "Indicates the content of the vendor-class string partial match (complete match is not required).";
+            }
+          }
+          default "exact-match";
+          description
+            "Indicates the content of the vendor-class string complete match or partial match (complete match is not required).";
+        }
+        leaf encrypt-flag {
+          when "../option-type";
+          type empty;
+          description
+            "Encrypts the domain name in the vendor-class option or not.";
+        }
+        choice decode-mode {
+          description
+            "Choose the decode mode with CN or other.";
+          case cn {
+            description
+              "Choose the CN mode.";
+            leaf cn {
+              when "../option-type";
+              type empty;
+              description
+                "Uses the cn mode for user domain identification.";
+            }
+          }
+          case self-define {
+            description
+              "Choose the self define mode.";
+            leaf offset {
+              when "../option-type";
+              type uint8 {
+                range "1..254";
+              }
+              must "(../length or ../code)";
+              description
+                "Specifies the offset of a vendor-class option. After this parameter is configured, the BRAS identifies a user domain based on the vendor-class option after offset.";
+            }
+            choice decode-type {
+              description
+                "Choose the decode type.";
+              case option {
+                description
+                  "Choose the option mode.";
+                leaf length {
+                  when "../option-type";
+                  type uint8 {
+                    range "1..254";
+                  }
+                description
+                    "Specifies which part of a vendor-class option is used for user domain identification. After this parameter is configured, only the specified part of the vendor-class option is used for domain identification.";
+                }
+              }
+              case sub-option {
+                description
+                  "Choose the sub option mode.";
+                leaf code{
+                  when "../option-type";
+                  type uint8 {
+                    range "1..255";
+                  }
+                  description
+                    "Specifies the code of a vendor-class sub-option used for user domain identification.";
+                }
+                leaf sub-offset {
+                  when "../code";
+                  type uint8 {
+                    range "1..254";
+                  }
+                  description
+                    "Specifies the offset for a vendor-class sub-option used for user domain identification.";
+                }
+                leaf sub-length {
+                  when "../code";
+                  type uint8 {
+                    range "1..254";
+                  }
+                  description
+                    "Specifies which part of a vendor-class sub-option is used for user domain identification. After this parameter is configured, only the specified part of the vendor-class sub-option is used for domain identification.";
+                }
+              }
+            }
+          }
+        }
+      }
+      container giaddr-policy {
+        description
+          "Configure the value of the Giaddr field in a packet.";
+        leaf dhcp-layer2-giaddr-clear {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the value of the Giaddr field in a packet to be sent to a Layer 2 user to 0.";
+        }
+      }
+   }
+   container rebind-no-user-action {
+     description
+       "Configure the action of device who has no receive a client's DHCP rebind message if a corresponding user entry does not exist on the device.";
+     choice nak-action {
+       description
+         "Choose the action of device who has no receive a client's DHCP rebind message if a corresponding user entry does not exist on the device.";
+       case keep-silence {
+         description
+           "Disable the device from sending an NAK message in response to a client's DHCP rebind message if a corresponding user entry does not exist on the device.";
+         leaf keep-silence {
+           type empty;
+           description
+             "In a cold backup scenario, disables the device from sending an NAK message in response to a client's DHCP rebind message if a corresponding user entry does not exist on the device.";
+         }
+       }
+       case reply-server-ip {
+         description
+           "Force the device to send an NAK message from server-ip.";
+         leaf reply-server-ip {
+           type inet:ipv4-address-no-zone;
+           description
+             "Force the device to send an NAK message from server-ip.";
+         }
+       }
+     }
+   }
+   container dhcp-access-statistics {
+      config false;
+      description
+        "Display statistics for the DHCP module.";
+      leaf client-send-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of packets received from clients.";
+      }
+      leaf received-discover-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of discover packets received from clients.";
+      }
+      leaf received-request-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of Request packets received from clients.";
+      }
+      leaf bootp-request-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of BOOTP request packets received from clients.";
+      }
+      leaf select-request-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of select request packets received from clients.";
+      }
+      leaf reboot-request-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of reboot request packets received from clients.";
+      }
+      leaf renew-request-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of renew request packets received from clients.";
+      }
+      leaf rebind-request-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of reboot rebind request packets received from clients.";
+      }
+      leaf received-decline-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of decline packets received from clients.";
+      }
+      leaf received-release-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of release packets received from clients.";
+      }
+      leaf received-inform-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of inform packets received from clients.";
+      }
+      leaf server-send-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of packets received from servers.";
+      }
+      leaf received-offer-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of offer packets received from servers.";
+      }
+      leaf received-ack-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of ACK packets received from servers.";
+      }
+      leaf received-nak-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of NAK packets received from servers.";
+      }
+      leaf received-forcerenew-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of forcerenew packets received from servers.";
+      }
+      leaf forbidden-discover-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of discover packets discarded based on ACL rules.";
+      }
+      leaf forbidden-request-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of request packets discarded based on ACL rules.";
+      }
+      leaf client-option-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of client packets with an incorrect option.";
+      }
+      leaf client-hops-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of client packets with an incorrect number of hops.";
+      }
+      leaf client-hardware-type-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of client packets with an incorrect hardware type.";
+      }
+      leaf client-length-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of client packets with an incorrect length.";
+      }
+      leaf client-mac-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of error client packets with the first byte of the MAC address being 01.";
+      }
+      leaf client-null-mac-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of error client packets with the MAC address being all 0s.";
+      }
+      leaf client-sname-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of client packets whose Sname fields are incorrect.";
+      }
+      leaf client-boot-file-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of client packets whose BootFile fields are incorrect.";
+      }
+      leaf server-option-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of server packets with an incorrect option.";
+      }
+      leaf access-limit-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of packets that cannot be sent due to the access limit.";
+      }
+      leaf invalid-server-ip-offer-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of offer packets with invalid server IP addresses.";
+      }
+      leaf invalid-server-ip-nak-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of NAK packets with invalid server IP addresses.";
+      }
+      leaf invalid-server-ip-nak-new-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of NAK packets discarded due to their invalid server IP addresses.";
+      }
+      leaf server-hardware-type-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of server packets with an incorrect hardware type.";
+      }
+      leaf server-length-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of server packets with an incorrect length.";
+      }
+      leaf server-mac-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of error server packets with the first byte of the MAC address being 01.";
+      }
+      leaf server-sname-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of server packets whose Sname fields are incorrect.";
+      }
+      leaf server-bootfile-errors {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of server packets whose BootFile fields are incorrect.";
+      }
+      leaf confict-ip-offer-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of offer packets with conflicted IP addresses received from servers.";
+      }
+      leaf confict-ip-ack-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of ACK packets with conflicted IP addresses received from servers.";
+      }
+      leaf sent-client-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Statistics about packets sent to clients.";
+      }
+      leaf sent-offer-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of offer packets sent to clients.";
+      }
+      leaf sent-ack-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of ACK packets sent to clients.";
+      }
+      leaf sent-nak-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of NAK packets sent to clients.";
+      }
+      leaf sent-server-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Statistics about packets sent to servers.";
+      }
+      leaf sent-discover-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of discover packets sent to servers.";
+      }
+      leaf sent-request-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of request packets sent to servers.";
+      }
+      leaf sent-release-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of release packets sent to servers.";
+      }
+      leaf sent-decline-packets {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Number of decline packets sent to servers.";
+      }
+    }
+    container bgp-over-ipoe {
+      description
+        "Configure BGP route forwarding between a CPE and BRAS.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable BGP route forwarding between a CPE and BRAS.";
+      }
+    }
+  }
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "BAS domain configuration.";
+    container dhcp-access {
+      description
+        "Configure DHCP access in domain scenario.";
+      uses server-ack-group;
+      uses parse-qos-profile-group;
+      container option121-routes {
+        description
+          "List of static routes assigned to DHCP clients. The destination IP address is the value obtained by performing a bitwise and operation of the destination IP address and mask length.";
+        list option121-route {
+          key "destination-ip mask-length gateway";
+          description
+            "Assign static routes to DHCP clients, and the destination IP address is the value obtained by performing a bitwise and operation of the destination IP address and mask length.";
+          leaf destination-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Destination IPv4 address.";
+          }
+          leaf mask-length {
+            type uint16 {
+              range "0..32";
+            }
+            description
+              "Mask length.";
+          }
+          leaf gateway {
+            type inet:ipv4-address-no-zone;
+            description
+              "Gateway address.";
+          }
+        }
+      }
+      uses through-packet-group;
+      container coa-zero-lease-dual-cut {
+        description
+          "Configure zero lease by COA for DHCP stack.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable dual cut zero lease user.";
+        }
+      }
+      container user-offline-by-send-packet {
+        description
+          "Configure user offline by send packets.";
+        leaf discover {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable DHCP user offline by discover packet.";
+        }
+        leaf reboot-request {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable DHCP user offline by reboot-request packet.";
+        }
+      }
+    }
+  }
+  /*interface*/
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-subscriber/bras-basic-access:layer2-subscriber" {
+    description
+      "Layer2 subscriber access type.";
+    container dhcp-access {
+      description "Configure DHCP access.";
+      uses extern-templete-group;
+      uses ipoe-service-group;
+      uses option-update-group;
+      uses session-mismatch-group;
+      uses force-renew-group;
+      uses ip-ttl-group;
+      uses option61-group;
+      uses rebuild-group;
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-leaseline/bras-basic-access:layer2-leaseline" {
+    description
+      "Layer2 leaseline access type.";
+      container dhcp-access {
+        description "Configure DHCP access.";
+        uses extern-templete-group;
+        uses option-update-group;
+        uses force-renew-group;
+        uses ip-ttl-group;
+        uses option61-group;
+        uses rebuild-group;
+      }
+   }
+}

@@ -1,0 +1,197 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-vpn {
+  namespace urn:huawei:yang:huawei-bras-vpn;
+  prefix brasvpn;
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras vpn.";
+  revision 2020-03-03 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-26 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+  
+  container bras-vpn {
+    description
+      "Bras vpn configurations.";
+    container vpn-users {
+      config false;
+      description
+        "List of vpn users.";
+      list vpn-user {
+        key "user-type vpn-instance";
+        description
+          "Statistics of vpn users.";
+        leaf user-type {
+          type enumeration {
+            enum "pppoe" {
+              value 1;
+              description
+                "PPPoE access users.";
+            }
+            enum "pppoa" {
+              value 2;
+              description
+                "PPPoA access users.";
+            }
+            enum "ipoe" {
+              value 3;
+              description
+                "IPOE access users.";
+            }
+            enum "lns" {
+              value 4;
+              description
+                "Lns access users.";
+            }
+            enum "lac" {
+              value 5;
+              description
+                "Lac access users.";
+            }
+            enum "ipv4" {
+              value 6;
+              description
+                "IPv4 access users.";
+            }
+            enum "ipv6" {
+              value 7;
+              description
+                "IPv6 access users.";
+            }
+            enum "dual" {
+              value 8;
+              description
+                "Dual-stack access users.";
+            }
+            enum "all" {
+              value 9;
+              description
+                "All type access users.";
+            }
+          }
+          description
+            "User type.";
+        }
+        leaf vpn-instance {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "Vpn name.";
+        }
+        leaf user-number {
+          type int32 {
+            range "0..256000";
+          }
+          description
+            "The number of vpn access users.";
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-subscriber/bras-basic-access:layer2-subscriber" {
+    description
+      "Bras vpn of layer2 subscriber.";
+    container bas-8021p-to-vpn {
+      description
+        "Configure a BAS interface to transmit packets to different VPNs based on 802.1p priorities of the packets.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable 802.1p to Vpn.";
+      }
+    }
+  }
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "Adds vpn configuration to aaa domain model.";
+    container vpn {
+      description
+        "Configure a VPN instance to aaa domain model.";
+      container vpn-instance {
+        description
+          "Configure a VPN instance to a domain.";
+        leaf name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "(/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']) or (/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast'])";
+          description
+            "Specifies the VPN instance name.";
+        }
+      }
+      container bound-vrf {
+        description
+          "Configure an inbound VPN instance to an AAA domain.";
+        leaf name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "(/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']) or (/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast'])";
+          description
+            "Specifies the VPN instance name.";
+        }
+      }
+      container trust-enable {
+        description
+          "Configure a device to trust the VPN instance that is bound to IPv6 address pool delivered by the RADIUS server.";
+        leaf trust-access-interface-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to trust the VPN instance that is bound to IPv6 address pool delivered by the RADIUS server.";
+        }
+        leaf trust-frame-pool-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to trust the VPN instance that is bound to IPv4 address pool delivered by the RADIUS server.";
+        }
+        leaf trust-frame-ipv6-pool-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to trust the VPN instance that is bound to IPv6 address pool delivered by the RADIUS server.";
+        }
+      }
+    }
+  }
+}

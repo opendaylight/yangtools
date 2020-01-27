@@ -1,0 +1,833 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-netstream {
+  namespace urn:huawei:yang:huawei-netstream;
+  prefix netstream;
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Netstream.";
+  revision 2019-06-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "netstream";
+  typedef nsm-direction {
+    type enumeration {
+      enum "inbound" {
+        value 0;
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        value 1;
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "Description of sampler direction.";
+  }
+  typedef nsm-agg-type {
+    type enumeration {
+      enum "as" {
+        value 0;
+        description
+          "AS aggregation.";
+      }
+      enum "as-tos" {
+        value 1;
+        description
+          "AS-ToS aggregation.";
+      }
+      enum "protocol-port" {
+        value 2;
+        description
+          "Protocol-port.";
+      }
+      enum "protocol-port-tos" {
+        value 3;
+        description
+          "Protocol-port-ToS aggregation.";
+      }
+      enum "source-prefix" {
+        value 4;
+        description
+          "Source-prefix aggregation. It classifies flows by four key values, that is, the source AS number, source mask length, source prefix, and incoming interface index.";
+      }
+      enum "source-prefix-tos" {
+        value 5;
+        description
+          "Source prefix-ToS aggregation. It classifies flows by five key values, that is, the source AS number, source mask length, source prefix, ToS, and incoming interface index.";
+      }
+      enum "destination-prefix" {
+        value 6;
+        description
+          "Destination-prefix aggregation. It classifies flows by four key values, that is, the destination AS number, destination mask length, destination prefix, and outgoing interface index.";
+      }
+      enum "destination-prefix-tos" {
+        value 7;
+        description
+          "Destination prefix-ToS aggregation. It classifies flows by five key values, that is, the destination AS number, destination mask length, destination prefix, ToS, and outgoing interface index.";
+      }
+      enum "prefix" {
+        value 8;
+        description
+          "Prefix aggregation. It classifies flows by eight key values, that is, the source AS number, destination AS number, source mask length, destination mask length, source prefix, destination prefix, incoming interface index, and outgoing interface index.";
+      }
+      enum "prefix-tos" {
+        value 9;
+        description
+          "Prefix-ToS aggregation. It classifies flows by nine key values, that is, the source AS number, destination AS number, source mask length, destination mask length, source prefix, destination prefix, ToS, incoming interface index, and outgoing interface index.";
+      }
+      enum "mpls-label" {
+        value 10;
+        description
+          "MPLS-label aggregation. It classifies flows by six key values, that is, the first layer label, second layer label, third layer label, TopLabelIpAddress, stack bottom symbol of the first layer label, and the EXP value of the first layer label.";
+      }
+      enum "vlan-id" {
+        value 11;
+        description
+          "VLAN-ID aggregation. It classifies flows by two key values, that is, the VLAN ID and incoming interface index.";
+      }
+      enum "bgp-nexthop-tos" {
+        value 12;
+        description
+          "BGP next hop-ToS aggregation. It classifies streams by six key values including the BGP next hop, source AS number, destination AS number, incoming interface index, outgoing interface index, and ToS.";
+      }
+      enum "index-tos" {
+        value 13;
+        description
+          "Interface index-ToS aggregation. It classifies flows by three key values, that is, the incoming interface index, outgoing interface index, and ToS.";
+      }
+      enum "source-index-tos" {
+        value 14;
+        description
+          "Interface source-index-ToS aggregation.";
+      }
+      enum "bgp-community" {
+        value 15;
+        description
+          "BGP Community Aggregation.";
+      }
+      enum "vni-sip-dip" {
+        value 16;
+        description
+          "It classifies flows by three key values, that is, the vni id, sip, and dip.";
+      }
+    }
+    description
+      "Description of aggregation type.";
+  }
+  typedef nsm-enable {
+    type enumeration {
+      enum "false" {
+        value 0;
+        description
+          "Disabling.";
+      }
+      enum "true" {
+        value 1;
+        description
+          "Enabling.";
+      }
+    }
+    description
+      "Description of enable type.";
+  }
+
+  typedef nsm-origin-version {
+    type enumeration {
+      enum "5" {
+        value 5;
+        description
+          "Version 5.";
+      }
+      enum "9" {
+        value 9;
+        description
+          "Version 9.";
+      }
+      enum "ipfix" {
+        value 10;
+        description
+          "Version ipfix.";
+      }
+    }
+    description
+      "Description of origin version type.";
+  }
+  typedef nsm-as-type {
+    type enumeration {
+      enum "invalid-as" {
+        value 0;
+        description
+          "Invalid system ID.";
+      }
+      enum "origin-as" {
+        value 1;
+        description
+          "Start AS number.";
+      }
+      enum "peer-as" {
+        value 2;
+        description
+          "Adjacent AS number.";
+      }
+    }
+    description
+      "Description of as type.";
+  }
+  typedef nsm-as-mode-index {
+    type enumeration {
+      enum "16" {
+        value 0;
+        description
+          "16-bit interface index carried in exported NetStream packets.";
+      }
+      enum "32" {
+        value 1;
+        description
+          "32-bit interface index carried in exported NetStream packets.";
+      }
+    }
+    description
+      "Description of as mode index type.";
+  }
+  typedef nsm-mpls-aware {
+    type enumeration {
+      enum "ip-only" {
+        value 0;
+        description
+          "IP address collection mode.";
+      }
+      enum "label-and-ip" {
+        value 1;
+        description
+          "Inner IP packet and label collection mode.";
+      }
+      enum "label-only" {
+        value 2;
+        description
+          "Label collection mode.";
+      }
+      enum "invalid-mpls" {
+        value 3;
+        description
+          "Invalid_MPLS.";
+      }
+    }
+    description
+      "Description of MPLS aware type.";
+  }
+
+  typedef nsm-flow-type {
+    type enumeration {
+      enum "ip-flow" {
+        value 0;
+        description
+          "IPv4.";
+      }
+      enum "ipv6-flow" {
+        value 1;
+        description
+          "IPv6.";
+      }
+    }
+    description
+      "Description of flow type.";
+  }
+  typedef nsm-destination-board {
+    type enumeration {
+      enum "self" {
+        value 0;
+        description
+          "To Self.";
+      }
+      enum "main" {
+        value 1;
+        description
+          "To Main.";
+      }
+      enum "bak" {
+        value 2;
+        description
+          "To Bak.";
+      }
+    }
+    description
+      "Description of destination board type.";
+  }
+  container netstream {
+    description
+      "Netstream.";
+    container flow-instances {
+      description
+        "List of configure global instance.";
+      list flow-instance {
+        key "flow-type";
+        description
+          "Configure global instance.";
+        ext:generated-by system {
+          description "The all instances are generated by system automatically.";
+        }
+        ext:operation-exclude create|delete {
+          description "The all instances cannot be created or deleted.";
+        }
+        leaf flow-type {
+          type nsm-flow-type;
+          description
+            "Flow type.";
+        }
+        leaf source-ipv4-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Source IPv4 address.";
+        }
+        leaf source-ipv4-port {
+          when "not(not(../source-ipv4-address))";
+          type uint16 {
+            range "1..65535";
+          }
+          default "40000";
+          description
+            "Source IPv4 port.";
+        }
+        leaf source-ipv6-address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Source IPv6 address.";
+        }
+        leaf source-ipv6-port {
+          when "not(not(../source-ipv6-address))";
+          type uint16 {
+            range "1..65535";
+          }
+          default "40000";
+          description
+            "Source IPv6 port.";
+        }
+        leaf export-version {
+          type nsm-origin-version;
+          must "(../flow-type='ipv6-flow' and (../export-version='9' or ../export-version='ipfix') ) or ((not(../flow-type='ipv6-flow') and (../export-version='5' or ../export-version='9' or ../export-version='ipfix') ))";
+          description
+            "Version of NetStream statistics packets. The value of IPv4 can be 5,9 or ipfix, the value of IPv6 can be 9 or ipfix.";
+        }
+        leaf as-type {
+          type nsm-as-type;
+          must "../as-type='invalid-as' or (../as-type!='invalid-as' and ../flow-type='ip-flow')";
+          default "invalid-as";
+          description
+            "AS number of a specified IP address. The available options are origin-as (start AS number) and peer-as (adjacent AS number).";
+        }
+        leaf bgp-nexthop {
+          type nsm-enable;
+          must "not(../export-version='5') or (../export-version='5' and ../bgp-nexthop='false')";
+          default "false";
+          description
+            "Whether exported statistics contain BGP next hop information. Version 5 does not support BGP next hop.";
+        }
+        leaf template-timeout-rate {
+          type uint16 {
+            range "1..3600";
+          }
+          default "30";
+          description
+            "The interval for refreshing the template.";
+        }
+        leaf option-template-timeout-rate {
+          type uint16 {
+            range "1..3600";
+          }
+          default "30";
+          description
+            "Interval for refreshing the Option template.";
+        }
+        leaf option-template-refresh-rate {
+          type uint16 {
+            range "1..600";
+          }
+          default "20";
+          description
+            "Packet-interval refreshing time of the option template.";
+        }
+        choice agg-active-age {
+          default "minutes";
+          description
+            "Specify the active aging time of aggregation flows.";
+          case minutes {
+            description
+                "Specify the active aging time (mins) of aggregation flows.";
+            leaf agg-active-age-minutes {
+              type uint32 {
+                range "1..60";
+              }
+              units min;
+              default "5";
+              description
+                "Specify the active aging time (mins) of aggregation flows.";
+            }
+          }
+          case seconds {
+            description
+                "Specify the active aging time (secs) of aggregation flows.";
+            leaf agg-active-age-seconds {
+              type uint8 {
+                range "15..59";
+              }
+              units s;
+              description
+                "Specify the active aging time (secs) of aggregation flows.";
+            }
+          }
+        }
+        leaf agg-inactive-age-seconds {
+          type uint32 {
+            range "5..600";
+          }
+          units s;
+          default "300";
+          description
+            "Inactive aging time of aggregation flows.";
+        }
+        choice origin-active-age {
+          default "minutes";
+          description
+            "Active aging time of original flows.";
+          case minutes {
+            description
+              "Active aging time (mins) of original flows.";
+            leaf origin-active-age-minutes {
+              type uint32 {
+                range "1..60";
+              }
+              units min;
+              default "30";
+              description
+                "Active aging time (mins) of original flows.";
+            }
+          }
+          case seconds {
+            description
+              "Active aging time (secs) of original flows.";
+            leaf origin-active-age-seconds {
+              type uint8 {
+                  range "15..59";
+              }
+              units s;
+              description
+                "Active aging time (secs) of original flows.";
+            }
+          }
+        }
+        leaf origin-inactive-seconds {
+          type uint32 {
+            range "5..600";
+          }
+          units s;
+          default "30";
+          description
+            "Inactive aging time of original flows.";
+        }
+        leaf as-mode {
+          type nsm-as-mode-index;
+          default "16";
+          description
+            "Mode supported by ASs.";
+        }
+        leaf index-switch {
+          type nsm-as-mode-index;
+          default "16";
+          description
+            "NetStream interface index.";
+        }
+        leaf tcpflag-enable {
+          type nsm-enable;
+          default "false";
+          description
+            "Whether tcp-flag information is extracted during the processing of sampling packets.";
+        }
+        leaf mpls-aware-enable {
+          type nsm-mpls-aware;
+          default "ip-only";
+          description
+            "Whether Layer 3 labels are extracted during the processing of sampling packets. The default value is ip-only, that is, not to extract the label.label-only indicates that only the label is extracted; label-and-ip indicates that both the label and IP address are extracted.";
+        }
+        leaf system-option-enable {
+          type nsm-enable;
+          default "false";
+          description
+            "Flow of statistics about system options. The data includes the numbers of exported flows and exported packets.";
+        }
+        leaf interface-option-enable {
+          type nsm-enable;
+          default "false";
+          description
+            "Flow of statistics about interface options, including the interface index for enabling NetStream in inbound direction or outbound direction, and corresponding sampling values.";
+        }
+        leaf ttl-flag {
+          type nsm-enable;
+          must "(../export-version='5' and ../ttl-flag= 'false') or (not(../export-version='5') and (../ttl-flag))";
+          default "false";
+          description
+            "Whether exported statistics contain TTL information.";
+        }
+        leaf sequence-number-fix {
+          type nsm-enable;
+          default "false";
+          description
+            "Whether the numbering mode of IPFIX version packet is fixed mode.";
+        }
+        container sampler-rates {
+          description
+            "List of configure global sampler instance.";
+          list sampler-rate {
+            key "direction";
+            description
+              "Configure global sampler instance.";
+            leaf direction {
+              type nsm-direction;
+              description
+                "Sampler direction.";
+            }
+            choice sampler-type {
+              mandatory true;
+              description
+                "Sampler type.";
+              case fix-packets {
+                description
+                  "Fix-pack value.";
+                leaf fix-packets-value {
+                  type uint32 {
+                    range "1..65535";
+                  }
+                  description
+                    "Fix-pack value.";
+                }
+              }
+              case fix-time {
+                description
+                  "Fix-time value.";
+                leaf fix-time-value {
+                  type uint32 {
+                    range "5..30000";
+                  }
+                  description
+                    "Fix-time value.";
+                }
+              }
+              case random-packets {
+                description
+                  "Random-pack value.";
+                leaf random-packets-value {
+                  type uint32 {
+                    range "1..65535";
+                  }
+                  description
+                    "Random-pack value.";
+                }
+              }
+            }
+          }
+        }
+        container export-ipv4-hosts {
+          description
+            "List of configure export vpn destination IPv4 address instance.";
+          list export-ipv4-host {
+            key "address port vpn-name";
+            max-elements 8;
+            description
+              "Configure export vpn destination IPv4 address instance.";
+            leaf address {
+              type inet:ipv4-address-no-zone;
+              description
+                "Exported destination IPv4 address.";
+            }
+            leaf port {
+              type uint16 {
+                range "1..65535";
+              }
+              description
+                "UDP port number of the NSC.";
+            }
+            leaf vpn-name {
+              type leafref {
+                path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+              }
+              must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+              description
+                "Vpn instance name.";
+            }
+            leaf dscp-value {
+              type uint8 {
+                range "1..63";
+              }
+              description
+                "Differentiated Services Code Point.";
+             }
+          }
+        }
+      }
+    }
+    container aggregations {
+      description
+        "List of configure aggregation instance.";
+      list aggregation {
+        must "./flow-type='ip-flow' or ((./flow-type='ipv6-flow') and (./agg-type!='bgp-community' and ./agg-type!='source-index-tos' and ./agg-type!='vni-sip-dip'))";
+        key "flow-type agg-type";
+        description
+          "Configure aggregation instance.";
+        leaf flow-type {
+          type nsm-flow-type;
+          description
+            "Flow type.";
+        }
+        leaf agg-type {
+          type nsm-agg-type;
+          description
+            "Aggregation type.";
+        }
+        leaf agg-enable {
+          type nsm-enable;
+          default "false";
+          description
+            "Aggregation enabling flag.";
+        }
+      }
+    }
+    container monitors {
+      description
+        "List of configure monitor instance.";
+      list monitor {
+        key "flow-type monitor-name";
+        description
+          "Configure monitor instance.";
+        leaf flow-type {
+          type nsm-flow-type;
+          description
+            "Flow type.";
+        }
+        leaf monitor-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Monitor name.";
+        }
+      }
+    }
+    container flexflow-records {
+      description
+        "List of configure flexible flow instance.";
+      list flexflow-record {
+        key "flow-type record-name";
+        description
+          "Configure flexible flow instance.";
+        leaf flow-type {
+          type nsm-flow-type;
+          description
+            "Flow type.";
+        }
+        leaf record-name {
+          type string {
+            length "1..32";
+            pattern '[a-zA-Z0-9._]{1,32}';
+          }
+          description
+            "Flexible flow record name.";
+        }
+        leaf source-address {
+          type nsm-enable;
+          default "false";
+          description
+            "Indicates the aggregation based on source addresses.";
+        }
+        leaf source-as {
+          type nsm-enable;
+          default "false";
+          description
+            "Indicates that the statistics to be sent to the NSC contain source AS infomation.";
+        }        
+      }
+    }
+  }
+
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "Add netstream configuration to devm slot model.";
+    container netstream{
+      description
+        "Configure netstream.";
+      container sampler-modes {
+        description
+          "List of configure slot instance.";
+        list sampler-mode {
+          key "flow-type sampler-mode";
+          description
+            "Configure slot instance.";
+          leaf flow-type {
+            type nsm-flow-type;
+            description
+              "Flow type.";
+          }
+          leaf sampler-mode {
+            type nsm-destination-board;
+            description
+              "Type of a sampled board.";
+          }
+          leaf dest-slot {
+            when "not(../sampler-mode='self')";
+            type leafref {
+              path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+            }
+            must "../../../../devm:position != ../dest-slot";
+            description
+              "Destination slot name. For example, board 3 is input as 0/3.";
+          }
+        }
+      }
+    }
+  }
+  
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+      "Add netstream configuration to devm slot model.";
+    container netstream{
+      description
+        "Configure netstream.";
+      container sampler-modes {
+        description
+          "List of configure slot instance.";
+        list sampler-mode {
+          key "flow-type sampler-mode";
+          description
+            "Configure slot instance.";
+          leaf flow-type {
+            type nsm-flow-type;
+            description
+              "Flow type.";
+          }
+          leaf sampler-mode {
+            type nsm-destination-board;
+            description
+              "Type of a sampled board.";
+          }
+        }
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Add interface configuration to ifm interface model.";
+    container netstream {
+      description
+        "Configure netstream interface.";
+      container sampler-enables {
+        description
+          "List of configure interface sampling instance.";
+        list sampler-enable {
+          key "flow-type direction";
+          description
+            "Configure interface sampling instance.";
+          leaf flow-type {
+            type nsm-flow-type;
+            description
+              "Flow type.";
+          }
+          leaf direction {
+            type nsm-direction;
+            description
+              "Sampler direction.";
+          }
+        }
+      }
+      container sampler-rates {
+        description
+            "List of Configure interface sampler instance.";
+        list sampler-rate {
+          key "flow-type direction";
+          description
+            "Configure interface sampler instance.";
+          leaf flow-type {
+            type nsm-flow-type;
+            description
+              "Flow type.";
+          }
+          leaf direction {
+            type nsm-direction;
+            description
+              "Sampler direction.";
+          }
+          choice sampler-type {
+            mandatory true;
+            description
+              "Sampler type.";
+            case fix-packets {
+              description
+                "Fix packets value.";
+              leaf fix-packets-value {
+                type uint32 {
+                  range "1..65535";
+                }
+                description
+                  "Fix packets value.";
+              }
+            }
+            case fix-time {
+              description
+                "Fix time value.";
+              leaf fix-time-value {
+                type uint32 {
+                  range "5..30000";
+                }
+                description
+                  "Fix time value.";
+              }
+            }
+            case random-packets {
+              description
+                "Random packets value.";
+              leaf random-packets-value {
+                type uint32 {
+                  range "1..65535";
+                }
+                description
+                  "Random packets value.";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,287 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-file-operation {
+  namespace "urn:huawei:yang:huawei-file-operation";
+  prefix file-operation;
+
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Indicate file system management.";
+
+  revision 2019-12-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+
+  ext:task-name "rpm";
+  typedef delete-type {
+    type enumeration {
+      enum "unreserved" {
+        value 0;
+        description
+          "Delete file permanently. The deleted file cannot be restored.";
+      }
+    }
+    description
+      "Specify the action of deleting file.";
+  }
+  typedef overwrite-type {
+    type enumeration {
+      enum "overwrite" {
+        value 0;
+        description
+          "Overwrite the file with same name as the destination file while compressing or decompressing.";
+      }
+      enum "not-overwrite" {
+        value 1;
+      description
+          "Not to overwrite the file with same name as the destination file while compressing or decompressing.";
+      }
+    }
+    description
+      "The overwrite strategy when there exists a file with same name as the destination file, should be overwrite or not-overwrite.";
+  }
+  container file-operation {
+    config false;
+    description
+      "Indicate file system management.";
+    container dirs {
+      description
+        "List of Operational data of file information.";
+      list dir {
+        key "file-name dir-name";
+        description
+          "Operational data of file information.";
+        leaf file-name {
+          type string {
+            length "1..255";
+          }
+          description
+            "Specify the name of a folder or file.";
+        }
+        leaf dir-name {
+          type string {
+            length "1..255";
+          }
+          description
+            "Specifies the name of a folder or a file.";
+        }
+        leaf attribute {
+          type string {
+            length "1..16";
+          }
+          description
+            "Specify attributes of a folder or file.";
+        }
+        leaf modify-time {
+          type yang:date-and-time;
+          description
+            "Specify the last time for modifying a folder or file.";
+        }
+        leaf size {
+          type int32;
+          units kB;
+          description
+            "Specify the size of a folder or file. Integer type and the size of a folder is expressed as 4096.";
+        }
+      }
+    }
+  }
+
+  rpc copy-file {
+    description
+      "Copy a file. A folder, however, cannot be copied.";
+    ext:node-ref "/file-operation/dirs/dir";  
+    input {
+      leaf src-file-name {
+        type leafref {
+          path "/file-operation/dirs/dir/file-name";
+        }
+        mandatory true;
+        description
+          "Specify a source file name that can be listed in a full directory or a relative directory.";
+      }
+      leaf des-file-name {
+        type string {
+          length "1..255";
+        }
+        mandatory true;
+        description
+          "Specify a destination file name that can be listed in a full path or a relative path.";
+      }
+    }
+  }
+  rpc delete-file {
+    description
+      "Delete file permanently. A folder, however, cannot be deleted.";
+    ext:node-ref "/file-operation/dirs/dir";
+    input {
+      leaf file-name {
+        type leafref {
+          path "/file-operation/dirs/dir/file-name";
+        }
+        mandatory true;
+        description
+          "Specify a file name that can be listed in a full directory or a relative directory.";
+      }
+      leaf delete-type {
+        type delete-type;
+        mandatory true;
+        description
+          "Specify the action of deleting file.";
+      }
+    }
+  }
+  rpc zip-file {
+    description
+      "Compress a file. A folder, however, cannot be compressed.";
+    ext:node-ref "/file-operation/dirs/dir";
+    input {
+      leaf src-file-name {
+        type leafref {
+          path "/file-operation/dirs/dir/file-name";
+        }
+        mandatory true;
+        description
+          "Specify a source file name that can be listed in a full directory or a relative directory.";
+      }
+      leaf des-file-name {
+        type string {
+          length "1..255";
+        }
+        mandatory true;
+        description
+          "Specify a destination file name that can be listed in a full directory or a relative directory.";
+      }
+      leaf overwrite-type {
+        type overwrite-type;
+        default "not-overwrite";
+        description
+          "Specify the overwrite strategy when there exists a file with same name as the destination file, should be overwrite or not-overwrite.";
+      }
+    }
+  }
+  rpc unzip-file {
+    description
+      "Decompress a file. A folder, however, cannot be decompressed.";
+    ext:node-ref "/file-operation/dirs/dir";
+    input {
+      leaf src-file-name {
+        type leafref {
+          path "/file-operation/dirs/dir/file-name";
+        }
+        mandatory true;
+        description
+          "Specify a source file name that can be listed in a full directory or a relative directory.";
+      }
+      leaf des-file-name {
+        type string {
+          length "1..255";
+        }
+        mandatory true;
+        description
+          "Specify a destination file name that can be listed in a full path or a relative path.";
+      }
+      leaf overwrite-type {
+        type overwrite-type;
+        default "not-overwrite";
+        description
+          "Specify the overwrite strategy when there exists a file with same name as the destination file, should be overwrite or not-overwrite.";
+      }
+    }
+  }
+  rpc move-file {
+    description
+      "Move a file. A folder, however, cannot be moved.";
+    ext:node-ref "/file-operation/dirs/dir";
+    input {
+      leaf src-file-name {
+        type leafref {
+          path "/file-operation/dirs/dir/file-name";
+        }
+        mandatory true;
+        description
+          "Specify a source file name that can be listed in a full directory or a relative directory.";
+      }
+      leaf des-file-name {
+        type string {
+          length "1..255";
+        }
+        mandatory true;
+        description
+          "Specify a destination file name that can be listed in a full directory or a relative directory.";
+      }
+    }
+  }
+  rpc rename {
+    description
+      "Rename a file or folder.";
+    ext:node-ref "/file-operation/dirs/dir";
+    input {
+      leaf src-name {
+        type leafref {
+          path "/file-operation/dirs/dir/file-name";
+        }
+        mandatory true;
+        description
+          "Specify a source file or folder name that can be listed in a full directory or a relative directory.";
+      }
+      leaf des-name {
+        type string {
+          length "1..255";
+        }
+        mandatory true;
+        description
+          "Specify a destination file or folder name that can be listed in a full directory or a relative directory.";
+      }
+    }
+  }
+  rpc make-dir {
+    description
+      "Create a folder.";
+    ext:node-ref "/file-operation/dirs/dir";
+    input {
+      leaf dir-name {
+        type string {
+            length "1..255";
+          }
+        mandatory true;
+        description
+          "Specify a folder that will be created.";
+      }
+    }
+  }
+  rpc remove-dir {
+    description
+      "Remove a folder.";
+    ext:node-ref "/file-operation/dirs/dir";
+    input {
+      leaf dir-name {
+        type leafref {
+          path "/file-operation/dirs/dir/dir-name";
+        }
+        mandatory true;
+        description
+          "Specify a folder that will be removed.";
+      }
+    }
+  }
+}

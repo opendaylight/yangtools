@@ -1,0 +1,1249 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-pp6 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-pp6";
+  prefix pp6;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ip {
+    prefix ip;
+  }  
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "IPv6 related configurations.";
+  revision 2019-04-01 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef extension-header-type {
+    type enumeration {
+      enum "fragment" {
+        value 44;
+        description
+          "IPv6 fragment extension header.";
+      }
+      enum "esp" {
+        value 50;
+        description
+          "IPv6 encapsulating security payload extension header.";
+      }
+      enum "ah" {
+        value 51;
+        description
+          "IPv6 authentication extension header.";
+      }	  
+    }
+    description
+      "Description of extension header type.";
+  }  
+  typedef filter-rule-type {
+    type enumeration {
+      enum "deny" {
+        value 0;
+        description
+          "Deny process specified IPv6 extension header packets.";
+      }
+      enum "permit" {
+        value 1;
+        description
+          "Permit process specified IPv6 extension header.";
+      }
+    }
+    description
+      "Description of filter-rule-type.";
+  }
+  typedef options-all-flag-type {
+    type enumeration {
+      enum "false" {
+        value 0;
+        description
+          "Not all options of an IPv6 extension header.";
+      }
+      enum "true" {
+        value 1;
+        description
+          "All options of an IPv6 extension header.";
+      }
+    }
+    description
+      "Description of options all flag type.";
+  }
+  typedef icmp-pkt-type {
+    type enumeration {
+      enum "port-unreachable" {
+	    value 1;
+        description
+          "Indicates that the packet type is port unreachable error packet.";
+      }
+      enum "hoplimit-exceeded" {
+	    value 2;
+        description
+          "Indicates that the packet type is hoplimit exceeded error packet.";
+      }
+    }
+    description
+      "Description of icmpv6 error packet type.";
+  }
+  typedef fragment-flag-type {
+    type enumeration {
+      enum "no" {
+	    value 0;
+        description
+          "Clear IPv6 Path MTU fragment flag.";
+      }
+      enum "yes" {
+	    value 1;
+        description
+          "Set IPv6 Path MTU fragment flag.";
+      }
+    }
+    description
+      "Description of fragment flag type.";
+  }
+  typedef pmtu-type {
+    type enumeration {
+      enum "static" {
+	    value 0;
+        description
+          "Static IPv6 Path MTU entry.";
+      }
+      enum "dynamic" {
+	    value 1;
+        description
+          "Dynamic IPv6 Path MTU entry.";
+      }
+    }
+    description
+      "Description of IPv6 Path MTU type, static or dynamic.";
+  }
+  typedef switch-type {
+    type enumeration {
+      enum "allow" {
+        value 0;
+        description
+          "Allow packets to pass.";
+      }
+      enum "deny" {
+        value 1;
+        description
+          "Reject packets to pass.";
+      }
+    }
+    description
+      "Description of switch type.";
+  }
+  typedef send-or-receive-type {
+    type enumeration {
+      enum "send" {
+        value 0;
+        description
+          "Packet sending.";
+      }
+      enum "receive" {
+        value 1;
+        description
+          "Packet reception.";
+      }
+    }
+    description
+      "Description of packet action.";
+  }
+  typedef icmp6-name-type {
+    type enumeration {
+      enum "network-unreachable" {
+        value 1;
+        description
+          "Type = 1, Code = 0. Not in the range of all-famous-receive-switch.";
+      }
+      enum "host-unreachable" {
+        value 2;
+        description
+          "Type = 1, Code = 3. Not in the range of all-famous-receive-switch.";
+      }
+      enum "port-unreachable" {
+        value 3;
+        description
+          "Type = 1, Code = 4.";
+      }
+      enum "packet-too-big" {
+        value 4;
+        description
+          "Type = 2, Code = 0.";
+      }
+      enum "hop-limit-exceeded" {
+        value 5;
+        description
+          "Type = 3, Code = 0.";
+      }
+      enum "echo" {
+        value 6;
+        description
+          "Type = 128, Code = 0.";
+      }
+      enum "echo-reply" {
+        value 7;
+        description
+          "Type = 129, Code = 0.";
+      }
+      enum "router-solicitation" {
+        value 8;
+        description
+          "Type = 133, Code = 0.";
+      }
+      enum "router-advertisement" {
+        value 9;
+        description
+          "Type = 134, Code = 0.";
+      }
+      enum "neighbor-solicitation" {
+        value 10;
+        description
+          "Type = 135, Code = 0.";
+      }
+      enum "neighbor-advertisement" {
+        value 11;
+        description
+          "Type = 136, Code = 0.";
+      }
+      enum "redirect" {
+        value 12;
+        description
+          "Type = 137, Code = 0. Not in the range of all-famous-receive-switch.";
+      }
+      enum "multicast-listener-query" {
+        value 13;
+        description
+          "Type = 130, code = 0.";
+      }
+      enum "multicast-listener-report" {
+        value 14;
+        description
+          "Type = 131, code = 0.";
+      }
+      enum "multicast-listener-done" {
+        value 15;
+        description
+          "Type = 132, code = 0.";
+      }
+      enum "multicast-listener-report-v2" {
+        value 16;
+        description
+          "Type = 143, code = 0.";
+      }
+      enum "un-famous" {
+        value 17;
+        description
+          "The ICMPv6 type that is not in the range of all-famous-send-switch, nor in the range of all-famous-receive-switch.";
+      }
+    }
+    description
+      "Description of ICMPv6 name type.";
+  }
+  container pp6 {
+    description
+      "IPv6 related configurations.";
+    container ipv6-global {
+      description
+        "Configure global PP6 attribute configuration.";
+      leaf bucket-size {
+        type uint32 {
+          range "1..200";
+        }
+        default "10";
+        description
+          "Number of ICMPv6 token buckets.";
+      }
+      leaf interval {
+        type uint32 {
+          range "0..2147483647";
+        }
+        units "ms";
+        default "100";
+        description
+          "ICMPv6 interval for sending a specified number of ICMPv6 token buckets.";
+      }
+      leaf echo-reply {
+        type boolean;
+        description
+          "Enable/disable sending enabling of echo reply packets.";
+      }
+      leaf host-unreach {
+        type boolean;
+        description
+          "Enable/disable host-unreachable error.";
+      }
+      leaf port-unreach {
+        type boolean;
+        description
+          "Enable/disable port-unreachable error.";
+      }
+      leaf timeout {
+        type uint32 {
+          range "10..100";
+        }
+        units "min";
+        default "10";
+        description
+          "Path-mtu lifecycle.";
+      }
+      leaf black-list-flag {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function enabled IPv6 blacklist packet permit.";
+      }
+      leaf too-big-limit-flag {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the function enabled toobig packet process rate limit.";
+      }
+      leaf permit-incomplete-fragment {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable global flag of allowing first fragment with incomplete IPv6 header chain.";
+      }
+      leaf reassemble-timeout {
+        type uint32 {
+          range "5..120";
+        }
+        units "ms";
+        default "60";
+        description
+          "The timeout for the split packets reorganization.";
+      }
+    }
+    container icmp6-pkt-switch {
+    description
+      "Configure the ICMPv6 packet sending and receiving switch. All-famous is enabled by default. When matching, a single type of configuration is preferred, followed by an all-famous configuration.";
+      leaf all-famous-send-switch {
+        type switch-type;
+        default "allow";
+        description
+          "Switchs for all famous send types. But, the configuration in each-type-switch will be used first, if it exists. Refer to the definition in icmp6-name-type for the scope of all-famous send types.";
+      }
+      leaf all-famous-receive-switch {
+        type switch-type;
+        default "allow";
+        description
+          "Switchs for all famous receive types. But, the configuration in each-type-switch will be used first, if it exists. Refer to the definition in icmp6-name-type for the scope of all-famous receive types.";
+      }
+      container each-type-switchs {
+        description
+          "List of switches of a single ICMPv6 type.";
+        list each-type-switch {
+          key "type code send-or-receive";
+          description
+            "Configure switch for single ICMPv6 type list.";
+          leaf type {
+            type uint32 {
+              range "0..255";
+            }
+            description
+              "The ICMPv6 type.";
+          }
+          leaf code {
+            type uint32 {
+              range "0..255";
+            }
+            description
+              "The ICMPv6 code.";
+          }
+          leaf send-or-receive {
+            type send-or-receive-type;
+            description
+              "Packet reception or packet sending.";
+          }
+          leaf switch {
+            type switch-type;
+            mandatory true;
+            description
+              "Switch for this ICMPv6 types.";
+          }
+          leaf name {
+            type icmp6-name-type;
+            config false;
+            description
+              "The name of ICMPv6 type.";
+          }
+        }
+      }
+    }
+    container extension-header-filter-globals {		
+      description
+        "Configure global IPv6 extension header filter configurations.";
+      container hop-by-hop-switch {
+        description
+          "Configure the IPv6 packet with hop-by-hop options extension header switch.";
+        leaf all-options {
+          type filter-rule-type;
+          description
+            "All options of IPv6 extension header switch.";
+        }
+        container options {
+          description
+            "List of some options of IPv6 extension header switchs.";				
+          list option {
+            key "option-code";
+            description
+              "Configure some options of IPv6 extension header switch.";		  
+            leaf option-code {
+              type uint8 {
+                  range "0..255";
+              }
+              description
+                "Option code of IPv6 extension header.";
+            }		
+            leaf filter-rule {
+              type filter-rule-type;
+              mandatory true;			  
+              description
+                "Filter policy of IPv6 packet.";
+              ext:support-filter "true";
+            }		  
+          }			
+        }		
+      }
+      container routing-switch {
+        description
+          "Configure the IPv6 packet with routing options extension header switch.";
+        leaf all-options {
+          type filter-rule-type;
+          description
+            "All options of IPv6 extension header switch.";
+        }
+        container options {
+          description
+            "List of some options of IPv6 extension header switchs.";		
+          list option {
+            key "option-code";
+            description
+              "Configure some options of IPv6 extension header switch.";		  
+            leaf option-code {
+              type uint8 {
+                  range "0..255";
+              }
+              description
+                "Option code of IPv6 extension header.";
+            }		
+            leaf filter-rule {
+              type filter-rule-type;
+              mandatory true;			  
+              description
+                "Filter policy of IPv6 packet.";
+              ext:support-filter "true";
+            }		  
+          }
+        }		
+      }
+      container destination-switch {
+        description
+          "Configure the IPv6 packet with destination options extension header switch.";
+        leaf all-options {
+          type filter-rule-type;
+          description
+            "All options of IPv6 extension header switch.";
+        }
+        container options {
+          description
+            "List of some options of IPv6 extension header switchs.";		
+          list option {
+            key "option-code";
+            description
+              "Configure some options of IPv6 extension header switch.";		  
+            leaf option-code {
+              type uint8 {
+                  range "0..255";
+              }
+              description
+                "Option code of IPv6 extension header.";
+            }		
+            leaf filter-rule {
+              type filter-rule-type;
+              mandatory true;			  
+              description
+                "Filter policy of IPv6 packet.";
+              ext:support-filter "true";
+            }		  
+          }
+        }		
+      }
+      container no-option-exh-switchs {
+        description
+          "List of the IPv6 packet with no options extension header switchs.";	  
+        list no-option-exh-switch {
+          key "exh-type";		  
+          description
+            "Configure the IPv6 packet with no options extension header switch.";
+          leaf exh-type {
+            type extension-header-type;
+            description
+              "IPv6 extension header type which have no option.";
+          }	
+          leaf filter-rule {
+            type filter-rule-type;
+            mandatory true;			
+            description
+              "Filter policy of IPv6 packet.";
+            ext:support-filter "true";
+          }		
+        }
+      }	  
+    }
+    container ipv6-stat {
+      config false;
+      description
+        "Statistics of querying for the statistics on IPv6 packets.";
+      leaf total-snd {
+        type uint32;
+        config false;
+        description
+          "Total count of sent packets.";
+      }
+      leaf local-snd {
+        type uint32;
+        config false;
+        description
+          "Count of packets that are sent out locally.";
+      }
+      leaf forwd-snd {
+        type uint32;
+        config false;
+        description
+          "Count of forwarded packets.";
+      }
+      leaf rawpkt-snd {
+        type uint32;
+        config false;
+        description
+          "Count of sent Raw packets.";
+      }
+      leaf discard-snd {
+        type uint32;
+        config false;
+        description
+          "Count of discarded packets due to the limit of sending rate.";
+      }
+      leaf fragmented {
+        type uint32;
+        config false;
+        description
+          "Count of sent fragmented packets.";
+      }
+      leaf fragment-snd {
+        type uint32;
+        config false;
+        description
+          "Count of sent packet fragments.";
+      }
+      leaf fragment-fail {
+        type uint32;
+        config false;
+        description
+          "Count of packet fragments that fail to be sent.";
+      }
+      leaf multi-snd {
+        type uint32;
+        config false;
+        description
+          "Count of sent multicast packets.";
+      }
+      leaf total-rcv {
+        type uint32;
+        config false;
+        description
+          "Total count of received packets.";
+      }
+      leaf local-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of packets that are received locally.";
+      }
+      leaf hop-exceed-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose number of hops exceeds the upper limit.";
+      }
+      leaf head-err-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of packets whose headers are incorrect.";
+      }
+      leaf too-big-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received oversized packets.";
+      }
+      leaf routfail-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose routes are unreachable.";
+      }
+      leaf addrerr-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received packets with incorrect addresses.";
+      }
+      leaf protoerr-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose protocols are incorrect.";
+      }
+      leaf truncated-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received truncated packets.";
+      }
+      leaf opterr-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose options are incorrect.";
+      }
+      leaf frags-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received packet fragments.";
+      }
+      leaf reassed-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received packets that are reassembled.";
+      }
+      leaf reass-timeout-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose reassembling is timeout.";
+      }
+      leaf multi-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received multicast packets.";
+      }
+      leaf hop-by-hop-option {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose extension headers are Hop-by-Hop options.";
+      }
+      leaf mobility-option {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose extension headers are mobility header.";
+      }
+      leaf dest-option {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose extension headers are destination options.";
+      }
+      leaf routing-option {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose extension headers are routing header.";
+      }
+      leaf fragment-option {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose extension headers are fragment header.";
+      }
+      leaf auth-option {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose extension headers are authentication header.";
+      }
+      leaf encap-option {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose extension headers are encapsulation header.";
+      }
+      leaf no-header {
+        type uint32;
+        config false;
+        description
+          "Count of received packets without any packet header after extension headers.";
+      }
+      leaf tlv-length-error {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose options length are incorrect.";
+      }
+      leaf opt-length-error {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose extension headers length are incorrect.";
+      }
+      leaf opt-unknown {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose extension headers type are incorrect.";
+      }
+      leaf type-unknown {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose options type are incorrect.";
+      }
+      leaf hbh-option-filter {
+        type uint32;
+        config false;
+        description
+          "Count of filtered packets whose extension headers are Hop-by-Hop options.";
+      }
+      leaf dest-option-filter {
+        type uint32;
+        config false;
+        description
+          "Count of filtered packets whose extension headers are destination options.";
+      }
+      leaf rout-option-filter {
+        type uint32;
+        config false;
+        description
+          "Count of filtered packets whose extension headers are routing header.";
+      }
+      leaf frag-option-filter {
+        type uint32;
+        config false;
+        description
+          "Count of filtered packets whose extension headers are fragment header.";
+      }
+      leaf ah-option-filter {
+        type uint32;
+        config false;
+        description
+          "Count of filtered packets whose extension headers are authentication header.";
+      }
+      leaf esp-option-filter {
+        type uint32;
+        config false;
+        description
+          "Count of filtered packets whose extension headers are encapsulation header.";
+      }
+    }
+    container icmp6-stat {
+      config false;
+      description
+        "Statistics of querying for the statistics on ICMPv6 packets.";
+      leaf total-sent {
+        type uint32;
+        config false;
+        description
+          "Total count of sent packets.";
+      }
+      leaf unreach-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent unreachable packets.";
+      }
+      leaf prohibit-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent prohibit packets.";
+      }
+      leaf hoplimit-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent hoplimit packets.";
+      }
+      leaf para-pro-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent Parameter error packets.";
+      }
+      leaf too-big-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent too big packets.";
+      }
+      leaf echo-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent echo packets.";
+      }
+      leaf echo-reply-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent echo reply packets.";
+      }
+      leaf rs-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent RS packets.";
+      }
+      leaf ra-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent RA packets.";
+      }
+      leaf ns-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent NS packets.";
+      }
+      leaf na-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent NA packets.";
+      }
+      leaf redirect-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent redirect packets.";
+      }
+      leaf rate-limit-sent {
+        type uint32;
+        config false;
+        description
+          "Count of sent rate limit packets.";
+      }
+      leaf total-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of total receive packets.";
+      }
+      leaf format-err-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of receive format error packets.";
+      }
+      leaf checksum-err-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of receive checksum error packets.";
+      }
+      leaf tooshort-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of receive too short packets.";
+      }
+      leaf bad-code-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of receive bad code packets.";
+      }
+      leaf bad-length-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of receive bad length packets.";
+      }
+      leaf unknown-info-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of receive unknown info packets.";
+      }
+      leaf unknown-err-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of receive unknown error packets.";
+      }
+      leaf unreachable-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of receive unreachable packets.";
+      }
+      leaf prohibit-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of managed restricted unreachable ICMPv6 packets received.";
+      }
+      leaf hop-exceed-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received packets whose number of hops exceeds the upper limit.";
+      }
+      leaf para-pro-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received ICMPv6 message packets is incorrect.";
+      }
+      leaf too-big-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of ICMPv6 messages received in oversized messages.";
+      }
+      leaf echo-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of ICMPv6 request packets received.";
+      }
+      leaf echo-reply-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received ICMPv6 response packets.";
+      }
+      leaf rs-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received RS messages.";
+      }
+      leaf ra-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received RA messages.";
+      }
+      leaf ns-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received NS messages.";
+      }
+      leaf na-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of received NA messages.";
+      }
+      leaf redirect-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of redirect packets received.";
+      }
+      leaf rate-limit-rcv {
+        type uint32;
+        config false;
+        description
+          "Count of unreceived packets due to ICMPv6 error handling rate limit.";
+      }
+      leaf echo-reject {
+        type uint32;
+        config false;
+        description
+          "Count of ICMPv6 echo packets discarded due to switch shutdown.";
+      }
+      leaf echoreply-reject {
+        type uint32;
+        config false;
+        description
+          "Count of ICMPv6 echoreply packets discarded due to switch shutdown.";
+      }
+      leaf hop-exceed-reject {
+        type uint32;
+        config false;
+        description
+          "Count of ICMPv6 exceed hop-limit packets discarded due to switch shutdown.";
+      }
+      leaf port-unreach-reject {
+        type uint32;
+        config false;
+        description
+          "Count of ICMPv6 messages port unreachable discarded due to the switch shutdown.";
+      }
+      leaf too-big-reject {
+        type uint32;
+        config false;
+        description
+          "Count of ICMPv6 messages oversized packets discarded due to switch shutdown.";
+      }
+      leaf ns-reject {
+        type uint32;
+        config false;
+        description
+          "Count of NS packets discarded due to switch shutdown.";
+      }
+      leaf na-reject {
+        type uint32;
+        config false;
+        description
+          "Count of NA packets discarded due to switch shutdown.";
+      }
+      leaf rs-reject {
+        type uint32;
+        config false;
+        description
+          "Count of RS packets discarded due to switch shutdown.";
+      }
+      leaf ra-reject {
+        type uint32;
+        config false;
+        description
+          "Count of RA packets discarded due to switch shutdown.";
+      }
+      leaf redirect-reject {
+        type uint32;
+        config false;
+        description
+          "Count of redirect packets discarded due to switch shutdown.";
+      }
+      leaf host-unreachable-reject {
+        type uint32;
+        config false;
+        description
+          "Count of host unreachable ICMPv6 packets discarded due to switch shutdown.";
+      }
+      leaf net-unreachable-reject {
+        type uint32;
+        config false;
+        description
+          "Count of net unreachable ICMPv6 packets discarded due to switch shutdown.";
+      }
+      leaf fragment-timeout-reject {
+        type uint32;
+        config false;
+        description
+          "Count of fragment timeout ICMPv6 packets discarded due to switch shutdown.";
+      }
+      leaf error-head-reject {
+        type uint32;
+        config false;
+        description
+          "Count of error head ICMPv6 packets discarded due to switch shutdown.";
+      }
+      leaf hostadmin-prohibit-reject {
+        type uint32;
+        config false;
+        description
+          "Count of hostadmin prohibit ICMPv6 packets discarded due to switch shutdown.";
+      }
+      leaf unkonwn-ipv6opt-reject {
+        type uint32;
+        config false;
+        description
+          "Count of unkonwn IPv6 option ICMPv6 packets discarded due to switch shutdown.";
+      }
+      leaf unknown-nexthead-reject {
+        type uint32;
+        config false;
+        description
+          "Count of unknown next-header ICMPv6 packets discarded due to switch shutdown.";
+      }
+      leaf other-reject {
+        type uint32;
+        config false;
+        description
+          "Count of other ICMPv6 packets discarded due to switch shutdown.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ip:ipv6" {
+    when "../ifm:type!='Tunnel' and ../ifm:type!='LoopBack' and ../ifm:type!='ServiceIf' and ../ifm:type!='Virtual-if'";  	  
+    description
+      "All configurations of the PP6 under the interface.";
+    container pp6-collection {
+      description
+        "Configure PP6 interface attribute configurations.";
+      leaf permit-incomplete-fragment {
+        type boolean;
+        description
+          "Enable/disable flag of allowing first fragment with incomplete IPv6 header chain in IPv6 enabled interfaces.";
+      }
+    }
+    container extension-header-filter {
+      when "../../ifm:type!='NULL' and ../../ifm:type!='Tunnel' and ../../ifm:type!='LoopBack' and ../../ifm:type!='ServiceIf' and ../../ifm:type!='Virtual-if' and ../../ifm:type!='Cpos' and ../../ifm:type!='Cpos-Trunk' and ../../ifm:type!='Atm-Bundle' and ../../ifm:type!='Serial' and ../../ifm:type!='Trunk-Serial' and ../../ifm:type!='Global-Mp-Group' and ../../ifm:type!='Gmpls-Uni'";
+      description
+        "Configure interface IPv6 extension header filter configurations."; 		  
+      container hop-by-hop-switch {		  
+        description
+          "Configure the IPv6 packet with hop-by-hop options extension header switch.";	
+        leaf all-options {
+          type filter-rule-type;
+          description
+            "All options of IPv6 extension header switch.";
+        }
+        container options {
+          description
+            "List of some options of IPv6 extension header switch.";			  
+          list option {
+            key "option-code";
+            description
+              "Configure some options of IPv6 extension header switch.";		
+            leaf option-code {
+              type uint8 {
+                  range "0..255";
+              }
+              description
+                "Option code of IPv6 extension header.";
+            }		
+            leaf filter-rule {
+              type filter-rule-type;
+              mandatory true;			  
+              description
+                "Filter policy of IPv6 packet.";
+              ext:support-filter "true";
+            }		  
+          }
+        }	  
+      }
+      container routing-switch {
+        description
+          "Configure the IPv6 packet with routing options extension header switchs.";	
+        leaf all-options {
+          type filter-rule-type;
+          description
+            "All options of IPv6 extension header switch.";
+        }
+        container options {
+          description
+            "List of some options of IPv6 extension header switch.";			  
+          list option {
+            key "option-code";
+            description
+              "Configure some options of IPv6 extension header switch.";		
+            leaf option-code {
+              type uint8 {
+                  range "0..255";
+              }
+              description
+                "Option code of IPv6 extension header.";
+            }		
+            leaf filter-rule {
+              type filter-rule-type;
+              mandatory true;			  
+              description
+                "Filter policy of IPv6 packet.";
+              ext:support-filter "true";
+            }		  
+          }
+        }
+      }
+      container destination-switch {
+        description
+          "Configure the IPv6 packet with destination options extension header switchs.";
+        leaf all-options {
+          type filter-rule-type;
+          description
+            "All options of IPv6 extension header switch.";
+        }
+        container options {
+          description
+            "List of some options of IPv6 extension header switch.";		  
+          list option {
+            key "option-code";
+            description
+              "Configure some options of IPv6 extension header switch.";		
+            leaf option-code {
+              type uint8 {
+                  range "0..255";
+              }
+              description
+                "Option code of IPv6 extension header.";
+            }		
+            leaf filter-rule {
+              type filter-rule-type;
+              mandatory true;			  
+              description
+                "Filter policy of IPv6 packet.";
+              ext:support-filter "true";
+            }		  
+          }
+        }
+      }
+      container no-option-exh-switchs {
+        description
+          "List of the IPv6 packet with no options extension header switchs.";	  
+        list no-option-exh-switch {
+          key "exh-type";
+          description
+            "Configure the IPv6 packet with hop-by-hop options extension header switch.";			  
+          leaf exh-type {
+            type extension-header-type;
+            description
+              "IPv6 extension header type which have no option.";
+          }	
+          leaf filter-rule {
+            type filter-rule-type;
+            mandatory true;			
+            description
+              "Filter policy of IPv6 packet.";
+            ext:support-filter "true";
+          }		
+        }
+      }	  
+    }	
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance" {
+    description
+      "All configurations of the PP6 under the network instance.";
+    container icmp6-source-address {
+      must "(./pkt-type and ./if-name) or (not(./pkt-type) and not(./if-name))";
+      description
+        "Configure a loopback interface address as a source IP address for an ICMP6 error packet.";
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='LoopBack'";
+        must "/ifm:ifm/ifm:interfaces/ifm:interface/ip:ipv6";
+        must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name = ../../ni:name";
+        description
+          "Interface name.";
+      }
+      leaf pkt-type {
+        type icmp-pkt-type;	  
+        description
+          "Packet type of ICMPv6.";
+      }
+    }
+  }
+  ext:task-name "ip-stack";
+}

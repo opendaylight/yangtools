@@ -1,0 +1,63 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-dhcpv6-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-dhcpv6-deviations-CH-NE-X3";
+  prefix dhcpv6-devs-CH-NE-X3;
+
+  import huawei-dhcpv6 {
+    prefix dhcpv6;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Dynamic Host Configuration Protocol for IPv6.";
+
+  revision 2019-04-29 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  typedef dhcpv6-duid-deviations {
+    type enumeration {
+      enum invalid {
+        value 0;
+        description
+          "-";
+      }
+      enum llt {
+        value 1;
+        description
+          "Link-layer address plus time.";
+      }
+      enum user-defined {
+        value 3;
+        description
+          "User-defined.";
+      }
+    }
+    description
+      "Description of dhcp6_dhcpv6Duid_type.";
+  }
+
+  deviation "/dhcpv6:dhcpv6/dhcpv6:common/dhcpv6:global/dhcpv6:duid-format" {
+    deviate replace {
+      type dhcpv6-devs-CH-NE-X3:dhcpv6-duid-deviations;
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/dhcpv6:dhcpv6-relay-attribute/dhcpv6:rebuild-option" {
+    deviate not-supported;
+  }
+}

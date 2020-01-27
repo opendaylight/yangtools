@@ -1,0 +1,1992 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-nqa-instance {
+  yang-version 1;
+  belongs-to huawei-nqa {
+    prefix nqa;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-yang-types {
+    prefix "yang";
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of submodule nqa-instance.";
+  revision 2020-01-11 {
+    description
+      "Modify execution-policy to rpc.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-12 {
+    description
+      "ICMP modification.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-30 {
+    description
+      "ICMP modification.";
+    reference
+      "Huawei private.";
+  }
+
+  revision 2019-04-12 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef path-type {
+    type enumeration {
+      enum "bypass" {
+        value 1;
+        description
+          "Bypath.";
+      }
+    }
+    description
+      "Path type.";
+  }
+  typedef ethsvc-profile {
+    type enumeration {
+      enum profile-none {
+        value 0;
+        description
+          "None profile.";
+      }
+      enum profile-imix {
+        value 1;
+        description
+          "Imix profile.";
+      }
+    }
+    description
+      "Description of ethsvc-profile.";
+  }
+
+  typedef jitter-code-type {
+    type enumeration {
+      enum none {
+        value 1;
+        description
+          "None.";
+      }
+      enum g711a {
+        value 2;
+        description
+          "G711a.";
+      }
+      enum g711u {
+        value 3;
+        description
+          "G711u.";
+      }
+      enum g729a {
+        value 4;
+        description
+          "G729a.";
+      }
+    }
+    description
+      "Description of jitter-code-type.";
+  }
+
+  typedef jitter-mode-type {
+    type enumeration {
+      enum icmp-echo {
+        value 2;
+        description
+          "Icmp echo.";
+      }
+      enum icmp-timestamp {
+        value 1;
+        description
+          "Icmp timestamp.";
+      }
+    }
+    description
+      "Description of jitter-mode-type.";
+  }
+
+  typedef time-unit-type {
+    type enumeration {
+      enum microsecond {
+        value 1;
+        description
+          "Microsecond timestamp.";
+      }
+      enum millisecond {
+        value 0;
+        description
+          "Millisecond timestamp.";
+      }
+    }
+    description
+      "Description of time-unit-type.";
+  }
+
+  typedef recv-time-unit-type {
+    type enumeration {
+      enum unknown {
+        value 0;
+        description
+          "Unknown timestamp.";
+      }
+      enum microsecond {
+        value 2;
+        description
+          "Microsecond timestamp.";
+      }
+      enum millisecond {
+        value 1;
+        description
+          "Millisecond timestamp.";
+      }
+    }
+    description
+      "Description of recv-time-unit-type.";
+  }
+
+  typedef vxlan-reply-mode {
+    type enumeration {
+      enum no-reply {
+        value 1;
+        description
+          "No reply.";
+      }
+      enum udp {
+        value 2;
+        description
+          "UDP.";
+      }
+      enum vxlan {
+        value 3;
+        description
+          "VXLAN.";
+      }
+    }
+    description
+      "Description of vxlan-reply-mode.";
+  }
+
+  typedef lsp-reply-mode-type {
+    type enumeration {
+      enum no-reply {
+        value 1;
+        description
+          "NQA test packets are not to be responded.";
+      }
+      enum udp {
+        value 2;
+        description
+          "UDP packets are used to respond NQA test packets.";
+      }
+      enum level-control-channel {
+        value 4;
+        description
+          "Control-channel packets are used to respond to NQA test packets.";
+      }
+    }
+    description
+      "Description of lsp-reply-mode-type.";
+  }
+
+  typedef srte-lsp-reply-mode-type {
+    type enumeration {
+      enum udp {
+        value 2;
+        description
+          "UDP packets are used to respond NQA test packets.";
+      }
+    }
+    description
+      "Description of srte-lsp-reply-mode-type.";
+  }
+
+  typedef ip-lsp-reply-mode-type {
+    type enumeration {
+      enum no-reply {
+        value 1;
+        description
+          "NQA test packets are not to be responded.";
+      }
+      enum udp {
+        value 2;
+        description
+          "UDP packets are used to respond NQA test packets.";
+      }
+    }
+    description
+      "Description of ip-lsp-reply-mode-type.";
+  }
+
+  typedef lsp-path {
+    type enumeration {
+      enum working {
+        value 0;
+        description
+          "Use working tunnel.";
+      }
+      enum hot-standby {
+        value 1;
+        description
+          "Use hot standby tunnel.";
+      }
+      enum primary {
+        value 2;
+        description
+          "Use hot primary tunnel.";
+      }
+    }
+    description
+      "Description of lsp-path.";
+  }
+
+  typedef remote-fec-type {
+    type enumeration {
+      enum null {
+        value 0;
+        description
+          "Null.";
+      }
+      enum ldp {
+        value 1;
+        description
+          "Ldp.";
+      }
+    }
+    description
+      "Description of remote-fec-type.";
+  }
+
+  typedef ttl-mode {
+    type enumeration {
+      enum uniform {
+        value 1;
+        description
+          "Uniform.";
+      }
+      enum pipe {
+        value 2;
+        description
+          "Pipe.";
+      }
+    }
+    description
+      "Description of ttl-mode.";
+  }
+
+  typedef vc-type {
+    type enumeration {
+      enum ldp {
+        value 1;
+        description
+          "Ldp.";
+      }
+    }
+    description
+      "Description of vc-type.";
+  }
+
+  typedef lsp-version {
+    type enumeration {
+      enum rfc4379 {
+        value 2;
+        description
+          "Rfc4379.";
+      }
+      enum ptn-mode {
+        value 3;
+        description
+          "Ptn-mode.";
+      }
+    }
+    description
+      "Description of lsp-version.";
+  }
+
+  typedef vpls-reply-mode-type {
+    type enumeration {
+      enum no-reply {
+        value 1;
+        description
+          "No-reply.";
+      }
+      enum udp {
+        value 2;
+        description
+          "Udp.";
+      }
+      enum udp-via-vpls {
+        value 5;
+        description
+          "Udp-via-vpls.";
+      }
+    }
+    description
+      "Description of vpls-reply-mode-type.";
+  }
+
+  typedef pw-type {
+    type enumeration {
+      enum atm-aal5 {
+        value 2;
+        description
+          "ATM aal5.";
+      }
+      enum atm-cell-transport {
+        value 3;
+        description
+          "ATM cell transport.";
+      }
+      enum vlan {
+        value 4;
+        description
+          "VLAN.";
+      }
+      enum ethernet {
+        value 5;
+        description
+          "Ethernet.";
+      }
+      enum hdlc {
+        value 6;
+        description
+          "High - level Data Link Control.";
+      }
+      enum ppp {
+        value 7;
+        description
+          "Point - to - Point Protocol.";
+      }
+      enum atm-nto1-vcc {
+        value 9;
+        description
+          "ATM n to one VCC cell mode.";
+      }
+      enum atm-nto1-vpc {
+        value 10;
+        description
+          "ATM n to one VPC cell mode.";
+      }
+      enum ip-layer2 {
+        value 11;
+        description
+          "IP layer 2.";
+      }
+      enum atm-1to1-vcc {
+        value 12;
+        description
+          "ATM one to one VCC cell mode.";
+      }
+      enum atm-1to1-vpc {
+        value 13;
+        description
+          "ATM one to one VPC cell mode.";
+      }
+      enum satop-e1 {
+        value 17;
+        description
+          "Satop e1.";
+      }
+      enum cesopsn-basic {
+        value 21;
+        description
+          "Cesopsn basi.";
+      }
+      enum ip-interworking {
+        value 64;
+        description
+          "IP interworking.";
+      }
+    }
+    description
+      "Description of pw-type.";
+  }
+
+  typedef lsp-jitter-type {
+    type enumeration {
+      enum ipv4 {
+        value 0;
+        description
+          "The test-type of LSP jitter is IPv4.";
+      }
+      enum te {
+        value 1;
+        description
+          "The test-type of LSP jitter is te.";
+      }
+    }
+    description
+      "Description of lsp-jitter-type.";
+  }
+
+  typedef test-measure-type {
+    type enumeration {
+      enum delay {
+        value 1;
+        description
+          "Delay Test.";
+      }
+      enum loss {
+        value 2;
+        description
+          "Loss Test.";
+      }
+      enum throughput {
+        value 3;
+        description
+          "Throughput Test.";
+      }
+    }
+    description
+      "Description of test-measure-type.";
+  }
+
+  typedef test-rate-type {
+    type enumeration {
+      enum information-rate {
+        value 2;
+        description
+          "Information rate.";
+      }
+      enum utilized-line-rate {
+        value 1;
+        description
+          "Utilized line rate.";
+      }
+    }
+    description
+      "Description of test-rate-type.";
+  }
+
+  typedef test-ratio-unit-type {
+    type enumeration {
+      enum 10e-4 {
+        value 0;
+        description
+          "10e-4.";
+      }
+      enum 10e-9 {
+        value 1;
+        description
+          "10e-9.";
+      }
+    }
+    description
+      "Description of test-ratio-unit-type.";
+  }
+
+  typedef pwe3-label-type {
+    type enumeration {
+      enum label-alert {
+        value 1;
+        description
+          "Label alert.";
+      }
+      enum control-word {
+        value 2;
+        description
+          "Control word.";
+      }
+      enum normal {
+        value 3;
+        description
+          "Normal.";
+      }
+    }
+    description
+      "Description of pwe3-label-type.";
+  }
+
+  typedef start-now-type {
+    type enumeration {
+      enum start-now {
+        value 1;
+        description
+          "Start now.";
+      }
+    }
+    description
+      "Start now.";
+  }
+  
+  typedef stop-type {
+    type enumeration {
+      enum stop {
+        value 1;
+        description
+          "Stop.";
+      }
+    }
+    description
+      "Stop.";
+  }
+  
+  grouping instances-type {
+    description
+      "The network quality assurance.";
+    list instance {
+      key "admin-name test-name";
+      description
+        "Configure test instance.";
+      leaf admin-name {
+        type string {
+          length "1..32";
+        }
+        description
+          "Administrator name.";
+      }
+      leaf test-name {
+        type string {
+          length "1..32";
+        }
+        description
+          "Test name.";
+      }
+      choice type {
+        description
+          "The test-type of instance.";
+        case icmp {
+          description
+            "ICMP NQA test.";
+          container icmp-input {
+            must "not(ipv4-next-hop and (ni-name != '_public_' or fwd-if-name or path-type = 'bypass'))";
+            must "not(path-type = 'bypass' and (pass-route = 'true' or fwd-if-name or ipv6-dest-address or ipv6-source-address))";
+            must "not(pass-route = 'true' and (fwd-if-name or ipv6-dest-address or ipv6-source-address))";
+            must "not(out-if-name and fwd-if-name)";
+            presence "ICMP PING test instance.";
+            description
+              "Configure icmp test intance input.";
+            uses icmp-intance-input;
+          }
+        }
+        case jitter {
+          description
+            "Jitter NQA test that tests UDP-packet jitter.";
+          container jitter-input {
+            must "not(hardware-enable = 'true' and data-fill)";
+            must "not(hardware-enable = 'false' and timestamp = 'microsecond')";
+            must "(hardware-enable = 'false' and interval >= 20) or (hardware-enable = 'true' and interval >= 10)";
+            presence "Present enable jitter test intance input";
+            description
+              "Configure jitter test intance input.";
+            uses jitter-intance-input;
+          }
+        }
+        case icmp-jitter {
+          description
+            "ICMP jitter NQA test.";
+          container icmp-jitter-input {
+            presence "Present enable icmp-jitter test intance input";
+            description
+              "Configure ICMP jitter test intance input.";
+            uses icmp-jitter-intance-input;
+          }
+        }
+        case lsp-jitter {
+          description
+            "LSP jitter NQA test.";
+          container lsp-jitter-input {
+            presence "Present enable LSP jitter test intance input";
+            description
+              "Configure lsptjitter test intance input.";
+            uses lsp-jitter-intance-input;
+          }
+        }
+        case pwe3-trace {
+          description
+            "PWE3 trace NQA test.";
+          container pwe3-trace-input {
+            presence "Present enable pwe3trace test intance input";
+            description
+              "Configure pwe3trace test intance input.";
+            uses pwe3-trace-intance-input;
+          }
+        }
+        case tcp {
+          description
+            "TCP NQA test.";
+          container tcp-input {
+            presence "Present enable tcp test intance input";
+            description
+              "Configure tcp test intance input.";
+            uses tcp-intance-input;
+          }
+        }
+      }
+      container execution-policy {
+        config false;
+        description
+          "Statistics of the test intance execution policy.";
+        choice execution-policy {
+          description
+            "The test intance start policy.";
+          case start {
+            description
+              "Start the test.";
+            choice start-type {
+              description
+                "The test intance start type.";
+              case start-now {
+                description
+                  "Start now.";
+                leaf start-now {
+                  type start-now-type;
+                  description
+                    "Start the test intance instantly.";
+                }
+                choice start-now-end-type {
+                  description
+                    "Test intance end type.";
+                  case at {
+                    description
+                      "Stop the test at the specified time.";
+                    leaf start-now-end-date-time {
+                      type yang:date-and-time;
+                      description
+                        "The test intance end time.";
+                    }
+                  }
+                  case delay {
+                    description
+                      "Stop the test after the specified delay time.";
+                    leaf start-now-end-delay-seconds {
+                      type uint32 {
+                        range "6..86399";
+                      }
+                      description
+                        "The test intance end delay seconds.";
+                    }
+                  }
+                  case lifetime {
+                    description
+                      "Stop the test after the specified life time.";
+                    leaf start-now-end-lifetime-seconds {
+                      type uint32 {
+                        range "6..86399";
+                      }
+                      description
+                        "The test intance end lifetime seconds.";
+                    }
+                  }
+                }
+              }
+              case start-at {
+                description
+                  "Execute at the specified time.";
+                leaf start-date-time {
+                  type yang:date-and-time;
+                  description
+                    "The test intance start time.";
+                }
+                choice start-at-end-type {
+                  description
+                    "Test intance end type.";
+                  case at {
+                    description
+                      "Stop the test at the specified time.";
+                    leaf start-at-end-date-time {
+                      type yang:date-and-time;
+                      description
+                        "The test intance end time.";
+                    }
+                  }
+                  case delay {
+                    description
+                      "Stop the test after the specified delay time.";
+                    leaf start-at-end-delay-seconds {
+                      type uint32 {
+                        range "6..86399";
+                      }
+                      description
+                        "The test intance end delay seconds.";
+                    }
+                  }
+                  case lifetime {
+                    description
+                      "Stop the test after the specified life time.";
+                    leaf start-at-end-lifetime-seconds {
+                      type uint32 {
+                        range "6..86399";
+                      }
+                      description
+                        "The test intance end lifetime seconds.";
+                    }
+                  }
+                }
+              }
+              case start-delay {
+                description
+                  "Delay some time then execute testcase.";
+                leaf start-delay-seconds {
+                  type uint32 {
+                    range "1..86399";
+                  }
+                  description
+                    "The test intance start delay seconds.";
+                }
+                choice start-delay-end-type {
+                  description
+                    "Test intance end type.";
+                  case at {
+                    description
+                      "Stop the test at the specified time.";
+                    leaf start-delay-end-date-time {
+                      type yang:date-and-time;
+                      description
+                        "The test intance end time.";
+                    }
+                  }
+                  case delay {
+                    description
+                      "Stop the test after the specified delay time.";
+                    leaf start-delay-end-delay-seconds {
+                      type uint32 {
+                        range "6..86399";
+                      }
+                      description
+                        "The test intance end delay seconds.";
+                    }
+                  }
+                  case lifetime {
+                    description
+                      "Stop the test after the specified life time.";
+                    leaf start-delay-end-lifetime-seconds {
+                      type uint32 {
+                        range "6..86399";
+                      }
+                      description
+                        "The test intance end lifetime seconds.";
+                    }
+                  }
+                }
+              }
+              case start-daily {
+                description
+                  "Execute the test intance daily.";
+                leaf daily-start-time {
+                  type pub-type:time;
+                  description
+                    "Start time of daily execution.";
+                }
+                leaf daily-start-date {
+                  type pub-type:date;
+                  description
+                    "Start date of daily execution.";
+                }
+                leaf daily-end-time {
+                  type pub-type:time;
+                  description
+                    "End time of daily execution.";
+                }
+                leaf daily-end-date {
+                  type pub-type:date;
+                  description
+                    "End date of daily execution.";
+                }
+              }
+            }
+          }
+          case stop{
+            description
+              "Stop the test.";
+            leaf stop {
+              type stop-type;
+              description
+                "Stop the test.";
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  grouping icmp-intance-input {
+    description
+      "Icmp test intance input parameters.";
+    choice address {
+      description
+        "Address information.";
+      case ipv4-address {
+        description
+          "IPv4 address.";
+        leaf ipv4-dest-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Destination IPv4 address.";
+        }
+        leaf ipv4-source-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Source IPv4 address.";
+        }
+        leaf ipv4-next-hop {
+          type inet:ipv4-address-no-zone;
+          description
+            "IPv4 next hop address.";
+        }
+      }
+      case ipv6-address {
+        description
+          "IPv6 address.";
+        leaf ipv6-dest-address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Destination IPv6 address.";
+        }
+        leaf ipv6-source-address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Source IPv6 address.";
+        }
+      }
+    }
+    leaf ni-name {
+      type leafref {
+        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+      }
+      default "_public_";
+      description
+        "Name of a VPN instance.";
+    }
+    leaf out-if-name {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Out interface name.";
+    }
+    leaf fwd-if-name {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Simulated inbound-interface name.";
+    }
+    leaf interval {
+      type uint32 {
+        range "1..60";
+      }
+      units "s";
+      default "4";
+      description
+        "Interval for sending packets, expressed in seconds.";
+    }
+    leaf probe-count {
+      type uint32 {
+        range "1..15";
+      }
+      default "3";
+      description
+        "Number of sent packets.";
+    }
+    leaf timeout {
+      type uint32 {
+        range "1..60";
+      }
+      units "s";
+      default "3";
+      description
+        "Time to wait for a response packet after a test packet is sent, expressed in seconds.";
+    }
+    leaf frequency {
+      type uint32 {
+        range "1..604800";
+      }
+      units "s";
+      description
+        "Test instance frequency, expressed in seconds. The Frequency must be greater than the value of the following formula; otherwise, the test results may be inaccurate:
+         (Number of Sent Packets - 1) * (Packet Sending Interval) + (Timeout Period)";
+    }
+    leaf fail-percent {
+      type uint32 {
+        range "1..100";
+      }
+      units "%";
+      default "100";
+      description
+        "Loss ratio (%), determining whether the test is successful.";
+    }
+    leaf data-size {
+      type uint32 {
+        range "0..8100";
+      }
+      units "Byte";
+      default "0";
+      description
+        "Packet size (byte).";
+    }
+    leaf data-fill {
+      type string {
+        length "1..230";
+      }
+      description
+        "Packing string.";
+    }
+    leaf tos {
+      type uint16 {
+        range "0..255";
+      }
+      default "0";
+      description
+        "ToS.";
+    }
+    leaf ttl {
+      type uint8 {
+        range "1..255";
+      }
+      default "30";
+      description
+        "Time to live.";
+    }
+    leaf pass-route {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable check pass route.";
+    }
+    leaf probe-fails {
+      type uint32 {
+        range "1..15";
+      }
+      default "1";
+      description
+        "Packet failed threshold determining whether send traps or events.";
+    }
+    leaf test-fails {
+      type uint32 {
+        range "1..15";
+      }
+      default "1";
+      description
+        "Test failed threshold determining whether send traps or events.";
+    }
+    leaf send-trap-bits {
+      type bits {
+        bit probefailure {
+          position 31;
+          description
+            "Indicates that a trap is sent when the OWD from the source to the destination exceeds the threshold. This parameter applies only to jitter test instances.";
+        }
+        bit rtd {
+          position 28;
+          description
+            "Indicates that a trap is sent when the RTD exceeds the threshold.";
+        }
+        bit testcomplete {
+          position 29;
+          description
+            "Indicates that a trap is sent when a test succeeds.";
+        }
+        bit testfailure {
+          position 30;
+          description
+            "Indicates that a trap is sent when the number of test failures reaches the threshold.";
+        }
+      }
+      description
+        "Configures conditions for sending traps.";
+    }
+    leaf compatibility {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable compatibility mode. When the ptn79 interworks with the ptn39, the no result is converted to failed and success.";
+    }
+    leaf result-num {
+      type uint32 {
+        range "1..10";
+      }
+      default "5";
+      description
+        "Result record number of test instance.";
+    }
+    leaf history-num {
+      type uint32 {
+        range "0..1000";
+      }
+      default "60";
+      description
+        "History record number of test instance.";
+    }
+    leaf description {
+      type string {
+        length "1..230";
+      }
+      description
+        "Description of test instance.";
+    }
+    leaf age-time {
+      type pub-type:time;
+      default "00:00:00";
+      description
+        "Aging time of test instance.";
+    }
+    leaf path-type {
+      type path-type;
+      description
+        "Path type.";
+    }
+    leaf threshold-rtd {
+      type uint32 {
+        range "1..60000";
+      }
+      description
+        "RTD threshold.";
+    }
+  }
+  grouping jitter-intance-input {
+    description
+      "Jitter test intance input parameters.";
+    choice address {
+      description
+        "IP address configurations.";
+      case ipv4-address {
+        description 
+          "IPv4 address.";
+        leaf ipv4-dest-address  {
+          type inet:ipv4-address-no-zone;
+          description
+            "Destination IPv4 address.";
+        }     
+        leaf ipv4-source-address {
+          type inet:ipv4-address-no-zone;
+          description
+          "Source IPv4 address.";
+        }
+      }
+      case ipv6-address {
+        description 
+          "IPv6 address.";
+        leaf ipv6-dest-address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Destination IPv6 address.";
+        }     
+        leaf ipv6-source-address {
+          type inet:ipv6-address-no-zone;
+          description
+          "Source IPv6 address.";
+        }
+      }
+    }
+    leaf dest-port {
+      type uint16 {
+        range "1..65535";
+      }
+      description
+        "UDP destination port.";
+    }
+    leaf source-port {
+      type uint16 {
+        range "1..65535";
+      }
+      description
+        "UDP source port.";
+    }
+    leaf ttl {
+      type uint8 {
+        range "1..255";
+      }
+      default "30";
+      description
+        "Time to live.";
+    }
+    leaf hardware-enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable packets are sent by hardware.";
+    }
+    leaf interval {
+      type uint32 {
+        range "10..60000";
+      }
+      units "ms";
+      default "20";
+      description
+        "Interval for sending packets.";
+    }
+    leaf probe-count {
+      type uint32 {
+        range "1..15";
+      }
+      default "3";
+      description
+        "Number of probes.";
+    }
+    leaf jitter-packet-num {
+      type uint32 {
+        range "1..3000";
+      }
+      default "20";
+      description
+        "Number of sent packets.";
+    }
+    leaf data-size {
+      type uint16 {
+        range "0..8100";
+      }
+      units "Byte";
+      default "0";
+      description
+        "Packet size.";
+    }
+    leaf data-fill {
+      type string {
+        length "1..230";
+      }
+      description
+        "Packing string.";
+    }
+    leaf pass-route {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable sending packet pass route.";
+    }
+    leaf tos {
+      type uint16 {
+        range "0..255";
+      }
+      default "0";
+      description
+        "TOS.";
+    }
+    leaf ni-name {
+      type leafref {
+        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+      }
+      default "_public_";
+      description
+        "Name of a VPN instance.";
+    }
+    leaf code-type {
+      type jitter-code-type;
+      default "none";
+      description
+        "Code type.";
+    }
+    leaf adv-factor {
+      when "../code-type='g711a' or ../code-type='g711u' or ../code-type='g729a'";
+      type uint8 {
+        range "0..20";
+      }
+      default "0";
+      description
+        "Advantage factor.";
+    }
+    leaf threshold-owd-ds {
+      type uint32 {
+        range "1..60000";
+      }
+      description
+        "One way delay threshold value from destination to source.";
+    }
+    leaf threshold-owd-sd {
+      type uint32 {
+        range "1..60000";
+      }
+      description
+        "One way delay threshold value from source to destination.";
+    }
+    leaf threshold-rtd {
+      type uint32 {
+        range "1..60000";
+      }
+      description
+        "Round trip delay time threshold value.";
+    }
+    leaf fail-percent {
+      type uint32 {
+        range "1..100";
+      }
+      units "%";
+      default "100";
+      description
+        "Loss ratio, determining whether the test is successful.";
+    }
+    leaf test-failtimes {
+      type uint32 {
+        range "1..15";
+      }
+      default "1";
+      description
+        "Test failed threshold determining whether send traps or events.";
+    }
+    leaf timestamp {
+      type time-unit-type;
+      default "millisecond";
+      description
+        "The unit of timestamp.";
+    }
+    leaf out-if-name {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Out interface name.";
+    }
+    leaf timeout {
+      type uint32 {
+        range "1..60";
+      }
+      units "s";
+      default "3";
+      description
+        "Time to wait for a response packet after a test packet is sent.";
+    }
+    leaf result-num {
+      type uint32 {
+        range "1..10";
+      }
+      default "5";
+      description
+        "Result record number of test instance.";
+    }
+    leaf history-num {
+      type uint32 {
+        range "0..1000";
+      }
+      default "60";
+      description
+        "History record number of test instance.";
+    }
+    leaf description {
+      type string {
+        length "1..230";
+      }
+      description
+        "Description of test instance.";
+    }
+    leaf age-time {
+      type pub-type:time;
+      default "00:00:00";
+      description
+        "Aging time of test instance.";
+    }
+    leaf frequency {
+      type uint32 {
+        range "1..604800";
+      }
+      description
+        "Test instance frequency, expressed in seconds. The Frequency must be greater than the value of the following formula; otherwise, the test results may be inaccurate:
+         (Number of Sent Packets - 1) * (Packet Sending Interval) + (Timeout Period).";
+    }
+  }
+  grouping icmp-jitter-intance-input {
+    description
+      "Icmp jitter test intance input parameters.";
+    choice address {
+      description
+        "IP address configurations.";
+      case ipv4-address {
+        description 
+          "IPv4 address.";
+        leaf ipv4-dest-address  {
+          type inet:ipv4-address-no-zone;
+          description
+            "Destination IPv4 address.";
+        }     
+        leaf ipv4-source-address {
+          type inet:ipv4-address-no-zone;
+          description
+          "Source IPv4 address.";
+        }
+      }
+      case ipv6-address {
+        description 
+          "IPv6 address.";
+        leaf ipv6-dest-address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Destination IPv6 address.";
+        }     
+        leaf ipv6-source-address {
+          type inet:ipv6-address-no-zone;
+          description
+          "Source IPv6 address.";
+        }
+      }
+    }
+    leaf ttl {
+      type uint8 {
+        range "1..255";
+      }
+      default "30";
+      description
+        "Time to live.";
+    }
+    leaf probe-count {
+      type uint32 {
+        range "1..15";
+      }
+      default "3";
+      description
+        "Number of probes.";
+    }
+    leaf hardware-enable {
+      type boolean;
+      must "not(../jitter-mode='icmp-echo') or (../jitter-mode='icmp-echo' and (../hardware-enable='false'))";
+      default "false";
+      description
+        "Enable/disable packets are sent by hardware.";
+    }
+    leaf jitter-packet-num {
+      type uint32 {
+        range "1..3000";
+      }
+      default "20";
+      description
+        "Number of packets.";
+    }
+    leaf data-size {
+      type uint16 {
+        range "0..8100";
+      }
+      units "Byte";
+      must "../jitter-mode='icmp-echo' or (not(../jitter-mode='icmp-echo') and not(../data-size))";
+      default "0";
+      description
+        "Packet size.";
+    }
+    leaf data-fill {
+      type string {
+        length "1..230";
+      }
+      must "../jitter-mode='icmp-echo' or (not(../jitter-mode='icmp-echo') and not(../data-fill))";
+      description
+        "Packing string.";
+    }
+    leaf tos {
+      type uint16 {
+        range "0..255";
+      }
+      default "0";
+      description
+        "TOS.";
+    }
+    leaf ni-name {
+      type leafref {
+        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+      }
+      default "_public_";
+      description
+        "Name of a VPN instance.";
+    }
+    leaf jitter-mode {
+      when "not(../ipv6-dest-address) and not(../ipv6-source-address)";
+      type jitter-mode-type;
+      default "icmp-timestamp";
+      description
+        "Packet format.";
+    }
+    leaf interval {
+      type uint32 {
+        range "10..60000";
+      }
+      units "ms";
+      must "../hardware-enable = 'false' and ../interval >= 20 or ../hardware-enable = 'true'";
+      default "20";
+      description
+        "Interval for sending packets, expressed in milliseconds.";
+    }
+    leaf timestamp {
+      when "not(../ipv6-dest-address) and not(../ipv6-source-address)";
+      type time-unit-type;
+      must "../hardware-enable = 'true' or ../timestamp != 'microsecond'";
+      default "millisecond";
+      description
+        "The unit of timestamp.";
+    }
+    leaf out-if-name {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Out interface name.";
+    }
+    leaf timeout {
+      type uint32 {
+        range "1..60";
+      }
+      units "s";
+      default "3";
+      description
+        "Time to wait for a response packet after a test packet is sent, expressed in seconds.";
+    }
+    leaf receive-timeunit {
+      type recv-time-unit-type;
+      must "../hardware-enable = 'true' or (../timestamp != 'microsecond' and ../timestamp != 'millisecond')";
+      default "unknown";
+      description
+        "The unit of receive timestamp.";
+    }
+    leaf fail-percent {
+      type uint32 {
+        range "1..100";
+      }
+      units "%";
+      default "100";
+      description
+        "Loss ratio, determining whether the test is sucessful.";
+    }
+    leaf result-num {
+      type uint32 {
+        range "1..10";
+      }
+      default "5";
+      description
+        "Result record number of test instance.";
+    }
+    leaf history-num {
+      type uint32 {
+        range "0..1000";
+      }
+      default "60";
+      description
+        "History record number of test instance.";
+    }
+    leaf description {
+      type string {
+        length "1..230";
+      }
+      description
+        "Description of test instance.";
+    }
+    leaf age-time {
+      type pub-type:time;
+      default "00:00:00";
+      description
+        "Aging time of test instance.";
+    }
+    leaf frequency {
+      type uint32 {
+        range "1..604800";
+      }
+      description
+        "Test instance frequency (s). The frequency must be greater than the value of the following formula; otherwise, the test results may be inaccurate:
+         (Number of Sent Packets - 1) * (Packet Sending Interval) + (Timeout Period).";
+    }
+  }
+  grouping lsp-jitter-intance-input {
+    description
+      "LSP jitter test intance input parameters.";
+    choice lsp-protocol {
+      description
+        "The test-type of LSP.";
+      case te {
+        description
+          "The test-type of LSP is TE.";
+        container te-lsp-jitter {
+          presence "Present enable te jitter test intance input";
+          description
+            "Configure container of te jitter instance.";
+          leaf tunnel-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "TE tunnel name.";
+          }
+          leaf lsp-path {
+            when "../tunnel-name";
+            type lsp-path;
+            default "working";
+            description
+              "LSP path.";
+          }
+          leaf reply-mode {
+            type lsp-reply-mode-type;
+            default "udp";
+            description
+              "LSP reply mode.";
+          }
+        }
+      }
+    }
+    leaf timeout {
+      type uint32 {
+        range "1..60";
+      }
+      units "s";
+      default "3";
+      description
+        "Time to wait for a response packet after a test packet is sent.";
+    }
+    leaf frag-flag {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable use fragment to send packets.";
+    }
+    leaf source-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Source IP address.";
+    }
+    leaf exp {
+      type uint8 {
+        range "0..7";
+      }
+      default "0";
+      description
+        "Configures the LSP exp value.";
+    }
+    leaf ttl {
+      type uint8 {
+        range "1..255";
+      }
+      default "30";
+      description
+        "TTL value of NQA test packets.";
+    }
+    leaf interval {
+      type uint32 {
+        range "1..60";
+      }
+      units "s";
+      default "1";
+      description
+        "Interval for sending packets.";
+    }
+    leaf probe-count {
+      type uint32 {
+        range "1..15";
+      }
+      default "3";
+      description
+        "Number of probes.";
+    }
+    leaf jitter-packet-num {
+      type uint32 {
+        range "1..3000";
+      }
+      default "20";
+      description
+        "Number of sent packets.";
+    }
+    leaf data-size {
+      type uint32 {
+        range "0..9600";
+      }
+      units "Byte";
+      default "0";
+      description
+        "Packet size (byte).";
+    }
+    leaf data-fill {
+      type string {
+        length "1..230";
+      }
+      description
+        "Data padding.";
+    }
+    leaf fail-percent {
+      type uint32 {
+        range "1..100";
+      }
+      units "%";
+      default "100";
+      description
+        "The rate of loss that the test case performed successfully.";
+    }
+    leaf result-num {
+      type uint32 {
+        range "1..10";
+      }
+      default "5";
+      description
+        "Result record number of test instance.";
+    }
+    leaf history-num {
+      type uint32 {
+        range "0..1000";
+      }
+      default "60";
+      description
+        "History record number of test instance.";
+    }
+    leaf description {
+      type string {
+        length "1..230";
+      }
+      description
+        "Description of test instance.";
+    }
+    leaf age-time {
+      type pub-type:time;
+      default "00:00:00";
+      description
+        "Aging time of test instance.";
+    }
+    leaf frequency {
+      type uint32 {
+        range "1..604800";
+      }
+      description
+        "Test instance frequency (s). The frequency must be greater than the value of the following formula; otherwise, the test results may be inaccurate:
+         (Number of Sent Packets - 1) * (Packet Sending Interval) + (Timeout Period).";
+    }
+  }
+  grouping pwe3-trace-intance-input {
+    description
+      "Pwe3 trace test intance input parameters.";
+    leaf vc-type {
+      type vc-type;
+      default "ldp";
+      description
+        "VC TYPE.";
+    }
+    leaf local-pw-type {
+      type pw-type;
+      default "ethernet";
+      description
+        "Local PW type.";
+    }
+    leaf local-pw-id {
+      type uint32 {
+        range "1..4294967295";
+      }
+      description
+        "Local PW ID.";
+    }
+    leaf label-type {
+      type pwe3-label-type;
+      default "control-word";
+      description
+        "Label type.";
+    }
+    leaf dest-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination IP address. (Must specify the destination address to start the test)";
+    }
+    leaf timeout {
+      type uint32 {
+        range "1..60";
+      }
+      units "s";
+      default "3";
+      description
+        "Time to wait for a response packet after a test packet is sent.";
+    }
+    leaf first-ttl {
+      type uint8 {
+        range "1..255";
+      }
+      must "(../first-ttl <= ../max-ttl)";
+      default "1";
+      description
+        "Packet first TTL.";
+    }
+    leaf max-ttl {
+      type uint8 {
+        range "1..255";
+      }
+      must "(../max-ttl > ../first-ttl)";
+      default "30";
+      description
+        "Packet maximum TTL.";
+    }
+    leaf exp {
+      type uint8 {
+        range "0..7";
+      }
+      default "0";
+      description
+        "Configures the Pwe3Trace exp value.";
+    }
+    leaf reply-mode {
+      type lsp-reply-mode-type;
+      default "udp";
+      description
+        "Pwe3Trace reply mode.";
+    }
+    leaf packet-count {
+      type uint32 {
+        range "1..15";
+      }
+      units "packet";
+      default "3";
+      description
+        "Number of sent packets.";
+    }
+    leaf probe-failtimes {
+      type uint32 {
+        range "1..15";
+      }
+      default "1";
+      description
+        "Packet failed threshold determining whether send traps or events.";
+    }
+    leaf test-failtimes {
+      type uint32 {
+        range "1..15";
+      }
+      default "1";
+      description
+        "Test failed threshold determining whether send traps or events.";
+    }
+    leaf lsp-version {
+      type lsp-version;
+      default "rfc4379";
+      description
+        "Lsp version.";
+    }
+    leaf threshold-rtd {
+      type uint32 {
+        range "1..60000";
+      }
+      description
+        "RTD threshold.";
+    }
+    leaf ttl-mode {
+      type ttl-mode;
+      default "uniform";
+      description
+        "TTL mode.";
+    }
+    leaf hop-fail-times {
+      type uint8 {
+        range "1..255";
+      }
+      default "5";
+      description
+        "The times of hop failure.";
+    }
+    leaf frag-flag {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable use fragment to send packets.";
+    }
+    leaf peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Peer IP Address.";
+    }
+    leaf no-cw-flag {
+      when "../label-type!='control-word'";
+      type boolean;
+      default "false";
+      description
+        "Enable/disable NO control word.";
+    }
+    leaf result-num {
+      type uint32 {
+        range "1..10";
+      }
+      default "5";
+      description
+        "Result record number of test instance.";
+    }
+    leaf history-num {
+      type uint32 {
+        range "0..1000";
+      }
+      default "60";
+      description
+        "History record number of test instance.";
+    }
+    leaf description {
+      type string {
+        length "1..230";
+      }
+      description
+        "Description of test instance.";
+    }
+    leaf age-time {
+      type pub-type:time;
+      default "00:00:00";
+      description
+        "Aging time of test instance.";
+    }
+    leaf frequency {
+      type uint32 {
+        range "1..604800";
+      }
+      units "s";
+      description
+        "Test instance frequency. The frequency must be greater than the value of the following formula; otherwise, the test results may be inaccurate:
+         (Number of Sent Packets - 1) * (Packet Sending Interval) + (Timeout Period).";
+    }
+  }
+  grouping tcp-intance-input {
+    description
+      "TCP test intance input parameters.";
+    leaf dest-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination IP address.";
+    }
+    leaf source-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Source IP address.";
+    }
+    leaf interval {
+      type uint32 {
+        range "1..60";
+      }
+      units "s";
+      default "4";
+      description
+        "Interval for sending packets.";
+    }
+    leaf timeout {
+      type uint32 {
+        range "1..60";
+      }
+      units "s";
+      default "3";
+      description
+        "Time to wait for a response packet after a test packet is sent.";
+    }
+    leaf ttl {
+      type uint8 {
+        range "1..255";
+      }
+      default "30";
+      description
+        "TTL value of NQA test packets.";
+    }
+    leaf probe-count {
+      type uint32 {
+        range "1..15";
+      }
+      default "3";
+      description
+        "Number of sent packets.";
+    }
+    leaf tos {
+      type uint16 {
+        range "0..255";
+      }
+      default "0";
+      description
+        "TOS Field.";
+    }
+    leaf dest-port {
+      type uint16 {
+        range "1..65535";
+      }
+      default "7";
+      description
+        "TCP destination port number.";
+    }
+    leaf source-port {
+      type uint16 {
+        range "1..65535";
+      }
+      description
+        "TCP source port number.";
+    }
+    leaf pass-route {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable check pass route.";
+    }
+    leaf ni-name {
+      type leafref {
+        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+      }
+      default "_public_";
+      description
+        "Name of a VPN instance.";
+    }
+    leaf threshold-rtd {
+      type uint32 {
+        range "1..60000";
+      }
+      description
+        "RTD threshold.";
+    }
+    leaf probe-fails {
+      type uint32 {
+        range "1..15";
+      }
+      default "1";
+      description
+        "Packet failed threshold determining whether send traps or events.";
+    }
+    leaf fail-percent {
+      type uint32 {
+        range "1..100";
+      }
+      units "%";
+      default "100";
+      description
+        "The rate of loss that the test case performed successfully.";
+    }
+    leaf test-fail-times {
+      type uint32 {
+        range "1..15";
+      }
+      default "1";
+      description
+        "Test failed threshold determining whether send traps or events.";
+    }
+    leaf result-num {
+      type uint32 {
+        range "1..10";
+      }
+      default "5";
+      description
+        "Result record number of test instance.";
+    }
+    leaf history-num {
+      type uint32 {
+        range "0..1000";
+      }
+      default "60";
+      description
+        "History record number of test instance.";
+    }
+    leaf description {
+      type string {
+        length "1..230";
+      }
+      description
+        "Description of test instance.";
+    }
+    leaf age-time {
+      type pub-type:time;
+      default "00:00:00";
+      description
+        "Aging time of test instance.";
+    }
+    leaf frequency {
+      type uint32 {
+        range "1..604800";
+      }
+      units "s";
+      description
+        "Test instance frequency. The Frequency must be greater than the value of the following formula; otherwise, the test results may be inaccurate:
+         (Number of Sent Packets - 1) * (Packet Sending Interval) + (Timeout Period).";
+    }
+  }
+}

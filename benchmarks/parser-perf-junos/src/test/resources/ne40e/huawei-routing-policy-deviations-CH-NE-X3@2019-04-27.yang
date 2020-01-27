@@ -1,0 +1,147 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-routing-policy-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-routing-policy-deviations-CH-NE-X3";
+  prefix rtp-devs-CH-NE-X3;
+
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Routing policies are used to filter routes and control the receiving and advertising of routes. By changing the route attributes, such as reachability, you can change the path through which the traffic passes.";
+
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  typedef route-type-deviations {
+    type enumeration {
+      enum external1 {
+        value 1;
+        description
+          "Type-1 external route of OSPF.";
+      }
+      enum external2 {
+        value 2;
+        description
+          "Type-2 external route of OSPF.";
+      }
+      enum internal {
+        value 4;
+        description
+          "OSPF internal route, including inter-area routes and intra-area routes of OSPF.";
+      }
+      enum isis-level1 {
+        value 5;
+        description
+          "Level-1 route of IS-IS.";
+      }
+      enum isis-level2 {
+        value 6;
+        description
+          "Level-2 route of IS-IS.";
+      }
+      enum nssa-external1 {
+        value 7;
+        description
+          "NSSA type-1 external route of OSPF.";
+      }
+      enum nssa-external2 {
+        value 8;
+        description
+          "NSSA type-2 external route of OSPF.";
+      }
+      enum ibgp {
+        value 10;
+        description
+          "Internal route of BGP.";
+      }
+      enum ebgp {
+        value 11;
+        description
+          "Eternal route of BGP.";
+      }
+      enum mvpn1 {
+        value 16;
+        description
+          "MVPN1 type of route.";
+      }
+      enum mvpn3 {
+        value 18;
+        description
+          "MVPN3 type of route.";
+      }
+      enum evpn-ad {
+        value 23;
+        description
+          "Ethernet Auto-Discovery (A-D) Route.";
+      }
+      enum evpn-es {
+        value 24;
+        description
+          "Ethernet Segment Route.";
+      }
+      enum evpn-inclusive {
+        value 25;
+        description
+          "Inclusive Multicast Route.";
+      }
+      enum evpn-join {
+        value 26;
+        description
+          "IGMP Join Synch Route.";
+      }
+      enum evpn-leave {
+        value 27;
+        description
+          "IGMP Leave Synch Route.";
+      }
+      enum evpn-mac {
+        value 28;
+        description
+          "MAC Advertisement Route.";
+      }
+      enum evpn-prefix {
+        value 29;
+        description
+          "IP-prefix routes.";
+      }
+      enum evpn-smet {
+        value 30;
+        description
+          "Selective Multicast Ethernet Tag Route.";
+      }
+    }
+    description
+      "Match route type.";
+  }
+
+  deviation "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:conditions/rtp:match-route-types/rtp:match-route-type/rtp:route-type" {
+    deviate replace {
+      type rtp-devs-CH-NE-X3:route-type-deviations;
+    }
+  }
+  deviation "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:actions/rtp:apply-priority" {
+    deviate not-supported;
+  }
+  deviation "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:actions/rtp:apply-qos-parameter/rtp:set-qos-parameter/rtp:local-id-ip-precedence/rtp:qos-local-id" {
+    deviate replace {
+      type uint32 {
+        range "1..255";
+      }
+    }
+  }
+}

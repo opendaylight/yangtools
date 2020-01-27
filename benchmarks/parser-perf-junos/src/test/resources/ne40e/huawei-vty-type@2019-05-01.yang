@@ -1,0 +1,89 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-vty-type {
+  belongs-to huawei-vty {
+    prefix vty;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of vty type submodule.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef vtyauthmodetype {
+    type enumeration {
+      enum "none" {
+        value 1;
+        description
+          "VTY authentication mode none.";
+      }
+      enum "password" {
+        value 2;
+        description
+          "VTY authentication mode password.";
+      }
+      enum "aaa" {
+        value 3;
+        description
+          "VTY authentication mode aaa.";
+      }
+      enum "init" {
+        value 4;
+        description
+          "Undo authentication mode.";
+      }
+    }
+    description
+      "Vty and tty authentication mode type.";
+  }
+  typedef vtyprotoinbndtype {
+    type enumeration {
+      enum "all" {
+        value 0;
+        description
+          "Protocol inbound all.";
+      }
+      enum "ssh" {
+        value 1;
+        description
+          "Protocol inbound ssh.";
+      }
+      enum "telnet" {
+        value 2;
+        description
+          "Protocol inbound telnet.";
+      }
+    }
+    description
+      "Vty and tty ProtoInbnd.";
+  }
+  typedef vtybooltype {
+    type enumeration {
+      enum "false" {
+        value 0;
+        description
+          "VTY shell disable.";
+      }
+      enum "true" {
+        value 1;
+        description
+          "VTY shell enable.";
+      }
+    }
+    description
+      "Vty and tty bool type.";
+  }
+}

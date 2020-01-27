@@ -1,0 +1,125 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifm-trunk-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-ifm-trunk-deviations-CH-NE-X3";
+  prefix ifm-trunk-devs-CH-NE-X3;
+
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ifm-trunk {
+    prefix ifm-trunk;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Define the trunk bundling technology that bundles multiple physical interfaces into a logical interface.";
+
+  revision 2019-04-15 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  typedef trunk-mode-deviations {
+    type enumeration {
+      enum manual {
+        value 1;
+        description
+          "Specify the manual load balancing mode. It is a basic link aggregation mode. In this mode, you must manually create a trunk interface, add interfaces to the trunk interface, and specify active member interfaces. LACP is not involved.";
+      }
+      enum static {
+        value 3;
+        description
+          "Specify the static LACP mode. In this mode, you must manually add interfaces to the Eth-Trunk interface. Different from link aggregation in manual load balancing mode, active member interfaces are selected based on LACP packets.";
+      }
+      enum backup {
+        value 4;
+        description
+          "Specify the 1:1 active/standby load balancing mode. In this mode, an Eth-Trunk interface contains only two member interfaces (one active interface and one standby interface).";
+      }
+    }
+    description
+      "Trunk Work Mode.";
+  }
+
+  typedef trunk-hash-type-deviations {
+    type enumeration {
+      enum ip {
+        value 1;
+        description
+          "Specify the IP-address-based per-destination load balancing mode. In this mode, data flows are differentiated based on IP addresses of packets to ensure that the packets of the same data flow are transmitted over the same member link.";
+      }
+      enum mac {
+        value 2;
+        description
+          "Specify the MAC-address-based per-destination load balancing mode. In this mode, data flows are differentiated based on MAC addresses of packets to ensure that the packets of the same data flow are transmitted over the same member link.";
+      }
+      enum packet-all {
+        value 3;
+        description
+          "Specifies the per-packet load balancing mode. In this mode, one packet (not a data flow) is regarded as a unit, and packets are dispersed and transmitted among different member links.";
+      }
+      enum symmetric {
+        value 14;
+        description
+          "Symmetric hash arithmetic.";
+      }
+      enum symmetric-complement {
+        value 15;
+        description
+          "Symmetric complement hash arithmetic.";
+      }
+    }
+    description
+      "Trunk Hash Type.";
+  }
+
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk/ifm-trunk:work-mode" {
+    deviate replace {
+      type ifm-trunk-devs-CH-NE-X3:trunk-mode-deviations;
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk/ifm-trunk:hash-type" {
+    deviate replace {
+      type ifm-trunk-devs-CH-NE-X3:trunk-hash-type-deviations;
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk/ifm-trunk:members/ifm-trunk:member/ifm-trunk:weight" {
+    deviate replace {
+      type uint32 {
+        range "1..64";
+      }
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk/ifm-trunk:member-num" {
+    deviate replace {
+      type uint32 {
+        range "0..64";
+      }
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk/ifm-trunk:online-member-num" {
+    deviate replace {
+      type uint32 {
+        range "0..64";
+      }
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk/ifm-trunk:up-member-num" {
+    deviate replace {
+      type uint32 {
+        range "0..64";
+      }
+    }
+  }
+}

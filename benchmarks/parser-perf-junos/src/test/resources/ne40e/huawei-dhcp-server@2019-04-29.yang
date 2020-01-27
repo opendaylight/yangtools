@@ -1,0 +1,611 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-dhcp-server {
+  yang-version 1;
+  belongs-to huawei-dhcp {
+    prefix dhcp;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This module contains a collection of YANG definitions for managing DHCP server.";
+  revision 2019-04-29 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef network-bios-type {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "-.";
+      }
+      enum "b-node" {
+        value 1;
+        description
+          "B-node.";
+      }
+      enum "m-node" {
+        value 2;
+        description
+          "M-node.";
+      }
+      enum "p-node" {
+        value 3;
+        description
+          "P-node.";
+      }
+    }
+    description
+      "The type of network BIOS.";
+  }
+  typedef reply-type {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "-.";
+      }
+      enum "broadcast-always" {
+        value 1;
+        description
+          "Always broadcast the reply.";
+      }
+      enum "unicast-always" {
+        value 2;
+        description
+          "Always unicast the reply.";
+      }
+    }
+    description
+      "DHCP reply type.";
+  }
+  typedef sip-mode {
+    type enumeration {
+      enum "ip-mode" {
+        value 1;
+        description
+          "SIP server IP mode.";
+      }
+      enum "list-mode" {
+        value 2;
+        description
+          "SIP server string mode.";
+      }
+    }
+    description
+      "The type of SIP mode.";
+  }
+  typedef address-status {
+    type enumeration {
+      enum "static-bind-used" {
+        value 0;
+        description
+          "Static bind used status.";
+      }
+      enum "static-bind" {
+        value 1;
+        description
+          "Static bind status.";
+      }
+      enum "used" {
+        value 2;
+        description
+          "Used status.";
+      }
+      enum "expired" {
+        value 3;
+        description
+          "Expired status.";
+      }
+      enum "conflict" {
+        value 4;
+        description
+          "Conflict status.";
+      }
+      enum "disable" {
+        value 5;
+        description
+          "Disable status.";
+      }
+      enum "idle" {
+        value 6;
+        description
+          "Idle status.";
+      }
+      enum "error" {
+        value 7;
+        description
+          "Error.";
+      }
+    }
+    description
+      "The type of address status.";
+  }
+  grouping dhcp-server-type {
+    description
+      "DHCP server.";
+    container common {
+      description
+        "Configure DHCP server common attributes.";
+      leaf ping-packet-nub {
+        type uint32 {
+          range "0..10";
+        }
+        units "pps";
+        default "2";
+        description
+          "Number of ping packets.";
+      }
+      leaf ping-packet-timeout {
+        type uint32 {
+          range "0..10000";
+        }
+        units "ms";
+        default "500";
+        description
+          "Timeout interval of ping reply.";
+      }
+      leaf trust-option82 {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the system to trust option82.";
+      }
+      leaf bootp-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable BOOTP.";
+      }
+      leaf bootp-auto-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable BOOTP automatic IP address assignment.";
+      }
+      leaf database-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable database.";
+      }
+      leaf database-recover {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable database recover.";
+      }
+      leaf write-delay-interval {
+        type uint32 {
+          range "300..86400";
+        }
+        units "s";
+        default "300";
+        description
+          "Write delay interval.";
+      }
+      leaf option60-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable to allocate IP address by option60.";
+      }
+      leaf dest-ip-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable to use destionation IP address of the request packet as server identifier option.";
+      }
+      leaf lease-items-path {
+        type string {
+          length "1..64";
+        }
+        config false;
+        description
+          "Lease items path.";
+      }
+      leaf conflict-items-path {
+        type string {
+          length "1..64";
+        }
+        config false;
+        description
+          "Conflict items path.";
+      }
+      leaf link-selection-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable DHCP server to assign IP addresses based on the link-selection value in option82.";
+      }
+      leaf server-id-override-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable DHCP server to encapsulate option54 into packet based on the server-id-override value in option82.";
+      }
+      leaf request-packet-all-interface-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function of DHCP server on all interfaces.";
+      }
+    }
+    container global-ip-pools {
+      description
+        "List of global ip pools.";
+      list global-ip-pool {
+        key "ip-pool-name";
+        description
+          "Configure a global ip pool.";
+        leaf ip-pool-name {
+          type string {
+            length "1..128";
+          }
+          description
+            "Pool name.";
+        }
+        leaf vpn-instance {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+          default "_public_";
+          description
+            "VPN instance.";
+        }
+        leaf locked-flag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable to lock.";
+        }
+        leaf option-router-disable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable reply router option.";
+        }
+        leaf warning-exhaust-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the warning-exhaust of the pool.";
+        }
+        leaf warning-threshold {
+          type uint8 {
+            range "0..100";
+          }
+          default "80";
+          description
+            "The warning threshold of the pool.";
+        }
+        container gateway {
+          must "../gateway or (not(../gateway) and not(../sections))";
+          description
+            "Configure the gateway information of the pool.";
+          leaf ip-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "The gateway address of the pool.";
+          }
+          leaf mask {
+            when "../ip-address";
+            type inet:ipv4-address-no-zone;
+            mandatory true;
+            description
+              "The gateway mask of the pool.";
+          }
+        }
+        container conflict-recycle {
+          description
+            "Configure the conflict address auto recycle.";
+          leaf auto-recycle-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable auto recycle of the conflict address.";
+          }
+          leaf conflict-recycle-interval {
+            when "../auto-recycle-enable='true'";
+            type uint16 {
+              range "30..1440";
+            }
+            units "min";
+            default "30";
+            description
+              "The interval of the conflict address auto recycle.";
+          }
+        }
+        container lease-time {
+          must "(day=0 and hour=0 and minute=0 and ../rebind-time/day=0 and ../rebind-time/hour=0 and ../rebind-time/minute=0) or (day>../rebind-time/day) or (day=../rebind-time/day and hour>../rebind-time/hour) or (day=../rebind-time/day and hour=../rebind-time/hour and minute>../rebind-time/minute)";
+          description
+            "Configure lease time.";
+          leaf day {
+            type uint16 {
+              range "0..999";
+            }
+            units "d";
+            default "3";
+            description
+              "The lease time day.";
+          }
+          leaf hour {
+            type uint16 {
+              range "0..23";
+            }
+            units "h";
+            default "0";
+            description
+              "The lease time hour.";
+          }
+          leaf minute {
+            type uint16 {
+              range "0..59";
+            }
+            units "min";
+            default "0";
+            description
+              "The lease time minute.";
+          }
+          leaf unlimited {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable to unlimit lease time.";
+          }
+        }
+        container rebind-time {
+          must "(day=0 and hour=0 and minute=0 and ../renew-time/day=0 and ../renew-time/hour=0 and ../renew-time/minute=0) or (day>../renew-time/day) or (day=../renew-time/day and hour>../renew-time/hour) or (day=../renew-time/day and hour=../renew-time/hour and minute>../renew-time/minute)";
+          description
+            "Configure the rebind time of the pool.";
+          leaf day {
+            type uint16 {
+              range "0..999";
+            }
+            units "d";
+            default "0";
+            description
+              "The rebinding time day.";
+          }
+          leaf hour {
+            type uint8 {
+              range "0..23";
+            }
+            units "h";
+            default "0";
+            description
+              "The rebinding time hour.";
+          }
+          leaf minute {
+            type uint8 {
+              range "0..59";
+            }
+            units "min";
+            default "0";
+            description
+              "The rebinding time minute.";
+          }
+        }
+        container renew-time {
+          description
+            "Configure the renew time of the pool.";
+          leaf day {
+            type uint16 {
+              range "0..999";
+            }
+            units "d";
+            default "0";
+            description
+              "The renew time day.";
+          }
+          leaf hour {
+            type uint8 {
+              range "0..23";
+            }
+            units "h";
+            default "0";
+            description
+              "The renew time hour.";
+          }
+          leaf minute {
+            type uint8 {
+              range "0..59";
+            }
+            units "min";
+            default "0";
+            description
+              "The renew time minute.";
+          }
+        }
+        container option125 {
+          description
+            "Configure an option125 of the pool.";
+          leaf enterprise-code {
+            when "../option-string";
+            type uint32 {
+              range "0..4294967295";
+            }
+            default "2011";
+            description
+              "The enterprise information option code.";
+          }
+          leaf option-string {
+            type string {
+              length "1..32";
+            }
+            description
+              "The enterprise information option value.";
+          }
+        }
+        container sip-server {
+          description
+            "Configure the SIP server of the pool.";
+          leaf sip-server-mode {
+            type sip-mode;
+            must "(../sip-server-mode='ip-mode' and ../sip-server-ip1) or (../sip-server-mode='list-mode' and ../sip-server-name1) or (not (../sip-server-mode))";
+            description
+              "The mode of SIP server.";
+          }
+          choice sip-server-format {
+            description
+              "The format of SIP server.";
+            case ip-format {
+              description
+                "The IP of SIP server.";
+              leaf sip-server-ip1 {
+                when "../sip-server-mode='ip-mode'";
+                type inet:ipv4-address-no-zone;
+                mandatory true;
+                description
+                  "The first IP of SIP server.";
+              }
+              leaf sip-server-ip2 {
+                when "../sip-server-mode='ip-mode'";
+                type inet:ipv4-address-no-zone;
+                description
+                  "The second IP of SIP server.";
+              }
+            }
+            case string-format {
+              description
+                "The name of SIP server.";
+              leaf sip-server-name1 {
+                when "../sip-server-mode='list-mode'";
+                type string {
+                  length "1..63";
+                }
+                mandatory true;
+                description
+                  "The first name of SIP server.";
+              }
+              leaf sip-server-name2 {
+                when "../sip-server-mode='list-mode'";
+                type string {
+                  length "1..63";
+                }
+                description
+                  "The second name of SIP server.";
+              }
+            }
+          }
+        }
+        container sections {
+          description
+            "List of the sections of the pool.";
+          list section {
+            must "(../../gateway and ../section) or (not(../section))";
+            key "section-index";
+            max-elements 256;
+            description
+              "Configure the section of the pool.";
+            leaf section-index {
+              type uint32 {
+                range "0..255";
+              }
+              description
+                "The section index.";
+            }
+            leaf start-ip {
+              type inet:ipv4-address-no-zone;
+              mandatory true;
+              description
+                "The start IP address of the section.";
+            }
+            leaf end-ip {
+              type inet:ipv4-address-no-zone;
+              mandatory true;
+              description
+                "The end IP address of the section.";
+            }
+          }
+        }
+        container dns-lists {
+          description
+            "List of DNS IPs.";
+          list dns-list {
+            key "dns-ip";
+            max-elements 8;
+            description
+              "Configure a DNS IP instance.";
+            leaf dns-ip {
+              type inet:ipv4-address-no-zone;
+              description
+                "DNS IP.";
+            }
+          }
+        }
+        container user-options {
+          description
+            "List of configuring the user define options of the pool.";
+          list user-option {
+            key "option-code";
+            max-elements 16;
+            description
+              "Configure a user define option of the pool.";
+            leaf option-code {
+              type uint32 {
+                range "1..254";
+              }
+              description
+                "The user define option code.";
+            }
+            choice option-format {
+              mandatory true;
+              description
+                "The format of server option.";
+              case ascii-format {
+                description
+                  "ASCII string format.";
+                leaf ascii-string {
+                  type string {
+                    length "1..255";
+                  }
+                  description
+                    "The ASCII string of the option.";
+                }
+              }
+            }
+          }
+        }
+        container option-force-replys {
+          description
+            "List of the force reply options of the pool.";
+          list option-force-reply {
+            key "option-code";
+            max-elements 16;
+            description
+              "Configure the force reply option of the pool.";
+            leaf option-code {
+              type uint8 {
+                range "2..254";
+              }
+              description
+                "The force reply option code.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

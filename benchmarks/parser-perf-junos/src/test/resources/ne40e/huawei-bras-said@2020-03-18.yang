@@ -1,0 +1,125 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-said {
+  namespace "urn:huawei:yang:huawei-bras-said";
+  prefix bras-said;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras said.";
+
+  revision 2020-03-18 {
+    description
+      "Modify description.";
+    reference "Huawei private.";
+  }
+  revision 2019-04-10 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+  ext:task-name "aaa-access";
+  
+  container bras-said {
+    description
+      "Bras said.";
+    container said-exclude-fail-codes {
+      description
+        "Configure the excluding of login failures with a specified cause code from being detected or diagnosed by SAID nodes. By default, a login failure is not excluded from the detection or diagnosis of SAID nodes.";
+      leaf-list visible-code {
+        type uint16 {
+          range "1..741";
+        }
+        description
+          "Configure the visible on-line failure cause type.";
+      }
+      leaf-list invisible-code {
+        type uint16 {
+          range "0..62";
+        }
+        description
+          "Configure the sxternal invisible on-line failure cause type.";
+      }
+    }
+    container said-parameter {
+      description
+        "Configure the user Access.";
+      leaf increase-number-of-online-fail {
+        type uint32 {
+          range "100..256000";
+        }
+        default "10000";
+        description
+          "Sets the sepical increase number of online-fail.";
+      }
+      leaf recover-interval {
+        type uint32 {
+          range "1..180";
+        }
+        units d;
+        description
+          "Sets the special days of interval between recover operations.";
+      }
+      leaf online-fail-number {
+        type uint32 {
+          range "1..256000";
+        }
+        default "10000";
+        description
+          "The sepical increase number of online-fail.";
+      }
+      leaf online-user-reduce-number {
+        type uint32 {
+          range "1..256000";
+        }
+        default "1000";
+        description
+          "The sepical reduce of online-user number.";
+      }
+      leaf online-success-rate {
+        type uint32 {
+          range "1..100";
+        }
+        units %;
+        default "30";
+        description
+          "The sepical rate of online success, unit is percent.";
+      }
+      leaf detect-by-user-number-reduce-ratio {
+        type uint32 {
+          range "0..100";
+        }
+        units %;
+        default "50";
+        description
+          "Accords to the number of users decreased the percentage of detection when the specified value. Only when the number of users is detected to reach the specified drop rate, it is considered that the SAID condition is satisfied and the diagnosis and recovery are continued.";
+      }
+      leaf detect-by-flow-speed-reduce-ratio {
+        type uint32 {
+          range "0..100";
+        }
+        units %;
+        default "50";
+        description
+          "Accords to the percentage drop in the flow rate when the specified value, Only when the traffic rate reduction is detected reaches the specified drop rate, it is considered that the SAID condition is satisfied and the diagnosis and recovery are continued.";
+      }
+      leaf said-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable SAID function.";
+      }
+    }
+  }
+}

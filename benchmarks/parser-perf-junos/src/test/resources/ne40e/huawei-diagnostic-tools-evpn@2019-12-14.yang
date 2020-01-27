@@ -1,0 +1,554 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-diagnostic-tools-evpn {
+  yang-version 1;
+  belongs-to huawei-diagnostic-tools {
+    prefix diagnostic-tools;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-diagnostic-tools-common;
+  include huawei-diagnostic-tools-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Evpn diagnosis tool.";
+
+  revision 2019-12-14 {
+    description
+      "Container added for list.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-12 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  grouping evpn-ping-trace-result-type {
+    description
+      "Description of evpn-ping-trace-result-type.";
+    container vpws-ping-results {
+      config false;
+      description
+        "List of test result.";
+      list vpws-ping-result {
+        key "test-name";
+        config false;
+        description
+        "Statistics of ping test results.";
+        leaf test-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Test name.";
+        }
+        leaf local-ce-id {
+          type uint16;
+          config false;
+          description
+            "Local EVPN VPWS ID.";
+        }
+        leaf remote-ce-id {
+          type uint16;
+          config false;
+          description
+            "Remote EVPN VPWS ID.";
+        }
+        leaf packet-send {
+          type uint32;
+          config false;
+          description
+            "Total number of sent packets.";
+        }
+        leaf packet-receive {
+          type uint32;
+          config false;
+          description
+            "Total number of received packets.";
+        }
+        leaf loss-ratio {
+          type pub-type:percent;
+          config false;
+          description
+            "Packet loss ratio of a test.";
+        }
+        leaf rtt-min {
+          type uint32;
+          units "ms";
+          config false;
+          description
+            "Minimum RTT of all test packets.";
+        }
+        leaf rtt-max {
+          type uint32;
+          units "ms";
+          config false;
+          description
+            "Maximum RTT of all test packets.";
+        }
+        leaf rtt-average {
+          type uint32;
+          units "ms";
+          config false;
+          description
+            "Average RTT of all test packets.";
+        }
+        leaf status {
+          type dgntl-test-status-type;
+          config false;
+          description
+            "Test status.";
+        }
+        container probes {
+          config false;
+          description
+            "List of ping results of all packets in a test.";
+          list probe {
+            key "sequence";
+            config false;
+            description
+              "Statistics of get the response result of a single packet in an EVPN VPWS ping test.";
+            leaf sequence {
+              type uint32;
+              config false;
+              description
+                "Serial number of a test packet received by a certain hop.";
+            }
+            leaf replier {
+              type inet:ip-address-no-zone;
+              config false;
+              description
+                "Reply address in a received response packet.";
+            }
+            leaf data-bytes {
+              type uint32;
+              config false;
+              description
+                "Number of bytes in a received response packet.";
+            }
+            leaf rtt {
+              type uint32;
+              units "ms";
+              config false;
+              description
+                "RTT of test packets.";
+            }
+            leaf result-type {
+              type probe-result-type;
+              config false;
+              description
+                "Result of packet sending, which is either success or timeout.";
+            }
+            leaf is-delete {
+              type boolean;
+              config false;
+              description
+                "Deletion flag indicating whether to delete test results.";
+            }
+          }
+        }
+      }
+    }
+    container vpws-trace-results {
+      config false;
+      description
+        "List of test result.";
+      list vpws-trace-result {
+        key "test-name";
+        config false;
+        description
+          "Statistics of test result of a certain hop in the test path.";
+        leaf test-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Test name.";
+        }
+        leaf local-ce-id {
+          type uint16;
+          config false;
+          description
+            "Local EVPN VPWS ID.";
+        }
+        leaf remote-ce-id {
+          type uint16;
+          config false;
+          description
+            "Remote EVPN VPWS ID.";
+        }
+        leaf status {
+          type dgntl-test-status-type;
+          config false;
+          description
+            "Test status.";
+        }
+        container hops {
+          config false;
+          description
+            "List of ping results of all packets in a test.";
+          list hop {
+            key "hop-index";
+            config false;
+            description
+              "Statistics of hop results.";
+            leaf hop-index {
+              type uint32;
+              config false;
+              description
+                "The index of the hop.";
+            }
+            leaf replier {
+              type inet:ip-address-no-zone;
+              config false;
+              description
+                "Reply address of the related hop in a test.";
+            }
+            leaf rtt {
+              type uint32;
+              units "ms";
+              config false;
+              description
+                "RTT of test packets.";
+            }
+            leaf type {
+              type transmit-type;
+              config false;
+              description
+                "Node type.";
+            }
+            leaf return-code {
+              type uint32;
+              config false;
+              description
+                "Return code.";
+            }
+            leaf ds-address {
+              type inet:ip-address-no-zone;
+              config false;
+              description
+                "Downstream address of the related hop in a test.";
+            }
+            container ds-label-lists {
+              config false;
+              description
+                "List of downstream information tables.";
+              list ds-label-list {
+                key "ds-label";
+                config false;
+                description
+                  "Statistics of downstream information table.";
+                leaf ds-label {
+                  type uint32;
+                  config false;
+                  description
+                    "Downstream labels.";
+                }
+              }
+            }
+            leaf result-type {
+              type probe-result-type;
+              config false;
+              description
+                "Result of packet sending, which is either success or timeout.";
+            }
+            leaf is-delete {
+              type boolean;
+              config false;
+              description
+                "Deletion flag indicating whether to delete test results.";
+            }
+          }
+        }
+      }
+    }
+  }
+  rpc evpn-start-vpws-ping {
+    description
+      "Start evpn vpws ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:evpn/diagnostic-tools:vpws-ping-results";
+    input {
+      leaf test-name {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+      leaf local-ce-id {
+        type uint32 {
+          range "1..16777215";
+        }
+        mandatory true;
+        description
+          "Local EVPN VPWS ID.";
+      }
+      leaf remote-ce-id {
+        type uint32 {
+          range "1..16777215";
+        }
+        mandatory true;
+        description
+          "Remote EVPN VPWS ID.";
+      }
+      leaf source-address {
+        type inet:ip-address-no-zone;
+        description
+          "Source address of the string type. You can click this node to set different types of addresses and deploy the configurations together with the configuration of the source address type node. If the source address type is set to IPv4, this parameter is set to IPv4. If the source address type is set to IPv6, this parameter is set to IPv6.";
+      }
+      leaf count {
+        type uint32 {
+          range "1..4294967295";
+        }
+        default "5";
+        description
+          "Number of sent test packets.";
+      }
+      leaf interval {
+        type uint32 {
+          range "1..10000";
+        }
+        units "ms";
+        default "2000";
+        description
+          "Interval for sending test packets.";
+      }
+      leaf packet-size {
+        type uint32 {
+          range "80..8100";
+        }
+        default "100";
+        description
+          "Number of bytes in a sent test packet.";
+      }
+      leaf exp {
+        type uint32 {
+          range "0..7";
+        }
+        description
+          "EXP value in the label field of MPLS packets. The EXP value is used to distinguish the service types of MPLS packets.";
+      }
+      leaf tc {
+        type uint8 {
+          range "0..255";
+        }
+        default "0";
+        description
+          "Traffic class value of IPv6 packets. The traffic class value is used to distinguish the service types of IPv6 packets.";
+      }
+      leaf timeout {
+        type uint32 {
+          range "0..65535";
+        }
+        units "ms";
+        default "2000";
+        description
+          "Time taken to wait for the response packets after detection packets are sent. If no response packet is received within the timeout period, the system considers that the test packet times out.";
+      }
+      leaf reply-mode {
+        type reply-mode-evpn;
+        default "udp";
+        description
+          "Mode for responding to test packets in a test.";
+      }
+      leaf end-op {
+        type inet:ipv6-address-no-zone;
+        must "not(../exp)";
+        description
+          "End-OP segment ID.";
+      }
+    }
+  }
+
+  rpc evpn-stop-vpws-ping {
+    description
+      "Stop evpn vpws ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:evpn/diagnostic-tools:vpws-ping-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:evpn/diagnostic-tools:vpws-ping-results/diagnostic-tools:vpws-ping-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc evpn-delete-vpws-ping {
+    description
+      "Delete evpn vpws ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:evpn/diagnostic-tools:vpws-ping-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:evpn/diagnostic-tools:vpws-ping-results/diagnostic-tools:vpws-ping-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc evpn-start-vpws-trace {
+    description
+      "Start evpn vpws trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:evpn/diagnostic-tools:vpws-trace-results";
+    input {
+      leaf test-name {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+      leaf local-ce-id {
+        type uint32 {
+          range "1..16777215";
+        }
+        mandatory true;
+        description
+          "Local EVPN VPWS ID.";
+      }
+      leaf remote-ce-id {
+        type uint32 {
+          range "1..16777215";
+        }
+        mandatory true;
+        description
+          "Remote EVPN VPWS ID.";
+      }
+      leaf source-address {
+        type inet:ip-address-no-zone;
+        description
+          "Source address of the string type. You can click this node to set different types of addresses and deploy the configurations together with the configuration of the source address type node. If the source address type is set to IPv4, this parameter is set to IPv4. If the source address type is set to IPv6, this parameter is set to IPv6.";
+      }
+      leaf packet-size {
+        type uint32 {
+          range "96..8100";
+        }
+        default "160";
+        description
+          "Number of bytes in a sent test packet.";
+      }
+      leaf exp {
+        type uint32 {
+          range "0..7";
+        }
+        description
+          "EXP value in the label field of MPLS packets. The EXP value is used to distinguish the service types of MPLS packets.";
+      }
+      leaf tc {
+        type uint8 {
+          range "0..255";
+        }
+        default "0";
+        description
+          "Traffic class value of IPv6 packets. The traffic class value is used to distinguish the service types of IPv6 packets.";
+      }
+      leaf timeout {
+        type uint32 {
+          range "0..65535";
+        }
+        units "ms";
+        default "2000";
+        description
+          "Time taken to wait for the response packets after detection packets are sent. If no response packet is received within the timeout period, the system considers that the test packet times out.";
+      }
+      leaf ttl {
+        type uint8 {
+          range "1..255";
+        }
+        default "30";
+        description
+          "Time to live.";
+      }
+      leaf reply-mode {
+        type reply-mode-evpn;
+        default "udp";
+        description
+          "Mode for responding to test packets in a test.";
+      }
+      leaf ttl-mode {
+        type ttl-mode;
+        description
+          "TTL mode.";
+      }
+      leaf end-op {
+        type inet:ipv6-address-no-zone;
+        must "not(../exp)";
+        description
+          "End-OP segment ID.";
+      }
+    }
+  }
+
+  rpc evpn-stop-vpws-trace {
+    description
+      "Stop evpn vpws trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:evpn/diagnostic-tools:vpws-trace-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:evpn/diagnostic-tools:vpws-trace-results/diagnostic-tools:vpws-trace-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc evpn-delete-vpws-trace {
+    description
+      "Delete evpn vpws trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:evpn/diagnostic-tools:vpws-trace-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:evpn/diagnostic-tools:vpws-trace-results/diagnostic-tools:vpws-trace-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  augment "/diagnostic-tools:diagnostic-tools" {
+    description
+      "List of EVPN ping and trace tests.";
+    container evpn {
+      config false;
+      description
+        "Statistics of EVPN ping and trace tests.";
+      uses diagnostic-tools:evpn-ping-trace-result-type;
+    }
+  }
+
+}

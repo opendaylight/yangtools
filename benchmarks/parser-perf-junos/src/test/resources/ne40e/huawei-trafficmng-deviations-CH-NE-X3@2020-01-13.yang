@@ -1,0 +1,41 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-trafficmng-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-trafficmng-deviations-CH-NE-X3";
+  prefix "trafficmng-devs-CH-NE-X3";
+
+  import huawei-trafficmng {
+    prefix "trafficmng";
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Quality of service.";
+  revision 2020-01-13 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  deviation /trafficmng:trafficmng/trafficmng:tm-sfu-informations {
+    deviate not-supported;
+  }
+  deviation /trafficmng:trafficmng/trafficmng:sfu-warm-backup-switch {
+    deviate not-supported;
+  }
+  deviation /trafficmng:trafficmng/trafficmng:tm-lpu-statuss/trafficmng:tm-lpu-status/trafficmng:inbound-switch-port-statuss {
+    deviate not-supported;
+  }
+  deviation /trafficmng:trafficmng/trafficmng:tm-lpu-statuss/trafficmng:tm-lpu-status/trafficmng:outbound-switch-port-statuss {
+    deviate not-supported;
+  }
+}

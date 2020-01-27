@@ -1,0 +1,215 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-y1731-statistics {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-y1731-statistics";
+  prefix y1731-statistics;
+  import huawei-y1731 {
+    prefix y1731;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Y1731-statistics.";
+  revision 2020-03-05{
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-20{
+    description
+      "Add task-name.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-27{
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  ext:task-name  "y1731"; 
+
+  augment "/y1731:y1731" {
+    description
+      "Configure y1731.";
+    container ccm-statistics {
+      description
+        "Configure statistics about CCMs.";
+      leaf cfm-statistic-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the CCM statistics function.";
+      }
+      container ccm-sends {
+        config false;
+        description
+          "List of statistics about CCMs sent.";
+        list ccm-send {
+          key "md ma mep-id";
+          description
+            "Statistics of CCMs sent.";
+          leaf md {
+            type string {
+              length "1..43";
+            }
+            description
+              "Specifies the name of an MD.";
+          }
+          leaf ma {
+            type string {
+              length "1..43";
+            }
+            description
+              "Specifies the name of an MA.";
+          }
+          leaf mep-id {
+            type uint32 {
+              range "1..8191";
+            }
+            description
+              "Specifies the ID of a MEP.";
+          }
+          leaf send-packet {
+            type uint64;
+            description
+              "Displays the number of CCMs sent by the MEP.";
+          }
+        }
+      }
+      container ccm-receives {
+        config false;
+        description
+          "List of statistics about CCMs received.";
+        list ccm-receive {
+          key "md ma mep-id rmep-id";
+          description
+            "Statistics of CCMs received.";
+          leaf md {
+            type string {
+              length "1..43";
+            }
+            description
+              "Specifies the name of an MD.";
+          }
+          leaf ma {
+            type string {
+              length "1..43";
+            }
+            description
+              "Specifies the name of an MA.";
+          }
+          leaf mep-id {
+            type uint32 {
+              range "1..8191";
+            }
+            description
+              "Specifies the ID of a MEP.";
+          }
+          leaf rmep-id {
+            type uint32 {
+              range "1..8191";
+            }
+            description
+              "Specifies the ID of a remote MEP.";
+          }
+          leaf receive-packet {
+            type uint64;
+            description
+              "Displays the number of CCMs received by the MEP.";
+          }
+          leaf rdi-packet {
+            type uint64;
+            description
+              "Displays the number of CCMs with the RDI flag set to 1 that the MEP receives.";
+          }
+          leaf tlv-packet {
+            type uint64;
+            description
+              "Displays the number of CCMs carrying the Sender ID TLV, Port Status TLV, or Interface Status TLV field that the MEP receives.";
+          }
+          leaf mac-err-packet {
+            type uint64;
+            description
+              "Displays the number of CCMs carrying the MAC address different from the MAC address configured on the remote MEP that the MEP receives.";
+          }
+          leaf freq-err-packet {
+            type uint64;
+            description
+              "Displays the number of CCMs carrying the correct MEG level, MEG ID, and MEP ID but the incorrect transmission interval that the MEP receives.";
+          }
+          leaf ma-id-err-packet {
+            type uint64;
+            description
+              "Displays the number of CCMs carrying the correct MEG level but the incorrect MEG ID (MAID) that the MEP receives.";
+          }
+        }
+      }
+    }
+    container inner-priority {
+      description
+        "Configure Y1731.";
+      leaf inner-priority-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Y1731 inner priority function.";
+      }
+    }
+    container cfm-level-check {
+      description
+        "Configure CFM.";
+      leaf level-check-strict {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable strict check for MD levels of CFM (802.1ag) packets.";
+      }
+    }
+  }
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "Configure cfm.";
+    container cfm-mac-level-enable-lpu {
+      description
+        "Configure CFM MAC level check.";
+      leaf mac-level-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable MAC level check.";
+      }
+    }
+  }
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+      "Configure cfm.";
+    container cfm-mac-level-enable-mpu {
+      description
+        "Configure CFM MAC level check.";
+      leaf mac-level-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable MAC level check.";
+      }
+    }
+  }
+}

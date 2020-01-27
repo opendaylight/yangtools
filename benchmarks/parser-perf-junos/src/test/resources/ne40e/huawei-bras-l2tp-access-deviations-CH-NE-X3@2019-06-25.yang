@@ -1,0 +1,93 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-l2tp-access-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-bras-l2tp-access-deviations-CH-NE-X3";
+  prefix bras-l2tp-access-devs-CH-NE-X3;
+
+  import huawei-bras-l2tp-access {
+    prefix bras-l2tp-access;
+  }
+  import huawei-bras-cu-controller {
+    prefix bras-cu-controller;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global Configuration.";
+
+  revision 2019-06-25 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/bras-l2tp-access:bras-l2tp-access/bras-l2tp-access:lns-global/bras-l2tp-access:l2tp-aaa/bras-l2tp-access:lns-user-limit/bras-l2tp-access:limit-value" {
+    deviate replace {
+      type uint32 {
+        range "0..131072"; /* need replace */
+      }
+    }
+  }
+  deviation "/bras-l2tp-access:bras-l2tp-access/bras-l2tp-access:l2tp-groups/bras-l2tp-access:l2tp-group/bras-l2tp-access:l2tp-lac/bras-l2tp-access:cp-source-interfaces" {
+    deviate not-supported;
+  }
+  deviation "/bras-cu-controller:bras-cu-controller/bras-cu-controller:resource-ups/bras-cu-controller:resource-up/bras-l2tp-access:l2tp" {
+    deviate not-supported;
+  }
+  deviation "/bras-cu-controller:bras-cu-controller/bras-cu-controller:resource-ups/bras-cu-controller:resource-up/bras-cu-controller:remote-up-boards/bras-cu-controller:remote-up-board/bras-l2tp-access:l2tp" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:mpu-boards/devm:mpu-board/bras-l2tp-access:l2tp" {
+    deviate not-supported;
+  }
+  deviation "/bras-l2tp-access:bras-l2tp-access/bras-l2tp-access:l2tp-groups/bras-l2tp-access:l2tp-group/bras-l2tp-access:cp-source-interface" {
+    deviate not-supported;
+  }
+  deviation "/bras-l2tp-access:bras-l2tp-access/bras-l2tp-access:lns-global/bras-l2tp-access:lns-fast-replys/bras-l2tp-access:lns-fast-reply/bras-l2tp-access:slot-id" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+  deviation "/bras-l2tp-access:bras-l2tp-access/bras-l2tp-access:lns-groups/bras-l2tp-access:lns-group/bras-l2tp-access:bind-board/bras-l2tp-access:bind-slots/bras-l2tp-access:bind-slots/bras-l2tp-access:bind-slot/bras-l2tp-access:slot-id" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+  deviation "/bras-l2tp-access:bras-l2tp-access/bras-l2tp-access:lns-backup-groups/bras-l2tp-access:lns-backup-group/bras-l2tp-access:bind-slots/bras-l2tp-access:master-slot-id" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+  deviation "/bras-l2tp-access:bras-l2tp-access/bras-l2tp-access:lns-backup-groups/bras-l2tp-access:lns-backup-group/bras-l2tp-access:bind-slots/bras-l2tp-access:slave-slot-id" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+  deviation "/bras-l2tp-access:bras-l2tp-access/bras-l2tp-access:lns-global/bras-l2tp-access:slot-block/bras-l2tp-access:slot-id" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+}

@@ -1,0 +1,289 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2pt {
+  namespace "urn:huawei:yang:huawei-l2pt";
+  prefix l2pt;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "L2 protocol tunnel.";
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "ethernet";  
+  typedef bpdu-role-type {
+    type enumeration {
+      enum "customer" {
+        value 0;
+        description
+          "The bridge role is a customer.";
+      }
+      enum "provider" {
+        value 1;
+        description
+          "The bridge role is a provider.";
+      }
+    }
+    description
+      "Role type.";
+  }
+  typedef protocol-type {
+    type enumeration {
+      enum "EOAM3AH" {
+        value 1;
+        description
+          "Ethernet in the First mile OAM.";
+      }
+      enum "LLDP" {
+        value 2;
+        description
+          "Link Layer discovery protocol.";
+      }
+      enum "GMRP" {
+        value 3;
+        description
+          "GARP multicast registration protocol.";
+      }
+      enum "GVRP" {
+        value 4;
+        description
+          "GARP VLAN registration protocol.";
+      }
+      enum "DLDP" {
+        value 5;
+        description
+          "Device link detection protocol.";
+      }
+      enum "HGMP" {
+        value 6;
+        description
+          "HUAWEI group management protocol.";
+      }
+      enum "VTP" {
+        value 7;
+        description
+          "VLAN trunking protocol.";
+      }
+      enum "DTP" {
+        value 8;
+        description
+          "Dynamic trunking protocol.";
+      }
+      enum "CDP" {
+        value 9;
+        description
+          "Cisco discovery protocol.";
+      }
+      enum "UDLD" {
+        value 10;
+        description
+          "Unidirectional link detection.";
+      }
+      enum "PAGP" {
+        value 11;
+        description
+          "Port aggregation protocol.";
+      }
+      enum "PVST-PLUS" {
+        value 12;
+        description
+          "Per VLAN spanning tree plus.";
+      }
+      enum "STP" {
+        value 13;
+        description
+          "Spanning tree protocol.";
+      }
+      enum "LACP" {
+        value 14;
+        description
+          "Link aggregation control protocol.";
+      }
+      enum "MVRP" {
+        value 15;
+        description
+          "Multiple VLAN registration protocol.";
+      }
+      enum "MMRP" {
+        value 16;
+        description
+          "Multiple MAC registration protocol.";
+      }
+      enum "E-LMI" {
+        value 17;
+        description
+          "Ethernet local management interface.";
+      }
+      enum "802.1X" {
+        value 18;
+        description
+          "802.1X protocol.";
+      }
+      enum "SSTP" {
+        value 19;
+        description
+          "Secure socket tunneling protocol.";
+      }
+    }
+    description
+      "Protocol Type.";
+  }
+  typedef action-mode {
+    type enumeration {
+      enum "enable" {
+        value 0;
+        description
+          "Enable mode.";
+      }
+      enum "drop" {
+        value 1;
+        description
+          "Drop mode.";
+      }
+    }
+    description
+      "Action mode.";
+  }
+  typedef encapsulation-type {
+    type enumeration {
+      enum "ETHERNETII" {
+        value 1;
+        description
+          "EthernetII type.";
+      }
+      enum "LLC" {
+        value 2;
+        description
+          "Logical link control type.";
+      }
+      enum "SNAP" {
+        value 3;
+        description
+          "Sub-network access protocol.";
+      }
+    }
+    description
+      "Encapsulation type.";
+  }
+  container l2pt {
+    description
+      "L2 protocol tunnel.";
+    container bpdu-attribute {
+      description
+        "Configure BPDU tunnel global attribute.";
+      leaf bridge-role {
+        type bpdu-role-type;
+        default "customer";
+        description
+          "Bridge role that can be a customer or provider.";
+      }
+      leaf group-mac {
+        type pub-type:mac-address {
+          pattern '[0-9a-f][1|3|5|7|9|b|d|f][0-9a-f]{2}(-[0-9a-f]{4}){2}';
+        }
+        default "0100-0ccd-cdd0";
+        description
+          "BPDU well-known destination MAC address, Multicast MAC address, excluding 0180-c200-0000 to 0180-c200-002f and ffff-ffff-ffff.";
+      }
+    }
+    container well-known-protocol {
+      config false;	
+      description
+        "Statistics of L2PT well-known protocol attributes.";
+      container protocols {
+        config false;
+        description
+          "List of protocol informations.";
+        list protocol {
+          key "protocol-type";
+          description
+            "Statistics of protocol information.";
+          leaf protocol-type {
+            type protocol-type;
+            description
+              "Well-known protocol name.";
+          }
+          leaf group-mac {
+            type pub-type:mac-address;
+            description
+              "User-definded protocol group MAC address.";
+          }
+          leaf protocol-mac {
+            type pub-type:mac-address;
+            description
+              "MAC address of protocol.";
+          }
+          leaf encapsulation-type {
+            type encapsulation-type;
+            description
+              "Ethernet encapsulation type of layer 2 packets.";
+          }
+          leaf ethernet-type {
+            type pub-type:hex-binary;
+            description
+              "Protocol type of EthernetII.";
+          }
+          leaf snap-type {
+            type pub-type:hex-binary;
+            description
+              "The type of sub-network access protocol.";
+          }
+          leaf dsap-value {
+            type pub-type:hex-binary;
+            description
+              "The value of destination service access point value.";
+          }
+          leaf ssap-value {
+            type pub-type:hex-binary;
+            description
+              "The value of source service access point.";
+          }
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:main-interface/ethernet:l2-attribute" {
+    description
+        "BPDU tunnel interface attribute.";
+    container bpdu-tunnel {
+      description
+        "Configure BPDU tunnel attribute.";
+      choice bpdu-enable {
+        description
+          "BPDU enable type.";
+        case enable {
+          description
+            "Enable the BPDU tunnel function.";
+          leaf enable {
+            type empty;
+            description
+              "Enable the BPDU tunnel function.";
+          }
+        }		
+      }
+    }
+  }
+}

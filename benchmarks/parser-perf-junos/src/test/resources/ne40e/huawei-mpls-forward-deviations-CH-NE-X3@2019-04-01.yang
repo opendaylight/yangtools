@@ -1,0 +1,44 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls-forward-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-mpls-forward-deviations-CH-NE-X3";
+  prefix "mpls-forward-devs-CH-NE-X3";
+  
+  import huawei-loadbalance {
+    prefix "loadbalance";
+  }
+  import huawei-mpls-forward {
+    prefix "mpls-forward";
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Load balance.";
+  revision 2019-04-01 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  deviation /loadbalance:loadbalance/mpls-forward:mpls-hashpacket { 
+    deviate not-supported; 
+  }
+  deviation /loadbalance:loadbalance/mpls-forward:mpls-intfmtu { 
+    deviate not-supported; 
+  } 
+  deviation /mpls:mpls/mpls:common/mpls-forward:mpls-forward/mpls-forward:static-label-only {
+    deviate not-supported;
+  }
+}

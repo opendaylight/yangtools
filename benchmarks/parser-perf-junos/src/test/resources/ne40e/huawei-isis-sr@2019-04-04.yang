@@ -1,0 +1,240 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-isis-sr {
+  namespace "urn:huawei:yang:huawei-isis-sr";
+  prefix isis-sr;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-isis {
+    prefix isis;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-segment-routing {
+    prefix sr;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "ISIS segment routing management.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "isis";
+  typedef lsp-trigger-type {
+    type enumeration {
+      enum "host" {
+        value 0;
+        description
+          "Trigger SR LSP establishment for 32 bit host routes.";
+      }
+      enum "none" {
+        value 2;
+        description
+          "Do not trigger SR LSP establishment.";
+      }
+      enum "ip-prefix" {
+        value 4;
+        description
+          "Trigger SR LSP establishment based on an IP prefix list.";
+      }
+    }
+    description
+      "ISIS SR LSP trigger type.";
+  }
+  typedef prefix-sid-type {
+    type enumeration {
+      enum "absolute" {
+        value 1;
+        description
+          "Absolute value.";
+      }
+      enum "index" {
+        value 2;
+        description
+          "Index.";
+      }
+    }
+    description
+      "ISIS prefix sid type.";
+  }
+  augment /ni:network-instance/ni:instances/ni:instance/isis:isis/isis:sites/isis:site {
+    description
+      "ISIS SRGB augment to ISIS.";
+    container srgbs {
+      when "../../../../sr:segment-routing/sr:enable='true' and (../isis:cost-style='wide' or ../isis:cost-style='transition' or ../isis:cost-style='wtransition')";
+      description
+        "List of segment routing global block.";
+      list srgb {
+        key "lower-bound upper-bound";
+        max-elements  "1";
+        description
+          "Configure segment routing global block.";
+        leaf lower-bound {
+          type uint32 {
+            range "16..1048575";
+          }
+          must "../lower-bound<../upper-bound";
+          description
+            "SRGB begin value. The range of specific values is dynamic and is also affected by paf.";
+        }
+        leaf upper-bound {
+          type uint32 {
+            range "16..1048575";
+          }
+          must "../lower-bound<../upper-bound";
+          description
+            "SRGB end value. The range of specific values is dynamic and is also affected by paf.";
+        }
+      }
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance/isis:isis/isis:sites/isis:site/isis:afs/isis:af {
+    description
+      "ISIS segment routing augment to ISIS.";
+    container segment-routing {
+      when "../isis:type='afipv4'";
+      description
+        "Configure ISIS segment routing.";
+      leaf enable {
+        type boolean;
+        must "../enable='false' or ../../../../../../../ni:name='_public_' and ../../../../../../../sr:segment-routing/sr:enable='true' and (../../../../isis:cost-style='wide' or ../../../../isis:cost-style='transition' or ../../../../isis:cost-style='wtransition')";
+        default "false";
+        description
+          "Enable/disable segment routing MPLS.";
+      }
+      leaf auto-adj-sid {
+        when "../enable='true'";
+        type boolean;
+        default "true";
+        description
+          "Enable/disable apply adj label when build adjency.";
+      }
+      leaf adv-static-sid {
+        when "../enable='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable ISIS to advertise static SID capabilities, support static adjacency SID distribution in LSP.";
+      }
+      container binding {
+        when "../enable='true'";
+        description
+          "Configure ISIS segment routing.";
+        leaf receive {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable receive remote prefix SID mappings.";
+        }
+        leaf advertise {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable advertise active local prefix SID mappings.";
+        }
+      }
+      container lsp-trigger {
+        when "../enable='true'";
+        description
+          "Configure the SR LSP trigger command.";
+        leaf type {
+          type lsp-trigger-type;
+          default "host";
+          description
+            "Set the SR LSP trigger type.";
+        }
+        leaf ip-prefix {
+          when "../type='ip-prefix'";
+          type leafref {
+            path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+          }
+          description
+            "Set the IP prefix name.";
+        }
+      }
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance/isis:isis/isis:sites/isis:site/isis:avoid-micro-loop {
+    description
+      "ISIS avoid-microloop segment routing augment to ISIS.";
+    leaf sr-enable-flag {
+      type boolean;
+      must "../sr-enable-flag='false' or ../../isis:afs/isis:af[isis:type='afipv4']/isis-sr:segment-routing/isis-sr:enable='true'";
+      default "false";
+      description
+        "Enable/disable SR avoid microloop. Depend on segment routing MPLS.";
+    }
+    leaf sr-new-update-delay {
+      type uint16 {
+        range "1000..10000";
+      }
+      units "ms";
+      must "../sr-new-update-delay=5000 or ../../isis:afs/isis:af[isis:type='afipv4']/isis-sr:segment-routing/isis-sr:enable='true'";
+      default "5000";
+      description
+        "Set the route delivery delay for SR avoid microloop. Depend on segment routing MPLS.";
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance/isis:isis/isis:sites/isis:site/isis:circuits/isis:circuit/isis:afs/isis:af {
+    description
+      "ISIS prefix sid augment to ISIS.";
+    container prefix-sids {
+      when "../../../../../isis:afs/isis:af[isis:type='afipv4']/isis-sr:segment-routing/isis-sr:enable='true' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../isis:name]/ifm:type='LoopBack' and ../isis:type='afipv4'";
+      description
+        "List of prefix segment ID. Only on the Loopback interface.";
+      list prefix-sid {
+        key "algorithm";
+        description
+          "Configure prefix segment ID.";
+        leaf algorithm {
+          type uint32 {
+            range 0;
+          }
+          description
+            "Prefix sid algorithm.";
+        }
+        leaf type {
+          type prefix-sid-type;
+          mandatory "true";
+          description
+            "Set the type of prefix sid.";
+        }
+        leaf label {
+          type uint32 {
+            range "0..1048575";
+          }
+          mandatory "true";
+          description
+            "Set the label of prefix sid. The range of values for label is dynamically variable.";
+        }
+        leaf node-flag {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable the node flag.";
+        }
+      }
+    }
+  }
+}

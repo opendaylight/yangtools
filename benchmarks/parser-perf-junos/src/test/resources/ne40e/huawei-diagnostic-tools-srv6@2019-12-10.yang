@@ -1,0 +1,751 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-diagnostic-tools-srv6 {
+  yang-version 1;
+  belongs-to huawei-diagnostic-tools {
+    prefix diagnostic-tools;
+  }
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-diagnostic-tools-common;
+  include huawei-diagnostic-tools-type;
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Srv6 diagnosis tool.";
+
+   revision 2019-12-10 {
+    description
+      "Modify srv6-te-start-trace and srv6-te-start-ping.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-09 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  grouping srv6-ping-trace-result-type {
+    description
+      "Test result of srv6 ping and trace.";
+    container ping-results {
+      config false;
+      description
+        "List of test result of srv6 ping.";
+      list ping-result {
+        key "test-name path-index";
+        config false;
+        description
+          "Statistics of test result of ping.";
+        leaf test-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Test name.";
+        }
+        leaf path-index {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "Path index.";
+        }
+        leaf packet-receive {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Total number of received packets.";
+        }
+        leaf packet-send {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Total number of sent packets.";
+        }
+        leaf loss-ratio {
+          type pub-type:percent {
+            range "0..100";
+          }
+          config false;
+          description
+            "Packet loss ratio of a test.";
+        }
+        leaf rtt-min {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "ms";
+          config false;
+          description
+            "Minimum RTT of all test packets.";
+        }
+        leaf rtt-max {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "ms";
+          config false;
+          description
+            "Maximum RTT of all test packets.";
+        }
+        leaf rtt-average {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "ms";
+          config false;
+          description
+            "Average RTT of all test packets.";
+        }
+        leaf status {
+          type dgntl-test-status-type;
+          config false;
+          description
+            "Test status.";
+        }
+        leaf path-status {
+          type dgntl-test-status-type;     
+          config false;
+          description
+            "Path test status.";
+        }
+        leaf preference {
+          type uint32 {
+            range "1..65535";
+          }   
+          config false;
+          description
+            "Path preference.";
+        }
+        leaf path-type {
+          type dgntl-sr-policy-path-type;
+          config false;
+          description
+            "Path type.";
+        }
+        leaf protocol-origin {
+          type dgntl-lsp-protocol-origin;
+          config false;
+          description
+            "Protocol origin.";
+        }
+        leaf node-address {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "Endpoint IP address.";
+        }
+        leaf asn-no {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "ASN No.";
+        }
+        leaf discriminator {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Discriminator.";
+        }
+        leaf segment-list-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Segment-list ID.";
+        }
+        leaf xc-index {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "XC index.";
+        }
+        leaf end-op {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "End-OP segment ID.";
+        }
+        container probes {
+          config false;
+          description
+             "List of ping results of all packets in a test.";
+          list probe {
+            key "sequence";
+            config false;
+            description
+              "Statistics of ping result of a single packet in a test.";
+            leaf sequence {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Serial number of a test packet received by a certain hop.";
+            }
+            leaf replier {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "Destination address of the related hop in a test.";
+            }
+            leaf data-bytes {
+              type uint32 {
+                range "65..9600";
+              }
+              config false;
+              description
+                "Number of bytes in a received response packet.";
+            }
+            leaf hop-limit {
+              type uint8 {
+                range "1..255";
+              }
+              config false;
+              description
+                "Hop limit of received response packets.";
+            }
+            leaf rtt {
+              type uint32 {
+                range "0..4294967295";
+              }
+              units "ms";
+              config false;
+              description
+                "RTT of test packets.";
+            }
+            leaf result-type {
+              type probe-result-type;
+              config false;
+              description
+                "Result of packet sending, which is either success or timeout.";
+            }
+            leaf is-delete {
+              type boolean;
+              config false;
+              description
+                "Deletion flag indicating whether to delete test results.";
+            }
+          }	
+        }
+      }
+    }
+    container trace-results {
+      config false;
+      description
+        "List of test result list of trace.";
+      list trace-result {
+        key "test-name path-index";
+        config false;
+        description
+           "Statistics of test result of ping.";
+        leaf test-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Test name.";
+        }
+        leaf path-index {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "Path index.";
+        }
+        leaf status {
+          type dgntl-test-status-type;
+          config false;
+          description
+            "Test status.";
+        }
+        leaf preference {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Path preference.";
+        }
+        leaf path-type {
+          type dgntl-sr-policy-path-type;
+          config false;
+          description
+            "Path type.";
+        }
+        leaf protocol-origin {
+          type dgntl-lsp-protocol-origin;
+          config false;
+          description
+            "Protocol origin.";
+        }
+        leaf node-address {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "End point IP address.";
+        }
+        leaf asn-no {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "ASN No.";
+        }
+        leaf discriminator {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Discriminator.";
+        }
+        leaf segment-list-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Segment-list ID.";
+        }
+        leaf xc-index {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "XC index.";
+        }
+        leaf path-status {
+          type dgntl-test-status-type;     
+          config false;
+          description
+            "Path test status.";
+        }
+        leaf end-op{
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "End-OP segment ID.";
+        }
+        container hops {
+          config false;
+          description
+            "List of trace results of all packets in a test.";
+          list hop {
+            key "hop-index";
+            config false;
+            description
+              "Statistics of ping result of a single packet in a test.";
+            leaf hop-index {
+              type uint8 {
+                range "1..255";
+              }
+              config false;
+              description
+                "Hop limit of received response packets.";
+            }
+            leaf rtt {
+              type uint32;
+              units  "ms";
+              config false;
+              description
+                "RTT of test packets.";
+            }
+            leaf replier {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "Destination address of the related hop in a test.";
+            }
+            leaf type {
+              type transmit-type;
+              config false;
+              description
+                "Node type.";
+            }
+            leaf srh-sl {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Segments left.";
+            }
+            container srh-sid-lists {
+              config false;
+              description
+                "List of SID Information Result.";
+              list srh-sid-list {
+                key "sid";
+                config false;
+                description
+                  "Statistics of SID information.";
+                leaf sid {
+                  type inet:ipv6-address-no-zone;
+                  config false;
+                  description
+                    "Segment ID.";
+                }
+              }
+            }
+            leaf is-delete {
+              type boolean;
+              config false;
+              description
+                "Deletion flag indicating whether to delete test results.";
+            }
+          }	
+        }
+      }
+    }
+  }
+  rpc srv6-te-start-ping {
+    description
+      "Start srv6 te ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:srv6/diagnostic-tools:ping-results";
+    input {
+      leaf test-name {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+      choice type {
+        description
+          "The type of srv6-te policy ping.";
+        case policy-name {
+          description
+            "Policy name.";
+          leaf policy-name {
+            type string {
+              length "1..32";
+            }
+            mandatory true;
+            description
+              "Policy name.";
+          }
+        }
+        case endpoint-ip {
+          description
+            "Endpoint IP.";
+          leaf end-point-ip {
+            type inet:ipv6-address-no-zone;
+            mandatory true;
+            description
+              "End point IP address.";
+          }
+          leaf color {
+            type uint32 {
+              range "0..4294967295";    
+            }
+            mandatory true;
+            description
+              "Color.";
+          }
+        }
+        case binding-sid {
+          description
+            "Binding SID.";
+          leaf binding-sid {
+            type inet:ipv6-address-no-zone;
+            mandatory true;
+            description
+              "Binding segmentlist ID.";
+          }
+        }
+      }
+      leaf source-address {
+        type inet:ipv6-address-no-zone;
+        description
+          "Source Address.";
+      }
+      leaf interval {
+        type uint32 {
+          range "1..10000";
+        }
+        units "ms";
+        default "2000";
+        description
+          "Interval for sending test packets.";
+      }
+      leaf packet-size {
+        type uint32 {
+          range "65..9600";
+        }
+        default "100";
+        description
+          "Number of bytes in a sent test packet.";
+      }
+      leaf count {
+        type uint32 {
+          range "1..4294967295";
+        }
+        default "5";
+        description
+          "Number of sent test packets.";
+      }
+      leaf timeout {
+        type uint32 {
+          range "0..65535";
+        }
+        units "ms";
+        default "2000";
+        description
+          "Time to wait for a response packet after a test packet is sent. If no response packet is received within the timeout period, the system considers that the test packet times out.";
+      }
+      leaf traffic-class {
+        type uint32 {
+          range "0..255";
+        }
+        description
+          "Traffic class value of IPv6 packets. The traffic class value is used to distinguish the service types of IPv6 packets.";
+      }
+      leaf hop-limit {
+        type uint32 {
+          range "1..255";
+        }
+        default "1";
+        description
+          "Hop limit of send packets.";
+      }
+      leaf end-op {
+        type inet:ipv6-address-no-zone;
+        description
+          "End-OP segment ID.";
+      }
+    }
+  }
+
+  rpc srv6-te-stop-ping {
+    description
+      "Stop srv6 te ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:srv6/diagnostic-tools:ping-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:srv6/diagnostic-tools:ping-results/diagnostic-tools:ping-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc srv6-te-delete-ping {
+    description
+      "Delete srv6 te ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:srv6/diagnostic-tools:ping-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:srv6/diagnostic-tools:ping-results/diagnostic-tools:ping-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc srv6-te-start-trace {
+    description
+      "Start srv6 te trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:srv6/diagnostic-tools:trace-results";
+    input {
+      leaf test-name {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+      choice type {
+        description
+          "The type of srv6-te policy ping.";
+        case policy-name {
+          description
+            "Policy name.";
+          leaf policy-name {
+            type string {
+              length "1..32";
+            }
+            mandatory true;
+            description
+              "Policy name.";
+          }
+        }
+        case endpoint-ip {
+          description
+            "Endpoint IP.";
+          leaf end-point-ip {
+            type inet:ipv6-address-no-zone;
+            mandatory true;
+            description
+              "End point IP address.";
+          }
+          leaf color {
+            type uint32 {
+              range "0..4294967295";    
+            }
+            mandatory true;
+            description
+              "Color.";
+          }
+        }
+        case binding-sid {
+          description
+            "Binding SID.";
+          leaf binding-sid {
+            type inet:ipv6-address-no-zone;
+            mandatory true;
+            description
+              "Binding segmentlist ID.";
+          }
+        }
+      }
+      leaf source-address {
+        type inet:ipv6-address-no-zone;
+        description
+          "Source address.";
+      }
+      leaf packet-size {
+        type uint32 {
+          range "65..9600";
+        }
+        default "100";
+        description
+          "Number of bytes in a sent test packet.";
+      }
+      leaf timeout {
+        type uint32 {
+          range "0..65535";
+        }
+        units "ms";
+        default "2000";
+        description
+          "Time to wait for a response packet after a test packet is sent. If no response packet is received within the timeout period, the system considers that the test packet times out.";
+      }
+      leaf first-hop-limit {
+        type uint32 {
+          range "1..255";
+        }
+        default "1";
+        description
+          "Hop limit of the first packet in a test.";
+      }
+      leaf max-hop-limit {
+        type uint32 {
+          range "1..255";
+        }
+        default "30";
+        description
+          "Max hop limit of test packets.";
+      }
+      leaf udp-port {
+        type uint32 {
+          range "1..65535";
+        }
+        default "33434";
+        description
+          "Destination port number.";
+      }
+      leaf traffic-class {
+        type uint32 {
+          range "0..255";
+        }
+        description
+          "Traffic class value of IPv6 packets. The traffic class value is used to distinguish the service types of IPv6 packets.";
+      }
+      leaf end-op {
+        type inet:ipv6-address-no-zone;
+        description
+          "End-OP segment ID.";
+      }
+    }
+  }
+
+  rpc srv6-te-stop-trace {
+    description
+      "Stop srv6 te trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:srv6/diagnostic-tools:trace-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:srv6/diagnostic-tools:trace-results/diagnostic-tools:trace-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc srv6-te-delete-trace {
+    description
+      "Delete srv6 te trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:srv6/diagnostic-tools:trace-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:srv6/diagnostic-tools:trace-results/diagnostic-tools:trace-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  augment "/diagnostic-tools:diagnostic-tools" {
+    description
+      "List of SRV6 ping and trace tests.";
+    container srv6 {
+      config false;
+      description
+        "Statistics of SRV6 ping and trace tests.";
+      uses diagnostic-tools:srv6-ping-trace-result-type;
+    }
+  }
+
+}

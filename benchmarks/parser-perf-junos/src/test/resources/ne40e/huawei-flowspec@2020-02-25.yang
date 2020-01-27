@@ -1,0 +1,161 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-flowspec {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-flowspec";
+  prefix flowspec;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  include huawei-flowspec-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Flow specification.";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-05-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  augment /ni:network-instance/ni:instances/ni:instance {
+    description
+      "Flowspec private network instance configuration.";
+    container flowspec {
+      description
+        "Configure flow specification.";
+      container flow-routes {
+        description
+          "List of flow specification routes.";
+        list flow-route {
+          key "name address-family";
+          description
+            "Configure static flow specification route.";
+          leaf name {
+            type string {
+              length "1..30";
+            }
+            description
+              "Route name. Spaces not supported.";
+          }
+          leaf address-family {
+            type flowspec:af-type;
+            description
+              "Address Family Type.";
+          }
+          container condition {
+            description
+              "Configure filtering conditions.";
+            container source-prefix {
+              when "../../address-family='ipv4flow'";
+              description
+                "Configure source IP addresses.";
+              leaf address {
+                type inet:ipv4-address;
+                must "../address and ../mask-length";
+                description
+                  "Source IP address.";
+              }
+              leaf mask-length {
+                type uint8 {
+                  range "0..32";
+                }
+                must "../address and ../mask-length";
+                description
+                  "Mask length.";
+              }
+            }
+          }
+          container action {
+            description
+              "Configure actions to be applied to static flow specification routes.";
+            container remark-dscp {
+              description
+                "Configure remark DSCP.";
+              leaf value {
+                type uint8 {
+                  range "0..63";
+                }
+                description
+                  "Specify the DSCP Value. Relationships between the traffic classifier name and DSCP value are as follows: 0: BE; 8: CS1; 10: AF11; 12: AF12; 14: AF13; 16: CS2; 18: AF21; 20: AF22; 22: AF23; 24: CS3; 26: AF31; 28: AF32; 30: AF33; 32: CS4; 34: AF41; 36: AF42; 38: AF43; 40: CS5; 46: EF; 48: CS6; 56: CS7.";
+              }
+            }
+            container traffic-rate {
+              description
+                "Configure the traffic rate.";
+              leaf value {
+                type uint32 {
+                  range "1..100000000";
+                }
+                units kB/s;
+                description
+                  "Specify the traffic rate.";
+              }
+              leaf valid-value {
+                type uint32 {
+                  range "1..12500000";
+                }
+                units kB/s;
+                config false;
+                description
+                  "The valid traffic rate.";
+              }
+            }
+            container traffic {
+              description
+                "Configure the traffic behaviour table.";
+              leaf sample {
+                type empty;
+                description
+                  "Apply the traffic behaviour sampling.";
+              }
+            }
+            container redirect-ipv6 {
+              description
+                "Configure the rule to redirect to IPv6.";
+              leaf color {
+                type string {
+                  length "3..12";
+                }
+                description
+                  "Specify the color information, format:0:number[1-4294967295].";
+              }
+              leaf ipv6 {
+                type string {
+                  length "5..47";
+                }
+                description
+                  "Specify the redirect IPv6 information, Format:X:X::X:X.number[0-1] (0:redirect 1:copy).";
+              }
+              leaf prefix-sid {
+                type inet:ipv6-address-no-zone;
+                description
+                  "PrefixSid attribute infomation of Route.";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  ext:task-name "flow-route";
+}

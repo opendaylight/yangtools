@@ -1,0 +1,187 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-twamp-responder {
+  namespace "urn:huawei:yang:huawei-twamp-responder";
+  prefix twamp-responder;
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Two Way Active Measurement Protocol.";
+
+  revision 2019-12-27 {
+    description
+      "Solve some errors.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-05 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  ext:task-name  "twamp"; 
+  
+  container twamp-responder {
+    description
+      "Two Way Active Measurement Protocol.";
+    container server {
+      presence "Server Enable.";
+      description
+        "Configure server role.";
+      leaf tcp-port {
+        type uint16 {
+          range "862|1024..65535";
+        }
+        default "862";
+        description
+          "The TCP port of server.";
+      }
+      leaf ctrl-session-timeout {
+        type uint32 {
+          range "1..6000";
+        }
+        units "s";
+        default "900";
+        description
+          "The timeout of control session.";
+      }  
+      leaf acl-identity {
+        type leafref {
+          path "/acl:acl/acl:groups/acl:group/acl:identity";
+        }
+        description
+          "Configure TWAMP by specifying ACL name.";
+      }
+      choice vpn {
+        description
+          "VPN instance of TWAMP.";
+        case vpn-all {
+          description
+            "Specify all VPN instance.";
+          leaf all-vpn {
+            type empty;
+            description
+              "IP and all VPN instances.";
+          }
+        }
+        case vpn-instance {
+          description
+            "Specify any VPN instance.";
+          leaf vrf-name {
+            type leafref {
+              path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+            }
+            must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+            description
+              "VPN instance name.";
+          }
+        }
+      }  
+    }
+    container reflector {
+      presence "Reflector Enable.";
+      description
+        "Configure the reflector of TWAMP.";
+      leaf test-session-timeout {
+        type uint32 {
+          range "1..604800";
+        }
+        units "s";
+        default "900";
+        description
+          "The timeout of test session.";
+      }
+    }
+    container responder {
+      presence "Enable responder of TWAMP.";
+      description
+        "Configure the responder of TWAMP light.";
+      container test-sessions {
+        description
+          "List of TWAMP light responder test session.";
+        list test-session {
+          key "session-id";
+          unique "source-ip dest-ip source-port dest-port";
+          description
+            "Configure TWAMP light test session.";
+          leaf session-id {
+            type uint32 {
+              range "1..65535";
+            }
+            description
+              "Test session ID.";
+          }
+          leaf source-ip {
+            type inet:ip-address-no-zone;
+            must "((../source-ip) != (../dest-ip))";
+            mandatory true;
+            description
+              "Source IP address.";
+          }
+          leaf dest-ip {
+            type inet:ip-address-no-zone;
+            must "((../source-ip) != (../dest-ip))";
+            mandatory true;
+            description
+              "Dest IP address.";
+          }
+          leaf source-port {
+            type uint16 {
+              range "862..863|1025..65535";
+            }
+            mandatory true;
+            description
+              "Source UDP port, This UDP port cannot used by other protocol.";
+          }
+          leaf dest-port {
+            type uint16 {
+              range "862..863|1025..65535";
+            }
+            mandatory true;
+            description
+              "Dest UDP Port, This UDP Port cannot used by other protocol.";
+          }
+          leaf vrf-name {
+            type leafref {
+              path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+            }
+            must "(contains(../source-ip,':') and /ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']) or (not(contains(../source-ip,':'))and /ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast'])";
+            description
+              "VPN Instance name.";
+          }
+          leaf anti-loop {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable anti loop.";
+          }
+        }
+      }
+    } 
+  }
+}

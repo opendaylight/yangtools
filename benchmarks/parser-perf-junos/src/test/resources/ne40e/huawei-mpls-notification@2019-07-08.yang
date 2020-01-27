@@ -1,0 +1,670 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-mpls-notification";
+  prefix mpls-notification;
+  /*import huawei-notification-common {
+    prefix nc;
+  }*/
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of MPLS.";
+  revision 2019-07-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mpls-base";
+  typedef interface-status {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "The interface is in the up state..";
+      }
+      enum "down" {
+        value 2;
+        description
+          "The interface is in the down state.";
+      }
+      enum "test" {
+        value 3;
+        description
+          "The interface is in the test state..";
+      }	  
+    }
+    description
+      "Interface status.";
+  }
+  notification mpls-tunnel-rerouted {
+    description
+      "Tunnel routes changed.";  
+    leaf tunnel-id {
+      type uint32;
+      description
+        "Primary tunnel ID.";
+    }
+    leaf local-lsp-id {
+      type uint32;
+      description
+        "LSP ID of the primary tunnel.";
+    }
+    leaf ingress-lsr-id {
+      type inet:ipv4-address-no-zone;
+      description
+        "Ingress LSR ID of the primary tunnel.";
+    }
+    leaf egress-lsr-id {
+      type inet:ipv4-address-no-zone;
+      description
+        "Egress LSR ID of the primary tunnel.";
+    }
+    leaf tunnel-admin-status {
+      type interface-status;
+      description
+        "Indicates the management status of the tunnel.";
+    }
+    leaf tunnel-oper-status {
+      type interface-status;
+      description
+        "Indicates the operating status of the tunnel.";
+    }
+  }
+  notification ldp-session-down {
+    description
+      "The LDP session status is Down.";
+    leaf peer-lsr-id {
+      type string {
+        length "1..31";
+      }
+      description
+        "Peer LSR ID.";
+    }
+    leaf reason-value {
+      type uint32;
+      description
+        "Cause for trap generation.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Indicates the index of the interface that discovers the neighbor.";
+    }
+    leaf ssn-state {
+      type uint32;
+      description
+        "Session status.";
+    }
+    leaf ssn-disco-time {
+      type uint32;
+      description
+        "Session keepalive time.";
+    }
+    leaf ssn-rec-unknown-msg-errs {
+      type uint32;
+      description
+        "Number of unknown types of messages received by the session.";
+    }
+    leaf ssn-rec-unknown-tlv-errs {
+      type uint32;
+      description
+        "Number of unknown TLVs received by the session.";
+    }
+    leaf local-lsr-id {
+      type string {
+        length "1..31";
+      }
+      description
+        "Local LSR ID.";
+    }
+    leaf ldp-entity-index {
+      type uint32;
+      description
+        "The index for the LDP entry.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Name of an LDP peer interface.";
+    }
+  }
+  notification ldp-session-up {
+    description
+      "The LDP session status changes.";
+    leaf peer-lsr-id {
+      type string {
+        length "1..31";
+      }
+      description
+        "Peer LSR ID.";
+    }
+    leaf vrf-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VRF for an LDP session.";
+    }
+    leaf session-type {
+      type string {
+        length "1..31";
+      }
+      description
+        "LDP session type: - Local - Remote - Local and remote.";
+    }
+    leaf sub-reason {
+      type string {
+        length "1..63";
+      }
+      description
+        "Detailed cause for an alarm When an LDP session goes Down because an incorrect packet or a Notify message is received, the specific error packet type or Notify message type is displayed. For example: - Incorrect LDP ID carried in the packet(1) - Incorrect version number carried in the packet(2) - Incorrect PDU length(3) - Incorrect message length(5) - Incorrect TLV carried in the packet(7) - The received Notify message indicates that the Hello packet times out(9) - The received Notify message indicating a shutdown instruction(10) - The received Notify message indicates the keepalive message times out(20) When an LDP session goes Down because an incorrect socket is received, the detail error reason or an error code is displayed. For example: - Tcp connection reset by peer(54) - Tcp connection time out(60) This field is 0 if the LDP session goes Down due to other causes.";
+    }
+    leaf reason-value {
+      type uint32;
+      description
+        "Cause for trap generation.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Indicates the index of the interface that discovers the neighbor.";
+    }
+    leaf ssn-state {
+      type uint32;
+      description
+        "Session status.";
+    }
+    leaf ssn-disco-time {
+      type uint32;
+      description
+        "Session keepalive time.";
+    }
+    leaf ssn-rec-unknown-msg-errs {
+      type uint32;
+      description
+        "Number of unknown types of messages received by the session.";
+    }
+    leaf ssn-rec-unknown-tlv-errs {
+      type uint32;
+      description
+        "Number of unknown TLVs received by the session.";
+    }
+    leaf local-lsr-id {
+      type string {
+        length "1..31";
+      }
+      description
+        "Local LSR ID.";
+    }
+    leaf ldp-entity-index {
+      type uint32;
+      description
+        "The index for the LDP entry.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Name of an LDP peer interface.";
+    }
+    leaf adj-if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf reason {
+      type string {
+        length "1..63";
+      }
+      description
+        "Alarm cause.";
+    }
+  }
+  notification session-retry {
+    description
+	"The sequence number of an Initialization message exceeded the threshold of MPLS LDP entity Initialization session and the threshold is not zero.";
+    leaf peer-ldp-id {
+      type string {
+        length "1..31";
+      }
+      description
+        "LDP ID.";
+    }
+    leaf entity-index {
+      type uint32;
+      description
+        "LDP instance index.";
+    }
+    leaf init-session-threshold {
+      type int32;
+      description
+        "Indicates the number of attempts for session negotiation through Init messages.";
+    }
+  }
+  notification mpls-ldp-virtual-tunnel-down {
+    description
+      "This alarm is generated when the LDP virtual tunnel goes Down.";
+    leaf ldp-virtual-tunnel-fec {
+      type uint32;
+      description
+        "FEC for a virtual LDP tunnel.";
+    }
+  }
+  notification mpls-ldp-virtual-tunnel-up {
+    description
+      "This alarm is generated when the LDP virtual tunnel goes Up.";
+    leaf ldp-virtual-tunnel-fec {
+      type uint32;
+      description
+        "FEC for a virtual LDP tunnel.";
+    }
+  }
+  notification ldp-multiple-links-inconsistent {
+    description
+      "MPLS LDP multi-link configurations are inconsistent.";
+    leaf config-type {
+      type string {
+        length "1..31";
+      }
+      description
+        "Configuration inconsistent type.";
+    }
+    leaf effect-ka {
+      type uint32;
+      description
+        "KeepAlive value used by the LDP session.";
+    }
+    leaf peer-lsr-id {
+      type string {
+        length "1..31";
+      }
+      description
+        "LDP session ID.";
+    }
+    leaf local-lsr-id {
+      type string {
+        length "1..31";
+      }
+      description
+        "Local LSR ID.";
+    }
+    leaf config-if-index {
+      type uint32;
+      description
+        "Configure the current interface index.";
+    }
+    leaf effect-ta {
+      type inet:ipv4-address-no-zone;
+      description
+        "LDP transport addresses used by the session.";
+    }
+    leaf effect-lam {
+      type string {
+        length "1..31";
+      }
+      description
+        "Peer use label advertisement mode.";
+    }
+    leaf consistent-state {
+      type uint32;
+      description
+        "The current configuration inconsistent type.";
+    }
+    leaf vrf-index {
+      type uint32;
+      description
+        "VRF index of LDP session exists.";
+    }
+    leaf config-rmt-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Configure the IP address of the remote session.";
+    }
+  }
+  notification ldp-multiple-links-inconsistent-clear {
+    description
+      "MPLS LDP multi-link configurations became consistent.";
+    leaf config-type {
+      type string {
+        length "1..31";
+      }
+      description
+        "Configuration inconsistent type.";
+    }
+    leaf peer-lsr-id {
+      type string {
+        length "1..31";
+      }
+      description
+        "LDP session ID.";
+    }
+    leaf local-lsr-id {
+      type string {
+        length "1..31";
+      }
+      description
+        "Local LSR ID.";
+    }
+    leaf config-if-index {
+      type uint32;
+      description
+        "Configure the current interface index.";
+    }
+    leaf consistent-state {
+      type uint32;
+      description
+        "The current configuration inconsistent type.";
+    }
+    leaf vrf-index {
+      type uint32;
+      description
+        "VRF index of LDP session exists.";
+    }
+    leaf config-rmt-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Configure the IP address of the remote session.";
+    }
+  }
+  notification mpls-lsp-threshold-exceed {
+    description
+      "The lsp count exceeds the threshold.";
+    leaf lsp-protocol {
+      type uint8;
+      description
+        "LSP protocol type.";
+    }
+    leaf lsp-current-count {
+      type uint32;
+      description
+        "Number of the current LSPs.";
+    }
+    leaf lsp-threshold {
+      type uint8;
+      description
+        "Upper threshold of LSPs.";
+    }
+    leaf lsp-total-count {
+      type uint32;
+      description
+        "Upper limit of LSPs which supported MPLS LSP protocol.";
+    }
+  }
+  notification mpls-lsp-threshold-exceed-clear {
+    description
+      "The lsp count falls from the threshold.";
+    leaf lsp-protocol {
+      type uint8;
+      description
+        "LSP protocol type.";
+    }
+    leaf lsp-current-count {
+      type uint32;
+      description
+        "Number of the current LSPs.";
+    }
+    leaf lsp-threshold {
+      type uint8;
+      description
+        "Upper threshold of LSPs.";
+    }
+    leaf lsp-total-count {
+      type uint32;
+      description
+        "Upper limit of LSPs which supported MPLS LSP protocol.";
+    }
+  }
+  notification mpls-lsp-total-count-exceed {
+    description
+      "The lsp count reaches the upper limit.";
+    leaf lsp-protocol {
+      type uint8;
+      description
+        "LSP protocol type.";
+    }
+    leaf lsp-total-count {
+      type uint32;
+      description
+        "Upper limit of supported LSPs.";
+    }
+  }
+  notification mpls-lsp-total-count-exceed-clear {
+    description
+      "The lsp count falls from the upper limit.";
+    leaf lsp-protocol {
+      type uint8;
+      description
+        "LSP protocol type.";
+    }
+    leaf lsp-total-count {
+      type uint32;
+      description
+        "Upper limit of supported LSPs.";
+    }
+  }
+  notification mpls-static-lsp-down {
+    description
+      "Static LSP went Down.";
+    leaf lsp-index {
+      type uint32;
+      description
+        "Indicates the index of the LSP.";
+    }
+    leaf in-segment-index {
+      type uint32;
+      description
+        "Indicates the inSegment index of a static LSP.";
+    }
+    leaf out-segment-index {
+      type uint32;
+      description
+        "Indicates the outbound interface index of a static LSP.";
+    }
+    leaf out-if-index {
+      type uint32;
+      description
+        "Indicates the outbound interface index of a static LSP.";
+    }
+    leaf lsp-name {
+      type string {
+        length "1..19";
+      }
+      description
+        "Indicates the name of a static LSP.";
+    }
+    leaf lsp-status {
+      type uint32;
+      description
+        "Indicates the status of a static LSP.";
+    }
+    leaf out-if-name {
+      type pub-type:if-name;
+      description
+        "Indicates the outbound interface name of a static LSP.";
+    }
+    leaf in-if-index {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the inbound interface index of a static LSP.";
+    }
+    leaf in-if-name {
+      type pub-type:if-name;
+      description
+        "Indicates the inbound interface name a static LSP.";
+    }
+    leaf reason-index {
+      type uint32;
+      description
+        "Indicates the reason that the static LSP down.";
+    }
+    leaf reason {
+      type string {
+        length "1..63";
+      }
+      description
+        "Alarm cause.";
+    }
+  }
+  notification mpls-static-lsp-up {
+    description
+      "Static LSP's status changes.";
+    leaf lsp-index {
+      type uint32;
+      description
+        "Indicates the index of the LSP.";
+    }
+    leaf in-segment-index {
+      type uint32;
+      description
+        "Indicates the inSegment index of a static LSP.";
+    }
+    leaf out-segment-index {
+      type uint32;
+      description
+        "Indicates the outbound interface index of a static LSP.";
+    }
+    leaf lsp-name {
+      type string {
+        length "1..19";
+      }
+      description
+        "Indicates the name of a static LSP.";
+    }
+    leaf lsp-status {
+      type uint32;
+      description
+        "Indicates the status of a static LSP.";
+    }
+    leaf out-if-index {
+      type uint32;
+      description
+        "Indicates the outbound interface index of a static LSP.";
+    }
+    leaf out-if-name {
+      type pub-type:if-name;
+      description
+        "Indicates the outbound interface name of a static LSP.";
+    }
+    leaf in-if-index {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the inbound interface index of a static LSP.";
+    }
+    leaf in-if-name {
+      type pub-type:if-name;
+      description
+        "Indicates the inbound interface name a static LSP.";
+    }
+    leaf reason-index {
+      type uint32;
+      description
+        "Indicates the reason that the static LSP down.";
+    }
+    leaf reason {
+      type string {
+        length "1..63";
+      }
+      description
+        "Alarm cause.";
+    }
+  }
+  notification block-label-threshold-exceed {
+    description
+      "The block label usage exceeds the threshold, which may affect the creation of BGP/L2VPNs.";
+    leaf block-label-total-count {
+      type uint32;
+      description
+        "Indicates the total number of block labels.";
+    }
+    leaf block-label-current-count {
+      type uint32;
+      description
+        "Indicates the number of used block labels.";
+    }
+    leaf block-label-threshold-upper-limit {
+      type uint32;
+      description
+        "Indicates the upper limit of block label usage.";
+    }
+    leaf block-label-threshold-lower-limit {
+      type uint32;
+      description
+        "Indicates the lower limit of block label usage.";
+    }
+  }
+  notification block-label-threshold-exceed-clear {
+    description
+      "The block label usage falls from the threshold.";
+    leaf block-label-total-count {
+      type uint32;
+      description
+        "Indicates the total number of block labels.";
+    }
+    leaf block-label-current-count {
+      type uint32;
+      description
+        "Indicates the number of used block labels.";
+    }
+    leaf block-label-threshold-upper-limit {
+      type uint32;
+      description
+        "Indicates the upper limit of block label usage.";
+    }
+    leaf block-label-threshold-lower-limit {
+      type uint32;
+      description
+        "Indicates the lower limit of block label usage.";
+    }
+  }
+  notification block-label-total-count-exceed {
+    description
+      "The block label count reaches the upper limit.";
+    leaf block-label-total-count {
+      type uint32;
+      description
+        "Indicates the maximum number of block labels supported by the device.";
+    }
+    leaf block-label-current-count {
+      type uint32;
+      description
+        "Indicates the number of block labels that are currently used on the device.";
+    }
+  }
+  notification block-label-total-count-exceed-clear {
+    description
+      "The block label count falls from the upper limit.";
+    leaf block-label-total-count {
+      type uint32;
+      description
+        "Indicates the maximum number of block labels supported by the device.";
+    }
+    leaf block-label-current-count {
+      type uint32;
+      description
+        "Indicates the number of block labels that are currently used on the device.";
+    }
+  }
+}

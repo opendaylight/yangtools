@@ -1,0 +1,46 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-notification-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-clocksync-notification-deviations-CH-NE-X3";
+  prefix clocksync-notification-devs-CH-NE-X3;
+  import huawei-clocksync-notification {
+    prefix clocksync-notification;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of clocksync-notification-deviations-CH-NE-X3.";
+  revision 2020-01-14 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  deviation /clocksync-notification:clock-cluster-topo-fail {
+    deviate not-supported;
+  }
+  deviation /clocksync-notification:clock-cluster-topo-fail-resume {
+    deviate not-supported;
+  }
+  deviation /clocksync-notification:clock-fm-switch {
+    deviate not-supported;
+  }
+  deviation /clocksync-notification:clock-fm-switch-resume {
+    deviate not-supported;
+  }
+  deviation /clocksync-notification:clock-sync-bad {
+    deviate not-supported;
+  }
+  deviation /clocksync-notification:clock-sync-bad-resume {
+    deviate not-supported;
+  }
+}

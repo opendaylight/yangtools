@@ -1,0 +1,38 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-pnp-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-pnp-deviations-CH-NE-X3";
+  prefix pnp-devs-CH-NE-X3;
+
+  import huawei-pnp {
+    prefix pnp;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Plug and play.";
+
+  revision 2019-09-17 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/pnp:pnp/pnp:global" {
+    deviate replace {
+      config false;
+    }
+  }
+  deviation "/pnp:pnp/pnp:global/pnp:enable" {
+    deviate not-supported;
+  }
+}

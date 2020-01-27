@@ -1,0 +1,447 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mac-fwd {
+  namespace "urn:huawei:yang:huawei-mac-fwd";
+  prefix mac-fwd;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-vlan {
+    prefix vlan;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-bd {
+    prefix bd;
+  }
+  import huawei-mac {
+    prefix mac;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-mac-flapping {
+    prefix mac-flapping;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  ext:task-name "mac";
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Forwarding MAC service.";
+  revision 2020-01-22 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-15 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef alarm-state {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable the MAC flapping alarm function.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable the MAC flapping alarm function.";
+      }
+    }
+    description
+      "MAC flapping alarm enable.";
+  }
+  rpc reset-bd-machop {
+    description
+      "Reset MAC hop info by BD id.";
+    ext:node-ref "/bd:bd/bd:instances/bd:instance/mac-fwd:mac-hops/mac-fwd:mac-hop";
+    input {
+      leaf bd-id {
+        type uint32 {
+          range "1..16777215";
+        }
+        mandatory true;
+        description
+          "BD id.";
+      }
+    }
+  }
+  rpc reset-bd-machop-all {
+    description
+      "Reset MAC hop info.";
+    ext:node-ref "/bd:bd/bd:instances/bd:instance/mac-fwd:mac-hops/mac-fwd:mac-hop";
+  }
+  rpc reset-vlan-machop {
+    description
+      "Reset MAC hop info by VLAN id.";
+    ext:node-ref "/vlan:vlan/vlan:vlans/vlan:vlan/mac-fwd:mac-hops/mac-fwd:mac-hop";
+    input {
+      leaf vlan-id {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "VLAN id.";
+      }
+    }
+  }
+  rpc reset-vlan-machop-all {
+    description
+      "Reset MAC hop info.";
+    ext:node-ref "/vlan:vlan/vlan:vlans/vlan:vlan/mac-fwd:mac-hops/mac-fwd:mac-hop";
+  }
+  rpc reset-vsi-machop {
+    description
+      "Reset MAC hop info by VSI name.";
+    ext:node-ref "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/mac-fwd:mac-hops/mac-fwd:mac-hop";
+    input {
+      leaf name {
+        type string {
+          length "1..31";
+        }
+        mandatory true;
+        description
+          "VSI name.";
+      }
+    }
+  }
+  rpc reset-vsi-machop-all {
+    description
+      "Reset MAC hop info.";
+    ext:node-ref "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/mac-fwd:mac-hops/mac-fwd:mac-hop";
+  }
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "Slot MAC synchronize.";
+    container mac-sync {
+      description
+        "Configure MAC synchronize.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MAC synchronize.";
+      }
+    }
+  }
+  augment "/bd:bd/bd:instances/bd:instance" {
+    description
+      "BD mac hop info.";
+    container mac-hops {
+      config false;
+      description
+        "List of the bridge domain mac hop info.";
+      list mac-hop {
+        key "mac-address interface-name peer-ip";
+        config false;
+        description
+          "Operational data of the bridge domain mac hop info.";
+        leaf mac-address {
+          type pub-type:mac-address {
+            length "0..255";
+          }
+          config false;
+          description
+            "MAC address.";
+        }
+        leaf interface-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          config false;
+          description
+            "Interface name.";
+        }
+        leaf peer-ip {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Remote peer IP information.";
+        }
+        leaf detect-time {
+          type string {
+            length "1..20";
+          }
+          config false;
+          description
+            "Detect time.";
+        }
+      }
+    }
+  }
+  augment "/vlan:vlan/vlan:vlans/vlan:vlan" {
+    description
+      "VLAN mac hop info.";
+    container mac-hops {
+      config false;
+      description
+        "List of the VLAN mac hop info.";
+      list mac-hop {
+        key "mac-address interface-name";
+        config false;
+        description
+          "Operational data of VLAN mac hop info.";
+        leaf mac-address {
+          type pub-type:mac-address {
+            length "0..255";
+          }
+          config false;
+          description
+            "MAC address.";
+        }
+        leaf interface-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          config false;
+          description
+            "Interface name.";
+        }
+        leaf detect-time {
+          type string {
+            length "1..20";
+          }
+          config false;
+          description
+            "Detect time.";
+        }
+      }
+    }
+    container loop-detect-suppression {
+      config false;
+      description
+        "Statistics of the VLAN suppression.";
+      leaf interface-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        config false;
+        description
+          "Interface name.";
+      }
+      leaf cir {
+        type uint32;
+        config false;
+        description
+          "Committed information rate.";
+      }
+      leaf time {
+        type string {
+          length "1..20";
+        }
+        config false;
+        description
+          "Suppression generation time.";
+      }
+      leaf state {
+        type string {
+          length "1..15";
+        }
+        config false;
+        description
+          "Suppression state.";
+      }
+      leaf slot {
+        type string {
+          length "1..20";
+        }
+        config false;
+        description
+          "Slot ID.";
+      }
+    }
+  }
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls" {
+    description
+      "VPLS mac hop info.";
+    container mac-hops {
+      config false;
+      description
+        "List of the vpls mac hop info.";
+      list mac-hop {
+        key "mac-address interface-name peer-ip";
+        config false;
+        description
+          "Operational data of vpls mac hop info.";
+        leaf mac-address {
+          type pub-type:mac-address {
+            length "0..255";
+          }
+          config false;
+          description
+            "MAC address.";
+        }
+        leaf interface-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          config false;
+          description
+            "Interface name.";
+        }
+        leaf peer-ip {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Remote peer IP information.";
+        }
+        leaf pw-id {
+          type uint32;
+          config false;
+          description
+            "Remote PW ID information.";
+        }
+        leaf detect-time {
+          type string {
+            length "1..20";
+          }
+          config false;
+          description
+            "Detect time.";
+        }
+      }
+    }
+    container loop-detect-suppression {
+      config false;
+      description
+        "Statistics of the vsi suppression.";
+      leaf interface-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        config false;
+        description
+          "Interface name.";
+      }
+      leaf peer-ip {
+        type string {
+          length "1..20";
+        }
+        config false;
+        description
+          "Remote peer IP information.";
+      }
+      leaf vc-lable {
+        type uint32;
+        config false;
+        description
+          "Remote PW ID information.";
+      }
+      leaf cir {
+        type uint32;
+        config false;
+        description
+          "Committed information rate.";
+      }
+      leaf time {
+        type string {
+          length "1..20";
+        }
+        config false;
+        description
+          "Suppression generation time.";
+      }
+      leaf state {
+        type string {
+          length "1..15";
+        }
+        config false;
+        description
+          "Suppression state.";
+      }
+      leaf slot {
+        type string {
+          length "1..20";
+        }
+        config false;
+        description
+          "Slot ID.";
+      }
+    }
+  }
+
+  augment "/mac:mac/mac:global-attribute" {
+      description
+        "Forwarding MAC global attribute.";
+      container mac-fwd {
+        description
+          "Configure forwarding MAC global attribute.";
+        leaf mac-synchronize {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable global MAC address synchronization.";
+        }
+        leaf learn-first-packet {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable MAC limit since-first-packet.";
+        }
+      }
+  }
+
+  augment "/mac-flapping:mac-flapping/mac-flapping:global-attribute" {
+      description
+        "MAC flapping alarm parameter.";
+      container alarm-para {
+        description
+          "Configure MAC flapping alarm parameter.";
+        leaf loop-times {
+          type uint32 {
+            range "3..1000";
+          }
+          default "3";
+          description
+            "Number of MAC address flappings.";
+        }
+        leaf detect-cycle {
+          type uint16 {
+            range "10..30";
+          }
+          default "10";
+          description
+            "Detection cycle.";
+        }
+        leaf cycles {
+          type uint16 {
+            range "3..15";
+          }
+          default "3";
+          description
+            "Number of cycles.";
+        }
+        leaf alarm-state {
+          type alarm-state;
+          default "enable";
+          description
+            "MAC flapping alarm status.";
+        }
+      }
+   }
+}

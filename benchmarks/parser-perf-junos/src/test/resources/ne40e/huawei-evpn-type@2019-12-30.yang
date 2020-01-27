@@ -1,0 +1,952 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-evpn-type {
+  belongs-to huawei-evpn {
+    prefix evpn;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Evpn type.";
+  revision 2019-12-30 {
+    description
+      "Modify the tunne-type.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef name-type {
+    type string {
+      length "1..31";
+    }
+    description
+      "EVN name type.";
+  }
+  typedef esi {
+    type string {
+      length "1..24";
+      pattern '( *(00([0-9a-fA-F]){2}\.(([0-9a-fA-F]){4}\.){3}(([0-9a-fA-F]){4}))? *)';
+    }
+    description
+      "ESI is begin with a-f or A-f or 0-9.";
+  }
+  typedef vrf-rt-type {
+    type enumeration {
+      enum "export-extcommunity" {
+        value 2;
+        description
+          "Value of the extended community attribute of the route from an outbound interface to the destination VPN.";
+      }
+      enum "import-extcommunity" {
+        value 3;
+        description
+          "Extended community attribute value. Routes with such an extended community value can be accepted.";
+      }
+    }
+    description
+      "VRF RT type.";
+  }
+  typedef evpn-type {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "The type of EVPN is normal mode.";
+      }
+      enum "i-evpn" {
+        value 1;
+        description
+          "The type of EVPN is Instance-EVPN.";
+      }
+      enum "b-evpn" {
+        value 2;
+        description
+          "The type of EVPN is Backbone-EVPN.";
+      }
+      enum "bd-evpn" {
+        value 3;
+        description
+          "The type of EVPN is BD mode.";
+      }
+      enum "vpws-evpn" {
+        value 4;
+        description
+          "The type of EVPN is VPWS mode.";
+      }
+    }
+    description
+      "EVPN type.";
+  }
+  typedef redundancy-mode {
+    type enumeration {
+      enum "all-active" {
+        value 0;
+        description
+          "All active mode.";
+      }
+      enum "single-active" {
+        value 1;
+        description
+          "Single active mode.";
+      }
+    }
+    description
+      "Redundancy mode.";
+  }
+  typedef df-election-mode {
+    type enumeration {
+      enum "per-vlan" {
+        value 0;
+        description
+          "Per VLAN mode.";
+      }
+      enum "per-interface" {
+        value 1;
+        description
+          "Per interface mode.";
+      }
+    }
+    description
+      "DF election type.";
+  }
+  typedef vpws-df-election-mode {
+    type enumeration {
+      enum "per-serviceid" {
+        value 1;
+        description
+          "The DF election policy of per service ID.";
+      }
+      enum "per-interface" {
+        value 2;
+        description
+          "The DF election policy of per interface.";
+      }
+    }
+    description
+      "DF election policy.";
+  }
+  typedef ad-per-es-route-divmode {
+    type enumeration {
+      enum "dont-divide-rt" {
+        value 0;
+        description
+          "AD per ES route Split mode dont-divide-rt.";
+      }
+      enum "divide-rt" {
+        value 1;
+        description
+          "AD per ES route Split mode divide-rt.";
+      }
+    }
+    description
+      "AD per ES route Split mode.";
+  }
+  typedef ac-influnced-enable {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "AcInfluncedEnable type.";
+  }
+  typedef mac-route-no-advertise-type {
+    type enumeration {
+      enum "enable" {
+        value 0;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 1;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "MAC no-advertise enable type.";
+  }
+  typedef isolate-spoken-type {
+    type enumeration {
+      enum "isolateflag" {
+        value 4;
+        description
+          "Enable.";
+      }
+      enum "default" {
+        value 0;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Forwarding isolation.";
+  }
+  typedef local-remote-frr-enable-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Default.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Local remote FRR enable type.";
+  }
+  typedef evpl-state {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "The state of EVPL instance is down.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "The state of EVPL instance is up.";
+      }
+    }
+    description
+      "EVPL state.";
+  }
+  typedef reduancy-mode {
+    type enumeration {
+      enum "single-active" {
+        value 0;
+        description
+          "Single-active mode.";
+      }
+      enum "all-active" {
+        value 1;
+        description
+          "All-active mode.";
+      }
+    }
+    description
+      "Reduancy mode.";
+  }
+  typedef df-state {
+    type enumeration {
+      enum "primary" {
+        value 0;
+        description
+          "Primary DF state.";
+      }
+      enum "backup" {
+        value 1;
+        description
+          "Backup DF state.";
+      }
+      enum "none" {
+        value 2;
+        description
+          "None DF state.";
+      }
+    }
+    description
+      "DF state.";
+  }
+  typedef evpn-tunnel-type {
+    type enumeration {
+      enum "vxlan" {
+        value 0;
+        description
+          "The tunnel type of VXLAN mode.";
+      }
+      enum "mpls" {
+        value 1;
+        description
+          "The tunnel type of MPLS mode.";
+      }
+      enum "native-ipv6" {
+        value 2;
+        description
+          "The tunnel type of Native-IPv6 mode.";
+      }
+    }
+    description
+      "The type of tunnel.";
+  }
+  typedef evpn-evpl-type {
+    type enumeration {
+      enum "vxlan-mode" {
+        value 0;
+        description
+          "The EVPL type of VXLAN mode.";
+      }
+      enum "mpls-mode" {
+        value 1;
+        description
+          "The EVPL type of MPLS mode.";
+      }
+      enum "srv6-mode" {
+        value 2;
+        description
+          "The EVPL type of SRv6 mode.";
+      }
+    }
+    description
+      "The type of EVPL.";
+  }
+  typedef interface-state {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "The state of interface is down.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "The state of interface is up.";
+      }
+    }
+    description
+      "Interface state.";
+  }
+  typedef vc-state {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "The state of VC is down.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "The state of VC is up.";
+      }
+    }
+    description
+      "VC state.";
+  }
+  typedef df-result {
+    type enumeration {
+      enum "backup" {
+        value 0;
+        description
+          "Backup DF state.";
+      }
+      enum "primary" {
+        value 1;
+        description
+          "Primary DF state.";
+      }
+      enum "none" {
+        value 2;
+        description
+          "None DF state.";
+      }
+    }
+    description
+      "DF result.";
+  }
+  typedef pmsi-type {
+    type enumeration {
+      enum "I-PMSI" {
+        value 1;
+        description
+          "I-PMSI.";
+      }
+      enum "S-PMSI" {
+        value 2;
+        description
+          "S-PMSI.";
+      }
+    }
+    description
+      "EVPN PMSI type.";
+  }
+  typedef mc-tunnel-type {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid.";
+      }
+      enum "mldp-p2mp" {
+        value 1;
+        description
+          "MLDP P2MP.";
+      }
+      enum "te-p2mp" {
+        value 3;
+        description
+          "TE P2MP.";
+      }
+    }
+    description
+      "EVPN MC tunnel type.";
+  }
+  typedef mc-tunnel-role-type {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid.";
+      }
+      enum "root" {
+        value 1;
+        description
+          "Root.";
+      }
+      enum "leaf" {
+        value 2;
+        description
+          "Leaf.";
+      }
+    }
+    description
+      "EVPN MC tunnel role type.";
+  }
+  typedef evpn-state {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Default.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "Down.";
+      }
+      enum "up" {
+        value 2;
+        description
+          "Up.";
+      }
+    }
+    description
+      "EVPN state.";
+  }
+  typedef tunnel-type {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Tunnel of the none type. The none type is an initial type, indicating that no tunnel type is configured. A tunnel can be used only after a tunnel type excluding the none type is configured.";
+      }
+      enum "ldp" {
+        value 1;
+        description
+          "LDP tunnel.";
+      }
+      enum "bgp" {
+        value 2;
+        description
+          "BGP tunnel.";
+      }
+      enum "te" {
+        value 3;
+        description
+          "TE tunnel.";
+      }
+      enum "static-lsp" {
+        value 4;
+        description
+          "Static LSP.";
+      }
+      enum "gre" {
+        value 5;
+        description
+          "GRE tunnel.";
+      }
+      enum "uni" {
+        value 6;
+        description
+          "UNI tunnel.";
+      }
+      enum "tnl-group" {
+        value 7;
+        description
+          "Tunnel group that consists of a primary tunnel and a secondary tunnel.";
+      }
+      enum "sub-te" {
+        value 8;
+        description
+          "Virtual tunnel that exclusively occupies the specified bandwidth of a TE tunnel.";
+      }
+      enum "sub-group" {
+        value 9;
+        description
+          "Virtual tunnel that occupies the specified bandwidth of the primary and secondary tunnels in a tunnel group.";
+      }
+      enum "6over4" {
+        value 10;
+        description
+          "IPv6-over-IPv4 tunnel.";
+      }
+      enum "6to4" {
+        value 11;
+        description
+          "IPv6-to-IPv4 tunnel.";
+      }
+      enum "bgp-local-ifnet" {
+        value 12;
+        description
+          "Local-IFNET tunnel, which is mainly used as a virtual tunnel between two ASBRs in the VPN Option B networking.";
+      }
+      enum "ldp6" {
+        value 13;
+        description
+          "LDP6 tunnel, which is an IPv6 tunnel.";
+      }
+      enum "nvgre" {
+        value 15;
+        description
+          "NVGRE tunnel.";
+      }
+      enum "p2mp-ldp" {
+        value 16;
+        description
+          "P2MP LDP tunnel.";
+      }
+      enum "vxlan" {
+        value 23;
+        description
+          "VXLAN Tunnel.";
+      }
+      enum "ipsec" {
+        value 24;
+        description
+          "IPSec tunnel.";
+      }
+      enum "p2mp-te" {
+        value 32;
+        description
+          "P2MP TE tunnel.";
+      }
+      enum "vxlan-nvo3" {
+        value 39;
+        description
+          "VXLAN-NVO3 tunnel.";
+      }
+      enum "gre6" {
+        value 40;
+        description
+          "GRE6 tunnel.";
+      }
+      enum "srbe-lsp" {
+        value 41;
+        description
+          "SR-LSP tunnel.";
+      }
+      enum "srv6" {
+        value 43;
+        description
+          "SRv6 tunnel.";
+      }
+      enum "4over6" {
+        value 44;
+        description
+          "IPv4-over-IPv6 tunnel.";
+      }
+      enum "6rd" {
+        value 45;
+        description
+          "6rd tunnel.";
+      }
+      enum "sr-te" {
+        value 47;
+        description
+          "SR-TE tunnel.";
+      }
+      enum "sr-te-policy" {
+        value 50;
+        description
+          "SR-TE policy tunnel.";
+      }
+      enum "sr-te-policy-group" {
+        value 51;
+        description
+          "SR-TE policy group tunnel.";
+      }
+      enum "srv6-te-policy" {
+        value 52;
+        description
+          "SRv6-TE policy tunnel.";
+      }
+      enum "p2mp-gre" {
+        value 64;
+        description
+          "P2MP GRE tunnel.";
+      }
+    }
+    description
+      "Tunnel type.";
+  }
+  typedef acess-mode {
+    type enumeration {
+      enum "vlan" {
+        value 0;
+        description
+          "VLAN access mode.";
+      }
+      enum "port" {
+        value 1;
+        description
+          "Port access mode.";
+      }
+    }
+    description
+      "The mode of access.";
+  }
+  typedef service-mode {
+    type enumeration {
+      enum "vlan-aware" {
+        value 0;
+        description
+          "VLAN aware service mode.";
+      }
+      enum "vlan-unaware" {
+        value 1;
+        description
+          "VLAN unaware service mode.";
+      }
+    }
+    description
+      "The interface service mode.";
+  }
+  typedef apply-label-mode {
+    type enumeration {
+      enum "per-instance" {
+        value 1;
+        description
+          "Label per instance.";
+      }
+    }
+    description
+      "Apply label mode.";
+  }
+  typedef timer-type {
+    type enumeration {
+      enum "track-peer-timer" {
+        value 0;
+        description
+          "Track peer timer.";
+      }
+    }
+    description
+      "Timer type.";
+  }
+  typedef timer-mode {
+    type enumeration {
+      enum "idle" {
+        value 0;
+        description
+          "IDLE mode.";
+      }
+      enum "running" {
+        value 1;
+        description
+          "RUNNING mode.";
+      }
+    }
+    description
+      "DF timer mode.";
+  }
+  typedef eline-role {
+    type enumeration {
+      enum "primary" {
+        value 1;
+        description
+          "Primary.";
+      }
+      enum "backup" {
+        value 2;
+        description
+          "Backup.";
+      }
+      enum "bypass" {
+        value 4;
+        description
+          "Bypass.";
+      }
+    }
+    description
+      "ELINE role.";
+  }
+  typedef esi-type {
+    type enumeration {
+      enum "static" {
+        value 0;
+        description
+          "Static.";
+      }
+      enum "dynamic" {
+        value 1;
+        description
+          "Dynamic.";
+      }
+    }
+    description
+      "ESI type.";
+  }
+  typedef esi-redundancy-mode {
+    type enumeration {
+      enum "all-active" {
+        value 0;
+        description
+          "All active mode.";
+      }
+      enum "single-active" {
+        value 1;
+        description
+          "Single active mode.";
+      }
+      enum "none" {
+        value 255;
+        description
+          "None.";
+      }
+    }
+    description
+      "ESI redundancy mode.";
+  }
+  typedef srv6-mode {
+    type enumeration {
+      enum "be" {
+        value 1;
+        description
+          "SRv6 iteration mode is BE.";
+      }
+      enum "te" {
+        value 2;
+        description
+          "SRv6 iteration mode is TE.";
+      }
+    }
+    description
+      "Srv6 mode is BE or TE.";
+  }
+  typedef topology {
+    type enumeration {
+      enum "SH-SA" {
+        value 0;
+        description
+          "Single-homed and single-active.";
+      }
+      enum "MH-SA" {
+        value 1;
+        description
+          "Multi-homed and single-active.";
+      }
+      enum "SH-AA" {
+        value 2;
+        description
+          "Single-homed and all-active.";
+      }
+      enum "MH-AA" {
+        value 3;
+        description
+          "Multi-homed and all-active.";
+      }
+      enum "IMCOMPLETE" {
+        value 4;
+        description
+          "Imcomplete.";
+      }
+    }
+    description
+      "Evpn Topology.";
+  }
+  typedef df-election-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Default value.";
+      }
+      enum "preference-based" {
+        value 2;
+        description
+          "Preference based type.";
+      }
+    }
+    description
+      "DF election type.";
+  }
+  typedef df-timer-type {
+    type enumeration {
+      enum "esidftimer" {
+        value 1;
+        description
+          "ESI DF timer.";
+      }
+      enum "ifdftimer" {
+        value 2;
+        description
+          "IF DF timer.";
+      }
+      enum "elinedftimer" {
+        value 6;
+        description
+          "ELINE DF timer.";
+      }
+      enum "pwdftimer" {
+        value 7;
+        description
+          "PW DF timer.";
+      }
+    }
+    description
+      "The type of DF timer.";
+  }
+  typedef df-timer-mode {
+    type enumeration {
+      enum "idle" {
+        value 0;
+        description
+          "Idle.";
+      }
+      enum "running" {
+        value 1;
+        description
+          "Running.";
+      }
+    }
+    description
+      "The mode of the DF timer.";
+  }
+  typedef l2vpn-encapsulate-type {
+    type enumeration {
+      enum "vlan" {
+        value 4;
+        description
+          "VLAN.";
+      }
+      enum "ethernet" {
+        value 5;
+        description
+          "Ethernet.";
+      }
+    }
+    description
+      "L2VPN encapsulate type.";
+  }
+  typedef bypass-vxlan-enable-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Default.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Enable bypass VXLAN capability.";
+  }
+  typedef evpl-tunnel-type {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid tunnel.";
+      }
+      enum "ldp" {
+        value 1;
+        description
+          "LDP tunnel.";
+      }
+      enum "bgp" {
+        value 2;
+        description
+          "BGP tunnel.";
+      }
+      enum "te" {
+        value 3;
+        description
+          "TE tunnel.";
+      }
+      enum "sr-te" {
+        value 4;
+        description
+          "SR-TE tunnel.";
+      }
+      enum "sr-be" {
+        value 5;
+        description
+          "SR-BE tunnel.";
+      }
+      enum "srte-policy" {
+        value 6;
+        description
+          "SRTE-policy tunnel.";
+      }
+      enum "native-ipv6" {
+        value 7;
+        description
+          "Native IPv6 tunnel.";
+      }
+      enum "vxlan" {
+        value 8;
+        description
+          "VXLAN tunnel.";
+      }
+    }
+    description
+      "The type of tunnel.";
+  }
+  typedef irb2ip-enable-type {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "Disable.";
+      }
+      enum "default" {
+        value 0;
+        description
+          "Default.";
+      }
+    }
+    description
+      "EVPN irb-reoriginate irb2ip enable type.";
+  }  
+}

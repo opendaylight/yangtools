@@ -1,0 +1,68 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bier-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bier-deviations-CH-NE-X3";
+  prefix bier-devs-CH-NE-X3;
+
+  import huawei-bier {
+    prefix bier;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Model for Bit Index Explicit Replication (BIER).";
+
+  revision 2019-09-06 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  typedef underlay-protocol-type-deviations {
+    type enumeration {
+      enum isis {
+        value 2;
+        description
+          "IS-IS.";
+      }
+    }
+    description
+      "BIER underlay protocol type.";
+  }
+
+  deviation "/bier:bier/bier:sub-domains/bier:sub-domain/bier:underlay-protocol" {
+    deviate replace {
+      type bier-devs-CH-NE-X3:underlay-protocol-type-deviations;
+    }
+  }
+  deviation "/bier:bier/bier:sub-domains/bier:sub-domain/bier:routings/bier:routing/bier:underlay-protocol" {
+    deviate replace {
+      type bier-devs-CH-NE-X3:underlay-protocol-type-deviations;
+    }
+  }
+  deviation "/bier:bier/bier:sub-domains/bier:sub-domain/bier:routings/bier:routing/bier:nexthops/bier:nexthop/bier:underlay-protocol" {
+    deviate replace {
+      type bier-devs-CH-NE-X3:underlay-protocol-type-deviations;
+    }
+  }
+  deviation "/bier:bier/bier:sub-domains/bier:sub-domain/bier:routings/bier:routing/bier:invalid-nexthops/bier:invalid-nexthop/bier:underlay-protocol" {
+    deviate replace {
+      type bier-devs-CH-NE-X3:underlay-protocol-type-deviations;
+    }
+  }
+  deviation "/bier:bier/bier:prefixs/bier:prefix/bier:underlay-protocol" {
+    deviate replace {
+      type bier-devs-CH-NE-X3:underlay-protocol-type-deviations;
+    }
+  }
+}

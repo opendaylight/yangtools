@@ -1,0 +1,294 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ssl {
+  namespace "urn:huawei:yang:huawei-ssl";
+  prefix ssl;
+
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ssl-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Secure Socket Layer (SSL)";
+
+  revision 2020-03-19 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ssl";
+  container ssl {
+    description
+      "Secure Socket Layer (SSL)";
+    container ssl-policys {
+      description
+        "List of all SSL policys.";
+      list ssl-policy {
+        key "policy-name";
+        max-elements  "4";
+        description
+          "Configure SSL policy.";
+        leaf policy-name {
+          type string {
+            length "1..23";
+            pattern '[a-z0-9_]*';
+          }
+          description
+            "Name for identifying an SSL policy.";
+        }
+        leaf mini-version {
+          type sslversion;
+          default "tls1.2";
+          description
+            "Set SSL version, surport tls1.1 and tls1.2, the defult value is tls1.2.";
+        }
+        leaf cert-ver3-enable {
+          type sslbool;
+          default "disable";
+          description
+            "Whether to enable X509v3 verification for certificates.";
+        }
+        leaf crl-ver2-enable {
+          type sslbool;
+          default "disable";
+          description
+            "Whether to enable X509v2 verification for CRLs.";
+        }
+        leaf basic-const-enable {
+          type sslbool;
+          default "disable";
+          description
+            "Whether to enable Basic Constraints Field verification for certificates.";
+        }
+        leaf mini-path-len {
+          type uint32 {
+            range "1..1024";
+          }
+          default "1";
+          description
+            "Whether to enable minimum path length verification for certificates.";
+        }
+        leaf key-usage-enable {
+          type sslbool;
+          default "disable";
+          description
+            "Whether to enable Key Usage Field verification for certificates.";
+        }
+		container cert-loads {
+		  when "/ssl:ssl/ssl:ssl-policys/ssl:ssl-policy/ssl:policy-name";
+		  description
+			"List of all SSL certificate file loaded by SSL policy.";
+		  list cert-load {
+			key "cert-file";
+			description
+			  "Configure SSL certificate file loaded by SSL policy.";
+			leaf cert-file {
+			  type string {
+				length "1..64";
+			  }
+			  description
+				"Cert file.";
+			}
+			leaf cert-type {
+			  type certtype;
+			  must "(../cert-type='pfx-cert' and ((../is-mac and ../is-mac=1 and not (../key-file)) or (../key-file and not (../is-mac)))) or (../cert-type!='pfx-cert' and ../key-file and not (../is-mac))";
+			  mandatory true;
+			  description
+				"CertType.";
+			}
+			leaf auth-code-crt {
+			  when "not(../cert-type='asn1-cert')";
+			  type sslpasswordtype {
+				length "1..168";
+			  }
+			  mandatory true;
+			  description
+				"AuthCode.";
+			}
+			leaf is-mac {
+			  when "(../cert-type='pfx-cert')";
+			  type uint32 {
+				range "0..1";
+			  }
+			  description
+				"Mark for using MAC.";
+			}
+			leaf key-type {
+			  type keytype;
+			  mandatory true;
+			  description
+				"KeyType.";
+			}
+			leaf auth-code-mac {
+			  when "(../cert-type='pfx-cert' and ../is-mac=1)";
+			  type sslpasswordtype {
+				length "1..168";
+			  }
+			  mandatory true;
+			  description
+				"AuthCodeMac.";
+			}
+			leaf key-file {
+			  when "not(../is-mac)";
+			  type string {
+				length "1..64";
+			  }
+			  mandatory true;
+			  description
+				"KeyFile.";
+			}
+			leaf issuer-name {
+			  when "not(not(../cert-file)) or not(../cert-file)";
+			  type string {
+				length "1..255";
+			  }
+			  config false;
+			  description
+				"Issuer name.";
+			}
+			leaf valid-not-before {
+			  when "not(not(../cert-file)) or not(../cert-file)";
+			  type string {
+				length "1..255";
+			  }
+			  config false;
+			  description
+				"Validity Not Before.";
+			}
+			leaf valid-not-after {
+			  when "not(not(../cert-file)) or not(../cert-file)";
+			  type string {
+				length "1..255";
+			  }
+			  config false;
+			  description
+				"Validity Not After.";
+			}
+			leaf is-cert-file-encrypted {
+			  type encrypted;
+			  config false;
+			  description
+				"Is cert-file Encrypted.";
+			}
+		  }
+		}
+		container crl-loads {
+		  when "/ssl:ssl/ssl:ssl-policys/ssl:ssl-policy/ssl:policy-name";
+		  description
+			"List of sslCrlLoad.";
+		  list crl-load {
+			key "crl-file";
+			max-elements  "2";
+			description
+			  "Configure sslCrlLoad policy.";
+			leaf crl-file {
+			  type string {
+				length "1..64";
+			  }
+			  description
+				"CrlFile.";
+			}
+			leaf crl-type {
+			  type crltype;
+			  mandatory true;
+			  description
+				"CrlType.";
+			}
+		  }
+		}
+		container trust-ca-loads {
+		  when "/ssl:ssl/ssl:ssl-policys/ssl:ssl-policy/ssl:policy-name";
+		  description
+			"List of sslTrustCALoads.";
+		  list trust-ca-load {
+			key "ca-file";
+			max-elements  "4";
+			description
+			  "Configure sslTrustCALoad policy.";
+			leaf ca-file {
+			  type string {
+				length "1..64";
+			  }
+			  description
+				"CaFile.";
+			}
+			leaf ca-type {
+			  type catype;
+			  mandatory true;
+			  description
+				"CaType.";
+			}
+			leaf auth-code {
+			  when "not(../ca-type!='pfx-ca')";
+			  type sslpasswordtype {
+				length "1..168";
+			  }
+			  description
+				"AuthCode.";
+			}
+		  }
+		}
+        leaf cipher-suite-name {
+          type leafref {
+            path "/ssl:ssl/ssl:ssl-cipher-suites/ssl:ssl-cipher-suite/ssl:cipher-suite-name";
+          }
+          description
+            "Name for identifying a cipher suite name.";
+        }
+        leaf exclude-rsa-kex {
+          type ssl:sslbool;
+          default "enable";
+          description
+            "Whether to exclude RSA key exchange algorithm.";
+        }
+        leaf exclude-hmac-sha1 {
+          type ssl:sslbool;
+          default "enable";
+          description
+            "Whether to exclude SHA-1 HMAC algorithm.";
+        }
+        leaf exclude-ciphermode-cbc {
+          type ssl:sslbool;
+          default "enable";
+          description
+            "Whether to exclude Cipher Block Chaining (CBC) mode algorithm.";
+        }
+      }
+		  }
+    container ssl-cipher-suites {
+      list ssl-cipher-suite {
+        key "cipher-suite-name";
+        leaf cipher-suite-name {
+          type string {
+            length "1..32";
+            pattern '[a-z0-9_\*]*';
+		}
+        description
+          "Configure Name of cipher suite policy.";
+	  }
+        leaf-list ssl-ciphers {
+          type ssl:sslciphertype;
+          max-elements 4096;
+          description
+            "Configure List of ssl ciphers to configure policy.";
+	    }
+        description
+          "Configure ssl ciphers.";
+      }
+      description
+        "List of ssl cipher suites to configure.";
+    }
+  }
+}

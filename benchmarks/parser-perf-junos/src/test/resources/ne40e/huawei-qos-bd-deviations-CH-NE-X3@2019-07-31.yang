@@ -1,0 +1,68 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-qos-bd-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-qos-bd-deviations-CH-NE-X3";
+  prefix "qos-bd-devs-CH-NE-X3";
+
+  import huawei-qos-bd {
+    prefix qos-bd;
+  }
+  import huawei-bd {
+    prefix bd;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Quality of service for bridge domain.";
+  revision 2019-07-31 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  typedef qos-direction-type-deviations {
+    type enumeration {
+      enum "inbound" {
+        value 0; 
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        value 1; 
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "Direction.";
+  }
+  deviation /qos-bd:qos-bd/qos-bd:qos-query/qos-bd:vxlan-mode-policy-statisticss/qos-bd:vxlan-mode-policy-statistics/qos-bd:direction {
+    deviate replace {
+      type qos-bd-devs-CH-NE-X3:qos-direction-type-deviations;
+    }
+  }
+  deviation /bd:bd/bd:instances/bd:instance/qos-bd:qos/qos-bd:vxlan-mode-policy-applys/qos-bd:vxlan-mode-policy-apply/qos-bd:direction {
+    deviate replace {
+      type qos-bd-devs-CH-NE-X3:qos-direction-type-deviations;
+    }
+  }  
+  deviation /bd:bd/bd:instances/bd:instance/qos-bd:qos/qos-bd:phbs/qos-bd:phb/qos-bd:diffserv-domain-name {
+    deviate add  {
+      mandatory true;
+    }
+  }
+  deviation /bd:bd/bd:instances/bd:instance/qos-bd:qos/qos-bd:phb-vxlans/qos-bd:phb-vxlan/qos-bd:diffserv-domain-name {
+    deviate add  {
+      mandatory true;
+    }
+  }
+
+}

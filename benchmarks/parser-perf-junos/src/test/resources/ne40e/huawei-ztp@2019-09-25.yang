@@ -1,0 +1,96 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ztp {
+  namespace "urn:huawei:yang:huawei-ztp";
+  prefix ztp;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+
+  description
+    "ZTP (Zero Touch Provisioning) refers to the function of an automatically loading of version file (including system software, configuration files and patch files) used for powering on a new factory device or an empty configuration device.";
+
+  revision 2019-09-25 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ztp";
+  
+  container ztp {
+    description
+      "ZTP (Zero Touch Provisioning) refers to the function of an automatically loading of version file (including system software, configuration files and patch files) used for powering on a new factory device or an empty configuration device.";
+    container status {
+      config false;
+      description
+        "ZTP function status, the ZTP function for used to query the enabled state and completion state.";
+      leaf enable {
+        type boolean;
+        description
+          "ZTP function enable or disable status.";
+      }
+      leaf last {
+        type boolean;
+        description
+          "ZTP function completion status, used to record the completion of the last ZTP function.";
+      }
+      leaf pre-configuration-name {
+        type string {
+          length "1..65";
+        }
+        description
+          "ZTP function previous configuration file name.";
+      }
+    }
+  }
+
+  rpc set-enable-status {
+    description
+      "Set ZTP enable status.";
+    input {
+      leaf enable {
+        type boolean;
+        description
+          "Enable status.";
+      }
+    }
+  }
+
+  rpc set-pre-configuration {
+    description
+      "Set ZTP previous configuration file name.";
+    input {
+      leaf file-name {
+        type string {
+          length "1..65";
+        }
+        description
+          "Previous configuration file name.";
+      }
+    }
+  }
+
+  rpc reset-pre-configuration {
+    description
+      "Reset ZTP previous configuration file name.";
+    input {
+      leaf confirm {
+        type boolean;
+        description
+          "Confirm reset.";
+      }
+    }
+  }
+}

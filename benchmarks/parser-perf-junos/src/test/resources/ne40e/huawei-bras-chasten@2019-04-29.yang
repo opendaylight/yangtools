@@ -1,0 +1,498 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-chasten {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bras-chasten";
+  prefix bras-chasten;
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  ext:task-name "dhcp";
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+description
+    "This module contains a collection of YANG definitions for managing DHCP chasten.";
+  revision 2019-04-29{
+      description
+        "Initial revision.";
+      reference
+        "Huawei private.";
+  }  
+  container bras-chasten {
+    description
+      "Configure DHCP chasten.";
+    container ipv6-all-slots {
+      must "request-packets!=0 or authen-packets!=0";
+      description
+        "Configure DHCPv6 chasten for all slots.";
+      leaf check-period {
+        type uint32 {
+          range "1..3600";
+        }
+        units "s";
+        default "180";
+        description
+          "Check period.";
+      }
+      leaf restrain-period {
+        type uint32 {
+          range "0..3600";
+        }
+        units "s";
+        default "300";
+        description
+          "Restrain period.";
+      }
+      leaf authen-packets {
+        type uint32 {
+          range "0..10000";
+        }
+        default "5";
+        description
+          "Authen packets.";
+      }
+      leaf request-packets {
+        type uint32 {
+          range "0..10000";
+        }
+        default "10";
+        description
+          "Request packets.";
+      }
+    }
+    container ipv6-slots {
+      description
+        "List of DHCPv6 chasten for one slot.";
+      list ipv6-slot {
+        must "request-packets or authen-packets";
+        key "slot-id";
+        description
+          "Configure DHCPv6 chasten for one slot.";
+        leaf slot-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "Slot ID.";
+        }
+        leaf authen-packets {
+          type uint32 {
+            range "1..10000";
+          }
+          description
+            "Authen packets.";
+        }
+        leaf request-packets {
+          type uint32 {
+            range "1..10000";
+          }
+          description
+            "Request packets.";
+        }
+        leaf check-period {
+          type uint32 {
+            range "1..3600";
+          }
+          units "s";
+          mandatory true;
+          description
+            "Check period.";
+        }
+        leaf restrain-period {
+          type uint32 {
+            range "0..3600";
+          }
+          units "s";
+          mandatory true;
+          description
+            "Restrain period.";
+        }
+      }
+    }
+    container ipv6-users {
+      config false;
+      description
+        "List of DHCPv6 chasten user information.";
+      list ipv6-user {
+        key "mac-address pe-vlan ce-vlan slot-id if-name";
+        description
+          "Operational state of DHCPv6 chasten user information.";
+        leaf mac-address {
+          type pub-type:mac-address;
+          description
+            "MAC address.";
+        }
+        leaf pe-vlan {
+          type uint16 {
+            range "0..4094";
+          }
+          description
+            "PE VLAN of user.";
+        }
+        leaf ce-vlan {
+          type uint16 {
+            range "0..4094";
+          }
+          description
+            "CE VLAN of user.";
+        }
+        leaf slot-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "Slot ID.";
+        }
+        leaf if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Interface name.";
+        }
+        leaf user-state {
+          type enumeration{
+            enum restrain{
+              value 1;
+               description
+                "Restrain state.";
+             }
+             enum check{
+               value 2;
+               description
+                "Check state.";
+              }
+            }
+          description
+            "Bras chasten user state.";
+          ext:support-filter "true";
+        }
+        leaf receive-packet-time {
+          type yang:date-and-time;
+          description
+            "Receive packet time.";
+        }
+        leaf receive-packet-count {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Receive packet count.";
+        }
+        leaf receive-authen-count {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Receive authen count.";
+        }
+        leaf total-restrain-packet {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Total restrain packet count.";
+        }
+        leaf total-pass-packet {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Total pass packet count.";
+        }
+      }
+    }
+    container ipv4-all-slots {
+      must "request-packets!=0 or authen-packets!=0";
+      description
+        "Configure DHCPv4 chasten for all slots.";
+      leaf check-period {
+        type uint32 {
+          range "1..3600";
+        }
+        units "s";
+        default "180";
+        description
+          "Check period.";
+      }
+      leaf restrain-period {
+        type uint32 {
+          range "0..3600";
+        }
+        units "s";
+        default "300";
+        description
+          "Restrain period.";
+      }
+      leaf authen-packets {
+        type uint32 {
+          range "0..10000";
+        }
+        default "5";
+        description
+          "Authen packets.";
+      }
+      leaf request-packets {
+        type uint32 {
+          range "0..10000";
+        }
+        default "10";
+        description
+          "Request packets.";
+      }
+    }
+    container ipv4-slots {
+      description
+        "List of DHCPv4 chasten for one slot.";
+      list ipv4-slot {
+        must "request-packets or authen-packets";
+        key "slot-id";
+        description
+          "Configure DHCPv4 chasten for one slot.";
+        leaf slot-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "Slot ID.";
+        }
+        leaf authen-packets {
+          type uint32 {
+            range "1..10000";
+          }
+          description
+            "Authen packets.";
+        }
+        leaf request-packets {
+          type uint32 {
+            range "1..10000";
+          }
+          description
+            "Request packets.";
+        }
+        leaf check-period {
+          type uint32 {
+            range "1..3600";
+          }
+          units "s";
+          mandatory true;
+          description
+            "Check period.";
+        }
+        leaf restrain-period {
+          type uint32 {
+            range "0..3600";
+          }
+          units "s";
+          mandatory true;
+          description
+            "Restrain period.";
+        }
+      }
+    }
+    container ipv4-users {
+      config false;
+      description
+        "List of DHCPv4 chasten user information.";
+      list ipv4-user {
+        key "mac-address pe-vlan ce-vlan slot-id if-name";
+        description
+          "Operational state of DHCPv4 chasten user information.";
+        leaf mac-address {
+          type pub-type:mac-address;
+          description
+            "MAC address.";
+        }
+        leaf pe-vlan {
+          type uint16 {
+            range "0..4094";
+          }
+          description
+            "PE VLAN of user.";
+        }
+        leaf ce-vlan {
+          type uint16 {
+            range "0..4094";
+          }
+          description
+            "CE VLAN of user.";
+        }
+        leaf slot-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "Slot ID.";
+        }
+        leaf if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Interface name.";
+        }
+        leaf user-state {
+          type enumeration{
+            enum restrain{
+              value 1;
+               description
+                "Restrain state.";
+             }
+             enum check{
+               value 2;
+               description
+                "Check state.";
+              }
+            }
+          description
+            "Bras chasten user state.";
+          ext:support-filter "true";
+        }
+        leaf receive-packet-time {
+          type yang:date-and-time;
+          description
+            "Receive packet time.";
+        }
+        leaf receive-packet-count {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Receive packet count.";
+        }
+        leaf receive-authen-count {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Receive authen count.";
+        }
+        leaf total-restrain-packet {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Total restrain packet count.";
+        }
+        leaf total-pass-packet {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Total pass packet count.";
+        }
+      }
+    }
+  }
+  rpc reset-ipv6-user {
+   description
+    "Reset chasten user information.";
+    ext:node-ref "/bras-chasten/ipv6-users/ipv6-user";
+    input {
+      leaf slot-id {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Slot ID.";
+      }
+      leaf mac-address {
+        type pub-type:mac-address;
+        description
+          "MAC address.";
+      }
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Interface name.";
+      }
+      leaf pe-vlan {
+        type uint16 {
+            range "1..4094";
+        }
+        description
+          "PE VLAN of user.";
+      }
+      leaf ce-vlan {
+        type uint16 {
+            range "1..4094";
+        }
+        description
+          "CE VLAN of user.";
+      }
+      leaf clear-statistics {
+        type boolean;
+        default "false";
+        description
+          "Clear statistics of user.";
+      }
+    }
+  }
+  rpc reset-ipv4-user {
+   description
+    "Reset chasten user information.";
+    ext:node-ref "/bras-chasten/ipv4-users/ipv4-user";
+    input {
+      leaf slot-id {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Slot ID.";
+      }
+      leaf mac-address {
+        type pub-type:mac-address;
+        description
+          "MAC address.";
+      }
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Interface name.";
+      }
+      leaf pe-vlan {
+        type uint16 {
+            range "1..4094";
+        }
+        description
+          "PE VLAN of user.";
+      }
+      leaf ce-vlan {
+        type uint16 {
+            range "1..4094";
+        }
+        description
+          "CE VLAN of user.";
+      }
+      leaf clear-statistics {
+        type boolean;
+        default "false";
+        description
+          "Clear statistics of user.";
+      }
+    }
+  }
+}

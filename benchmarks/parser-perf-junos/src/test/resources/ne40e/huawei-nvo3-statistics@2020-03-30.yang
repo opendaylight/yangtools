@@ -1,0 +1,316 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-nvo3-statistics {
+  namespace "urn:huawei:yang:huawei-nvo3-statistics";
+  prefix nvo3-statistics;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-nvo3 {
+    prefix nvo3;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Management for data center network virtualization over Layer 3.";
+  revision 2020-03-30 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+
+  typedef vxlan-mode {
+    type enumeration {
+      enum "l2" {
+        value 0;
+        description
+          "Layer 2.";
+      }
+      enum "l3" {
+        value 1;
+        description
+          "Layer 3.";
+      }
+    }
+    description
+      "VXLAN mode.";
+  }
+  typedef statistics-direction {
+    type enumeration {
+      enum "inbound" {
+        value 0;
+        description
+          "Inbound direction.";
+      }
+      enum "outbound" {
+        value 1;
+        description
+          "Outbound direction.";
+      }
+      enum "bidirection" {
+        value 2;
+        description
+          "Bidirection.";
+      }
+    }
+    description
+      "VXLAN tunnel traffic statistics type.";
+  }
+
+  grouping vxlan-traffic-collection {
+    description
+      "VXLAN tunnel traffic statistics collection.";
+    leaf send-bits-rate {
+      type uint64;
+      units bit/s;
+      description
+        "Number of send bits per second.";
+    }
+    leaf send-pkts-rate {
+      type uint64;
+      units pps;
+      description
+        "Number of send packets per second.";
+    }
+    leaf send-unicast-pkts {
+      type uint64;
+      units packet;
+      description
+        "Number of send unicast packets.";
+    }
+    leaf send-multicast-pkts {
+      type uint64;
+      units packet;
+      description
+        "Number of send multicast packets.";
+    }
+    leaf send-broadcast-pkts {
+      type uint64;
+      units packet;
+      description
+        "Number of send broadcast packets.";
+    }
+    leaf send-total-bytes {
+      type uint64;
+      units Byte;
+      description
+        "Total number of send bytes.";
+    }
+    leaf send-total-pkts {
+      type uint64;
+      units packet;
+      description
+        "Total number of send packets.";
+    }
+    leaf receive-bits-rate {
+      type uint64;
+      units bit/s;
+      description
+        "Number of receive bits per second.";
+    }
+    leaf receive-pkts-rate {
+      type uint64;
+      units pps;
+      description
+        "Number of receive packets per second.";
+    }
+    leaf receive-unicast-pkts {
+      type uint64;
+      units packet;
+      description
+        "Number of receive unicast packets.";
+    }
+    leaf receive-multicast-pkts {
+      type uint64;
+      units packet;
+      description
+        "Number of receive multicast packets.";
+    }
+    leaf receive-broadcast-pkts {
+      type uint64;
+      units packet;
+      description
+        "Number of receive broadcast packets.";
+    }
+    leaf receive-total-bytes {
+      type uint64;
+      units Byte;
+      description
+        "Total number of receive bytes.";
+    }
+    leaf receive-total-pkts {
+      type uint64;
+      units packet;
+      description
+        "Total number of receive packets.";
+    }
+    leaf drop-unicast-pkts {
+      type uint64;
+      units packet;
+      description
+        "Number of discarded unicast packets.";
+    }
+    leaf drop-multicast-pkts {
+      type uint64;
+      units packet;
+      description
+        "Number of discarded multicast packets.";
+    }
+    leaf drop-broadcast-pkts {
+      type uint64;
+      units packet;
+      description
+        "Number of discarded broadcast packets.";
+    }
+  }
+
+  ext:task-name "nvo3";
+  rpc reset-vni-label-statistics {
+    description
+      "Clear VXLAN tunnel traffic statistics collection for a VNI.";
+    ext:node-ref "/nvo3:nvo3/nvo3:vni-labels/nvo3:vni-label/nvo3-statistics:statistics/nvo3-statistics:collections";
+    input {
+      leaf vni {
+        type uint32 {
+          range "1..16777215";
+        }
+        mandatory true;
+        description
+          "VXLAN network identifier.";
+      }
+    }
+  }
+  rpc reset-vtep-statistics {
+    description
+      "Clear VXLAN tunnel traffic statistics collection for a VTEP.";
+    ext:node-ref "/ifm:ifm/ifm:interfaces/ifm:interface/nvo3-statistics:nvo3-vtep-statistics/nvo3-statistics:nvo3-vtep-statistic/nvo3-statistics:collections/nvo3-statistics:collection";
+    input {
+      leaf vni {
+        type uint32 {
+          range "1..16777215";
+        }
+        mandatory true;
+        description
+          "VXLAN network identifier.";
+      }
+      leaf source {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "The srource address of VTEP.";
+      }
+      leaf peer {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "The address of VTEP.";
+      }
+      leaf mode {
+        type vxlan-mode;
+        mandatory true;
+        description
+          "The type of VXLAN tunnel traffic statistics.";
+      }
+      leaf direction {
+        type statistics-direction;
+        must "(../mode = 'l2') or (../mode = 'l3' and (../direction != 'bidirection'))";
+        mandatory true;
+        description
+          "Traffic statistics direction.";
+      }     
+    }
+  }
+
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "The NVO3 statistics for interface.";
+    container nvo3-vtep-statistics {
+      when "../ifm:type='Nve'";
+      description
+        "List of VXLAN tunnel statistics.";
+      list nvo3-vtep-statistic {
+        key "vni peer mode direction";
+        description
+          "Configure VTEP statistics collection.";
+        leaf vni {
+          type uint32 {
+            range "1..16777215";
+          }
+          description
+            "VXLAN network identifier.";
+        }
+        leaf peer {
+          type inet:ipv4-address-no-zone;
+          description
+            "The peer address of VTEP.";
+        }
+        leaf mode {
+          type vxlan-mode;
+          description
+            "The type of VXLAN tunnel traffic statistics.";
+        }
+        leaf direction {
+          type statistics-direction;
+          must "(../mode = 'l2') or (../mode = 'l3' and (../direction != 'bidirection'))";
+          description
+            "Traffic statistics direction.";
+        }
+        container collections {
+          config false;
+          description
+            "List of Traffic statistics collection.";
+          list collection {
+            key "source-addr";
+            description
+              "Statistics of VXLAN tunnel traffic collection.";
+            leaf source-addr {
+              type inet:ipv4-address-no-zone;
+              description
+                "The address of VTEP.";
+            }
+            uses vxlan-traffic-collection;
+          }
+        }
+      }
+    }
+  }
+
+  augment "/nvo3:nvo3/nvo3:vni-labels/nvo3:vni-label" {
+    description
+      "The NVO3 traffic statistics of vni.";
+    container statistics {
+      description
+        "Configure VNI traffic statistics.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable VNI traffic statistics.";
+      }
+      container collections {
+        when "../enable='true'";
+        config false;
+        description
+          "Statistics of VNI traffic statistics collection.";
+        uses vxlan-traffic-collection;
+      }
+    }
+  }
+}

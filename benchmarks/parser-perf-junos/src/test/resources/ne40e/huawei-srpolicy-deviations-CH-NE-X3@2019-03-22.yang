@@ -1,0 +1,84 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-srpolicy-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-srpolicy-deviations-CH-NE-X3";
+  prefix srpolicy-devs-CH-NE-X3;
+
+  import huawei-srpolicy {
+    prefix srpolicy;
+  }
+  import huawei-segment-routing {
+    prefix sr;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-srv6 {
+    prefix srv6;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Common srpolicy management, which includes the public configuration of srpolicies.";
+
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/ni:network-instance/ni:instances/ni:instance/sr:segment-routing/srpolicy:srpolicy/srpolicy:policy-attributes/srpolicy:bfd/srpolicy:min-tx" {
+    deviate replace {
+      type uint32 {
+        range "3..20000";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/sr:segment-routing/srpolicy:srpolicy/srpolicy:policy-attributes/srpolicy:bfd/srpolicy:min-rx" {
+    deviate replace {
+      type uint32 {
+        range "3..20000";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/sr:segment-routing/srpolicy:srpolicy/srpolicy:policy-attributes/srpolicy:bfd/srpolicy:multi-num" {
+    deviate replace {
+      type uint32 {
+        range "3..50";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/sr:segment-routing/srpolicy:srpolicy/srpolicy:policy-attributes/srpolicy:switch-delay" {
+    deviate not-supported;
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/sr:segment-routing/srpolicy:srpolicy/srpolicy:policys/srpolicy:policy/srpolicy:candidate-paths/srpolicy:candidate-path/srpolicy:type/srpolicy:explicit/srpolicy:segment-lists/srpolicy:segment-list/srpolicy:weight" {
+    deviate not-supported;
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srpolicy:srpolicy/srpolicy:policy-attributes/srpolicy:hsb-enable" {
+    deviate not-supported;
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srpolicy:srpolicy/srpolicy:policy-attributes/srpolicy:bfd" {
+    deviate not-supported;
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srpolicy:srpolicy/srpolicy:policys/srpolicy:policy/srpolicy:hsb-enable" {
+    deviate not-supported;
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srpolicy:srpolicy/srpolicy:policys/srpolicy:policy/srpolicy:bfd-enable" {
+    deviate not-supported;
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srpolicy:srpolicy/srpolicy:policys/srpolicy:policy/srpolicy:diffserv-mode" {
+    deviate not-supported;
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srpolicy:srpolicy/srpolicy:policys/srpolicy:policy/srpolicy:mtu" {
+    deviate not-supported;
+  }
+}

@@ -1,0 +1,55 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-srv6-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-srv6-deviations-CH-NE-X3";
+  prefix srv6-devs-CH-NE-X3;
+
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-srv6 {
+    prefix srv6;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Common srv6 management, which includes the public configuration of srv6.";
+
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  typedef protocol-type-deviations {
+    type enumeration {
+      enum evpn {
+        value 1;
+        description
+          "EVPN.";
+      }
+    }
+    description
+      "Protocol Type.";
+  }
+
+  deviation "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srv6:locators/srv6:locator/srv6:opcodes/srv6:end-dx4s/srv6:end-dx4/srv6:protocol" {
+    deviate replace {
+      type srv6-devs-CH-NE-X3:protocol-type-deviations;
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srv6:locators/srv6:locator/srv6:opcodes/srv6:end-dx6s/srv6:end-dx6/srv6:protocol" {
+    deviate replace {
+      type srv6-devs-CH-NE-X3:protocol-type-deviations;
+    }
+  }
+}

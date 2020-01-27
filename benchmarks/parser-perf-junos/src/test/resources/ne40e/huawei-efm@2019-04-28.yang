@@ -1,0 +1,462 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-efm {
+  namespace "urn:huawei:yang:huawei-efm";
+  prefix efm;
+  
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  import huawei-ifm {
+    prefix ifm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Ethernet in the First Mile, which is used for fault and performance detection.";
+  revision 2019-04-28 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  ext:task-name  "efm"; 
+  
+   typedef enable-state {
+    type enumeration {
+      enum "disable" {
+	    value 0;
+        description
+          "Indicate that EFM is disabled.";
+      }
+      enum "enable" {
+	    value 1;
+        description
+          "Indicate that EFM is enabled.";
+      }
+    }
+    description
+      "Enable-state.";
+  }
+  typedef work-mode {
+    type enumeration {
+      enum "active" {
+	    value 1;
+        description
+          "Indicate that EFM works in active mode.";
+      }
+      enum "passive" {
+	    value 0;
+        description
+          "Indicate that EFM works in passive mode.";
+      }
+    }
+    description
+      "Work-mode.";
+  }
+  typedef session-state {
+    type enumeration {
+      enum "discovery" {
+	    value 2;
+        description
+          "Indicate that the EFM session is in the discovery state.";
+      }
+      enum "detect" {
+	    value 1;
+        description
+          "Indicate that the EFM session is in the detect state.";
+      }
+      enum "loopback-be-controlled" {
+	    value 5;
+        description
+          "Indicate that the EFM session is in the loopback state on the end that receives the session connection request.";
+      }
+      enum "loopback-control" {
+	    value 3;
+        description
+          "Indicate that the EFM session is in the loopback state on the end that initiates the session connection request.";
+      }
+      enum "loopback-control-forward" {
+	    value 4;
+        description
+          "The EFM session is in the Loopback state (control, forward).";
+      }
+    }
+    description
+      "Session-state.";
+  }
+  typedef parser-action {
+    type enumeration {
+      enum "forward" {
+	    value 0;
+        description
+          "The EFM parser action is forward.";
+      }
+      enum "loopback" {
+	    value 1;
+        description
+          "The EFM parser action is loopback.";
+      }
+      enum "discard" {
+	    value 2;
+        description
+          "The EFM parser action is discard.";
+      }
+      enum "reserve" {
+	    value 3;
+        description
+          "The EFM parser action is reserve.";
+      }
+    }
+    description
+      "Parser-action.";
+  }
+  typedef multiplexer-action {
+    type enumeration {
+      enum "forward" {
+	    value 0;
+        description
+          "The EFM multiplexer action is forward.";
+      }
+      enum "discard" {
+	    value 1;
+        description
+          "The EFM multiplexer action is discard.";
+      }
+    }
+    description
+      "Multiplexer-action.";
+  }
+  typedef test-packet-status {
+    type enumeration {
+      enum "working" {
+	    value 0;
+        description
+          "The EFM test packet is working.";
+      }
+      enum "finished" {
+	    value 1;
+        description
+          "The EFM test packet is finished.";
+      }
+    }
+    description
+      "The type of efm test packet status.";
+  }
+
+  typedef discovery-state {
+    type enumeration {
+      enum "FAULT" {
+	    value 0;
+        description
+          "FAULT state.";
+      }
+      enum "ACTIVE-SEND-LOCAL" {
+	    value 1;
+        description
+          "ACTIVE_SEND_LOCAL state.";
+      }
+      enum "PASSIVE-WAIT" {
+	    value 2;
+        description
+          "PASSIVE_WAIT state.";
+      }
+      enum "SEND-LOCAL-REMOTE" {
+	    value 3;
+        description
+          "SEND_LOCAL_REMOTE state.";
+      }
+      enum "SEND-LOCAL-REMOTE-OK" {
+	    value 4;
+        description
+          "SEND_LOCAL_REMOTE_OK state.";
+      }
+      enum "SEND-ANY" {
+	    value 5;
+        description
+          "SEND_ANY state.";
+      }
+    }
+    description
+      "The type of efm discovery state.";
+  }
+  
+  typedef error-frame-period-unit {
+    type enumeration {
+      enum "second" {
+	    value 0;
+        description
+          "Error frame period unit: seconds.";
+      }
+      enum "millisecond" {
+	    value 1;
+        description
+          "Error frame period unit: milliseconds.";
+      }
+    }
+    description
+      "EFM error frame period unit.";
+  }
+  typedef loopback-state {
+    type enumeration {
+      enum "none" {
+	    value 0;
+        description
+          "Indicate that the EFM session is in the Loopback state (none).";
+      }
+      enum "loopback-be-controlled" {
+	    value 1;
+        description
+          "Indicate that the EFM session is in the Loopback state on the end that receives the session connection request.";
+      }
+      enum "loopback-control" {
+	    value 2;
+        description
+          "Indicate that the EFM session is in the Loopback state on the end that initiates the session connection request.";
+      }
+    }
+    description
+      "The type of EFM loopback state.";
+  }
+  typedef extended-info-transmit-type {
+    type enumeration {
+      enum "receive" {
+	    value 0;
+        description
+          "EFM receives extended information.";
+      }
+      enum "send" {
+	    value 1;
+        description
+          "EFM sends extended information.";
+      }
+      enum "send-and-receive" {
+	    value 2;
+        description
+          "EFM sends and receives extended information.";
+      }
+    }
+    description
+      "The type of EFM extended information transmit.";
+  }
+		  
+  container efm {
+    presence "Enables EFM";
+    description
+      "Ethernet in the First Mile, which is used for fault and performance detection.";
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {  
+    when "/efm:efm";
+	description
+      "EFM configuration in interface.";
+    container efm {
+      description
+        "Configure EFM on the interface.";
+      container session {
+        description
+          "Configure EFM on the local interface.";
+        leaf state {
+          type enable-state;
+          default "disable";
+          description
+            "Indicate whether EFM is enabled on an interface.";
+        }
+        leaf mode {
+          type work-mode;
+          default "active";
+          description
+            "Specify the working mode of an EFM-enabled interface.";
+        }
+        leaf packet-max-size {
+          type uint16 {
+            range "64..1518";
+          }
+          units "Byte";
+          default "128";
+          description
+            "Specify the maximum size of an EFM packet.";
+        }
+        leaf interval {
+          type uint16 {
+            range "100..1000";
+          }
+          units "ms";
+          must "(../interval) mod 100 = 0";
+          default "1000";
+          description
+            "Specify the interval at which EFM packets are sent.";
+        }
+        leaf timeout {
+          type uint16 {
+            range "300..30000";
+          }
+          units "ms";
+          must "(../timeout) mod 100 = 0";
+          default "5000";
+          description
+            "Specify the timeout period for receiving EFM packets.";
+        }
+        leaf ignore-loopback-request {
+          type enable-state;
+          must "(../state='disable' and ../ignore-loopback-request='disable') or (../state='enable')";
+          default "disable";
+          description
+            "Indicate that this interface will ignore the loopback request from the peer.";
+        }
+        leaf trigger-if-down {
+          type enable-state;
+          must "(../state='disable' and ../trigger-if-down='disable') or (../state='enable')";
+          default "disable";
+          description
+            "Indicate that EFM blocks an interface after detecting a fault.";
+        }
+        leaf hold-up-time {
+          type uint16 {
+            range "0..50";
+          }
+          units "s";
+          default "0";
+          description
+            "Specify the time waiting for an interface blocked by EFM to go up.";
+        }
+        leaf trigger-mac-renew {
+          type boolean;
+          must "(../state='disable' and ../trigger-mac-renew='false') or (../state='enable')";
+          default "false";
+          description
+            "Enable/disable that EFM clears the MAC address of an interface after detecting a fault.";
+        }
+
+        container error-frame {
+          description
+            "Configure the error frame function.";
+          leaf notification {
+            type enable-state;
+            default "disable";
+            description
+              "Indicate whether notification of error frames is enabled.";
+          }
+          leaf period {
+            type uint32 {
+              range "1..60";
+            }
+            units "s";
+            default "1";
+            description
+              "Specify the interval at which error frames are detected.";
+          }
+          leaf threshold {
+            type uint32 {
+              range "0..65535";
+            }
+            default "1";
+            description
+              "Specify the threshold for error frames.";
+          }
+          leaf period-unit {
+            type error-frame-period-unit;
+            default "second";
+            config false;
+            description
+              "Period unit of an error frame event.";
+          }
+        }
+        container error-frame-second {
+          description
+            "Configure the error frames second function.";
+	  leaf notification {
+            type enable-state;
+            default "disable";
+            description
+              "Indicate whether notification of error frame seconds is enabled.";
+          }
+          leaf period {
+            type uint32 {
+              range "10..900";
+            }
+            units "s";
+            default "60";
+            description
+              "Specify the interval at which error frame seconds are detected.";
+          }
+          leaf threshold {
+            type uint32 {
+              range "0..900";
+            }
+            units "s";
+            must "(../threshold<=../period)";
+            default "1";
+            description
+              "Specify the threshold for error frame seconds.";
+          }
+        }
+        container error-code {
+          description
+            "Configure the error code function.";
+          leaf notification {
+            type enable-state;
+            default "disable";
+            description
+              "Indicates whether notification of error codes is enabled.";
+          }
+          leaf period {
+            type uint32 {
+              range "1..60";
+            }
+            units "s";
+            default "1";
+            description
+              "Specify the interval at which error codes are detected.";
+          }
+          leaf threshold {
+            type uint32 {
+              range "0..65535";
+            }
+            default "1";
+            description
+              "Specify the threshold for error codes.";
+          }
+        }
+        container error-frame-period {
+          description
+            "Configure the error frame period function.";
+          leaf notification {
+            type enable-state;
+            default "disable";
+            description
+              "Indicate whether notification of error frame periods is enabled.";
+          }
+          leaf period {
+            type uint32 {
+              range "20000..4294967295";
+            }
+            default "200000";
+            description
+              "Specify the interval at which error frame periods are detected.";
+          } 
+          leaf threshold {
+            type uint32 {
+              range "0..4294967295";
+            }
+            must "(../threshold<=../period)";
+            default "1";
+            description
+              "Specify the threshold for error frame periods.";
+          }
+        }
+      }
+    }
+  }
+}

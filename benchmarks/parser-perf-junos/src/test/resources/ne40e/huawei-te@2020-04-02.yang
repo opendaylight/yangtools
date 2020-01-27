@@ -1,0 +1,230 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-te {
+  namespace "urn:huawei:yang:huawei-te";
+  prefix te;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  include huawei-te-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the traffic engineering configuration.";
+  revision 2020-04-02 {
+    description
+      "Fixed the mode node condition for explicit path.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-28 {
+    description
+      "Fixed some problems.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-10 {
+    description
+      "Fixed some nodes description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-13 {
+    description
+      "Add te attribute global configuration.";
+    reference
+      "Huawei private.";
+  }		
+  revision 2019-06-14 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mpls-te";
+  /*
+   * data-def-stmt
+   */
+  container te {
+    description
+      "TE attribute.";
+    container global {
+      description
+        "Configure the global TE information.";
+      leaf te-attribute-enable {
+        type boolean;
+        default "false";
+        description
+        "Enable/disable TE attribute.";
+      }
+      leaf ipv6-router-id {
+        type "inet:ipv6-address";
+        description
+          "TE IPv6 Router ID.";
+      }
+    }
+    container explicit-paths {
+      description
+        "List of explicit path.";
+      list explicit-path {
+        key "name";
+        description
+          "Configure explicit path. When a TE LSP is to be established, specify route hop constraints for the LSP.";
+        leaf name {
+          type string {
+            length "1..128";
+            pattern '[^ \?]*';
+          }
+          description
+            "Explicit path name.";
+        }
+        container hops {
+          description
+            "List of Route hop.";
+          list hop {
+            key "index";
+            unique "address";
+            max-elements  "96";
+            description
+              "Configure route hop. Operations such as CFG restart and mixed command configuration may cause the index value to change.";
+            leaf index {
+              type uint32 {
+                range "1..65535";
+              }
+              description
+                "Route hop index.";
+            }
+            leaf mode {
+              ext:operation-exclude update;
+              type er-hop-mode;
+              mandatory true;
+              description
+                "Route hop mode, IPv4 or IPv6 address, segment label or SID IPv6 label.";
+            }
+            leaf er-hop-type {
+              when "../mode='ipv4-ipv6-address'";
+              type er-hop-type;
+              default "include-strict";
+              description
+                "Route hop type. Stictly included: A route hop must be included in a LSP path. Loosely included: A route hop is included in a LSP path if the hop meets path constraints and excluded if the hop does not meet path constraints. Excluded: A route hop is excluded fron the LSP path.";
+            }
+            leaf interface-type {
+              when "../mode='ipv4-ipv6-address' and ../er-hop-type!='exclude'";
+              type er-hop-interface-type;
+              default "default";
+              description
+                "Route hop interface type.";
+            }
+            leaf address-type {
+              when "../mode='ipv4-ipv6-address'";
+              type te-hop-address-type;
+              default "ipv4";
+              description
+                "Address type. IPv4 is only supported.";
+            }
+            leaf address {
+              when "../mode='ipv4-ipv6-address'";
+              type inet:ip-address;
+              mandatory true;
+              description
+                "IP address of a route hop.";
+            }
+            leaf sid-label-type {
+              when "../mode='sid-label'";
+              type er-sid-label-type;
+              default "adjacency";
+              description
+                "SID label type of the explicit route hop.";
+            }
+            leaf sid-label {
+              when "../sid-label-type";
+              type uint32 {
+                range "16..1048575";
+              }
+              mandatory true;
+              description
+                "SID label of the explicit route hop.";
+            }
+            leaf sid-ipv6 {
+              when "../mode='sid-ipv6'";
+              type inet:ipv6-address-no-zone;
+              mandatory true;
+              description
+                "SID IPv6 label of the explicit route hop.";
+            }
+            leaf sid-ipv6-label-type {
+              when "../mode='sid-ipv6'";
+              type er-sid-ipv6-label-type;
+              default "none";
+              description
+                "SID IPv6 label type of the explicit route hop.";
+            }			
+          }
+        }
+      }
+    }
+    container affinity-define {
+      presence "Enter path-constraint affinity-mapping view.";
+      description
+        "Configure affinity define function.";
+      leaf description {
+        type string {
+          length "1..80";
+        }
+        description
+          "Description the affinity mapping information.";
+      }
+      container affinity-mappings {
+        description
+          "List of the affinity mappings configuration.";
+        list affinity-mapping {
+          key "attribute-name";
+          unique "bit-sequence";
+          description
+            "Configure the affinity mapping.";
+          leaf attribute-name {
+            type string {
+              length "1..31";
+              pattern '[^ ?]*';
+            }
+            description
+              "Configure the attribute name.";
+          }
+          leaf bit-sequence {
+            type uint32 {
+              range "0..31";
+            }
+            mandatory true;
+            description
+              "Configure the bit sequence.";
+          }
+        }
+      }
+    }
+  }
+  /*
+   * augment-stmt
+   */
+  augment /ni:network-instance/ni:instances/ni:instance {
+    description
+      "TE Configuration information augment to network instance.";
+    container te {
+      description
+        "Configure TE function information.";
+    }
+  }
+}

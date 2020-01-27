@@ -1,0 +1,172 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ecc {
+  namespace "urn:huawei:yang:huawei-ecc";
+  prefix ecc;
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ecc-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Ecc.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ssh-server"; 
+  typedef ecc-encode-type {
+    type enumeration {
+      enum "der" {
+        value 0;
+        description
+          "Der.";
+      }
+      enum "pem" {
+        value 1;
+        description
+          "Pem.";
+      }
+      enum "openssh" {
+        value 2;
+        description
+          "Openssh.";
+      }
+    }
+    description
+      "ECC encodein type list.";
+  }  
+  container ecc {
+    description
+      "Ecc.";
+    container local-keys {
+      description
+        "Configure local key table.";
+      container local-key {
+        presence "create eccLocalKey.";
+        description
+          "Enable/disable local key code.";
+        leaf key-size {
+          type ecc-key-type;
+          default "521";
+          description
+            "Key size(256/384/521).";
+        }
+        leaf host-key-name {
+          type string {
+            length "0..264";
+          }
+          config false;
+          description
+            "Hostkey name.";
+        }
+        leaf host-key-code {
+          type string {
+            length "0..1024";
+          }
+          config false;
+          description
+            "Hostkey code.";
+        }
+        leaf host-key-pem {
+          type string {
+            length "0..1024";
+          }
+          config false;
+          description
+            "Hostkey code in PEM format.";
+        }
+      }
+    }
+    container peer-keys {
+      description
+        "List of peer key table.";
+      list peer-key {
+        key "key-name";
+        description
+          "Configure peer key code. If the key code is bound, it cannot be deleted, you need to unbind and then delete.";
+        leaf key-name {
+          type string {
+            length "1..40";
+          }
+          description
+            "Key name.";
+        }
+        leaf key-code {
+          type string {
+            length "1..1024";
+          }
+          mandatory true;
+          ext:support-filter "true";		  
+          description
+            "Key code conforming to PEM, OpenSSH or DER format.";
+        }
+        leaf encoding-type {
+          type ecc-encode-type;
+          default "der";
+          ext:support-filter "true";
+          description
+            "Encode type.";
+        }
+      }
+    }
+    container key-pairs {
+      description
+        "List of ECC keypair labels.";
+      list key-pair {
+        key "key-pair-label";
+        max-elements  "20";
+        description
+          "Configure ECC keypair label.";
+        leaf key-pair-label {
+          type string {
+            length "1..35";
+            pattern '[a-z0-9_]*';
+          }
+          description
+            "Keypair Label Name : It only contains underscores (_), lowercase letters and digits.";
+        }
+        leaf key-size {
+          type ecc-key-type;
+          default "521";
+          ext:support-filter "true";		  
+          description
+            "Size of Keypair.";
+        }
+        leaf host-key-code {
+          type string {
+            length "0..2048";
+          }
+          config false;
+          ext:support-filter "true";			  
+          description
+            "ECC hostkey code.";
+        }
+      }
+    }
+    container ecc-global {
+      description
+        "Configure Global Configuration.";
+      leaf max-key-pair {
+        type int32 {
+          range "1..20";
+        }
+        default "20";
+        description
+          "Maximum keypair value.";
+      }
+    }
+  }
+}

@@ -1,0 +1,105 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-network-instance {
+  namespace "urn:huawei:yang:huawei-network-instance";
+  prefix ni;
+  
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  import ietf-inet-types {
+    prefix inet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Layer 3 Virtual Private Network (L3VPN). An L3VPN is a virtual private network set up over public networks by Internet Service Providers (ISPs) and Network Service Providers (NSPs).";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-04-28 {
+    description
+      "Modify descriptions of the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "l3vpn";
+  container network-instance {
+    description
+      "Layer 3 Virtual Private Network (L3VPN). An L3VPN is a virtual private network set up over public networks by Internet Service Providers (ISPs) and Network Service Providers (NSPs).";
+    container global {
+      description
+        "Configure the global layer 3 virtual private network (L3VPN).";
+      leaf cfg-router-id {
+        type inet:ipv4-address-no-zone;
+        description
+          "The router id of router manager.";
+      }
+      leaf as-notation-plain {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable setting the display format of the BGP 4 byte as to be unformatted integer type.";
+      }
+      leaf route-distinguisher-auto-ip {
+        type inet:ipv4-address-no-zone;
+        description
+          "Set the display format of the BGP 4 byte as to be unformatted integer type.";
+      }
+    }
+    container instances {
+      description
+        "List of VPN instances. VPN instances are established to separate VPN routes from public network routes, and separate the routes of different VPNs. Some software features can be bound to multiple VPN instances so that multiple instances can provide a same feature. For example, RIP, OSPF, IS-IS, and BGP multiple instances.";
+      list instance {
+        key "name";
+        description
+          "Configure VPN instances. VPN instances are established to separate VPN routes from public network routes, and separate the routes of different VPNs. Multiple software features can be bound to multiple VPN instances to form a multi-instance that provides multiple features, for example, RIP multi-instance, OSPF multi-instance, IS-IS multi-instance, and BGP multi-instance. The _public_, dcn, ason, __mpp_vpn_inner__, __mpp_vpn_outer__, __mpp_vpn_inner_server__, and __LOCAL_OAM_VPN__ instances cannot be deleted.";
+        leaf name {
+          type string {
+            length "1..31";
+          }
+          description
+            "VPN instance name. It uniquely identifies a VPN instance. The name is a string of case-sensitive characters.";
+        }
+        leaf description {
+          when "not(../name='_public_')";
+          type string {
+            length "1..242";
+            pattern '([^?]*)';
+          }
+          description
+            "The description of a VPN instance. The value is a string, spaces supported.";
+        }
+        leaf sys-router-id {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "The router id of current use.";
+        }
+        leaf vrf-id {
+          type uint32;
+          config false;
+          description
+            "Vpn Instances ID.";
+        }
+      }
+    }
+  }
+}

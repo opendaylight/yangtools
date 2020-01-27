@@ -1,0 +1,611 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-tunnel-management {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-tunnel-management";
+  prefix tnlm;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Tunnel management, including management on tunnel policies and tunnel selectors.";
+  revision 2020-01-10 {
+    description
+      "Modify the description of node tunnel-protocol.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "tunnel";
+  typedef sel-seq-tunnel-type {
+    type enumeration {
+      enum "lsp" {
+        value 1;
+        description
+          "Search for LDP LSPs.";
+      }
+      enum "cr-lsp" {
+        value 3;
+        description
+          "Search for CR-LSPs.";
+      }
+      enum "gre" {
+        value 5;
+        description
+          "Search for GREs.";
+      }
+      enum "bgp" {
+        value 2;
+        description
+          "Search for BGP LSPs.";
+      }
+      enum "srbe-lsp" {
+        value 41;
+        description
+          "Search for SR-LSPs.";
+      }
+      enum "ldp" {
+        value 255;
+        description
+          "Search for LDP LSPs.";
+      }
+      enum "te" {
+        value 7;
+        description
+          "Search for TE.";
+      }
+      enum "sr-te" {
+        value 47;
+        description
+          "Search for SR-TE.";
+      }
+      enum "sr-te-policy" {
+        value 50;
+        description
+          "SR TE policy, used to define the selection sequence of tunnel types.";
+      }
+    }
+    description
+      "Tunnel type of select-sequences.";
+  }
+  typedef sel-seq-tunnel-ipv6-type {
+    type enumeration {
+      enum "srv6-te-policy" {
+        value 52;
+        description
+          "SRv6 TE policy, used to define the selection sequence of tunnel types.";
+      }
+    }
+    description
+      "Tunnel type of select-sequences.";
+  }
+  typedef tunnel-type {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Tunnel of the none type. The none type is an initial type, indicating that no tunnel type is configured. A tunnel can be used only after a tunnel type excluding the none type is configured.";
+      }
+      enum "ldp" {
+        value 1;
+        description
+          "LDP tunnel.";
+      }
+      enum "bgp" {
+        value 2;
+        description
+          "BGP tunnel.";
+      }
+      enum "te" {
+        value 3;
+        description
+          "TE tunnel.";
+      }
+      enum "static-lsp" {
+        value 4;
+        description
+          "Static LSP.";
+      }
+      enum "gre" {
+        value 5;
+        description
+          "GRE tunnel.";
+      }
+      enum "uni" {
+        value 6;
+        description
+          "UNI tunnel.";
+      }
+      enum "tnl-group" {
+        value 7;
+        description
+          "Tunnel group that consists of a primary tunnel and a secondary tunnel.";
+      }
+      enum "sub-te" {
+        value 8;
+        description
+          "Virtual tunnel that exclusively occupies the specified bandwidth of a TE tunnel.";
+      }
+      enum "sub-group" {
+        value 9;
+        description
+          "Virtual tunnel that occupies the specified bandwidth of the primary and secondary tunnels in a tunnel group.";
+      }
+      enum "6over4" {
+        value 10;
+        description
+          "IPv6-over-IPv4 tunnel.";
+      }
+      enum "6to4" {
+        value 11;
+        description
+          "IPv6-to-IPv4 tunnel.";
+      }
+      enum "mpls-local-ifnet" {
+        value 12;
+        description
+          "MPLS_local_IFNET tunnel, which is mainly used as a virtual tunnel between two ASBRs in the VPN Option B networking.";
+      }
+      enum "ldp6" {
+        value 13;
+        description
+          "LDP6 tunnel, which is an IPv6 tunnel.";
+      }
+      enum "nvgre" {
+        value 15;
+        description
+          "NVGRE tunnel.";
+      }
+      enum "p2mp-ldp" {
+        value 16;
+        description
+          "P2MP LDP tunnel.";
+      }
+      enum "vxlan" {
+        value 23;
+        description
+          "VXLAN tunnel.";
+      }
+      enum "ipsec" {
+        value 24;
+        description
+          "IPSec Tunnel.";
+      }
+      enum "p2mp-te" {
+        value 32;
+        description
+          "P2MP TE tunnel.";
+      }
+      enum "vxlan-nvo3" {
+        value 39;
+        description
+          "VXLAN_NVO3 tunnel.";
+      }
+      enum "gre6" {
+        value 40;
+        description
+          "GRE6 tunnel.";
+      }
+      enum "srbe-lsp" {
+        value 41;
+        description
+          "SR-LSP tunnel.";
+      }
+      enum "srv6" {
+        value 43;
+        description
+          "SRv6 tunnel.";
+      }
+      enum "4over6" {
+        value 44;
+        description
+          "IPv4-over-IPv6 tunnel.";
+      }
+      enum "6rd" {
+        value 45;
+        description
+          "6rd tunnel.";
+      }
+      enum "sr-te" {
+        value 47;
+        description
+          "SR-TE tunnel.";
+      }
+      enum "p2mp-gre" {
+        value 64;
+        description
+          "P2MP GRE tunnel.";
+      }
+      enum "ldp-lsp" {
+        value 255;
+        description
+          "LDP lsp tunnel.";
+      }
+      enum "sr-te-policy" {
+        value 50;
+        description
+          "SR TE policy tunnel.";
+      }
+      enum "sr-te-policy-group" {
+        value 51;
+        description
+          "SR TE policy group tunnel.";
+      }
+      enum "srv6-te-policy" {
+        value 52;
+        description
+          "SRv6 TE policy tunnel.";
+      }
+    }
+    description
+      "Tunnel type.";
+  }
+  
+  container tunnel-management {
+    description
+      "Tunnel management, including management on tunnel policies.";
+    container tunnel-policys {
+      description
+        "List of global tunnel policy configurations. A tunnel policy can be used to specify a rule for selecting tunnels.";
+      list tunnel-policy {
+        key "name";
+        description
+          "Configure a global tunnel policy, which is used to specify rules for selecting tunnels.";
+        leaf name {
+          type string {
+            length "1..39";
+          }
+          description
+            "Name of a tunnel policy. The value is a string case-sensitive characters, spaces not supported.";
+        }
+        leaf description {
+          type string {
+            length "1..80";
+          }
+          description
+            "Description of a tunnel policy.";
+        }
+        container ipv4-set {
+          description
+            "Configure an IPv4 tunnel policy.";
+          choice policy-type {
+            description
+              "Tunnel policy type.";
+            case select-sequences{  
+              description
+                "List of tunnel select sequences configurations.";
+              container select-sequence {
+                presence "create select-sequence.";
+                description
+                  "Enable/disable the selection of different types of tunnels. If the value is INVALID, no tunnel type is configured.";
+                leaf loadbalance {
+                  type uint32 {
+                    range "1..128";
+                  }
+                  mandatory true;
+                  description
+                    "Specify the maximum number of tunnels for load balancing. The maximum value varies according to hardware. To query the value, you can perform a get operation.";
+                }
+                leaf unmix {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable mixed selection.";
+                }
+                container select-tunnel-types {
+                  description
+                    "List of different types of tunnels that are selected in order of priority.";
+                  list select-tunnel-type {
+                    key "type";
+                    min-elements 1;
+                    max-elements 7;
+                    ordered-by user;
+                    description
+                      "Configure a tunnel type.";
+                    leaf type {
+                      type tnlm:sel-seq-tunnel-type;
+                      must "(../type='sr-te-policy' and ../../../unmix = 'true') or (../type != 'sr-te-policy')";
+                      description
+                        "The selected sequence type. CR-LSP is mutually exclusive with TE and SR-TE. LSP is mutually exclusive with BGP, LDP, and SRBE-LSP.";
+                    } 
+                  }
+                }
+              }
+            }
+            case binding {
+              description
+                "List of tunnel binding configurations.";
+              container nexthops {
+                description
+                  "List of rules for binding TE tunnels to destination addresses, so that VPN traffic destined for each destination address can be transmitted over the bound TE tunnels.";
+                list nexthop {
+                  key "address";
+                  max-elements 65535;
+                  description
+                    "Configure a rule for binding tunnels to a specified destination address.";
+                  leaf address {
+                    type inet:ipv4-address-no-zone;
+                    description
+                      "Destination IP address to be bound to a tunnel.";
+                  }
+                  leaf down-switch {
+                    type boolean;
+                    must "(../down-switch='true' and ../include-ldp='false') or ../down-switch='false'";
+                    default "false";
+                    description
+                      "Enable/disable tunnel switching. After this option is selected, if the bound TE tunnel is unavailable, the system will select an available tunnel in order of conventional LSP, CR-LSP, and Local_IFNET tunnel.";
+                  }
+                  leaf ignore-destination-check {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable the function of checking whether the destination address of a TE tunnel matches the destination address specified in a tunnel policy.";
+                  }
+                  leaf include-ldp {
+                    type boolean;
+                    must "../include-ldp='false' or (../bind-type='te' and ../down-switch='false')";
+                    default "false";
+                    description
+                      "Enable/disable load balancing among tunnels that include LDP LSPs.";
+                  }
+                  leaf bind-type {
+                    type enumeration {
+                      enum "te" {
+                        value 0;
+                        description
+                          "TE tunnel type.";
+                      }
+                      enum "auto" {
+                        value 1;
+                        description
+                          "Auto tunnel type.";
+                      }
+                      enum "sr-te-policy-group" {
+                        value 2;
+                        description
+                          "SR TE policy group tunnel type.";
+                      }
+                    }
+                    mandatory true;
+                    description
+                      "Type of tunnels.";
+                  }
+                  container tunnel-names {
+                    when "../bind-type='te'";
+                    description
+                        "List of TE tunnel names.";
+                    list tunnel-name {
+                      key "name";
+                      min-elements 1;
+                      max-elements 32;
+                      description
+                        "Configure a tunnel name.";
+                      leaf name {
+                        type leafref {
+                          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                        }
+                        must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Tunnel'";
+                        description
+                          "Name of the specified tunnel.";
+                      }
+                    }
+                  }
+                  container auto-names {
+                    when "../bind-type='auto'";
+                    description
+                        "List of auto tunnel names.";
+                    list auto-name {
+                      key "name";
+                      min-elements 1;
+                      max-elements 32;
+                      description
+                        "Configure a tunnel name.";
+                      leaf name {
+                        type string {
+                          length "1..37";
+                        }
+                        description
+                          "Name of the auto tunnel.";
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        container ipv6-set {
+          description
+            "Configure an IPv6 tunnel policy.";
+          choice policy-type {
+            description
+              "Tunnel policy type.";
+            case select-sequences{  
+              description
+                "List of tunnel select sequences configurations.";
+              container select-sequence {
+                presence "create select-sequence.";
+                description
+                  "Enable/disable the selection of different types of tunnels. If the value is INVALID, no tunnel type is configured.";
+                leaf loadbalance {
+                  type uint32 {
+                    range "1..128";
+                  }
+                  mandatory true;
+                  description
+                    "Specify the maximum number of tunnels for load balancing. The maximum value varies according to hardware. To query the value, you can perform a get operation.";
+                }
+                container select-tunnel-types {
+                  description
+                    "List of different types of tunnels that are selected in order of priority.";
+                  list select-tunnel-type {
+                    key "type";
+                    min-elements 1;
+                    max-elements 1;
+                    ordered-by user;
+                    description
+                      "Configure a tunnel type.";
+                    leaf type {
+                      type sel-seq-tunnel-ipv6-type;
+                      description
+                        "The selected sequence type.";
+                    } 
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container tunnel-down-switch {
+      description
+        "Configure traffic switching to a tunnel that is selected in the LSP > TE > GRE order of priority if a destination address is not bound to any tunnel.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable traffic switching to a tunnel that is selected in the LSP > TE > GRE order of priority if a destination address is not bound to any tunnel.";
+      }
+    }
+    container tunnel-infos {
+      config false;
+      description
+        "List of tunnel-related items.";
+      list tunnel-info {
+        key "id";
+        description
+          "Operational state of tunnels managed, such as their tunnel IDs, tunnel types, and destination IP addresses.";
+        leaf id {
+          type string {
+            length "1..36";
+          }
+          description
+            "Tunnel ID.";
+        }
+        leaf name {
+          type string {
+            length "1..256";
+          }
+          description
+            "Tunnel name.";
+        }
+        leaf type {
+          type tnlm:tunnel-type;
+          description
+            "Tunnel type.";
+        }
+        leaf destination {
+          type inet:ipv4-address-no-zone;
+          description
+            "Destination IP address of a tunnel.";
+        }
+        leaf status {
+          type enumeration {
+            enum "up" {
+              value 1;
+              description
+                "The tunnel status is Up.";
+            }
+            enum "down" {
+              value 2;
+              description
+                "The tunnel status is Down.";
+            }
+          }
+          description
+            "Status of a tunnel.";
+        }
+        leaf cost {
+          type uint32;
+          description
+            "Tunnel cost.";
+        }
+        leaf sr-te-policy-color {
+          type uint32;
+          description
+            "Tunnel color.";
+        }
+        leaf sr-te-policy-group {
+          type uint32;
+          description
+            "SR TE policy group ID.";
+        }
+      }
+    }
+    container subscribe-tunnel-policys {
+      config false;
+      description
+        "List of tunnel policy reference times.";
+      list subscribe-tunnel-policy {
+        key "policy-name";
+        description
+          "Statistics of the number of times that a tunnel policy has been referenced.";
+        leaf policy-name {
+          type string {
+            length "1..39";
+          }
+          description
+            "Tunnel policy name. The value is a string of case-sensitive characters, spaces not supported.";
+        }
+        leaf policy-exist {
+          type enumeration {
+            enum "true" {
+              value 1;
+              description
+                "The tunnel policy has been configured.";
+            }
+            enum "false" {
+              value 2;
+              description
+                "The tunnel policy has not been configured.";
+            }
+          }
+          description
+            "Whether a tunnel policy has been configured.";
+        }
+        leaf count {
+          type uint32;
+          description
+            "Number of times a tunnel policy is referenced.";
+        }
+      }
+    }
+  }
+  augment /ifm:ifm/ifm:interfaces/ifm:interface {
+    when "ifm:type='Tunnel'";
+    description
+      "Augment the huawei-ifm model to add tunnel protocol configuration.";
+    container tunnel-protocol {
+      description
+        "Configure tunnel protocol.
+         Special explanation:
+         Constraint: If a tunnel is locked, all configurations of the tunnel cannot be deleted or modified.";
+      choice type {
+        description
+          "Tunnel interface link layer encapsulation protocol type.";
+      }
+    }
+  }
+}

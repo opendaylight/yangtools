@@ -1,0 +1,554 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-dhcp {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-dhcp";
+  prefix dhcp;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-vlan {
+    prefix vlan;
+  }
+  import huawei-bd {
+    prefix bd;
+  } 
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  include huawei-dhcp-relay;
+  include huawei-dhcp-server;
+  include huawei-dhcp-snooping;
+  include huawei-dhcp-client;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Dynamic Host Configuration Protocol.";
+  revision 2019-12-17 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "dhcp";
+  typedef option82-sub-option-type {
+    type enumeration {
+      enum "circuit-id" {
+        value 1;
+        description
+          "DHCP option82 sub-option circuit-ID.";
+      }
+      enum "remote-id" {
+        value 2;
+        description
+          "DHCP option82 sub-option remote-ID.";
+      }
+      enum "circuit-remote" {
+        value 3;
+        description
+          "DHCP option82 sub-option circuit-ID and sub-option remote-ID.";
+      }
+    }
+    description
+      "The type of option82 sub-option.";
+  }
+  typedef option82-format {
+    type enumeration {
+      enum "common" {
+        value 1;
+        description
+          "DHCP option82 common format.";
+      }
+      enum "extend" {
+        value 2;
+        description
+          "DHCP option82 extend format.";
+      }
+      enum "user-defined" {
+        value 3;
+        description
+          "DHCP option82 user-defined format.";
+      }
+      enum "default" {
+        value 4;
+        description
+          "DHCP option82 default format.";
+      }
+      enum "type1" {
+        value 5;
+        description
+          "DHCP option82 type1 format.";
+      }
+      enum "type2" {
+        value 6;
+        description
+          "DHCP option82 type2 format.";
+      }
+      enum "self-define" {
+        value 7;
+        description
+          "DHCP option82 self-define format.";
+      }
+      enum "default-extra" {
+        value 8;
+        description
+          "DHCP option82 extra default format.";
+      }
+      enum "cn-telecom" {
+        value 9;
+        description
+          "DHCP option82 cn-telecom format.";
+      }
+      enum "self-define-extra" {
+        value 10;
+        description
+          "DHCP option82 extra self-define format.";
+      }
+
+      enum "intracom-vxlan" {
+        value 11;
+        description
+          "DHCP option82 Intracom-VXLAN format.";
+      }
+    }
+    description
+      "The type of DHCP option82 format.";
+  }
+  typedef server-enable-state {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable the function of DHCP server on an interface.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "Disable the function of DHCP server on an interface.";
+      }
+    }
+    description
+      "The state of DHCP server flag.";
+  }
+  container dhcp {
+    description
+      "Configure Dynamic Host Configuration Protocol.";
+    container common {
+      description
+        "Configure basic DHCP.";
+      container global {
+        description
+          "Configure globally configured attributes.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable DHCP globally.";
+        }
+        leaf ignore-hostname {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable DHCP ignore hostname.";
+        }
+      }
+    }
+    container relay {
+      description
+        "Configure DHCP relay.";
+      uses dhcp:dhcp-relay-type;
+    }
+    container server {
+      description
+        "Configure DHCP server.";
+      uses dhcp:dhcp-server-type;
+    }
+    container snooping {
+      description
+        "Configure DHCP snooping.";
+      uses dhcp:dhcp-snooping-type;
+    }
+    container client {
+      description
+        "Configure DHCP client.";
+      uses dhcp:dhcp-client-type;
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description "Extend interface attribute.";
+    container dhcp-if {
+      description
+        "Configure dhcp attributes on an interface.";
+      container dhcp-packet-setting {
+        description
+          "Configure dhcp packets.";
+        leaf ip-ttl {
+          type uint8 {
+            range "1..255";
+          }
+          description
+            "IP time to live.";
+        }
+        leaf dscp-outbound {
+          type uint8 {
+            range "0..63";
+          }
+          description
+            "DSCP outbound.";
+        }
+        leaf server-enable {
+          type server-enable-state;
+          description
+            "Enable/disable the function of DHCP server on an interface.";
+        }
+      }
+      container option82-formats {
+        description
+          "List of DHCP option82 formats.";
+        list option82-format {
+          key "sub-option-type";
+          description
+            "Configure a DHCP option82 format.";
+          leaf sub-option-type {
+            type option82-sub-option-type;
+            must "(../sub-option-type = 'circuit-remote' and not(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()/../../../../ifm:name]/dhcp:dhcp-if/dhcp:option82-formats/dhcp:option82-format[dhcp:sub-option-type='circuit-id']) and not(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()/../../../../ifm:name]/dhcp:dhcp-if/dhcp:option82-formats/dhcp:option82-format[dhcp:sub-option-type='remote-id'])) or ((../sub-option-type = 'circuit-id' or ../sub-option-type = 'remote-id') and not(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()/../../../../ifm:name]/dhcp:dhcp-if/dhcp:option82-formats/dhcp:option82-format[dhcp:sub-option-type='circuit-remote']))";
+            description
+              "DHCP option82 sub-option type.";
+          }
+          leaf option82-format {
+            type option82-format;
+            must "(((../sub-option-type != 'circuit-remote') and (../option82-format = 'self-define' and ../user-define-text)) or ((../sub-option-type = 'circuit-remote') and (../option82-format = 'type1' or ../option82-format = 'type2' or ../option82-format = 'cn-telecom' or (../option82-format = 'self-define' and ../user-define-text))))";
+            mandatory true;
+            description
+              "DHCP option82 format.";
+          }
+          leaf user-define-text {
+            when "../option82-format = 'self-define'";
+            type string {
+              length "1..255";
+              pattern '([^\t]{0,})';
+            }
+            mandatory true;
+            description
+              "DHCP option82 user-defined string.";
+          }
+        }
+      }
+      container option82-insert-setting {
+        description
+          "Configure all interfaces to insert or forcibly insert DHCP option82 to DHCP packets.";
+        choice option82-insert-format {
+          description
+            "Specify DHCP option82 insertion format.";
+          case insert-format {
+            description
+              "Configure all interfaces to insert DHCP option82 to DHCP packets.";
+            leaf insert {
+              type empty;
+              description
+                "Configure all interfaces to insert DHCP option82 to DHCP packets.";
+            }
+          }
+          case rebuild-format {
+            description
+            "Configure all interfaces to forcibly insert DHCP option82 to DHCP packets.";
+            leaf rebuild {
+              type empty;
+              description
+                "Configure all interfaces to forcibly insert DHCP option82 to DHCP packets.";
+            }
+          }
+        }
+      }
+    }
+    container dhcp-client-if {
+      description
+        "Configure DHCP client attributes on an interface.";
+      leaf address-allocation {
+        type empty;
+        description
+          "DHCP client allocate IP.";
+      }
+      leaf expected-lease {
+        type uint32 {
+          range "60..864000";
+        }
+        units "s";
+        description
+          "DHCP client expected lease.";
+      }
+      leaf option60 {
+        type string {
+          length "1..128";
+          pattern '([^\t]{0,})';
+        }
+        description
+          "The value of DHCP client option60 on an interface.";
+      }
+      container client-status {
+        config false;
+        description
+          "Operational state of DHCP client.";
+        leaf fsm-state {
+          type client-state;
+          config false;
+          description
+            "DHCP client status.";
+        }
+        leaf mac-address {
+          type pub-type:mac-address;
+          config false;
+          description
+            "User MAC address.";
+        }
+        leaf ip-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IP address.";
+        }
+        leaf ip-mask {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IP mask.";
+        }
+        leaf server-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Server IP address.";
+        }
+        leaf lease-obtained-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Lease obtained time.";
+        }
+        leaf lease-expire-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Lease expires time.";
+        }
+        leaf lease-renew-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Lease renews time.";
+        }
+        leaf lease-rebind-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Lease rebinds time.";
+        }
+      }
+      container client-statistics {
+        config false;
+        description
+          "Statistics of DHCP client.";
+        leaf total-packets-received {
+          type uint32;
+          config false;
+          description
+            "The number of totol packets received.";
+        }
+        leaf offer-packets-received {
+          type uint32;
+          config false;
+          description
+            "The number of offer packets received.";
+        }
+        leaf ack-packets-received {
+          type uint32;
+          config false;
+          description
+            "The number of ACK packets received.";
+        }
+        leaf nak-packets-received {
+          type uint32;
+          config false;
+          description
+            "The number of NAK packets received.";
+        }
+        leaf total-packets-send {
+          type uint32;
+          config false;
+          description
+            "The number of totol packets send.";
+        }
+        leaf discovery-packets-send {
+          type uint32;
+          config false;
+          description
+            "The number of discover packets send.";
+        }
+        leaf request-packets-send {
+          type uint32;
+          config false;
+          description
+            "The number of request packets send.";
+        }
+        leaf reboot-request-packets-send {
+          type uint32;
+          config false;
+          description
+            "The number of reboot request packets send.";
+        }
+        leaf select-request-packets-send {
+          type uint32;
+          config false;
+          description
+            "The number of select request packets send.";
+        }
+        leaf renew-request-packets-send {
+          type uint32;
+          config false;
+          description
+            "The number of renew request packets send.";
+        }
+        leaf rebind-request-packets-send {
+          type uint32;
+          config false;
+          description
+            "The number of rebind request packets send.";
+        }
+        leaf decline-packets-send {
+          type uint32;
+          config false;
+          description
+            "The number of decline packets send.";
+        }
+        leaf release-packets-send {
+          type uint32;
+          config false;
+          description
+            "The number of release packets send.";
+        }
+      }
+    }
+  }
+  augment "/vlan:vlan/vlan:vlans/vlan:vlan" {
+    description "Extend VLAN attribute.";
+    container dhcp-vlan {
+      description
+        "Configure DHCP attributes in a VLAN.";
+      container interface-option82-insert-settings {
+        description
+          "List of configuring all interfaces in a VLAN to insert or forcibly insert DHCP Option82 to DHCP packets.";
+        list interface-option82-insert-setting {
+          key "if-name";
+          description
+             "Configure all interfaces in a VLAN to insert or forcibly insert DHCP Option82 to DHCP packets.";
+          leaf if-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Interface name. The interface must be the member interface of this VLAN.";
+          }
+          choice option82-insert-format {
+            mandatory true;
+            description
+              "Specify DHCP option82 insertion format.";
+            case insert-format {
+              description
+                "Configure all interfaces in a VLAN to insert DHCP Option82 to DHCP packets.";
+              leaf insert {
+                type empty;
+                description
+                  "Configure all interfaces in a VLAN to insert DHCP Option82 to DHCP packets.";
+              }
+            }
+            case rebuild-format {
+              description
+              "Configure all interfaces in a VLAN to forcibly insert DHCP Option82 to DHCP packets.";
+              leaf rebuild {
+                type empty;
+                description
+                  "Configure all interfaces in a VLAN to forcibly insert DHCP Option82 to DHCP packets.";
+              }
+            }
+          }
+        }
+      }
+      container option82-insert-setting {
+        description
+          "Configure all interfaces in a VLAN to insert or forcibly insert DHCP option82 to DHCP packets.";
+        choice option82-insert-format {
+          description
+            "Specify DHCP option82 insertion format.";
+          case insert-format {
+            description
+              "Configure all interfaces in a VLAN to insert DHCP option82 to DHCP packets.";
+            leaf insert {
+              type empty;
+              description
+                "Configure all interfaces in a VLAN to insert DHCP option82 to DHCP packets.";
+            }
+          }
+          case rebuild-format {
+            description
+            "Configure all interfaces in a VLAN to forcibly insert DHCP option82 to DHCP packets.";
+            leaf rebuild {
+              type empty;
+              description
+                "Configure all interfaces in a VLAN to forcibly insert DHCP option82 to DHCP packets.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment "/bd:bd/bd:instances/bd:instance" {
+    description "Extend BD attribute.";
+    container dhcp-bd {
+      description
+        "Configure DHCP attributes in BDs.";
+      container option82-insert-setting {
+        description
+          "Configure all interfaces in a BD to insert or forcibly insert DHCP option82 to DHCP packets.";
+        choice option82-insert-format {
+          description
+            "Specify DHCP option82 insertion format.";
+          case insert-format {
+            description
+             "Configure all interfaces in a BD to insert DHCP option82 to DHCP packets.";
+            leaf insert {
+              type empty;
+              description
+                "Configure all interfaces in a BD to insert DHCP option82 to DHCP packets.";
+            }
+          }
+          case rebuild-format {
+            description
+            "Configure all interfaces in a BD to forcibly insert DHCP option82 to DHCP packets.";
+            leaf rebuild {
+              type empty;
+              description
+                "Configure all interfaces in a BD to forcibly insert DHCP option82 to DHCP packets.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

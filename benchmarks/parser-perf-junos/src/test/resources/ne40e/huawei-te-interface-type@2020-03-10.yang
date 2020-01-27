@@ -1,0 +1,89 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-te-interface-type {
+  belongs-to huawei-te-interface {
+    prefix te-interface;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+  revision 2020-03-10 {
+    description
+      "Fixed some descriptions.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-07-29 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  /*
+   * typedef-stmt
+   */
+  typedef line-protocol-status {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "The interface is in down state.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "The interface is in up state.";
+      }
+    }
+    description
+      "Interface line protocol type.";
+  }
+  typedef rsvp-fast-reroute-mode {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Inherit from global configuration defaultly.";
+      }
+      enum "link" {
+        value 1;
+        description
+          "Link protection mode.";
+      }
+      enum "node" {
+        value 2;
+        description
+          "Node protection mode.";
+      }
+      enum "self-adapting" {
+        value 3;
+        description
+          "Self-adapting mode.";
+      }
+      enum "disable" {
+        value 4;
+        description
+          "No protection.";
+      }
+    }
+    description
+      "RSVP TE FRR mode.";
+  }
+  typedef hex-binary {
+    type string {
+      length "1..8";
+      pattern '(0x|0X)?[0-9a-fA-F]+';
+    }
+    description
+      "This is a hexadecimal variable.";
+  }
+}

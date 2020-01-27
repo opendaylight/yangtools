@@ -1,0 +1,125 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-multicast-forward-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-multicast-forward-deviations-CH-NE-X3";
+  prefix "multicast-forward-devs-CH-NE-X3";
+
+  import huawei-multicast-forward {
+    prefix "multicast-forward";
+  }
+  import huawei-vlan {
+    prefix vlan;
+  }
+  import huawei-bd {
+    prefix bd;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-igmp-mld-snooping {
+    prefix ims;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Multicast forwarding table.";
+  revision 2019-06-01 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  deviation /multicast-forward:multicast-forward/multicast-forward:global/multicast-forward:reliability-enhance-enable { 
+	deviate not-supported; 
+  }
+  deviation /multicast-forward:multicast-forward/multicast-forward:global/multicast-forward:fragment-enable { 
+    deviate not-supported; 
+  }
+  deviation /multicast-forward:multicast-forward/multicast-forward:global/multicast-forward:qos-queue1 { 
+    deviate not-supported; 
+  }
+  deviation /multicast-forward:multicast-forward/multicast-forward:global/multicast-forward:qos-queue2 { 
+    deviate not-supported; 
+  }
+  deviation /multicast-forward:multicast-forward/multicast-forward:global/multicast-forward:qos-queue3 { 
+    deviate not-supported; 
+  }
+  deviation /multicast-forward:multicast-forward/multicast-forward:global/multicast-forward:qos-queue4 { 
+    deviate not-supported; 
+  }
+  deviation /multicast-forward:multicast-forward/multicast-forward:nat/multicast-forward:bind/multicast-forward:single-binds/multicast-forward:single-bind/multicast-forward:switch-packet-offset { 
+    deviate not-supported; 
+  }
+  deviation /multicast-forward:multicast-forward/multicast-forward:nat/multicast-forward:bind/multicast-forward:group-binds/multicast-forward:group-bind/multicast-forward:switch-packet-offset { 
+    deviate not-supported; 
+  }  
+  deviation /multicast-forward:multicast-forward/multicast-forward:l2-egress-statistics/multicast-forward:vlan-enables/multicast-forward:vlan-enable/multicast-forward:vlan-id {
+    deviate add {
+      must "(/vlan:vlan/vlan:vlans/vlan:vlan[vlan:id=current()]/ims:igmp-snooping/ims:global/ims:enable = 'true')";
+    }
+  }
+  deviation /multicast-forward:multicast-forward/multicast-forward:l2-egress-statistics/multicast-forward:vsi-enables/multicast-forward:vsi-enable/multicast-forward:vsi-name {
+    deviate add {
+      must "(/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance[l2vpn:name=current()][l2vpn:type='vpls']/l2vpn:vpls/ims:igmp-snooping/ims:global/ims:enable = 'true')";
+    }
+  }
+  deviation /multicast-forward:multicast-forward/multicast-forward:l2-egress-statistics/multicast-forward:bd-enables/multicast-forward:bd-enable/multicast-forward:bd-id {
+    deviate add {
+      must "(/bd:bd/bd:instances/bd:instance[bd:id=current()]/ims:igmp-snooping/ims:global/ims:enable = 'true')";
+    }
+  }
+  deviation "/multicast-forward:multicast-forward/multicast-forward:l2-egress-statistics/multicast-forward:vsi-enables/multicast-forward:vsi-enable/multicast-forward:vsi-name" {
+    deviate replace {
+      type leafref {
+        path "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:name";
+      }
+    }
+  }
+  deviation "/multicast-forward:multicast-forward/multicast-forward:l2-egress-statistics/multicast-forward:vsi-statistics/multicast-forward:vsi-statistic/multicast-forward:vsi-name" {
+    deviate replace {
+      type leafref {
+        path "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:name";
+      }
+    }
+  }
+  deviation "/multicast-forward:reset-vsi-egress-statistics/multicast-forward:input/multicast-forward:vsi-name" {
+    deviate replace {
+      type leafref {
+        path "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:name";
+      }
+    }
+  }
+  deviation "/multicast-forward:multicast-forward/multicast-forward:l2-egress-statistics/multicast-forward:bd-enables/multicast-forward:bd-enable/multicast-forward:bd-id" {
+    deviate replace {
+      type leafref {
+        path "/bd:bd/bd:instances/bd:instance/bd:id";
+      }
+    }
+  }
+  deviation "/multicast-forward:multicast-forward/multicast-forward:l2-egress-statistics/multicast-forward:bd-statistics/multicast-forward:bd-statistic/multicast-forward:bd-id" {
+    deviate replace {
+      type leafref {
+        path "/bd:bd/bd:instances/bd:instance/bd:id";
+      }
+    }
+  }
+  deviation "/multicast-forward:reset-bd-egress-statistics/multicast-forward:input/multicast-forward:bd-id" {
+    deviate replace {
+      type leafref {
+        path "/bd:bd/bd:instances/bd:instance/bd:id";
+      }
+    }
+  }
+  deviation /multicast-forward:multicast-forward/multicast-forward:egress-forward-mode { 
+    deviate not-supported; 
+  }
+}

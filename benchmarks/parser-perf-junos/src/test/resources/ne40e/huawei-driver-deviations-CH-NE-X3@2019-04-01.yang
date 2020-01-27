@@ -1,0 +1,354 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-driver-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-driver-deviations-CH-NE-X3";
+  prefix driver-devs-CH-NE-X3;
+  
+  import huawei-driver {
+    prefix driver;
+  }
+  
+  import huawei-devm {
+    prefix devm;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Configuration deviations of the driver file.";
+  revision 2019-04-01 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  
+/*
+ typedef deviations begin
+*/
+ typedef trap-type-deviations {
+    type enumeration {
+      enum "base-trap" {
+        value 1;
+        description
+          "Base-trap.";
+      }
+      enum "entity-trap" {
+        value 4;
+        description
+          "Entity-trap.";
+      }
+    }
+    description
+      "Information of enum type trap-type.";
+  }
+  
+  typedef pwr-supply-temp-type-deviations {
+    type enumeration {
+      enum "temphigh" {
+        value 55;
+        description
+          "55.";
+      }
+    }
+    description
+      "Information of enum type pwr-supply-temp-type.";
+  }
+  
+  typedef fan-workmode-deviations {
+    type enumeration {
+      enum "auto" {
+        value 1;
+        description
+          "Automatic.";
+      }
+      enum "manual" {
+        value 2;
+        description
+          "Percent.";
+      }
+      enum "silent" {
+        value 4;
+        description
+          "Silent.";
+      }
+      enum "full" {
+        value 5;
+        description
+          "Full.";
+      }
+      enum "minimum-percent" {
+        value 9;
+        description
+          "Minimum-percent.";
+      }
+    }
+    description
+      "Information of enum type fan-workmode.";
+  }
+  
+  deviation /devm:devm/devm:chassiss/devm:chassis/driver:fan-attribute/driver:workmode {
+    deviate replace {
+      type driver-devs-CH-NE-X3:fan-workmode-deviations;
+    }
+  }
+  deviation /driver:driver/driver:global-attribute/driver:system-trap {
+    deviate replace {
+      type driver-devs-CH-NE-X3:trap-type-deviations;
+    }
+  }
+  deviation /devm:devm/devm:chassiss/devm:chassis/driver:power-supply-attribute/driver:power-supply-temp {
+    deviate replace {
+      type driver-devs-CH-NE-X3:pwr-supply-temp-type-deviations;
+    }
+  }
+/*
+ typedef deviations end
+*/
+/*
+ deviation add begin
+*/
+  deviation "/driver:driver/driver:temperatures/driver:temperature" {
+    deviate add {
+        must "(minor and major and fatal) or (not(minor) and not(major) and not(fatal))";
+    }
+  }
+  deviation "/driver:driver/driver:voltageinfos/driver:voltageinfo" {
+    deviate add {
+        must "(major-voltage-threshold-low and major-voltage-threshold-high and fatal-voltage-threshold-low and fatal-voltage-threshold-high) or (not(major-voltage-threshold-low) and not(major-voltage-threshold-high) and not(fatal-voltage-threshold-low) and not(fatal-voltage-threshold-high))";
+    }
+  }
+/*
+ deviation add end
+*/
+
+/*
+ deviation range or default begin
+*/
+
+/*
+ deviation range or default end
+*/
+
+
+/*
+ deviation not-supported begin
+*/ 
+  deviation /driver:driver/driver:global-attribute/driver:cur-device-work-mode {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:next-device-work-mode {
+    deviate not-supported;
+  }
+  deviation /driver:set-usb-uart-stat {
+    deviate not-supported;
+  }
+  deviation /driver:power-on-sfu {
+    deviate not-supported;
+  }
+  deviation /driver:power-off-sfu {
+    deviate not-supported;
+  }
+  deviation /driver:power-on-ecu {
+    deviate not-supported;
+  }
+  deviation /driver:power-off-ecu {
+    deviate not-supported;
+  }
+  deviation /driver:power-on-icu {
+    deviate not-supported;
+  }
+  deviation /driver:power-off-icu {
+    deviate not-supported;
+  }
+  deviation /driver:reset-lcd {
+    deviate not-supported;
+  }
+  deviation /driver:reset-ecu-board {
+    deviate not-supported;
+  }
+  deviation /driver:reset-icu-board{
+    deviate not-supported;
+  }
+  deviation /driver:reset-cmu-board {
+    deviate not-supported;
+  }
+  deviation /driver:reset-fan-board{
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:usb-uart-status {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:switch-port-mode {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:inner-links {
+    deviate not-supported;
+  }
+  deviation /devm:devm/driver:driver/driver:ecus {
+    deviate not-supported;
+  }
+  deviation /driver:reset-dustproof-net {
+    deviate not-supported;
+  }
+  deviation /driver:reset-mbus-node {
+    deviate not-supported;
+  }
+  
+  deviation /devm:devm/driver:driver/driver:icus {
+    deviate not-supported;
+  }
+  deviation /devm:devm/driver:driver/driver:cmus {
+    deviate not-supported;
+  }
+  deviation /devm:devm/driver:driver/driver:ccus {
+    deviate not-supported;
+  }
+  deviation /devm:devm/driver:driver/driver:pmus {
+    deviate not-supported;
+  }
+  deviation /devm:devm/driver:driver/driver:dacss {
+    deviate not-supported;
+  }
+  
+  deviation /devm:devm/driver:driver/driver:lcds {
+    deviate not-supported;
+  }
+  
+  deviation /devm:devm/driver:driver/driver:pms {
+    deviate not-supported;
+  }
+  
+  deviation /devm:devm/devm:chassiss/devm:chassis/driver:power-supply-attribute/driver:pm-output-limit {
+    deviate not-supported;
+  }
+  
+  deviation /devm:devm/devm:chassiss/devm:chassis/driver:power-supply-attribute/driver:pm-input-voltage-110 {
+    deviate not-supported;
+  }
+  deviation /devm:devm/devm:chassiss/devm:chassis/driver:dustproof-attribute {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:cur-work-mode {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:next-work-mode {
+    deviate not-supported;
+  }
+  deviation /driver:set-next-work-mode {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:temp-query-mode {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:vlt-query-mode {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:warm-backup-states {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:warm-backup-mode {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:sfu-switch-mode {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:optional-entity-fault-isolate {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:sampling-period {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:energy-saving-pm {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:energy-saving-pm-status {
+    deviate not-supported;
+  }
+  
+  deviation /driver:driver/driver:global-attribute/driver:dustproof-check {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:fault-strategy {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:cur-system-mode {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:next-system-mode {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:pic-reload-cycle {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:system-mac-address {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:system-mac-number {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:cur-system-mac-address {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:global-attribute/driver:least-sfu-number {
+    deviate not-supported;
+  }
+
+  deviation /devm:devm/driver:driver/driver:dmus {
+    deviate not-supported;
+  }
+  
+  deviation /devm:devm/driver:driver/driver:pdus {
+    deviate not-supported;
+  }
+
+  deviation /driver:driver/driver:io-inspect-states {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:io-inspect-attributes {
+    deviate not-supported;
+  }
+  deviation /driver:driver/driver:rollback-attribute {
+    deviate not-supported;
+  }
+  deviation /driver:rollback {
+    deviate not-supported;
+  }
+  deviation /driver:set-slot-led-flash {
+    deviate not-supported;
+  }
+  deviation /driver:set-npu-led-flash {
+    deviate not-supported;
+  }
+  deviation /driver:set-vsu-service-type {
+    deviate not-supported;
+  }
+  deviation /devm:devm/driver:driver/driver:vsus {
+    deviate not-supported;
+  }
+
+  deviation /driver:check-lcm-channel {
+    deviate not-supported;
+  }
+  deviation /driver:multi-level-alarm-boolean {
+    deviate not-supported;
+  } 
+/*
+ deviation not-supported end
+*/
+  deviation /driver:driver/driver:global-attribute/driver:split-resume {
+    deviate not-supported;
+  }
+  deviation /driver:set-split-resume {
+    deviate not-supported;
+  }
+}

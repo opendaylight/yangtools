@@ -1,0 +1,85 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ip-cga {
+  namespace "urn:huawei:yang:huawei-ip-cga";
+  prefix ip-cga;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ip {
+    prefix ip;
+  }
+  import huawei-rsa {
+    prefix rsa;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This module contains a collection of YANG definitions for
+     configuring IP implementations.
+     Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.";
+  revision 2020-02-14 {
+    description
+      "Modify the description of nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-08-30 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "interface-mgr";
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ip:ipv6" {
+    description
+      "Cryptographically generated adresses.";
+    container cgas {
+      description
+        "List of CGA information.";
+      list cga {
+        key "rsakey-pair";
+        max-elements 1;
+        description
+          "Configure CGA information.";
+        leaf rsakey-pair {
+          type leafref {
+            path "/rsa:rsa/rsa:key-pairs/rsa:key-pair/rsa:key-pair-label";
+          }
+          description
+            "RSA key.";
+        }
+        leaf sec-level {
+          type uint8 {
+            range "0..1";
+          }
+          description
+            "Security level.";
+        }
+        leaf modifier {
+          type inet:ipv6-address-no-zone;
+          must "not (../sec-level=1 and ../modifier!='::')";
+          description
+            "CGA address modifier.";
+        }
+      }
+    }
+  }
+}

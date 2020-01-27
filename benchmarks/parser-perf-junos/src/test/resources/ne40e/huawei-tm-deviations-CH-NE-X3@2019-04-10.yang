@@ -1,0 +1,33 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-tm-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-tm-deviations-CH-NE-X3";
+  prefix tm-devs-CH-NE-X3;
+
+  import huawei-tm {
+    prefix tm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Time management (TM) component.";
+
+  revision 2019-04-10 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/tm:tm/tm:dst-configuration-ias" {
+    deviate not-supported;
+  }
+}

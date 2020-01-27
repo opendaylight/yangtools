@@ -1,0 +1,240 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-devm-vnf {
+  namespace "urn:huawei:yang:huawei-devm-vnf";
+  prefix devm-vnf;
+  import huawei-extension {
+    prefix ext;
+  }  
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Configuration management module.";
+  revision 2019-07-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+    
+  typedef run-state-type {
+    type enumeration {
+      enum "abnormal" {
+        value 0;
+        description
+          "Abnormal.";
+      }
+      enum "normal" {
+        value 1;
+        description
+          "Normal.";
+      }
+      enum "isolated" {
+        value 2;
+        description
+          "Isolated.";
+      }
+      enum "notinstall" {
+        value 3;
+        description
+          "Not install.";
+      }
+      enum "wrongtype" {
+        value 4;
+        description
+          "Wrong type.";
+      } 
+      enum "active" {
+        value 5;
+        description
+          "Active.";
+      }
+      enum "inactive" {
+        value 6;
+        description
+          "Inactive.";
+      }
+      enum "offline" {
+        value 7;
+        description
+          "Offline.";
+      }
+      enum "stop" {
+        value 8;
+        description
+          "Stop.";
+      }
+    }
+    description
+      "Run state.";
+  }  
+
+  typedef resource-type {
+    type enumeration {
+      enum "vm" {
+        value 0;
+        description
+          "Virtual machine.";
+      }
+    }
+    description
+      "Resource source type.";
+  }  
+
+  typedef standby-state-type {
+    type enumeration {
+      enum "not-supported" {
+        value 0;
+        description
+          "No standby state.";
+      }
+      enum "master" {
+        value 1;
+        description
+          "Master board.";
+      }
+      enum "slave" {
+        value 2;
+        description
+          "Slave board.";
+      }
+    }
+    description
+      "Board standby state.";
+  }
+  
+  typedef board-role-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }
+      enum "mmb" {
+        value 1;
+        description
+          "MMB.";
+      }
+      enum "mb" {
+        value 4;
+        description
+          "MB.";
+      }
+      enum "lc" {
+        value 5;
+        description
+          "LC.";
+      }
+      enum "other" {
+        value 200;
+        description
+          "OTHER.";
+      }
+      enum "na" {
+        value 255;
+        description
+          "NA.";
+      }
+    }
+    description
+      "Board role.";
+  }
+  ext:task-name "device-mgr";
+  container devm-vnf {
+    description
+      "Virtualized network function (VNF) infomation.";
+    container vnf-boards {
+      description
+        "List of virtualized network function (VNF) board.";
+      list vnf-board {
+        key "vnfc-name id";
+        description
+          "Configure virtualized network function (VNF) board.";
+        leaf vnfc-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Virtualized network function component (VNFC) name.";
+        }
+        leaf id {
+          type uint32;
+          description
+            "Board ID.";
+        }
+        leaf type-name {
+          type string {
+            length "1..63";
+          }
+          mandatory true;
+          description
+            "Type name.";
+        }
+        leaf name {
+          type string {
+            length "1..63";
+          }
+          config false;
+          description
+            "Board name.";
+        }
+        leaf run-state {
+          type run-state-type;
+          config false;
+          description
+            "Running status.";
+        }
+        leaf resource-type {
+          type resource-type;
+          config false;
+          description
+            "Resource Type.";
+        }
+        leaf resource-name {
+          type string {
+            length "1..63";
+          }
+          config false;
+          description
+            "Name of a resource source.";
+        }
+        leaf standby-state {
+          type standby-state-type;
+          config false;
+          description
+            "Standby state of a VNF board.";
+        }
+        leaf role {
+          type board-role-type;
+          config false;
+          description
+            "MPU role.";
+        }
+        leaf up-time  {
+          type pub-type:time-tick;
+          config false;
+          description
+            "Running period.";
+        }
+        leaf physical-index {
+          type uint32;
+          config false;
+          description
+            "Entity index.";
+        }
+      }
+    }
+  }
+}

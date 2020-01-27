@@ -1,0 +1,53 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-vaccess-type {
+  belongs-to huawei-vaccess {
+    prefix vaccess;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Virtual Access Type Information.";
+  revision 2020-03-24 {
+    description
+      "Fixed some descriptions.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-06-05 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef vaccess-va-role {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "The default value of virtual access node type.";
+      }
+      enum "master" {
+        value 1;
+        description
+          "Virtual access node type is master.";
+      }
+      enum "ap" {
+        value 2;
+        description
+          "Virtual access node type is ap.";
+      }
+    }
+    description
+      "The role of virtual access node.";
+  }
+}

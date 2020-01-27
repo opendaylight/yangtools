@@ -1,0 +1,106 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-cgn {
+  namespace "urn:huawei:yang:huawei-bras-cgn";
+  prefix bras-cgn;
+
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras cgn.";
+
+  revision 2019-04-01 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+  ext:task-name "aaa-access";
+
+  container bras-cgn {
+    description
+      "Bras cgn.";
+    container pub-user-auto-cut {
+      description
+        "Configure automatic switchback from public IP address-based access to private IP address-based access for CGN public network users.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable automatic switchback from public IP address-based access to private IP address-based access for CGN public network users.";
+      }
+    }
+  }
+  
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "Bras cgn in bas domain.";
+    container bras-cgn {
+      description
+        "Configure Bras cgn in bas domain.";
+      container public-address {
+        must "not(./assign-first='true' and ./nat-instance-down='true')";
+        description
+          "Configure in distributed CGN scenarios.";
+        leaf nat-enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable the NAT device to process traffic from public network IPv4 address users in distributed CGN scenarios before forwarding it based on the routing table.";
+        }
+        leaf assign-first {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable public network IPv4 addresses to be preferentially allocated to users.";
+        }
+        leaf nat-instance-down {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable CGN users to access a device using a public IP address if the CGN service board fails.";
+        }
+      }
+      container ipv6-pool-domain {
+        description
+          "Configure IPv6 attribute configuration of an AAA domain.";
+        leaf aftr-name {
+          type string {
+            length "1..63";
+            pattern "[a-zA-Z0-9._-]{1,63}";
+          }
+          must "../aftr-name != '-' and ../aftr-name != '--'";
+          description
+            "Specifies an AFTR (Address Family Transition Router) name.";
+        }
+      }
+      container ds-lite-ipv4-portal {
+        description
+          "Configure captive portal in DS-Lite scenarios.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable captive portal in DS-Lite scenarios.";
+        }
+      }
+    }
+  }
+}

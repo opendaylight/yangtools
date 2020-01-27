@@ -1,0 +1,35 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-cesacr-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-clocksync-cesacr-deviations-CH-NE-X3";
+  prefix "clocksync-cesacr-devs-CH-NE-X3";
+
+  import huawei-clocksync-cesacr {
+    prefix "clocksync-cesacr";
+  }
+  import huawei-ifm {
+    prefix "ifm";
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Clock ces-acr deviations data model define.";
+  revision 2019-06-15 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  deviation /ifm:ifm/ifm:interfaces/ifm:interface/clocksync-cesacr:clock-cesacr/clocksync-cesacr:recovery-modes {
+    deviate not-supported;
+  }
+}

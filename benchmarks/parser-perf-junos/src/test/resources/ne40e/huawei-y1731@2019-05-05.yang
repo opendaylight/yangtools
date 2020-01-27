@@ -1,0 +1,124 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-y1731 {
+  namespace "urn:huawei:yang:huawei-y1731";
+  prefix y1731;
+  
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Y.1731 is developed by ITU-T for operations, administration and maintenance (OAM) of Ethernet, which providing fault management and performance management solutions for Ethernet.";
+  revision 2019-05-05 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  ext:task-name  "y1731"; 
+  
+  typedef version {
+    type enumeration {
+      enum "draft7" {
+	    value 0;
+        description
+          "IEEE 802.1ag draft 7.";
+      }
+      enum "standard" {
+	    value 1;
+        description
+          "IEEE std 802.1ag-2007.";
+      }
+    }
+    description
+      "CFM version.";
+  }
+  typedef mp-address-model {
+    type enumeration {
+      enum "bridge" {
+	    value 1;
+        description
+          "Bridge MAC model of an 802.1ag protocol.";
+      }
+      enum "individual" {
+	    value 2;
+        description
+          "Individual MAC model of an 802.1ag protocol.";
+      }
+    }
+    description
+      "MP address model.";
+  }
+  typedef portid-tlv-type {
+    type enumeration {
+      enum "interface-name" {
+	    value 5;
+        description
+          "Interface name type of port ID TLV.";
+      }
+      enum "local" {
+	    value 7;
+        description
+          "Private type of port ID TLV.";
+      }
+    }
+    description
+      "Portid tlv type.";
+  }
+  container y1731 {
+    description
+      "Y.1731 is developed by ITU-T for operations, administration and maintenance (OAM) of Ethernet, which providing fault management and performance management solutions for Ethernet.";
+    container global-attribute {
+      description
+        "Configure global Y.1731 attribute.";
+      leaf cfm-version {
+        type version;
+        default "standard";
+        description
+          "Version of Y.1731, which can be standard or draft7. The default Y.1731 version is standard.";
+      }
+      leaf mp-address-model {
+        type mp-address-model;
+        default "bridge";
+        description
+          "MAC model of Y.1731, which can be bridge or individual. The default Y.1731 MAC model is bridge.";
+      }
+      leaf pm-mode-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Y.1731 PM. By default, PM mode is disabled.";
+      }
+      leaf portid-tlv {
+        type portid-tlv-type;
+        default "interface-name";
+        description
+          "Set the type of port ID TLV in MAC Trace packet.";
+      }
+      leaf idle-test-id-count {
+        type uint16;
+        default "1";
+        description
+          "Set the number of idle test id for query.";
+      }
+    }
+	container global-enable {
+	  when "(../global-attribute/cfm-version='standard')";
+	  presence "Enable Y.1731.";
+	  description
+        "Enable/disable Y.1731 to be developed by ITU-T for operations, administration and maintenance (OAM) of Ethernet, which providing fault management and performance management solutions for Ethernet.";
+	}
+  }
+}

@@ -1,0 +1,273 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp-vpntarget {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bgp-vpntarget";
+  prefix bgp-vpntarget;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-bgp {
+    prefix bgp;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+  grouping bgp-vpntarget-cap-type {
+    description
+      "BGP-vpntarget-cap-type configuration.";
+    leaf external-path-num {
+      type uint16 {
+        range "0..64";
+      }
+      default "0";
+      description
+        "The number of external path.";
+    }
+    leaf rt-filter-disable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable route-target routing-table filer ability.";
+    }
+    leaf timer-for-end-of-rib {
+      type uint32 {
+        range "3..3000";
+      }
+      default "180";
+      description
+        "Time waiting for the End-Of-RIB.";
+    }
+  }
+  ext:task-name "bgp";
+
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af" {
+    description
+      "BGP vpntarget address family configuration.";
+    container vpntarget {
+      when "../bgp:type = 'vpntarget'";
+      description
+        "Configure IPv4-family vpntarget options.";
+      container common {
+        description
+          "Configure IPv4-family vpntarget common options.";
+        uses bgp-vpntarget-cap-type;
+        leaf route-select-delay {
+          type uint16 {
+            range "0..3600";
+          }
+          units "s";
+          default "0";
+          description
+            "Route selection delay.";
+        }
+        leaf default-med {
+          type uint32;
+          default "0";
+          description
+            "Specify the Multi-Exit-Discriminator (MED) of BGP routes. The value is an integer. This value is valid only for the imported routes and BGP summarized routes on the local router.";
+        }
+        leaf reflect-change-path {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable an RR to use an export policy to change route AS_Path.";
+        }
+        leaf reflect-between-client {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable route reflection between clients. If clients of a route reflector (RR) are fully meshed, you can disable route reflection among clients to reduce the cost.";
+        }
+        uses bgp:reflector-cluster-type;
+        leaf default-local-preference {
+          type uint32 {
+            range "0..4294967295";
+          }
+          default "100";
+          description
+            "The local preference of BGP routes.";
+        }
+        uses bgp:bestroute-router-id-prior-clusterlist-type;
+      }
+    }
+  }
+  
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:peer-groups/bgp:peer-group/bgp:afs/bgp:af" {
+    description
+      "BGP vpntarget address family configuration.";
+    container vpntarget {
+      when "../bgp:type = 'vpntarget'";
+      description
+        "Configure IPv4-family vpntarget options.";
+      leaf advertise-community {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable advertise the community attribute to a peer or a peer group.";
+      }
+      leaf reflect-client {
+        when "../../../../bgp:type='ibgp'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the local device as a route reflector (RR) and a peer or peer group as its client. This configuration is applicable between IBGP peers only. The configurations of RRs and its clients in an address family are valid only in this address family. Therefore, it is recommended to configure RRs and its clients in the specified address family that is required.";
+      }
+      leaf default-route-advertise {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a device to advertise the default route to its peers. This option enables a device to send a default route with the device as the next hop address to its peers, regardless of whether there is a default route in the local routing table.";
+      }
+      uses bgp:as-path-filter-type;
+      leaf allow-as-loop {
+        type uint32 {
+        range "1..10";
+        }
+        description
+          "Allow repetitive local AS numbers. By default, repetitive local AS numbers are not allowed.";
+      }
+      choice import-policy-type {
+        description
+          "Set route policy or filter.";
+        case rtp-ref {
+          description
+            "Route policy.";
+          leaf import-policy {
+            type leafref {
+              path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+            }
+            description
+              "Specify the filtering policy applied to the routes learned from a peer. By default, no such policy is specified.";
+          }
+        }
+      }
+      choice export-policy-type {
+        description
+          "Set route policy or filter.";
+        case rtp-ref {
+          description
+            "Route policy.";
+          leaf export-policy {
+            type leafref {
+              path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+            }
+            description
+              "Specify the filtering policy applied to the routes to be advertised to a peer. By default, no such policy is specified.";
+          }
+        }
+      }
+      uses bgp:advertise-large-community-group-type;
+      uses bgp:rt-update-interval-type;
+      uses bgp:preferred-value-type;
+      uses bgp:route-limit-type;
+      uses bgp:public-as-only-type;
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:peers/bgp:peer/bgp:afs/bgp:af" {
+    description
+      "BGP vpntarget address family configuration.";
+    container vpntarget {
+      when "../bgp:type = 'vpntarget'";
+      description
+        "Configure IPv4-family vpntarget options.";
+      leaf group-name {
+        type leafref {
+          path "../../../../../../bgp:peer-groups/bgp:peer-group/bgp:name";
+        }
+        must "../../../../../../bgp:peer-groups/bgp:peer-group[bgp:name = current()]/bgp:afs/bgp:af[bgp:type='vpntarget']";
+        description
+          "Configure a name for a peer group. After a peer is deleted from the peer group, the peer is disabled from the address family. The object cannot be modified.";
+        ext:operation-exclude update {
+          description "The node cannot be modified, when the peer already belongs to a peer-group.";
+        }
+      }
+      leaf advertise-community {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable advertise the community attribute to a peer or a peer group.";
+      }
+      leaf reflect-client {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the local device as a route reflector (RR) and a peer or peer group as its client. This configuration is applicable between IBGP peers only. The configurations of RRs and its clients in an address family are valid only in this address family. Therefore, it is recommended to configure RRs and its clients in the specified address family that is required.";
+      }
+      leaf default-route-advertise {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a device to advertise the default route to its peers. This option enables a device to send a default route with the device as the next hop address to its peers, regardless of whether there is a default route in the local routing table.";
+      }
+      uses bgp:as-path-filter-type;
+      leaf allow-as-loop {
+        type uint32 {
+        range "1..10";
+        }
+        description
+          "Allow repetitive local AS numbers. By default, repetitive local AS numbers are not allowed.";
+      }
+      choice import-policy-type {
+        description
+          "Set route policy or filter.";
+        case rtp-ref {
+          description
+            "Route policy.";
+          leaf import-policy {
+            type leafref {
+              path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+            }
+            description
+              "Specify the filtering policy applied to the routes learned from a peer. By default, no such policy is specified.";
+          }
+        }
+      }
+      choice export-policy-type {
+        description
+          "Set route policy or filter.";
+        case rtp-ref {
+          description
+            "Route policy.";
+          leaf export-policy {
+            type leafref {
+              path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+            }
+            description
+              "Specify the filtering policy applied to the routes to be advertised to a peer. By default, no such policy is specified.";
+          }
+        }
+      }
+      uses bgp:advertise-large-community-type;
+      uses bgp:rt-update-interval-type;
+      uses bgp:preferred-value-type;
+      uses bgp:route-limit-type;
+      uses bgp:public-as-only-type;
+    }
+  }
+}

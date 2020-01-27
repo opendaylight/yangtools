@@ -1,0 +1,87 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-software-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-software-notification";
+  prefix software-notification;
+
+  import huawei-extension {
+    prefix ext;
+  } 
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of software.";
+  revision 2020-01-13 {
+    description
+      "Yang white-box.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-16 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "rpm";
+
+  notification package-verify-failed {
+    description
+      "Package digital signature verification failed to be verified.";
+    leaf physical-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Entity name.";
+    }
+    leaf package-name {
+      type string {
+        length "4..127";
+      }
+      description
+        "Software package name.";
+    }
+    leaf fail-reason {
+      type string {
+        length "1..127";
+      }
+      description
+        "Error reason.";
+    }
+  }
+  notification package-verify-failed-resume {
+    description
+      "Package digital signature verification succeeded to be verified.";
+    leaf physical-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Entity name.";
+    }
+    leaf package-name {
+      type string {
+        length "4..127";
+      }
+      description
+        "Software package name.";
+    }
+    leaf fail-reason {
+      type string {
+        length "1..127";
+      }
+      description
+        "Error reason.";
+    }
+  }
+}

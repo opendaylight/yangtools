@@ -1,0 +1,1026 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mvpn {
+  namespace "urn:huawei:yang:huawei-mvpn";
+  prefix mvpn;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-l3-multicast {
+    prefix l3mc;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-mpls-te {
+    prefix mpls-te;
+  }
+  import huawei-bier {
+    prefix bier;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "A model for Multicast Virtual Private Network (MVPN).";
+  revision 2020-02-21 {
+    description
+      "Modify bier leaf node type to leafref. Add units for some nodes. Modify some restriction for bier node. Modify description. Add dynamic default value for per-item-tunnel-limit.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-04 {
+    description
+      "Change rsvp-te-p2mp-template leaf node type to leafref.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-18 {
+    description
+      "Change relative node for bier tunnel.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-20 {
+    description
+      "Change container information to ipmsi-infos.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-06 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mvpn";
+
+  typedef addr-family-type {
+    type enumeration {
+      enum "ipv4-unicast" {
+        value 1;
+        description
+          "IPv4 address family.";
+      }
+      enum "ipv6-unicast" {
+        value 2;
+        description
+          "IPv6 address family.";
+      }
+    }
+    description
+      "Address family.";
+  }
+  typedef signaling-mode {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid signaling mode.";
+      }
+      enum "BGP" {
+        value 2;
+        description
+          "BGP signaling mode.";
+      }
+    }
+    description
+      "MVPN signal type.";
+  }
+  typedef tunnel-mode {
+    type enumeration {
+      enum "p2mp-te" {
+        value 3;
+        description
+          "P2MP TE tunnel.";
+      }
+      enum "p2mp-mldp" {
+        value 4;
+        description
+          "P2MP mLDP tunnel.";
+      }
+      enum "bier" {
+        value 7;
+        description
+          "BIER tunnel.";
+      }
+    }
+    description
+      "MVPN tunnel type.";
+  }
+  typedef auto-discovery-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "The A-D mode is disabled.";
+      }
+      enum "MDT" {
+        value 1;
+        description
+          "The A-D mode is Multicast Distribution Tree (MDT).";
+      }
+    }
+    description
+      "Auto-Discovery Mode.";
+  }
+  typedef vpn-target-type {
+    type enumeration {
+      enum "export-extcommunity" {
+        value 2;
+        description
+          "Extended community attribute carried in routes sent from an outbound interface to the destination VPN.";
+      }
+      enum "import-extcommunity" {
+        value 3;
+        description
+          "Extended community attribute used to accept routes carrying the specified extended community attribute.";
+      }
+    }
+    description
+      "VPN target type.";
+  }
+  typedef rpt-spt-mode {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "PIM SM shared tree is not supported.";
+      }
+      enum "spt-mode" {
+        value 1;
+        description
+          "SPT-only mode.";
+      }
+      enum "rpt-spt-mode" {
+        value 2;
+        description
+          "RPT-SPT mode.";
+      }
+    }
+    description
+      "The mode of PIM SM shared tree.";
+  }
+  typedef umh-type {
+    type enumeration {
+      enum "unicast" {
+        value 0;
+        description
+          "Unicast route preferred.";
+      }
+      enum "highest-ip" {
+        value 1;
+        description
+          "Highest IP address.";
+      }
+    }
+    description
+      "Select upstream multicast hop.";
+  }
+  typedef bier-entropy-mode {
+    type enumeration {
+      enum "sg-hash" {
+        value 1;
+        description
+          "SG hash entropy mode of MVPN BIER.";
+      }
+    }
+    description
+      "MVPN BIER entropy mode.";
+  }
+
+  typedef bit-string-length {
+    type enumeration {
+      enum "64-bit" {
+        value 1;
+        description
+          "64-bit BitString.";
+      }
+      enum "128-bit" {
+        value 2;
+        description
+          "128-bit BitString.";
+      }
+      enum "256-bit" {
+        value 3;
+        description
+          "256-bit BitString.";
+      }
+    }
+    description
+      "Enumerated values of the BitString length.";
+  }
+  grouping spmsis-tunnel-info-type {
+    description
+      "S-PMSI tunnel and (S, G) entry state.";
+    container tunnels {
+      config false;
+      description
+        "List of S-PMSI tunnel state.";
+      list tunnel {
+        key "address";
+        description
+          "S-PMSI tunnel state.";
+        leaf address {
+          type inet:ip-address-no-zone;
+          description
+            "Tunnel node address.";
+        }
+        leaf role {
+          type string {
+            length "0..15";
+          }
+          description
+            "Role of a tunnel node.";
+        }
+      }
+    }
+    container sgs {
+      config false;
+      description
+        "List of (S, G) entry state.";
+      list sg {
+        key "source-addr group-addr";
+        description
+          "(S, G) entry state.";
+        leaf source-addr {
+          type inet:ip-address-no-zone;
+          description
+            "Source address.";
+        }
+        leaf group-addr {
+          type inet:ip-address-no-zone;
+          description
+            "Group address.";
+        }
+      }
+    }
+  }
+
+  container mvpn {
+    description
+      "Configure global MVPN configurations.";
+    container globals {
+      description
+        "List of global MVPN configuration.";
+      list global {
+        key "address-family";
+        description
+          "Configure global MVPN.";
+        leaf address-family {
+          type addr-family-type;
+          description
+            "IPv4 or IPv6 address family.";
+        }
+        leaf mvpn-id {
+          type inet:ip-address-no-zone;
+          mandatory true;
+          description
+            "Specify MVPN ID, IP address mode.";
+        }
+        leaf enable-inter-area-segmented {
+          when "../address-family='ipv4-unicast'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable segmented tunnels globally on the ABR.";
+        }
+        leaf apply-explicit-null-label {
+          when "../address-family='ipv6-unicast'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable IPv6 explicit null to apply label.";
+        }
+      }
+    }
+  }
+
+  augment "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af" {
+    when "../../ni:name!='_public_' and ((./l3vpn:type='ipv4-unicast' and ../../l3mc:multicast/l3mc:ipv4) or (./l3vpn:type='ipv6-unicast' and ../../l3mc:multicast/l3mc:ipv6))";
+    description
+      "Adds MVPN configuration to the L3VPN module.";
+    container mvpn {
+      description
+        "Configure MVPN in the instance.";
+      leaf mvpn-id {
+        when "../../l3vpn:type='ipv4-unicast'";
+        type inet:ip-address-no-zone;
+        description
+          "Specify MVPN ID, IP address mode.";
+      }
+      choice mvpn-type {
+        description
+          "MVPN type.";
+        case ng-mvpn {
+          description
+            "NG MVPN.";
+          container ng {
+            must "(../../l3vpn:type='ipv4-unicast' and (../mvpn:mvpn-id or /mvpn:mvpn/mvpn:globals/mvpn:global[mvpn:address-family=current()/../../l3vpn:type]/mvpn:mvpn-id)) or (../../l3vpn:type='ipv6-unicast' and /mvpn:mvpn/mvpn:globals/mvpn:global[mvpn:address-family=current()/../../l3vpn:type]/mvpn:mvpn-id)";
+            must "./is-inter-as='false' or ./inter-area-seg-enable='false'";
+            presence "mvpn enable";
+            description
+              "Enable/disable NG-MVPN in the instance.";
+            leaf signaling-mode {
+              type signaling-mode;
+              default "invalid";
+              description
+                "Signaling mode.";
+            }
+            leaf is-sender-site {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the function of specifying the current PE as a sender PE.";
+            }
+            leaf rpt-spt-mode {
+              type rpt-spt-mode;
+              default "none";
+              description
+                "*G mode.";
+            }
+            leaf is-inter-as {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the function of specifying the current PE as a auto-discovery inter-as PE.";
+            }
+            leaf is-c-multicast-frr {
+              type boolean;
+              must "(../../../l3vpn:type='ipv6-unicast' and ../is-c-multicast-frr='false') or ../../../l3vpn:type='ipv4-unicast'";
+              default "false";
+              description
+                "Enable/disable FRR.";
+            }
+            leaf frr-flow-based-acl-name {
+              when "../../../l3vpn:type='ipv4-unicast' and ../is-c-multicast-frr='true'";
+              type leafref {
+                path "/acl:acl/acl:groups/acl:group/acl:identity";
+              }
+              must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+              description
+                "Configure a flow-based IPv4 FRR policy. The value is an integer ranging from 2000 to 3999, or a string of 1 to 64 case-sensitive characters. If no ACL is specified, the switch-group address pool takes effect for all (S, G) entries.";
+            }
+            leaf is-compatible-draft {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable a device to use the packet encapsulation format defined in the draft.";
+            }
+            leaf is-export-msdp {
+              when "../../../l3vpn:type='ipv4-unicast'";
+              type boolean;
+              default "false";
+              description
+                "Enable/disable a device to export source active to MSDP.";
+            }
+            leaf is-import-msdp {
+              when "../../../l3vpn:type='ipv4-unicast'";
+              type boolean;
+              default "false";
+              description
+                "Enable/disable a device to import source active from MSDP.";
+            }
+            leaf spmsi-tnl-detect-delay {
+              type uint16 {
+                range "3..60";
+              }
+              units "s";
+              default "5";
+              description
+                "The delay in tunnel detection.";
+            }
+            leaf rpt-prune-delay {
+              type uint16 {
+                range "0..1800";
+              }
+              units "s";
+              default "60";
+              description
+                "The delay of RPT pruning.";
+            }
+            leaf inter-area-seg-enable {
+              type boolean;
+              must "(../inter-area-seg-enable='false' and ../../../l3vpn:type='ipv6-unicast') or ../../../l3vpn:type='ipv4-unicast'";
+              default "false";
+              description
+                "Enable/disable intra-area segmented tunnels.";
+            }
+            leaf umh-select-type {
+              type umh-type;
+              default "unicast";
+              description
+                "Configure UMH select type.";
+            }
+            leaf bier-entropy-mode {
+              when "../../../l3vpn:type='ipv4-unicast'";
+              type bier-entropy-mode;
+              description
+                "Configure BIER entropy mode.";
+            }
+            container route-targets {
+              //if-feature mvpn-separate-rt;
+              description
+                "List of MVPN route-targets.";
+              list route-target {
+                key "rt-type rt-value";
+                description
+                  "Configure a multicast route-target.";
+                leaf rt-type {
+                  type vpn-target-type;
+                  description
+                    "RT type.";
+                }
+                leaf rt-value {
+                  type string {
+                    length "3..21";
+                  }
+                  description
+                    "The available MVPN target formats are as follows:
+                     - 16-bit AS number:32-bit user-defined number, for example, 1:3. An AS number ranges from 0 to 65535, and a user-defined number ranges from 0 to 4294967295. The AS number and user-defined number cannot be both 0s. That is, a VPN target cannot be 0:0.
+                     - 32-bit IP address:16-bit user-defined number, for example, 192.168.122.15:1. The IP address ranges from 0.0.0.0 to 255.255.255.255, and the user-defined number ranges from 0 to 65535.";
+                }
+              }
+            }
+            container ipmsi-tunnel {
+              must "not(../spmsi-tunnels/spmsis/star-star) and not(../spmsi-tunnels/spmsis/star-grps/star-grp)";
+              must "not(./tunnel-mode) or ./tunnel-mode!='bier' or (./sub-domain-id and ./bsl)";
+              presence "ipmsi-tunnel";
+              description
+                "Enable/disable I-PMSI in the instance. Default MDT or I-PMSI configuration and operational state information.";
+              leaf tunnel-mode {
+                type tunnel-mode;
+                description
+                  "Tunnel mode.";
+              }
+              choice tunnel-attribute {
+                description
+                  "I-PMSI tunnel attributes configuration.";
+                case rsvp-te-p2mp {
+                  when "tunnel-mode='p2mp-te'";
+                  description
+                    "RSVP TE P2MP tunnel.";
+                  leaf rsvp-te-p2mp-template {
+                    type leafref {
+                      path "/mpls:mpls/mpls-te:te/mpls-te:p2mp-templates/mpls-te:p2mp-template/mpls-te:name";
+                    }
+                    description
+                      "RSVP TE P2MP tunnel template.";
+                  }
+                }
+                case bier {
+                  when "tunnel-mode='bier' and ../../../l3vpn:type='ipv4-unicast'";
+                  description
+                    "BIER underlay.";
+                  leaf sub-domain-id {
+                    type leafref {
+                      path "/bier:bier/bier:sub-domains/bier:sub-domain/bier:sub-domain-id";
+                    }
+                    must "../../inter-area-seg-enable='false' and ../../is-inter-as='false'";
+                    description
+                      "Sub-domain ID of BIER.";
+                  }
+                  leaf bsl {
+                    type leafref {
+                      path "/bier:bier/bier:sub-domains/bier:sub-domain[bier:sub-domain-id=current()/../sub-domain-id]/bier:encapsulations/bier:encapsulation/bier:bsl";
+                    }
+                    description
+                      "BitString length of BIER.";
+                  }
+                }
+              }
+              container ipmsi-infos {
+                config false;
+                description
+                  "I-PMSI state.";
+                leaf tunnel-mode {
+                  type tunnel-mode;
+                  description
+                    "Tunnel mode.";
+                }
+                choice tunnel-attribute {
+                  description
+                    "I-PMSI tunnel attributes configuration.";
+                  case rsvp-te-p2mp {
+                    description
+                      "RSVP TE P2MP tunnel.";
+                    leaf te-p2mp-id {
+                      type pub-type:hex-binary;
+                      description
+                        "P2MP ID of the P2MP tunnel.";
+                    }
+                    leaf te-tunnel-id {
+                      type uint32;
+                      description
+                        "ID of the P2MP tunnel.";
+                    }
+                    leaf te-extend-tunnel-id {
+                      type inet:ip-address-no-zone;
+                      description
+                        "P2MP extended tunnel interface ID.";
+                    }
+                  }
+                  case mldp-p2mp {
+                    description
+                      "MLDP P2MP tunnel.";
+                    leaf ldp-route-addr {
+                      type inet:ip-address-no-zone;
+                      description
+                        "IP address of the root of a P2MP LSP.";
+                    }
+                    leaf ldp-lsp-id {
+                      type string {
+                        length "1..255";
+                      }
+                      description
+                        "P2MP LSP ID.";
+                    }
+                  }
+                }
+                container tunnels {
+                  description
+                    "List of I-PMSI tunnel state.";
+                  list tunnel {
+                    key "address";
+                    description
+                      "I-PMSI tunnel state.";
+                    leaf address {
+                      type inet:ip-address-no-zone;
+                      description
+                        "Tunnel node address.";
+                    }
+                    leaf role {
+                      type string {
+                        length "0..15";
+                      }
+                      description
+                        "Role of a tunnel node.";
+                    }
+                  }
+                }
+                container sgs {
+                  description
+                    "List of (S, G) entry.";
+                  list sg {
+                    key "source-addr group-addr";
+                    description
+                      "(S, G) entry state.";
+                    leaf source-addr {
+                      type inet:ip-address-no-zone;
+                      description
+                        "Source address.";
+                    }
+                    leaf group-addr {
+                      type inet:ip-address-no-zone;
+                      description
+                        "Group address.";
+                    }
+                  }
+                }
+              }
+            }
+            container spmsi-tunnels {
+              presence "spmsi-tunnels";
+              description
+                "Enable/disable S-PMSI tunnel in the instance. S-PMSI tunnel configuration and operational state information.";
+              leaf switch-delay-time {
+                type uint8 {
+                  range "3..60";
+                }
+                units "s";
+                default "5";
+                description
+                  "The delay for switching from the I-PMSI to the S-PMSI.";
+              }
+              leaf switch-back-holddown-time {
+                type uint16 {
+                  range "0..180";
+                }
+                units "s";
+                default "60";
+                description
+                  "The delay for switching back from the S-PMSI to the I-PMSI.";
+              }
+              leaf spmsi-tunnel-withdraw-delay-time {
+                type uint16 {
+                  range "5..20";
+                }
+                units "s";
+                default "5";
+                description
+                  "The delay for withdrawing the SPMSI.";
+              }
+              container spmsis {
+                description
+                  "Configure NG SPMSI switch policy.";
+                container star-star {
+                  when "../../../../../l3vpn:type='ipv4-unicast'";
+                  must "not(../star-grps/star-grp) and not(../../../ipmsi-tunnel)";
+                  presence "spmsi group star-star policy";
+                  description
+                    "Enable/disable (*, *) S-PMSI swicth policy.";
+                  leaf tunnel-mode {
+                    type tunnel-mode;
+                    must "../tunnel-mode='p2mp-mldp' or (../tunnel-mode='p2mp-te' and ../rsvp-te-p2mp-template) or (../tunnel-mode='bier' and ../sub-domain-id and ../bsl)";
+                    mandatory true;
+                    description
+                      "Tunnel mode.";
+                  }
+                  choice tunnel-attribute {
+                    description
+                      "S-PMSI tunnel attributes configuration.";
+                    case rsvp-te-p2mp {
+                      when "tunnel-mode='p2mp-te'";
+                      description
+                        "RSVP TE P2MP tunnel.";
+                      leaf rsvp-te-p2mp-template {
+                        type leafref {
+                          path "/mpls:mpls/mpls-te:te/mpls-te:p2mp-templates/mpls-te:p2mp-template/mpls-te:name";
+                        }
+                        description
+                          "RSVP TE P2MP tunnel template.";
+                      }
+                    }
+                    case bier {
+                      when "tunnel-mode='bier'";
+                      description
+                        "BIER tunnel.";
+                      leaf sub-domain-id {
+                        type leafref {
+                          path "/bier:bier/bier:sub-domains/bier:sub-domain/bier:sub-domain-id";
+                        }
+                        must "../../../../inter-area-seg-enable='false' and ../../../../is-inter-as='false'";
+                        description
+                          "S-PMSI BIER sub-domain ID.";
+                      }
+                      leaf bsl {
+                        type leafref {
+                          path "/bier:bier/bier:sub-domains/bier:sub-domain[bier:sub-domain-id=current()/../sub-domain-id]/bier:encapsulations/bier:encapsulation/bier:bsl";
+                        }
+                        description
+                          "S-PMSI BIER BitString length.";
+                      }
+                    }
+                  }
+                }
+                container star-grps {
+                  when "../../../../../l3vpn:type='ipv4-unicast'";
+                  description
+                    "List of (*, G) S-PMSI switch policys.";
+                  list star-grp {
+                    must "not(../../star-star) and not(../../../../ipmsi-tunnel)";
+                    must "./tunnel-mode='p2mp-mldp' or (./tunnel-mode='p2mp-te' and ./rsvp-te-p2mp-template) or (./tunnel-mode='bier' and ./sub-domain-id and ./bsl)";
+                    key "group-addr group-mask-length";
+                    description
+                      "Apply (*, G) S-PMSI switch policy.";
+                    leaf group-addr {
+                      type inet:ip-address-no-zone;
+                      description
+                        "Start address of the IPv4 group address range in private network.";
+                    }
+                    leaf group-mask-length {
+                      type uint8 {
+                        range "4..32";
+                      }
+                      description
+                        "Group mask length for the IPv4 group address range in private network.";
+                    }
+                    leaf tunnel-mode {
+                      type tunnel-mode;
+                      mandatory true;
+                      description
+                        "Tunnel mode.";
+                    }
+                    leaf per-item-tunnel-limit {
+                      type uint32 {
+                        range "1..8192";
+                      }
+                      ext:dynamic-default {
+                        ext:default-value 16 {
+                          when "../tunnel-mode='p2mp-te' or ../tunnel-mode='p2mp-mldp'";
+                          description "The default value of p2mp-te or p2mp-mldp tunnel.";
+                        }
+                        ext:default-value 256 {
+                          when "../tunnel-mode!='p2mp-te' and ../tunnel-mode!='p2mp-mldp'";
+                          description "The default value of other tunnel.";
+                        }						
+                      }
+                      description
+                        "Maximum number of S-PMSI tunnels allowed per S-PMSI configuration item per MVPN instance.";
+                    }
+                    choice tunnel-attribute {
+                      description
+                        "S-PMSI tunnel attributes configuration.";
+                      case rsvp-te-p2mp {
+                        when "tunnel-mode='p2mp-te'";
+                        description
+                          "RSVP TE P2MP tunnel.";
+                        leaf rsvp-te-p2mp-template {
+                          type leafref {
+                            path "/mpls:mpls/mpls-te:te/mpls-te:p2mp-templates/mpls-te:p2mp-template/mpls-te:name";
+                          }
+                          description
+                            "RSVP TE P2MP tunnel template.";
+                        }
+                      }
+                      case bier {
+                        when "tunnel-mode='bier'";
+                        description
+                          "BIER tunnel.";
+                        leaf sub-domain-id {
+                          type leafref {
+                            path "/bier:bier/bier:sub-domains/bier:sub-domain/bier:sub-domain-id";
+                          }
+                          must "../../../../../inter-area-seg-enable='false' and ../../../../../is-inter-as='false'";
+                          must "not(../../star-grp[sub-domain-id!=current()])";						  
+                          description
+                            "S-PMSI BIER sub-domain ID.";
+                        }
+                        leaf bsl {
+                          type leafref {
+                            path "/bier:bier/bier:sub-domains/bier:sub-domain[bier:sub-domain-id=current()/../sub-domain-id]/bier:encapsulations/bier:encapsulation/bier:bsl";
+                          }
+                          must "not(../../star-grp[bsl!=current()])";						  
+                          description
+                            "S-PMSI BIER BitString length.";
+                        }
+                      }
+                    }
+                  }
+                }
+                container src-grps {
+                  description
+                    "List of (S, G) S-PMSI switch policys.";
+                  list src-grp {
+                    must "../../star-star or ../../../../ipmsi-tunnel";
+                    must "./tunnel-mode='p2mp-mldp' or (./tunnel-mode='p2mp-te' and ./rsvp-te-p2mp-template) or (./tunnel-mode='bier' and ./sub-domain-id and ./bsl)";
+                    key "group-addr group-mask-length source-addr source-mask-length";
+                    description
+                      "Apply (S, G) S-PMSI switch policy.";
+                    leaf group-addr {
+                      type inet:ip-address-no-zone;
+                      description
+                        "Start address of the IP group address range in private net.";
+                    }
+                    leaf group-mask-length {
+                      type uint8 {
+                        range "4..128";
+                      }
+                      description
+                        "Group mask length for the IP group address range in private net.";
+                    }
+                    leaf source-addr {
+                      type inet:ip-address-no-zone;
+                      description
+                        "Start address of the IP source address range in private net.";
+                    }
+                    leaf source-mask-length {
+                      type uint8 {
+                        range "0..128";
+                      }
+                      description
+                        "Source mask length for the IP source address range in private net.";
+                    }
+                    leaf tunnel-mode {
+                      type tunnel-mode;
+                      must "(../tunnel-mode!='p2mp-te' and ../tunnel-mode!='p2mp-mldp') or (../../../star-star/tunnel-mode='p2mp-te' or ../../../star-star/tunnel-mode='p2mp-mldp' or ../../../../../ipmsi-tunnel/tunnel-mode='p2mp-te' or ../../../../../ipmsi-tunnel/tunnel-mode='p2mp-mldp')";
+                      must "(../tunnel-mode!='bier') or ((../../../star-star/tunnel-mode and ../../../star-star/tunnel-mode='bier') or (../../../../../ipmsi-tunnel/tunnel-mode and ../../../../../ipmsi-tunnel/tunnel-mode='bier'))";
+                      mandatory true;
+                      description
+                        "Tunnel mode.";
+                    }
+                    leaf switch-threshold {
+                      type uint32 {
+                        range "0..4194304";
+                      }
+                      units "kbit/s";
+                      default "0";
+                      description
+                        "Multicast packet rate threshold for triggering the switching from the I-PMSI to the S-PMSI.";
+                    }
+                    leaf per-item-tunnel-limit {
+                      type uint32 {
+                        range "1..8192";
+                      }
+                      ext:dynamic-default {
+                        ext:default-value 16 {
+                          when "../tunnel-mode='p2mp-te' or ../tunnel-mode='p2mp-mldp'";
+                          description "The default value of p2mp-te or p2mp-mldp tunnel.";
+                        }
+                        ext:default-value 256 {
+                          when "../tunnel-mode!='p2mp-te' and ../tunnel-mode!='p2mp-mldp'";
+                          description "The default value of other tunnel.";
+                        }						
+                      }
+                      description
+                        "Maximum number of S-PMSI tunnels allowed per S-PMSI configuration item per MVPN instance.";
+                    }
+                    choice tunnel-attribute {
+                      description
+                        "S-PMSI tunnel attributes configuration.";
+                      case rsvp-te-p2mp {
+                        when "tunnel-mode='p2mp-te'";
+                        description
+                          "RSVP TE P2MP tunnel.";
+                        leaf rsvp-te-p2mp-template {
+                          type leafref {
+                            path "/mpls:mpls/mpls-te:te/mpls-te:p2mp-templates/mpls-te:p2mp-template/mpls-te:name";
+                          }
+                          description
+                            "RSVP TE P2MP tunnel template.";
+                        }
+                      }
+                      case bier {
+                        when "tunnel-mode='bier' and ../../../../../../l3vpn:type='ipv4-unicast'";
+                        description
+                          "BIER tunnel.";
+                        leaf sub-domain-id {
+                          type leafref {
+                            path "/bier:bier/bier:sub-domains/bier:sub-domain/bier:sub-domain-id";
+                          }
+                          must "../../../../../inter-area-seg-enable='false' and ../../../../../is-inter-as='false'";
+                          must "../../../star-star[sub-domain-id=current()] or ../../../../../ipmsi-tunnel[sub-domain-id=current()]";
+                          description
+                            "S-PMSI BIER sub-domain ID.";
+                        }
+                        leaf bsl {
+                          type leafref {
+                            path "/bier:bier/bier:sub-domains/bier:sub-domain[bier:sub-domain-id=current()/../sub-domain-id]/bier:encapsulations/bier:encapsulation/bier:bsl";
+                          }
+                          must "../../../star-star[bsl=current()] or ../../../../../ipmsi-tunnel[bsl=current()]";						  
+                          description
+                            "S-PMSI BIER BitString length.";
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            container spmsis {
+              config false;
+              description
+                "Operational state of S-PMSI.";
+              container te-tunnels {
+                description
+                  "List of S-PMSI TE tunnel state.";
+                list te-tunnel {
+                  key "te-p2mp-id te-tunnel-id te-extend-tunnel-id";
+                  description
+                    "S-PMSI TE tunnel state.";
+                  leaf te-p2mp-id {
+                    type pub-type:hex-binary;
+                    description
+                      "P2MP ID of the P2MP tunnel.";
+                  }
+                  leaf te-tunnel-id {
+                    type uint32;
+                    description
+                      "ID of the P2MP tunnel.";
+                  }
+                  leaf te-extend-tunnel-id {
+                    type inet:ip-address-no-zone;
+                    description
+                      "P2MP extended tunnel interface ID.";
+                  }
+                  uses spmsis-tunnel-info-type;
+                }
+              }
+              container ldp-tunnels {
+                description
+                  "List of S-PMSI LDP tunnel state.";
+                list ldp-tunnel {
+                  key "ldp-route-addr opaque-value";
+                  description
+                    "S-PMSI LDP tunnel state.";
+                  leaf ldp-route-addr {
+                    type inet:ip-address-no-zone;
+                    description
+                      "IP address of the root of a P2MP LSP.";
+                  }
+                  leaf opaque-value {
+                    type string {
+                      length "1..255";
+                    }
+                    description
+                      "P2MP LSP ID.";
+                  }
+                  uses spmsis-tunnel-info-type;
+                }
+              }
+            }
+          }
+        }
+        case rosen-mvpn {
+          description
+            "Rosen MVPN.";
+          container rosen {
+            description
+              "Configure rosen MVPN.";
+            container share-group {
+              presence "config share group";
+              description
+                "Enable/disable multicast-domain share-group.";
+              leaf address {
+                type inet:ip-address-no-zone;
+                mandatory true;
+                description
+                  "Default MDT or I-PMSI group address for SM mode.";
+              }
+              leaf mtunnel-number {
+                type uint32 {
+                  range "0..4095";
+                }
+                mandatory true;
+                description
+                  "MTI ID.";
+              }
+              choice mtunnel-ip-configuration {
+                description
+                  "Mtunnel IP configuration.";
+                case use-exist-interface-ip {
+                  description
+                    "Use IP of an exist interface.";
+                  leaf unnumbered-if-name {
+                    type leafref {
+                      path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                    }
+                    description
+                      "Interface whose IP address is used as the default IP address of an MTI.";
+                  }
+                }
+                case specify-mtunnel-ip {
+                  description
+                    "Specify an IP.";
+                  leaf ip-address {
+                    type inet:ipv4-address-no-zone;
+                    description
+                      "MTI IP address.";
+                  }
+                  leaf ip-mask-length {
+                    type uint32 {
+                      range "0..32";
+                    }
+                    description
+                      "Mask length of the MTI IP address.";
+                  }
+                }
+              }
+            }
+            container attributes {
+              description
+                "Configure rosen MVPN attributes.";
+              leaf auto-discovery-mode {
+                when "../../mvpn:share-group";
+                type auto-discovery-type;
+                default "none";
+                description
+                  "A-D mode.";
+              }
+              leaf is-switch-without-register {
+                when "../../mvpn:share-group";
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable the source PE from sending register packets to the RP to establish the SPT on the public network before the switch-group address is used to encapsulate VPN data.";
+              }
+              leaf source-interface-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                description
+                  "Name of the public network interface whose IP address is used as the default IP address of an MTI.";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

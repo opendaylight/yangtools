@@ -1,0 +1,289 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-layer3-access {
+  namespace "urn:huawei:yang:huawei-bras-layer3-access";
+  prefix bras-layer3-access;
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-network-instance {
+    prefix network-instance;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras-layer3-access.";
+  revision 2020-02-22 {
+    description
+      "Description modification.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-16 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+  container bras-layer3-access {
+    description
+      "Layer3 access.";
+    container global {
+      description
+        "Configure global layer3 access.";
+      container user-switch {
+        description
+          "Configure user switch.";
+        leaf switch-policy {
+          type enumeration {
+            enum "vpn" {
+              value 0;
+              description
+                "Enable the layer3 IPv4 static user switch VPN.";
+            }
+            enum "vpn-export-route" {
+              value 1;
+              description
+                "Enable the layer3 IPv4 static user export host-route.";
+            }
+          }
+          description
+            "Enable the layer3 IPv4 static user export host-route or enable the layer3 IPv4 static user export host-route.";
+        }
+      }
+      container any-ip {
+        description
+          "Configure the name of the authentication domain associated with the IP address segment of layer 3 static users.";
+        leaf domain-name {
+          type leafref {
+            path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+          }
+          description
+            "Specifies the name of the authentication domain associated with the IP address segment of layer 3 static users.";
+        }
+      }
+    }
+    container subscriber-ips {
+      description
+        "List of network segments. It can't conflict with each other. For example, if the network segment 1.1.1.1 1.1.1.5 exists, the 1.1.1.2 1.1.1.6 cannot be delivered.";
+      list subscriber-ip {
+        key "start-ip-address vpn-name";
+        description
+          "Configure the network segments. It can't conflict with each other. For example, if the network segment 1.1.1.1 1.1.1.5 exists, the 1.1.1.2 1.1.1.6 cannot be delivered.";
+        leaf start-ip-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Specifies the start IP address on the IP address segment where the layer 3 static users reside.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "/network-instance:network-instance/network-instance:instances/network-instance:instance/network-instance:name";
+          }
+          must "(/network-instance:network-instance/network-instance:instances/network-instance:instance[network-instance:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast'])";
+          description
+            "Specifies the VPN instance name of layer 3 static users. Public network vpn-name value is '_public_'.";
+        }
+        leaf domain-name {
+          type leafref {
+            path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+          }
+          mandatory true;
+          description
+            "Specifies the name of the authentication domain associated with the IP address segment of layer 3 static users.";
+        }
+        leaf end-ip-address {
+          type inet:ipv4-address-no-zone;
+          mandatory true;
+          description
+            "Specifies the end IP address on the IP address segment where the layer 3 static users reside.";
+        }
+      }
+    }
+    container subscriber-ipv6s {
+      description
+        "List of network segments. The address type of the IPv6/prefix must be GUA or ULA. It can't conflict with each other. For example, if the network segment 1::1 1::5 exists, the 1::2 1::6 cannot be delivered..";
+      list subscriber-ipv6 {
+        must "((prefix-length and address-type='ipv6-prefix') or ((not(prefix-length)) and address-type='ipv6'))";
+        key "address-type start-ipv6-address vpn-name";
+        description
+          "Configure the network segments. The address type of the IPv6/prefix must be GUA or ULA. It can't conflict with each other. For example, if the network segment 1::1 1::5 exists, the 1::2 1::6 cannot be delivered.";
+        leaf address-type {
+          type enumeration {
+            enum "ipv6" {
+            value 0;
+              description
+               "The IPv6 address.";
+            }
+            enum "ipv6-prefix" {
+            value 1;
+              description
+               "IPv6 prefix.";
+            }
+        }
+          description
+            "The IPv6 address type.";
+        }
+        leaf start-ipv6-address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Specifies the start IP address of the IPv6 network segment where the layer 3 static users reside.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "/network-instance:network-instance/network-instance:instances/network-instance:instance/network-instance:name";
+          }
+          must "(/network-instance:network-instance/network-instance:instances/network-instance:instance[network-instance:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast'])";
+          description
+            "Specifies the VPN instance name of layer 3 static users. Public network vpn-name value is '_public_'.";
+        }
+        leaf domain-name {
+          type leafref {
+            path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+          }
+          mandatory true;
+          description
+            "Specifies the name of the authentication domain associated with the IP address segment of layer 3 static users.";
+        }
+        leaf end-ipv6-address {
+          type inet:ipv6-address-no-zone;
+          mandatory true;
+          description
+            "Specifies the end IP address of the IPv6 network segment where the layer 3 static users reside.";
+        }
+        leaf prefix-length {
+          type uint32 {
+          range "1..128";
+          }
+          description
+            "Specifies the prefix length.";
+        }
+      }
+    }
+    container subscriber-ip-and-ipv6s {
+      description
+        "List of network segments. The address type of the IPv6/prefix must be GUA or ULA. It can't conflict with each other. For example, if the network segment 1.1.1.1 1.1.1.5 exists, the 1.1.1.2 1.1.1.6 cannot be delivered. The number of network segments delivered by the dual-stack IPv4/IPv6/prefix must be the same. For example, the IPv4 delivers the 1.1.1.1 1.1.1.5, and the IPv6 delivers the 2::1 2::5.";
+      list subscriber-ip-and-ipv6 {
+        must "(start-ip-address != '0.0.0.0' and start-ipv6-address != '0::0') or (start-ipv6-prefix != '0::0' and start-ip-address != '0.0.0.0') or (start-ipv6-prefix != '0::0' and start-ipv6-address != '0::0')";
+        must "(start-ipv6-prefix!='0::0' and prefix-length) or (start-ipv6-prefix='0::0' and not(prefix-length))";
+        key "start-ip-address start-ipv6-address start-ipv6-prefix vpn-name";
+        description
+          "Configure the network segments. The address type of the IPv6/prefix must be GUA or ULA. It can't conflict with each other. For example, if the network segment 1.1.1.1 1.1.1.5 exists, the 1.1.1.2 1.1.1.6 cannot be delivered. The number of network segments delivered by the dual-stack IPv4/IPv6/prefix must be the same. For example, the IPv4 delivers the 1.1.1.1 1.1.1.5, and the IPv6 delivers the 2::1 2::5.";
+        leaf start-ip-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Specifies the start IP address on the IP address segment where the layer 3 static users reside.";
+        }
+        leaf start-ipv6-address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Specifies the start IP address of the IPv6 network segment where the layer 3 static users reside.";
+        }
+        leaf start-ipv6-prefix {
+          type inet:ipv6-address-no-zone;
+          description
+            "Specifies the start IPv6 delegation prefixes of layer 3 static users.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "/network-instance:network-instance/network-instance:instances/network-instance:instance/network-instance:name";
+          }
+          must "(../start-ip-address!='0.0.0.0' and (/network-instance:network-instance/network-instance:instances/network-instance:instance[network-instance:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast'])) or ((../start-ipv6-address != '0::0' or ../start-ipv6-prefix != '0::0') and (/network-instance:network-instance/network-instance:instances/network-instance:instance[network-instance:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']))";
+          description
+            "Specifies the VPN instance name of layer 3 static users. Public network vpn-name value is '_public_'.";
+        }
+        leaf domain-name {
+          type leafref {
+            path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+          }
+          mandatory true;
+          description
+            "Specifies the name of the authentication domain associated with the IP address segment of layer 3 static users.";
+        }
+        leaf end-ip-address {
+          when "../start-ip-address!='0.0.0.0'";
+          type inet:ipv4-address-no-zone;
+          mandatory true;
+          description
+            "Specifies the end IP address on the IP address segment where the layer 3 static users reside.";
+        }
+        leaf end-ipv6-address {
+          when "../start-ipv6-address!='0::0'";
+          type inet:ipv6-address-no-zone;
+          mandatory true;
+          description
+            "Specifies the end IP address of the IPv6 network segment where the layer 3 static users reside.";
+        }
+        leaf end-ipv6-prefix {
+          when "../start-ipv6-prefix!='0::0'";
+          type inet:ipv6-address-no-zone;
+          mandatory true;
+          description
+            "Specifies the end IPv6 delegation prefixes of layer 3 static users.";
+        }
+        leaf prefix-length {
+          type uint32 {
+          range "1..128";
+          }
+          description
+            "Specifies the prefix length.";
+        }
+      }
+    }
+    container subscriber-subnets {
+      description
+        "List of IP address segments for layer 3 static users. The name of the authentication domain associated with the IP address segment.";
+      list subscriber-subnet {
+        key "start-ip-address vpn-name";
+        description
+          "Configure an IP address segment for layer 3 static users and the name of the authentication domain associated with the IP address segment.";
+        leaf start-ip-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Specifies the start IP address on the IP address segment where the layer 3 static users reside.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "/network-instance:network-instance/network-instance:instances/network-instance:instance/network-instance:name";
+          }
+          description
+            "Specifies the VPN instance name of layer 3 static users. Public network vpn-name value is '_public_'.";
+        }
+        leaf mask-length {
+          type uint32 {
+            range "1..32";
+          }
+          mandatory true;
+          description
+            "Specifies the mask length for the subnet.";
+        }
+        leaf domain-name {
+          type leafref {
+            path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+          }
+          mandatory true;
+          description
+            "Specifies the domain name.";
+          ext:support-filter "true";
+        }
+      }
+    }
+  }
+}

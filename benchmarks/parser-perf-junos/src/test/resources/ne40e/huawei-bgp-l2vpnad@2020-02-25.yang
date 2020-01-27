@@ -1,0 +1,281 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp-l2vpnad {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bgp-l2vpnad";
+  prefix bgp-l2vpnad;
+  import huawei-extension {
+    prefix ext;
+  }
+
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-bgp {
+    prefix bgp;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+  grouping l2vpnad-cap-type {
+    description
+      "The l2vpnad-cap-type configuration.";
+    leaf vpls-ad-disable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable virtual private LAN service auto-discovery.not receive BGP-AD route.";
+    }
+    leaf vpws-enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable virtual private wire services.";
+    }
+    leaf vpls-enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable virtual private LAN services.";
+    }
+  }
+  ext:task-name "bgp";
+
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af" {
+    description
+      "BGP l2vpnad address family configuration.";
+    container l2vpnad {
+      when "../bgp:type='l2vpnad'";
+      description
+        "Configure l2vpn-ad-family options.";
+      container common {
+        description
+          "Configure l2vpn-ad-family common options.";
+        uses bgp:vpn-target-type;
+        uses l2vpnad-cap-type;
+        leaf multi-homing-nonstand {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable capability of multi-homing for virtual private LAN services.";
+        }
+        leaf vpn-orf-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable vpn-orf capability.";
+        }
+        leaf route-select-delay {
+          type uint16 {
+            range "0..3600";
+          }
+          units "s";
+          default "0";
+          description
+          "Route selection delay.";
+        }
+        leaf reflect-change-path {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable an RR to use an export policy to change route AS_Path.";
+        }
+        leaf reflect-between-client {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable route reflection between clients. If clients of a route reflector (RR) are fully meshed, you can disable route reflection among clients to reduce the cost.";
+        }
+        uses bgp:reflector-cluster-type;
+        leaf default-local-preference {
+          type uint32 {
+            range "0..4294967295";
+          }
+          default "100";
+          description
+            "The local preference of BGP routes.";
+        }
+        uses bgp:bestroute-router-id-prior-clusterlist-type;
+        leaf tunnel-selector-name {
+          type leafref {
+            path "/rtp:routing-policy/rtp:tunnel-selectors/rtp:tunnel-selector/rtp:name";
+          }
+          description
+            "Configure a tunnel selector. Applying it to the BGP IPv4 unicast, BGP VPNv4 address families, BGP VPNv6 address families and BGP L2VPN AD address family so that IPv4,VPNv4,VPNv6 and L2VPN AD labeled routes can be iterated to tunnels based on the tunnel selector. By default, no tunnel selector is configured.";
+        }
+      }
+      uses bgp:slow-peer-type;
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:peer-groups/bgp:peer-group/bgp:afs/bgp:af" {
+    description
+      "BGP l2vpnad address family configuration.";
+    container l2vpnad {
+      when "../bgp:type='l2vpnad'";
+      description
+        "Configure l2vpn-ad-family options.";
+      leaf advertise-community {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable advertise the community attribute to a peer or a peer group.";
+      }
+      leaf reflect-client {
+        when "../../../../bgp:type='ibgp'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the local device as a route reflector (RR) and a peer or peer group as its client. This configuration is applicable between IBGP peers only. The configurations of RRs and its clients in an address family are valid only in this address family. Therefore, it is recommended to configure RRs and its clients in the specified address family that is required.";
+      }
+      leaf allow-as-loop {
+        type uint32 {
+        range "1..10";
+        }
+        description
+          "Allow repetitive local AS numbers. By default, repetitive local AS numbers are not allowed.";
+      }
+      leaf nexthop-configure {
+        type bgp:nexthop-configuration-type;
+        description
+          "Both the next-hop-local mode and next-hop-invariable mode are available when the peer address family is the VPNv4/VPNv6/L2VPN AD address family. Only the next-hop-local mode is available when the peer address family is not VPNv4/VPNV6/L2VPN AD address family. In next-hop-local mode, you can configure a BGP speaker to set its IP address of as the next hop of the routes to be advertised to IBGP peers or IBGP peer groups. In next-hop-invariable mode, you can configure PEs in different ASs not to change the next hop of routes when the PEs advertise the routes to their EBGP peers and use the next hop addresses of IGP routes to advertise imported IGP routes to IBGP peers. By default, when a BGP speaker advertises routes to EBGP peers and imported IGP routes to IBGP peers, the BGP speaker changes the next hop to its interface address.";
+      }
+      uses bgp:advertise-large-community-group-type;
+      choice import-policy-type {
+        description
+          "Set route policy or filter.";
+        case rtp-ref {
+          description
+            "Route policy.";
+          leaf import-policy {
+            type leafref {
+              path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+            }
+            description
+              "Specify the filtering policy applied to the routes learned from a peer. By default, no such policy is specified.";
+          }
+        }
+      }
+      choice export-policy-type {
+        description
+          "Set route policy or filter.";
+        case rtp-ref {
+          description
+            "Route policy.";
+          leaf export-policy {
+            type leafref {
+              path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+            }
+            description
+              "Specify the filtering policy applied to the routes to be advertised to a peer. By default, no such policy is specified.";
+          }
+        }
+      }
+      uses bgp:rt-update-interval-type;
+      uses bgp:preferred-value-type;
+      uses bgp:route-limit-type;
+      uses bgp:public-as-only-type;
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:peers/bgp:peer/bgp:afs/bgp:af" {
+    description
+      "BGP l2vpnad address family configuration.";
+    container l2vpnad {
+      when "../bgp:type='l2vpnad'";
+      description
+        "Configure l2vpn-ad-family options.";
+      leaf group-name {
+        type leafref {
+          path "../../../../../../bgp:peer-groups/bgp:peer-group/bgp:name";
+        }
+        must "../../../../../../bgp:peer-groups/bgp:peer-group[bgp:name = current()]/bgp:afs/bgp:af[bgp:type='l2vpnad']";
+        description
+          "Configure a name for a peer group. After a peer is deleted from the peer group, the peer is disabled from the address family. The object cannot be modified.";
+        ext:operation-exclude update {
+          description "The node cannot be modified, when the peer already belongs to a peer-group.";
+        }
+      }
+      leaf advertise-community {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable advertise the community attribute to a peer or a peer group.";
+      }
+      leaf reflect-client {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the local device as a route reflector (RR) and a peer or peer group as its client. This configuration is applicable between IBGP peers only. The configurations of RRs and its clients in an address family are valid only in this address family. Therefore, it is recommended to configure RRs and its clients in the specified address family that is required.";
+      }
+      leaf allow-as-loop {
+        type uint32 {
+            range "1..10";
+        } 
+        description
+          "Allow repetitive local AS numbers. By default, repetitive local AS numbers are not allowed.";
+      }
+      uses l2vpnad-cap-type;
+      leaf nexthop-configure {
+        type bgp:nexthop-configuration-type;
+        description
+          "Both the next-hop-local mode and next-hop-invariable mode are available when the peer address family is the VPNv4/VPNV6/L2VPN AD address family. Only the next-hop-local mode is available when the peer address family is not VPNv4/VPNV6/L2VPN AD address family. In next-hop-local mode, you can configure a BGP speaker to set its IP address of as the next hop of the routes to be advertised to IBGP peers or IBGP peer groups. In next-hop-invariable mode, you can configure PEs in different ASs not to change the next hop of routes when the PEs advertise the routes to their EBGP peers and use the next hop addresses of IGP routes to advertise imported IGP routes to IBGP peers. By default, when a BGP speaker advertises routes to EBGP peers and imported IGP routes to IBGP peers, the BGP speaker changes the next hop to its interface address.";
+      }
+      uses bgp:advertise-large-community-type;
+      choice import-policy-type {
+        description
+          "Set route policy or filter.";
+        case rtp-ref {
+          description
+            "Route policy.";
+          leaf import-policy {
+            type leafref {
+              path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+            }
+            description
+              "Specify the filtering policy applied to the routes learned from a peer. By default, no such policy is specified.";
+          }
+        }
+      }
+      choice export-policy-type {
+        description
+          "Set route policy or filter.";
+        case rtp-ref {
+          description
+            "Route policy.";
+          leaf export-policy {
+            type leafref {
+              path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+            }
+            description
+              "Specify the filtering policy applied to the routes to be advertised to a peer. By default, no such policy is specified.";
+          }
+        }
+      }
+      uses bgp:rt-update-interval-type;
+      uses bgp:preferred-value-type;
+      uses bgp:route-limit-type;
+      uses bgp:public-as-only-type;
+    }
+  }
+}

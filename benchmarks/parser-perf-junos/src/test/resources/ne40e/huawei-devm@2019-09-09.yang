@@ -1,0 +1,1316 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-devm {
+  namespace "urn:huawei:yang:huawei-devm";
+  prefix devm;
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-devm-action;
+  include huawei-devm-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global configuration.";
+	
+  revision 2019-09-09 {
+    description
+      "Add new leafs.";
+    reference
+      "Huawei private.";
+  }	
+	
+  revision 2019-04-05 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "device-mgr";
+  container devm {
+    description
+      "Global configuration.";
+    container physical-entitys {
+      config false;
+      status deprecated;
+      description
+        "List of physical entities.";
+      list physical-entity {
+        key "class position serial-number";
+        config false;
+        status deprecated;
+        description
+          "Operational data of physical entities.";
+        leaf class {
+          type entity-class-type;
+          config false;
+          status deprecated;
+          description
+            "Entity class.";
+        }
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          status deprecated;
+          description
+            "Entity position.";
+        }
+        leaf serial-number {
+          type string {
+            length "0..32";
+          }
+          config false;
+          status deprecated;
+          description
+            "Entity number.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          status deprecated;
+          description
+            "Entity index.";
+        }
+        leaf chassis-index {
+          type uint32;
+          config false;
+          status deprecated;
+          description
+            "Chassis index.";
+        }
+        leaf board-index {
+          type uint32;
+          config false;
+          status deprecated;
+          description
+            "Board index.";
+        }
+        leaf name {
+          type string {
+            length "0..128";
+          }
+          config false;
+          status deprecated;
+          description
+            "Entity name.";
+        }
+        leaf entity-description {
+          type string {
+            length "0..256";
+          }
+          config false;
+          status deprecated;
+          description
+            "Entity description.";
+        }
+        leaf alias {
+          type string {
+            length "0..128";
+          }
+          config false;
+          status deprecated;
+          description
+            "Entity alias.";
+        }
+        leaf vendor-type {
+          type string {
+            length "0..30";
+          }
+          config false;
+          status deprecated;
+          description
+            "Type of a hardware entity.";
+        }
+        leaf contained-index {
+          type uint32;
+          config false;
+          status deprecated;
+          description
+            "Information about the parent index of an entity.";
+        }
+        leaf parent-relative-position {
+          type uint32;
+          config false;
+          status deprecated;
+          description
+            "Position of an entity relative to its parent entity.";
+        }
+        leaf hardware-version {
+          type string {
+            length "0..128";
+          }
+          config false;
+          status deprecated;
+          description
+            "Hardware version.";
+        }
+        leaf firmware-version {
+          type string {
+            length "0..128";
+          }
+          config false;
+          status deprecated;
+          description
+            "Firmware version.";
+        }
+        leaf software-version {
+          type string {
+            length "0..128";
+          }
+          config false;
+          status deprecated;
+          description
+            "Software version.";
+        }
+        leaf module-name {
+          type string {
+            length "0..128";
+          }
+          config false;
+          status deprecated;
+          description
+            "Module name.";
+        }
+        leaf is-fru {
+          type boolean;
+          config false;
+          status deprecated;
+          description
+            "Whether the entity a replaceable unit.";
+        }
+        leaf admin-state {
+          type entity-admin-state;
+          config false;
+          status deprecated;
+          description
+            "Administration state (read-only).";
+        }
+        leaf running-state {
+          type entity-oper-state-type;
+          config false;
+          status deprecated;
+          description
+            "Running state of an entity (read-only).";
+        }
+        leaf standby-state {
+          type entity-standby-state;
+          config false;
+          status deprecated;
+          description
+            "Active/standby state.";
+        }
+        leaf system-oid {
+          type string {
+            length "1..128";
+          }
+          config false;
+          status deprecated;
+          description
+            "Entity OID.";
+        }
+        leaf ls-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          status deprecated;
+          description
+            "The LS name of the entity.";
+        }
+      }
+    }
+    container logic-entitys {
+      description
+        "List of information about logical entity.";
+      list logic-entity {
+        key "class position serial-number";
+        description
+          "Configure information about a logical entity.";
+        leaf class {
+          type entity-class-type;
+          description
+            "Entity class.";
+        }
+        leaf position {
+          type pub-type:position;
+          description
+            "Entity position.";
+        }
+        leaf serial-number {
+          type string {
+            length "0..32";
+          }
+          description
+            "Entity number.";
+        }
+        leaf vendor-type {
+          type hardware-type;
+          default "unknown";
+          description
+            "Type of a hardware entity.";
+        }
+        leaf name {
+          type string {
+            length "0..128";
+          }
+          config false;
+          description
+            "Entity name.";
+        }
+        leaf entity-description {
+          type string {
+            length "0..256";
+          }
+          config false;
+          description
+            "Entity description.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "Entity index.";
+        }
+        leaf oper-state {
+          type entity-oper-state-type;
+          config false;
+          description
+            "Operation state of an entity (read-only).";
+        }
+        leaf parent-index {
+          type uint32;
+          config false;
+          description
+            "Information about the parent index of an entity.";
+        }
+        leaf parent-relative-position {
+          type uint32;
+          config false;
+          description
+            "Position of an entity relative to its parent entity.";
+        }
+        leaf memo {
+          type string {
+            length "0..256";
+          }
+          description
+            "Chassis Description.";
+        }
+      }
+    }
+    container chassiss {
+      ext:operation-exclude create|delete;
+      description
+        "List of chassis.";
+      list chassis {
+        key "position";
+        ext:operation-exclude create|delete;
+        description
+          "Specify chassis.";
+        ext:generated-by system;
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Chassis position.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "Chassis index.";
+        }
+        leaf type {
+          type string {
+            length "0..30";
+          }
+          config false;
+          description
+            "Chassis type.";
+        }
+        leaf service-type {
+          type string {
+            length "0..30";
+          }
+          config false;
+          description
+            "Chassis service type.";
+        }
+        leaf slot-num {
+          type uint32;
+          config false;
+          description
+            "Number of slots on a chassis.";
+        }
+        leaf board-num {
+          type uint32;
+          config false;
+          description
+            "Number of boards on a chassis.";
+        }
+        leaf fan-num {
+          type uint32;
+          config false;
+          description
+            "Number of fans on a chassis.";
+        }
+        leaf power-num {
+          type uint32;
+          config false;
+          description
+            "Number of power modules for a chassis.";
+        }
+        leaf up-time {
+          type pub-type:time-tick;
+          config false;
+          description
+            "Running time of a chassis.";
+        }
+        leaf status-last-change {
+          type pub-type:time-tick;
+          config false;
+          description
+            "Time when the entity running status last changed.";
+        }
+        leaf entity-last-change {
+          type pub-type:time-tick;
+          config false;
+          description
+            "Time when the entity on chassis last changed.";
+        }
+        leaf current-id {
+          type uint32 {
+            range "1..8";
+          }
+          config false;
+          description
+            "Current Chassis ID.";
+        }
+        leaf next-id {
+          type uint32 {
+            range "1..8";
+          }
+          default "1";
+          description
+            "ID of the next start-up chassis.";
+        }
+        leaf current-run-mode {
+          type product-type;
+          config false;
+          description
+            "Model of the running chassis.";
+        }
+        leaf next-run-mode {
+          type product-type;
+          default "unknown";
+          description
+            "Next start-up chassis model.";
+        }
+        leaf dust-clean-cycle {
+          type uint32 {
+            range "0..65535";
+          }
+          units d;
+          default "90";
+          description
+            "Interval at which air filter dust is cleaned.";
+        }
+        leaf last-clean-date {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Date when dust was last cleaned.";
+        }
+        leaf up-to-last-clean {
+          type uint32 {
+            range "0..4294967295";
+          }
+          default "0";
+          config false;
+          description
+            "Time past since dust was last cleaned.";
+        }
+        leaf alarm-exist-days {
+          type uint32 {
+            range "0..4294967295";
+          }
+          default "0";
+          config false;
+          description
+            "Alarm existence days.";
+        }
+        container monitor-board-changes {
+          config false;
+          description
+            "List of time when board status changes.";
+          list monitor-board-change {
+            key "board-index";
+            config false;
+            description
+              "Operational data of time when the status of a board changes.";
+            leaf board-index {
+              type uint32;
+              config false;
+              description
+                "Board index.";
+            }
+            leaf status-last-change {
+              type pub-type:time-tick;
+              config false;
+              description
+                "Time when the board running status changes.";
+            }
+            leaf entity-last-change {
+              type pub-type:time-tick;
+              config false;
+              description
+                "Time when the board entity changes.";
+            }
+          }
+        }
+      }
+    }
+    container logic-containers {
+      config false;
+      description
+        "List of logic slot.";
+      list logic-container {
+        key "position";
+        config false;
+        description
+          "Operational data of logic slot.";
+        leaf position {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "Slot position.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "Slot index.";
+        }
+        leaf container-type {
+          type container-class-type;
+          config false;
+          description
+            "Slot type.";
+        }
+        leaf equiped-entity-type {
+          type hardware-type;
+          config false;
+          description
+            "Type of an installed entity.";
+        }
+        container supported-entity-types {
+          config false;
+          description
+            "List of supported entity types.";
+          list supported-entity-type {
+            key "entity-type";
+            config false;
+            description
+              "Statistics of supported entity types.";
+            leaf entity-type {
+              type hardware-type;
+              config false;
+              description
+                "Type of an equipped entity.";
+            }
+          }
+        }
+      }
+    }
+    container containers {
+      config false;
+      description
+        "List of slot.";
+      list container {
+        key "position";
+        config false;
+        description
+          "Operational data of slot.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Slot position.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "Slot index.";
+        }
+        leaf type {
+          type string {
+            length "0..30";
+          }
+          config false;
+          description
+            "Slot type.";
+        }
+        leaf equiped-entity-type {
+          type string {
+            length "0..30";
+          }
+          config false;
+          description
+            "Type of an equipped entity.";
+        }
+        container supported-entity-types {
+          config false;
+          description
+            "List of supported entity types.";
+          list supported-entity-type {
+            key "entity-type";
+            config false;
+            description
+              "Statistics of supported entity types.";
+            leaf entity-type {
+              type string {
+                length "0..30";
+              }
+              config false;
+              description
+                "Type of an equipped entity.";
+            }
+          }
+        }
+      }
+    }
+    container mpu-boards {
+      ext:operation-exclude create|delete;
+      description
+        "List of MPU.";
+      list mpu-board {
+        key "position";
+        ext:operation-exclude create|delete;
+        description
+          "Specify MPU.";
+        ext:generated-by system;
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "MPU position.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "MPU index.";
+        }
+        leaf board-type {
+          type string {
+            length "0..30";
+          }
+          config false;
+          description
+            "MPU type.";
+        }
+        leaf up-time {
+          type pub-type:time-tick;
+          config false;
+          description
+            "MPU running time, expressed in the number of timeticks.";
+        }
+        leaf sdram-size {
+          type uint32;
+          units MByte;
+          config false;
+          description
+            "SDRAM size.";
+        }
+        leaf nvram-size {
+          type uint32;
+          units MByte;
+          config false;
+          description
+            "NVRAM size.";
+        }
+        leaf flash-size {
+          type uint32;
+          units MByte;
+          config false;
+          description
+            "Flash size.";
+        }
+        leaf ls-role {
+          type board-role-type;
+          config false;
+          description
+            "MPU role.";
+        }
+        leaf last-reset-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Last reset time.";
+        }
+        leaf last-reset-reason {
+          type string {
+            length "0..256";
+          }
+          config false;
+          description
+            "Last reset reason.";
+        }
+        leaf register-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Time when a board goes Up.";
+        }
+        leaf is-register {
+          type boolean;
+          config false;
+          description
+            "Whether the board is register.";
+        }
+        leaf cfcard-size {
+          type uint32;
+          units MB;
+          config false;
+          description
+            "Cfcard memory size.";
+        }
+        leaf cfcard2-size {
+          type uint32;
+          units MB;
+          config false;
+          description
+            "Cfcard2 memory size.";
+        }
+      }
+    }
+    container lpu-boards {
+      ext:operation-exclude create|delete;
+      description
+        "List of LPU.";
+      list lpu-board {
+        key "position";
+        ext:operation-exclude create|delete;
+        description
+          "Specify LPU.";
+        ext:generated-by system;
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "LPU position.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "LPU index.";
+        }
+        leaf board-type {
+          type string {
+            length "0..30";
+          }
+          config false;
+          description
+            "LPU type.";
+        }
+        leaf sdram-size {
+          type uint32;
+          units MByte;
+          config false;
+          description
+            "SDRAM size.";
+        }
+        leaf flash-size {
+          type uint32;
+          units MByte;
+          config false;
+          description
+            "Flash size.";
+        }
+        leaf up-time {
+          type pub-type:time-tick;
+          config false;
+          description
+            "LPU running time, expressed in the number of timeticks.";
+        }
+        leaf np-rdram-size {
+          type uint32;
+          units MByte;
+          config false;
+          description
+            "NP RDRAM size.";
+        }
+        leaf np-sram-size {
+          type uint32;
+          units MByte;
+          config false;
+          description
+            "NP SRAM size.";
+        }
+        leaf service-type {
+          type lpu-service-type;
+          config false;
+          description
+            "Service type.";
+        }
+        leaf next-service-type {
+          type lpu-service-type;
+          config false;
+          description
+            "Type of next started service board.";
+        }
+        leaf pic-num {
+          type uint32;
+          config false;
+          description
+            "Number of PICs on an LPU.";
+        }
+        leaf sub-slot-num {
+          type uint32;
+          config false;
+          description
+            "Number of slots on a subcard.";
+        }
+        leaf clock-8k-port {
+          type string {
+            length "0..32";
+          }
+          description
+            "8K clock port.";
+        }
+        leaf current-l3-clk {
+          type uint32;
+          config false;
+          description
+            "L3 clock source being used.";
+        }
+        leaf register-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Time when a board goes Up.";
+        }
+        leaf is-register {
+          type boolean;
+          config false;
+          description
+            "Whether the board is register.";
+        }
+      }
+    }
+    container sfu-boards {
+      config false;
+      description
+        "List of SFU.";
+      list sfu-board {
+        key "position";
+        config false;
+        description
+          "Operational data of SFU.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "SFU position.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "SFU index.";
+        }
+        leaf board-type {
+          type string {
+            length "0..30";
+          }
+          config false;
+          description
+            "SFU type.";
+        }
+        leaf sdram-size {
+          type uint32;
+          units MByte;
+          config false;
+          description
+            "SDRAM size.";
+        }
+        leaf flash-size {
+          type uint32;
+          units MByte;
+          config false;
+          description
+            "Flash size.";
+        }
+        leaf up-time {
+          type pub-type:time-tick;
+          config false;
+          description
+            "SFU running time, expressed in the number of timeticks.";
+        }
+        leaf register-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Time when a board goes Up.";
+        }
+        leaf is-register {
+          type boolean;
+          config false;
+          description
+            "Whether the board is register.";
+        }
+      }
+    }
+    container cards {
+      ext:operation-exclude create|delete;
+      description
+        "List of card.";
+      list card {
+        key "position index";
+        ext:operation-exclude create|delete;
+        description
+          "Specify card.";
+        ext:generated-by system;
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Card position.";
+        }
+        leaf index {
+          type uint32;
+          description
+            "Card index.";
+        }
+        leaf type {
+          type string {
+            length "0..30";
+          }
+          config false;
+          description
+            "Elabel type of a card.";
+        }
+        leaf hard-type {
+          type string {
+            length "0..30";
+          }
+          config false;
+          description
+            "Hardware type of a card.";
+        }
+        leaf port-num {
+          type uint32;
+          config false;
+          description
+            "Number of ports on a card.";
+        }
+        leaf init-status {
+          type init-status-type;
+          config false;
+          description
+            "Initialized status of a card.";
+        }
+        leaf register-status {
+          type register-status-type;
+          config false;
+          description
+            "Registered status of a card.";
+        }
+        container pic {
+          config false;
+          description
+            "Operational data of physical interface card.";
+          leaf logic-status {
+            type logic-status-type;
+            config false;
+            description
+              "Logic loading status.";
+          }
+          leaf up-time {
+            type yang:date-and-time;
+            config false;
+            description
+              "Time when a card goes Up.";
+          }
+        }
+      }
+    }
+    container cf-cards {
+      config false;
+      description
+        "List of CF card.";
+      list cf-card {
+        key "position serial-number";
+        config false;
+        description
+          "Operational data of CF card.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "CF card position.";
+        }
+        leaf serial-number {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Number of a CF card.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "CF card index.";
+        }
+        leaf card-type {
+          type string {
+            length "0..30";
+          }
+          config false;
+          description
+            "CF card type.";
+        }
+        leaf memory-size {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Memory size of a CF card.";
+        }
+        leaf memory-used {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Used memory of a CF card.";
+        }
+        leaf memory-free {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Available memory of a CF card.";
+        }
+      }
+    }
+    container ports {
+      ext:operation-exclude create|delete;
+      description
+        "List of port.";
+      list port {
+        key "position";
+        ext:operation-exclude create|delete;
+        description
+          "Specify port.";
+        ext:generated-by system;
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+        leaf index {
+          type uint32 {
+            range "1..4294967295";
+          }
+          default "1";
+          config false;
+          ext:support-filter "true";
+          description
+            "Port index.";
+        }
+        leaf admin-state {
+          type entity-admin-state;
+          must "((../admin-state='active' or ../admin-state='inactive') )";
+          default "active";
+          description
+            "Port administration state.";
+        }
+        leaf type {
+          type port-class-type;
+          ext:support-filter "true";
+          config false;
+          description
+            "Port type, such as ETH, POS, or OTN.";
+        }
+        leaf hard-type {
+          type port-hardware-type;
+          config false;
+          description
+            "Hardware type of a port.";
+        }
+        leaf loopback-mode {
+          type loopback-state-type;
+          default "noLoopback";
+          description
+            "Port loopback mode.";
+        }
+        leaf enable-transmission-delay {
+          type uint32 {
+            range "0..86400000";
+          }
+          default "0";
+          description
+            "Enable port transmission delay (ms).";
+        }
+        leaf last-up-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Time when a port last went Up.";
+        }
+        leaf last-down-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Time when a port last wend Down.";
+        }
+        leaf medium-type {
+          type port-medium-type;
+          config false;
+          ext:support-filter "true";
+          description
+            "Port medium type.";
+        }
+        leaf optical-equipped {
+          type boolean;
+          config false;
+          description
+            "Flag indicating whether an optical transceiver is equipped.";
+        }
+        leaf physical-bandwidth {
+          type uint64 {
+            range "0..10000000000000";
+          }
+          default "0";
+          config false;
+          description
+            "Port physical bandwidth.";
+        }
+      }
+    }
+    container logic-ports {
+      description
+        "List of logic port.";
+      list logic-port {
+        key "position serial-number port-type";
+        description
+          "Configure logic port.";
+        leaf position {
+          type pub-type:position;
+          description
+            "Port position.";
+        }
+        leaf serial-number {
+          type string {
+            length "0..32";
+          }
+          description
+            "Port number.";
+        }
+        leaf port-type {
+          type port-class-type;
+          description
+            "Port type, such as ETH, POS, or OTN.";
+        }
+        leaf index {
+          type uint32 {
+            range "1..4294967295";
+          }
+          default "1";
+          config false;
+          description
+            "Port index.";
+        }
+        leaf admin-state {
+          type entity-admin-state;
+          config false;
+          description
+            "Port administration state.";
+        }
+        leaf hard-type {
+          type port-hardware-type;
+          mandatory true;
+          description
+            "Hardware type of a port.";
+        }
+        leaf enable-transmission-delay {
+          type uint32 {
+            range "0..86400000";
+          }
+          default "0";
+          config false;
+          description
+            "Enable port transmission delay (ms).";
+        }
+        leaf level {
+          type port-level-type;
+          mandatory true;
+          description
+            "Port speed level.";
+        }
+      }
+    }
+    
+    container entity-classes {
+      config false;
+      description
+        "List of entity capability.";
+      list entity-class {
+        key "class-name";
+        config false;
+        description
+          "Statistics of entity capability.";
+        leaf class-name {
+          type entity-class-type;
+          config false;
+          description
+            "Entity type.";
+        }
+        leaf is-resetable {
+          type boolean;
+          config false;
+          description
+            "Flag indicating whether the entity can be reset.";
+        }
+        leaf is-switchoverable {
+          type boolean;
+          config false;
+          description
+            "Flag indicating whether a switchover can be performed on the entity.";
+        }
+      }
+    }
+    
+    container inconsistent-entitys {
+      config false;
+      description
+        "List of incompatible entity.";
+      list inconsistent-entity {
+        key "class position serial-number";
+        config false;
+        description
+          "Operational data of incompatible entity.";
+        leaf class {
+          type entity-class-type;
+          config false;
+          description
+            "Entity class.";
+        }
+        leaf position {
+          type pub-type:position;
+          config false;
+          description
+            "Position.";
+        }
+        leaf serial-number {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "Number.";
+        }
+        leaf logical-type {
+          type hardware-type;
+          config false;
+          description
+            "Logical type.";
+        }
+        leaf physical-type {
+          type hardware-type;
+          config false;
+          description
+            "Physical type.";
+        }
+        leaf oper-state {
+          type entity-oper-state-type;
+          config false;
+          description
+            "Running status.";
+        }
+      }
+    }
+    container offlines {
+      config false;
+      description
+        "List of offline configuration.";
+      list offline {
+        key "class position";
+        config false;
+        description
+          "Operational data of offline configuration.";
+        leaf class {
+          type offline-class-type;
+          config false;
+          description
+            "Class.";
+        }
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Position.";
+        }
+      }
+    }
+    container schedule-reboot {
+      config false;
+      description
+        "Statistics of schedule reboot date time.";
+      leaf datetime {
+        type yang:date-and-time;
+        config false;
+        description
+          "At Time.";
+      }
+      leaf delay-time {
+        type string {
+          length "1..49";
+        }
+        config false;
+        description
+            "Delay Time.";
+      }
+    }
+  }
+}

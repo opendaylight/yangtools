@@ -1,0 +1,356 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bd {
+  namespace "urn:huawei:yang:huawei-bd";
+  prefix bd;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Definition of bridge domain in the EVC model.";
+  revision 2019-04-29 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bdbase";
+  typedef admin-status {
+    type enumeration {
+      enum "up" {
+        value 0;
+        description
+          "BD administrative status is up.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "BD administrative status is down.";
+      }
+    }
+    description
+      "BD administrative status.";
+  }
+   typedef oper-status {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "BD operation status is up.";
+      }
+      enum "down" {
+        value 0;
+        description
+          "BD operation status is down.";
+      }
+      enum "admin-down" {
+        value 2;
+        description
+          "BD operation status is admin down.";
+      }
+      enum "invalid" {
+        value 255;
+        description
+          "BD operation status is invalid.";
+      }
+    }
+    description
+      "BD operation status.";
+  }
+  typedef enable-status {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "BD enable status is enable.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "BD enable status is disable.";
+      }
+    }
+    description
+      "BD enable status.";
+  }
+  container bd {
+    description
+      "Bridge domain configuration.";
+    container instances {
+      description
+        "List of bridge domain.";
+      list instance {
+        key "id";
+        max-elements 32768;
+        description
+          "Configure BD instance.";
+        leaf id {
+          type uint32 {
+            range "1..16777215";
+          }
+          description
+            "BD ID.";
+        }
+        leaf description {
+          type string {
+            length "1..80";
+          }
+          description
+            "BD description.";
+        }
+        leaf admin-status {
+          type admin-status;
+          default "up";
+          description
+            "BD administrative status.";
+        }
+        leaf status {
+          type oper-status;
+          config false;
+          description
+            "BD status.";
+        }
+        leaf statistic-enable {
+          type enable-status;
+          default "disable";
+          description
+            "Whether BD statistics measurement is enable.";
+        }
+        leaf statistic-discard {
+          when "../statistic-enable='enable'";
+          type enable-status;
+          default "disable";
+          description
+            "Whether BUM discard statistics collection is enabled.";
+        }
+        leaf broadcast-discard {
+          type enable-status;
+          default "disable";
+          description
+            "Discard broadcast packets.";
+        }
+        leaf unknown-multicast-discard {
+          type enable-status;
+          default "disable";
+          description
+            "Discard unknown multicast packets.";
+        }
+        leaf unknown-unicast-discard {
+          type enable-status;
+          default "disable";
+          description
+            "Discard unknown unicast packets.";
+        }
+        leaf mac-learning {
+          type enable-status;
+          default "enable";
+          description
+            "Enable MAC address learning.";
+        }
+        leaf mac-aging-time {
+          type uint32 {
+            range "0|60..1000000";
+          }
+          units s;
+          description
+            "MAC address aging time, 0 indicates that MAC addresses do not age.";
+        }
+        leaf split-horizon {
+          type enable-status;
+          default "disable";
+          description
+            "Enable split horizon.";
+        }
+        container service-points {
+          description
+            "List of EVC service points.";
+          list service-point {
+            key "interface-name";
+            description
+              "Configure EVC service information.";
+            leaf interface-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:l2-mode-enable = 'true'";
+              description
+                "Interface name.";
+            }
+            leaf split-horizon {
+              type enable-status;
+              default "disable";
+              description
+                "Enable split horizon.";
+            }
+          }
+        }
+        container statistics {
+          config false;
+          description
+            "Statistics of BD information.";
+          leaf inbound-packets {
+            type uint64;
+            description
+              "Number of inbound packets.";
+          }
+          leaf inbound-bytes {
+            type uint64;
+            description
+              "Number of inbound bytes.";
+          }
+          leaf outbound-packets {
+            type uint64;
+            description
+              "Number of outbound packets.";
+          }
+          leaf outbound-bytes {
+            type uint64;
+            description
+              "Number of outbound bytes.";
+          }
+          leaf inbound-unicasts {
+            type uint64;
+            description
+              "Number of inbound unicasts.";
+          }
+          leaf inbound-multicasts {
+            type uint64;
+            description
+              "Number of inbound multicasts.";
+          }
+          leaf inbound-broadcasts {
+            type uint64;
+            description
+              "Number of inbound broadcasts.";
+          }
+          leaf inbound-unknown-unicast-drops {
+            type uint64;
+            description
+              "Number of discarded unknown unicast packets in the inbound direction.";
+          }
+          leaf inbound-unknown-multicast-drops {
+            type uint64;
+            description
+              "Number of discarded unknown multicast packets in the inbound direction.";
+          }
+          leaf inbound-broadcast-drops {
+            type uint64;
+            description
+              "Number of discarded broadcast packets in the inbound direction.";
+          }
+          leaf outbound-unicasts {
+            type uint64;
+            description
+              "Number of outbound unicasts.";
+          }
+          leaf outbound-multicasts {
+            type uint64;
+            description
+              "Number of outbound multicasts.";
+          }
+          leaf outbound-broadcasts {
+            type uint64;
+            description
+              "Number of outbound broadcasts.";
+          }
+          leaf outbound-pps {
+            type uint64;
+            description
+              "Rate of outbound packets.";
+          }
+          leaf outbound-bps {
+            type uint64;
+            description
+              "Rate of outbound bytes.";
+          }
+        }
+        container bind-service {
+          config false;
+          description
+            "Statistics of BD binding Information.";
+          leaf vsi-name {
+            type string {
+              length "1..31";
+            }
+            description
+              "The VSI name bound to the BD.";
+          }
+          leaf evpn-name {
+            type string {
+              length "1..31";
+            }
+            description
+              "The EVPN name bound to the BD.";
+          }
+          leaf vni {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "The VNI ID bound to the BD.";
+          }
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    when "ifm:type='Vbdif'";
+    description "Extend interface attribute.";
+      container bdif-attribute {
+        description
+          "Configure BDIF interface attribute.";
+        choice band-width-type {
+          default band-width-mbps;
+          description
+            "BDIF interface bandwidth.";
+          case band-width-mbps {
+            description
+              "BDIF interface bandwidth with mbps.";
+            leaf band-width {
+              type uint32 {
+                range "1..1000000";
+              }
+              units Mbit/s;
+              default "1000";
+                description
+                "BDIF interface bandwidth.";
+            }
+          }
+          case band-width-kbps {
+            description
+              "BDIF interface bandwidth with kbps.";
+            leaf band-width-kbps {
+              type uint32 {
+                range "1..1000000";
+              }
+              units kbit/s;
+              description
+                "BDIF interface bandwidth with kbps.";
+            }
+          }
+        }
+        leaf damping-time {
+          type uint16 {
+            range "0..20";
+          }
+          units s;
+          default "0";
+          description
+            "Delay time after which a BDIF interface goes down.";
+        }
+      }
+  }
+}

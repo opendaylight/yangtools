@@ -1,0 +1,744 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+
+/*
+module: huawei-netconf-sync
+   +--ro synchronization
+      +--ro query-statuss
+      |  +--ro query-status* [sync-full-id]
+      |     +--ro sync-full-id           uint32
+      |     +--ro app-num?               uint32
+      |     +--ro status?                synchronization-status
+      |     +--ro progress?              percent
+      |     +--ro in-progress-app?       string
+      |     +--ro in-progress-vs-name?   string
+      |     +--ro in-progress-vs-id?     uint32
+      |     +--ro success-apps [app-name vs-name]
+      |     |  +--ro success-app*
+      |     |     +--ro app-name?   string
+      |     |     +--ro vs-name?    string
+      |     |     +--ro vs-id?      uint32
+      |     +--ro failed-apps [app-name vs-name]
+      |        +--ro failed-app*
+      |           +--ro app-name?        string
+      |           +--ro vs-name?         string
+      |           +--ro vs-id?           uint32
+      |           +--ro error-message?   string
+      +--ro file-transfer-statuss
+         +--ro file-transfer-status* [sync-full-id]
+            +--ro sync-full-id     uint32
+            +--ro status?          synchronization-status
+            +--ro progress?        percent
+            +--ro error-message?   string
+rpcs:
+   +---x sync-full
+   |  +---w input
+   |  |  +---w target
+   |  |  |  +---w user-name            string
+   |  |  |  +---w password             password
+   |  |  |  +---w target-addr          inet:ip-address
+   |  |  |  +---w path?                string
+   |  |  |  +---w port-number?         inet:port-number
+   |  |  |  +---w vpn-instance-name?   string
+   |  |  +---w transfer-protocol?         sync-file-transfer-protocol
+   |  |  +---w transfer-method?           sync-file-transfer-method
+   |  |  +---w file-save-time?            uint32
+   |  |  +---w secure-transfer-options
+   |  |  |  +---w prefer-kex?              sync-sftp-key-ex-alg
+   |  |  |  +---w prefer-stoc-cipher?      sync-sftp-cipher-alg
+   |  |  |  +---w prefer-ctos-cipher?      sync-sftp-cipher-alg
+   |  |  |  +---w prefer-stoc-hmac?        sync-sftp-hmac-alg
+   |  |  |  +---w prefer-ctos-hmac?        sync-sftp-hmac-alg
+   |  |  |  +---w compression-type-ctos?   sync-sftp-compress-alg
+   |  |  |  +---w compression-type-stoc?   sync-sftp-compress-alg
+   |  |  |  +---w force-receive-pubkey?    sync-force-pubkey
+   |  |  +---w filename-prefix            string
+   |  |  +---w app-err-operation?         sync-error-option
+   |  |  +---w filter?
+   |  +--ro output
+   |     +--ro sync-full-id?   uint32
+   +---x upload-sync-file
+   |  +---w input
+   |     +---w sync-full-id        uint32
+   |     +---w result-save-time?   uint32
+   +---x cancel-synchronization
+   |  +---w input
+   |     +---w sync-full-id    uint32
+   +---x sync-increment
+      +---w input
+      |  +---w target
+      |  |  +---w flow-id    uint32
+      |  +---w source
+      |  |  +---w flow-id    uint32
+      |  +---w filter?
+      +--ro output
+         +--ro data?
+*/
+module huawei-netconf-sync {
+  namespace "urn:huawei:yang:huawei-netconf-sync";
+  prefix nc-sync;
+
+  import ietf-netconf {
+    prefix nc;
+  }
+  import huawei-extension {
+    prefix ext;
+  }  
+  import ietf-inet-types {
+    prefix inet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Netconf synchronization operation to get the complete config and state data and the difference,
+     Private features sync-full and sync-increment supported by the schema are added to the YANG file to follow the standard method.";
+  
+  revision 2019-05-25 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";	  
+  }
+  ext:task-name "netconf";
+  typedef synchronization-status {
+    type enumeration {
+      enum "in-progress" {
+        value 1;
+        description
+          "Operation id in progress.";
+      }
+      enum "success" {
+        value 2;
+        description
+          "Operation is success.";
+      }
+      enum "failed" {
+        value 3;
+        description
+          "Operation is failed.";
+      }
+      enum "partly-failed" {
+        value 4;
+        description
+          "Operation partly failed.";
+      }
+    }
+    description
+      "Synchronization status.";
+  }
+
+  typedef sync-file-transfer-protocol {
+    type enumeration {
+      enum "ftp" {
+        value 1;
+        description
+          "Transfer protocol FTP.";
+      }
+      enum "sftp" {
+        value 2;
+        description
+          "Transfer protocol SFTP.";
+      }
+    }
+    description
+      "Synchronization file transfer protocol.";
+  }
+
+  typedef sync-file-transfer-method {
+    type enumeration {
+      enum "auto" {
+        value 0;
+        description
+          "Transfer method auto.";
+      }
+      enum "manual" {
+        value 1;
+        description
+          "Transfer method manual, use upload-cync-file to transfer the file.";
+      }
+    }
+    description
+      "Synchronization file transfer method.";
+  }
+
+  typedef sync-error-option {
+    type enumeration {
+      enum "continue-on-error" {
+        value 0;
+        description
+          "Stop query when app pquery process is error.";
+      }
+      enum "stop-on-error" {
+        value 1;
+        description
+          "Continue query other app when app query process is error.";
+      }
+    }
+    description
+      "Synchronization app error option.";
+  }
+
+  typedef sync-sftp-key-ex-alg {
+    type enumeration {
+      enum "dh-group1" {
+        value 0;
+        description
+          "Key exchange method DH_Group1_SHA1.";
+      }
+      enum "dh-exchange-group" {
+        value 1;
+        description
+          "Key exchange method DH_GroupEx_SHA1.";
+      }
+      enum "sm2-kep" {
+        value 2;
+        description
+          "Key exchange method SM2_KEP.";
+      }
+      enum "dh-exchange-group-sha256" {
+        value 3;
+        description
+          "Key exchange method DH_GroupEx_SHA256.";
+      }
+      enum "ecdh-sha2-nistp256" {
+        value 4;
+        description
+          "Key exchange method ECDH with curve 256.";
+      }
+      enum "ecdh-sha2-nistp384" {
+        value 5;
+        description
+          "Key exchange method ECDH with curve 384.";
+      }
+      enum "ecdh-sha2-nistp521" {
+        value 6;
+        description
+          "Key exchange method ECDH with curve 521.";
+      }
+    }
+    description
+      "Synchronization sftp key exchange algorithm.";
+  }
+
+  typedef sync-sftp-cipher-alg {
+    type enumeration {
+      enum "des" {
+        value 0;
+        description
+          "Cipher DES.";
+      }
+      enum "3des" {
+        value 1;
+        description
+          "Cipher TripleDES.";
+      }
+      enum "aes128" {
+        value 2;
+        description
+          "Cipher AES128.";
+      }
+      enum "aes256" {
+        value 3;
+        description
+          "Cipher AES256.";
+      }
+      enum "arcfour128" {
+        value 4;
+        description
+          "Cipher RC4-128.";
+      }
+      enum "arcfour256" {
+        value 5;
+        description
+          "Cipher RC4-256.";
+      }
+    }
+    description
+      "Synchronization sftp Cipher.";
+  }
+
+  typedef sync-sftp-hmac-alg {
+    type enumeration {
+      enum "sha1" {
+        value 0;
+        description
+          "Cipher TripleDES.";
+      }
+      enum "sha1-96" {
+        value 1;
+        description
+          "Cipher DES.";
+      }
+      enum "md5" {
+        value 2;
+        description
+          "Cipher AES128.";
+      }
+      enum "md5-96" {
+        value 3;
+        description
+          "Cipher AES256.";
+      }
+      enum "sha2-256" {
+        value 4;
+        description
+          "Cipher RC4-128.";
+      }
+      enum "sha2-256-96" {
+        value 5;
+        description
+          "Cipher RC4-256.";
+      }
+    }
+    description
+      "Synchronization sftp Cipher.";
+  }
+
+  typedef sync-sftp-hostkey-alg {
+    type enumeration {
+      enum "rsa" {
+        value 0;
+        description
+          "Identity key RSA.";
+      }
+      enum "dsa" {
+        value 1;
+        description
+          "Identity key DSA.";
+      }
+      enum "ecc" {
+        value 2;
+        description
+          "Identity key ECC.";
+      }
+    }
+    description
+      "Synchronization sftp identity key.";
+  }
+
+  typedef sync-sftp-compress-alg {
+    type enumeration {
+      enum "zlib" {
+        value 0;
+        description
+          "Compress zlib.";
+      }
+    }
+    description
+      "Synchronization sftp compression.";
+  }
+
+  typedef sync-force-pubkey {
+    type enumeration {
+      enum "yes" {
+        value 0;
+        description
+          "Force receive pub key YES.";
+      }
+      enum "no" {
+        value 1;
+        description
+          "Force receive pub key NO.";
+      }
+    }
+    description
+      "Synchronization sftp compression.";
+  }
+
+  typedef percent {
+    type uint32 {
+      range "0 .. 100";
+    }
+    description "Percentage.";
+  }
+  
+  typedef password {
+    type string {
+      length "1..128";
+    }
+    description
+      "The password is a string ranging from 1 to 16 characters for a plaintext password and 20 to 128 characters for a ciphertext password.";
+  }
+  
+  container synchronization {
+    config false;
+    description
+      "CANNOT_FIND_CONTAINER_NAME:synchronization in config file.";
+      container query-statuss {
+        description
+          "List of data nodes for query the progress status of sync-full operation.";
+        list query-status {
+          key "sync-full-id";
+          description
+            "Operational state of query.query the progress of sync-full query operation with condition as sync-full-id only supported for this list.";
+          leaf sync-full-id {
+            type uint32;
+            description
+              "Sync-full operation identifer given by device; this is replied as an output element for the sync-full rpc.";
+          }
+          leaf app-num {
+            type uint32;
+            ext:support-filter "true";				
+            description
+              "Total number of applications queried in the sync-full request.";
+          }
+          leaf status {
+            type synchronization-status;
+            ext:support-filter "true";				
+              description
+                "Sync-full operation query status.";
+          }
+          leaf progress {
+            type percent;
+            ext:support-filter "true";				
+            description
+              "Progress percentage of the sync-full operation query.";
+          }
+          leaf in-progress-app {
+            type string {
+              length "1..63";
+            }
+            ext:support-filter "true";				
+            description
+              "Name of application which is being queried.";
+          }
+          leaf in-progress-vs-name {
+            type string {
+              length "1..32";
+            }
+            ext:support-filter "true";				
+            description
+              "Name of virtual system which is being queried.";
+          }
+          leaf in-progress-vs-id {
+            type uint32;
+            ext:support-filter "true";				
+            description
+              "Identifier of virtual system which is being queried.";
+          }
+          container success-apps {
+            description
+              "List of success-apps.";
+            list success-app {
+              key "app-name vs-name";
+              description
+                "Statistics of success-app.";
+              leaf app-name {
+                type string {
+                  length "1..63";
+                }
+                description
+                  "Name of application which has completed sync query successfully.";
+              }
+              leaf vs-name {
+                type string {
+                  length "1..32";
+                }
+                description
+                  "Name of virtual system in which application query is success.";
+              }
+              leaf vs-id {
+                type uint32;
+                ext:support-filter "true";					
+                  description
+                    "Identifier of virtual system in which application query is success.";
+              }
+            }
+          }
+          container failed-apps {
+            description
+              "List of failed-apps.";
+            list failed-app {
+              key "app-name vs-name";
+              description
+                "Statistics of failed-app.";
+              leaf app-name {
+                type string {
+                  length "1..63";
+                }
+                description
+                  "Name of application for which sync-full query has failed.";
+              }
+              leaf vs-name {
+                type string {
+                  length "1..32";
+                }
+                description
+                  "Name of virtual system in which application query failed.";
+              }
+              leaf vs-id {
+                type uint32;
+                ext:support-filter "true";	   				
+                description
+                  "Identifier of virtual system in which application query failed.";
+              }
+              leaf error-message {
+                type string {
+                  length "1..512";
+                }
+                ext:support-filter "true";					
+                description
+                  "Query failure error message.";
+              }
+            }
+          }
+        }
+      }
+      container file-transfer-statuss {
+        description
+        "List of file transfer status query.";	  
+        list file-transfer-status {
+          key "sync-full-id";
+          description
+            "Operational state of query. Query nodes data for file transfer.";
+          leaf sync-full-id {
+            type uint32;
+            description
+              "Sync-full operation identifer given by device.";
+          }
+          leaf status {
+            type synchronization-status;
+            ext:support-filter "true";				
+            description
+              "Sync-full operation file transfer status.";
+          }
+          leaf progress {
+            type percent;
+            ext:support-filter "true";				
+            description
+              "Progress percentage of the sync-full file transfer.";
+          }
+          leaf error-message {
+            type string {
+              length "1..512";
+            }
+            ext:support-filter "true";				
+            description
+              "Query failure error message.";
+          }
+        }
+      }
+  }
+
+  rpc sync-full {
+    description
+      "Syncronization operation.";
+    input {
+      container target {
+        description
+          "Configure target information to transfer the sync-full zip file.";
+        leaf user-name {
+          type string {
+            length "1..253";
+          }
+          mandatory true;	  
+          description
+            "File transfer user name.";
+        }
+        leaf password {
+          type password;
+          mandatory true;		  
+          description
+            "File transfer password.";
+        }
+        leaf target-addr {
+          type inet:ip-address;
+          mandatory true;		  
+          description
+            "File transfer target ip address.";
+        }
+        leaf path {
+          type string {
+            length "1..255";
+          }		  
+          description
+            "File transfer destination path.";
+        }
+        leaf port-number {
+          type inet:port-number;			  
+          description
+            "File transfer port number.";
+        }
+        leaf vpn-instance-name {
+          type string {
+            length "1..31";
+          }		  
+          description
+            "File transfer vpn instance name.";
+        }
+      }
+      leaf transfer-protocol {
+        type sync-file-transfer-protocol;
+        default "ftp";		
+        description
+          "Sync-full zip file transfer protocol.";
+      }
+      leaf transfer-method {
+        type sync-file-transfer-method;
+        default "auto";		
+        description
+          "Sync-full zip file transfer method, it will auto, manual.";
+      }
+      leaf file-save-time {
+        type uint32 {
+          range "1..20";
+        }
+        units min;		
+        description
+          "Sync-full file save time in minutues.";
+      }
+      container secure-transfer-options {
+        description
+          "Configure transfer options for secure target.";
+        leaf prefer-kex {
+          type sync-sftp-key-ex-alg;			  
+          description
+            "Prefer-kex.";
+        }
+        leaf prefer-stoc-cipher {
+          type sync-sftp-cipher-alg;			  
+          description
+            "Prefer-stoc-cipher.";
+        }
+        leaf prefer-ctos-cipher {
+          type sync-sftp-cipher-alg;			  
+          description
+            "Prefer-ctos-cipher.";
+        }
+        leaf prefer-stoc-hmac {
+          type sync-sftp-hmac-alg;			  
+          description
+            "Prefer-stoc-hmac.";
+        }
+        leaf prefer-ctos-hmac {
+          type sync-sftp-hmac-alg;		  
+          description
+            "Prefer-ctos-hmac.";
+        }
+        leaf compression-type-ctos {
+          type sync-sftp-compress-alg;		  
+          description
+            "Compression-type-ctos.";
+        }
+        leaf compression-type-stoc {
+          type sync-sftp-compress-alg;			  
+          description
+            "Compression-type-stoc.";
+        }
+        leaf force-receive-pubkey {
+          type sync-force-pubkey;		  
+          description
+            "Force-receive-pubkey.";
+        }
+      }
+      leaf filename-prefix {
+        type string {
+          length "1..32";
+        }
+        mandatory true;		
+        description
+          "Sync-full zip file name prefix.";
+      }
+      leaf app-err-operation {
+        type sync-error-option;		
+        description
+          "Sync-full app error operation, To continue or stop if any app query results in error.";
+      }
+      anyxml filter {
+        description
+          "Filter element to sync datamodel.";
+          nc:get-filter-element-attributes;
+      }
+    }
+
+    output {
+      leaf sync-full-id {
+        type uint32;
+        description
+          "Sync-full operation identifer given by device;
+           this is replied as an output element for the sync-full rpc.";
+      }
+    }
+  }
+
+  rpc upload-sync-file {
+    description
+      "Upload the syncronization file.";
+    input {
+      leaf sync-full-id {
+        type uint32;
+        mandatory true;
+        description
+          "Sync-full operation identifer given by device.";
+      }
+      leaf result-save-time {
+        type uint32 {
+          range "1..5";
+        }
+        units min;
+        default "5";		
+        description
+          "Sync-full operation file transfer result saved time in minutes.";
+      }
+    }
+  }
+
+  rpc cancel-synchronization {
+    description
+      "Cancel the specified synchronization operation.";
+    input {
+      leaf sync-full-id {
+        type uint32;
+        mandatory true;
+        description
+          "Sync-full operation identifer given by device.";
+      }
+    }
+  }
+
+  rpc sync-increment {
+    description
+      "Syncronize the increment data.";
+    input {
+      container target {
+        description
+          "Configure target information to transfer the sync-increment file.";
+        leaf flow-id {
+          type uint32;
+          mandatory true;
+          description
+            "Target flow id.";
+        }
+      }
+      container source {
+        description
+          "Configure source information to transfer the sync-increment file.";
+        leaf flow-id {
+          type uint32;
+          mandatory true;
+          description
+            "Source flow id.";
+        }
+      }
+      anyxml filter {
+        description
+          "Filter element to sync datamodel.";
+          nc:get-filter-element-attributes;
+      }
+    }
+    output {
+      anyxml data {
+        description
+          "Data model output with record information.";
+      }
+    }
+  }
+}

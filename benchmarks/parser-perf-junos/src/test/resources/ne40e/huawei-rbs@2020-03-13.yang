@@ -1,0 +1,503 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-rbs {
+  namespace "urn:huawei:yang:huawei-rbs";
+  prefix rbs;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-etrunk {
+    prefix etrunk;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Remote backup service, providing service backup between the master and backup devices, such as ARP entry backup.";
+  revision 2020-03-13 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "rbs";   
+  typedef tcp-state {
+    type enumeration {
+      enum "initial" {
+        value 0;	  
+        description
+          "Initial state, a TCP connection status.";
+      }
+      enum "listening" {
+        value 1;	  
+        description
+          "Listening state, a TCP connection status.";
+      }	  
+      enum "connecting" {
+        value 2;	  
+        description
+          "Connecting state, meaning that the client is connecting to the server.";
+      }
+      enum "connected" {
+        value 3;	  
+        description
+          "Connected state, a TCP connection status.";
+      }
+    }
+    description
+      "TCP connection status.";
+  }  
+  typedef rbp-state {
+    type enumeration {
+      enum "init" {
+        value 0;	  
+        description
+          "Initial state, an RBP status.";
+      }
+      enum "slave" {
+        value 1;	  
+        description
+          "Slave state, an RBP status.";
+      }	  
+      enum "master" {
+        value 2;	  
+        description
+          "Master state, an RBP status.";
+      }
+    }
+    description
+      "RBP status.";
+  }  
+  typedef backup-mode {
+    type enumeration {
+      enum "hot" {
+        value 1;		  
+        description
+          "Hot peer backup mode.";
+      }
+      enum "warm" {
+        value 2;		  
+        description
+          "Warm peer backup mode.";
+      }
+      enum "virtual" {
+        value 3;		  
+        description
+          "Virtual peer backup mode.";
+      }
+    }
+    description
+      "Backup mode.";
+  }  
+  typedef service-type {
+    type enumeration {
+      enum "all" {
+        value 0;		  
+        description
+          "All services that can be backed up.";
+      }
+      enum "bras" {
+        value 1;		  
+        description
+          "BRAS services that can be backed up.";
+      }	  
+      enum "igmp-snooping" {
+        value 2;		  
+        description
+          "IGMP snooping services that can be backed up.";
+      }
+      enum "arp" {
+        value 5;		  
+        description
+          "ARP services that can be backed up.";
+      }
+      enum "multicast" {
+        value 9;		  
+        description
+          "MULTICAST services that can be backed up.";
+      }	 
+      enum "l2tp" {
+        value 10;		  
+        description
+          "L2TP services that can be backed up.";
+      }
+      enum "igmp" {
+        value 21;		  
+        description
+          "IGMP services that can be backed up.";
+      }	  
+      enum "lacp" {
+        value 24;		  
+        description
+          "LACP services that can be backed up.";
+      }	
+      enum "no-host-multicast" {
+        value 25;		  
+        description
+          "No host multicast services that can be backed up.";
+      }	  
+      enum "dhcp-server" {
+        value 26;		  
+        description
+          "DHCP-SERVER services that can be backed up.";
+      }
+      enum "ipsec" {
+        value 30;		  
+        description
+          "Ipsec service that can backed up.";
+      }
+      enum "nd" {
+        value 32;		  
+        description
+          "Nd service that can backed up.";
+      }
+    }
+    description
+      "RBP service type.";
+  } 
+  typedef vrrp-mac-type {
+    type enumeration {
+      enum "none" {
+        value 0;	  
+        description
+          "VRRP association not based on odd/even MAC addresses.";
+      }
+      enum "even" {
+        value 1;	  
+        description
+          "VRRP association based on even MAC addresses.";
+      }
+      enum "odd" {
+        value 2;	  
+        description
+          "VRRP association based on odd MAC addresses.";
+      }
+    }
+    description
+      "VRRP association mode.";
+  }  
+  typedef batch-backup-type {
+    type enumeration {
+      enum "igmp-snooping" {
+        value 2;
+        description
+          "IGMP snooping services that can be batch backed up.";
+      }
+      enum "bras" {
+        value 1;
+        description
+          "BRAS services that can be batch backed up.";
+      }
+      enum "l2tp" {
+        value 10;
+        description
+          "L2TP services that can be batch backed up.";
+      }
+      enum "multicast" {
+        value 9;
+        description
+          "MULTICAST services that can be batch backed up.";
+      }
+      enum "dhcp-server" {
+        value 26;
+        description
+          "DHCP-SERVER services that can be batch backed up.";
+      }
+      enum "dhcpv6-relay" {
+        value 34;
+        description
+          "DHCPV6 relay services that can be batch backed up.";
+      }
+    }
+    description
+      "Service type batch backup.";
+  }
+  container rbs {
+    description
+      "Remote backup service, providing service backup between the master and backup devices, such as ARP entry backup.";
+    container services {
+      description
+        "List of RBS, including information about all remote backup services on a device.";
+      list service {
+        key "name";
+        description
+          "Configure RBS instance list, which can be configured or queried.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern '[0-9a-z_.\-]+';
+          }
+          description
+            "RBS instance name.";
+        }
+        leaf peer-ip {
+          type inet:ip-address-no-zone;
+          must "(../peer-ip and ../source-ip and ../tcp-port and ../peer-ip!=../source-ip) or (not (../peer-ip) and not (../source-ip) and not (../tcp-port))";
+          description
+            "Peer IP/IPv6 address of a TCP connection.";
+        }
+        leaf source-ip {
+          type inet:ip-address-no-zone;
+          must "(../peer-ip and ../source-ip and ../tcp-port and ../peer-ip!=../source-ip) or (not (../peer-ip) and not (../source-ip) and not (../tcp-port))";
+          description
+            "Local IP/IPv6 address of a TCP connection.";
+        }
+        leaf tcp-port {
+          type uint32 {
+            range "1024..55535";
+          }
+          must "(../peer-ip and ../source-ip and ../tcp-port and ../peer-ip!=../source-ip) or (not (../peer-ip) and not (../source-ip) and not (../tcp-port))";
+          description
+            "Port number of a TCP connection.";
+        }
+        leaf shut-down {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable an RBS connection.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "RBS instance index, which is automatically allocated by the system. It can be queried but cannot be configured.";
+        }
+        leaf tcp-state {
+          type tcp-state;
+          config false;
+          description
+            "TCP connection status.";
+        }		
+        leaf last-up-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Last up time.";
+        }
+        leaf last-down-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Last down time.";
+        }
+        leaf last-down-reason {
+          type string {
+            length "1..64";
+          }
+          config false;
+          description
+            "Last down reason.";
+        }
+        container batch-backups{
+          description
+            "List of periodic service synchronization configurations.";
+          list batch-backup {
+            key "service-type";
+            description
+              "Configure periodic service synchronization configuration instance.";
+            leaf service-type {
+              type batch-backup-type;
+              description
+                "Type of services that are periodically synchronized.";
+            }
+            leaf backup-time {
+              type pub-type:time;
+              mandatory true;
+              description
+                "Backup start time.";
+            }
+          }
+        }
+      }
+    }
+    container profiles {
+      description
+        "List of remote backup profiles.";
+      list profile {
+        key "name";
+        description
+          "Configure RBP instance.";
+        leaf name {
+          type string {
+            length "1..128";
+            pattern '[0-9a-z_.\-]+';
+          }
+          description
+            "RBP instance name.";
+        }
+        leaf service-name {
+          type leafref {
+            path "../../../services/service/name";
+          }
+          must "(../service-name and ../backup-id) or (not(../service-name) and not(../backup-id))";
+          description
+            "Name of the RBS bound to an RBP.";
+          ext:support-filter "true";
+        }
+        leaf backup-id {
+          type uint32 {
+            range "1..4095";
+          }
+          must "(../service-name and ../backup-id) or (not(../service-name) and not(../backup-id))";
+          description
+            "RBS ID.";
+        }
+        leaf mode {
+          type backup-mode;
+          default "hot";
+          description
+            "Backup mode of an RBP.";
+        }	
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "RBP index, which is automatically allocated by the system. It can be queried but cannot be configured.";
+        }	
+        leaf local-state {
+          type rbp-state;
+          config false;
+          description
+            "Local RBP status when the associated protocol is not VRRP.";
+        }
+        leaf peer-state {
+          type rbp-state;
+          config false;
+          description
+            "Peer RBP status when the associated protocol is not VRRP.";
+        }		
+        choice track-type {
+          description
+            "Arbitrate protocol configuration.";
+          case e-trunk {
+            description
+              "Etrunk type that rbs profile tracking.";
+            leaf etrunk-id {
+              type leafref {
+                path "/etrunk:etrunk/etrunk:instances/etrunk:instance/etrunk:id";
+              }
+              mandatory true;
+              description
+                "Etrunk ID.";
+            }
+            leaf ethtrunk-name {
+              type leafref {
+                path "/etrunk:etrunk/etrunk:instances/etrunk:instance[etrunk:id=current()/../etrunk-id]/etrunk:interfaces/etrunk:interface/etrunk:if-name";
+              }
+              mandatory true;
+              description
+                "Eth-trunk name.";
+            }
+          }
+          case vrrp {
+            description
+              "Specify VRRP as arbitrate protocol.";		  
+            container vrrps {
+              description
+                "List of associated VRRP backup groups.";
+              list vrrp {
+                key "id";
+                unique "mac-type";
+                max-elements  "2";
+                description
+                  "Configure associated VRRP backup group instance.";
+                leaf id {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  must "(count(../../vrrp)=2 and not(../rbs:mac-type='none')) or count(../../vrrp)<=1";
+                  description
+                    "ID of the associated VRRP backup group.";
+                }
+                leaf if-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  mandatory true;
+                  description
+                    "Name of the interface where the associated VRRP backup group resides.";
+                }
+                leaf mac-type {
+                  ext:operation-exclude update {
+                    description 
+                      "The mac type cannot be updated.";
+                  }
+                  type vrrp-mac-type;
+                  default "none";
+                  description
+                    "VRRP association mode.";
+                }				
+                leaf local-state {
+                  type rbp-state;
+                  config false;
+                  description
+                    "Local RBP status.";
+                }
+                leaf peer-state {
+                  type rbp-state;
+                  config false;
+                  description
+                    "Peer RBP status.";
+                }
+              }
+            }
+          }
+        }
+        container service-types {
+          description
+            "List of RBS types.";
+          list service-type {
+            key "type";
+            description
+              "Configure remote backup service.";
+            leaf type {
+              type service-type;
+              description
+                "RBS type.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "RBP extend parameters on interface.";	  
+    container rbs {
+      description
+        "Configure list of interfaces bound to an RBP.";
+      container bind-rbp {
+        description
+          "Configure interface bound to an RBP.";
+        leaf name {
+          type leafref {
+            path "/rbs:rbs/rbs:profiles/rbs:profile/rbs:name";
+          }
+          must "not(/rbs:rbs/rbs:profiles/rbs:profile[rbs:name=current()]/rbs:vrrps) or (/rbs:rbs/rbs:profiles/rbs:profile[rbs:name=current()]/rbs:vrrps/rbs:vrrp[rbs:mac-type='none'])";
+          description
+            "Name of an interface bound to an RBP.";
+          ext:support-filter "true";
+        }
+      }
+    }
+  }  
+}

@@ -1,0 +1,94 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-dhcp-snooping {
+  yang-version 1;
+  belongs-to huawei-dhcp {
+    prefix dhcp;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This module contains a collection of YANG definitions for managing DHCP snooping.";
+  revision 2019-04-29 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  grouping dhcp-snooping-type {
+    description
+      "DHCP snooping.";
+    container global {
+      must "(not (user-bind-auto-save-enable='true') and not (user-bind-file-name)) or (user-bind-auto-save-enable='true' and user-bind-file-name)";
+      description
+        "Configure global attributes of DHCP snooping.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable DHCP snooping globally.";
+      }
+      leaf server-detect-enable {
+        when "../enable='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the check on bogus DHCP servers.";
+      }
+      leaf user-bind-auto-save-enable {
+        when "../enable='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable automatic saving of DHCP snooping binding entries.";
+      }
+      leaf user-bind-file-name {
+        when "../enable='true' and ../user-bind-auto-save-enable='true'"; 
+        type string {
+          length "1..56";
+          pattern '(cfcard:/dhcp/\S+\.tbl)';
+        }
+        description
+          "File name of saving the snooping binding table.";
+      }
+      leaf alarm-threshold {
+        when "../enable='true'";
+        type uint16 {
+          range "1..1000";
+        }
+        default "100";
+        description
+          "Global alarm threshold for DHCP packets.";
+      }
+      leaf arp-detect-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable ARP detection for DHCP users based on DHCP snooping binding entries.";
+      }
+      leaf mac-strict-check-enable {
+        when "../enable='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MAC strict check.";
+      }
+      leaf unicast-cpu-forward-disable {
+        when "../enable='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable CPU forwarding for DHCP snooping unicast packets.";
+      }
+    }
+  }
+}

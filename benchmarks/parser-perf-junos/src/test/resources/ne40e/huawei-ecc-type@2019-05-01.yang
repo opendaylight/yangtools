@@ -1,0 +1,47 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ecc-type {
+  belongs-to huawei-ecc {
+    prefix ecc;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of ecc type submodule.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef ecc-key-type {
+    type enumeration {
+      enum "256" {
+	    value 256;
+        description
+          "Modulus 256.";
+      }
+      enum "384" {
+	    value 384;	  
+        description
+          "Modulus 384.";
+      }
+      enum "521" {
+	    value 521;		  
+        description
+          "Modulus 521.";
+      }
+    }
+    description
+      "Ecc key length.";
+  }
+}

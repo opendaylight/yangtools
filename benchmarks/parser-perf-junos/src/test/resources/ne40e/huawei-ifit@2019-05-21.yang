@@ -1,0 +1,37 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifit {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-ifit";
+  prefix ifit;
+  
+  import huawei-extension {
+    prefix ext;
+  } 
+
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This module contains a collection of YANG definitions IFIT feature.";
+
+    revision 2019-05-21 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "ifit";
+  container ifit {
+    description
+    "IFIT function.";
+  }
+}

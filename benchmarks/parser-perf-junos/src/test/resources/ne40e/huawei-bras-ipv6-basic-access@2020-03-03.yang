@@ -1,0 +1,338 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-ipv6-basic-access {
+  namespace urn:huawei:yang:huawei-bras-ipv6-basic-access;
+  prefix bras-ipv6-basic-access;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-bras-ipv6-address-manage {
+    prefix bras-ipv6-address-manage;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras IPv6 basic access.";
+  revision 2020-03-03 {
+    description
+      "Modify description.";
+    reference "Huawei private.";
+  }
+  revision 2019-11-04 {
+    description
+      "Third revision.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-27 {
+    description
+      "Second revision.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-26 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+
+  typedef bras-ipv6-basic-access-accounting-mode {
+    type enumeration {
+      enum "separate" {
+        value 1;
+        description
+          "Indicates that traffic of IPv4 and IPv6 users is sent to the server separately and then accounted separately.";
+      }
+      enum "identical" {
+        value 2;
+        description
+          "Indicates that traffic of IPv4 and IPv6 users is sent to the server together and then accounted together.";
+      }
+    }
+    description
+      "Accounting mode for IPv4/IPv6 dual-stack users.";
+  }
+  grouping client-option38-group {
+    description
+      "The grouping enables the NE40E to trust the information in the Option 38 field of DHCPv6 messages sent by the client.";
+    container client-option38 {
+      description
+        "Configure the NE40E to trust the information in the Option 38 field of DHCPv6 messages sent by the client.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the NE40E to trust the information in the Option 38 field of DHCPv6 messages sent by the client.";
+      }
+      leaf basinfo-insert-mac {
+        type boolean;
+        must "not(../enable='false' and ../basinfo-insert-mac='true')";
+        default "false";
+        description
+          "Enable/disable insertion of BAS interface information into the Option 38 field of DHCPv6 messages sent by the client.";
+      }
+    }
+  }
+  grouping nd-proxy-group {
+    description
+      "The grouping enables or disable proxy ND on a BAS interface.";
+    container nd-proxy {
+      description
+        "Configure proxy ND on a BAS interface.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable proxy ND on a BAS interface.";
+      }
+    }
+  }
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "Bras domain configuration.";
+    container ipv6-basic-access {
+      description
+        "Configure the IPv6 basic access domain.";
+      container dual-stack-accounting {
+        description
+          "Configure the accounting mode for IPv4/IPv6 dual-stack users.";
+        leaf mode {
+          type bras-ipv6-basic-access-accounting-mode;
+          default "separate";
+          description
+            "Configures the accounting mode for IPv4/IPv6 dual-stack users.";
+        }
+      }
+      container ipv6-pools {
+        description
+          "List of IPv6 address pool in an AAA domain.";
+        list ipv6-pool {
+          key "name";
+          description
+            "Configure an IPv6 address pool to an AAA domain.";
+          leaf name {
+            type leafref {
+              path "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-pools/bras-ipv6-address-manage:ipv6-pool/bras-ipv6-address-manage:name";
+            }
+            must "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-pools/bras-ipv6-address-manage:ipv6-pool[bras-ipv6-address-manage:name=current()]/bras-ipv6-address-manage:type != 'relay'";
+            must "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-pools/bras-ipv6-address-manage:ipv6-pool[bras-ipv6-address-manage:name=current()]/bras-ipv6-address-manage:local/bras-ipv6-address-manage:bind-prefix/bras-ipv6-address-manage:prefix-name or
+              /bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-pools/bras-ipv6-address-manage:ipv6-pool[bras-ipv6-address-manage:name=current()]/bras-ipv6-address-manage:delegation/bras-ipv6-address-manage:bind-prefix/bras-ipv6-address-manage:prefix-name or
+              /bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-pools/bras-ipv6-address-manage:ipv6-pool[bras-ipv6-address-manage:name=current()]/bras-ipv6-address-manage:remote/bras-ipv6-address-manage:bind-prefix/bras-ipv6-address-manage:prefix-name";
+            description
+              "Specifies the name of an IPv6 address pool.";
+          }
+        }
+      }
+      container prefix-assign-mode {
+        description
+          "Configure the IPv6 prefix allocation mode.";
+        leaf unshared {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the IPv6 prefix allocation mode to be the unshared mode. That is, IPv6 users do not share the same IP prefix. By default, the IP prefix allocation mode is the shared mode.";
+        }
+      }
+      container nd-ra-assign-mode {
+        description
+          "Configure the NDRA or DHCPv6 allocation mode.";
+        leaf mode {
+          type enumeration {
+            enum "dhcpv6" {
+              value 0;
+              description
+                "Indicates that DHCPv6 is used to perform other configurations.";
+            }
+            enum "nd-ra" {
+              value 1;
+              description
+                "Indicates that NDRA is used to perform other configurations.";
+            }
+            enum "dhcpv6-enhance" {
+              value 2;
+              description
+                "Enable the DHCPv6 enhanced function, which encapes DNS information in the RA packet when DHCPv6 is used to perform other configuration.";
+            }
+          }
+          default "dhcpv6";
+          description
+            "Enables a user to use either NDRA or DHCPv6 to perform other configurations when NDRA is used to allocate IPv6 addresses.";
+        }
+      }
+      container pppox-assign-mode {
+        description
+          "Configure the pppox allocation mode.";
+        leaf mode {
+          type enumeration {
+            enum "dhcpv6-without-interface-id" {
+              value 0;
+              description
+                "Indicates that the interface ID negotiated not using IPv6CP is specified as the interface ID of the IPv6 address allocated by means of DHCPv6.";
+            }
+            enum "dhcpv6-with-interface-id" {
+              value 1;
+              description
+                "Indicates that the interface ID negotiated using IPv6CP is specified as the interface ID of the IPv6 address allocated by means of DHCPv6.";
+            }
+            enum "nd-ra-without-interface-id" {
+              value 2;
+              description
+                "NDRA is used as an IP address allocation mode for PPPoX users.";
+            }
+          }
+          default "nd-ra-without-interface-id";
+          description
+            "Sets the IP address allocation mode to DHCPv6 for PPPoX users, and specifies the interface ID negotiated using IPv6CP as the interface ID of the IPv6 address allocated by means of DHCPv6.By default, NDRA is used as an IP address allocation mode for PPPoX users.";
+        }
+      }
+      container ipv6-nd-ra-halt {
+        description
+          "Configure the IPv6 nd ra halt.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the halt flag.";
+        }
+      }
+      container ipv6-nd-ra-unicast {
+        description
+          "Configure the IPv6 nd ra unicast.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the unicast flag.";
+        }
+      }
+      container ipv6-usage-threshold {
+        description
+          "Configure an alarm threshold for the IPv6 address usage.";
+        leaf lower {
+          type uint8 {
+            range "0..99";
+          }
+          units %;
+          description
+            "Specifies a lower alarm threshold for the IPv6 address usage.";
+        }
+        leaf upper {
+          type uint8 {
+            range "1..100";
+          }
+          units %;
+          description
+            "Specifies an upper alarm threshold for the IPv6 address usage.";
+        }
+      }
+      container ipoe-pd-address-release {
+        description
+          "Configure a PD address release policy for IPoE users. The configured PD address can be released separately.";
+        leaf separate {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the user to separate the PD stack function.";
+        }
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-subscriber/bras-basic-access:layer2-subscriber" {
+    description
+      "IPv6 basic access configuration of layer2 subscriber.";
+    container authentication-method-ipv6 {
+      must "bind-authentication or (dot1x-authentication or ppp-authentication or (fast-authentication or web-authentication))";
+      description
+        "Configure the authentication method on a BAS interface for IPv6 users.";
+      choice authentication-method {
+        default unbind;
+        description
+          "Choice the authentication method on a BAS interface for IPv6 users.";
+        case bind {
+          description
+            "Configures the bind authentication method on a BAS interface for IPv6 users.";
+          leaf bind-authentication {
+            type empty;
+            description
+              "Indicates binding authentication.";
+          }
+        }
+        case unbind {
+          description
+            "Configures the unbind authentication method on a BAS interface for IPv6 users.";
+          leaf dot1x-authentication {
+            type empty;
+            description
+              "Indicates 802.1x authentication.";
+          }
+          leaf ppp-authentication {
+            type empty;
+            description
+              "Indicates PPP authentication (default authentication method).";
+          }
+          choice fast-web {
+            description
+              "Configures the fast or web authentication method on a BAS interface for IPv6 users.";
+            case fast {
+              description
+                "Configures the fast authentication method on a BAS interface for IPv6 users.";
+              leaf fast-authentication {
+                type empty;
+                description
+                  "Indicates fast authentication.";
+              }
+            }
+            case web {
+              description
+                "Configures the web authentication method on a BAS interface for IPv6 users.";
+              leaf web-authentication {
+                type empty;
+                description
+                  "Indicates web authentication.";
+              }
+            }
+          }
+        }
+      }
+    }
+    container ipv6-nd-trigger {
+      description
+        "Configure packet trigger on the BAS interface.";
+      leaf nd {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable nd packet trigger on the BAS interface.";
+      }
+      leaf ipv6 {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable IPv6 packet trigger on the BAS interface.";
+      }
+    }
+    uses client-option38-group;
+    uses nd-proxy-group;
+  }
+}

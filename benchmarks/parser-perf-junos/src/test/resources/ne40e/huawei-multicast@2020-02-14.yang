@@ -1,0 +1,363 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-multicast {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-multicast";
+  prefix mc;
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Multicast basic service package.";
+  revision 2020-02-14 {
+    description
+      "Add units for some nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-11 {
+    description
+      "Add global-outgoing-interface-limit-counts container.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-17 {
+    description
+      "Add vbdif-extranet-enable leaf.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-30 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mcast-base";
+  typedef rmbase-af-type {
+    type enumeration {
+      enum "ipv4unicast" {
+        value 0;
+        description
+          "IPv4 unicast.";
+      }
+      enum "ipv6unicast" {
+        value 1;
+        description
+          "IPv6 unicast.";
+      }
+    }
+    description
+      "Address family.";
+  }
+
+  typedef outgoing-interface-limit-type {
+    type enumeration {
+      enum "pim-sm" {
+        value 0;
+        description
+          "PIM-SM (Protocol Independent Multicast-Sparse Mode).";
+      }
+    }
+    description
+      "The protocol type of the entry to which the outgoing interface belongs.";
+  }
+  container multicast {
+    description
+      "Multicast basic service package.";
+    container global {
+      description
+        "Configure multicast global configuration.";
+      container ipv4 {
+        description
+          "Configure IPv4 multicast global configuration.";
+        leaf vlanif-extranet-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable multicast VLANIF extranet.";
+        }
+        leaf qinq-extranet-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable multicast QinQ extranet.";
+        }
+        leaf bas-igmp-extranet-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable multicast BAS IGMP extranet.";
+        }
+        leaf vbdif-extranet-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable multicast VBDIF extranet.";
+        }
+      }
+    }
+    container invalid-packet-max-count {
+      description
+        "Configure maximum number of invalid packet settings.";
+      container ipv4 {
+        description
+          "Configure maximum number of invalid IPv4 packets.";
+        leaf igmp-packets {
+          type uint32 {
+            range "1..100";
+          }
+          default "10";
+          description
+            "Maximum number of invalid IGMP packets.";
+        }
+        leaf mvpn-packets {
+          type uint32 {
+            range "1..100";
+          }
+          default "10";
+          description
+            "Maximum number of invalid MVPN packets.";
+        }
+        leaf msdp-packets {
+          type uint32 {
+            range "1..100";
+          }
+          default "10";
+          description
+            "Maximum number of invalid MSDP packets.";
+        }
+        leaf pim-packets {
+          type uint32 {
+            range "1..100";
+          }
+          default "10";
+          description
+            "Maximum number of invalid PIM packets.";
+        }
+        leaf igmp-snooping-packets {
+          type uint32 {
+            range "1..100";
+          }
+          default "10";
+          description
+            "Maximum number of invalid Layer 2 multicast packets.";
+        }
+      }
+      container ipv6 {
+        description
+          "Configure maximum number of invalid IPv6 packets.";   
+        leaf mld-packets {
+          type uint32 {
+            range "1..100";
+          }
+          default "10";
+          description
+            "Maximum number of invalid IGMP packets.";
+        }
+        leaf pim-packets {
+          type uint32 {
+            range "1..100";
+          }
+          default "10";
+          description
+            "Maximum number of invalid PIM packets.";
+        }
+        leaf mld-snooping-packets {
+          type uint32 {
+            range "1..100";
+          }
+          default "10";
+          description
+            "Maximum number of invalid Layer 2 multicast packets.";
+        }
+      }
+    }
+    container ssm-mapping-policys {
+      description
+        "List of SSM Mapping policy.";
+      list ssm-mapping-policy {
+        key "address-family policy-name";
+        description
+          "Configure SSM Mapping policy.";
+        leaf address-family {
+          type rmbase-af-type;
+          description
+            "Address family, which determines whether an address belongs to IPv4 or IPv6.";
+        }
+        leaf policy-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Name of SSM Mapping policy. The value is a string of 1 to 31 case-sensitive characters.";
+        }
+        container groups {
+          description
+            "List of SSM Mapping rule.";
+          list group {
+            key "group-address mask-length source-address";
+            max-elements "1024";
+            description
+              "Configure SSM Mapping rule.";
+            leaf group-address {
+              type inet:ip-address-no-zone;
+              description
+                "Address of a multicast group. In IPv4, the value ranges from 224.0.1.0 to 239.255.255.255, in dotted decimal notation. In IPv6, the value ranges from FF00::0 to FFFF:FFFF::, in hexadecimal notation.";
+            }
+            leaf mask-length {
+              type uint32 {
+                range "0..128";
+              }
+              description
+                "Specify the mask length of a multicast group address. In IPv4, the value ranges from 4 to 32. In IPv6, the value ranges from 16 32 64 and 128.";
+            }
+            leaf source-address {
+              type inet:ip-address-no-zone;
+              description
+                "Specify the address of a multicast source. In the case of an IPv4 address, the value is in dotted decimal notation. In the case of an IPv6 address, the value is in hexadecimal notation.";
+            }
+          }
+        }
+      }
+    }
+    container trap-parameter {
+      presence "trap-parameter-cfg.";
+      description
+        "Enable/disable Multicast trap.";
+      container pim-notification-interval {
+        description
+          "Configure PIM notification.";        
+        leaf interface-election-dr {
+          type uint32 {
+            range "0..65535";
+          }
+          units "s";
+          default "65535";
+          description
+            "Interval at which a DR election trap is sent.";
+        }
+        leaf invalid-join-prune{
+          type uint32 {
+            range "10..65535";
+          }
+          units "s";
+          default "65535";
+          description
+            "Interval at which an invalid JP trap is sent.";
+        }
+        leaf invalid-register{
+          type uint32 {
+            range "10..65535";
+          }
+          units "s";
+          default "65535";
+          description
+            "Interval at which an invalid register trap is sent.";
+        }
+        leaf neighbor-loss {
+          type uint32 {
+            range "0..65535";
+          }
+          units "s";
+          default "0";
+          description
+            "Interval at which a neighbor loss trap is sent.";
+        }
+        leaf new-neighbor {
+          type uint32 {
+            range "0..65535";
+          }
+          units "s";
+          default "0";
+          description
+            "Interval at which a neighbor addition trap is sent.";
+        }
+        leaf rp-mapping-change {
+          type uint32 {
+            range "0..65535";
+          }
+          units "s";
+          default "65535";
+          description
+            "Interval at which an RP change trap is sent.";
+        }
+      }
+    }
+    container global-outgoing-interface-limit-counts {
+      config false;
+      description
+        "List of outgoing interfaces in multicast entries.";
+      list global-outgoing-interface-limit-count {
+        key "address-family limit-type";
+        description
+          "Statistics of outgoing interfaces in multicast entries.";
+        leaf address-family {
+          type rmbase-af-type;
+          description
+            "Address family, which determines whether an address belongs to IPv4 or IPv6.";
+        }
+        leaf limit-type {
+          type outgoing-interface-limit-type;
+          description
+            "The protocol type of the entry to which the outgoing interface belongs.";
+        }
+        leaf limit-value {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "The maximum number of outgoing interfaces.";
+        }
+        leaf upper-threshold-value {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "The upper alarm threshold for the maximum number of outgoing interfaces.";
+        }
+        leaf lower-threshold-value {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "The lower alarm threshold for the maximum number of outbound interfaces.";
+        }
+        leaf total-outgoing-interface-count {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Total number of interfaces in multicast entries.";
+        }
+        leaf star-group-outgoing-interface-count {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Total number of outgoing interfaces in (*, G) entries.";
+        }
+        leaf source-group-outgoing-interface-count {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Total number of outgoing interfaces in (S, G) entries.";
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,620 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mstp {
+  namespace "urn:huawei:yang:huawei-mstp";
+  prefix mstp;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-vlan {
+    prefix vlan;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Multiple spanning tree protocol.";
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mstp";
+  typedef bpdu-filter-type {
+    type enumeration {
+      enum "disable" {
+        value 1;
+        description
+          "Disable the BPDU filter function.";
+      }
+      enum "enable" {
+        value 2;
+        description
+          "Enable the BPDU filter function.";
+      }
+      enum "default" {
+        value 3;
+        description
+          "The default BPDU filter function.";
+      }
+    }
+    description
+      "BPDU filter type.";
+  }
+  typedef compliance-type {
+    type enumeration {
+      enum "auto" {
+        value 1;
+        description
+          "Indicates that the MST BPDU format is self-adaptive.";
+      }
+      enum "dot1s" {
+        value 2;
+        description
+          "Indicates that the MST BPDU format is standard IEEE 802.1s.";
+      }
+      enum "legacy" {
+        value 3;
+        description
+          "Indicates that the MST BPDU format is proprietary.";
+      }
+    }
+    description
+      "MSTP BPDU format type.";
+  }
+  typedef edge-port-type {
+    type enumeration {
+      enum "disable" {
+        value 1;
+        description
+          "Set a port as a non-edge port.";
+      }
+      enum "enable" {
+        value 2;
+        description
+          "Set a port as an edge port.";
+      }
+      enum "default" {
+        value 3;
+        description
+          "Default port.";
+      }
+    }
+    description
+      "Edge port type.";
+  }
+  typedef stp-mode {
+    type enumeration {
+      enum "stp" {
+        value 0;
+        description
+          "Spanning tree protocol mode.";
+      }
+      enum "rstp" {
+        value 2;
+        description
+          "Rapid spanning tree protocol mode.";
+      }
+      enum "mstp" {
+        value 3;
+        description
+          "Multiple ppanning tree protocol mode.";
+      }
+    }
+    description
+      "STP mode.";
+  }
+  typedef path-cost-standard-type {
+    type enumeration {
+      enum "dot1d-1998" {
+        value 1;
+        description
+          "IEEE 802.1D standard used to calculate the path cost.";
+      }
+      enum "dot1t" {
+        value 2;
+        description
+          "IEEE 802.1T standard used to calculate the path cost.";
+      }
+      enum "legacy" {
+        value 3;
+        description
+          "Huawei legacy standard used to calculate the path cost.";
+      }
+    }
+    description
+      "Path Cost Standard.";
+  }
+  typedef point-to-point-type {
+    type enumeration {
+      enum "force-true" {
+        value 1;
+        description
+          "The link type is a point to point link.";
+      }
+      enum "force-false" {
+        value 2;
+        description
+          "The link type is not a point to point link.";
+      }
+      enum "auto" {
+        value 3;
+        description
+          "The spanning tree protocol detects automatically whether the port is connected to a point to point link.";
+      }
+    }
+    description
+      "The link type of a port.";
+  }
+  typedef port-state-type {
+    type enumeration {
+      enum "down" {
+        value 1;
+        description
+          "Down status.";
+      }
+      enum "disabled" {
+        value 2;
+        description
+          "Disabled status.";
+      }
+      enum "forwarding" {
+        value 3;
+        description
+          "Forwarding status.";
+      }
+      enum "learning" {
+        value 4;
+        description
+          "Learning status.";
+      }
+      enum "discarding" {
+        value 5;
+        description
+          "Discarding status.";
+      }
+      enum "inactive" {
+        value 6;
+        description
+          "Inactive status.";
+      }
+    }
+    description
+      "The type of STP port state.";
+  }
+  typedef protection-type {
+    type enumeration {
+      enum "none" {
+        value 1;
+        description
+          "No protection.";
+      }
+      enum "loopback" {
+        value 2;
+        description
+          "Loopback detection.";
+      }
+      enum "bpdu-root" {
+        value 3;
+        description
+          "BPDU and root protection.";
+      }
+      enum "root" {
+        value 4;
+        description
+          "Root protection.";
+      }
+      enum "bpdu" {
+        value 5;
+        description
+          "BPDU protection.";
+      }
+      enum "loop" {
+        value 6;
+        description
+          "Loop protection.";
+      }
+    }
+    description
+      "STP protection type.";
+  }
+  typedef port-role-type {
+    type enumeration {
+      enum "disabled" {
+        value 1;
+        description
+          "Inactive port.";
+      }
+      enum "alternate" {
+        value 2;
+        description
+          "Alternate port.";
+      }
+      enum "backup" {
+        value 3;
+        description
+          "Backup port.";
+      }
+      enum "root" {
+        value 4;
+        description
+          "Root port.";
+      }
+      enum "designated" {
+        value 5;
+        description
+          "Designated port.";
+      }
+      enum "master" {
+        value 6;
+        description
+          "Master Port.";
+      }
+    }
+    description
+      "STP port role.";
+  }
+  typedef root-type {
+    type enumeration {
+      enum "normal" {
+        value 1;
+        description
+          "Configure a device as a normal root bridge of a spanning tree.";
+      }
+      enum "primary" {
+        value 2;
+        description
+          "Configure a device as a primary root bridge of a spanning tree.";
+      }
+      enum "secondary" {
+        value 3;
+        description
+          "Configure a device as a secondary root bridge of a spanning tree.";
+      }
+    }
+    description
+      "STP root type.";
+  }
+  grouping process-common {
+    description
+      "Common attributes of process.";
+    leaf enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable STP/RSTP/MSTP on a device.";
+    }
+    leaf bpdu-protection {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable to configure BPDU protection on an edge port. This function prevents network flapping caused by attack packets.";
+    }
+    leaf max-hops {
+      type uint16 {
+        range "1..40";
+      }
+      default "20";
+      description
+        "Set the maximum hops of a spanning tree in an MST region.";
+    }
+    leaf mode {
+      type stp-mode;
+      default "mstp";
+      description
+        "Set an operation mode for the current MSTP process.";
+    }
+    leaf path-cost-standard {
+      type path-cost-standard-type;
+      default "dot1t";
+      description
+        "Set a standard for calculating the path cost.";
+    }
+    leaf tc-protection {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable to configure the TC BPDU protection function for an MSTP process.";
+    }
+    leaf tc-protection-threshold {
+      type uint32 {
+        range "1..255";
+      }
+      default "1";
+      description
+        "Set the maximum number of TC BPDUs that the MSTP can handle.";
+    }
+    leaf tc-protection-interval {
+      type uint16 {
+        range "1..600";
+      }
+      units s;
+      description
+        "Set the time the MSTP device takes to handle the maximum number of TC BPDUs and immediately refresh forwarding entries.";
+    }
+    leaf timer-factor {
+      type uint8 {
+        range "1..10";
+      }
+      default "3";
+      description
+        "Set a multiplier for the Hello timer. If a device does not receive BPDUs from an upstream device within the timeout period (timeout period = hello time x 3 x timer factor), the spanning tree is calculated again.";
+    }
+    leaf region-name {
+      type string {
+        length "1..32";
+      }
+      ext:dynamic-default;
+      description
+        "Configure an MST region name for a device.";
+    }
+    leaf revision-level {
+      type uint16 {
+        range "0..65535";
+      }
+      default "0";
+      description
+        "Configure a revision level for an MST region.";
+    }
+    leaf forward-delay {
+      type uint16 {
+        range "400..3000";
+      }
+      units "10 ms";
+      must "(../forward-delay) mod 100 = 0";
+      default "1500";
+      description
+        "Set the value of the forward delay. The step is 1000ms.";
+    }
+    leaf hello-time {
+      type uint16 {
+        range "100..1000";
+      }
+      units "10 ms";
+      must "(../hello-time) mod 100 = 0";
+      default "200";
+      description
+        "Set the interval at which BPDUs are sent. The step is 1000ms.";
+    }
+    leaf max-age {
+      type uint16 {
+        range "600..4000";
+      }
+      units "10 ms";
+      must "(../max-age) mod 100 = 0";
+      default "2000";
+      description
+        "Set the BPDU aging time on a port of a device. The step is 1000ms.";
+    }
+  }
+  grouping instance-common {
+    description
+      "Common attributes of instance.";
+    leaf priority {
+      when "../root-type='normal'";
+      type uint32 {
+        range "0..61440";
+      }
+      must "(../priority) mod 4096 = 0";
+      default "32768";
+      description
+        "Set the priority of a device in a spanning tree instance. The default step is 4096, that is, the device can have 16 priorities configured, such as 0, 4096, and 8192. A smaller value indicates a higher priority.";
+    }
+    leaf root-type {
+      type root-type;
+      default "normal";
+      description
+        "Configure the current device as the root bridge of a spanning tree instance.";
+    }
+  }
+  grouping process-instance {
+    description
+      "Configuration of instance.";
+    container default-instance {
+      description
+        "Configure instance.";
+      uses instance-common;
+      leaf vlan-mapping {
+        type pub-type:vlan-range;
+        config false;
+        description
+          "VLAN mappings in instance 0.";
+      }
+    }
+    container instances {
+      description
+        "List of configurations of process instance.";
+      list instance {
+        must "(priority and priority!=32768) or (root-type and root-type!='normal') or vlan-mapping";
+        key "id";
+        description
+          "Configure process instance.";
+        leaf id {
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "Instance ID.";
+        }
+        uses instance-common;
+        leaf vlan-mapping {
+          type pub-type:vlan-range;
+          description
+            "VLAN mappings in instance.";
+        }
+      }
+    }
+  }
+  grouping port-pw-common {
+    description
+      "Common attributes of port and PW.";
+    leaf enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable STP/RSTP/MSTP on PW.";
+    }
+    leaf loop-protection {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable loop protection on the current port.";
+    }
+    leaf no-agreement-check {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable to configure the common fast transition mechanism on the current interface.";
+    }
+    leaf point-to-point {
+      type point-to-point-type;
+      default "auto";
+      description
+        "Set the link type of a port.";
+    }
+    leaf root-protection {
+      type boolean;
+      must "../loop-protection='false' or ../root-protection='false'";
+      default "false";
+      description
+        "Enable/disable root protection on the current port.";
+    }
+    leaf transmit-limit {
+      type uint16 {
+        range "1..255";
+      }
+      description
+        "Set the maximum number of BPDUs sent by the current port within each hello interval.";
+    }
+  }
+  grouping port-common {
+    description
+      "Common attributes of port.";
+    uses port-pw-common;
+    leaf bpdu-filter {
+      type bpdu-filter-type;
+      default "default";
+      description
+        "Specify the current port as a BPDU filter port or a non-BPDU filter port.";
+    }
+    leaf edge-port {
+      type edge-port-type;
+      default "default";
+      description
+        "Specify the current port as an edge port or a non-edge port.";
+    }
+    leaf vpls-sub-interface {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable to configure an interface to instruct its VPLS-bound sub-interfaces to update ARP and MAC entries after the interface receives TC BPDUs.";
+    }
+  }
+  container mstp {
+    description
+      "Multiple spanning tree protocol.";
+    container global {
+      description
+        "Configure MSTP global attributes.";
+      leaf edge-port {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable default configuration of global edge port function.";
+      }
+    }
+    container default-process {
+      description
+        "Configure default MSTP process.";
+      uses process-common;
+      uses process-instance {
+        refine instances/instance/vlan-mapping {
+          must "not(/vlan:vlan/vlan:instances/vlan:instance)";
+        }
+      }
+    }
+    container processs {
+      description
+        "List of MSTP processes.";
+      list process {
+        key "id";
+        description
+          "Configure MSTP process.";
+        leaf id {
+          type uint32 {
+            range "1..256";
+          }
+          description
+            "MSTP process ID.";
+        }
+        uses process-common;
+        uses process-instance {
+          refine instances/instance/vlan-mapping {
+            must "not(/vlan:vlan/vlan:instances/vlan:instance)";
+          }
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:main-interface/ethernet:l2-attribute"{
+    description
+      "MSTP attribute on layer 2 port.";
+    container mstp-attribute {
+      description
+        "Configure MSTP attribute on layer 2 port.";
+      uses port-common {
+        refine enable {
+          default "true";
+          description
+            "Enable/disable STP/RSTP/MSTP on layer 2 port.";		  
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:main-interface" {
+    when "not(/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:main-interface/ethernet:l2-attribute)";
+    description
+      "MSTP attribute on layer 3 port.";
+    container mstp-attribute {
+      presence "MSTP attribute";
+      description
+        "Configure MSTP attribute on layer 3 port.";
+      uses port-common {
+        refine enable {
+          description
+            "Enable/disable STP/RSTP/MSTP on layer 3 port.";		  
+        }
+      }
+    }
+  }
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:ldp-signaling/l2vpn:pws/l2vpn:pw" {
+    description
+      "MSTP attribute on PW.";
+    container mstp-attribute {
+      when "../l2vpn:name and ../../../../l2vpn:work-mode='normal'";
+      description
+        "Configure MSTP attribute on PW.";
+      uses port-pw-common;
+    }
+  }
+}

@@ -1,0 +1,39 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ztp-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-ztp-deviations-CH-NE-X3";
+  prefix "ztp-devs-CH-NE-X3";
+
+  import huawei-ztp {
+    prefix "ztp";
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "ZTP (Zero Touch Provisioning) refers to the function of an automatically loading of version file (including system software, configuration files and patch files) used for powering on a new factory device or an empty configuration device.";
+  revision 2019-09-25 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  deviation /ztp:ztp/ztp:status/ztp:pre-configuration-name {
+    deviate not-supported;
+  }
+  deviation /ztp:set-pre-configuration {
+    deviate not-supported;
+  }
+  deviation /ztp:reset-pre-configuration {
+    deviate not-supported;
+  }
+}

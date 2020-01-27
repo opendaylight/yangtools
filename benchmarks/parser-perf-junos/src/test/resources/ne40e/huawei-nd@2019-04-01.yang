@@ -1,0 +1,589 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-nd {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-nd";
+  prefix nd;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-if-ip {
+    prefix if-ip;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "ND management. This yang file has been replaced by huawei-IPv6-nd.yang.";
+  revision 2019-04-01 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef nd-flag {
+    type enumeration {
+      enum "false" {
+        value 0;
+        description
+          "NO.";
+      }
+      enum "true" {
+        value 1;
+        description
+          "YES.";
+      }
+    }
+    description
+      "Description of nd-flag.";
+  }
+  typedef a-flag {
+    type enumeration {
+      enum "on" {
+        value 1;
+        description
+          "YES.";
+      }
+      enum "off" {
+        value 0;
+        description
+          "NO.";
+      }
+    }
+    description
+      "Description of a-flag.";
+  }
+  typedef o-flag {
+    type enumeration {
+      enum "on" {
+        value 1;
+        description
+          "YES.";
+      }
+      enum "off" {
+        value 0;
+        description
+          "NO.";
+      }
+    }
+    description
+      "Description of o-flag.";
+  }
+  typedef nd-ngb-state {
+    type enumeration {
+      enum "INCMP" {
+        value 0;
+        description
+          "Incomplete.";
+      }
+      enum "REACH" {
+        value 1;
+        description
+          "Reachable.";
+      }
+      enum "STALE" {
+        value 2;
+        description
+          "Stale.";
+      }
+      enum "DELAY" {
+        value 3;
+        description
+          "Delay.";
+      }
+      enum "PROBE" {
+        value 4;
+        description
+          "Probe.";
+      }
+    }
+    description
+      "Description of nd-ngb-state.";
+  }
+  typedef nd-route-preference {
+    type enumeration {
+      enum "MEDIUM" {
+        value 0;
+        description
+          "Preference medium.";
+      }
+      enum "HIGH" {
+        value 1;
+        description
+          "Preference high.";
+      }
+      enum "LOW" {
+        value 3;
+        description
+          "Preference low.";
+      }
+    }
+    description
+      "Description of nd-routePreference.";
+  }
+  typedef nd-nb-type {
+    type enumeration {
+      enum "remote" {
+        value 0;
+        description
+          "Remote.";
+      }
+      enum "static" {
+        value 1;
+        description
+          "Static.";
+      }
+      enum "dynamic" {
+        value 2;
+        description
+          "Dynamic.";
+      }
+    }
+    description
+      "Description of nb-type.";
+  }
+  container nd {
+    status deprecated;
+    description
+      "ND management.";
+	container global {
+      status deprecated;
+      description
+        "Configure ND detect flag.";
+	  leaf na-send-rate-limit {
+        type uint16 {
+          range "1..10240";
+        }
+        default "5000";
+        status deprecated;
+        description
+          "Rate limit of sending NA packet (pps).";
+      }
+	  leaf rs-send-rate-limit {
+        type uint16 {
+          range "1..1000";
+        }
+        default "550";
+        status deprecated;
+        description
+          "Rate limit of sending RS packet (pps).";
+      }
+	  leaf ra-send-rate-limit {
+        type uint16 {
+          range "1..1000";
+        }
+        default "550";
+        status deprecated;
+        description
+          "Rate limit of sending RA packet (pps).";
+      }
+    }
+    container ipv6-neighbors {
+      config false;
+      status deprecated;
+      description
+        "List of information about neighbor entry query.";
+      list ipv6-neighbor {
+        key "if-name ipv6-addr";
+        config false;
+        status deprecated;
+        description
+          "Statistics of query neighbor entries which can be static, or dynamic.";
+        leaf if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          config false;
+          status deprecated;
+          description
+            "Interface name.";
+        }
+        leaf ipv6-addr {
+          type inet:ipv6-address-no-zone;
+          config false;
+          status deprecated;
+          description
+            "IPv6 address of a neighbor entry.";
+        }
+        leaf mac-addr {
+          type pub-type:mac-address;
+          config false;
+          mandatory true;
+          status deprecated;
+          description
+            "MAC address.";
+        }
+        leaf vpnname {
+          type string {
+            length "0..31";
+          }
+          config false;
+          status deprecated;
+          description
+            "VPN name.";
+		  ext:support-filter "true";
+        }
+        leaf vlan-id {
+          type uint32 {
+            range "1..4094";
+          }
+          config false;
+          status deprecated;
+          description
+            "VLAN ID.";
+		  ext:support-filter "true";
+        }
+        leaf state {
+          type nd-ngb-state;
+          config false;
+          status deprecated;
+          description
+            "Status of a neighbor entry.";
+        }
+        leaf static-flag {
+          type nd-nb-type;
+          config false;
+          status deprecated;
+          description
+            "Type of a neighbor entry. The available options are static, dynamic or remote.";
+        }
+        leaf age {
+          type uint32 {
+            range "0..4294967293";
+          }
+          config false;
+          status deprecated;
+          description
+            "Time when a neighbor entry is established.";
+        }
+        leaf is-router {
+          type nd-flag;
+          config false;
+          status deprecated;
+          description
+            "Is a Router.";
+        }
+        leaf cevid {
+          type uint32 {
+            range "1..4094";
+          }
+          config false;
+          status deprecated;
+          description
+            "Inner VLAN tag. If this parameter is not set, the value of the VLAN ID is considered to be 0. If this parameter is set, it indicates that the ND entry is in the associated VLAN.";
+        }
+        leaf strict-flag {
+          type boolean;
+          config false;
+          status deprecated;
+          description
+            "Strict security mode.";
+        }
+        leaf nickname {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          status deprecated;
+          description
+            "Nickname which uniquely identifies an RB on a TRILL network.";
+        }
+        leaf bd-id {
+          type uint32 {
+            range "1..16777215";
+          }
+          config false;
+          status deprecated;
+          description
+            "Bridge-domain ID.";
+        }
+        leaf vni {
+          type uint32 {
+            range "1..16777215";
+          }
+          config false;
+          status deprecated;
+          description
+            "Vxlan VNI.";
+        }
+        leaf source-addr {
+          type inet:ip-address-no-zone;
+          config false;
+          status deprecated;
+          description
+            "Tunnel SourceIPAddr.";
+        }
+        leaf peer-addr {
+          type inet:ip-address-no-zone;
+          config false;
+          status deprecated;
+          description
+            "Tunnel PeerIPAddr.";
+        }
+      }
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/if-ip:ipv6-ifs/if-ip:ipv6-if" {
+    when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/if-ip:name]/ifm:type!='Tunnel' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/if-ip:name]/ifm:type!='LoopBack' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/if-ip:name]/ifm:type!='ServiceIf'";
+    status deprecated;
+    description
+      "All configurations of the ND under the interface.";
+    container nd-collection {
+    status deprecated;
+      description
+        "Configure ND interface configurations.";
+      container if-property {
+      status deprecated;
+        description
+          "Configure ND interface configurations.";
+        leaf retrans-timer {
+          type uint32 {
+            range "1000..4294967295";
+          }
+          units "ms";
+          default "1000";
+          status deprecated;
+          description
+            "To set the retransmission timer of a router.";
+        }
+        leaf nud-reach-time {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Ip-Trunk' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Pos' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Mp-group'";
+          type uint32 {
+            range "1..3600000";
+          }
+          units "ms";
+          default "1200000";
+          status deprecated;
+          description
+            "To set the reachable time of a neighbor.";
+        }
+        leaf attempts-value {
+          type uint32 {
+            range "0..600";
+          }
+          default "1";
+          status deprecated;
+          description
+            "To set the number of sent NS messages during DAD.";
+        }
+        leaf ns-mcast-flag {
+          type nd-flag;
+          status deprecated;
+          description
+            "Flag of enabling multicast.";
+        }
+        leaf max-dyn-nb-num {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Ip-Trunk' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Pos' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Mp-group'";
+          type uint64 {
+            range "0..65536";
+          }
+          default "0";
+          status deprecated;
+          description
+            "The maximum of limitation of dynamic neighbor.";
+        }
+        leaf dad-timeout {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Ip-Trunk' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Pos' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Mp-group'";
+          type uint32 {
+            range "1..60";
+          }
+          default "1";
+          status deprecated;
+          description
+            "Timeout of DAD.";
+        }
+        leaf nud-attempts {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Ip-Trunk' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Pos' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Mp-group'";
+          type uint8 {
+            range "1..10";
+          }
+          default "3";
+          status deprecated;
+          description
+            "ND entries NUD attempts.";
+        }
+        leaf na-glean {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Ip-Trunk' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Pos' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='Mp-group'";
+          type nd-flag;
+          default "false";
+          status deprecated;
+          description
+            "Flag of generating NB when receiving NA packet.";
+        }
+        leaf ma-flag {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='MEth'";
+          type nd-flag;
+          default "false";
+          status deprecated;
+          description
+            "Flag of obtaining the routable address through state-based automatic configuration.";
+        }
+        leaf o-flag {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='MEth'";
+          type nd-flag;
+          default "false";
+          status deprecated;
+          description
+            "To set state-based automatic configuration.";
+        }
+        leaf ra-halt-flag {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='MEth'";
+          type nd-flag;
+          default "true";
+          status deprecated;
+          description
+            "To suppress the advertisement of RA packets.";
+        }
+        leaf max-interval {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='MEth'";
+          type uint32 {
+            range "4..1800";
+          }
+          units "s";
+          default "600";
+          status deprecated;
+          description
+            "Maximum interval.";
+        }
+        leaf ra-preference {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='MEth'";
+          type nd-route-preference;
+          default "MEDIUM";
+          status deprecated;
+          description
+            "RA router preference.";
+        }
+        leaf ra-prefix-flag {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='MEth'";
+          type nd-flag;
+          default "true";
+          status deprecated;
+          description
+            "Flag of RA packet carry prefix information.";
+        }
+        leaf ra-mtu-flag {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type!='MEth'";
+          type nd-flag;
+          default "true";
+          status deprecated;
+          description
+            "Flag of RA Packet Carry MTU Option.";
+        }
+        leaf strict-flag {
+          type boolean;
+          default "false";
+          status deprecated;
+          description
+            "Enable/disable strict security mode.";
+        }
+        leaf ts-fuzz-factor {
+          type uint16 {
+            range "0..1000";
+          }
+          units "s";
+          default "1";
+          status deprecated;
+          description
+            "Fuzz factor for timestamp option.";
+        }
+        leaf ts-clock-drift {
+          type uint8 {
+            range "0..100";
+          }
+          default "1";
+          status deprecated;
+          description
+            "Drift for timestamp option.";
+        }
+        leaf ts-delta {
+          type uint16 {
+            range "0..1000";
+          }
+          units "s";
+          default "300";
+          status deprecated;
+          description
+            "Delta for timestamp option.";
+        }
+        leaf rsa-min-key-len {
+          type uint16 {
+            range "384..3072";
+          }
+          units "bit";
+          must "(../rsa-min-key-len<=../rsa-max-key-len)";
+          default "512";
+          status deprecated;
+          description
+            "The minimum length of acceptable RSA key pair.";
+        }
+        leaf rsa-max-key-len {
+          type uint16 {
+            range "384..3072";
+          }
+          units "bit";
+          must "(../rsa-max-key-len>=../rsa-min-key-len)";
+          default "2048";
+          status deprecated;
+          description
+            "The maximum length of acceptable RSA key pair.";
+        }
+      }
+      container proxys {
+        when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../if-ip:name]/ifm:type!='MEth' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../if-ip:name]/ifm:type!='Ip-Trunk' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../if-ip:name]/ifm:type!='PW-VE'";
+        status deprecated;
+        description
+          "Configure list of ND Proxy.";
+        leaf route-proxy {
+          type nd-flag;
+          default "false";
+          status deprecated;
+          description
+            "Router Proxy.";
+        }
+        leaf inner-vlan-proxy {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:class='sub-interface' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type='Vlanif'";
+          type nd-flag;
+          default "false";
+          status deprecated;
+          description
+            "InnerVLAN Proxy.";
+        }
+        leaf inter-vlan-proxy {
+          when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:class='sub-interface' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../if-ip:name]/ifm:type='Vlanif'";
+          type nd-flag;
+          default "false";
+          status deprecated;
+          description
+            "InterVLAN Proxy.";
+        }
+        leaf anyway-proxy {
+          type nd-flag;
+          default "false";
+          status deprecated;
+          description
+            "Anyway Proxy.";
+        }
+      }
+    }
+  }
+  ext:task-name "nd";
+}

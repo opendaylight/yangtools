@@ -1,0 +1,472 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp-ipv6-srpolicy {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bgp-ipv6-srpolicy";
+  prefix bgp-ipv6-srpolicy;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-bgp {
+    prefix bgp;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-xpl {
+    prefix xpl;
+  }
+  import huawei-bgp-routing-table {
+    prefix bgp-rt;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+   typedef srv6-select-depend-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Default value.";
+      }
+      enum "depend-ip" {
+        value 2;
+        description
+          "Routing-dependent IP iteration.";
+      }
+    }
+    description
+      "The type of nexthop select depend.";
+  }
+  grouping ipv6-srpolicy-route-type {
+    description
+      "IPv6-srpolicy route type.";
+    leaf prefix {
+      type string {
+        length "0..300";
+      }
+      description
+        "SR-policy route prefix.";
+    }
+    leaf im-table-id {
+      type uint32;
+      description
+        "ID of the routing table to which routes are imported.";
+    }
+    leaf from {
+      type inet:ip-address-no-zone;
+      description
+        "Source peer that sends a route.";
+    }
+    leaf local-priority {
+      type uint32;
+      description
+        "Local priority.";
+    }
+    leaf preferred-value {
+      type uint32;
+      description
+        "Preferred value of a protocol.";
+    }
+    leaf preference {
+      type uint8;
+      description
+        "Preference of a route.";
+    }
+    leaf path-as {
+      type string {
+        length "0..300";
+      }
+      description
+        "List of the ASs that packets pass through.";
+    }
+    leaf origin {
+      type bgp-rt:bgp-origin-type;
+      description
+        "Origin of a route.";
+    }
+    leaf med {
+      type uint32;
+      description
+        "Route MED in the attribute node.";
+    }
+    leaf flag-string {
+      type string {
+        length "0..100";
+      }
+      description
+        "Route flag that contains a string of characters.";
+    }
+    leaf worse-reason {
+      type string {
+        length "1..50";
+      }
+      description
+        "Reason why a route is not selected.";
+    }
+    leaf peer-string {
+      type string {
+        length "0..300";
+      }
+      description
+        "List of sending peers.";
+    }
+    leaf time {
+      type uint32;
+      description
+        "Time stamp of a route.";
+    }
+    leaf community {
+      type string {
+        length "1..300";
+      }
+      description
+        "Community attribute of a RPD route.";
+    }
+    leaf extended-community {
+      type string {
+        length "1..300";
+      }
+      description
+        "Extended community attribute.";
+    }
+    leaf originator {
+      type inet:ip-address-no-zone;
+      description
+        "Router ID of the route initiator.";
+    }
+    leaf cluster-list {
+      type string {
+        length "1..300";
+      }
+      description
+        "Cluster list of a RPD route.";
+    }
+    leaf remote-router-id {
+      type inet:ipv4-address-no-zone;
+      description
+        "Router ID of a peer.";
+    }
+    leaf tunnel-encapsulation {
+      type string {
+        length "0..10240";
+      }
+      description
+        "Tunnel Encapsulation Attribute.";
+    }
+    leaf large-community {
+      type string {
+        length "1..200";
+      }
+      description
+        "Large-community attribute information.";
+    }
+    leaf interface-name {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Name of the outbound interface of a route.";
+    }
+    leaf relay-nexthop {
+      type inet:ip-address-no-zone;
+      description
+        "Next hop to which a route is iterated.";
+    }
+    leaf advertise-nexthop {
+      type inet:ip-address-no-zone;
+      description
+        "Advertise nexthop.";
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af" {
+    description
+      "BGP IPv6-srpolicy address family configuration.";
+    container ipv6-srpolicy {
+      when "../bgp:type='ipv6srpolicy'";
+      description
+        "Configure IPv6-family srpolicy options.";
+      container common {
+        description
+          "Configure IPv6-family srpolicy common options.";
+        uses bgp:reflector-cluster-type;
+        leaf reflect-change-path {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable an RR to use an export policy to change route AS_Path. By default, this function is not enabled.";
+        }
+        leaf nexthop-select-depend-type {
+          type srv6-select-depend-type;
+          default "depend-ip";
+          description
+            "Specify the route iteration mode: IP or tunnel. In tunnel mode, the labeled BGP IPv4 route can participate in route selection only after its next hop is iterated to an LSP. In IP 
+            mode, the labeled BGP IPv4 route can participate in route selection only after its next hop is iterated to an IP address. By default, the labeled BGP IPv4 route can participate in route selection 
+            if its next hop can be iterated to an IP address, regardless of whether the LSP of the next hop exists. This allows the RR that is not enabled with MPLS to forward labeled routes. In non-RR 
+            networking or RR networking where the BGP next hop is changed, BGP needs to check whether there is an LSP destined for the next hop. If such an LSP is not found, BGP needs to establish an LSP in 
+            advance. If the default setting is adopted, a labeled BGP IPv4 unicast route may be selected prior to LSP establishment. As a result, services are incorrectly switched before LSP establishment and 
+            service stability is affected. Therefore, allow route selection only after the labeled BGP IPv4 route is iterated to an LSP.";
+        }
+        leaf bestroute-as-path-ignore {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable BGP to ignore the AS_Path attribute when selecting the optimal route. By default, BGP uses the AS_Path attribute as one of route selection rules, and a route with a shorter AS_Path is preferred. After bestroute-as-path-ignore is selected, BGP does not compare the AS_Path length.";
+        }
+        leaf default-local-preference {
+          type uint32;
+          default "100";
+          description
+            "Set the Local-Preference attribute. The value is an integer. The greater the value, the higher the priority. By default, the Local-Preference for BGP is 100. Setting different Local-Preferences affects BGP route selection. When a router that runs BGP has multiple routes to the same destination, the router selects the route with the highest Local-Preference. The Local-Preference is exchanged only between IBGP peers and is not advertised to other ASs.";
+        }        
+        leaf routerid-neglect {
+          type boolean;
+          default "false";
+          description
+          "Enable/disable BGP to ignore router IDs when selecting the optimal route. Comparing router IDs is the last resort in route selection. This means that if one optimal route must be selected and no other parameters can be used to break the tie, router IDs can be used. If this option is selected, the first received route will be selected as the optimal route, and BGP will ignore the router ID and peer address in route selection.";
+        }
+        leaf reflect-between-client {
+          type boolean;
+          default "true";
+          description
+          "Enable/disable route reflection between clients. By default, this function is enabled.";
+        }
+        leaf advertise-ebgp {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable advertise to EBGP peer.";
+        }
+        leaf router-id-filter {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable router ID filtering.";
+        }
+      }
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:peers/bgp:peer/bgp:afs/bgp:af" {
+    description "BGP peer IPv6-srpolicy address family configuration.";
+    container ipv6-srpolicy {
+      when "../bgp:type='ipv6srpolicy'";
+      description
+        "Configure IPv6-family srpolicy options.";
+      leaf advertise-community {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable advertise the community attribute to a peer or a peer group.";
+      }
+      leaf reflect-client {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the local device as a route reflector (RR) and a peer or peer group as its client. This configuration is applicable between IBGP peers only. The configurations of RRs and its clients in an address family are valid only in this address family. Therefore, it is recommended to configure RRs and its clients in the specified address family that is required.";
+      }
+      choice import-policy-type {
+        description
+          "Set route policy or filter.";
+        case rtp-ref {
+          description
+            "Route policy.";
+          leaf import-policy {
+            type leafref {
+              path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+            }
+            description
+              "Specify the filtering policy applied to the routes learned from a peer. By default, no such policy is specified.";
+          }
+        }
+        case xpl-ref {
+          description
+            "Route filter.";
+          container import-filter {
+            description
+              "Configure an import route-filter to filter the routes received from peers. By default, no route-filter is specified to filter the routes imported from peers.";
+            leaf name {
+              type leafref {
+                path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+              }
+              description
+                "Specify an import route-filter name.";
+            }
+            leaf parameter {
+              when "../name";
+              type string {
+                length "1..1609";
+              }
+              description
+                "Specify an import route-filter parameter.";
+            }
+          }
+        }
+      }
+      choice export-policy-type {
+        description
+          "Set route policy or filter.";
+        case rtp-ref {
+          description
+            "Route policy.";
+          leaf export-policy {
+            type leafref {
+              path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+            }
+            description
+              "Specify the filtering policy applied to the routes to be advertised to a peer. By default, no such policy is specified.";
+          }
+        }
+        case xpl-ref {
+          description
+            "Route filter.";
+          container export-filter {
+            description
+              "Configure an export route-filter to filter the routes to be advertised to peers. By default, no route-filter is specified to filter the routes to be advertised to peers.";
+            leaf name {
+              type leafref {
+                path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+              }
+              description
+                "Specify an export route-filter name.";
+            }
+            leaf parameter {
+              when "../name";
+              type string {
+                length "1..1609";
+              }
+              description
+                "Specify an export route-filter parameter.";
+            }
+          }
+        }
+      }
+      leaf advertise-ext-community {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable advertise the extended community attribute to a peer. By default, the extended community attribute is not advertised to any peer.";
+      }
+      leaf allow-as-loop {
+        type uint32 {
+            range "1..10";
+        }
+        description
+          "Allow repetitive local AS numbers. By default, repetitive local AS numbers are not allowed.";
+      }
+      leaf route-update-interval {
+        type uint16 {
+          range "0..600";
+        }
+        units "s";
+        description
+          "Specify the minimum interval at which Update packets are sent. By default, the interval at which Update packets are sent to IBGP peers is 15s, and the interval at which Update packets are sent to EBGP peers is 30s. When routes change, a router will send Update packets to notify its peers. If a route changes frequently, you can set an interval at which Update packets are sent to prevent the router from sending Update packets each time the route changes. This configuration is valid only to the routes learned from peers.";
+        ext:dynamic-default;
+      }
+      leaf graceful-restart-static-timer {
+        type uint32 {
+            range "3600..86400";
+        }
+        units "s";
+        description
+          "Specifies the maximum time during which a peer waits for a BGP session reestablishment in seconds.";
+      }
+      leaf advertise-large-community {
+        type bgp:peer-comm-config-type;
+        default "default";
+        description
+          "Advertise the large community attribute to a peer. By default, the large community attribute is not advertised to any peer.";
+      }
+      uses bgp:as-path-filter-type;
+      uses bgp:route-limit-type;
+    }
+  }
+  augment "/bgp:bgp/bgp:base-process/bgp-rt:bgp-route" {
+    description
+      "BGP IPv6-srpolicy address family routing-table.";
+    container ipv6-srpolicy {
+      config false;
+      description
+        "Statistics of IPv6-srpolicy routes.";
+      container routes {
+        config false;
+        description
+          "List of IPv6-srpolicy routing tables.";
+        list route {
+          key "vpn-name prefix im-table-id from";
+          description
+            "Statistics of IPv6-srpolicy routing table.";
+          uses bgp-rt:routing-table-vpn-name;
+          uses ipv6-srpolicy-route-type;
+        }
+      }
+      container peer-advertise-routes {
+        config false;
+        description
+          "List of displayed advertised route information in an address family.";
+        list peer-advertise-route {
+          key "vpn-name remote-peer-address prefix im-table-id from";
+          description
+            "Statistics of advertised routes.";
+          uses bgp-rt:routing-table-vpn-name;
+          leaf remote-peer-address {
+            type inet:ip-address-no-zone;
+            description
+              "BGP neighbor address.";
+          }
+          uses ipv6-srpolicy-route-type;
+        }
+      }
+      container peer-receive-routes {
+        config false;
+        description
+          "List of displayed received route information in an address family.";
+        list peer-receive-route {
+          key "vpn-name remote-peer-address prefix im-table-id from";
+          description
+            "Statistics of received routes.";
+          uses bgp-rt:routing-table-vpn-name;
+          leaf remote-peer-address {
+            type inet:ip-address-no-zone;
+            description
+              "BGP neighbor address.";
+          }
+          uses ipv6-srpolicy-route-type;
+        }
+      }
+      container statistic {
+        description
+          "Statistics of BGP routes information of srv6-policy address family.";
+        uses bgp-rt:route-total-st-type;
+      }
+    }
+  }
+  ext:task-name "bgp";
+}

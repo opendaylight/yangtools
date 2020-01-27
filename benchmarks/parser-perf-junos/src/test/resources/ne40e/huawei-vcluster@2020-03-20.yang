@@ -1,0 +1,225 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-vcluster {
+  namespace "urn:huawei:yang:huawei-vcluster";
+  prefix vcluster;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Configuration and Information of IPRAN Virtual Cluster Access.";
+  revision 2020-03-20 {
+    description
+      "Fixed some problems.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-10 {
+    description
+      "Fixed some nodes description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-13 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "virtual-cluster";
+  typedef vc-role {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Default is no configuration.";
+      }
+      enum "master" {
+        value 1;
+      description
+          "Role of virtual cluster access is Master.";
+      }
+    }
+    description
+      "Role.";
+  }
+   typedef run-state {
+    type enumeration {
+      enum "init" {
+        value 0;
+        description
+          "Run state of virtual cluster access router is intializtion.";
+      }
+      enum "setup" {
+        value 1;
+        description
+          "Run state of virtual cluster access router is setup.";
+      }
+      enum "registing" {
+        value 2;
+        description
+          "Run state of virtual cluster access router is registing.";
+      }
+      enum "running" {
+        value 3;
+        description
+          "Run state of virtual cluster access router is running.";
+      }
+    }
+    description
+      "VC AP Status Info.";
+  }
+  typedef graceful-restart-state {
+    type enumeration {
+      enum "idle" {
+        value 0;
+        description
+          "GR state of virtual cluster access routert is idle.";
+      }
+      enum "reconnect" {
+        value 1;
+        description
+          "GR state of virtual cluster access router is reconnect.";
+      }
+      enum "recovery" {
+        value 2;
+        description
+          "GR state of virtual cluster access router is recovery.";
+      }
+      enum "aging" {
+        value 3;
+        description
+          "GR state of virtual cluster access router is aging.";
+      }
+    }
+    description
+      "Graceful restart state.";
+  }
+
+  container vcluster {
+    description
+      "Virtual Cluster Access."; 
+    container global {
+      presence
+        "Enable/disable vcluster function."; 
+      description
+        "Configure basic function of virtural cluster.";
+      leaf role {
+        type vc-role;
+        default "default";
+        description
+          "Role of virtual cluster access. Include ap and master. Default is no configuration.";
+      }
+      leaf admin-ip-address {
+        type inet:ip-address;
+        description
+          "Admin IP of virtual cluster access.";
+      }
+      leaf vpn-name {
+        when '../admin-ip-address';
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        default "_public_";
+        description
+          "VPN name.";
+      }
+     leaf keychain-name {
+        type string {
+          length "0..47";
+        }
+        description
+          "Keychain name.";
+      }
+      leaf vc-min-tx-interval {
+        when "../role='master'";
+        type uint32 {
+          range "3..1000";
+        }
+        units "ms";
+        default "50";
+        description
+          "The minimum transmit interval of VC BFD.";
+      }
+      leaf vc-min-rx-interval {
+        when "../role='master'";
+        type uint32 {
+          range "3..1000";
+        }
+        units "ms";
+        default "50";
+        description
+          "The minimum receive interval of VC BFD.";
+      }
+      leaf vc-detect-multiplier {
+        when "../role='master'";
+        type uint32 {
+          range "3..50";
+        }
+        default "3";
+        description
+          "Detection multiplier of VC BFD.";
+      }
+      leaf vc-bit-error-detection {
+        when "../role='master'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable VC bit error detection.";
+      }
+      leaf vp-min-rx-interval {
+        when "../role='master'";
+        type uint32 {
+          range "3..1000";
+        }
+        units "ms";
+        default "10";
+        description
+          "The minimum receive interval of VP BFD.";
+      }
+      leaf vp-min-tx-interval {
+        when "../role='master'";
+        type uint32 {
+          range "3..1000";
+        }
+        units "ms";   
+        default "10";
+        description
+          "The minimum transmit interval of VP BFD.";
+      }
+      leaf vp-detect-multiplier {
+        when "../role='master'";
+        type uint32 {
+          range "3..50";
+        }
+        default "3";
+        description
+          "Detection multiplier of VP BFD.";
+      }
+      leaf vp-bit-error-detection {
+       when "../role='master'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable VP bit error detection.";
+      }
+    }
+  }
+}

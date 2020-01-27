@@ -1,0 +1,68 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-masterkey-type {
+  belongs-to huawei-masterkey {
+    prefix masterkey;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This table is used to query or set master key.";
+  revision 2019-05-22 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef mk-config-type {
+    type enumeration {
+      enum "default" {
+        value 1;
+        description
+          "Default master key.";
+      }
+      enum "user-defined" {
+        value 2;
+        description
+          "User defined master key.";
+      }
+      enum "auto-update" {
+        value 3;
+        description
+          "Auto update master key.";
+      }
+    }
+    description
+      "The config type of master key.";
+  }
+  typedef mk-modify-result {
+    type enumeration {
+      enum "success" {
+        value 1;
+        description
+          "Success.";
+      }
+      enum "operating" {
+        value 2;
+        description
+          "Operating.";
+      }
+      enum "failure" {
+        value 3;
+        description
+          "Failure.";
+      }
+    }
+    description
+      "The status of operation.";
+  }
+}

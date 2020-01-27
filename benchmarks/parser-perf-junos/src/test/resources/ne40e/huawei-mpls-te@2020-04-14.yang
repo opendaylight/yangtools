@@ -1,0 +1,3309 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls-te {
+  namespace "urn:huawei:yang:huawei-mpls-te";
+  prefix mpls-te;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-te {
+    prefix te;
+  }
+  import huawei-tunnel-management {
+    prefix tnlm;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  include huawei-mpls-te-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+  revision 2020-04-14 {
+    description
+      "Modify the type of the affinity attribute.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-17 {
+    description
+      "Fixed some descriptions.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-03 {
+    description
+      "Modify the reverse LSP model.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-25 {
+    description
+      "Description of some nodes and locations of some read-only nodes are fixed.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-17 {
+    description
+      "New add nodes to associate-groups.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-14 {
+    description
+      "Self-ping and self-ping-duration are added.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-13 {
+    description
+      "New add nodes to associate-groups.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-23 {
+    description
+      "New add nodes to configure global.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-14 {
+    description
+      "Modify the value range of the node tunnel-id.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-10 {
+    description
+      "Add tunnel-locks model nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-03 {
+    description
+      "Add auto tunnels and rsvp statistics model nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-17 {
+    description
+      "Adjusting path-type definitions for some nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-07 {
+    description
+      "Adjusting the tunnel-group and associated-groups model.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-14 {
+    description
+      "New add nodes to configure frr switch degrade.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-12 {
+    description
+      "Fixed some issues where YANG models are inappropriate.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-26 {
+    description
+      "Fixed some issues where YANG models are inappropriate.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-16 {
+    description
+      "New add nodes to display MPLS TE tunnel statistic information.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-14 {
+    description
+      "New add nodes to configure p2mp templates and p2p templates.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-08 {
+    description
+      "New add nodes to display MPLS rsvp-te neighbor information.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mpls-te";
+  /*
+   * augment-stmt
+   */
+  augment /mpls:mpls {
+    description
+      "MPLS TE Configuration information augment to module MPLS.";
+    container te {
+      description
+        "Configure MPLS TE parameters.";
+      leaf enable {
+        when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MPLS TE.";
+      }
+      container global {
+        when "../enable='true'";
+        must "(p2mp-leaf-switch-delay-time=0 and p2mp-leaf-delete-delay-time=0) or (not(p2mp-leaf-switch-delay-time) and not(p2mp-leaf-delete-delay-time))";
+        description
+          "Configure global MPLS TE basic parameters.";
+        leaf switch-delay-time {
+          type uint32 {
+            range "0..600000";
+          }
+          units "ms";
+          default "5000";
+          description
+            "Delay time for switching the TE traffic from a Primary CR-LSP to a Modified CR-LSP.";
+        }
+        leaf delete-delay-time {
+          type uint32 {
+            range "0..600000";
+          }
+          units "ms";
+          default "20000";
+          description
+            "Delay time for deleting the Primary CR-LSP after the TE traffic is switched to the Modified CR-LSP.";
+        }
+        leaf frr-timer-weight {
+          type uint32 {
+            range "0..604800";
+          }
+          default "300";
+          description
+            "FRR binding upgrade weight. If the value is 0, stop the FRR timer. The FRR timer interval depends on the value and the number of LSPs.";
+        }
+        leaf frr-switch-delay-time {
+          type uint32 {
+            range "100..1800000";
+          }
+          units "ms";
+          description
+            "When hot-standby and frr exist at the same time, delay time for switching the TE traffic from a Primary CR-LSP to FRR.";
+        }
+        leaf pce-delegate {
+          type delegate-type;
+          default "no";
+          description
+            "Specifies the enabling state of PCE delegation capability.";
+        }
+        leaf pce-inter-layer-delegate {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable PCE inter-layer delegation.";
+        }
+        leaf pce-cleanup-lsp-state {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable PCE clean lsp state.";
+        }
+        leaf pce-cleanup-initiated-lsp {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable PCE cleanup initiated lsp.";
+        }
+        leaf pce-clean-stitch-label {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable PCE cleanup stitch label.";
+        }
+        leaf path-selection {
+          type path-selection-mode;
+          description
+            "Enable path selection and set mode as overload.";
+        }
+        leaf lsp-loopback-clear-time {
+          type uint32 {
+            range "1..2880";
+          }
+          default "5";
+          description
+            "LSP loopback auto clear time.";
+        }
+        leaf ip-prefix-delete-time {
+          type uint32 {
+            range "30..604800";
+          }
+          default "300";
+          description
+            "Auto Primary Tunnel Delete Time.";
+        }
+        leaf slsp-deduct-rsvp-bandwidth {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable rsvp bandwidth deduction.";
+        }
+        leaf reoptimization-link-disable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable global interface reoptimization capability.";
+        }
+        leaf rsvp-entropy-label {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable RSVP P2P tunnel entropy label.";
+        }
+        leaf bandwidth-auto-config-disable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable automatic bandwidth configuration.";
+        }
+        leaf suppress-flapping-disable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the TE LSP flapping suppression.";
+        }
+        leaf path-verification {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable MPLS TE tunnel path verify.";
+        }
+        leaf soft-preemption {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable soft preemption.";
+        }
+        leaf explicit-path-deletion-down {
+          type boolean;
+          default "false";
+          description
+          "Enable/disable SR LSP explicit path deletion down.";
+        }
+        leaf p2mp-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable P2MP TE capability.";
+        }
+        leaf p2mp-auto-frr {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable P2MP TE auto-frr capability.";
+        }
+        leaf p2mp-frr-mbb-type {
+          type mpls-p2mp-te-frr-mbb-type;
+          default "sub-lsp";
+          description
+            "P2MP FRR MBB Mode.";
+        }
+        leaf p2mp-leaf-switch-delay-time {
+          type uint16;
+          units "ms";
+          description
+            "P2MP leaf switch delay time.";
+        }
+        leaf p2mp-leaf-delete-delay-time {
+          type uint16;
+          units "ms";
+          description
+            "P2MP leaf delete delay time.";
+        }
+        leaf auto-frr-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable auto FRR capability.";
+        }
+        leaf auto-frr-self-adapting {
+          when "../auto-frr-enable='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable auto FRR self-adapting.";
+        }
+        leaf auto-frr-reoptimization {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the enabling state of auto bypass Reoptimization.";
+        }
+        leaf auto-frr-frequency {
+          when "../auto-frr-reoptimization='true'";
+          type uint32 {
+            range "60..604800";
+          }
+          default "3600";
+          description
+            "Specifies the frequency of auto bypass Reoptimization.";
+        }
+        leaf auto-bandwidth-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the tunnel's traffic rate sampling switch.";
+        }
+        leaf auto-bandwidth-interval {
+          when "../auto-bandwidth-enable='true'";
+          type uint32 {
+            range "1..604800";
+          }
+          units "s";
+          default "300";
+          description
+            "Set interval of Tunnel traffic rate sampling.";
+        }
+        leaf flood-bandwidth-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable flooding TE link bandwidth periodically capability. When TE LSP reserves or releases bandwidth with the changing rate not reaching the flooding threshold of TE link, it will not flood bandwidth to network. In order to flood bandwidth to network as soon as possible, and to avoid waste of network resource caused by frequent flooding, it will flood changed bandwidth to network periodically.";
+        }
+        leaf flood-bandwidth-interval {
+          when "../flood-bandwidth-enable='true'";
+          type uint32 {
+            range "10..43200";
+          }
+          units "s";
+          default "30";
+          description
+            "Interval at which a TE interface floods bandwidth over the network. The bandwidth that a TE LSP reserves or releases on an interface may be only a small part compared with the reservable bandwidth of the interface, which does not reach the flooding threshold of the interface. To flood the interface bandwidth over the network and avoid frequent flooding, the TE NE is configured to flood bandwidth over the network periodically.";
+        }
+        leaf ds-te-mode {
+          type ds-te-mode-type;
+          must "../ds-te-mode='non-ietf' or (../pce-delegate='no' and ../soft-preemption='false' and ../p2mp-enable='false')";
+          default "non-ietf";
+          description
+            "DS-TE mode.";
+        }
+        container bcm-model {
+          when "../ds-te-mode='ietf'";
+          description
+            "Configure DS-TE bcm.";
+          leaf bcm-mode {
+            type ds-te-bcm-type;
+            default "rdm";
+            description
+              "DS-TE bandwidth constraints model.";
+          }
+        }
+      }
+      container tunnel-locks {
+        description
+          "List of Tunnel locks.";
+        list tunnel-lock {
+          key "name";
+          description
+            "Configure Tunnel lock.";
+          leaf name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Tunnel' and (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:common-attributes/mpls-te:signal-protocol='rsvp-te' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:common-attributes/mpls-te:signal-protocol='segment-routing')";
+            description
+              "Specifies the name of a TE tunnel interface. The name is case-insensitive.";
+          }
+        }
+      }
+      container rsvp {
+        description
+          "Configure MPLS RSVP-TE parameters.";
+        leaf enable {
+          when "../../enable='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable RSVP TE.";
+        }
+        container global {
+          when "../enable='true'";
+          description
+            "Configure global MPLS RSVP-TE.";
+          leaf hello-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable Hello enabling state.";
+          }
+          leaf max-hello-miss-times {
+            when "../hello-enable='true'";
+            type uint32 {
+              range "3..10";
+            }
+            default "3";
+            description
+              "Maximum number of Hello packet loss times. When the number of Hello packet refreshing (from the NE) times exceeds the configured maximum number, and the NE does not receive a response from its peer end, the NE considers that the session with the peer end is lost.";
+          }
+          leaf hello-interval {
+            when "../hello-enable='true'";
+            type uint32 {
+              range "1..25";
+            }
+            units "s";
+            default "3";
+            description
+              "Interval for refreshing Hello packets. It is the interval of refreshing a Hello packet from an NE to its peer after a Hello session is established.";
+          }
+          leaf support-gr-enable {
+            when "../hello-enable='true'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable support GR.";
+          }
+          leaf keep-multiplier {
+            type uint16 {
+              range "3..255";
+            }
+            default "3";
+            description
+              "Timeout multiplier of soft state PSB or RSB. If the local NE does not receive a packet for refreshing the TE LSP soft state from its upstream or downstream neighbor in the period (that is a specified multiplier of the refreshing cycle), the NE considers that the soft state times out and will delete the TE LSP.";
+          }
+          leaf refresh-interval {
+            type uint32 {
+              range "10..65535";
+            }
+            units "s";
+            default "30";
+            description
+              "Cycle of refreshing a PATH or a RESV message (for soft state maintenance).";
+          }
+          leaf resv-confirm-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable reservation confirmation capability. After the reservation confirmation capability is configured on an NE, all starting nodes of TE tunnels whose destinations are the NE will send source reservation confirmation messages to the NE after receiving the RESV messages from the NE. This capability is not applicable for single-direction LSPs. Enabling reservation confirmation capability in the single-direction LSP scenario is not recommended.";
+          }
+          leaf srefresh-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable summary refresh.";
+          }
+          leaf reliable-delivery-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable reliable delivery.";
+          }
+          leaf retransmission-interval {
+            type uint32 {
+              range "500..5000";
+            }
+            units "ms";
+            default "5000";
+            description
+              "Interval at which interface summary messages are retransmitted.";
+          }
+          leaf retransmission-increment-value {
+            type uint32 {
+              range "1..10";
+            }
+            units "ms";
+            default "1";
+            description
+              "Incremental value for retransmitting interface summary. If an NE does not receive a response from the peer end after sending a message to the peer end, the NE will start the retransmission mechanism. The retransmission interval increases with the increase of the retransmission incremental value. The formula is as following: retransmission interval = last retransmission interval * (1 + retransmission incremental value).";
+          }
+          leaf challenge-retransmission-interval {
+            type uint32 {
+              range "500..10000";
+            }
+            units "ms";
+            default "1000";
+            description
+              "Challenge message retransmission interval. If the NE does not receive a response message from the peer end after sending a Challenge message for handshake authentication to the peer end, the NE will retransmit the Challenge message.";
+          }
+          leaf max-challenge-miss-times {
+            type uint32 {
+              range "1..10";
+            }
+            default "3";
+            description
+              "Maximum challenge loss times. If the times of a retransmitting a Challenge message from the NE to its neighbor exceed the maximum challenge loss times, the NE considers that the handshake cannot be established and will not send a Challenge message again.";
+          }
+          leaf is-send-down-reason {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable RSVP send down reason capability. When this command is configured on a non-ingress node, RSVP can send the down reasons to the ingress through path error message and resv tear message.";
+          }
+          leaf transit-rro1 {
+            type transit-rro-type;
+            must "not(../transit-rro1='disable')";
+            default "incoming-with-label";
+            description
+              "Transit-rro1.
+               Special explanation:
+               Constraint: For transit RRO types: The value of the inbound interface type can be incoming or incoming-with-label. The value of the outbound interface type can be outgoing or outgoing-with-label. The value of the router ID type can be router-id or router-id-with-label. The value cannot be set to disable for transit-rro1. If transit-rro1 is configured, one of the inbound interface type, outbound interface type, and router ID type can only be selected form transit RRO types. The transit RRO type of transit-rro1, transit-rro2, and transit-rro3 nodes must be different from one another.";
+          }
+          leaf transit-rro2 {
+            type transit-rro-type;
+            must "(((../transit-rro1='incoming' or ../transit-rro1='incoming-with-label') and not(../transit-rro2='incoming' or ../transit-rro2='incoming-with-label')) or ((../transit-rro1='router-id' or ../transit-rro1='router-id-with-label') and not(../transit-rro2='router-id' or ../transit-rro2='router-id-with-label')) or ((../transit-rro1='outgoing' or ../transit-rro1='outgoing-with-label') and not(../transit-rro2='outgoing' or ../transit-rro2='outgoing-with-label')))";
+            default "router-id-with-label";
+            description
+              "Transit-rro2.
+               Special explanation:
+               Constraint: The value if disable type can be disable. For transit RRO types: The value of the inbound interface type can be incoming or incoming-with-label. The value of the outbound interface type can be outgoing or outgoing-with-label. The value of the router ID type can be router-id or router-id-with-label. If transit-rro2 is configured, this leaf can be set to disable. Or one of the inbound interface type, outbound interface type, and router ID type form transit RRO types can only be selected for transit-rro2 node, and the transit RRO type of transit-rro1, transit-rro2, and transit-rro3 nodes must be different from one another.";
+          }
+          leaf transit-rro3 {
+            type transit-rro-type;
+            must "../transit-rro3='disable' or (((../transit-rro1='incoming' or ../transit-rro1='incoming-with-label') and (((../transit-rro2='outgoing' or ../transit-rro2='outgoing-with-label') and (../transit-rro3='router-id' or ../transit-rro3='router-id-with-label')) or ((../transit-rro2='router-id' or ../transit-rro2='router-id-with-label') and (../transit-rro3='outgoing' or ../transit-rro3='outgoing-with-label')))) or ((../transit-rro1='outgoing' or ../transit-rro1='outgoing-with-label') and (((../transit-rro2='incoming' or ../transit-rro2='incoming-with-label') and (../transit-rro3='router-id' or ../transit-rro3='router-id-with-label')) or ((../transit-rro2='router-id' or ../transit-rro2='router-id-with-label') and (../transit-rro3='incoming' or ../transit-rro3='incoming-with-label')))) or ((../transit-rro1='router-id' or ../transit-rro1='router-id-with-label') and (((../transit-rro2='incoming' or ../transit-rro2='incoming-with-label') and (../transit-rro3='outgoing' or ../transit-rro3='outgoing-with-label')) or ((../transit-rro2='outgoing' or ../transit-rro2='outgoing-with-label') and (../transit-rro3='incoming' or ../transit-rro3='incoming-with-label')))))";
+            default "outgoing";
+            description
+              "Transit-rro3.
+               Special explanation:
+               Constraint: The value if disable type can be disable. For transit RRO types: The value of the inbound interface type can be incoming or incoming-with-label. The value of the outbound interface type can be outgoing or outgoing-with-label. The value of the router ID type can be router-id or router-id-with-label. If transit-rro2 is set to disable, transit-rro3 can only be set to disable, too. Or one of the inbound interface type, outbound interface type, and router ID type can only be selected for transit-rro3 node form transit RRO types, and the transit RRO type of transit-rro1, transit-rro2, and transit-rro3 nodes must be different from one another.";
+          }
+          leaf egress-rro1 {
+            type egress-rro-type;
+            must "not(../egress-rro1='disable')";
+            default "incoming-with-label";
+            description
+              "Egress-rro1.
+               Special explanation:
+               Constraint: For egress RRO types: For egress RRO types: The value of the inbound interface type can be incoming or incoming-with-label. The value of the router ID type can be router-id or router-id-with-label. The value if disable type can be disable. The value cannot be set to disable for egress-rro1. If egress-rro1 is delivered, either the inbound interface type or router ID type can be selected form egress RRO types. The egress RRO type of egress-rro1 must be differ from that of egress-rro2.";
+          }
+          leaf egress-rro2 {
+            type egress-rro-type;
+            must "((../egress-rro1='incoming' or ../egress-rro1='incoming-with-label') and not(../egress-rro2='incoming' or ../egress-rro2='incoming-with-label')) or ((../egress-rro1='router-id' or ../egress-rro1='router-id-with-label') and not(../egress-rro2='router-id' or ../egress-rro2='router-id-with-label'))";
+            default "router-id-with-label";
+            description
+              "Egress-rro2.
+               Special explanation:
+               Constraint: For egress RRO types: The value of the inbound interface type can be incoming or incoming-with-label. The value of the router ID type can be router-id or router-id-with-label. The value if disable type can be disable. If egress-rro2 is configured, this leaf can be set to disable. Or either the inbound interface type or router ID type can be selected form egress RRO types, and the egress RRO type of egress-rro1 must be differ from that of egress-rro2.";
+          }
+          leaf frr-bw-compatible {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable fast-reroute bandwidth storage in memory, and the default mode is float.";
+          }
+          leaf without-affinity {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the session-attribute object in RSVP message without affinity at ingress.";
+          }
+          leaf soft-preempt-interval {
+            type uint32 {
+              range "30..300";
+            }
+            units "s";
+            default "30";
+            description
+              "Interval for soft preempt timer.";
+          }
+          leaf graceful-shutdown-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable graceful shutdown for system.";
+          }
+          leaf graceful-shutdown-time {
+            type uint16 {
+              range "30..1200";
+            }
+            units "s";
+            description
+              "Delayed deletion period of Graceful Shutdown.";
+          }
+          leaf-list nodeid-session {
+            when "../hello-enable='true'";
+            type inet:ip-address;
+            max-elements 128;
+            description
+              "Configure a list of establishes hello sessions with a single-hop or multi-hop neighbor of a specified IP address.";
+          }
+        }
+        container peer-infos {
+          config false;
+          description
+            "List of MPLS RSVP-TE neighbor information.";
+          list peer-info {
+            key "type ip-address";
+            description
+              "Operational state of MPLS RSVP-TE neighbor query information.";
+            leaf type {
+              type neighbor-address-type;
+              description
+                "Type of a neighbor.";
+            }
+            leaf ip-address {
+              type inet:ipv4-address-no-zone;
+              description
+                "IP address of a neighbor.";
+            }
+            leaf local-interface-name {
+              type pub-type:if-name;
+              description
+                "Local interface name for normal neighbor.";
+            }
+            leaf src-instance {
+              type pub-type:hex-binary;
+              description
+                "Src instance of a neighbor.";
+            }
+            leaf neighbor-src-instance {
+              type pub-type:hex-binary;
+              description
+                "Neighbor src instance of a neighbor.";
+            }
+            leaf psb-count {
+              type uint32;
+              description
+                "Psb count of a neighbor.";
+            }
+            leaf rsb-count {
+              type uint32;
+              description
+                "Rsb count of a neighbor.";
+            }
+            leaf hello-type-sent {
+              type neighbor-hello-sent-type;
+              description
+                "Hello type sent of a neighbor.";
+            }
+            leaf hello-extension-enable {
+              type boolean;
+              description
+                "Hello extension of a neighbor.";
+            }
+            leaf srefresh-enable {
+              type boolean;
+              description
+                "Srefresh enable state of a neighbor.";
+            }
+            leaf authentication-enable {
+              type boolean;
+              description
+                "Authentication enable state of a neighbor.";
+            }
+            leaf authentication-type {
+              type neighbor-authentication-type;
+              description
+                "Authentication type of a neighbor.";
+            }
+            leaf keychain-name {
+              type string {
+                length "1..47";
+              }
+              description
+                "Keychain name of a neighbor.";
+            }
+            leaf window-size {
+              type uint8 {
+                range "1..255";
+              }
+              description
+                "Window size of a neighbor.";
+            }
+            leaf last-valid-sequence-h {
+              type uint32;
+              description
+                "Upper 32 bits of last valid sequence number.";
+            }
+            leaf last-valid-sequence-l {
+              type uint32;
+              description
+                "Lower 32 bits of last valid sequence number.";
+            }
+          }
+        }
+        container neighbors {
+          when "../enable='true'";
+          description
+            "List of MPLS RSVP-TE neighbors.";
+          list neighbor {
+            key "peer-ip-address";
+            description
+              "Configure RSVP-TE neighbor information.";
+            leaf peer-ip-address {
+              type inet:ipv4-address-no-zone;
+              description
+                "IP address of a neighbor.";
+            }
+            container authentication {
+              description
+                "Configure Neighbor configuration of RSVP TE authentication.";
+              leaf enable {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable neighbor authentication.";
+              }
+              leaf type {
+                when "../enable='true'";
+                type rsvp-authentication-type;
+                mandatory true;
+                description
+                  "Authentication type on an RSVP-TE neighbor.";
+              }
+              leaf keychain-name {
+                when "../enable='true' and ../type='keychain'";
+                type string {
+                  length "1..47";
+                }
+                mandatory true;
+                ext:case-sensitivity upper2lower;
+                description
+                  "Keychain name. The name is case insensitive.";
+              }
+              leaf md5-password {
+                when "../enable='true' and ../type!='keychain'";
+                type pub-type:password-extend {
+                  pattern '[^ ]+';
+                }
+                mandatory true;
+                description
+                  "Authentication key of a RSVP TE neighbor. The two NEs that configured with neighbor authentication authenticate each other by sending and receiving RSVP packets. The packets that are sent from the local NE to its neighbor carry the authentication information that are calculated based on the authentication key by using the MD5 algorithm. The packets received from the neighbor are also authenticated based on the authentication key. The password is a string ranging from 1 to 255 characters for a plaintext password and 20 to 432 characters for a ciphertext password.";
+              }
+              leaf life-time {
+                when "../enable='true'";
+                type pub-type:time-tick {
+                  range "1..86399";
+                }
+                units "s";
+                default "1800";
+                description
+                  "Authentication lifetime. During the authentication lifetime, RSVP authentication lifetime will be reset after a RSVP packet is received. If no RSVP packet is received when the authentication lifetime times out, the RSVP neighbor will delete the authentication relationship to prevent persistent authentication.";
+              }
+              leaf handshake-enable {
+                when "../enable='true'";
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable the handshake authentication. When RSVP packet authentication is out of order, a handshake will be initiated and authentication will be re-negotiated.";
+              }
+              leaf window-size {
+                when "../enable='true' and ../handshake-enable='true'";
+                type uint32 {
+                  range "1..64";
+                }
+                default "1";
+                description
+                  "Size of an authentication window that is set to prevent information loss caused by packet disorder. If the packet sequence number exceeds the window size, the packet is considered to be out of order.";
+              }
+            }
+          }
+        }
+        container distribute-instances {
+          when "../enable='true'";
+          description
+            "List of RSVP distributed instance.";
+          list distribute-instance {
+            key "instance-name";
+            max-elements "16";
+            description
+              "Configure RSVP distributed instance.";
+            leaf instance-name {
+              type string {
+                length "1..31";
+                pattern '[a-z,A-Z][a-z,A-Z,_,\-,0-9]*';
+              }
+              description
+                "Name of RSVP distributed instance.";
+            }
+            leaf os-group-name {
+              type string {
+                length "1..31";
+              }
+              mandatory true;
+              description
+                "Name of RSVP distributed instance os-group.";
+            }
+          }
+        }
+      }
+      container cspf {
+        when "../enable='true'";
+        description
+          "Configure CSPF parameters.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable CSPF capability.";
+        }
+        leaf preferred-igp {
+          when "../enable='true'";
+          type cspf-igp-type;
+          default "ospf";
+          description
+            "Preferred IGP TEDB in CSPF to calculate path.";
+        }
+        leaf multi-instances-short-path-mode {
+          when "../enable='true'";
+          type cspf-multiple-area-shortpath-mode;
+          default "disable";
+          description
+            "Multiple IGP instances Shortest path Mode.";
+        }
+        leaf tie-breaking {
+          type tebase-tie-breaking;
+          default "random";
+          description
+            "Rules for selecting multiple equal-cost routes. In path computation, if multiple paths meet constraints, a device uses this rule to select a path.
+             Random: randomly selects a path.
+             Least Fill: selects a link with the lowest proportion of used bandwidth to the maximum reservable bandwidth.
+             Most Fill: selects a link with the highest proportion of used bandwidth to the maximum reservable bandwidth.";
+        }
+        leaf path-metric-type {
+          type global-path-metric-type;
+          default "te";
+          description
+            "Referenced metric type of one link for calculating path when creating TE tunnels. The available options IGP and TE, default is TE.";
+        }
+        leaf srlg-path-calculate-mode {
+          type mpls-te-cspf-srlg-path-calculation-mode;
+          default "default";
+          description
+            "SRLG path calculation mode. It is configured on the ingress of a tunnel so that a TE HSB path can be calculated based on the SRLG if TE HSB is enabled.
+             In strict mode, the ingress keeps using the SRLG as a constraint. In preferred mode, SRLG will be considered as a constraint only when the ingress computes a backup CR-LSP at the first time. If the path computation fails, the ingress will no longer uses the SRLG as a constraint.";
+        }
+        leaf fast-notice {
+          when "../enable='true'";
+          type boolean;
+          default  "false";
+          description
+            "Enable/disable CSPF tedb fast notice.";
+        }
+        leaf disable-optimize-mode {
+          when "../enable='true'";
+          type boolean;
+          default  "false";
+          description
+            "Enable/disable CSPF algorithm optimization mode.";
+        }
+        container tedbs {
+          config false;
+          description
+            "List of TEDB records of MPLS-TE.";
+          list tedb {
+            key "igp-type";
+            description
+              "Statistics of TEDB record of MPLS-TE.";
+            leaf igp-type {
+              type tedb-srdb-igp-type;
+              description
+                "IGP type of the node.";
+            }
+            leaf process-id {
+              type uint32;
+              description
+                "Process ID of the IGP protocol.";
+            }
+            leaf area-id {
+              type string {
+                length "1..31";
+              }
+              description
+                "ID of the area where the node resides.";
+            }
+            leaf router-id {
+              type inet:ip-address;
+              description
+                "Router ID of the node.";
+            }
+            leaf link-count {
+              type uint32;
+              description
+                "Number of TE interfaces of the node.";
+            }
+          }
+        }
+        container srdbs {
+          config false;
+          description
+            "List of SRDB records of MPLS-TE.";
+          list srdb {
+            key "process-id area-id igp-type router-id ipv4-node-sid";
+            description
+              "Statistics of SRDB record of MPLS-TE.";
+            leaf process-id {
+              type uint32;
+              description
+                "Process ID of the IGP protocol.";
+            }
+            leaf area-id {
+              type uint32;
+              description
+                "ID of the area where the node resides.";
+            }
+            leaf igp-type {
+              type tedb-srdb-igp-type;
+              description
+                "IGP type of the node.";
+            }
+            leaf router-id {
+              type inet:ip-address;
+              description
+                "Router ID of the node.";
+            }
+            leaf ipv4-node-sid {
+              type uint32 {
+                range "0..65534";
+              }
+              description
+                "SID of the node.";
+            }
+            leaf adjacent-sid-count {
+              type uint32;
+              description
+                "Number of adjacent SID.";
+            }
+          }
+        }
+      }
+      container p2mp-leaf-lists {
+        when "../enable='true'";
+        description
+          "List of p2mp leaf list configuration.";
+        list p2mp-leaf-list {
+          key "name";
+          description
+            "Configure p2mp leaf list.";
+          leaf name {
+            type string {
+              length "1..31";
+              pattern '[^ \?]*';
+            }
+            description
+              "Name of leaf list of P2mp.";
+          }
+          container leafs {
+            description
+              "List of leaf configuration.";
+            list leaf {
+              key "destination";
+              max-elements 1024;
+              description
+                "Configure leaf.";
+              leaf destination {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Leaf destination ip address.";
+              }
+              leaf explicit-path-name {
+                type leafref {
+                  path "/te:te/te:explicit-paths/te:explicit-path/te:name";
+                }
+                description
+                  "Explicit path name of a leaflist. The name is case-insensitive.";
+              }
+            }
+          }
+        }
+      }
+      container p2mp-templates {
+        when "../enable='true'";
+        description
+          "List of P2MP template configuration.";
+        list p2mp-template {
+          must "((not(include-all-affinity-name) and not(include-any-affinity-name) and not(exclude-affinity-name)) or (include-any='0x0' and exclude-any='0x0'))";
+          must "((./bandwidth>=./frr/bandwidth) or (./bandwidth and not(./frr/bandwidth)) or (not(./bandwidth) and not(./frr/bandwidth)))";
+          key "name";
+          description
+            "Configure P2MP template.";
+          leaf name {
+            type string {
+              length "1..31";
+              pattern '[^ ]*';
+            }
+            description
+              "Name of p2mp template.";
+          }
+          leaf cspf-disable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable CSPF of LSP.";
+          }
+          leaf record-route {
+            type record-route-mode;
+            default "disable";
+            description
+              "Route record mode.";
+          }
+          leaf resv-style {
+            type resource-reservation-style;
+            must "../resv-style='se' or ../reoptimization='false'";
+            default "se";
+            description
+              "P2MP Template reservation styles.";
+          }
+          leaf setup-priority {
+            type uint8 {
+              range "0..7";
+            }
+            must '../frr/setup-priority>=../setup-priority and ../setup-priority>=../hold-priority';
+            default "7";
+            description
+              "Specifies a p2mp template setup priority. The smaller the value, the higher the setup priority. 0 is the highest priority.
+               Special explanation:
+               Constraint: The setup priority must be equal to or smaller than its holding priority.";
+          }
+          leaf hold-priority {
+            type uint8 {
+              range "0..7";
+            }
+            must '../frr/hold-priority>=../hold-priority and ../setup-priority>=../hold-priority';
+            default "7";
+            description
+              "Specifies a p2mp template holding priority. The smaller the value, the higher the holding priority. 0 is the highest priority.
+               Special explanation:
+               Constraint: The holding priority must be equal to or larger than its setup priority.";
+          }
+          leaf bandwidth {
+            type uint32 {
+              range "1..4000000000";
+            }
+            units "kbit/s";
+            description
+              "Specifies a tunnel bandwidth.";
+          }
+          leaf reoptimization {
+            type boolean;
+            must "../reoptimization='false' or ../resv-style='se'";
+            default "false";
+            description
+              "Enable/disable auto reoptimization of P2MP Template.";
+          }
+          leaf reoptimization-frequency {
+            type uint32 {
+              range "60..604800";
+            }
+            units "s";
+            must "../reoptimization-frequency=3600 or ../reoptimization='true'";
+            default "3600";
+            description
+              "Frequency of auto reoptimization.";
+          }
+          leaf lsp-tp-outbound {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable traffic policing capability.";
+          }
+          leaf path-metric-type {
+            type tunnel-path-metric-type;
+            default "none";
+            description
+              "Referenced metric type of one link for calculating path when creating TE tunnels. The available options are DEFAULT, IGP and TE, default is inheriting from global configuration.";
+          }
+          leaf tie-breaking {
+            type p2p-tunnel-tie-breaking;
+            default "default";
+            description
+              "Routing rules for a p2mp template with multiple equal-cost routes. Random: Select a link randomly. least fill: Select the link with smallest bandwidth usage. most fill: Select the link with biggest bandwidth usage. By default, routing rules are inherited from the global MPLS TE routing rules. If multiple paths meet certain limits, a path will be selected based on the preceding rules.";
+          }
+          leaf hop-limit {
+            type uint32 {
+              range "1..32";
+            }
+            default "32";
+            description
+              "Hop limit on a TE LSP.";
+          }
+          leaf include-any {
+            type pub-type:hex-binary;
+            default "0x0";
+            description
+              "Administrative group attribute of an LSP (includeAny).";
+          }
+          leaf exclude-any {
+            type pub-type:hex-binary;
+            default "0x0";
+            description
+              "Administrative group attribute of an LSP (excludeAny).";
+          }
+          leaf include-all {
+            type pub-type:hex-binary;
+            config false;
+            description
+              "Administrative group attribute of an LSP (includeAll).";
+          }
+          leaf leaf-list-name {
+            type leafref {
+              path "../../../p2mp-leaf-lists/p2mp-leaf-list/name";
+            }
+            description
+              "Specifies the leaf-list.";
+          }
+          leaf-list include-any-affinity-name {
+            type leafref {
+              path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+            }
+            must "not(../include-all-affinity-name)";
+            max-elements 32;
+            description
+              "Configure affinity name that can be refer to a tunnel to include any.";
+          }
+          leaf-list include-all-affinity-name {
+            type leafref {
+              path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+            }
+            must "not(../include-any-affinity-name)";
+            max-elements 32;
+            description
+              "Configure affinity name that can be refer to a tunnel to include all.";
+          }
+          leaf-list exclude-affinity-name {
+            type leafref {
+              path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+            }
+            max-elements 32;
+            description
+              "Configure tunnel path affinity attribute: exclude.";
+          }
+          leaf refer-number {
+            type uint32;
+            config false;
+            description
+              "Refer number for p2mp template.";
+          }
+          container frr {
+            description
+              "Configure fast reroute attribute of P2MP template.";
+            leaf enable {
+              type boolean;
+              must "../enable='false' or (../../record-route='record-label' and ../../resv-style='se')";
+              default "false";
+              description
+                "Enable/disable fast reroute capability.";
+            }
+            leaf bandwidth-protection-enable {
+              when "../enable='true'";
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the tunnel with fast reroute capability requests bandwidth protection.";
+            }
+            leaf bandwidth {
+              when "../bandwidth-protection-enable='true'";
+              type uint32 {
+                range "1..4000000000";
+              }
+              units "kbit/s";
+              description
+                "FRR-protection bandwidth (kbit/s) requested by an active tunnel. The value cannot exceed the bandwidth of the active tunnel.";
+            }
+            leaf setup-priority {
+              type uint8 {
+                range "0..7";
+              }
+              must "../setup-priority>=../../setup-priority and ../setup-priority>=../hold-priority and ((../setup-priority=7) or ../bandwidth-protection-enable='true')";
+              default "7";
+              description
+                "Setup priority of FRR-protection tunnels. The smaller the value, the higher the setup priority. 0 is the highest priority.
+                 Special explanation:
+                 Constraint: The protection tunnel setup priority cannot exceed the setup priority of the active tunnel.";
+            }
+            leaf hold-priority {
+              type uint8 {
+                range "0..7";
+              }
+              must "../setup-priority>=../hold-priority and ../hold-priority>=../../hold-priority and ((../hold-priority=7) or ../bandwidth-protection-enable='true')";
+              default "7";
+              description
+                "Holding priority of FRR protection tunnels. The smaller the value, the higher the priority. The value 0 is the highest priority.
+                 Special explanation:
+                 Constraint: The protection tunnel holding priority cannot exceed the active tunnel holding priority.";
+            }
+          }
+        }
+      }
+      container p2p-templates {
+        when "../enable='true'";
+        description
+          "List of P2P template configuration.";
+        list p2p-template {
+          must "auto-bandwidth-max-bandwidth>=auto-bandwidth-min-bandwidth";
+          must "((./bandwidth>=./frr/bandwidth) or (./bandwidth and not(./frr/bandwidth)) or (not(./bandwidth) and not(./frr/bandwidth)) or ./frr/bandwidth='0')";
+          key "name";
+          description
+            "Configure P2P template.";
+          leaf name {
+            type string {
+              length "1..31";
+              pattern '[^ ]*';
+            }
+            description
+              "Name of p2p template.";
+          }
+          leaf record-route {
+            type record-route-mode;
+            default "disable";
+            description
+              "Route record mode. The available options are not record, recording routes only, and recording routes and labels.";
+          }
+          leaf resv-style {
+            type resource-reservation-style;
+            must "../resv-style='se' or ../reoptimization='false'";
+            default "se";
+            description
+              "P2P Template reservation styles. SE style: shared explicit style; FF: fixed filter style. The default tunnel reservation style is SE.";
+          }
+          leaf setup-priority {
+            type uint8 {
+              range "0..7";
+            }
+            must "../frr/setup-priority>=../setup-priority and ../setup-priority>=../hold-priority";
+            default "7";
+            description
+              "Specifies a p2p template setup priority. The smaller the value, the higher the setup priority. 0 is the highest priority.
+               Special explanation:
+               Constraint: The setup priority must be equal to or smaller than its holding priority.";
+          }
+          leaf hold-priority {
+            type uint8 {
+              range "0..7";
+            }
+            must "../frr/hold-priority>=../hold-priority and ../setup-priority>=../hold-priority";
+            default "7";
+            description
+              "Specifies a p2p template holding priority. The smaller the value, the higher the holding priority. 0 is the highest priority.
+               Special explanation:
+               Constraint: The holding priority must be equal to or larger than its setup priority.";
+          }
+          leaf bandwidth {
+            type uint32 {
+              range "1..4000000000";
+            }
+            units "kbit/s";
+            description
+              "Specifies a tunnel bandwidth.";
+          }
+          leaf reoptimization {
+            type boolean;
+            must "../reoptimization='false' or ../resv-style='se'";
+            default "false";
+            description
+              "Enable/disable auto reoptimization enabling state of P2P Template.";
+          }
+          leaf reoptimization-frequency {
+            type uint32 {
+              range "60..604800";
+            }
+            units "s";
+            must "../reoptimization-frequency=3600 or ../reoptimization='true'";
+            default "3600";
+            description
+              "Frequency of auto reoptimization.";
+          }
+          leaf lsp-tp-outbound {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable traffic policing enabling state.";
+          }
+          leaf path-metric-type {
+            type tunnel-path-metric-type;
+            default "none";
+            description
+              "Referenced metric type of one link for calculating path when creating TE tunnels. The available options are DEFAULT, IGP and TE, default is inheriting from global configuration.";
+          }
+          leaf tie-breaking {
+            type p2p-tunnel-tie-breaking;
+            default "default";
+            description
+              "Routing rules for a p2p template with multiple equal-cost routes. Random: Select a link randomly. least fill: Select the link with smallest bandwidth usage. most fill: Select the link with biggest bandwidth usage. By default, routing rules are inherited from the global MPLS TE routing rules. If multiple paths meet certain limits, a path will be selected based on the preceding rules.";
+          }
+          leaf auto-bandwidth-mode {
+            type auto-bandwidth-type;
+            default "none";
+            description
+              "Auto bandwidth mode.";
+          }
+          leaf auto-bandwidth-frequency {
+            when "../auto-bandwidth-mode!='none'";
+            type uint32 {
+              range "300..604800";
+            }
+            default "86400";
+            description
+              "Set frequency of auto bandwidth.";
+          }
+          leaf auto-bandwidth-max-bandwidth {
+            when "../auto-bandwidth-mode!='none'";
+            type uint32 {
+              range "0..4000000000";
+            }
+            default "4000000000";
+            description
+              "Set maximum bandwidth.";
+          }
+          leaf auto-bandwidth-min-bandwidth {
+            when "../auto-bandwidth-mode!='none'";
+            type uint32 {
+              range "0..4000000000";
+            }
+            default "0";
+            description
+              "Set minimum bandwidth.";
+          }
+          leaf auto-bandwidth-threshold {
+            when "../auto-bandwidth-mode='adjustment'";
+            type uint32 {
+              range "0..100";
+            }
+            default "0";
+            description
+              "Set the threshold of the adjustment bandwidth.";
+          }
+          leaf auto-bandwidth-threshold-absolute {
+            when "../auto-bandwidth-mode='adjustment'";
+            type uint64 {
+              range "0..4000000000";
+            }
+            default "0";
+            description
+              "Set the absolute minimum bandwidth of the adjustment bandwidth.";
+          }
+          leaf hotstandby-enable {
+            type boolean;
+            must "../hotstandby-enable='false' or (../record-route!='disable' and ../resv-style='se')";
+            default "false";
+            description
+              "Enable/disable hot standby for protecting TE tunnels. When an active LSP is set up successfully, a standby LSP that meets certain limits will be set up to protect the active LSP. When the active LSP fails, the traffic on the active LSP will be switched to the standby LSP.";
+          }
+          leaf hotstandby-revertive-mode {
+            type tunnel-hotstandby-revert-mode;
+            must "../hotstandby-revertive-mode='revertive' or ../hotstandby-enable='true'";
+            default "revertive";
+            description
+              "Hot-standby revertive.";
+          }
+          leaf hotstandby-wtr {
+            type uint32 {
+              range "0..2592000";
+            }
+            units "s";
+            must "../hotstandby-wtr=10 or (../hotstandby-revertive-mode='revertive' and ../hotstandby-enable='true')";
+            default "10";
+            description
+              "Time of waiting recovering back to primary LSP. When hot-standby backup is in use, after primary LSP restores, the traffic will switch to primary LSP after waiting some time instead of switching to primary LSP immediately. This is to avoid frequent switching between primary LSP and backup LSP caused by network flapping.";
+          }
+          leaf hotstandby-path-overlap {
+            type boolean;
+            must "../hotstandby-path-overlap='false' or ../hotstandby-enable='true'";
+            default "false";
+            description
+              "Enable/disable hot-standby LSP can overlap primary LSP. If there is no other path to choose, the hot-standby LSP can overlap the primary LSP.";
+          }
+          leaf hotstandby-dynamic-bandwidth {
+            type boolean;
+            must "../hotstandby-dynamic-bandwidth='false' or ../hotstandby-enable='true'";
+            default "false";
+            description
+              "Enable/disable hot-standby dynamic-bandwidth.";
+          }
+          leaf statistic-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable Statistic.";
+          }
+          leaf entropy-label {
+            type entropy-label-enable;
+            default "default";
+            description
+              "Entropy Label Enable.";
+          }
+          leaf refer-number {
+            type uint32;
+            config false;
+            description
+              "Refer number for p2p template.";
+          }
+          container frr {
+            description
+              "Configure fast reroute attribute of p2p template.";
+            leaf enable {
+              type boolean;
+              must "../enable='false' or (../../record-route='record-label' and ../../resv-style='se')";
+              default "false";
+              description
+                "Enable/disable fast reroute capability.";
+            }
+            leaf bandwidth-protection-enable {
+              when "../enable='true'";
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the tunnel with fast reroute capability requests bandwidth protection.";
+            }
+            leaf bandwidth {
+              when "../bandwidth-protection-enable='true'";
+              type uint32 {
+                range "0..4000000000";
+              }
+              units "kbit/s";
+              description
+                "FRR-protection bandwidth (kbits/s) requested by an active tunnel. The value cannot exceed the bandwidth of the active tunnel.";
+            }
+            leaf setup-priority {
+              type uint8 {
+                range "0..7";
+              }
+              must "../setup-priority>=../../setup-priority and ../setup-priority>=../hold-priority and ((../setup-priority=7) or ../bandwidth-protection-enable='true')";
+              default "7";
+              description
+                "Setup priority of FRR-protection tunnels. The smaller the value, the higher the setup priority. 0 is the highest priority.
+                 Special explanation:
+                 Constraint: The protection tunnel setup priority cannot exceed the setup priority of the active tunnel.";
+            }
+            leaf hold-priority {
+              type uint8 {
+                range "0..7";
+              }
+              must "../setup-priority>=../hold-priority and ../hold-priority>=../../hold-priority and ((../hold-priority=7) or ../bandwidth-protection-enable='true')";
+              default "7";
+              description
+                "Holding priority of FRR protection tunnels. The smaller the value, the higher the priority. The value 0 is the highest priority.
+                 Special explanation:
+                 Constraint: The protection tunnel holding priority cannot exceed the active tunnel holding priority.";
+            }
+          }
+          container lsp-paths {
+            description
+              "List of LSP attribute parameter.";
+            list lsp-path {
+              must "((not(include-all-affinity-name) and not(include-any-affinity-name) and not(exclude-affinity-name)) or (include-any='0x0' and exclude-any='0x0'))";
+              key "path-type";
+              max-elements 1;
+              description
+                "Configure LSP attribute parameter.";
+              leaf path-type {
+                type lsp-path-type;
+                must "../path-type='primary'";
+                description
+                  "Set LSP type. Only support primary type.";
+              }
+              leaf hop-limit {
+                type uint32 {
+                  range "1..32";
+                }
+                default "32";
+                description
+                  "Hop limit on a TE LSP.";
+              }
+              leaf include-all {
+                type pub-type:hex-binary;
+                config false;
+                description
+                  "Administrative group attribute of an LSP (includeAll).";
+              }
+              leaf include-any {
+                type pub-type:hex-binary;
+                default "0x0";
+                description
+                  "Administrative group attribute of an LSP (includeAny).";
+              }
+              leaf exclude-any {
+                type pub-type:hex-binary;
+                default "0x0";
+                description
+                  "Administrative group attribute of an LSP (excludeAny).";
+              }
+              leaf-list include-any-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                must "not(../include-all-affinity-name)";
+                max-elements 32;
+                description
+                  "Configure affinity name that can be refer to a tunnel to include any.";
+              }
+              leaf-list include-all-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                must "not(../include-any-affinity-name)";
+                max-elements 32;
+                description
+                  "Configure affinity name that can be refer to a tunnel to include all."; 
+              }
+              leaf-list exclude-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                max-elements 32;
+                description
+                  "Configure tunnel path affinity attribute: exclude.";
+              }
+            }
+          }
+        }
+      }
+      container ip-prefixs {
+        when "../enable='true'";
+        description
+          "List of IP prefix auto tunnel.";
+        list ip-prefix {
+          key "name";
+          description
+            "Configure IP prefix auto tunnel.";
+          leaf name {
+            type leafref {
+              path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+            }
+            description
+              "Ip prefix name of ip prefix auto tunnel.";
+          }
+          leaf template-name {
+            type leafref {
+              path "../../../p2p-templates/p2p-template/name";
+            }
+            description
+              "Template name of ip prefix auto tunnel.";
+          }
+        }
+      }
+      container te-class-mapping {
+        when "../enable='true'";
+        presence "Enter te-class-mapping view.";
+        description
+          "Enable/disable TE class mapping.";
+        container te-classes {
+          description
+            "List of TE class configuration.";
+          list te-class {
+            key "te-class-mode";
+            unique "te-class-type priority";
+            max-elements 8;
+            description
+              "Configure TE class.";
+            leaf te-class-mode {
+              type te-class-mode-type;
+              description
+                "TE-Class only configured from te-class0 to te-class7.";
+            }
+            leaf te-class-type {
+              type te-class-type;
+              mandatory true;
+              description
+                "Class-Type 0 to 7.";
+            }
+            leaf priority {
+              type uint8 {
+                range "0..7";
+              }
+              mandatory true;
+              description
+                "Class type priority.";
+            }
+            leaf description {
+              type string {
+                length "1..31";
+              }
+              description
+                "Set TE-Class description.";
+            }
+          }
+        }
+      }
+      container associate-groups {
+        when "../enable='true'";
+        description
+          "List of associated tunnel groups.";
+        list associate-group {
+          key "group-id";
+          max-elements "1024";
+          description
+            "Configure associated tunnel group.";
+          leaf group-id {
+            type uint32 {
+              range "1..4294967295";
+            }
+            description
+              "Associated tunnel group id.";
+          }
+          leaf backup-type {
+            type backup-type;
+            default "load-balance";
+            description
+              "Backup type of a tunnel association group.";
+          }
+          container original-tunnels {
+            description
+              "List of original tunnels.";
+            list original-tunnel {
+              must "(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:rsvp-te/mpls-te:split-tunnel='false' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:rsvp-te/mpls-te:ordinary-enable='false' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:rsvp-te/mpls-te:best-effort-enable='false' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:rsvp-te/mpls-te:bypass/mpls-te:enable='false' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:rsvp-te/mpls-te:fast-reroute/mpls-te:mode!='detour-backup' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:rsvp-te/mpls-te:fast-reroute/mpls-te:enable='false') or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:sr-te/mpls-te:split-tunnel='false')";
+              key "name";
+              max-elements "1";
+              description
+                "Configure original tunnel.";
+              leaf name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Tunnel' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:common-attributes/mpls-te:egress-lsr-id and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:common-attributes/mpls-te:tunnel-id";
+                must "../../../backup-type='load-balance' or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:common-attributes/mpls-te:signal-protocol='rsvp-te' )";
+                description
+                  "Original tunnel name.";
+              }
+              leaf state {
+                type associate-tunnel-group-state;
+                config "false";
+                description
+                  "Original tunnel status.";
+              }
+              container split-tunnels {
+                description
+                  "List of split tunnels.";
+                list split-tunnel {
+                  must "(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:common-attributes/mpls-te:signal-protocol='rsvp-te' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:rsvp-te/mpls-te:split-tunnel='true') or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:common-attributes/mpls-te:signal-protocol='segment-routing' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:sr-te/mpls-te:split-tunnel='true')";
+                  must "../../name!=name";
+                  must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:common-attributes/mpls-te:egress-lsr-id=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:common-attributes/mpls-te:egress-lsr-id";
+                  key "name";
+                  max-elements "63";
+                  description
+                    "Configure split tunnel.";
+                  leaf name {
+                    type leafref {
+                      path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                    }
+                    must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Tunnel'";
+                    must "../../../../../backup-type='load-balance' or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/tnlm:tunnel-protocol/mpls-te:te-tunnel/mpls-te:common-attributes/mpls-te:signal-protocol='rsvp-te')";
+                    description
+                      "Split tunnel name.";
+                  }
+                  leaf state {
+                    type associate-tunnel-group-state;
+                    config "false";
+                    description
+                      "Split tunnel status.";
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      container tunnel-statistic {
+        config false;
+        description
+          "Statistics of tunnel about quantities and status.";
+        leaf ingress-tunnel {
+          type uint32;
+          description
+            "Number of tunnels of the ingress.";
+        }
+        leaf ingress-tunnel-up {
+          type uint32;
+          description
+            "Number of up tunnels of the ingress.";
+        }
+        leaf ingress-cr-lsps-up {
+          type uint32;
+          description
+            "Number of up CR-LSPs of the ingress.";
+        }
+        leaf ingress-tunnel-modified {
+          type uint32;
+          description
+            "Number of modified tunnels of the ingress.";
+        }
+        leaf ingress-tunnel-in-progress {
+          type uint32;
+          description
+            "Number of being-created tunnels of the ingress.";
+        }
+        leaf ingress-tunnel-failed {
+          type uint32;
+          description
+            "Number of down tunnels of the ingress.";
+        }
+        leaf transit-tunnel-up {
+          type uint32;
+          description
+            "Number of up tunnels of the transit node.";
+        }
+        leaf egress-tunnel-up {
+          type uint32;
+          description
+            "Number of up tunnels of the egress.";
+        }
+        leaf tunnel-group-count {
+          type uint32;
+          description
+            "Tunnel group statistic.";
+        }
+        leaf p2mp-tunnel-count {
+          type uint32;
+          description
+            "Total number of p2mp tunnel.";
+        }
+      }
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance/mpls:mpls {
+    description
+      "MPLS TE Configuration information augment to network instance.";
+    container te {
+      when "/mpls:mpls/mpls-te:te/mpls-te:enable='true'";
+      description
+        "Configure MPLS TE parameters.";
+    }
+  }
+  augment /ifm:ifm/ifm:interfaces/ifm:interface/tnlm:tunnel-protocol/tnlm:type {
+    description
+      "MPLS TE Tunnel Configuration information augment to tnlm.";
+    case mpls-te {
+      when "/mpls:mpls/mpls-te:te/mpls-te:enable='true'";
+      description
+        "Tunnel protocol MPLS te.";
+      container te-tunnel {
+        presence "Specifies tunnel-protocol MPLS TE.";
+        description
+          "Enable/disable MPLS TE tunnel.";
+        container common-attributes {
+          description
+            "Configure Te tunnel common attributes.";
+          leaf signal-protocol {
+            type te-tunnel-signal-protocol;
+            default "rsvp-te";
+            description
+              "MPLS-TE tunnel signal-protocol.";
+          }
+          leaf tunnel-id {
+            type uint16 {
+              range "1..32768";
+            }
+            description
+              "Session ID of a tunnel.
+               Special explanation:
+               Range: The min value of MPLSTunnelIndex leaf is 1, and max value is dynamic.";
+          }
+          leaf egress-lsr-id {
+            type inet:ipv4-address-no-zone;
+            description
+              "Specifies egress LSR ID of the tunnel.";
+          }
+          leaf reserved-for-binding {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the tunnel can transmit only the service of the specified VPN.";
+          }
+          leaf lsp-tp-outbound {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable traffic policing enabling state.";
+          }
+          leaf statistic-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable TE tunnel interface statistic enabling state.";
+          }
+        }
+        container rsvp-te {
+          when "../common-attributes/signal-protocol='rsvp-te'";
+          description
+            "Configure TE E2E Dynamic unicast tunnel.";
+          leaf signalled-tunnel-name {
+            type string {
+              length "1..63";
+              pattern '[a-z,A-Z,_][^ /]*';
+            }
+            description
+              "User Defined el Name, use tunnel interface name as default. The first character cannot be numbers. And cannot use physical interface name.";
+          }
+          leaf traffic-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable traffic for a tunnel.";
+          }
+          leaf bandwidth {
+            type uint32 {
+              range "0..4000000000";
+            }
+            units "kbit/s";
+            must "../fast-reroute/bypass-attributes/frr-bandwidth and ../bandwidth>=../fast-reroute/bypass-attributes/frr-bandwidth or not(../fast-reroute/bypass-attributes/frr-bandwidth)";
+            default "0";
+            description
+              "Specifies a tunnel bandwidth.";
+          }
+          leaf class-type {
+            when "/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:ds-te-mode='ietf'";
+            type te-class-type;
+            must "../class-type='ct0' or ../bandwidth!=0";
+            default "ct0";
+            description
+              "The class type for IETF mode.";
+          }
+          leaf setup-priority {
+            type uint8 {
+              range "0..7";
+            }
+            must "((../fast-reroute/bypass-attributes/setup-priority>=../setup-priority) or not(../fast-reroute/bypass-attributes/setup-priority)) and ((../setup-priority>=../hold-priority) or (../setup-priority='7' and not(../hold-priority)))";
+            default "7";
+            description
+              "Specifies a tunnel setup priority. The smaller the value, the higher the setup priority. 0 is the highest priority.";
+          }
+          leaf hold-priority {
+            type uint8 {
+              range "0..7";
+            }
+            must "((../fast-reroute/bypass-attributes/hold-priority>=../hold-priority) or not(../fast-reroute/bypass-attributes/hold-priority)) and ((../setup-priority>=../hold-priority) or not(../setup-priority))";
+            default "7";
+            description
+              "Specifies a tunnel holding priority. The smaller the value, the higher the holding priority. 0 is the highest priority.";
+          }
+          leaf ordinary-enable {
+            type boolean;
+            must "(../ordinary-enable='false') or (../ordinary-enable='true' and ../record-route!='disable')";
+            default "false";
+            description
+              "Enable/disable a tunnel ordinary backup protection capability. When it is enabled, and the primary LSP fails, a backup LSP that meets certain limits will be set up. Then, the traffic on the primary LSP will be switched to the backup LSP.";
+          }
+          leaf best-effort-enable {
+            type boolean;
+            must "(../best-effort-enable='false') or (../best-effort-enable='true' and ../record-route!='disable')";
+            default "false";
+            description
+              "Enable/disable best-effort path protection of tunnels. When best-effort path is enabled for a TE tunnel, and both active and standby LSP fail, an LSP will be set up in the best effort method.";
+          }
+          leaf backup-frr-inuse {
+            when "../ordinary-enable='true' or ../hotstandby";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the capability of creating backup lsp during frr in use. When configured fast-reroute and backup protection, and the tunnel is down, it will switch to frr-in-use, and it will try to restore the primary LSP, if you configure this capability, the same time, it will try to create backup LSP. This capability depends on configuration of enabling hot-standby or ordinary.";
+          }
+          leaf path-disjoint-calculate {
+            type boolean;
+            must "(../path-disjoint-calculate='false') or (../path-disjoint-calculate='true' and ../hotstandby)";
+            default "false";
+            description
+              "Enable/disable the capability of calculate fully disjoint path for main and hot-standby.";
+          }
+          leaf soft-preempt-enable {
+            type boolean;
+            must "(../reserve-style='se' and ../soft-preempt-enable='true') or (../soft-preempt-enable='false')";
+            default "false";
+            description
+              "Enable/disable soft preempt.";
+          }
+          leaf disable-cspf {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable Cspf of a Tunnel.";
+          }
+          leaf reserve-style {
+            type resource-reservation-style;
+            must "(../reserve-style='ff' and ../best-effort-enable='false' and ../ordinary-enable='false' and ../fast-reroute/enable='false' and ../reoptimization='false' and ../soft-preempt-enable='false') or (../reserve-style='se')";
+            default "se";
+            description
+              "Tunnel reservation styles.";
+          }
+          leaf record-route {
+            type record-route-mode;
+            default "disable";
+            description
+              "Route record mode of a tunnel.";
+          }
+          leaf reoptimization {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable auto reoptimization enabling state of TE Tunnel.";
+          } 
+          leaf reoptimization-frequency {
+            type uint32 {
+              range "60..604800";
+            }
+            units "s";
+            must "../reoptimization-frequency=3600 or ../reoptimization='true'";
+            default "3600";
+            description
+              "Frequency of auto reoptimization.";
+          }
+          leaf inter-area-reoptimization {
+            type boolean;
+            must "../inter-area-reoptimization='false' or ../reoptimization='true'";
+            default "false";
+            description
+              "Enable/disable inter-area reoptimization enabling state of TE Tunnel.";
+          }
+          leaf tie-breaking {
+            type p2p-tunnel-tie-breaking;
+            default "default";
+            description
+              "Routing rules for a tunnel with multiple equal-cost routes. Random: Select a link randomly. least fill: Select the link with smallest bandwidth usage. most fill: Select the link with biggest bandwidth usage. By default, routing rules are inherited from the global MPLS TE routing rules. If multiple paths meet certain limits, a path will be selected based on the preceding rules.";
+          }
+          leaf path-metric-type {
+            type tunnel-path-metric-type;
+            default "none";
+            description
+              "Referenced metric type of one link for calculating path when creating TE tunnels. The available options are DEFAULT, IGP and TE, default is inheriting from global configuration.";
+          }
+          leaf metric-inherit-igp {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the TE tunnel metric inherits the IGP metric.";
+          }
+          leaf pce-delegate {
+            type delegate-type;
+            default "no";
+            description
+              "Specifies the enabling state of PCE delegation capability.";
+          }
+          leaf entropy-label {
+            type entropy-label-enable;
+            default "default";
+            description
+              "Entropy Label Enable.";
+          }
+          leaf split-tunnel {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the RSVP-TE tunnel as a split tunnel.";
+          }
+          leaf soft-preempt-block {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable block soft preempt.";
+          }
+          leaf disable-reroute {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable MPLS te rerouting function.";
+          }
+          container fast-reroute {
+            must "(enable='true' and mode and mode='facility-backup') or (enable='false' and not(mode='facility-backup'))";
+            must "not(../disable-reroute='true' and enable='true')";
+            description
+              "Configure fast reroute attribute of a Tunnel.";
+            leaf enable {
+              type boolean;
+              must "(../../record-route='record-label' and ../enable='true') or (../enable='false')";
+              default "false";
+              description
+                "Enable/disable fast reroute capability.";
+            }
+            leaf mode {
+              type tunnel-fast-reroute-type;
+              description
+                "The tunnel with fast reroute mode.";
+            }
+            leaf bandwidth-protection-enable {
+              when "../enable='true'";
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the tunnel with fast reroute capability requests bandwidth protection.";
+            }
+            leaf frr-switch-degrade {
+              when "../enable='true'";
+              type boolean;
+              default "false";
+              description
+                "Enable/disable fast reroute tunnel degrade capability.";
+            }
+            container bypass-attributes {
+              when "../enable='true'";
+              must "((not(include-all-affinity-name) and not(include-any-affinity-name) and not(exclude-affinity-name)) or (include-any='0x0' and exclude-any='0x0'))";
+              description
+                "Configure fast reroute attributes.";
+              leaf frr-bandwidth {
+                when "../../bandwidth-protection-enable='true'";
+                type uint32 {
+                  range "0..4000000000";
+                }
+                units "kbit/s";
+                must '../../../bandwidth>=../frr-bandwidth';
+                description
+                  "FRR-protection bandwidth (kbits/s) requested by an active tunnel. The value cannot exceed the bandwidth of the active tunnel.";
+              }
+              leaf setup-priority {
+                type uint32 {
+                  range "0..7";
+                }
+                must "((../setup-priority>=../../../setup-priority) or (../setup-priority='7' and not(../../../setup-priority))) and ((../setup-priority>=../hold-priority) or (../setup-priority='7' and not(../hold-priority)))";
+                default "7";
+                description
+                  "Setup priority of FRR-protection tunnels. The smaller the value, the higher the setup priority. 0 is the highest priority.
+                   Special explanation:
+                   Constraint: The protection tunnel setup priority cannot exceed the setup priority of the active tunnel.";
+              }
+              leaf hold-priority {
+                type uint32 {
+                  range "0..7";
+                }
+                must "((../hold-priority>=../../../hold-priority) or (../hold-priority='7' and not(../../../hold-priority))) and ((../setup-priority>=../hold-priority) or (not(../setup-priority)))";
+                default "7";
+                description
+                  "Holding priority of FRR protection tunnels. The value 0 is the highest priority.
+                   Special explanation:
+                   Constraint: The protection tunnel holding priority cannot exceed the active tunnel holding priority.";
+              }
+              leaf include-any {
+                type pub-type:hex-binary;
+                default "0x0";
+                description
+                  "Tunnel path management attribute of FRR protection tunnel: Include-any. The attribute is a 32-bit vector. If the management attribute of a link contain any bit in the Include-any attribute field of an LSP, the link can be a candidate LSP link.";
+              }
+              leaf exclude-any {
+                type pub-type:hex-binary;
+                default "0x0";
+                description
+                  "Tunnel path management attribute of FRR protection tunnel: Exclude-any. The management attribute is a 32-bit vector. If the management attribute of a link contains any bit in the Exclude-any attribute field of an LSP, the link cannot be a candidate LSP link.";
+              }
+              leaf include-all {
+                type pub-type:hex-binary;
+                config false;
+                description
+                  "Tunnel path management attribute of FRR protection tunnel: Include-all. The management attribute is a 32-bit vector. The management attribute of a selected link must contain the entire Include-all attribute field of the tunnel.";
+              }
+              leaf-list include-any-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                max-elements 32;
+                description
+                  "Configure affinity name that can be refer to a tunnel to include any.";
+              }
+              leaf-list include-all-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                max-elements 32;
+                description
+                  "Configure affinity name that can be refer to a tunnel to include all."; 
+              }
+              leaf-list exclude-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                max-elements 32;
+                description
+                  "Configure tunnel path affinity attribute: exclude.";
+              }
+            }
+          }
+          container hotstandby {
+            must "../record-route!='disable'";
+            presence "Indicates hotstandby-enable a node is configured."; 
+            description
+              "Enable/disable hot standby for protecting TE tunnels. When an active LSP is set up successfully, a standby LSP that meets certain limits will be set up to protect the active LSP. When the active LSP fails, the traffic on the active LSP will be switched to the standby LSP.";
+            leaf wtr {
+              when "../revertive-mode='revertive'";
+              type uint32 {
+                range "0..2592000";
+              }
+              units "s";
+              default "10";
+              description
+                "Time of waiting recovering back to primary LSP. When hot-standby backup is in use, after primary LSP restores, the traffic will switch to primary LSP after waiting some time instead of switching to primary LSP immediately. This is to avoid frequent switching between primary LSP and backup LSP caused by network flapping.";
+            }
+            leaf revertive-mode {
+              type tunnel-hotstandby-revert-mode;
+              default "revertive";
+              description
+                "Hot-standby revertive. There are two revert modes, e.g. revertive and non-revertive. The default mode is revertive.";
+            }
+            leaf path-overlap {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable hot-standby LSP can overlap primary LSP. If there is no other path to choose, the hot-standby LSP can overlap the primary LSP.";
+            }
+            leaf dynamic-bandwidth {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable hot-standby dynamic bandwidth.";
+            }
+          }
+          container lsp-paths {
+            description
+              "List of LSP path of a tunnel.";
+            list lsp-path {
+              must "((not(include-all-affinity-name) and not(include-any-affinity-name) and not(exclude-affinity-name)) or (include-any='0x0' and exclude-any='0x0'))";
+              key "path-type";
+              max-elements 4;
+              description
+                "Configure LSP path of a tunnel. Four roles are available.";
+              leaf path-type {
+                type te-tunnel-path-type;
+                description
+                  "Path role of a tunnel. The available options are primary (used by primary LSP), hot-standby (used by hot-standby backup LSP), ordinary (used by ordinary backup LSP), and best-effort (used by best-effort LSP).";
+              }
+              leaf explicit-path-name {
+                when "not(../path-type='best-effort')";
+                type leafref {
+                  path "/te:te/te:explicit-paths/te:explicit-path/te:name";
+                }
+                description
+                  "Referenced explicit path by the tunnel. The name is case-insensitive.";
+              }
+              leaf hop-limit {
+                type uint32 {
+                  range "1..32";
+                }
+                default "32";
+                description
+                  "Hop limit on a TE LSP.";
+              }
+              leaf lsp-id {
+                type uint32 {
+                  range "0..65535";
+                }
+                config false;
+                description
+                  "LSP ID of a tunnel path.";
+              }
+              leaf lsp-state {
+                type mpls-te-lsp-status-type;
+                config false;
+                description
+                  "The state of LSP.";
+              }
+              leaf modify-lsp-id {
+                type uint32 {
+                  range "0..65535";
+                }
+                config false;
+                description
+                  "Modified LSP ID of a tunnel path.";
+              }
+              leaf include-all {
+                type pub-type:hex-binary;
+                config false;
+                description
+                  "Tunnel path management attribute: Include-all. The management attribute is a 32-bit vector. The management attribute of a selected link must contain the entire Include-all attribute field of the tunnel.";
+              }
+              leaf include-any {
+                type pub-type:hex-binary;
+                default "0x0";
+                description
+                  "Tunnel path management attribute: Include-any. The attribute is a 32-bit vector. If the management attribute of a link contain any bit in the Include-any attribute field of an LSP, the link can be a candidate LSP link.";
+              }
+              leaf exclude-any {
+                type pub-type:hex-binary;
+                default "0x0";
+                description
+                  "Tunnel path management attribute: Exclude-any. The management attribute is a 32-bit vector. If the management attribute of a link contains any bit in the Exclude-any attribute field of an LSP, the link cannot be a candidate LSP link.";
+              }
+              leaf-list include-any-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                max-elements 32;
+                description
+                  "Configure affinity name that can be refer to a tunnel to include any."; 
+              }
+              leaf-list include-all-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                max-elements 32;
+                description
+                  "Configure affinity name that can be refer to a tunnel to include all."; 
+              }
+              leaf-list exclude-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                max-elements 32;
+                description
+                  "Configure tunnel path affinity attribute: exclude."; 
+              }
+            }
+          }
+          container bypass {
+            description
+              "Configure bypass tunnel attribute.";
+            leaf enable {
+              type boolean;
+              must "(../enable='true' and ../../record-route!='disable') or (../enable='false')";
+              default "false";
+              description
+                "Enable/disable bypass tunnel capability. A bypass tunnel can be enabled to protect a tunnel that requests FRR protection.
+                 Special explanation:
+                 Constraint: A bypass tunnel cannot request FRR protection.";
+            }
+            leaf-list protection-interfaces {
+              type leafref {
+                path "/ni:network-instance/ni:instances/ni:instance/mpls:mpls/mpls:common/mpls:mpls-interfaces/mpls:mpls-interface/mpls:name";
+              }
+              max-elements 24;
+              description
+                "Configure interface that can be protected by a bypass tunnel.";
+            }
+          }
+          container hotstandby-state {
+            config false;
+            description
+              "Operational state of hot-standby informations.";
+            leaf switch-result {
+              type hotstandby-switch-result;
+              description
+                "Hot-standby switching result.";
+            }
+            leaf wtr-state {
+              type boolean;
+              description
+                "Whether the hot-standby WTR timer is running.";
+            }
+            leaf wtr-remaining-time {
+              type uint32 {
+                range "0..2592000";
+              }
+              description
+                "Hot-standby WTR remaining time.";
+            }
+            leaf switch-state {
+              type hotstandby-switch-state;
+              description
+                "Hot-switching status.";
+            }
+            leaf using-overlap {
+              type overlap-type;
+              description
+                "Using HSB path overlapping.";
+            }
+            leaf switch-reason {
+              type hotstandby-switch-reason;
+              description
+                "The reason of hot-stanby LSP switch.";
+            }
+          }
+          container lsps {
+            config false;
+            description
+              "List of LSPs of a tunnel.";
+            list lsp {
+              key "ingress-lsr-id egress-lsr-id session-id lsp-id";
+              max-elements 4;
+              description
+                "Statistics of LSP of a tunnel.";
+              leaf ingress-lsr-id {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Ingress LSR ID.";
+              }
+              leaf egress-lsr-id {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Egress LSR ID.";
+              }
+              leaf session-id {
+                type uint16 {
+                  range "0..65535";
+                }
+                description
+                  "Tunnel ID.";
+              }
+              leaf lsp-id {
+                type uint16 {
+                  range "0..65535";
+                }
+                description
+                  "LSP ID.";
+              }
+              leaf tunnel-role {
+                type te-tunnel-role;
+                description
+                  "Specifies the types of the LSP nodes.";
+              }
+              leaf incoming-interface-name {
+                type pub-type:if-name;
+                description
+                  "LSP incoming interface name. The name is case-insensitive.";
+              }
+              leaf outgoing-interface-name {
+                type pub-type:if-name;
+                description
+                  "LSP outgoing interface name. The name is case-insensitive.";
+              }
+              leaf setup-priority {
+                type uint8 {
+                  range "0..7";
+                }
+                description
+                  "Setup priority of an LSP.";
+              }
+              leaf hold-priority {
+                type uint8 {
+                  range "0..7";
+                }
+                description
+                  "Hold priority of an LSP.";
+              }
+              leaf record-route {
+                type record-route-mode;
+                description
+                  "Route record mode.";
+              }
+              leaf dste-mode {
+                type boolean;
+                description
+                  "Whether DS-TE is used for LSP bandwidth constraints.";
+              }
+              leaf reserved-bandwidth {
+                type uint32 {
+                  range "0..4000000000";
+                }
+                units "kbit/s";
+                description
+                  "Reserved bandwidth for non-DS-TE.";
+              }
+              leaf explicit-path-name {
+                type string {
+                  length "1..128";
+                }
+                description
+                  "Explicit path name of an LSP. The name is case-insensitive.";
+              }
+              leaf include-all {
+                type pub-type:hex-binary;
+                description
+                  "Specifies the Include-all (management group attribute) of an LSP.";
+              }
+              leaf include-any {
+                type pub-type:hex-binary;
+                description
+                  "Specifies the Include-any (management group attribute) of an LSP.";
+              }
+              leaf exclude-any {
+                type pub-type:hex-binary;
+                description
+                  "Specifies the Exclude-any (management group attribute) of an LSP.";
+              }
+              leaf local-protect-enable {
+                type boolean;
+                description
+                  "Specifies the enabling or disabling state of FRR for an LSP.";
+              }
+              leaf local-protect-inuse {
+                type fast-reroute-inuse-state;
+                description
+                  "Specifies the FRR protection state of this LSP.";
+              }
+              leaf bypass-tunnel-name {
+                type string {
+                  length "1..256";
+                }
+                description
+                  "Specifies the name of the bypass tunnel that protects the LSP. The name is case-insensitive.";
+              }
+              leaf permit-bandwidth-share {
+                type boolean;
+                description
+                  "Indicates whether the LSP permits bandwidth sharing.";
+              }
+              leaf lsp-mtu {
+                type uint32 {
+                  range "0..32000000";
+                }
+                description
+                  "Specifies an LSP MTU.";
+              }
+              leaf oper-status {
+                type interface-status;
+                description
+                  "Operation status of an LSP.";
+              }
+              leaf lsp-delegate {
+                type delegate-type;
+                description
+                  "The type of LSP delegation.";
+              }
+              leaf xcindex {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Cross-connect index.";
+              }
+              leaf entropy-label {
+                type boolean;
+                description
+                  "LSP Entropy Label Capability Negotiation Result.";
+              }
+              container ar-hops {
+                description
+                  "List of actual path of an LSP.";
+                list ar-hop {
+                  key "index";
+                  description
+                    "Statistics of actual hop of an LSP.";
+                  leaf index {
+                    type uint32;
+                    description
+                      "Actual hop index.";
+                  }
+                  leaf incomming-type {
+                    type boolean;
+                    description
+                      "Whether the hop is an inbound interface.";
+                  }
+                  leaf ip-address {
+                    type inet:ipv4-address-no-zone;
+                    description
+                      "IP address of the actual hop.";
+                  }
+                  leaf label {
+                    type uint32;
+                    description
+                      "Label of the actual hop.";
+                  }
+                  leaf local-protect-inuse {
+                    type boolean;
+                    description
+                      "FRR protection state.";
+                  }
+                  leaf local-protect-type {
+                    type local-protect-type;
+                    description
+                      "FRR protection type.";
+                  }
+                  leaf bandwidth-protection {
+                    type boolean;
+                    description
+                      "FRR bandwidth protection.";
+                  }
+                }
+              }
+            }
+          }
+          container auto-bandwidths {
+            description
+              "Configure auto bandwidth configuration of a tunnel.";
+            leaf mode {
+              type auto-bandwidth-type;
+              default "none";
+              description
+                "Auto bandwidth mode.";
+            }
+            leaf threshold-percent {
+              when "../mode='adjustment'";
+              type uint8 {
+                range "0..100";
+              }
+              default "0";
+              description
+                "Set the threshold of the adjustment bandwidth.";
+            }
+            leaf threshold-absolute {
+              when "../mode='adjustment'";
+              type uint64 {
+                range "0..4000000000";
+              }
+              default "0";
+              description
+                "Set the absolute minimum bandwidth of the adjustment bandwidth.";
+            }
+            leaf frequency {
+              when "../mode!='none'";
+              type uint32 {
+                range "300..604800";
+              }
+              default "86400";
+              description
+                "Set Frequency of Auto bandwidth.";
+            }
+            leaf max-bandwidth {
+              when "../mode!='none'";
+              type uint64 {
+                range "0..4000000000";
+              }
+              default "4000000000";
+              description
+                "Max Bandwidth.";
+            }
+            leaf min-bandwidth {
+              when "../mode!='none'";
+              type uint64 {
+                range "0..4000000000";
+              }
+              default "0";
+              description
+                "Min Bandwidth.";
+            }
+            leaf overflow-limit {
+              when "../mode='adjustment'";
+              type uint16 {
+                range "2..65535";
+              }
+              description
+                "Overflow Limit.";
+            }
+            leaf underflow-limit {
+              when "../mode='adjustment'";
+              type uint16 {
+                range "2..65535";
+              }
+              description
+                "Underflow Limit.";
+            }
+            leaf threshold-logic {
+              when "../mode='adjustment'";
+              type threshold-logic-type;
+              default "and";
+              description
+                "Set thresholds to adjust the bandwidth of the threshold absolute value and percentage of the effective logic.";
+            }
+          }
+          container bit-error-detection {
+            must '(resume-threshold-pow-value>switch-threshold-pow-value or (switch-threshold-pow-value=resume-threshold-pow-value and not(resume-threshold-coe-value>switch-threshold-coe-value))) or not(switch-threshold-coe-value and switch-threshold-pow-value and resume-threshold-coe-value and resume-threshold-pow-value)';
+            description
+              "Configure bit error detection of LSP.";
+            leaf bit-error-switch {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable bit error detection switch capability.";
+            }
+            leaf detection-mode {
+              when "../bit-error-switch='true'";
+              type bit-error-switch-mode;
+              default "bidirectional";
+              description
+                "Specifies the switch mode. Include unidirectional switching and bidirectional switching.";
+            }
+            leaf switch-threshold-coe-value {
+              type uint8 {
+                range "1..9";
+              }
+              description
+                "Specifies the coefficient value of switch-threshold.";
+            }
+            leaf switch-threshold-pow-value {
+              type uint8 {
+                range "1..7";
+              }
+              description
+                "Specifies the power value of switch-threshold.";
+            }
+            leaf resume-threshold-coe-value {
+              type uint8 {
+                range "1..9";
+              }
+              description
+                "Specifies the coefficient value of resume-threshold.";
+            }
+            leaf resume-threshold-pow-value {
+              type uint8 {
+                range "1..7";
+              }
+              description
+                "Specifies the power value of resume-threshold.";
+            }
+          }
+          container reverse-lsp {
+            presence "Configure the reverse LSP function.";
+            description
+              "Configure reverse LSP of TE tunnel.";
+            leaf ingress-lsr-id {
+              type inet:ipv4-address-no-zone;
+              mandatory true;
+              description
+                "LSP id of a backward tunnel path.";
+            }
+            leaf tunnel-id {
+              type uint16 {
+                range "1..65535";
+              }
+              mandatory true;
+              description
+                "Session id of a backward tunnel.";
+            }
+          }
+          container tunnel-interface {
+            config false;
+            description
+              "Statistics of TE tunnel interface.";
+            leaf ingress-lsr-id {
+              type inet:ipv4-address-no-zone;
+              description
+                "Specifies ingress LSR ID of the tunnel.";
+            }
+            leaf tunnel-ftid {
+              type uint32;
+              description
+                "Tunnel FTID.";
+            }
+            leaf state {
+              type tunnel-state;
+              description
+                "Tunnel status.";
+            }
+            leaf state-description {
+              type tunnel-state-description-type;
+              description
+                "Tunnel state description.";
+            }
+            leaf admin-status {
+              type interface-status;
+              description
+                "Interface administrative status. The available options are Up and Down.";
+            }
+            leaf oper-status {
+              type interface-status;
+              description
+                "Interface operation status. The available options are Up and Down.";
+            }
+            leaf active-lsp-type {
+              type active-lsp-type;
+              description
+                "Type of LSP that is transmitting traffic.";
+            }
+            leaf working-lsp-id {
+              type uint16 {
+                range "0..65535";
+              }
+              description
+                "The working LSP ID of a Tunnel.";
+            }
+            leaf traffic-switch-action {
+              type switch-action-type;
+              description
+                "Traffic switching action.";
+            }
+            leaf current-collect-bandwith {
+              type uint32;
+              description
+                "Existing collected bandwidth in automatic bandwidth adjustment.";
+            }
+            leaf offload-enable {
+              type boolean;
+              description
+                "Whether the offload is enabled.";
+            }
+            leaf offload-frequency {
+              type uint32;
+              description
+                "Offload frequency.";
+            }
+            leaf offload-low-bandwith {
+              type uint32;
+              description
+                "Offload lower bandwidth threshold.";
+            }
+            leaf offload-high-bandwith {
+              type uint32;
+              description
+                "Offload higher bandwidth threshold.";
+            }
+            leaf offload-path-name {
+              type string {
+                length "1..63";
+              }
+              description
+                "UNI explicit path name.";
+            }
+            leaf readjust-bandwith {
+              type uint32;
+              description
+                "UNI tunnel bandwidth.";
+            }
+            leaf excluded-ip {
+              type inet:ipv4-address-no-zone;
+              description
+                "Excluded IP address.";
+            }
+            leaf referred-lsp-count {
+              type uint32;
+              description
+                "Number of referenced LSPs.";
+            }
+            leaf oam-status {
+              type oam-status-type;
+              description
+                "OAM status.";
+            }
+            leaf bfd-status {
+              type bfd-status-type;
+              description
+                "BFD status.";
+            }
+            leaf backup-lsp-type {
+              type tunnel-backup-lsp-type;
+              description
+                "CR-LSP backup type.";
+            }
+            leaf lsp-control-status {
+              type lsp-control-status-type;
+              description
+                "LSP control status.";
+            }
+            leaf auto-bandwidth-remain-time {
+              type uint32;
+              description
+                "Remaining time of automatic bandwidth adjustment.";
+            }
+            leaf reoptimization-remain-time {
+              type uint32;
+              description
+                "Remaining time of automatic re-optimization.";
+            }
+            leaf associate-group-id {
+              type uint32;
+              description
+                "Associated tunnel group ID.";
+            }
+          }
+        }
+        container sr-te {
+          when "../common-attributes/signal-protocol='segment-routing'";
+          description
+            "Configure segment-routing TE tunnel information.";
+          leaf bandwidth {
+            type uint32 {
+              range "0..4000000000";
+            }
+            units "kbit/s";
+            default "0";
+            description
+              "Specifies a tunnel bandwidth.";
+          }
+          leaf setup-priority {
+            type uint8 {
+              range "0..7";
+            }
+            must "(../setup-priority>=../hold-priority) or (../setup-priority='7' and not(../hold-priority))";
+            default "7";
+            description
+              "Specifies a tunnel setup priority. The smaller the value, the higher the setup priority. 0 is the highest priority.
+               Special explanation:
+               Constraint: The setup priority of a tunnel must be equal to or smaller than its holding priority.";
+          }
+          leaf hold-priority {
+            type uint8 {
+              range "0..7";
+            }
+            must "(../setup-priority>=../hold-priority) or not(../setup-priority)";
+            default "7";
+            description
+              "Specifies a tunnel holding priority. The smaller the value, the higher the holding priority. 0 is the highest priority.
+               Special explanation:
+               Constraint: The holding priority of a tunnel must be equal to or larger than its setup priority.";
+          }
+          leaf pce-delegate {
+            type delegate-type;
+            default "no";
+            description
+              "Specifies the enabling state of PCE delegation capability.";
+          }
+          leaf split-tunnel {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable an SR-TE tunnel as a split tunnel.";
+          }
+          leaf binding-sid {
+            type uint32 {
+              range "16..1048575";
+            }
+            description
+              "Working binding SID of a Tunnel.";
+          }
+          leaf reverse-binding-sid {
+            type uint32 {
+              range "16..1048575";
+            }
+            description
+              "The working reverse binding SID of a LSP.";
+          }
+          leaf path-verification {
+            type path-verify-type;
+            default "inherit";
+            description
+              "SR-TE Tunnel path verify.";
+          }
+          leaf adjacency-sid {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable SR-TE tunnel CSPF path select label type adjacency.";
+          }
+          container reoptimization {
+            presence "Indicates reoptimization a node is configured.";  
+            description
+              "Enable/disable auto reoptimization of TE Tunnel.";
+            leaf frequency {
+              type uint32 {
+                range "60..604800";
+              }
+              units "s";
+              default "3600";
+              description
+                "Frequency of auto reoptimization.";
+            }
+          }
+          container hotstandby {
+            presence "Indicates hotstandby-enable a node is configured.";  
+            description
+              "Enable/disable hot standby for protecting TE tunnels. When an active LSP is set up successfully, a standby LSP that meets certain limits will be set up to protect the active LSP. When the active LSP fails, the traffic on the active LSP will be switched to the standby LSP.";              
+            leaf revertive-mode {
+              type tunnel-hotstandby-revert-mode;
+              default "revertive";
+              description
+                "Hot-standby revertive.";
+            }
+            leaf wtr-time {
+              when "../revertive-mode='revertive'";
+              type uint32 {
+                range "0..2592000";
+              }
+              units "s";
+              default "10";
+              description
+                "Time of waiting recovering back to primary LSP. Its range is 0~2592000, default is 10. When hot-standby backup is in use, after primary LSP restores, the traffic will switch to primary LSP after waiting some time instead of switching to primary LSP immediately. This is to avoid frequent switching between primary LSP and backup LSP caused by network flapping.";
+            }
+            leaf path-overlap {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable hot-standby LSP overlap capability. If there is no other path to choose, the hot-standby LSP can overlap the primary LSP.";
+            }
+          }
+          container lsp-paths {
+            description
+              "List of path configuration of a SR-TE tunnel.";
+            list lsp-path {
+              must "((not(include-all-affinity-name) and not(include-any-affinity-name) and not(exclude-affinity-name)) or (include-any='0x0' and exclude-any='0x0'))";
+              key "type";
+              max-elements 2;
+              description
+                "Configure LSP path of a SR-TE tunnel. Two roles are available.";
+              leaf type {
+                type sr-te-tunnel-path-type;
+                description
+                  "Path role of a tunnel. The available options are primary (used by primary LSP), hot-standby (used by hot-standby backup LSP).";
+              }
+              leaf explicit-path-name {
+                type leafref {
+                  path "/te:te/te:explicit-paths/te:explicit-path/te:name";
+                }
+                description
+                  "Referenced explicit path by the tunnel. The name is case-insensitive.";
+              }
+              leaf hop-limit {
+                type uint32 {
+                  range "1..32";
+                }
+                default "32";
+                description
+                  "Hop limit on a SR-MPLS TE LSP. If the default value (32) is used in the hop-limit, both adjacency and node SIDs can be used for local SR-MPLS TE path calculation. If a non-default value (1-31) is used in the hop-limit, only adjacency SIDs can be used for local SR-MPLS TE path computation.";
+              }
+              leaf lsp-state {
+                type mpls-te-lsp-status-type;
+                config false;
+                description
+                  "The state of LSP.";
+              }
+              leaf lsp-id {
+                type uint32 {
+                  range "0..65535";
+                }
+                config false;
+                description
+                  "LSP ID of a tunnel path.";
+              }
+              leaf modify-lsp-id {
+                type uint32 {
+                  range "0..65535";
+                }
+                config false;
+                description
+                  "Modified LSP ID of a tunnel path.";
+              }
+              leaf include-all {
+                type pub-type:hex-binary;
+                config false;
+                description
+                  "Tunnel path management attribute: Include-all. The management attribute is a 32-bit vector. The management attribute of a selected link must contain the entire Include-all attribute field of the tunnel.";
+              }
+              leaf include-any {
+                type pub-type:hex-binary;
+                default "0x0";
+                description
+                  "Tunnel path management attribute: Include-any. The attribute is a 32-bit vector. If the management attribute of a link contain any bit in the Include-any attribute field of an LSP, the link can be a candidate LSP link.";
+              }
+              leaf exclude-any {
+                type pub-type:hex-binary;
+                default "0x0";
+                description
+                  "Tunnel path management attribute: Exclude-any. The management attribute is a 32-bit vector. If the management attribute of a link contains any bit in the Exclude-any attribute field of an LSP, the link cannot be a candidate LSP link.";
+              }
+              leaf-list include-all-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                max-elements 32;
+                description
+                  "Configure affinity name that can be refer to a tunnel to include all.";
+              }
+              leaf-list include-any-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                max-elements 32;
+                description
+                  "Configure affinity name that can be refer to a tunnel to include any.";
+              }
+              leaf-list exclude-affinity-name {
+                type leafref {
+                  path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+                }
+                max-elements 32;
+                description
+                  "Configure tunnel path affinity attribute: exclude.";
+              }
+            }
+          }
+          container hotstandby-state {
+            config false;
+            description
+              "Statistics of hot-standby informations.";
+            leaf switch-result {
+              type hotstandby-switch-result;
+              description
+                "Hot-standby switching result.";
+            }
+            leaf wtr-state {
+              type boolean;
+              description
+                "Whether the hot-standby WTR timer is running.";
+            }
+            leaf wtr-remaining-time {
+              type uint32 {
+                range "0..2592000";
+              }
+              description
+                "Hot-standby WTR remaining time.";
+            }
+            leaf switch-state {
+              type hotstandby-switch-state;
+              description
+                "Hot-standby switching status.";
+            }
+            leaf using-overlap {
+              type overlap-type;
+              description
+                "Whether the primary and HSB LSPs overlap.";
+            }
+            leaf switch-reason {
+              type hotstandby-switch-reason;
+              description
+                "The reason of hot-stanby LSP switch.";
+            }
+          }
+          container tunnel-interface {
+            config false;
+            description
+              "Statistics of SR-TE tunnel interface.";
+            leaf ingress-lsr-id {
+              type inet:ipv4-address-no-zone;
+              description
+                "Specifies ingress LSR ID of the tunnel.";
+            }
+            leaf tunnel-ftid {
+              type uint32;
+              description
+                "Tunnel forwarding ID.";
+            }
+            leaf state {
+              type tunnel-state;
+              description
+                "Tunnel Status.";
+            }
+            leaf state-description {
+              type tunnel-state-description-type;
+              description
+                "Tunnel status description.";
+            }
+            leaf active-lsp {
+              type active-lsp-type;
+              description
+                "Active LSP.";
+            }
+            leaf working-lsp-id {
+              type uint16 {
+                range "0..65535";
+              }
+              description
+                "The working LSP ID of a Tunnel.";
+            }
+            leaf traffic-switch-action {
+              type switch-action-type;
+              description
+                "Traffic switching action.";
+            }
+            leaf current-collect-bandwith {
+              type uint32;
+              description
+                "Existing collected bandwidth in automatic bandwidth adjustment.";
+            }
+            leaf offload-enable {
+              type boolean;
+              description
+                "Whether the offload is enabled.";
+            }
+            leaf offload-frequency {
+              type uint32;
+              description
+                "Offload frequency.";
+            }
+            leaf offload-low-bandwith {
+              type uint32;
+              description
+                "Offload lower bandwidth threshold.";
+            }
+            leaf offload-high-bandwith {
+              type uint32;
+              description
+                "Offload higher bandwidth threshold.";
+            }
+            leaf offload-path-name {
+              type string {
+                length "1..63";
+              }
+              description
+                "UNI explicit path name.";
+            }
+            leaf readjust-bandwith {
+              type uint32;
+              description
+                "UNI tunnel bandwidth.";
+            }
+            leaf excluded-ip {
+              type inet:ipv4-address-no-zone;
+              description
+                "Excluded IP address.";
+            }
+            leaf referred-lsp-count {
+              type uint32;
+              description
+                "Number of referenced LSPs.";
+            }
+            leaf oam-status {
+              type oam-status-type;
+              description
+                "OAM status.";
+            }
+            leaf bfd-status {
+              type bfd-status-type;
+              description
+                "BFD status.";
+            }
+            leaf backup-lsp-type {
+              type tunnel-backup-lsp-type;
+              description
+                "CR-LSP backup type.";
+            }
+            leaf lsp-control-status {
+              type lsp-control-status-type;
+              description
+                "LSP control status.";
+            }
+            leaf auto-bandwidth-remain-time {
+              type uint32;
+              description
+                "Remaining time of automatic bandwidth adjustment.";
+            }
+            leaf reoptimization-remain-time {
+              type uint32;
+              description
+                "Remaining time of automatic re-optimization.";
+            }
+            leaf associate-group-id {
+              type uint32;
+              description
+                "Associated tunnel group ID.";
+            }
+          }
+          container lsps {
+            config false;
+            description
+              "List of LSPs for SR-TE Tunnel.";
+            list lsp {
+              key "ingress-lsr-id egress-lsr-id session-id lsp-id";
+              max-elements 4;
+              description
+                "Statistics of LSP for SR-TE Tunnel.";
+              leaf ingress-lsr-id {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Ingress LSR ID.";
+              }
+              leaf egress-lsr-id {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Egress LSR ID.";
+              }
+              leaf session-id {
+                type uint16 {
+                  range "0..65535";
+                }
+                description
+                  "Tunnel ID.";
+              }
+              leaf lsp-id {
+                type uint16 {
+                  range "0..65535";
+                }
+                description
+                  "LSP ID.";
+              }
+              container c-hops {
+                description
+                  "List of path calculated by PCE according to LSP constraints.";
+                list c-hop {
+                  key "index";
+                  description
+                    "Statistics of path calculated by PCE according to LSP constraints.";
+                  leaf index {
+                    type uint32;
+                    description
+                      "Hop index calculated by PCE.";
+                  }
+                  leaf type {
+                    type hop-strict-type;
+                    description
+                      "Hop type calculated by PCE or CSPF. The available options are strict and loose.";
+                  }
+                  leaf label-type {
+                    type sr-te-label-type;
+                    description
+                      "The type of label.";
+                  }
+                  leaf label {
+                    type uint32;
+                    description
+                      "HOP label calculated by PCE.";
+                  }
+                  leaf nai {
+                    type string {
+                      length "1..63";
+                    }
+                    description
+                      "Node or adjacency identifier.";
+                  }
+                }
+              }
+            }
+          }
+        }
+        container tunnel-last-errors {
+          config false;
+          description
+            "List of tunnel last error information.";
+          list tunnel-last-error {
+            key "lsp-id";
+            max-elements "10";
+            description
+              "Statistics of tunnel last error information.";
+            leaf lsp-id {
+              type uint16;
+              description
+                "LSP ID.";
+            }
+            leaf lsp-type {
+              type lsp-path-type;
+              description
+                "LSP type.";
+            }
+            leaf error-node {
+              type inet:ipv4-address-no-zone;
+              description
+                "Error node.";
+            }
+            leaf error-lsr-id {
+              type inet:ipv4-address-no-zone;
+              description
+                "Eroor lsr id.";
+            }
+            leaf occur-time {
+              type string {
+                length "1..23";
+              }
+              description
+                "Occur time.";
+            }
+            leaf error-code {
+              type uint16;
+              description
+                "Error code.";
+            }
+            leaf error-sub-code {
+              type uint16;
+              description
+                "Error sub code.";
+            }
+            leaf error-value {
+              type uint16;
+              description
+                "Error value.";
+            }
+            leaf error-info {
+              type string {
+                length "1..255";
+              }
+              description
+                "Last error information.";
+            }
+            leaf down-reason {
+              type string {
+                length "1..255";
+              }
+              description
+                "Reason of LSP down.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

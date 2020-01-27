@@ -1,0 +1,176 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-notification-common{
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-notification-common";
+  prefix noti-comm;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Common information of huawei notifications.";
+	
+  revision 2019-03-15{
+    description
+      "Initial revision.";
+	reference "";
+  }
+  ext:task-name "common";
+  typedef alarm-level{
+    
+    type enumeration{
+      enum critical{
+        value 1;
+		description "The Critical severity level indicates that a service affecting condition has occurred and an
+immediate corrective action is required. Such a severity can be reported, for example, when a managed
+object becomes totally out of service and its capability must be restored.";
+      }
+      enum major{
+        value 2;
+		description "The Major severity level indicates that a service affecting condition has developed and an urgent
+corrective action is required. Such a severity can be reported, for example, when there is a severe
+degradation in the capability of the managed object and its full capability must be restored.";
+      }
+      enum minor{
+        value 3;
+		description "The Minor severity level indicates the existence of a non-service affecting fault condition and that
+corrective action should be taken in order to prevent a more serious (for example, service affecting) fault.
+Such a severity can be reported, for example, when the detected alarm condition is not currently
+degrading the capacity of the managed object.";
+      }
+      enum warning{
+        value 4;
+		description "The Warning severity level indicates the detection of a potential or impending service affecting
+fault, before any significant effects have been felt. Action should be taken to further diagnose (if
+necessary) and correct the problem in order to prevent it from becoming a more serious service affecting
+fault.";
+      }
+      enum cleared{
+        value 5;
+		description "The Cleared severity level indicates the clearing of one or more previously reported alarms. This
+alarm clears all alarms for this managed object that have the same Alarm type, Probable cause and
+Specific problems (if given). Multiple associated notifications may be cleared by using the Correlated
+notifications parameter (defined below).
+This Recommendation | International Standard does not require that the clearing of previously reported
+alarms be reported. Therefore, a managing system cannot assume that the absence of an alarm with the
+Cleared severity level means that the condition that caused the generation of previous alarms is still
+present. Managed object definers shall state if, and under which conditions, the Cleared severity level is
+used.";
+      }
+      enum indeterminate{
+        value 6;
+		description "The Indeterminate severity level indicates that the severity level cannot be determined.";
+      }
+    }
+	description "This type defines six severity levels, which provide an indication of how it is perceived that the capability of the
+managed object has been affected. Those severity levels which represent service affecting conditions ordered from most
+severe to least severe are Critical, Major, Minor and Warning.";
+  }
+  typedef alarm-state{
+    type enumeration{
+      enum active{
+        value 1;
+		description "The alarm is active.";
+      }
+      enum cleared{
+        value 2;
+		description "The alarm has been cleared.";
+      }
+      enum changed{
+        value 3;
+		description "The alarm has been changed.";
+      }
+    }
+    description "State of alarm.";
+  }
+  typedef event-level{
+    type enumeration{
+      enum emergency{
+        value 0;
+		description "System is unusable.";
+      }
+      enum alert{
+        value 1;
+		description "Immediate action needed.";
+      }
+      enum critical{
+        value 2;
+		description "Critical conditions.";
+      }
+      enum error{
+        value 3;
+		description "Error conditions.";
+      }
+      enum warning{
+        value 4;
+		description "Warning conditions.";
+      }
+      enum notice{
+        value 5;
+		description "Normal but significant conditions.";
+      }
+      enum informational{
+        value 6;
+		description "Informational messages.";
+      }
+      enum debug{
+        value 7;
+		description "Debugging messages.";
+      }
+    }
+    description "The type of event level.";
+  }
+  grouping notification-common{
+	description "Common attributes of huawei notification.";
+    leaf notification-id{
+      type uint32;
+	  description "Identity of notification.";
+    }
+    leaf notification-class{
+      type enumeration{
+        enum event{
+          value 1;
+		  description "Event notification.";
+        }
+        enum alarm{
+          value 0;
+		  description "Alarm notification.";
+        }
+      }
+      description "Class of notification.";
+    }
+    choice common-info{
+      description "Some attribute come from event or alarm.";
+      case alarm-parameters{
+        when "../notification-class = 'alarm'";
+	    description "Attributes come from alarm.";
+        leaf alarm-level{
+          type noti-comm:alarm-level;
+		  description "Level of alarm.";
+        }
+        leaf state{
+          type noti-comm:alarm-state;
+		  description "Notification management state.";
+        }
+      }
+      case event-parameters{
+        when "../notification-class = 'info'";
+		description "Attributes come from event.";
+        leaf event-level{
+          type noti-comm:event-level;
+		  description "Level of event.";
+        }
+      }
+    }
+  }
+}

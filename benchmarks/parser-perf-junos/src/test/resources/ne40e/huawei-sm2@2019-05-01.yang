@@ -1,0 +1,94 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-sm2 {
+  namespace "urn:huawei:yang:huawei-sm2";
+  prefix sm2;
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Ecc.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ssh-server";
+   container sm2 {
+    description
+      "Sm2.";
+    container sm2-peer-keys {
+      description
+        "List of SM2 peer key table.";
+      list sm2-peer-key {
+        key "key-name";
+        description
+          "Configure SM2 peer key code. If the key code is bound, it cannot be deleted, you need to unbind and then delete.";
+        leaf key-name {
+          type string {
+            length "1..40";
+          }
+          description
+            "SM2 key name.";
+        }
+        leaf key-code {
+          type string {
+            length "1..1024";
+          }
+          mandatory true;
+          ext:support-filter "true";
+          description
+            "SM2 Key code conforming to DER format.";
+        }
+      }
+    }
+    container sm2-key-pairs {
+      description
+        "List of SM2 keypair labels.";
+      list sm2-key-pair {
+        key "key-pair-label";
+        max-elements  "20";
+        description
+          "Configure SM2 keypair label.";
+        leaf key-pair-label {
+          type string {
+            length "1..35";
+            pattern '[a-z0-9_]*';
+          }
+          description
+            "SM2 keypair label name : It only contains underscores (_), case-insensitive letters and digits.";
+        }
+        leaf key-size {
+          type uint32 {
+            range "256";
+          }
+          default "256";
+          ext:support-filter "true";
+          description
+            "SM2 size of keypair.";
+        }
+        leaf host-key-code {
+          type string {
+            length "0..2048";
+          }
+          config false;
+          ext:support-filter "true";
+          description
+            "SM2 hostkey code.";
+        }
+      }
+    }
+  }
+}

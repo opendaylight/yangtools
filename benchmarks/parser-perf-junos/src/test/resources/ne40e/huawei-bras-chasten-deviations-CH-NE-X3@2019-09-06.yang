@@ -1,0 +1,75 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-chasten-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-bras-chasten-deviations-CH-NE-X3";
+  prefix bras-chasten-devs-CH-NE-X3;
+
+  import huawei-bras-chasten {
+    prefix bras-chasten;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This module contains a collection of YANG definitions for managing chasten.";
+
+  revision 2019-09-06 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/bras-chasten:reset-ipv6-user/bras-chasten:input/bras-chasten:slot-id" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+  deviation "/bras-chasten:reset-ipv4-user/bras-chasten:input/bras-chasten:slot-id" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+  deviation "/bras-chasten:bras-chasten/bras-chasten:ipv6-slots/bras-chasten:ipv6-slot/bras-chasten:slot-id" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+  deviation "/bras-chasten:bras-chasten/bras-chasten:ipv4-slots/bras-chasten:ipv4-slot/bras-chasten:slot-id" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+  deviation "/bras-chasten:bras-chasten/bras-chasten:ipv6-users/bras-chasten:ipv6-user/bras-chasten:slot-id" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+  deviation "/bras-chasten:bras-chasten/bras-chasten:ipv4-users/bras-chasten:ipv4-user/bras-chasten:slot-id" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+}

@@ -1,0 +1,1047 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-bgp-type {
+  yang-version 1;
+  belongs-to huawei-bgp {
+    prefix bgp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Defines type definitions associated with the huawei-bgp modules.";
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef as-number-validate {
+    type string {
+      length "1..11";
+      pattern '((([1-9]\d{0,8})|([1-3]\d{9})|(4[0-1]\d{8})|(42[0-8]\d{7})|(429[0-3]\d{6})|(4294[0-8]\d{5})|(42949[0-5]\d{4})|(429496[0-6]\d{3})|(4294967[0-1]\d{2})|(42949672[0-8]\d{1})|(429496729[0-5]))|((([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))[\.](([0-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))))';
+    }
+    description
+      "AS number is not include.";
+  }
+  typedef password-type {
+    type enumeration {
+      enum "null" {
+        value 0;
+        description
+          "No password is set.";
+      }
+      enum "cipher" {
+        value 1;
+        description
+          "Set a ciphertext.";
+      }
+      enum "simple" {
+        value 2;
+        description
+          "Set a plaintext.";
+      }
+    }
+    description
+      "The type of bgpcommPassword.";
+  }
+  typedef af-type {
+    type enumeration {
+      enum "ipv4uni" {
+        value 1;
+        description
+          "IPv4 unicast address family.";
+      }
+      enum "ipv4multi" {
+        value 2;
+        description
+          "IPv4 multicast address family.";
+      }
+      enum "ipv4vpn" {
+        value 3;
+        description
+          "IPv4 VPN address family.";
+      }
+      enum "ipv4labeluni" {
+        value 4;
+        description
+          "IPv4 Labeled Address Family.";
+      }
+      enum "ipv6uni" {
+        value 5;
+        description
+          "IPv6 unicast address family.";
+      }
+      enum "ipv6vpn" {
+        value 6;
+        description
+          "IPv6 VPN address family.";
+      }
+      enum "ipv4flow" {
+        value 7;
+        description
+          "IPv4 Flow address family.";
+      }
+      enum "l2vpnad" {
+        value 8;
+        description
+          "L2VPN-AD Address Family.";
+      }
+      enum "evpn" {
+        value 9;
+        description
+          "EVPN address family.";
+      }
+      enum "mvpn" {
+        value 10;
+        description
+          "IPv4 MVPN address family.";
+      }
+      enum "vpntarget" {
+        value 11;
+        description
+          "Vpn Target Address Family.";
+      }
+      enum "ipv4vpnmcast" {
+        value 12;
+        description
+          "IPv4 VPN Multicast Address Family.";
+      }
+      enum "ls" {
+        value 13;
+        description
+          "Link-state Address Family.";
+      }
+      enum "mdt" {
+        value 14;
+        description
+          "IPv4 MDT Address Family.";
+      }
+      enum "ipv6flow" {
+        value 15;
+        description
+          "IPv6 Flow Address Family.";
+      }
+      enum "mvpnv6" {
+        value 16;
+        description
+          "IPv6 MVPN address family.";
+      }
+      enum "vpnv4flow" {
+        value 17;
+        description
+          "Vpnv4 Flow Address Family.";
+      }
+      enum "vpnv6flow" {
+        value 18;
+        description
+          "Vpnv6 Flow Address Family.";
+      }
+      enum "rpd" {
+        value 19;
+        description
+          "RPD Address Family.";
+      }
+      enum "ipv4srpolicy" {
+        value 20;
+        description
+          "IPv4-family Srpolicy Address Family.";
+      }
+      enum "ipv6srpolicy" {
+        value 21;
+        description
+          "IPv6-family Srpolicy Address Family.";
+      }
+    }
+    description
+      "The type of bgpcommPrefix.";
+  }
+  typedef group-af-type {
+    type enumeration {
+      enum "ipv4uni" {
+        value 1;
+        description
+          "IPv4 unicast address family.";
+      }
+      enum "ipv4multi" {
+        value 2;
+        description
+          "IPv4 multicast address family.";
+      }
+      enum "ipv4vpn" {
+        value 3;
+        description
+          "IPv4 VPN address family.";
+      }
+      enum "ipv4labeluni" {
+        value 4;
+        description
+          "IPv4 Labeled Address Family.";
+      }
+      enum "ipv6uni" {
+        value 5;
+        description
+          "IPv6 unicast address family.";
+      }
+      enum "ipv6vpn" {
+        value 6;
+        description
+          "IPv6 VPN address family.";
+      }
+      enum "l2vpnad" {
+        value 8;
+        description
+          "L2VPN-AD Address Family.";
+      }
+      enum "evpn" {
+        value 9;
+        description
+          "EVPN address family.";
+      }
+      enum "mvpn" {
+        value 10;
+        description
+          "IPv4 MVPN address family.";
+      }
+      enum "vpntarget" {
+        value 11;
+        description
+          "Vpn Target Address Family.";
+      }
+      enum "ipv4vpnmcast" {
+        value 12;
+        description
+          "IPv4 VPN Multicast Address Family.";
+      }
+      enum "ls" {
+        value 13;
+        description
+          "Link-state Address Family.";
+      }
+      enum "mdt" {
+        value 14;
+        description
+          "IPv4 MDT Address Family.";
+      }
+      enum "mvpnv6" {
+        value 16;
+        description
+          "IPv6 MVPN address family.";
+      }
+    }
+    description
+      "The type of bgpcommPrefix.";
+  }
+  typedef group-type {
+    type enumeration {
+      enum "ebgp" {
+        value 1;
+        description
+          "EBGP peer.";
+      }
+      enum "ibgp" {
+        value 2;
+        description
+          "IBGP peer.";
+      }
+    }
+    description
+      "The type of bgp common peer.";
+  }
+  typedef peer-type-info {
+    type enumeration {
+      enum "ebgp" {
+        value 1;
+        description
+          "EBGP peer.";
+      }
+      enum "ibgp" {
+        value 2;
+        description
+          "IBGP peer.";
+      }
+      enum "confed-ebgp" {
+        value 3;
+        description
+          "Confed EBGP peer.";
+      }
+      enum "confed-ibgp" {
+        value 4;
+        description
+          "Confed IBGP peer.";
+      }
+    }
+    description
+      "The type of bgp common peer.";
+  }
+  typedef peer-state {
+    type enumeration {
+      enum "idle" {
+        value 1;
+        description
+          "Idle state.";
+      }
+      enum "connect" {
+        value 2;
+        description
+          "Connecting state.";
+      }
+      enum "active" {
+        value 3;
+        description
+          "Active state.";
+      }
+      enum "opensent" {
+        value 4;
+        description
+          "OpenSent state.";
+      }
+      enum "openconfirm" {
+        value 5;
+        description
+          "OpenConfirm state.";
+      }
+      enum "established" {
+        value 6;
+        description
+          "Established state.";
+      }
+      enum "idle-admin" {
+        value 7;
+        description
+          "Idle (Admin) state.";
+      }
+      enum "idle-ovlmt" {
+        value 8;
+        description
+          "Idle (Ovlmt) state.";
+      }
+      enum "no-neg" {
+        value 9;
+        description
+          "No neg state.";
+      }
+    }
+    description
+      "The state of bgpcommPeer.";
+  }
+  typedef rpd-cap-type {
+    type enumeration {
+      enum "null" {
+        value 0;
+        description
+          "Null.";
+      }
+      enum "receive" {
+        value 1;
+        description
+          "Receive.";
+      }
+      enum "send" {
+        value 2;
+        description
+          "Send.";
+      }
+      enum "both" {
+        value 3;
+        description
+          "Both.";
+      }
+    }
+    description
+      "The type of flowRtpDistribute.";
+  }
+  typedef first-as-state {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "The check-first-as on the peer was enabled.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "The check-first-as on the peer was disabled.";
+      }
+    }
+    description
+      "The type of bgpCheckFirstAsRealState.";
+  }
+  typedef ipv4-import-route-protocol-type {
+    type enumeration {
+      enum "direct" {
+        value 1;
+        description
+          "Import direct routes.";
+      }
+      enum "ospf" {
+        value 2;
+        description
+          "Import OSPF routes.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "Import IS-IS routes.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Import static routes.";
+      }
+      enum "rip" {
+        value 5;
+        description
+          "Import RIP routes.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "Import UNR routes.";
+      }
+      enum "op-route" {
+        value 14;
+        description
+          "Import OPR routes.";
+      }
+    }
+    description
+      "The protocol of bgpcommonImRoute.";
+  }
+  typedef ipv6-import-route-protocol-type {
+    type enumeration {
+      enum "direct" {
+        value 1;
+        description
+          "Import direct routes.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "Import IS-IS routes.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Import static routes.";
+      }
+      enum "ospfv3" {
+        value 7;
+        description
+          "Import OSPFv3 routes.";
+      }
+      enum "ripng" {
+        value 8;
+        description
+          "Import RIPng routes.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "Import UNR routes.";
+      }
+    }
+    description
+      "The protocol of bgpcommonImRoute.";
+  }
+  typedef ipv4multi-import-route-protocol-type {
+    type enumeration {
+      enum "direct" {
+        value 1;
+        description
+          "Import direct routes.";
+      }
+      enum "ospf" {
+        value 2;
+        description
+          "Import OSPF routes.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "Import IS-IS routes.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Import static routes.";
+      }
+      enum "rip" {
+        value 5;
+        description
+          "Import RIP routes.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "Import UNR routes.";
+      }
+    }
+    description
+      "The protocol of bgpcommonImRoute.";
+  }
+  typedef apply-label-type {
+    type enumeration {
+      enum "per-route" {
+        value 0;
+        description
+          "Labels are assigned to routes in the 'one label per route' mode, that is, each route is assigned with one label.";
+      }
+      enum "per-nexthop" {
+        value 1;
+        description
+          "Labels are assigned to the routes which have same nexthop and out-label in 'one label per nexthop' mode, that is, all routes have same nexthop and out-label are assigned with the same label.";
+      }
+    }
+    description
+      "The type of bgpcommApplyLabel.";
+  }
+  typedef nexthop-configuration-type {
+    type enumeration {
+      enum "local" {
+        value 1;
+        description
+          "The next hop is changed to the local IP address.";
+      }
+      enum "invariable" {
+        value 2;
+        description
+          "Prevent the device from changing the next hop of each imported IGP route when advertising it to its BGP peers.";
+      }
+    }
+    description
+      "The nexthop configuration of bgp.";
+  }
+  typedef peer-cap-config-state {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Inherit the group or global configuration of check-first-as.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Explicit config enable check-first-as.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "Explicit config disable check-first-as.";
+      }
+    }
+    description
+      "The type of check-first-as-tri-state.";
+  }
+  typedef connect-mode {
+    type enumeration {
+      enum "listen-only" {
+        value 1;
+        description
+          "Listening mode.";
+      }
+      enum "connect-only" {
+        value 2;
+        description
+          "Connection mode.";
+      }
+      enum "null" {
+        value 3;
+        description
+          "Default value.";
+      }
+    }
+    description
+      "The connect mode of bgp common peer.";
+  }
+  typedef epe-state {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Disable or inheritance group.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Explicit config enable.";
+      }
+    }
+    description
+      "The type of bgpEpeState.";
+  }
+  typedef bgp-orf-mode-type {
+    type enumeration {
+      enum "null" {
+        value 0;
+        description
+          "Default value.";
+      }
+      enum "receive" {
+        value 1;
+        description
+          "ORF for incoming packets.";
+      }
+      enum "send" {
+        value 2;
+        description
+          "ORF for outgoing packets.";
+      }
+      enum "both" {
+        value 3;
+        description
+          "ORF for incoming and outgoing packets.";
+      }
+    }
+    description
+      "The mode of bgpcommonOrf.";
+  }
+  typedef bgp-orf-type {
+    type enumeration {
+      enum "null" {
+        value 0;
+        description
+          "Null:";
+      }
+      enum "ip-prefix" {
+        value 64;
+        description
+          "IP-prefix:";
+      }
+      enum "nonstandard-compatible" {
+        value 128;
+        description
+          "Nonstandard compatible:";
+      }
+    }
+    description
+      "The type of bgpcommonOrf.";
+  }
+  typedef cra-match-mode {
+    type enumeration {
+      enum "null" {
+        value 0;
+        description
+          "Null.";
+      }
+      enum "matchall" {
+        value 1;
+        description
+          "Advertise the default route if all matching conditions are met.";
+      }
+      enum "matchany" {
+        value 2;
+        description
+          "Advertise the default route if any matching condition is met.";
+      }
+    }
+    description
+      "The mode of bgpcommonCraMatch.";
+  }
+  typedef bfd-state {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "The BFD session is Up.";
+      }
+      enum "down" {
+        value 2;
+        description
+          "The BFD session is Down.";
+      }
+      enum "unknown" {
+        value 3;
+        description
+          "The BFD session is unknown.";
+      }
+    }
+    description
+      "The state of bgpBfd.";
+  }
+  typedef select-depend-type {
+    type enumeration {
+      enum "depend-tunnel" {
+        value 1;
+        description
+          "Routing-dependent tunnel iteration.";
+      }
+      enum "depend-ip" {
+        value 2;
+        description
+          "Routing-dependent IP iteration.";
+      }
+    }
+    description
+      "The type of nexthop select depend.";
+  }
+  typedef select-depend-ip-type {
+    type enumeration {
+      enum "null" {
+        value 0;
+        description
+          "Null.";
+      }
+      enum "depend-ip" {
+        value 2;
+        description
+          "Routing-dependent IP iteration.";
+      }
+    }
+    description
+      "The type of nexthop select depend.";
+  }
+  typedef add-path-cap-type {
+    type enumeration {
+      enum "null" {
+        value 0;
+        description
+          "Null.";
+      }
+      enum "receive" {
+        value 1;
+        description
+          "Support receiving Add-Path routes.";
+      }
+      enum "send" {
+        value 2;
+        description
+          "Support sending Add-Path routes.";
+      }
+      enum "both" {
+        value 3;
+        description
+          "Support receiving and sending Add-Path routes.";
+      }
+    }
+    description
+      "The type of bgpcommAddPathCap.";
+  }
+  typedef route-limit-type {
+    type enumeration {
+      enum "noparameter" {
+        value 0;
+        description
+          "Default value.";
+      }
+      enum "alert-only" {
+        value 1;
+        description
+          "An alarm is generated and no additional routes will be accepted if the maximum number of routes allowed have been received.";
+      }
+      enum "idle-forever" {
+        value 2;
+        description
+          "The connection that is interrupted is not automatically re-established if the maximum number of routes allowed have been received.";
+      }
+      enum "idle-timeout" {
+        value 3;
+        description
+          "After the number of received routes exceeds the threshold and the timeout timer expires, the connection that is interrupted is automatically re-established.";
+      }
+    }
+    description
+      "The type of bgpcommRouteLmt.";
+  }
+  typedef import-rib-ipv4-safi-type {
+    type enumeration {
+      enum "ipv4uni" {
+        value 1;
+        description
+          "IPv4 unicast address family.";
+      }
+      enum "ipv4labeluni" {
+        value 4;
+        description
+          "IPv4 Labeled Address Family.";
+      }
+    }
+    description
+      "The src address type of import rib.";
+  }
+  typedef import-rib-ipv6-safi-type {
+    type enumeration {
+      enum "ipv6uni" {
+        value 5;
+        description
+          "IPv6 unicast address family.";
+      }
+    }
+    description
+      "The src address type of import rib.";
+  }
+  typedef peer-comm-config-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Configuration on peer was default.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Configuration on peer was enable.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "Configuration on peer was disable.";
+      }
+    }
+    description
+      "State of the configuration on peer.";
+  }
+  typedef peer-state-type {
+    type enumeration {
+      enum "idle" {
+        value 1;
+        description
+          "Idle state.";
+      }
+      enum "connect" {
+        value 2;
+        description
+          "Connecting state.";
+      }
+      enum "active" {
+        value 3;
+        description
+          "Active state.";
+      }
+      enum "opensent" {
+        value 4;
+        description
+          "OpenSent state.";
+      }
+      enum "openconfirm" {
+        value 5;
+        description
+          "OpenConfirm state.";
+      }
+      enum "established" {
+        value 6;
+        description
+          "Established state.";
+      }
+      enum "idle-admin" {
+        value 7;
+        description
+          "Idle (Admin) state.";
+      }
+      enum "idle-ovlmt" {
+        value 8;
+        description
+          "Idle (Ovlmt) state.";
+      }
+      enum "no-neg" {
+        value 9;
+        description
+          "No neg state.";
+      }
+    }
+    description
+      "The state of peer state.";
+  }
+  typedef dampening-route-peer-type {
+    type enumeration {
+      enum "ebgp" {
+        value 0;
+        description
+          "EBGP peer.";
+      }
+    }
+    description
+      "The peer type of bgp dampening route.";
+  }
+
+  typedef dampening-route-ext-peer-type {
+    type enumeration {
+      enum "ebgp" {
+        value 0;
+        description
+          "EBGP peer.";
+      }
+      enum "ibgp" {
+        value 1;
+        description
+          "IBGP peer.";
+      }
+    }
+    description
+      "The peer type of bgp dampening route.";
+  }
+  typedef attribute-set-type {
+    type enumeration {
+      enum "receive" {
+        value 1;
+        description
+          "Supports receiving and parsing ATTRSET attributes.";
+      }
+      enum "send" {
+        value 2;
+        description
+          "Support sending ATTRSET attribute.";
+      }
+      enum "both" {
+        value 3;
+        description
+          "Supports receiving and sending ATTRSET attributes.";
+      }
+    }
+    description
+      "The type of attrSet.";
+  }
+  typedef ipv4-export-filter-protocol-type {
+    type enumeration {
+      enum "noprotocol" {
+        value 0;
+        description
+          "Import routes of all protocols.";
+      }
+      enum "direct" {
+        value 1;
+        description
+          "Import direct routes.";
+      }
+      enum "ospf" {
+        value 2;
+        description
+          "Import OSPF routes.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "Import IS-IS routes.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Import static routes.";
+      }
+      enum "rip" {
+        value 5;
+        description
+          "Import RIP routes.";
+      }
+      enum "op-route" {
+        value 14;
+        description
+          "Import OPR routes.";
+      }
+    }
+    description
+      "The protocol of bgpcommonImRoute.";
+  }
+  typedef ipv6-export-filter-protocol-type {
+    type enumeration {
+      enum "noprotocol" {
+        value 0;
+        description
+          "Import routes of all protocols.";
+      }
+      enum "direct" {
+        value 1;
+        description
+          "Import direct routes.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "Import IS-IS routes.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Import static routes.";
+      }
+      enum "ospfv3" {
+        value 7;
+        description
+          "Import OSPFv3 routes.";
+      }
+      enum "ripng" {
+        value 8;
+        description
+          "Import RIPng routes.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "Import UNR routes.";
+      }
+    }
+    description
+      "The protocol of bgpcommonImRoute.";
+  }
+  typedef peer-enable-config-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Configuration on peer was default.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Configuration on peer was enable.";
+      }
+    }
+    description
+      "State of the configuration on peer.";
+  }
+  typedef nexthop-priority-address-type {
+    type enumeration {
+      enum "ipv4" {
+        value 1;
+        description
+          "IPv4 address.";
+      }
+      enum "ipv6" {
+        value 2;
+        description
+          "IPv6 address.";
+      }
+    }
+    description
+      "The address type of nexthop priority.";
+  }
+  typedef exp-mode-type {
+    type enumeration {
+      enum "null" {
+        value 0;
+        description
+          "Default value.";
+      }
+      enum "pipe" {
+        value 1;
+        description
+          "The priority of BGP labels is not modified, and the outer label is removed.";
+      }
+      enum "uniform" {
+        value 2;
+        description
+          "The label priority of intra-AS tunnels is copied to the BGP label.";
+      }
+    }
+    description
+      "The type of bgpcommExpMode.";
+  }
+  typedef entropy-label-attribute-type {
+    type enumeration {
+      enum "elc" {
+        value 1;
+        description
+          "Elc.";
+      }
+    }
+    description
+      "The attribute type of advertising entropy labels.";
+  }
+}

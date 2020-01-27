@@ -1,0 +1,154 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-multicast-bas {
+  namespace "urn:huawei:yang:huawei-multicast-bas";
+  prefix mcbas;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Multicast for BRAS access.";
+  revision 2020-03-16 {
+    description
+      "Modify addr-family-type enumeration name.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-30 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mcast-base";
+  typedef addr-family-type {
+    type enumeration {
+      enum "ipv4-unicast" {
+        value 1;
+        description
+          "IPv4 unicast.";
+      }
+      enum "ipv6-unicast" {
+        value 2;
+        description
+          "IPv6 unicast.";
+      }
+    }
+    description
+      "Address family.";
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description "Add multicast BAS configuration to the ifm module.";
+    container multicast-bas {
+      must "(./mcbas:user-aggregation-pevlan and ./mcbas:user-aggregation-cevlan) or (not(./mcbas:user-aggregation-pevlan) and not(./mcbas:user-aggregation-cevlan))";
+      description
+        "Configure multicast BAS.";
+      choice vlan-type {
+        description
+          "Specify the VLAN-type of multicast BAS user-aggregation.";
+        case qinq {
+          description
+            "QinQ type.";
+          leaf user-aggregation-pevlan {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "QINQ PE ID in an outer VLAN tag.";
+          }
+          leaf user-aggregation-cevlan {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "QINQ CE ID in an inner VLAN tag.";
+          }
+        }
+        case vlan {
+          description
+            "VLAN type.";
+          leaf user-aggregation-vlan {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "VLAN ID in an outer VLAN tag.";
+          }
+        }
+      }
+      leaf copy-by-session-enable {
+        when "../../bras-basic-access:bas/bras-basic-access:layer2-subscriber";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable multicast copy by-session.";
+      }
+      leaf copy-by-vlan-enable {
+        when "../../bras-basic-access:bas/bras-basic-access:layer2-subscriber";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable multicast copy by-VLAN.";
+      }
+      leaf authorization-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable authorization.";
+      }
+      leaf igmp-query-auto-send-enable {
+        when "../../bras-basic-access:bas/bras-basic-access:layer2-subscriber";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable IGMP to send query message automatically.";
+      }
+      container binding-vpn-instances {
+        description
+          "List of multicast binding vpn-instance configurations.";
+        list binding-vpn-instance {
+          key "name address-family";
+          description
+            "Configure multicast binding vpn-instance.";
+          leaf name {
+            type leafref {
+              path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+            }
+            must "../name!='_public_'";
+            description
+              "VPN instance.";
+          }
+          leaf address-family {
+            type addr-family-type;
+            must "../address-family='ipv4-unicast' or ../../../../ifm:type='Virtual-Template'";
+            must "/ni:network-instance/ni:instances/ni:instance[ni:name = current()/../name]/l3vpn:afs/l3vpn:af[l3vpn:type=current()]";
+            description
+              "Address family, which determines whether an address belongs to IPv4 or IPv6.";
+          }
+        }
+      }
+    }
+  }
+}

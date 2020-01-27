@@ -1,0 +1,235 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-evpn-srv6 {
+  namespace "urn:huawei:yang:huawei-evpn-srv6";
+  prefix evpn-srv6;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-evpl {
+    prefix evpl;
+  }
+  import huawei-bgp {
+    prefix bgp;
+  }
+  import huawei-bgp-evpn {
+    prefix bgp-evpn;
+  }
+  import huawei-evpn {
+    prefix evpn;
+  }
+  import huawei-srv6 {
+    prefix srv6;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "EVPN SRv6 configuration.";
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "evpnbgp";
+  typedef apply-sid-mode {
+    type enumeration {
+      enum "per-instance" {
+        value 0;
+        description
+          "Set apply sid per instance mode.";
+      }	
+      enum "per-nexthop-all" {
+        value 1;
+        description
+          "Set apply sid all nexthop mode.";
+      }
+      enum "per-nexthop-specify" {
+        value 2;
+        description
+          "Set apply sid specify nexthop mode.";
+      }
+    }
+    description
+      "Apply SID for segment-routing IPv6 in EVPN.";
+  }
+  augment "/evpl:evpl/evpl:instances/evpl:instance/evpn:evpn" {
+    description
+      "EVPN SRv6 configuration.";
+    container locators {
+      when "../../evpl:mode='srv6-mode' and ../evpn:name";
+      description
+        "List of locators used by segment-routing IPv6 for EVPN.";
+      list locator {
+        must "/evpn:evpn/evpn:instances/evpn:instance[evpn:name=current()/../../evpn:name]/evpn:vpws-evpn/evpn:rd";
+        key "name";
+        description
+          "Configure SRv6 locator.";
+        leaf name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srv6:locators/srv6:locator/srv6:name";
+          }
+          description
+            "Locator name.";
+        }
+      }
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast/bgp-evpn:evpn" {
+    description
+      "EVPN SRv6 configuration.";
+    container locators {
+      when "../../../../../../../ni:name!='_public_'";
+      description
+        "List of locators used by segment-routing IPv6 for EVPN.";
+      list locator {
+        key "name";
+        description
+          "Configure SRv6 locator.";
+        leaf name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srv6:locators/srv6:locator/srv6:name";
+          }
+          description
+            "Locator name.";
+        }
+      }
+    } 
+  	container apply-sid-mode {
+	  when "../../../../../../../ni:name!='_public_' and ../../../bgp:type='ipv4uni'";
+	  description
+	    "Configure apply SID for segment-routing IPv6 in EVPN.";
+      leaf mode {
+        when "../../locators/locator/name";
+        type apply-sid-mode;
+        default "per-instance";
+        description
+          "Apply SID mode for segment-routing IPv6 in EVPN.";
+      }
+      container specify-nexthops {
+        when "../mode='per-nexthop-specify'";
+        description
+          "List of locators used by segment-routing IPv6 for EVPN.";
+        list specify-nexthop {
+          key "nexthop-address";
+          max-elements "128";
+          description
+            "Configure apply SID for segmet-routing IPv6 in EVPN specify nexthop mode.";
+          leaf nexthop-address {
+            type inet:ip-address-no-zone;
+            description
+              "Specify the nexthop address.";
+          }
+          leaf interface-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            mandatory true;
+            description
+              "Out interface name of route.";
+          }
+        } 
+      }
+    } 
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-unicast/bgp-evpn:evpn" {
+    description
+      "EVPN SRv6 configuration.";
+    container locators {
+      when "../../../../../../../ni:name!='_public_'";
+      description
+        "List of locators used by segment-routing IPv6 for EVPN.";
+      list locator {
+        key "name";
+        description
+          "Configure SRv6 locator.";
+        leaf name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srv6:locators/srv6:locator/srv6:name";
+          }
+          description
+            "Locator name.";
+        }
+      }
+    }	
+    container apply-sid-mode {
+      when "../../../../../../../ni:name!='_public_' and ../../../bgp:type='ipv6uni'";
+	  description
+	    "Configure apply SID for segment-routing IPv6 in EVPN.";
+      leaf mode {
+        when "../../locators/locator/name"; 
+        type apply-sid-mode;
+        default "per-instance";
+        description
+          "Apply SID mode for segment-routing IPv6 in EVPN.";
+      }  
+      container specify-nexthops {
+	    when "../mode='per-nexthop-specify'";
+	    description
+            "List of locators used by segment-routing IPv6 for EVPN.";
+        list specify-nexthop {
+          key "nexthop-address";
+          max-elements "128";
+          description
+            "Configure apply SID for segmet-routing IPv6 in EVPN specify nexthop mode.";
+          leaf nexthop-address {
+            type inet:ipv6-address-no-zone;
+            description
+              "Specify the nexthop IPv6 address.";
+          }
+          leaf interface-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            mandatory true;
+            description
+              "Out interface name of route.";
+          }
+        } 
+      }
+    }
+  }
+  augment "/evpn:evpn/evpn:instances/evpn:instance/evpn:bd-evpn" {
+    description
+      "EVPN SRv6 configuration.";
+    container locator {
+      when "../evpn:rd";
+      description
+        "Configure segment-routing IPv6 locators to EVPN.";
+      leaf srv6-locator {
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srv6:locators/srv6:locator/srv6:name";
+        }
+        must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/srv6:srv6/srv6:locators/srv6:locator[srv6:name=current()/../evpn-srv6:srv6-locator]/srv6:args-length>0";
+        description
+          "Locator that is used to generate a BUM (DT2M) SID. If unicast-locator is not configured, locator is used to generate a unicast (DT2U) SID.";
+      }
+      leaf unicast-locator {
+        when "../srv6-locator";
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srv6:locators/srv6:locator/srv6:name";
+        }
+        must "(../unicast-locator and ../unicast-locator!=../srv6-locator) or not(../unicast-locator)";
+        description
+          "Locator that is used to generate a unicast (DT2U) SID.";
+      }
+    }
+  }
+}

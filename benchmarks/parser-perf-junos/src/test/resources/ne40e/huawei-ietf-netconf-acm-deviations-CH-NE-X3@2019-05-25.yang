@@ -1,0 +1,207 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ietf-netconf-acm-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-ietf-netconf-acm-deviations-CH-NE-X3";
+  prefix nacm-devs-CH-NE-X3;
+
+  import ietf-netconf-acm {
+    prefix nacm;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "NETCONF Access Control Model.
+     Copyright (c) 2012 IETF Trust and the persons identified as
+     authors of the code. All rights reserved.
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject
+     to the license terms contained in, the Simplified BSD
+     License set forth in Section 4.c of the IETF Trust's
+     Legal Provisions Relating to IETF Documents
+     (http://trustee.ietf.org/license-info).
+     This version of this YANG module is part of RFC 6536; see
+     the RFC itself for full legal notices.";
+
+  revision 2019-05-25 {
+    description
+      "Initial revision.";
+    reference
+      "RFC 6536: Network Configuration Protocol (NETCONF)
+                 Access Control Model";
+  }
+
+  typedef group-name-type-deviations {
+    type string {
+      length "1..max";
+      pattern '[^\*].*';
+    }
+    description
+      "Name of administrative group to which
+       users can be assigned.";
+  }
+
+  typedef user-name-type-deviations {
+    type string {
+      length "1..max";
+    }
+    description
+      "General Purpose Username string.";
+  }
+
+  typedef node-instance-identifier-deviations {
+    type yang:xpath1.0;
+    description
+      "Path expression used to represent a special
+       data node instance identifier string.
+       A node-instance-identifier value is an
+       unrestricted YANG instance-identifier expression.
+       All the same rules as an instance-identifier apply
+       except predicates for keys are optional. If a key
+       predicate is missing, then the node-instance-identifier
+       represents all possible server instances for that key.
+       This XPath expression is evaluated in the following context:
+        o The set of namespace declarations are those in scope on
+           the leaf element where this type is used.
+        o The set of variable bindings contains one variable,
+           'USER', which contains the name of the user of the current
+            session.
+        o The function library is the core function library, but
+           note that due to the syntax restrictions of an
+           instance-identifier, no functions are allowed.
+        o The context node is the root node in the data tree.";
+  }
+
+  deviation "/nacm:nacm/nacm:enable-nacm" {
+    deviate replace {
+      default "false";
+    }
+  }
+  deviation "/nacm:nacm/nacm:read-default" {
+    deviate replace {
+      default "deny";
+    }
+  }
+  deviation "/nacm:nacm/nacm:exec-default" {
+    deviate replace {
+      default "deny";
+    }
+  }
+  deviation "/nacm:nacm/nacm:groups/nacm:group/nacm:name" {
+    deviate replace {
+      type nacm-devs-CH-NE-X3:group-name-type-deviations {
+        length "1..32";
+      }
+    }
+  }
+  deviation "/nacm:nacm/nacm:groups/nacm:group/nacm:user-name" {
+    deviate replace {
+      type nacm-devs-CH-NE-X3:user-name-type-deviations {
+        length "1..255";
+      }
+    }
+  }
+  deviation "/nacm:nacm/nacm:enable-external-groups" {
+    deviate not-supported;
+  }
+  deviation "/nacm:nacm/nacm:rule-list/nacm:name" {
+    deviate replace {
+      type string {
+        length "1..15";
+      }
+    }
+  }
+  deviation "/nacm:nacm/nacm:rule-list/nacm:group" {
+    deviate replace {
+      type union {
+        type nacm:matchall-string-type;
+        type string {
+          length "1..32";
+          pattern '[^\*].*';
+        }
+      }
+    }
+  }
+  deviation "/nacm:nacm/nacm:rule-list/nacm:rule/nacm:name" {
+    deviate replace {
+      type string {
+        length "1..15";
+      }
+    }
+  }
+  deviation "/nacm:nacm/nacm:rule-list/nacm:rule/nacm:module-name" {
+    deviate replace {
+      type union {
+        type nacm:matchall-string-type;
+        type string {
+          length "1..63";
+        }
+      }
+    }
+  }
+  deviation "/nacm:nacm/nacm:rule-list/nacm:rule/nacm:rule-type/nacm:protocol-operation/nacm:rpc-name" {
+    deviate replace {
+      type union {
+        type nacm:matchall-string-type;
+        type string {
+          length "1..63";
+        }
+      }
+    }
+  }
+  deviation "/nacm:nacm/nacm:rule-list/nacm:rule/nacm:rule-type/nacm:notification/nacm:notification-name" {
+    deviate replace {
+      type union {
+        type nacm:matchall-string-type;
+        type string {
+          length "1..63";
+        }
+      }
+    }
+  }
+  deviation "/nacm:nacm/nacm:rule-list/nacm:rule/nacm:rule-type/nacm:data-node/nacm:path" {
+    deviate replace {
+      type nacm-devs-CH-NE-X3:node-instance-identifier-deviations {
+        length "1..255";
+      }
+    }
+  }
+  deviation "/nacm:nacm/nacm:rule-list/nacm:rule/nacm:comment" {
+    deviate replace {
+      type string {
+        length "1..63";
+      }
+    }
+  }
+  deviation "/nacm:nacm/nacm:rule-list" {
+    deviate add {
+      max-elements 64;
+    }
+  }
+  deviation "/nacm:nacm/nacm:rule-list/nacm:group" {
+    deviate add {
+      max-elements 16;
+    }
+  }
+  deviation "/nacm:nacm/nacm:rule-list/nacm:rule" {
+    deviate add {
+      max-elements 256;
+    }
+  }
+  deviation "/nacm:nacm/nacm:groups/nacm:group" {
+    deviate add {
+      max-elements 16;
+    }
+  }
+}

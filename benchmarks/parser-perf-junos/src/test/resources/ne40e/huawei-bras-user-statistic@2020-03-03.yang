@@ -1,0 +1,113 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-user-statistic {
+  yang-version 1;
+  namespace urn:huawei:yang:huawei-bras-user-statistic;
+  prefix bras-user-statistic;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "BRAS user statistics.";
+  reference
+    "Huawei private.";
+  revision 2020-03-03 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-03 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "aaa-access";
+  rpc filter-access-user-summary-info {
+    description
+      "Display summary statistics about access users.";
+    input {
+      leaf interface-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Interface name.";
+      }
+      leaf include-sub-interface {
+        when "../interface-name";
+        type boolean;
+        description
+          "Whether user access sources include sub-interfaces.";
+      }
+      leaf pe-vlan-start-id {
+        type uint16 {
+          range "0..4094";
+        }
+        description
+          "Start outer VLAN ID for user access.";
+      }
+    }
+    output {
+      leaf normal-users-number {
+        type uint32;
+        description
+          "Number of common users.";
+      }
+      leaf rui-local-users-number {
+        type uint32;
+        description
+          "Number of local RUI users.";
+      }
+      leaf rui-remote-users-number {
+        type uint32;
+        description
+          "Number of remote RUI users.";
+      }
+      leaf radius-auth-number {
+        type uint32;
+        description
+          "Number of users authenticated through a RADIUS server.";
+      }
+      leaf radius-proxy-auth-number {
+        type uint32;
+        description
+          "Number of users authenticated through a RADIUS proxy server.";
+      }
+      leaf no-auth-number {
+        type uint32;
+        description
+          "Number of users granted access without authentication.";
+      }
+      leaf local-auth-number {
+        type uint32;
+        description
+          "Number of users authenticated locally.";
+      }
+      leaf tacacs-auth-number {
+        type uint32;
+        description
+          "Number of users authenticated through a TACACS server.";
+      }
+      leaf total-users-number {
+        type uint32;
+        description
+          "Total number of users.";
+      }
+    }
+  }
+}

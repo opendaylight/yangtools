@@ -1,0 +1,54 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-evpn-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-evpn-deviations-CH-NE-X3";
+  prefix evpn-devs-CH-NE-X3;
+
+  import huawei-evpn {
+    prefix evpn;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "EVPN configuration.";
+
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/evpn:evpn/evpn:site/evpn:ad-per-es-split" {
+    deviate not-supported;
+  }
+  deviation "/evpn:evpn/evpn:site/evpn:alm-threshold" {
+    deviate not-supported;
+  }
+  deviation "/evpn:evpn/evpn:site/evpn:irb-reoriginated" {
+    deviate not-supported;
+  }
+  deviation "/evpn:evpn/evpn:site/evpn:irb-split-group" {
+    deviate not-supported;
+  }
+  deviation "/evpn:evpn/evpn:site/evpn:recovery-percentage" {
+    deviate not-supported;
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/evpn:evpn/evpn:irb2ip" {
+    deviate not-supported;
+  }
+}

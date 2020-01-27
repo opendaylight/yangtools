@@ -1,0 +1,278 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-dhcpv6 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-dhcpv6";
+  prefix dhcpv6;
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  include huawei-dhcpv6-relay;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Dynamic Host Configuration Protocol for IPv6.";
+  revision 2019-04-29 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "dhcp"; 
+  typedef dhcpv6-duid {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "-";
+      }
+      enum "llt" {
+        value 1;
+        description
+          "Link-layer address plus time.";
+      }
+      enum "ll" {
+        value 2;
+        description
+          "Link-layer address.";
+      }
+      enum "user-defined" {
+        value 3;
+        description
+          "User-defined.";
+      }
+    }
+    description
+      "The type of DHCPv6 DUID.";
+  }
+  typedef remote-id-format {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Default format.";
+      }
+      enum "user-defined" {
+        value 1;
+        description
+          "User-defined format.";
+      }
+    }
+    description
+      "The type of DHCPv6 remote-id format.";
+  }
+  container dhcpv6 {
+    description
+      "Configure a Dynamic Host Configuration Protocol for IPv6.";
+    container common {
+      description
+        "Configure basic attributes.";
+      container global {
+        description
+          "Configure DHCPv6 global attributes.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable Dynamic Host Configuration Protocol for IPv6.";
+        }
+        leaf duid-format {
+          type dhcpv6-duid;
+          default "invalid";
+          description
+            "DHCPv6 unique identifier format.";
+        }
+        leaf duid-string {
+          when "../duid-format='user-defined'";
+          type string {
+            length "8..28";
+            pattern '([^\t]{0,})';
+          }
+          must "../duid-string";
+          description
+            "DUID string, in hexadecimal notation.";
+        }
+        leaf rate-limit-enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable DHCPv6 packets rate limit.";
+        }
+        leaf rate-limit {
+          type uint32 {
+            range "1..2000";
+          }
+          units "pps";
+          default "512";
+          description
+            "DHCPv6 packets rate limit value.";
+        }
+        leaf source-ip-adaptive {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable DHCPv6 source-ip-address format adaptive.";
+        }
+        leaf active-duid {
+          type string {
+            length "8..28";
+            pattern '([^\t]{0,})';
+          }
+          config false;
+          description
+            "DUID string, in hexadecimal notation.";
+        }
+      }
+    }
+    container relay {
+      description
+        "Configure DHCPv6 Relay.";
+      uses dhcpv6:dhcpv6-relay-type;
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description "Extend interface attribute.";
+    container dhcpv6-relay-attribute {
+      description
+      "Configure DHCPv6 relay attributes on an interface.";
+      leaf source-address {
+        type inet:ipv6-address-no-zone;
+        description
+          "Source address.";
+      }
+      leaf link-address {
+        type inet:ipv6-address-no-zone;
+        description
+          "Link address.";
+      }
+      leaf strict-check {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable strict check on interfaces.";
+      }
+      leaf server-group-name {
+        type leafref {
+          path "/dhcpv6:dhcpv6/dhcpv6:relay/dhcpv6:server-groups/dhcpv6:server-group/dhcpv6:name";
+        }
+        description
+          "DHCPv6 relay server group name.";
+      }
+      container destination-addresses {
+        description
+          "List of DHCPv6 relay destination addresses.";
+        list destination-address {
+          key "ipv6-address";
+          max-elements  "8";
+          description
+            "Configure the DHCPv6 relay destination address.";
+          leaf ipv6-address {
+            type inet:ipv6-address-no-zone;
+            description
+              "Destination address.";
+          }
+        }
+      }
+      container destination-ifs {
+        description
+          "List of DHCPv6 relay destination interfaces.";
+        list destination-if {
+          key "if-name";
+          max-elements  "8";
+          description
+            "Configure DHCPv6 relay destination interface.";
+          leaf if-name {
+            type leafref {
+             path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Destination interface name.";
+          }
+        }
+      }
+      container rebuild-option {
+        description
+          "Configure DHCPv6 relay option rebuild attributes.";
+        leaf rebuild-interface-id {
+          type empty;
+          description
+            "Rebuild the interface-id option.";
+          }
+        leaf rebuild-remote-id {
+          type empty;
+          description
+            "Rebuild the remote-id option.";
+        }
+      }
+      container access-limit-setting {
+        description
+          "Configure the maximum number of access users on an interface.";
+        leaf access-limit {
+          type uint32 {
+            range "0..65536";
+          }
+          description
+            "Maximum number of access users on an interface.";
+        }
+        leaf access-vlan-limit {
+          type uint32 {
+            range "0..65536";
+          }
+          must "(../../../ethernet:ethernet/ethernet:l3-sub-interface/ethernet:dot1q-termination) or (../../../ethernet:ethernet/ethernet:l3-sub-interface/ethernet:qinq-termination) or (../../../ethernet:ethernet/ethernet:l3-sub-interface/ethernet:vlan-type-dot1q)";
+          description
+            "Maximum number of access users in any VLAN.";
+        }
+      }
+    }
+    container dhcpv6-relay-if {
+      presence "Enable/disable DHCPv6 relay functions on an interface.";
+      status deprecated;
+      description
+        "Configure DHCPv6 relay attributes on an interface, it was replaced by a container named dhcpv6-relay-attribute.";
+      leaf source-address {
+        type inet:ipv6-address-no-zone;
+        status deprecated;
+        description
+          "Source address.";
+      }
+      leaf link-address {
+        type inet:ipv6-address-no-zone;
+        status deprecated;
+        description
+          "Link address.";
+      }
+      leaf strict-check {
+        type boolean;
+        default "false";
+        status deprecated;
+        description
+          "Enable/disable strict check on interfaces.";
+      }
+      leaf server-group-name {
+        type leafref {
+          path "/dhcpv6:dhcpv6/dhcpv6:relay/dhcpv6:server-groups/dhcpv6:server-group/dhcpv6:name";
+        }
+        status deprecated;
+        description
+          "DHCPv6 relay server group name.";
+      }
+    }
+  }
+}

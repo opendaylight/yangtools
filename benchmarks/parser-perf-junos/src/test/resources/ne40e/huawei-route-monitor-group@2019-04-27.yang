@@ -1,0 +1,157 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-route-monitor-group {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-route-monitor-group";
+  prefix rmg;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "A route monitoring group monitors the status of its member routes, each of which has a down-weight. The down-weight sum of the route monitoring group changes with the number of routes that are Down and indicates the link quality. If a route in the route monitoring group goes Down, its down-weight is added to the down-weight sum of the route monitoring group. If a route in the route monitoring group goes Up again, its down-weight is subtracted from the down-weight sum of the route monitoring group.";
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "route-base";
+  container route-monitor-group {
+    description
+      "A route monitoring group monitors the status of its member routes, each of which has a down-weight. The down-weight sum of the route monitoring group changes with the number of routes that are Down and indicates the link quality. If a route in the route monitoring group goes Down, its down-weight is added to the down-weight sum of the route monitoring group. If a route in the route monitoring group goes Up again, its down-weight is subtracted from the down-weight sum of the route monitoring group.";
+    container monitor-groups {
+      description
+        "List of route monitoring groups.";
+      list monitor-group {
+        key "group-name";
+        max-elements 32;
+        description
+          "Configure a route monitoring group.";
+        leaf group-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Name of a route monitoring group.";
+        }
+        leaf enable-status {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a route monitoring group.";
+        }
+        leaf operator-and {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the AND relationship for routes in a route monitoring group.";
+        }
+        leaf trigger-up-delay {
+          type uint32 {
+            range "0..1000";
+          }
+          units "s";
+          default "5";
+          description
+            "Restoration delay.";
+        }
+        leaf trigger-down-delay {
+          type uint32 {
+            range "0..1000";
+          }
+          units "s";
+          default "0";
+          description
+            "Notification delay.";
+        }
+        leaf weight-sum {
+          type uint32;
+          config false;
+          description
+            "Down-weight sum of the route monitoring group.";
+        }
+        leaf down-weight {
+          type uint32;
+          config false;
+          description
+            "Down-weight of the routes in the route monitoring group.";
+        }
+        container track-routes {
+          description
+            "List of routes added to a route monitoring group.";
+          list track-route {
+            key "destination-ni-name destination mask-length";
+            max-elements 16;
+            description
+              "Configure routes to be added to a route monitoring group.";
+            leaf destination-ni-name {
+              type leafref {
+                path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+              }
+              description
+                "Name of a VPN instance.";
+            }
+            leaf destination {
+              type inet:ip-address-no-zone;
+              description
+                "Destination IP address.";
+            }
+            leaf mask-length {
+              type uint8 {
+                range "0..32";
+              }
+              description
+                "Mask length.";
+            }
+            leaf down-weight {
+              type uint32 {
+                range "1..1000";
+              }
+              default "10";
+              description
+                "Down-weight of a route in a route monitoring group.";
+            }
+            leaf route-status {
+              type enumeration {
+                enum "active" {
+                  value 0;
+                  description
+                    "The route is active.";
+                }
+                enum "inactive" {
+                  value 1;
+                  description
+                    "The route is inactive.";
+                }
+                enum "invalid" {
+                  value 2;
+                  description
+                    "The status is invalid.";
+                }
+              }
+              config false;
+              description
+                "Displays the route status.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

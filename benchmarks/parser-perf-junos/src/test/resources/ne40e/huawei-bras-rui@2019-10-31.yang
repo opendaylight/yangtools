@@ -1,0 +1,1103 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-rui {
+  namespace "urn:huawei:yang:huawei-bras-rui";
+  prefix bras-rui;
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-bras-ipv4-address-manage {
+    prefix bras-ipv4-address-manage;
+  }
+  import huawei-bras-ipv6-address-manage {
+    prefix bras-ipv6-address-manage;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-tunnel-management {
+    prefix tnlm;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-rbs {
+    prefix rbs;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-bfd {
+    prefix bfd;
+  }
+  import huawei-route-monitor-group {
+    prefix rmg;
+  }
+  import huawei-bras-user-manage {
+    prefix bras-user-manage;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras RUI.";
+
+  revision 2019-10-31 {
+    description
+      "Modify container ip-vpns, backup-user-infos.";
+    reference "Huawei private.";
+  }
+  revision 2019-10-17 {
+    description
+      "Add container rbp-lpu-infos, rbp-slave-mpu-infos, access-remark-macs, load-balance-hash-algorithm, accounting.";
+    reference "Huawei private.";
+  }
+  revision 2019-04-07 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "rui";
+/****************************type definitions*************************************/
+  typedef common-state-type {
+    type enumeration {
+      enum "down" {
+        value 1;
+        description
+          "Down state.";
+      }
+      enum "up" {
+        value 2;
+        description
+          "Up state.";
+      }
+    }
+    description
+      "Defines the type of state.";
+  }
+/*****************************type definitions************************************/
+  container bras-rui {
+    description
+      "Bras RUI.";
+    container global {
+      description
+       "Configure global config of bras RUI.";
+      container rui-option {
+        description
+          "Configure global rui option code for DHCP and DHCPv6.";
+        leaf dhcpv4 {
+          type uint8 {
+            range "151..174";
+          }
+          default "151";
+          description
+            "DHCP option code.";
+        }
+        leaf dhcpv6 {
+          type uint8 {
+            range "151..174";
+          }
+          default "151";
+          description
+            "DHCPv6 option code.";
+        }
+      }
+      container peer-backup-batch-access {
+        description
+          "Configure enables users to go online during batch backup.";
+        leaf status {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable peer backup batch access status.";
+        }
+      }
+      container peer-backup {
+        description
+          "Configure global peer backup.";
+        leaf download-vrrp-delay-time {
+          type uint8 {
+            range "0..60";
+          }
+          default "0";
+          description
+            "Download vrrp table delay time.";
+        }
+        leaf trigger-speed {
+          type uint16 {
+            range "0..400";
+          }
+          description
+            "Peer-backup rui-trigger-speed.";
+        }
+        leaf ttl {
+          type uint8 {
+            range "0..15";
+          }
+          default "8";
+          description
+            "IP ttl.";
+        }
+      }
+      container route-cost-auto-advertise {
+        description
+          "Configure route cost.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable route cost.";
+        }
+      }
+    }
+    container backup-user-infos {
+      config false;
+      description
+        "List of Statistics of Query Rui Backup User Info.";
+      list backup-user {
+        key "user-id user-name";
+        config false;
+        description
+          "Statistics of Query Rui Backup User Info.";
+        leaf user-id {
+          type uint32 {
+            range "0..3145727";
+          }
+          config false;
+          description
+            "ID of a rui user.";
+        }
+        leaf user-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Name of a user.";
+        }
+        leaf cid {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "User cid.";
+        }
+        leaf session-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "SessionId of user.";
+        }
+        leaf mac {
+          type pub-type:mac-address;
+          config false;
+          description
+            "Mac address.";
+        }
+        leaf pe-vlan {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "PeVLAN of user.";
+        }
+        leaf ce-vlan {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "CeVLAN of user.";
+        }
+        leaf vrrp-id {
+          type uint8 {
+            range "0..255";
+          }
+          config false;
+          description
+            "VRRP Protocol Id.";
+        }
+        leaf ip {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Ip address.";
+        }
+        leaf backup-id {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Remote backup ID.";
+        }
+        leaf rbp-name {
+          type string {
+            length "1..128";
+          }
+          config false;
+          description
+            "Name of an RBP.";
+        }
+        leaf process-id {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "RBS Index.";
+        }
+        leaf rbs-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Name of the RBS bound to an RBP.";
+        }
+        leaf interface {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          config false;
+          description
+            "Interface name.";
+        }
+        leaf ipv4-vpn {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "IPv4 vpn name.";
+        }
+        leaf ipv6-vpn {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "IPv6 vpn name.";
+        }
+        leaf online-pos {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "User Online Position (From local server or remote server).";
+        }
+        leaf link-local-address {
+          type string {
+            length "1..49";
+          }
+          config false;
+          description
+            "User Lan Address.";
+        }
+        leaf wan-address {
+          type string {
+            length "1..49";
+          }
+          config false;
+          description
+            "User Wan Address.";
+        }
+        leaf wan-prefix-len {
+          type string {
+            length "1..3";
+          }
+          config false;
+          description
+            "User Wan Address Prefix Length.";
+        }
+        leaf user-mode {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "Rui User Backup Mode.";
+        }
+      }
+    }
+  }
+  augment "/aaa:aaa/aaa:domains/aaa:domain" {
+    description
+      "Domain View.";
+    container bras-rui {
+      description
+        "Configure Bras RUI.";
+      leaf peer-backup-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable RUI backup for users who get online through an AAA domain.";
+      }
+    }
+  }
+  augment "/rbs:rbs/rbs:services/rbs:service" {
+    description
+      "Bras config below remote-backup-service View.";
+    container bras-rui-config {
+      description
+        "Configure bras config below remote-backup-service View.";
+        container domain-map-list {
+          description
+            "Configure bind the domain mapping list to an RBS.";
+          leaf name {
+            type leafref {
+              path "/bras-user-manage:bras-user-manage/bras-user-manage:domain-map-lists/bras-user-manage:domain-map-list/bras-user-manage:name";
+            }
+            description
+              "Domain-map-list name.";
+          }
+        }
+        container ipv4-pools {
+          description
+            "List of configure in the remote backup server View, bind the address pool.";
+          list ipv4-pool {
+            key "name";
+            description
+              "Configure in the remote backup server View, bind the address pool.";
+            leaf name {
+              type leafref {
+                path "/bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:ipv4-pools/bras-ipv4-address-manage:ipv4-pool/bras-ipv4-address-manage:name";
+              }
+              description
+                "IP pool name.";
+            }
+            leaf priority {
+              type uint32 {
+                range "1..65535";
+              }
+              description
+                "Cost of ip pool network route.";
+            }
+          }
+        }
+        container ipv6-pools {
+          description
+            "List of configure in the remote backup server View, bind the IPv6 address pool.";
+          list ipv6-pool {
+            key "name";
+            description
+              "Configure in the remote backup server View, bind the IPv6 address pool.";
+            leaf name {
+              type leafref {
+                path "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-pools/bras-ipv6-address-manage:ipv6-pool/bras-ipv6-address-manage:name";
+              }
+              description
+                "IPv6 pool name.";
+            }
+            leaf priority {
+              type uint32 {
+                range "1..65535";
+              }
+              description
+                "Cost of IPv6 pool network route.";
+            }
+          }
+        }
+        container ipv6-inter-chassis-borrow {
+          must "not(./source-address = ./dest-address)";
+          presence "Create the source and destination IPv6 addresses for the device functioning as the DHCPv6 server when addresses are assigned from local IPv6 address pools to implement inter-chassis address borrowing."; 
+          description
+            "Enable/disable the source and destination IPv6 addresses for the device functioning as the DHCPv6 server when addresses are assigned from local IPv6 address pools to implement inter-chassis address borrowing.";
+          leaf dest-address {
+            type inet:ipv6-address-no-zone;
+            mandatory true;
+            description
+              "DHCPv6 server destination address.";            
+          }
+          leaf source-address {
+            type inet:ipv6-address-no-zone;
+            mandatory true;
+            description
+              "DHCPv6 server source address.";            
+          }
+          leaf vpn {
+            type leafref {
+              path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+            }
+            must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";
+            description
+              "VPN instance.";            
+          }
+        }
+        container l2tp-protect-tunnel-enable {
+          description
+            "Configure l2tp protect-tunnel.";
+          leaf status {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the status of l2tp protect-tunnel.";
+          }
+        }
+        container l2tp-tunnel-sources {
+          description
+            "List of configures a source L2TP tunnel interface in the RBS View so that the source interface route bound to the RBS is updated based on the link status on the network side.";
+          list l2tp-tunnel-source {
+            key "interface";
+            description
+              "Configure the remote backup service to bind source interface.";
+            leaf interface {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Specify interface.";
+            }
+          }
+        }
+      container protect-tunnels {
+       must "not(./policy and ./redirect)";
+        description
+          "Configure protection tunnel template in hot backup scenarios.";
+        container all-instance-lsp {
+          description
+            "Configure an all instance protection tunnel template in hot backup scenarios.";
+          leaf peer-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "IP next hop.";
+          }
+        }
+          container policy {
+            presence "Create a protection path for public users with the tunnel policy.";
+            description
+              "Enable/disable a protection path for public users with the tunnel policy.";
+            leaf tunnel-policy {
+              type leafref {
+                path "/tnlm:tunnel-management/tnlm:tunnel-policys/tnlm:tunnel-policy/tnlm:name";
+              }
+              mandatory true;
+              description
+                "Tunnel name.";
+            }
+            leaf peer-ip {
+              type inet:ipv4-address-no-zone;
+              mandatory true;
+              description
+                "Tunnel peer IP.";
+            }
+            leaf interface {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Out interface.";
+            }
+          }
+          container redirect {
+            presence "Create a protection path of the IP redirection type.";
+            description
+              "Enable/disable a protection path of the IP redirection type.";
+            leaf interface {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              mandatory true;
+              description
+                "Out interface.";           
+            }
+            leaf peer-ip {
+              type inet:ipv4-address-no-zone;
+              mandatory true;
+              description
+                "IP next hop.";            
+            }
+          }
+          container ip-vpns {
+            description
+              "List of configure a protection path between the active and standby devices when there is return traffic on the network side.";
+            list protect-tunnel-vpn {
+              key "vpn";
+              description
+                "Configure a protection path between the active and standby devices when there is return traffic on the network side.";
+              leaf vpn {
+                type leafref {
+                  path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                }
+                must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+                description
+                  "IP VPN instance.";
+              }
+              leaf peer-ip {
+                type inet:ipv4-address-no-zone;
+                mandatory true;
+                description
+                  "Tunnel peer ip.";
+              }			  
+              leaf interface {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                description
+                  "Out interface."; 
+                }
+            }
+          }
+        }
+      container radius-author-server {
+          description
+            "Configure the radius author server for remote backup service.";
+          container ip-vpn-servers {
+            description
+              "List of configure the Radius Authorization Server Source IP under Remote Backup Server.";
+            list ip-vpn-server {
+              key "vpn";
+              description
+                "Configure the Radius Authorization Server Source IP under Remote Backup Server.";
+              leaf vpn {
+                type leafref {
+                path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                }
+                must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+                description
+                  "Vpn instance name.";
+              }	
+              leaf ip {
+                type inet:ipv4-address-no-zone;
+                mandatory true;
+                description
+                  "IP Address.";
+              }
+            }
+          }
+          container nas-server {
+            description
+              "Configure the source IP address of the packets that the router sends back to the RADIUS server to be the same as the NAS IP address.";
+            leaf same-as-logic-ip {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable specify the source IP same as NAS logic ip.";
+            }
+          }
+        }
+        container static-routes {
+          description
+            "List of configure IP static routes.";
+          list static-route {
+            key "tag";
+            max-elements  "10";
+            description
+              "Configure IP static routes.";
+            leaf tag {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Binding IP static routes of specified tag value.";
+            }
+            leaf cost {
+              type uint32 {
+                range "1..65535";
+              }
+              ext:dynamic-default {
+                ext:default-value "10" {
+                  when "../slave-flag = 'false'";
+                description
+                  "The default value is 10 when slave-flag is false.";
+                }
+                ext:default-value "20" {
+                  when "../slave-flag = 'true'";
+                  description
+                    "The default value is 20 when slave-flag is true.";
+                }
+              }
+              description
+                "Specified by rbs static routes bound to the final release cost value.";
+            }
+            leaf null-interface-index {
+              type uint32 {
+                range "0";
+              }
+              default "0";
+              description
+                "Null interface index, current value only supports NULL0.";
+            }
+            leaf slave-flag {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable specify the route as a backup state for RUI.";
+            }
+          }
+        }
+        container switch-over-uplink {
+          when "not(../track/monitor-groups/monitor-group or ../track/route-monitor-groups/route-monitor-group)";
+          description
+            "Configure the uplink fault rate threshold for a master/backup switchover and the duration of the uplink fault before the switchover.";
+          leaf duration {
+            type uint32 {
+              range "0..30";
+            }
+            default "0";
+            description
+              "Duration value.";
+          }
+          leaf failure-ratio {
+            type uint32 {
+              range "1..100";
+            }
+            default "100";
+            description
+              "Failure-ratio value.";
+          }
+        }
+      container track {
+        description
+          "Configure the remote backup service to track.";
+        container bfd-session {
+          description
+            "Configure the remote backup service to track the bidirectional forwarding detection (BFD) session status.";
+          leaf session-id {
+            type leafref {
+              path "/bfd:bfd/bfd:sessions/bfd:session/bfd:local-discriminator";
+            }
+            description
+              "Specify BFD session ID.";
+          }
+        }
+        container interfaces {
+          description
+            "List of configure the remote backup service to track the status of the network-side interface.";
+          list interface {
+            key "name";
+            description
+              "Configure the remote backup service to track the status of the network-side interface.";
+            leaf name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Specify interface.";
+            }
+            leaf weight {
+              type uint8 {
+                range "1..100";
+              }
+              default "10";
+              description
+                "Interface weight value.";
+            }
+          }
+        }
+        container monitor-groups {
+          description
+            "List of configure the status of the remote backup service tracing interface group.";
+          list monitor-group {
+            key "name";
+            max-elements "2";
+            description
+              "Configure the status of the remote backup service tracing interface group.";
+            leaf name {
+              type string {
+                length "1..31";
+              }
+              description
+                "Interface monitor group name.";
+            }
+            leaf failure-ratio {
+              type uint8 {
+                range "1..100";
+              }
+              mandatory true;
+              description
+                "Failure-ratio value by a percent.";
+            }
+          }
+        }
+        container route-monitor-groups {
+          description
+            "List of configure the route monitoring group monitored by the network to meet the percentage of link failure thresholds.";
+          list route-monitor-group {
+            key "name";
+            max-elements "2";
+            description
+              "Configure the route monitoring group monitored by the network to meet the percentage of link failure thresholds.";
+            leaf name {
+              type leafref {
+                path "/rmg:route-monitor-group/rmg:monitor-groups/rmg:monitor-group/rmg:group-name";
+              }
+              description
+                "Route group name.";
+            }
+            leaf failure-ratio {
+              type uint8 {
+                range "1..100";
+              }
+              mandatory true;
+              description
+                "Failure-ratio value by a percent.";
+            }
+          }
+        }
+      }
+      container dynamic-statistics {
+        config false;
+        description
+          "Statistics of dynamic rbs about bras.";
+        leaf uplink-state {
+          type common-state-type;
+          config false;
+          description
+            "The uplink state of rbs.";
+        }
+        container protect-tunnels {
+          config false;
+          description
+            "List of Statistics of Vpn-based information.";
+          list protect-tunnel {
+            key "vpn-id";
+            config false;
+            description
+              "Statistics of Vpn-based information.";
+            leaf vpn-id {
+              type uint32;
+              config false;
+              description
+                "Specify the VPN instance index.";
+            }
+            leaf vpn-name {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Specify the VPN instance name.";
+              ext:support-filter "true";
+            }
+            leaf protect-type {
+              type string {
+                length "1..64";
+              }
+              config false;
+              description
+                "The type of protect tunnel.";
+            }
+            leaf peer-ip {
+              type string {
+                length "1..16";
+              }
+              config false;
+              description
+                "The peer ip address of protect tunnel.";
+            }
+            leaf tunnel-state {
+              type string {
+                length "1..8";
+              }
+              config false;
+              description
+                "The tunnel state of protect tunnel.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment "/rbs:rbs/rbs:profiles/rbs:profile" {
+    description
+      "Bras config below remote-backup-profile View.";
+    container bras-rui {
+      description
+        "Configure bras config below remote-backup-profile View.";
+        container frame-route {
+          when "../../rbs:service-types/rbs:service-type[rbs:type = 'bras']";
+          description
+            "Configure a cost value for user routes in a remote backup profile (RBP) on the master device.";
+          leaf cost {
+            type uint32 {
+              range "1..65535";
+            }
+            description
+              "Cost of frame route network route.";
+          }
+        }
+        container ipv4-pools {
+          when "../../rbs:service-types/rbs:service-type[rbs:type = 'bras']";
+          description
+            "List of configure the address pool under the remote backup template.";
+          list ipv4-pool {
+            key "name";
+            description
+              "Configure the address pool under the remote backup template.";
+            leaf name {
+              type leafref {
+                path "/bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:ipv4-pools/bras-ipv4-address-manage:ipv4-pool/bras-ipv4-address-manage:name";
+              }
+              description
+                "IP pool name.";
+            }
+          }
+        }
+        container ipv4-pool-map {
+          when "../../rbs:service-types/rbs:service-type[rbs:type = 'bras']";
+          description
+            "Configure the name of a source IP address pool (or pool group) and the destination IP address pool (or pool group).";
+          container group-groups {
+            description
+              "List of configure the name of a source IP address pool group and the destination IP address pool group.";
+            list group-group {
+              key "source target";
+              description
+                "Configure the name of a source IP address pool group and the destination IP address pool group.";
+              leaf source {
+                type string {
+                  length "1..128";
+                }
+                description
+                  "The source pool group name.";
+              }
+              leaf target {
+                type leafref {
+                  path "/bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:pool-groups/bras-ipv4-address-manage:pool-group/bras-ipv4-address-manage:name";
+                }
+                description
+                  "The target pool group name.";
+              }
+              leaf order {
+                type uint32 {
+                  range "1..65534";
+                }
+                description
+                  "The order to choose target pool group.";        
+              }
+            }
+          }
+          container group-pools {
+            description
+              "List of configure the name of a source IP address pool group and the destination IP address pool.";
+            list group-pool {
+              key "source target";
+              description
+                "Configure the name of a source IP address pool group and the destination IP address pool.";
+              leaf source {
+                type string {
+                  length "1..128";
+                }
+                description
+                  "The source pool group name.";
+              }
+              leaf target {
+                type leafref {
+                  path "/bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:ipv4-pools/bras-ipv4-address-manage:ipv4-pool/bras-ipv4-address-manage:name";
+                }
+                description
+                  "The target pool name.";
+              }
+              leaf order {
+                type uint32 {
+                  range "1..65534";
+                }
+                description
+                  "The order to choose target pool.";
+              }
+            }
+          }
+          container pool-groups {
+            description
+              "List of configure the name of a source IP address pool and the destination IP address pool group.";
+            list pool-group {
+              key "source target";
+              description
+                "Configure the name of a source IP address pool and the destination IP address pool group.";
+              leaf source {
+                type string {
+                  length "1..128";
+                }
+                description
+                  "IP pool name.";
+              }
+              leaf target {
+                type leafref {
+                  path "/bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:pool-groups/bras-ipv4-address-manage:pool-group/bras-ipv4-address-manage:name";
+                }
+                description
+                  "The target pool group name.";
+              }
+              leaf order {
+                type uint32 {
+                  range "1..65534";
+                }
+                description
+                  "Node id.";
+              }
+            }
+          }
+          container pool-pools {
+            description
+              "List of configure the name of a source IP address pool and the destination IP address pool.";
+            list pool-pool {
+              key "source target";
+              description
+                "Configure the name of a source IP address pool and the destination IP address pool.";
+              leaf source {
+                type string {
+                  length "1..128";
+                }
+                description
+                  "IP pool name.";
+              }
+              leaf target {
+                type leafref {
+                  path "/bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:ipv4-pools/bras-ipv4-address-manage:ipv4-pool/bras-ipv4-address-manage:name";
+                }
+                description
+                  "The target pool name.";
+              }
+              leaf order {
+                type uint32 {
+                  range "1..65534";
+                }
+                description
+                  "Node id.";
+              }
+            }
+          }
+        }
+        container ipv6-pools {
+          when "../../rbs:service-types/rbs:service-type[rbs:type = 'bras']";
+          description
+            "List of configure the IPv6 address pool under the remote backup template.";
+          list ipv6-pool {
+            key "name";
+            description
+              "Configure the IPv6 address pool under the remote backup template.";
+            leaf name {
+              type leafref {
+                path "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-pools/bras-ipv6-address-manage:ipv6-pool/bras-ipv6-address-manage:name";
+              }
+              description
+                "IPv6 pool name.";
+            }
+          }
+        }
+        container ipv6-pool-maps {
+          when "../../rbs:service-types/rbs:service-type[rbs:type = 'bras']";
+          description
+            "List of configure the name of a source IPv6 address pool and the destination IPv6 address pool.";
+          list ipv6-pool-map {
+            key "source target";
+            description
+              "Configure the name of a source IPv6 address pool and the destination IPv6 address pool.";
+            leaf source {
+              type string {
+                length "1..32";
+              }
+              description
+                "IPv6 pool name.";
+            }
+            leaf target {
+              type leafref {
+                path "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-pools/bras-ipv6-address-manage:ipv6-pool/bras-ipv6-address-manage:name";
+              }
+              description
+                "The target IPv6 pool name.";
+            }
+            leaf order {
+              type uint32 {
+                range "1..65534";
+              }
+              description
+                "Node id.";
+            }
+          }
+        }
+        container nas-logic {
+          when "../../rbs:service-types/rbs:service-type[rbs:type = 'bras']";
+          description
+            "Configure nas logic.";
+          container ip-address{
+            description
+              "Configure logical IP addresses in the remote backup profile.";
+            leaf ip {
+              type inet:ipv4-address-no-zone;
+              description
+                "Specify logic ip.";
+            }
+          }
+          container port{
+            description
+              "Configure logical interfaces in the remote backup profile.";
+            leaf interface-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Specify logic port of NAS.";
+            }
+          }
+          container system-name{
+            description
+              "Configure logical host names in the remote backup profile.";
+            leaf name {
+              type string {
+                length "1..30";
+              }
+              description
+                "Logic host name (1 to 30 characters).";
+            }
+          }
+        }
+        container slave-without-forwarding {
+          description
+            "Configure the slave device in a backup group from forwarding backup packets.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable Without-Forwarding.";
+          }
+        }
+        container traffic-backup {
+          when "../../rbs:service-types/rbs:service-type[rbs:type = 'bras']";
+          description
+            "Configure the interval for backing up access user traffic or the traffic threshold.";
+          leaf interval {
+            type uint32 {
+              range "0..1440";
+            }
+            default "20";
+            description
+              "Interval of backup (minutes).";
+          }
+          leaf threshold {
+            type uint32 {
+              range "0..100000";
+            }
+            default "100";
+            description
+              "Threshold (MByte).";
+          }
+        }
+      }
+    }
+}

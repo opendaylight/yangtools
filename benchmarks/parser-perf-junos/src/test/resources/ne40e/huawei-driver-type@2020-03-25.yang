@@ -1,0 +1,1336 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-driver-type {
+  belongs-to huawei-driver {
+    prefix driver;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of driver type.";
+  revision 2020-03-25 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  typedef driver-link-chassis-type {
+    type enumeration {
+      enum "other" {
+        value 0;
+        description
+          "Other.";
+      }
+      enum "central-chassis" {
+        value 1;
+        description
+          "Cluster central chassis.";
+      }
+      enum "line-chassis" {
+        value 2;
+        description
+          "Cluster line chassis.";
+      }
+    }
+    description
+      "Driver-link-chassis-type.";
+  }
+    typedef driver-item-type {
+    type enumeration {
+      enum "bios" {
+        value 0;
+        description
+          "Bios.";
+      }
+      enum "bootload" {
+        value 1;
+        description
+          "Bootload.";
+      }
+    }
+    description
+      "Driver-item-type.";
+  }
+   typedef driver-result-type {
+    type enumeration {
+      enum "fail" {
+        value 0;
+        description
+          "FAIL.";
+      }
+      enum "pass" {
+        value 1;
+        description
+          "PASS.";
+      }
+	  enum "not-support" {
+        value 2;
+        description
+          "NOT SUPPORT.";
+      }
+    }
+    description
+      "Driver-result-type.";
+  }
+  typedef driver-inner-link-type {
+    type enumeration {
+      enum "other" {
+        value 0;
+        description
+          "Other.";
+      }
+      enum "control-channel" {
+        value 1;
+        description
+          "Control Channel.";
+      }
+      enum "monitor-channel" {
+        value 2;
+        description
+          "Monitor Channel.";
+      }
+      enum "forward-channel" {
+        value 3;
+        description
+          "Forward Channel.";
+      }
+    }
+    description
+      "Information of enum type.";
+  }
+
+  typedef driver-link-state-type {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal.";
+      }
+      enum "partial-fault" {
+        value 1;
+        description
+          "Partial Fault.";
+      }
+      enum "fault" {
+        value 2;
+        description
+          "Fault.";
+      }
+    }
+    description
+      "Information of enum type driver-link-state-type.";
+  }
+
+  typedef driver-bool {
+    type enumeration {
+      enum "yes" {
+        value 1; 
+        description
+          "YES.";
+      }
+      enum "no" {
+        value 0;
+        description
+          "NO.";
+      }
+    }
+    description
+      "Information of enum type driver-bool.";
+  }
+  typedef driver-entity-bool {
+    type enumeration {
+      enum "enable" {
+        value 1; 
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Information of enum type driver-entity-bool.";
+  }
+  typedef driver-power-work-mode {
+    type enumeration {
+      enum "DC" {
+        value 1;
+        description
+          "DC.";
+      }
+      enum "AC" {
+        value 2;
+        description
+          "AC.";
+      }
+      enum "HVDC" {
+        value 3;
+        description
+          "HVDC.";
+      }
+      enum "unknown" {
+        value 4;
+        description
+          "UNKNOWN.";
+      }
+    }
+    description
+      "Information of enum type driver-power-work-mode.";
+  }
+
+  typedef driver-cable-state {
+    type enumeration {
+      enum "plug" {
+        value 1;
+        description
+          "Plug.";
+      }
+      enum "un-plug" {
+        value 0;
+        description
+          "Unplug.";
+      }
+    }
+    description
+      "Information of enum type driver-cable-state.";
+  }
+  typedef driver-pm-status {
+    type enumeration {
+      enum "abnormal" {
+        value 1;
+        description
+          "Abnormal.";
+      }
+      enum "normal" {
+        value 0;
+        description
+          "Normal.";
+      }
+    }
+    description
+      "Information of enum type pm status.";
+  }
+  typedef driver-dacs-status {
+    type enumeration {
+      enum "abnormal" {
+        value 1;
+        description
+          "Abnormal.";
+      }
+      enum "normal" {
+        value 0;
+        description
+          "Normal.";
+      }
+    }
+    description
+      "Information of enum type dacs status.";
+  }
+ 
+  typedef driver-clock-status {
+    type enumeration {
+      enum "normal" {
+        value 1;
+        description
+          "Normal.";
+      }
+      enum "abnormal" {
+        value 0;
+        description
+          "Abnormal.";
+      }
+    }
+    description
+      "Information of enum type clock status.";
+  }
+
+  typedef driver-temp-volt-state {
+    type enumeration {
+      enum "unknown" {
+        value 4;
+        description
+          "Unknown.";
+      }
+      enum "normal" {
+        value 0;
+        description
+          "Normal state that maps 'normal' in the command line.";
+      }
+      enum "minor" {
+        value 1;
+        description
+          "Minor alarm that maps 'minor' in the command line.";
+      }
+      enum "major" {
+        value 2;
+        description
+          "Major alarm that maps 'fatal' in the command line.";
+      }
+      enum "fatal" {
+        value 3;
+        description
+          "Fatal.";
+      }
+      enum "unsupported" {
+        value 5;
+        description
+          "Unsupported.";
+      }
+    }
+    description
+      "Information of enum type driver-temp-volt-state.";
+  }
+  
+  typedef driver-system-mode {
+    type enumeration {
+      enum "redundant" {
+        value 1;
+        description
+          "Redundant mode.";
+      }
+      enum "non-redundant" {
+        value 2;
+        description
+          "Non-redundant mode.";
+      }
+    }
+    description
+      "Information of enum type driver-system-mode.";
+  }
+
+  typedef driver-cmu-alarm-mode {
+    type enumeration {
+      enum "open" {
+        value 0;
+        description
+          "Open.";
+      }
+      enum "close" {
+        value 1;
+        description
+          "Close.";
+      }
+      enum "undo" {
+        value 2;
+        description
+          "Undo.";
+      }
+    }
+    description
+      "Information of enum type driver-cmu-alarm-mode.";
+  }
+  typedef driver-cmu-switch-fog {
+    type enumeration {
+      enum "fog" {
+        value 1;
+        description
+          "Fog.";
+      }
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }
+    }
+    description
+      "Information of enum type driver-cmu-switch-fog.";
+  }
+  
+  typedef driver-analog-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }
+      enum "current" {
+        value 1;
+        description
+          "Current.";
+      }
+      enum "voltage" {
+        value 2;
+        description
+          "Voltage.";
+      }
+    }
+    description
+      "Information of enum type driver-analog-type.";
+  }
+  typedef driver-analog-object-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }
+      enum "temperature" {
+        value 2;
+        description
+          "Temperature.";
+      }
+      enum "humidity" {
+        value 3;
+        description
+          "Humidity.";
+      }
+    }
+    description
+      "Information of enum type driver-analog-object-type.";
+  }
+  
+  typedef energy-mode-type {
+    type enumeration {
+      enum "basic" {
+        value 0;
+        description
+          "Basic.";
+      }
+      enum "standard" {
+        value 1;
+        description
+          "Standard.";
+      }
+      enum "deep" {
+        value 2;
+        description
+          "Deep.";
+      }
+      enum "optimal" {
+        value 3;
+        description
+          "Optimal.";
+      }
+    }
+    description
+      "Information of enum type energy-mode-type.";
+  }
+  typedef energy-saving-pm-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Information of enum type energy-saving-pm-type.";
+  }
+  typedef offline-function-type {
+    type enumeration {
+      enum "disable" {
+        value 1;
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 0;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Information of enum type offline-function-type.";
+  }
+  typedef mib-query-mode-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "NO.";
+      }
+      enum "brief" {
+        value 1;
+        description
+          "YES.";
+      }
+    }
+    description
+      "Information of enum type mib-query-mode-type.";
+  }
+  typedef pwr-supply-mode-type {
+    type enumeration {
+      enum "standard" {
+        value 1;
+        description
+          "Standard.";
+      }
+      enum "assign" {
+        value 2;
+        description
+          "Assign.";
+      }
+    }
+    description
+      "Information of enum type pwr-supply-mode-type.";
+  }
+
+  typedef pwr-supply-temp-type {
+    type enumeration {
+      enum "templow" {
+        value 40;
+        description
+          "40.";
+      }
+      enum "temphigh" {
+        value 55;
+        description
+          "55.";
+      }
+      enum "tempmiddle" {
+        value 50;
+        description
+          "50.";
+      }
+    }
+    description
+      "Information of enum type pwr-supply-temp-type.";
+  }
+  typedef warm-backup-mode {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Undo warm-backup mode enable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Warm-backup mode enable.";
+      }
+    }
+    description
+      "Information of enum type warm-backup-mode.";
+  }
+  typedef entity-fault-isolate-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Undo entFaultIso enable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "EntFaultIso enable.";
+      }
+    }
+    description
+      "Information of enum type entity-fault-isolate-type.";
+  }
+  typedef sampling-period-type {
+    type enumeration {
+      enum "fifteen-minutes" {
+        value 1;
+        description
+          "Fifteen minutes.";
+      }
+      enum "thirty-minutes" {
+        value 2;
+        description
+          "Thirty minutes.";
+      }
+      enum "one-hour" {
+        value 3;
+        description
+          "One hour.";
+      }
+      enum "one-day" {
+        value 4;
+        description
+          "One day.";
+      }
+      enum "one-week" {
+        value 5;
+        description
+          "One week.";
+      }
+      enum "one-month" {
+        value 6;
+        description
+          "One month.";
+      }
+    }
+    description
+      "Power sampling period.";
+  }
+  typedef warm-backup-status {
+    type enumeration {
+      enum "off" {
+        value 0;
+        description
+          "Warm-backup status : off.";
+      }
+      enum "on" {
+        value 1;
+        description
+          "Warm-backup status : on.";
+      }
+    }
+    description
+      "Information of enum type warm-backup-status.";
+  }
+
+  typedef driver-vsu-service-type {
+    type enumeration {
+      enum "cgn" {
+        value 1;
+        description
+          "Cgn.";
+      }
+      enum "qoe" {
+        value 3;
+        description
+          "Qoe.";
+      }
+    }
+    description
+      "Information of enum type driver-vsu-service-type.";
+  }
+  typedef driver-interface-match-check-object {
+    type enumeration {
+      enum "card" {
+        value 2;
+        description
+          "Card.";
+      }
+      enum "board" {
+        value 1;
+        description
+          "Board.";
+      }
+    }
+    description
+      "Driver-interface-match-check-object.";
+  }
+  typedef driver-interface-match-check-flag {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Driver-interface-match-check-flag.";
+  }
+
+  typedef sfu-switch-mode-type {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Sfu-switch-mode-type.";
+  }
+  typedef driver-split-resume-mode-type {
+    type enumeration {
+      enum "slave-reset" {
+        value 1;
+        description
+          "Slave-reset.";
+      }
+      enum "fast-preemption" {
+        value 2;
+        description
+          "Fast-preemption.";
+      }
+    }
+    description
+      "Driver-split-resume-mode-type.";
+  }
+  typedef driver-multi-chassis-type {
+    type enumeration {
+      enum "ccc" {
+        value 0;
+        description
+          "Ccc.";
+      }
+      enum "clc" {
+        value 1;
+        description
+          "Clc.";
+      }
+    }
+    description
+      "Driver-multi-chassis-type.";
+  }
+  typedef driver-run-mode-type {
+    type enumeration {
+      enum "single" {
+        value 1;
+        description
+          "Single.";
+      }
+      enum "ccc-0" {
+        value 2;
+        description
+          "Ccc-0.";
+      }
+      enum "ccc-1" {
+        value 3;
+        description
+          "Ccc-1.";
+      }
+      enum "ccc-2" {
+        value 4;
+        description
+          "Ccc-2.";
+      }
+      enum "virtual-cluster-chassis" {
+        value 6;
+        description
+          "Virtual-cluster-chassis.";
+      }
+    }
+    description
+      "Information of enum type driver-run-mode-type.";
+  }
+
+  typedef driver-single-input-type {
+    type enumeration {
+      enum "A" {
+        value 1;
+        description
+          "Single Input Plane A.";
+      }
+      enum "B" {
+        value 2;
+        description
+          "Single Input Plane B.";
+      }
+      enum "NA" {
+        value 0;
+        description
+          "Undo Single Input.";
+      }
+    }
+    description
+      "Information of enum type driver-single-input-type.";
+  }
+
+  typedef rollback-choice-type {
+    type enumeration {
+      enum "no" {
+        value 0;
+        description
+          "No.";
+      }
+      enum "yes" {
+        value 1;
+        description
+          "Yes.";
+      }
+    }
+    description
+      "Information of enum type rollback-choice-type.";
+  }
+
+  typedef global-card-fault-process-mode {
+    type enumeration {
+      enum "reset" {
+        value 0;
+        description
+          "Reset.";
+      }
+      enum "isolate" {
+        value 1;
+        description
+          "Isolate.";
+      }
+    }
+    description
+      "Global-card-fault-process-mode.";
+  }
+
+  typedef driver-slot-infos-type {
+    type enumeration {
+      enum "MPU" {
+        value 4159;
+        description
+          "MPU.";
+      }
+      enum "LPU" {
+        value 4160;
+        description
+          "LPU.";
+      }
+      enum "SFU" {
+        value 4161;
+        description
+          "SFU.";
+      }
+      enum "ICU" {
+        value 4111;
+        description
+          "ICU.";
+      }
+      enum "ECU" {
+        value 4110;
+        description
+          "ECU.";
+      }
+      enum "PMU" {
+        value 5031;
+        description
+          "PMU.";
+      }
+      enum "CMU" {
+        value 5009;
+        description
+          "CMU.";
+      }
+      enum "FAN" {
+        value 4163;
+        description
+          "FAN.";
+      }
+      enum "POWER" {
+        value 4164;
+        description
+          "POWER.";
+      }
+      enum "IPU" {
+        value 10248;
+        description
+          "IPU.";
+      }
+    }
+    description
+      "Driver-slot-infos-type.";
+  }
+  
+  typedef driver-system-mode-type {
+    type enumeration {
+      enum "classic" {
+        value 0;
+        description
+          "Classic.";
+      }
+      enum "ls" {
+        value 1;
+        description
+          "Ls.";
+      }
+    }
+    description
+      "Driver-system-mode-type.";
+  }
+
+  typedef driver-upgrade-mode-type {
+    type enumeration {
+      enum "close" {
+        value 1;
+        description
+          "Close.";
+      }
+      enum "open" {
+        value 0;
+        description
+          "Open.";
+      }
+    }
+    description
+      "Driver-upgrade-mode-type.";
+  } 
+  typedef driver-flash-lock {
+    type enumeration {
+      enum "immediately" {
+        value 0;
+        description
+          "Immediately.";
+      }
+      enum "delay" {
+        value 1;
+        description
+          "Delay.";
+      }
+    }
+    description
+      "Driver-flash-lock.";
+  }
+  typedef driver-work-mode {
+    type enumeration {
+      enum "base-function" {
+        value 0;
+        description
+          "Base Function.";
+      }
+      enum "ptn-iot-mode" {
+        value 1;
+        description
+          "PTN IOT Mode.";
+      }
+    }
+    description
+      "Information of enum type driver-work-mode.";
+  }
+  typedef driver-usb-uart {
+    type enumeration {
+      enum "open" {
+        value 6;
+        description
+          "Open.";
+      }
+      enum "close" {
+        value 5;
+        description
+          "Close.";
+      }
+    }
+    description
+      "Information of enum driver-usb-uart.";
+  }
+  typedef usb-uart-status {
+    type enumeration {
+      enum "open" {
+        value 0;
+        description
+          "Open.";
+      }
+      enum "closed" {
+        value 1;
+        description
+          "Closed.";
+      }
+      enum "not-support" {
+        value 2;
+        description
+          "Not-support.";
+      }
+    }
+    description
+      "Information of enum usb-uart-status.";
+  }
+  typedef driver-cmu-role {
+    type enumeration {
+      enum "master" {
+        value 0;
+        description
+          "Master.";
+      }
+      enum "slave" {
+        value 1;
+        description
+          "Slave.";
+      }
+	   enum "NA" {
+        value 2;
+        description
+          "NA.";
+      }
+    }
+    description
+      "Driver-cmu-role.";
+  } 
+  typedef trap-type {
+    type enumeration {
+      enum "base-trap" {
+        value 1;
+        description
+          "Base-trap.";
+      }
+      enum "dc-trap" {
+        value 2;
+        description
+          "Dc-trap.";
+      }
+      enum "entity-trap" {
+        value 4;
+        description
+          "Entity-trap.";
+      }
+    }
+    description
+      "Information of enum type trap-type.";
+  }
+  
+  typedef forwarding-mode {
+    type enumeration {
+      enum "compatible" {
+        value 1;
+        description
+          "Compatible.";
+      }
+      enum "enhance" {
+        value 2;
+        description
+          "Enhance.";
+      }
+    }
+    description
+      "Information of enum type forwarding-mode.";
+  }
+  
+  typedef fan-workmode {
+    type enumeration {
+      enum "auto" {
+        value 1;
+        description
+          "Automatic.";
+      }
+      enum "manual" {
+        value 2;
+        description
+          "Percent.";
+      }
+      enum "silent" {
+        value 4;
+        description
+          "Silent.";
+      }
+      enum "full" {
+        value 5;
+        description
+          "Full.";
+      }
+      enum "minimum-percent" {
+        value 9;
+        description
+          "Minimum-percent.";
+      }
+      enum "denoise" {
+        value 11;
+        description
+          "Denoise.";
+      }
+    }
+    description
+      "Information of enum type fan-workmode.";
+  }
+  
+  typedef dustproof-gate-state {
+    type enumeration {
+      enum "enable" {
+        value 0;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 1;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Information of enum type dustproof-gate-state.";
+  }
+  
+  typedef reload-time {
+    type enumeration {
+      enum "5min" {
+        value 5;
+        description
+          "5min.";
+      }
+      enum "15min" {
+        value 15;
+        description
+          "15min.";
+      }
+      enum "30min" {
+        value 30;
+        description
+          "30min.";
+      }
+      enum "60min" {
+        value 60;
+        description
+          "60min.";
+      }
+      enum "1440min" {
+        value 1440;
+        description
+          "1440min.";
+      }
+    }
+    description
+      "Information of enum type reload-time.";
+  }
+  
+  typedef driver-inspect-state {
+    type enumeration {
+      enum "close" {
+        value 0;
+        description
+          "Close.";
+      }
+      enum "open" {
+        value 1;
+        description
+          "Open.";
+      }
+      enum "NA" {
+        value 2;
+        description
+          "NA.";
+      }
+    }
+    description
+      "Information of enum type driver-inspect-state.";
+  }
+  
+  typedef driver-inspect-alarm-state {
+    type enumeration {
+      enum "abnormal" {
+        value 0;
+        description
+          "Abnormal.";
+      }
+      enum "normal" {
+        value 1;
+        description
+          "Normal.";
+      }
+    }
+    description
+      "Information of enum type driver-inspect-alarm-state.";
+  }
+  
+  typedef driver-auto-upgrade-mode {
+    type enumeration {
+      enum "cancel" {
+        value 1;
+        description
+          "Cancel.";
+      }
+      enum "open" {
+        value 0;
+        description
+          "Open.";
+      }
+    }
+    description
+      "Information of enum type driver-auto-upgrade-mode.";
+  }
+
+  typedef driver-default-states {
+    type enumeration {
+      enum "close" {
+        value 0;
+        description
+          "Close.";
+      }
+      enum "open" {
+        value 1;
+        description
+          "Open.";
+      }
+    }
+    description
+      "Information of enum type driver-default-states.";
+  }  
+  
+  typedef driver-next-run-mode {
+    type enumeration {
+      enum "single" {
+        value 1;
+        description
+          "Single.";
+      }
+      enum "virtual-cluster-chassis" {
+        value 0;
+        description
+          "Virtual-cluster-chassis.";
+      }
+    }
+    description
+      "Information of enum type driver-next-run-mode.";
+  }
+
+  typedef board-channel-check-type {
+    type enumeration {
+      enum "enable" {
+        value 1; 
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 2; 
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Information of enum type board-channel-check-type.";
+  }
+  
+  typedef driver-operation-flag {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Information of enum type driver-operation-flag.";
+  }
+  
+  typedef driver-relation-type {
+    type enumeration {
+      enum "eq" {
+        value 0;
+        description
+          "Equal.";
+      }
+      enum "ge" {
+        value 1;
+        description
+          "Greate equal.";
+      }
+      enum "gt" {
+        value 2;
+        description
+          "Greate.";
+      }
+      enum "le" {
+        value 3;
+        description
+          "Little equal.";
+      }
+      enum "lt" {
+        value 4;
+        description
+          "Little.";
+      }
+      enum "ne" {
+        value 5;
+        description
+          "No equal.";
+      }
+    }
+    description
+      "Information of enum type driver-relation-type.";
+  }
+  
+  typedef driver-alarm-level-type {
+    type enumeration {
+      enum "critical" {
+        value 1;
+        description
+          "Critical.";
+      }
+      enum "major" {
+        value 2;
+        description
+          "Major.";
+      }
+      enum "minor" {
+        value 3;
+        description
+          "Minor.";
+      }
+      enum "warning" {
+        value 4;
+        description
+          "Warning.";
+      }
+    }
+    description
+      "Information of enum type driver-alarm-level-type.";
+  }
+
+  typedef driver-board-device-type {
+    type enumeration {
+      enum "LPU" {
+        value 0;
+        description
+          "LPU.";
+      }
+      enum "SFU" {
+        value 1;
+        description
+          "SFU.";
+      }
+    }
+    description
+      "Information of enum type driver-board-device-type.";
+  }
+  
+  typedef driver-clock-type {
+    type enumeration {
+      enum "syn-clock" {
+        value 0;
+        description
+          "Synchronized clock.";
+      }
+      enum "line-clock" {
+        value 1;
+        description
+          "Linear clock.";
+      }
+    }
+    description
+      "Information of enum type driver-clock-type.";
+  }
+  
+  typedef driver-switch-mode-type {
+    type enumeration {
+      enum "auto-choice" {
+        value 1;
+        description
+          "Automatic choice.";
+      }
+      enum "force-choice" {
+        value 0;
+        description
+          "Forced choice.";
+      }
+    }
+    description
+      "Information of enum type driver-switch-mode-type.";
+  }
+  
+  typedef driver-lock-state-type {
+    type enumeration {
+      enum "locked" {
+        value 0;
+        description
+          "Locked.";
+      }
+      enum "unlocked" {
+        value 1;
+        description
+          "Unlocked.";
+      }
+    }
+    description
+      "Information of enum type driver-lock-state-type.";
+  }
+}

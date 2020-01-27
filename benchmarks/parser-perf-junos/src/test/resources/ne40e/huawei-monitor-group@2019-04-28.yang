@@ -1,0 +1,131 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-monitor-group {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-monitor-group";
+  prefix monitor-group;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Global monitor group configuration.";
+  revision 2019-04-28 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "interface-mgr";
+  typedef status-type {
+    type enumeration {
+      enum "inactive" {
+        value 0;
+        description
+          "The status of monitor group is inactive.";
+      }
+      enum "active" {
+        value 1;
+        description
+          "The status of monitor group is active.";
+      }
+    }
+    description
+      "Status type is like inactive/active.";
+  }
+  container monitor-group {
+    description
+      "Global monitor group configuration.";
+    container groups {
+      description
+        "List of monitor groups.";
+      list group {
+        key "name";
+        description
+          "Configure this table to operate monitor groups on devices.";
+        leaf name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Specifies the name of an interface monitoring group.";
+        }
+        leaf trigger-up-delay {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units s;
+          default "0";
+          description
+            "Delay for a track interface to go up.";
+        }
+        leaf enable-status {
+          type status-type;
+          default "inactive";
+          description
+            "Status of monitor group.";
+        }
+        container binding-ifs {
+          description
+            "List of monitor group binding interfaces.";
+          list binding-if {
+            key "if-name";
+            max-elements 32;
+            description
+              "Configure monitor group binding interface.";
+            leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Name of monitor group binding interface.";
+            }
+            leaf down-weight {
+              type uint32 {
+                range "1..1000";
+              }
+              default "10";
+              description
+                "Down weight of monitor group binding interface.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment /ifm:ifm/ifm:interfaces/ifm:interface {
+    description
+      "A set of track interfaces.";
+    container track-monitor-group {
+      description
+        "Configure a set of track interfaces.";
+      leaf name {
+        type leafref {
+          path "/monitor-group:monitor-group/monitor-group:groups/monitor-group:group/monitor-group:name";
+        }
+        description
+          "The monitoring group was tracked under the interface. The node cannot be modified.";
+      }
+      leaf down-weight {
+        when "../name";
+        type uint32 {
+          range "1..1000";
+        }
+        description
+          "Trigger down weight of a track interface.";
+      }
+    }
+  }
+}

@@ -1,0 +1,73 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ftpc {
+  namespace "urn:huawei:yang:huawei-ftpc";
+  prefix ftpc;
+  import huawei-extension {
+    prefix ext;
+  }  
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  include huawei-ftpc-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "File Transfer Protocol client.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ftp-client";  
+  container ftpc {
+    description
+      "File Transfer Protocol client.";
+    container client {
+      description
+        "Configure FTP client configurations.";
+      leaf source-ipv4-address {
+        type inet:ipv4-address-no-zone;
+        description
+          "Users can configure the source IP address for outgoing connections by specifying the source IP address.";
+      }
+      leaf source-interface-name {
+        when "not(../source-ipv4-address)";
+        type pub-type:if-name;
+        description
+          "Users can configure the source interface for outgoing connections by specifying the source interface name. The specified source interface must exist and an IP address must be configured on the interface.";
+      }
+    }
+    container global-vpn {
+      description
+        "Configure VPN setting.";
+      leaf vpn-name {
+        type string {
+          length "1..31";
+        }
+        description
+          "VPN name.";
+      }
+      leaf ipv6-vpn-name {
+        type string {
+          length "1..31";
+        }
+        description
+          "IPv6 VPN name.";
+      }
+    }
+  }
+}

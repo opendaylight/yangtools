@@ -1,0 +1,576 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-openconfig-telemetry-ext {
+  // namespace
+  namespace "urn:huawei:yang:huawei-openconfig-telemetry-ext";
+
+  prefix "hw-telemetry-ext";
+
+  import openconfig-telemetry { prefix ot;}
+  import openconfig-inet-types { prefix oc-inet; }
+  import openconfig-telemetry-types { prefix oc-telemetry-types; }
+  import huawei-network-instance { prefix ni; }
+  import huawei-extension {prefix ext; }
+  
+  organization "Huawei Technologies Co., Ltd.";
+  contact
+      "Huawei Industrial Base
+       Bantian, Longgang
+       Shenzhen 518129
+       People's Republic of China
+       Website: http://www.huawei.com
+       Email: support@huawei.com
+       ";
+
+  description "Data model which creates the condition for the telemetry.";
+
+  //oc-ext:openconfig-version "0.3.0";
+  revision 2020-01-10 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "hw-telemetry-ext";
+
+  // identity statements
+  identity STREAM_UDP {
+    base "oc-telemetry-types:STREAM_PROTOCOL";
+    description
+      "Telemetry stream is carried over a UDP connection.";
+  }
+
+  grouping telemetry-global-attribute-config{
+    description
+      "The global attribute of telemetry.";
+    
+    leaf json-only-content {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable its operation when telemetry-stream-encoding-config.encoding is specified to literal ENC_JSON_IETF within any subscription. If it is set to true, json format will only act on real data content while telemetry message layer will keep on gpb format.";
+    }
+
+    leaf cpu-max-usage {
+      type uint8 {
+        range "1..50";
+      }
+      units %;
+      default "5";
+      description
+        "Maximum usage of the main control board's CPU used when telemetry collects data.";
+    }
+  }
+  
+  grouping  telemetry-sensor-path-condition-op-config {
+    description
+      "Parameters for a filter criterion.";
+    
+    leaf op-field{
+      type string {
+        length "1..63";
+      }
+      description
+        "Reference field in the filter criterion. Different paths support different reference fields.";
+    }
+
+    leaf op-type{
+      type enumeration {
+        enum eq {
+          value 0;
+          description
+            "Equal.";
+        }
+        enum gt {
+          value 1;
+          description
+            "Greater than.";
+        }
+        enum ge {
+          value 2;
+          description
+            "Greater than or equal.";
+        }
+        enum lt {
+          value 3;
+          description
+            "Less than.";
+        }
+        enum le {
+          value 4;
+          description
+            "Less than or equal.";
+        }
+      }
+      description 
+        "Reference to the op-type of the filter criterion.";
+    }
+
+    leaf op-value{
+      type string {
+        length "1..10";
+      }
+      description
+        "Comparison value of the filter criterion. Op-value must be an integer and the maximum value range is [0, 4294967295]. For the actual value range, see the definition of op-field in the YANG model.";
+    }
+      
+  }
+  
+  grouping  telemetry-sensor-path-filter-condition-config {
+    description
+      "Parameters for filter criteria.";
+    
+    container conditions {
+      description
+        "List of filter criteria, including the filter information such as op-field, op-type, and op-value.";
+
+      list condition {
+        key "op-field op-type op-value";
+        max-elements  "2";
+        description
+          "Configure the filter criteria.";
+        
+        leaf "op-field" {
+          type leafref {
+            path "../config/op-field";
+          }
+          description
+            "Reference to the op-field of the filter criterion.";
+        }
+        
+        leaf "op-type" {
+          type leafref {
+            path "../config/op-type";
+          }
+          description
+            "Reference to the op-type of the filter criterion.";
+        }
+        
+        leaf "op-value" {
+          type leafref {
+            path "../config/op-value";
+          }
+          description
+            "Comparison value of the filter criterion. Op-value must be an integer and the maximum value range is [0, 4294967295]. For the actual value range, see the definition of op-field in the YANG model.";
+        }
+        
+        container config {
+          description
+            "Configure the parameters for a filter criterion.";
+          uses  telemetry-sensor-path-condition-op-config;
+        }
+        container state {
+          config false;
+          description
+            "Operational state of a filter criterion.";
+          uses  telemetry-sensor-path-condition-op-config;
+        }
+      }
+    }
+  }
+  
+  grouping  telemetry-sensor-path-filter-attribute-config {
+    description
+      "Configuration parameters relating to the configured name of the telemetry sensor path filter.";
+    
+    leaf name {
+      type string {
+        length "1..8";
+        pattern "[A-Za-z0-9]+";
+      }
+      description "Filter name for the telemetry sensor path filter.";
+    }
+    
+    leaf condition-relation{
+      type enumeration {
+        enum and {
+          value 1;
+          description
+            "The relationship between filter criteria in a filter of a sampling path is and.";
+        }
+        enum or {
+          value 2;
+          description
+            "The relationship between filter criteria in a filter of a sampling path is or.";
+        }
+      }
+      default "and";
+      description 
+        "Relationship between filter criteria in a filter of a sampling path.";
+    }
+  }
+  
+  grouping telemetry-sensor-path-filter-config {
+      description
+        "Condition-based filtering's parameter of the sampling path. If the conditions are met, the data is reported.";
+      
+      container filters {
+        description
+          "List of the top level container for filters. If the filter criteria are met, sampled data is sent to a collector. A filter and heartbeat interval or redundancy suppression cannot be configured at the same time.";
+
+        list filter {
+          key "name";
+          max-elements "1";
+          description
+            "Configure the sampling path.";
+          
+          leaf name {
+            type leafref {
+              path "../config/name";
+            }
+            description
+              "Filter name of a sampling path.";
+          }
+           
+          container config {
+            description
+              "Configure the parameters for a filter in a sampling path.";
+            uses telemetry-sensor-path-filter-attribute-config;
+          }
+          
+          container state {
+            config false;
+            description
+              "Operational state of a filter in a sampling path.";
+            uses telemetry-sensor-path-filter-attribute-config;
+          }
+
+          uses telemetry-sensor-path-filter-condition-config;
+        }
+      }    
+  }
+
+  grouping telemetry-sensor-path-self-define-event-config { 
+    description
+      "Parameters for a customized event.";
+
+    leaf description {
+      type string {
+        length "1..55";
+      }
+      description
+        "Description of a customized event.";
+    }
+    leaf level {
+      type uint32 {
+        range "0..255";
+      }
+      default "0";
+      description
+        "Level of a customized event.";
+    }
+    leaf suppress-period {
+      type uint32 {
+        range "0..3600";
+      }
+      units s;
+      default "10";
+      description
+        "Suppression period for customized event reporting.";
+    }
+    leaf depth {
+      type uint8 {
+        range "1..3";
+      }
+      default "1";
+      description
+        "Sampling depth.";
+    }
+  }  
+  
+  grouping telemetry-sensor-path-config-self-define-event {
+    description
+      "Configuration parameters relating to the grouping of data model paths comprising a sensor grouping.";
+      leaf path {
+        type string {
+          length "1..511";
+        }
+        description
+          "Path to a section of operational state of interest (the sensor).";
+      }
+      uses telemetry-sensor-path-self-define-event-config;
+  }
+  grouping telemetry-stream-destination-with-vpn-config {
+    description
+      "Configuration parameters for the stream destinations.";
+      leaf destination-address {
+        type oc-inet:ip-address;
+        description
+          "IP address of the telemetry stream destination. 
+           When the destination-address is an IPv4 address, it can only be configured as an class A/B/C address. 
+           When the destination-address is an IPv6 address, it cannot be configured as an unspecified address, multicast address, link-local address, loopback address, IPv4-compatible IPv6 address, or IPv4-mapped IPv6 address.";
+      }
+      leaf destination-port {
+        type uint16{
+          range 1..65535;
+        }
+        description
+          "Protocol (UDP or TCP) port number for the telemetry stream destination.";
+      }
+      leaf vpn-instance{
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        description
+          "Name of a VPN instance for the telemetry stream destination.";
+      }
+  
+      leaf protocol{
+        type identityref {
+          base oc-telemetry-types:STREAM_PROTOCOL;
+        }
+        description "Selection of the transport protocol for the telemetry stream.";
+      }
+
+      leaf tls {
+        when "../protocol='oc-telemetry-types:STREAM_GRPC'";
+        type boolean;
+        default "true";
+        description
+          "Enable/disable data encryption at the transport layer. If encryption is allowed, whether the data is encrypted depends on the SSL policy of the gRPC client. If an SSL policy is configured, data at the transport layer is encrypted. Otherwise, the data is not encrypted.";
+      }
+  }
+  
+  // typedef statements
+  augment "/ot:telemetry-system" {
+    description
+        "Top level configuration and state for the device's telemetry system.";
+         
+    container global {
+      description "Configure the global attribute of telemetry.";
+      
+      container config {
+        description
+          "Configure the parameters relating to the telemetry global attribute.";
+        uses telemetry-global-attribute-config;
+      }
+      
+      container state {
+        config false;
+        description
+          "Operational state of information relating to the telemetry global attribute.";
+        uses telemetry-global-attribute-config;
+      }      
+    }
+  }
+  
+  augment "/ot:telemetry-system/ot:destination-groups/ot:destination-group/ot:destinations/ot:destination/ot:config" {
+    description
+      "Configuration parameters relating to telemetry destinations.";
+
+    leaf protocol{
+      type identityref {
+        base oc-telemetry-types:STREAM_PROTOCOL;
+      }
+      description "Selection of the transport protocol for the telemetry stream.";
+    }
+
+    leaf tls {
+      when "../protocol='oc-telemetry-types:STREAM_GRPC'";
+      type boolean;
+      default "true";
+      description
+        "Enable/disable data encryption at the transport layer. If encryption is allowed, whether the data is encrypted depends on the SSL policy of the gRPC client. If an SSL policy is configured, data at the transport layer is encrypted. Otherwise, the data is not encrypted.";
+    }
+
+  }
+
+  augment "/ot:telemetry-system/ot:destination-groups/ot:destination-group/ot:destinations/ot:destination/ot:state" {
+    description
+      "State information associated with telemetry destinations.";
+
+    leaf protocol{
+      type identityref {
+        base oc-telemetry-types:STREAM_PROTOCOL;
+      }
+      description "Selection of the transport protocol for the telemetry stream.";
+    }
+
+    leaf tls {
+      when "../protocol='oc-telemetry-types:STREAM_GRPC'";
+      type boolean;
+      default "true";
+      description
+        "Whether data encryption at the transport layer is allowed. If encryption is allowed, whether the data is encrypted depends on the SSL policy of the gRPC client. If an SSL policy is configured, data at the transport layer is encrypted. Otherwise, the data is not encrypted.";
+    }
+  }
+  
+  augment "/ot:telemetry-system/ot:sensor-groups/ot:sensor-group/ot:sensor-paths/ot:sensor-path"{
+    description
+      "List of paths in the model which together comprise a sensor grouping. Filters for each path to exclude items are also provided.";
+
+    uses telemetry-sensor-path-filter-config;
+
+  }
+
+  augment "/ot:telemetry-system/ot:sensor-groups/ot:sensor-group/ot:sensor-paths/ot:sensor-path/ot:config"{
+    description
+      "Configuration parameters to configure a set of data model paths as a sensor grouping.";
+
+    leaf reset-when-start {
+      type boolean;
+      default "false";
+      description 
+        "Enable/disable clearing a field in the sampling path when a sampling sensor group is associated with subscription. The fields that can be cleared in different sampling paths are different. The value true indicates that the field is cleared, and the value false indicates that the field is not cleared. Currently, only the sampling path huawei-qos:qos/qosPortQueueStatInfos/qosPortQueueStatInfo allows reset-when-start to be set to true.";
+    }
+    leaf depth{
+      type uint8 {
+        range "1..3";
+      }
+      default "1";
+      description
+        "Sampling depth.";
+    }
+  }
+  
+  augment "/ot:telemetry-system/ot:sensor-groups/ot:sensor-group/ot:sensor-paths/ot:sensor-path/ot:state"{
+    description
+      "Configuration parameters to configure a set of data model paths as a sensor grouping.";
+  
+    leaf reset-when-start {
+      type boolean;
+      default "false";
+      description 
+        "Whether to clear a field in the sampling path when a sampling sensor group is associated with subscription. The fields that can be cleared in different sampling paths are different. The value true indicates that the field is cleared, and the value false indicates that the field is not cleared. Currently, only the sampling path huawei-qos:qos/global-query/default-queue-statisticss/default-queue-statistics allows reset-when-start to be set to true.";
+    }
+    leaf depth{
+      type uint8 {
+        range "1..3";
+      }
+      default "1";
+      description
+        "Sampling depth.";
+    }
+  }
+
+  augment "/ot:telemetry-system/ot:subscriptions/ot:persistent/ot:subscription/ot:config" {
+    description
+      "Config parameters relating to the telemetry subscriptions on the local device.";
+
+    leaf local-source-port {
+      when "../ot:local-source-address";
+      type uint16 {
+        range "1..65535";
+      }
+      description "The source port of UDP packets from the device to a telemetry collector destination.";
+    }
+
+    leaf tls {
+      when "../ot:protocol='oc-telemetry-types:STREAM_GRPC'";
+      type boolean;
+      default "true";
+      description
+        "Enable/disable data encryption at the transport layer. If encryption is allowed, whether the data is encrypted depends on the SSL policy of the gRPC client. If an SSL policy is configured, data at the transport layer is encrypted. Otherwise, the data is not encrypted.";
+    }
+  }  
+
+  augment "/ot:telemetry-system/ot:subscriptions/ot:persistent/ot:subscription/ot:state" {
+    description
+      "State parameters relating to the telemetry subscriptions on the local device.";
+  
+    leaf local-source-port {
+      when "../ot:local-source-address";
+      type uint16 {
+        range "1..65535";
+      }
+      description "The source port of UDP packets from the device to a telemetry collector destination.";
+    }
+
+    leaf tls {
+      when "../ot:protocol='oc-telemetry-types:STREAM_GRPC'";
+      type boolean;
+      default "true";
+      description
+        "Whether data encryption at the transport layer is allowed. If encryption is allowed, whether the data is encrypted depends on the SSL policy of the gRPC client. If an SSL policy is configured, data at the transport layer is encrypted. Otherwise, the data is not encrypted.";
+    }
+  }
+
+  augment "/ot:telemetry-system/ot:sensor-groups/ot:sensor-group"{
+    description
+      "List of telemetry sensory groups on the local system, where a sensor grouping represents a resuable grouping of multiple paths and exclude filters.";
+
+    container sensor-paths-self-define-event {
+      description
+        "Configure the top level container to hold a set of customized events' sensor paths grouped together. Customized events and heartbeat interval or redundancy suppression cannot be configured at the same time. A customized event can take effect only after at least one filter criterion is configured for the event.";
+
+        list sensor-path {
+          key "path";
+          description
+            "Configure the customized events.";
+
+          leaf path {
+            type leafref {
+              path "../config/path";
+            }
+            description
+              "Reference to the path of interest.";
+            }
+          container config {
+            description
+              "Configure the parameters for a customized event.";
+            uses telemetry-sensor-path-config-self-define-event;
+          }
+          container state {
+            config false;
+            description
+              "Operational state of a customized event.";
+            uses telemetry-sensor-path-config-self-define-event;
+          }
+          uses telemetry-sensor-path-filter-config;
+        }
+    }
+  }
+  
+  augment "/ot:telemetry-system/ot:destination-groups/ot:destination-group" {
+    description
+      "List of destination-groups. Destination groups allow the reuse of common telemetry destinations across the telemetry configuration. An operator references a set of destinations via the configurable destination-group-identifier. A destination group may contain one or more telemetry destinations.";
+
+    container destinations-with-vpn {
+      description
+        "Configure the destination container to list the information about the destination with the VPN such as IP address, port, and VPN of the telemetry messages from the network element.";
+      list destination-with-vpn {
+        key "destination-address destination-port vpn-instance";
+        description
+          "Configure the telemetry stream destinations, including vpn-instance.";
+
+        leaf destination-address {
+          type leafref {
+             path "../config/destination-address";
+          }
+          description
+             "Reference to the destination address of the telemetry stream.";
+        }
+
+        leaf destination-port {
+          type leafref {
+            path "../config/destination-port";
+          }
+          description
+            "Reference to the port number of the stream destination.";
+        }
+
+        leaf vpn-instance {
+          type leafref {
+            path "../config/vpn-instance";
+          }
+          description
+            "Name of a VPN instance for the telemetry stream destination.";
+        }
+
+        container config {
+          description
+            "Configure the parameters relating to telemetry destinations.";
+          uses telemetry-stream-destination-with-vpn-config;
+        }
+
+        container state {
+          config false;
+          description
+            "Telemetry destinations-associated state.";
+          uses telemetry-stream-destination-with-vpn-config;
+        }
+      }
+    }
+  }
+}

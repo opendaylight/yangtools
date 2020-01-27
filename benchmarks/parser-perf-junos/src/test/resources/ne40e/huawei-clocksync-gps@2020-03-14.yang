@@ -1,0 +1,668 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-gps {
+  namespace "urn:huawei:yang:huawei-clocksync-gps";
+  prefix clocksync-gps;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Clock atom-gps data model define.";
+
+  revision 2020-03-14 {
+    description
+      "Modify the node description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-04 {
+    description
+      "Modify the node description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-25 {
+    description
+      "Add reset-smart-clock-port action node.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "clksync";
+  typedef gps-workmode-type {
+    type enumeration {
+      enum "position" {
+        value 0;      
+        description
+          "Position.";          
+      }
+      enum "hold" {
+        value 1;       
+        description
+          "Hold.";                   
+      }
+      enum "auto" {
+        value 2;        
+        description
+          "Auto.";         
+      }
+    }
+    description
+      "Type of gps work mode.";
+  }
+  typedef gnss-model-type {
+    type enumeration {
+      enum "none" {
+        value 0;      
+        description
+          "None.";           
+      }
+      enum "gps" {
+        value 1;      
+        description
+          "Gps.";           
+      }
+      enum "glonass" {
+        value 2;      
+        description
+          "Glonass.";           
+      }
+      enum "beidou" {
+        value 3;       
+        description
+          "Beidou.";          
+      }
+      enum "gps-glonass" {
+        value 4;       
+        description
+          "Gps-glonass.";          
+      }
+      enum "gps-beidou" {
+        value 5;      
+        description
+          "Gps-beidou.";           
+      }
+    }
+    description
+      "Type of gnss model.";
+  }
+  typedef leap-adjustdirection-type {
+    type enumeration {
+      enum "none" {
+        value 0;      
+        description
+          "None.";           
+      }
+      enum "leap59" {
+        value 59;       
+        description
+          "Leap59.";          
+      }
+      enum "leap61" {
+        value 61;      
+        description
+          "Leap61.";           
+      }
+    }
+    description
+      "Type of leap adjust direction.";
+  }
+  typedef gps-fixstatus-type {
+    type enumeration {
+      enum "nofixstatus" {
+        value 0;       
+        description
+          "Nofixstatus.";          
+      }
+      enum "fixstatus" {
+        value 1;        
+        description
+          "Fixstatus.";         
+      }
+      enum "holdstatus" {
+        value 2;         
+        description
+          "Holdstatus.";        
+      }
+    }
+    description
+      "Type of gps fix status.";
+  }
+  typedef leap-manualmode-enable-type {
+    type enumeration {
+      enum "disable" {
+        value 0;        
+        description
+          "Disable.";         
+      }
+      enum "enable" {
+        value 1;       
+        description
+          "Enable.";          
+      }
+    }
+    description
+      "Type of leap manual mode.";
+  }
+  typedef ptp-delay-mechanism {
+    type enumeration {
+      enum "delay" {
+        value 0;       
+        description
+          "Delay.";         
+      }
+      enum "pdelay" {
+        value 1;        
+        description
+          "Pdelay.";        
+      }
+    }
+    description
+      "Type of ptp delay mechanism.";
+  }
+  typedef ptp-port-step-type {
+    type enumeration {
+      enum "onestep" {
+        value 0;         
+        description
+          "Onestep.";        
+      }
+      enum "twostep" {
+        value 1;       
+        description
+          "Twostep.";          
+      }
+    }
+    description
+      "Type of ptp port step.";
+  }
+  typedef ssm-level {
+    type enumeration {
+      enum "unk" {
+        value 0;
+        description
+          "Unknown SSM level (UNK).";
+      }
+      enum "prc" {
+        value 2;
+        description
+          "SSM level of the G.811 clock (PRC).";
+      }
+      enum "ssua" {
+        value 4;
+        description
+          "G.812 transit clock (SSUA).";
+      }
+      enum "ssub" {
+        value 8;
+        description
+          "G.812 local clock (SSUB).";
+      }
+      enum "sec" {
+        value 11;
+        description
+          "SDH (sec).";
+      }
+      enum "dnu" {
+        value 15;
+        description
+          "The quality level of the clock source is unavailable (DNU).";
+      }
+      enum "none" {
+        value 16;
+        description
+          "Invalid SSM level.";
+      }
+    }
+    description
+      "SSM level type.";
+  }
+
+  rpc reset-gps {
+    description
+      "Reset the smart-clock module.";
+    ext:node-ref "/ifm:ifm/ifm:interfaces/ifm:interface/clocksync-gps:gps-port-srcs/clocksync-gps:gps-port-src";
+    input {
+      leaf port-name {
+        type pub-type:if-name;
+        description
+          "Reset the smart-clock module.";
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+        "Interface of gps.";
+    container gps-port-srcs {
+      description
+        "Configure smart-clock modules.";
+      container gps-port-src {
+        description
+          "Configure smart-clock module.";
+        leaf gps-sfp-ptp-priority1 {
+          type int32 {
+            range "0..255";
+          }
+          default "128";
+          description
+            "Priority1 of the Smart-Clock module.";
+        }
+        leaf gps-sfp-ptp-priority2 {
+          type int32 {
+            range "0..255";
+          }
+          default "128";
+          description
+            "Priority2 of the Smart-Clock module.";
+        }
+        leaf gps-sfp-ptp-domain {
+          type int32 {
+            range "0..255";
+          }
+          default "0";
+          description
+            "PTP clock domain of the Smart-Clock module.";
+        }
+        leaf gps-sfp-recovery-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable self-healing for the Smart-Clock module.";
+        }
+        leaf gnss-model-pri1 {
+          type gnss-model-type;
+          default "gps";
+          description
+            "Multi-mode priority list 1 for the Smart-Clock module.";
+        }
+        leaf gnss-model-pri2 {       
+         when "not(../gnss-model-pri1='none')";         
+         type gnss-model-type;
+          default "none";
+          description
+            "Multi-mode priority list 2 for the Smart-Clock module.";
+        }
+        leaf gnss-model-pri3 {
+          when "not(../gnss-model-pri2='none')";
+          type gnss-model-type;
+          default "none";
+          description
+            "Multi-mode priority list 3 for the Smart-Clock module.";
+        }
+        leaf gnss-model-pri4 {
+          when "not(../gnss-model-pri3='none')";
+          type gnss-model-type;
+          default "none";
+          description
+            "Multi-mode priority list 4 for the Smart-Clock module.";
+        }
+        leaf gnss-model-pri5 {
+          when "not(../gnss-model-pri4='none')";
+          type gnss-model-type;
+          default "none";
+          description
+            "Multi-mode priority list 5 for the Smart-Clock module.";
+        }
+        choice leap-sec-type{
+          description
+            "Smart-Clock module current leap second. When the leap second is configured, the leap second adjustment direction and leap second adjustment time are restored to the default values.";
+        case leap-sec-adjust{
+          leaf leap-adjust-date {
+            type pub-type:date;
+            must "(../leap-manualmode-enable=1)"; 
+            default "2017-01-01";
+            description
+              "Configure leap second adjustment date of the Smart-Clock module. The date needs to be associated with the leap second adjustment direction.";
+          }
+          leaf leap-adjust-dir {
+            type leap-adjustdirection-type;
+            must "(../leap-manualmode-enable=1) or (../leap-manualmode-enable=0 and ../leap-adjust-dir='none')"; 
+            default "none";
+            description
+              "Configure leap second adjustment direction of the Smart-Clock module.";
+          }
+          leaf current-leap-sec {
+            type int32 {
+              range "0..255";
+            }
+            must "(../leap-manualmode-enable=1) or (../leap-manualmode-enable=0 and ../current-leap-sec=0)"; 
+            default "0";
+            description
+              "Smart-Clock module current leap second. When the leap second is configured, the leap second adjustment direction and leap second adjustment time are restored to the default values.";
+          }
+          description
+            "Smart-Clock module current leap second. When the leap second is configured, the leap second adjustment direction and leap second adjustment time are restored to the default values.";
+        }
+        case leap-sec{
+          leaf current-leap-sec-set {
+            type int32 {
+              range "0..255";
+            }
+            description
+              "Smart-Clock module current leap second.";
+          }
+          description
+            "Smart-Clock module current leap second. When the leap second is configured, the leap second adjustment direction and leap second adjustment time are restored to the default values.";
+        }
+        }
+        leaf leap-manualmode-enable {
+         type int32 {
+            range "0..1";
+          }
+          default "0";
+          description
+            "Enable manual configuration of the leap second for the Smart-Clock module.";
+        }
+        leaf cable-delay {    
+         type int32 {
+            range "0..65535";
+          }
+          default "0";
+          description
+            "Feeder delay of the Smart-Clock module.";
+        }
+        leaf gps-sfp-online {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Positioning status of the Smart-Clock module.";
+        }
+        container gps-sfp-work-states {
+          config false;
+          description
+            "Statistics of smart-clock module work state information.";
+          leaf gps-sfp-is-timelock {
+            type boolean;
+            default "false";
+            description
+              "Time locking status of the Smart-Clock module.";
+          }
+          leaf gps-sfp-is-freqlock {
+            type boolean;
+            default "false";
+            description
+              "Frequency locking status of the Smart-Clock module.";
+          }
+          leaf gps-sfp-self-recoveryen {
+            type boolean;
+            default "false";
+            description
+              "Working status of the Smart-Clock module.";
+          }
+          leaf gps-sfp-is-self-recovering {
+            type boolean;
+            default "false";
+            description
+              "Self-healing status of the Smart-Clock module.";
+          }
+        }
+        container gnss-module {
+          config false;
+          description
+            "Statistics of GNSS information of the Smart-Clock module.";
+          leaf gps-latitude {
+            type string {
+              length "1..30";
+            }
+            description
+              "Latitude of the Smart-Clock module.";
+          }
+          leaf gps-longitude {
+            type string {
+              length "1..30";
+            }
+            description
+              "Longitude of the Smart-Clock module.";
+          }
+          leaf gps-altitude {
+            type string {
+              length "1..30";
+            }
+            description
+              "Altitude of the Smart-Clock module.";
+          }
+          leaf gps-work-mode {
+            type gps-workmode-type;
+            default "position";
+            description
+              "Work mode of the satellite card of the Smart-Clock module.";
+          }
+          leaf gps-satellite-number {
+            type int32 {
+              range "0..12";
+            }
+            default "0";
+            description
+              "Number of GPS satellites traced by the Smart-Clock module.";
+          }
+          leaf gps-leap-second {
+            type int32 {
+              range "0..255";
+            }
+            default "0";
+            description
+              "Leap second.";
+          }
+          leaf gps-satellite-cno {
+            type string {
+              length "1..50";
+            }
+            description
+              "CNO of traced GPS satellite, indicating the signal quality. A larger value indicates better signal quality.";
+          }
+          leaf glonass-satellite-number {
+            type int32 {
+              range "0..12";
+            }
+            default "0";
+            description
+              "Number of Glonass satellites traced by the Smart-Clock module.";
+          }
+          leaf glonass-satellite-cno {
+            type string {
+              length "1..50";
+            }
+            description
+              "CNO of the traced Glonass satellite, indicating signal quality. A larger value indicates better signal quality.";
+          }
+          leaf beidou-satellite-number {
+            type int32 {
+              range "0..12";
+            }
+            default "0";
+            description
+              "Number of Beidou satellites traced.";
+          }
+          leaf beidou-satellite-cno {
+            type string {
+              length "1..50";
+            }
+            description
+              "CNO of the traced BeiDou satellite, indicating the signal quality. A large value indicates better signal quality.";
+          }
+          leaf gps-time {
+            type string {
+              length "1..30";
+            }
+            description
+              "GNSS time.";
+          }
+          leaf gps-fix-status {
+            type gps-fixstatus-type;
+            description
+              "The positioning status of the satellite card of the Smart-Clock mode, used for the GNSS SFP module.";
+          }
+          leaf gnss-model {
+            type gnss-model-type;
+            default "gps";
+            description
+              "Working mode of the Smart-Clock module.";
+          }
+          leaf gnss-model-priority {
+            type string {
+              length "1..70";
+            }
+            description
+              "List of changing the auto mode to the optional mode.";
+          }
+          leaf leap-manualmode-en-stat {
+            type leap-manualmode-enable-type;
+            description
+              "Information about manual configuration of the leap second for the Smart-Clock module.";
+          }
+          leaf leap-adjustdir-stat {
+            type leap-adjustdirection-type;
+            description
+              "Leap second adjustment direction of the Smart-Clock module.";
+          }
+          leaf leap-adjustdate-stat {
+            type string {
+              length "1..30";
+            }
+            default "2017-01-01";
+            description
+              "Leap second adjustment date of the Smart-Clock module.";
+          }
+          leaf cable-delay-stat {
+            type int32 {
+              range "0..65535";
+            }
+            default "0";
+            description
+              "Information about feeder delay of the Smart-Clock module.";
+          }
+        }
+        container gps-sync-parameters {
+          config false;
+          description
+            "Statistics of clock synchronization parameters of the Smart-Clock module.";
+          leaf gps-sync-domain {
+            type int32 {
+              range "0..255";
+            }
+            default "0";
+            description
+              "PTP clock domain of the Smart-Clock module.";
+          }
+          leaf gps-sync-priority1 {
+            type int32 {
+              range "0..255";
+            }
+            default "128";
+            description
+              "PTP priority1 of the Smart-Clock module.";
+          }
+          leaf gps-sync-priority2 {
+            type int32 {
+              range "0..255";
+            }
+            default "128";
+            description
+              "PTP priority2 of the Smart-Clock module.";
+          }
+          leaf gps-ptp-delay-mechanism {
+            type ptp-delay-mechanism;
+            default "delay";
+            description
+              "PTP delay mechanism of the Smart-Clock module.";
+          }
+          leaf gps-ptp-clk-class {
+            type uint32 {
+              range "0..255";
+            }
+            default "187";
+            description
+              "PTP clock class of the Smart-Clock module.";
+          }
+          leaf gps-ptp-clk-step {
+            type ptp-port-step-type;
+            default "onestep";
+            description
+              "PTP clock step of the Smart-Clock module.";
+          }
+          leaf gps-ptp-announce-interval {
+            type int32 {
+              range "0..20";
+            }
+            default "7";
+            description
+              "Interval at which Announce packets are sent by the Smart-Clock module.";
+          }
+          leaf gps-ptp-sync-interval {
+            type int32 {
+              range "0..20";
+            }
+            default "3";
+            description
+              "Interval at which Sync packets are sent by the Smart-Clock module.";
+          }
+          leaf gps-ptp-delayreq-interval {
+            type int32 {
+              range "0..20";
+            }
+            default "7";
+            description
+              "Delayreq packet interval of the Smart-Clock module.";
+          }
+          leaf gps-ptp-clkid {
+            type string {
+              length "1..20";
+            }
+            default "0000000000000000";
+            description
+              "PTP clock ID of the Smart-Clock module.";
+          }
+          leaf gps-clock-ssm {
+            type ssm-level;
+            default "dnu";
+            description
+              "Clock SSM of the Smart-Clock module.";
+          }
+        }
+        container gps-board {
+          config false;
+          description
+            "Statistics of hardware information of Smart-Clock module.";
+          leaf gps-board-version {
+            type string {
+              length "1..10";
+            }
+            description
+              "Hardware version of the Smart-Clock module.";
+          }
+          leaf gps-mac-address {
+            type string {
+              length "1..30";
+            }
+            description
+              "MAC address of the Smart-Clock module.";
+          }
+        }
+      }
+    }
+  }
+}

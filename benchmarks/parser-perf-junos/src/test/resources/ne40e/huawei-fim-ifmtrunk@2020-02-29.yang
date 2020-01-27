@@ -1,0 +1,129 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-fim-ifmtrunk {
+  namespace "urn:huawei:yang:huawei-fim-ifmtrunk";
+  prefix fim-ifmtrunk;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ifm-trunk {
+    prefix ifm-trunk;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Common interface management, which includes the public configuration of interfaces.";
+  reference
+    "Huawei private.";
+  revision 2020-02-29 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forwarding";
+  typedef enable-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable type.";
+  }
+  typedef trunk-hash-type {
+    type enumeration {
+      enum "CRC32-1" {
+        value 0;
+        description
+          "CRC32-1.";
+      }
+      enum "CRC32-2" {
+        value 1;
+        description
+          "CRC32-2.";
+      }
+      enum "XOR-16BIT" {
+        value 2;
+        description
+          "16bit XOR.";
+      }
+      enum "XOR-8BIT" {
+        value 3;
+        description
+          "8bit XOR.";
+      }
+    }
+    description
+      "Trunk arith hash type.";
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk" {
+      description
+        "FIM configuration to the ifm module.";
+    container fim-ifmtrunk {
+      description
+        "Configure the FIM configuration to Eth-Trunk interface.";
+      leaf trunk-locality-flag {
+        when "../../ifm-trunk:type='eth-trunk' or ../../ifm-trunk:type='ip-trunk'";
+        type boolean;
+        default "true";
+        description
+          "Enable/disable virtual-cluster trunk localization.";
+      }
+      leaf trunk-hash-type {
+        type trunk-hash-type;
+        default "CRC32-1";
+        description
+          "Configure the hash arithmetic type for a trunk interface.";
+      }
+      leaf dual-receive-enable {
+        when "../../ifm-trunk:type='eth-trunk' and ../../ifm-trunk:work-mode='backup'";
+        type enable-type;
+        default "disable";
+        description
+          "Enable the backup-dual-receiving function of the Eth-trunk interface.";
+      }
+      leaf ignore-lacp-state-enable {
+        when "../../ifm-trunk:type='eth-trunk' and ../../ifm-trunk:work-mode='static'";
+        type enable-type;
+        default "disable";
+        description
+          "Enable port ignore-lacp-state function of the Eth-trunk interface.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk/ifm-trunk:members/ifm-trunk:member" {
+    description
+      "FIM configuration to the ifm module.";
+    container fim-ifmtrunk-member {
+      description
+        "Configure the FIM configuration to trunk member interface.";
+      leaf hash-index {
+        when "../../../../ifm-trunk:hash-type='symmetric' or ../../../../ifm-trunk:hash-type ='symmetric-complement'";
+        type uint16 {
+          range "1..64";
+        }
+        description
+          "Hash index.";
+      }
+    }
+  }
+}

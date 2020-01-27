@@ -1,0 +1,123 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifm-cpos-trunk {
+  namespace "urn:huawei:yang:huawei-ifm-cpos-trunk";
+  prefix ifm-cpos-trunk;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Defines the Cpos-Trunk bundling technology, which bundles multiple physical interfaces into a logical interface.";
+  revision 2020-02-14 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "trunk";
+  typedef channel-mode-type {
+    type enumeration {
+      enum vc12 {
+        value 0;
+        description
+          "VC12.";
+      }
+      enum vc4 {
+        value 1;
+        description
+          "VC4.";
+      }
+    }
+    description
+      "Cpos Trunk Channel Mode.";
+  }
+
+  typedef active-status-type {
+    type enumeration {
+      enum invalid {
+        value 0;
+        description
+          "Invalid.";
+      }
+      enum active {
+        value 1;
+        description
+          "The interface is in Active state.";
+      }
+      enum inactive {
+        value 2;
+        description
+          "The interface is in InActive state.";
+      }
+    }
+    description
+      "Cpos trunk member active state.";
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    when "ifm:type='Cpos-Trunk'";
+    description
+      "Active when the interface is set to type Cpos-Trunk.";
+    container cpos-trunk {
+      description
+        "Configure the Cpos-Trunk interface, which is a logical interface with multiple physical interfaces being bundled.";
+      leaf channel-mode {
+        type channel-mode-type;
+	default "vc12";
+        description
+          "Channel mode.";
+      }
+      leaf up-member-num {
+        type uint32 {
+          range "0..2";
+        }
+        config false;
+        description
+          "Specifies the number of member interfaces in the Up state.";
+      }
+      container members {
+        description
+          "List of cpos-trunk member interfaces.";
+        list member {
+          key "name";
+          max-elements 2;
+          description
+            "Configure cpos-trunk member interfaces.";
+          leaf name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Cpos'";
+            description
+              "Configures a name for a cpos-trunk member interface.";
+          }
+          leaf port-status {
+            type ifm:port-status;
+            config false;
+            description
+              "Displays the status of a cpos-trunk member interface.";
+          }
+          leaf active-status {
+            type active-status-type;
+            config false;
+            description
+              "Displays the active status of a cpos-trunk member interface.";
+          }
+        }
+      }
+    }
+  }
+}

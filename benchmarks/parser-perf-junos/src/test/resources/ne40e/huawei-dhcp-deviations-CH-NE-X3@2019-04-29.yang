@@ -1,0 +1,128 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-dhcp-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-dhcp-deviations-CH-NE-X3";
+  prefix dhcp-devs-CH-NE-X3;
+
+  import huawei-dhcp {
+    prefix dhcp;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Dynamic Host Configuration Protocol.";
+
+  revision 2019-04-29 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  typedef option82-format-deviations {
+    type enumeration {
+      enum type1 {
+        value 5;
+        description
+          "DHCP option82 type1 format.";
+      }
+      enum type2 {
+        value 6;
+        description
+          "DHCP option82 type2 format.";
+      }
+      enum self-define {
+        value 7;
+        description
+          "DHCP option82 self-define format.";
+      }
+      enum cn-telecom {
+        value 9;
+        description
+          "DHCP option82 cn-telecom format.";
+      }
+    }
+    description
+      "Type of dhcp-opt82-format.";
+  }
+
+  typedef dhcp-svr-sub-option-mode-deviations {
+    type enumeration {
+      enum ascii-mode {
+        value 0;
+        description
+          "Ascii Mode.";
+      }
+      enum ip-mode {
+        value 2;
+        description
+          "IP Mode.";
+      }
+    }
+    description
+      "Type of dhcp-svr-sub-option-mode.";
+  }
+
+  typedef ip-pool-address-reset-type-deviations {
+    type enumeration {
+      enum conflict {
+        value 2;
+        description
+          "Conflict.";
+      }
+    }
+    description
+      "Type of ip-pool-address-reset.";
+  }
+
+  deviation "/dhcp:dhcp/dhcp:server/dhcp:common/dhcp:bootp-auto-enable" {
+    deviate not-supported;
+  }
+  deviation "/dhcp:dhcp/dhcp:server/dhcp:common/dhcp:bootp-enable" {
+    deviate not-supported;
+  }
+  deviation "/dhcp:dhcp/dhcp:server/dhcp:common/dhcp:trust-option82" {
+    deviate not-supported;
+  }
+  deviation "/dhcp:dhcp/dhcp:server/dhcp:global-ip-pools/dhcp:global-ip-pool/dhcp:lease-time/dhcp:unlimited" {
+    deviate not-supported;
+  }
+  deviation "/dhcp:dhcp/dhcp:relay/dhcp:global/dhcp:source-ip" {
+    deviate not-supported;
+  }
+  deviation "/dhcp:dhcp/dhcp:server/dhcp:global-ip-pools/dhcp:global-ip-pool/dhcp:ip-pool-name" {
+    deviate replace {
+      type string {
+        length "1..128";
+      }
+    }
+  }
+  deviation "/dhcp:dhcp/dhcp:common/dhcp:global/dhcp:enable" {
+    deviate replace {
+      default "true";
+    }
+  }
+  deviation "/dhcp:dhcp/dhcp:server/dhcp:global-ip-pools/dhcp:global-ip-pool/dhcp:user-options/dhcp:user-option/dhcp:option-code" {
+    deviate replace {
+      type uint32 {
+        range "2..254";
+      }
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/dhcp:dhcp-if/dhcp:option82-formats/dhcp:option82-format/dhcp:option82-format" {
+    deviate replace {
+      type dhcp-devs-CH-NE-X3:option82-format-deviations;
+    }
+  }
+}

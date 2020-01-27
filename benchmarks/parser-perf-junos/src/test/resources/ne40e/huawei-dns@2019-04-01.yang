@@ -1,0 +1,318 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-dns {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-dns";
+  prefix dns;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "DNS management.";
+  revision 2019-04-01 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+}
+  ext:task-name  "dns";
+  container dns {
+    description
+      "DNS management.";
+    container global {
+      description
+        "Configure determine whether to enable dns.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable dns enable flag.";
+      }
+    }
+    container src-ips {
+      description
+        "List of IPv4 Source Server.";
+      list src-ip {
+        key "vrf-name source-ipv4-addr";
+        description
+          "Configure IPv4 Source Server.";
+        leaf vrf-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+          description
+            "VPN name.";
+        }
+        leaf source-ipv4-addr {
+          type inet:ipv4-address-no-zone;
+          description
+            "IPv4 address of source server.";
+        }
+      }
+    }
+    container timeout {
+      description
+        "Configure specifies the amount of time to wait for a response to a DNS query. If the ip domain timeout command is not configured, system will wait 3 seconds for a response to a DNS query.";
+      leaf interval-time {
+        type uint32 {
+          range "1..10";
+        }
+        units "s";
+        default "5";
+        description
+          "The amount of time to wait for a response to a DNS query (s).";
+      }
+    }
+    container try-number {
+      description
+        "Configure specifies the number of times to retry sending DNS queries. If the ip domain retry command is not configured, system will retry DNS queries twice.";
+      leaf probe-count {
+        type uint32 {
+          range "1..3";
+        }
+        default "2";
+        description
+          "Specifies the number of times to retry sending DNS queries.";
+      }
+    }
+    container domains {
+      description
+        "List of domain.";
+      list domain {
+        key "vpn name";
+        description
+          "Configure domain name.";
+        leaf vpn {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+          description
+            "VPN name.";
+        }
+        leaf name {
+          type string {
+            length "1..63";
+          }
+          description
+            "Domain name.";
+        }
+      }
+    }
+    container ipv4-servers {
+      description
+        "List of dns IPv4 server.";
+      list ipv4-server {
+        key "vpn address";
+        description
+          "Configure dns IPv4 server.";
+        leaf vpn {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+          description
+            "VPN name.";
+        }
+        leaf address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Address of IPv4 server.";
+        }
+      }
+    }
+    container dns-pkt-stats {
+      config false;
+      description
+        "Statistics of dns packets.";
+        leaf input-total {
+          type uint32;
+          config false;
+          description
+            "Total count of received packets.";
+        }
+        leaf output-total {
+          type uint32;
+          config false;
+          description
+            "Total count of sent packets.";
+        }
+        leaf drop-total {
+          type uint32;
+          config false;
+          description
+            "Total count of discarded packets.";
+        }
+        leaf rr-a {
+          type uint32;
+          config false;
+          description
+            "Count of received 'A' resource record types.";
+        }
+        leaf rr-aaaa {
+          type uint32;
+          config false;
+          description
+            "Count of received 'AAAA' resource record types.";
+        }
+        leaf rr-ptr {
+          type uint32;
+          config false;
+          description
+            "Count of received 'PTR' resource record types.";
+        }
+        leaf rr-cname {
+          type uint32;
+          config false;
+          description
+            "Count of received 'CNAME' resource record types.";
+        }
+        leaf rr-unknown {
+          type uint32;
+          config false;
+          description
+            "Count of received unkown resource record types.";
+        }
+        leaf standard {
+          type uint32;
+          config false;
+          description
+            "Count of sent standard query packets.";
+        }
+        leaf question-a {
+          type uint32;
+          config false;
+          description
+            "Count of sent 'A' query types.";
+        }
+        leaf question-aaaa {
+          type uint32;
+          config false;
+          description
+            "Count of sent 'AAAA' query types.";
+        }
+        leaf question-ptr {
+          type uint32;
+          config false;
+          description
+            "Count of sent 'PTR' query types.";
+        }
+        leaf rcv-tcp-total {
+          type uint32;
+          config false;
+          description
+            "Total count of received TCP packets.";
+        }
+        leaf rcv-udp-total {
+          type uint32;
+          config false;
+          description
+            "Total count of received UDP packets.";
+        }
+        leaf drop-tcp-total {
+          type uint32;
+          config false;
+          description
+            "Total count of discarded TCP packets.";
+        }
+        leaf drop-udp-total {
+          type uint32;
+          config false;
+          description
+            "Total count of discarded UDP packets.";
+        }
+        leaf drop-len {
+          type uint32;
+          config false;
+          description
+            "Count of discarded length error packets.";
+        }
+        leaf drop-id {
+          type uint32;
+          config false;
+          description
+            "Count of discarded ID error packets.";
+        }
+        leaf drop-server {
+          type uint32;
+          config false;
+          description
+            "Count of discarded server error packets.";
+        }
+        leaf drop-code {
+          type uint32;
+          config false;
+          description
+            "Count of discarded code error packets.";
+        }
+        leaf drop-tc {
+          type uint32;
+          config false;
+          description
+            "Count of discarded truncated error packets.";
+        }
+        leaf drop-query-cnt {
+          type uint32;
+          config false;
+          description
+            "Count of discarded query count error packets.";
+        }
+        leaf drop-answer-cnt {
+          type uint32;
+          config false;
+          description
+            "Count of discarded answer count error packets.";
+        }
+        leaf drop-expand-name {
+          type uint32;
+          config false;
+          description
+            "Count of discarded expand name error packets.";
+        }
+        leaf drop-class {
+          type uint32;
+          config false;
+          description
+            "Count of discarded class error packets.";
+        }
+        leaf drop-other {
+          type uint32;
+          config false;
+          description
+            "Count of discarded other error packets.";
+        }
+        leaf sent-udp-total {
+          type uint32;
+          config false;
+          description
+            "Total count of sent UDP packets.";
+        }
+        leaf sent-tcp-total {
+          type uint32;
+          config false;
+          description
+            "Total count of sent TCP packets.";
+        }
+    }
+  }
+}

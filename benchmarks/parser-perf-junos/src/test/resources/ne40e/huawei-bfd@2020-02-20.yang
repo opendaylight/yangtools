@@ -1,0 +1,4263 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bfd {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bfd";
+  prefix bfd;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bidirectional Forwarding Detection (BFD) is a detection mechanism used uniformly on the entire network. BFD is used to rapidly detect and monitor the connectivity of links or IP routes on a network.";
+  
+  revision 2020-02-20 {
+    description
+      "Delete the default value of TOS-EXP in the BFD session.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-28 {
+    description
+      "BFD white box correct.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-07-05 {
+    description
+      "Add BFD for IPv6.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  /*****************************************************************
+  * type definitions
+  *****************************************************************/
+  typedef link-type {
+    type enumeration {
+      enum "ip" {
+        value 0;
+        description
+          "IP.";
+      }
+      enum "ldp-lsp" {
+        value 1;
+        description
+          "LDP LSP.";
+      }
+      enum "static-lsp" {
+        value 2;
+        description
+          "Static LSP.";
+      }
+      enum "te-lsp" {
+        value 3;
+        description
+          "TE LSP.";
+      }
+      enum "te-tunnel" {
+        value 4;
+        description
+          "TE tunnel.";
+      }
+      enum "ldp-tunnel" {
+        value 5;
+        description
+          "LDP tunnel.";
+      }
+      enum "vll-pw" {
+        value 6;
+        description
+          "VLL pseudo wire.";
+      }
+      enum "vsi-pw" {
+        value 7;
+        description
+          "VSI pseudo wire.";
+      }
+      enum "p2mp-te" {
+        value 8;
+        description
+          "P2MP TE.";
+      }
+      enum "bgp-tunnel" {
+        value 9;
+        description
+          "BGP tunnel.";
+      }
+      enum "p2mp-ldp" {
+        value 10;
+        description
+          "P2MP MLDP.";
+      }
+      enum "vxlan" {
+        value 11;
+        description
+          "VXLAN.";
+      }
+      enum "sr-be-tunnel" {
+        value 12;
+        description
+          "SR_BE tunnel.";
+      }
+      enum "other" {
+        value 14;
+        description
+          "Other link types.";
+      }
+      enum "sid-list" {
+        value 13;
+        description
+          "SID_LIST.";
+      }
+    }
+    description
+      "BFD smp linktype.";
+  }
+  typedef bfd-link-type {
+    type enumeration {
+      enum "ip" {
+        value 0;
+        description
+          "IP type.";
+      }
+      enum "ldp-lsp" {
+        value 1;
+        description
+          "LDP LSP type.";
+      }
+      enum "te-lsp" {
+        value 3;
+        description
+          "TE LSP type.";
+      }
+      enum "te-tunnel" {
+        value 4;
+        description
+          "TE tunnel type.";
+      }
+      enum "vll-pw" {
+        value 6;
+        description
+          "VLL pseudo wire.";
+      }
+      enum "vsi-pw" {
+        value 7;
+        description
+          "VSI pseudo wire.";
+      }
+      enum "vxlan" {
+        value 11;
+        description
+          "VXLAN type.";
+      }
+    }
+    description
+      "BFD linktype.";
+  }
+  typedef bfd-globalcmd-type {
+    type enumeration {
+      enum "set-bfd" {
+        value 0;
+        description
+          "SET_BFD.";
+      }
+      enum "set-delay" {
+        value 1;
+        description
+          "SET_DELAY.";
+      }
+      enum "mpls-passive" {
+        value 2;
+        description
+          "MPLS_PASSIVE.";
+      }
+      enum "ping-time" {
+        value 3;
+        description
+          "PING_TIME.";
+      }
+    }
+    description
+      "The configuration item of global BFD.";
+  }
+  typedef create-type {
+    type enumeration {
+      enum "session-static" {
+        value 0;
+        description
+          "A BFD session is created in static mode.";
+      }
+      enum "session-auto" {
+        value 1;
+        description
+          "A BFD session is created in static auto-negotiation mode.";
+      }
+      enum "session-dynamic" {
+        value 2;
+        description
+          "A BFD session is created in dynamic mode and does not support manual creation.";
+      }
+      enum "passive" {
+        value 3;
+        description
+          "A BFD session is created in entirely dynamic mode and does not support manual creation.";
+      }
+    }
+    description
+      "BFD session type.";
+  }
+  typedef multicast-session-create-type {
+    type enumeration {
+      enum "session-dynamic" {
+        value 2;
+        description
+          "A BFD session is created in dynamic mode and does not support manual creation.";
+      }
+    }
+    description
+      "BFD session type.";
+  }
+  
+  typedef bfd-create-type {
+    type enumeration {
+      enum "sess-static" {
+        value 0;
+        description
+          "A BFD session is created in static mode.";
+      }
+      enum "sess-auto" {
+        value 1;
+        description
+          "A BFD session is created in static auto-negotiation mode.";
+      }
+    }
+    description
+      "BFD session type.";
+  }
+  typedef display-type {
+    type enumeration {
+      enum "all" {
+        value 0;
+        description
+          "All BFD sessions.";
+      }
+      enum "static" {
+        value 1;
+        description
+          "Static BFD session.";
+      }
+      enum "dynamic" {
+        value 2;
+        description
+          "Dynamic BFD session.";
+      }
+      enum "passive" {
+        value 3;
+        description
+          "Passive BFD session.";
+      }
+      enum "discriminator" {
+        value 4;
+        description
+          "Discriminator-specified BFD session.";
+      }
+      enum "static-auto" {
+        value 5;
+        description
+          "Static auto-negotiation session.";
+      }
+      enum "peer-ip" {
+        value 6;
+        description
+          "BFD session with the peer IP address specified.";
+      }
+      enum "static-lsp" {
+        value 7;
+        description
+          "Static LSP session.";
+      }
+      enum "ldp-ldp" {
+        value 8;
+        description
+          "LDP LSP session.";
+      }
+      enum "mpls-te" {
+        value 9;
+        description
+          "MPLS TE session.";
+      }
+      enum "interface" {
+        value 10;
+        description
+          "BFD session with the specified interface.";
+      }
+    }
+    description
+      "BFD session type.";
+  }
+  typedef bfd-smp-dbgtype {
+    type enumeration {
+      enum "evt" {
+        value 0;
+        description
+          "BFD event debugging.";
+      }
+      enum "pkt" {
+        value 1;
+        description
+          "BFD packet debugging.";
+      }
+      enum "sock" {
+        value 2;
+        description
+          "BFD socket debugging.";
+      }
+      enum "msg" {
+        value 3;
+        description
+          "BFD message queue debugging.";
+      }
+      enum "err" {
+        value 4;
+        description
+          "BFD error debugging.";
+      }
+      enum "scm" {
+        value 5;
+        description
+          "BFD session control management debugging.";
+      }
+      enum "fsm" {
+        value 6;
+        description
+          "BFD FSM debugging.";
+      }
+      enum "ha" {
+        value 7;
+        description
+          "BFD HA debugging.";
+      }
+      enum "tmr" {
+        value 8;
+        description
+          "BFD timer debugging.";
+      }
+      enum "proc" {
+        value 9;
+        description
+          "BFD processing debugging.";
+      }
+      enum "all" {
+        value 10;
+        description
+          "BFD all debugging.";
+      }
+    }
+    description
+      "BFD debug type.";
+  }
+  typedef detect-mode {
+    type enumeration {
+      enum "async-with-echo" {
+        value 0;
+        description
+          "Asynchronous mode with the echo function.";
+      }
+      enum "async-without-echo" {
+        value 1;
+        description
+          "Asynchronous mode without the echo function.";
+      }
+      enum "demand-with-echo" {
+        value 2;
+        description
+          "Demand mode with the echo function.";
+      }
+      enum "demand-without-echo" {
+        value 3;
+        description
+          "Demand mode without the echo function.";
+      }
+      enum "async-one-arm-echo" {
+        value 4;
+        description
+          "Asynchronous one-arm echo mode.";
+      }
+      enum "seamless-without-echo" {
+        value 5;
+        description
+          "SBFD mode without the echo function.";
+      }
+    }
+    description
+      "BFD asynchronous type.";
+  }
+  typedef bfd-smp-bfd-cap {
+    type enumeration {
+      enum "ipv4" {
+        value 0;
+        description
+          "IPv4.";
+      }
+      enum "ipv6" {
+        value 1;
+        description
+          "IPv6.";
+      }
+    }
+    description
+      "BFD cap type.";
+  }
+  typedef session-state {
+    type enumeration {
+      enum "admin-down" {
+        value 0;
+        description
+          "The session is in the AdminDown state.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "The session is in the Down state.";
+      }
+      enum "init" {
+        value 2;
+        description
+          "The session is in the Initialize state.";
+      }
+      enum "up" {
+        value 3;
+        description
+          "The session is in the Up state.";
+      }
+    }
+    description
+      "BFD session state.";
+  }
+  typedef diag-state {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "No diagnosis reason.";
+      }
+      enum "detect-down" {
+        value 1;
+        description
+          "Detection control times out.";
+      }
+      enum "echo-down" {
+        value 2;
+        description
+          "Echo detection is Down.";
+      }
+      enum "neighbor-down" {
+        value 3;
+        description
+          "Neighbor advertisement is Down.";
+      }
+      enum "forwarding-reset" {
+        value 4;
+        description
+          "The forwarding plane is restarted.";
+      }
+      enum "path-down" {
+        value 5;
+        description
+          "The path is Down.";
+      }
+      enum "concat-path-down" {
+        value 6;
+        description
+          "The cascade path is Down.";
+      }
+      enum "admin-down" {
+        value 7;
+        description
+          "The session is in the AdminDown state.";
+      }
+      enum "reverse-concat-path-down" {
+        value 8;
+        description
+          "The reverse cascade path is Down.";
+      }
+      enum "receive-admin-down" {
+        value 9;
+        description
+          "The remote session is in the AdminDown state.";
+      }
+    }
+    description
+      "BFD diag state.";
+  }
+  typedef inner-state {
+    type enumeration {
+      enum "init" {
+        value 0;
+        description
+          "The BFD components are in the Initialize state.";
+      }
+      enum "batch-backup" {
+        value 1;
+        description
+          "The BFD components are backed up in batches.";
+      }
+      enum "await" {
+        value 2;
+        description
+          "The backup BFD components are ready and waiting for the message for switching to the primary components.";
+      }
+      enum "smooth-inside" {
+        value 3;
+        description
+          "Internal smoothing data about BFD components.";
+      }
+      enum "smooth-fei" {
+        value 4;
+        description
+          "Smooth data of the BFD components and forwarding plane.";
+      }
+      enum "smooth-fes" {
+        value 5;
+        description
+          "Smooth data of the BFD components and forwarding plane.";
+      }
+      enum "smooth-app" {
+        value 6;
+        description
+          "Smooth data of the BFD components and application components such as OSPF and BGP components.";
+      }
+      enum "work" {
+        value 7;
+        description
+          "The BFD components are working properly.";
+      }
+    }
+    description
+      "BFD inner state.";
+  }
+  typedef operation-state {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "The operating status is Down.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "The operating status is Up.";
+      }
+    }
+    description
+      "BFD oper state.";
+  }
+  typedef session-type {
+    type enumeration {
+      enum "single-hop-ip" {
+        value 0;
+        description
+          "Single-hop session.";
+      }
+      enum "multi-hop-ip" {
+        value 1;
+        description
+          "Multi-hop session.";
+      }
+      enum "static-lsp" {
+        value 2;
+        description
+          "Static LSP session.";
+      }
+      enum "ldp-lsp" {
+        value 3;
+        description
+          "LDP LSP session.";
+      }
+      enum "te-ldp" {
+        value 4;
+        description
+          "TE LSP session.";
+      }
+      enum "tunnel" {
+        value 5;
+        description
+          "TE tunnel session.";
+      }
+      enum "vll-pw" {
+        value 6;
+        description
+          "VLL PW session.";
+      }
+      enum "vsi-pw" {
+        value 7;
+        description
+          "VSI PW session.";
+      }
+      enum "p2mp-te" {
+        value 8;
+        description
+          "P2MP TE session.";
+      }
+      enum "ldp-tnl" {
+        value 9;
+        description
+          "LDP tunnel session.";
+      }
+      enum "bgp-tnl" {
+        value 10;
+        description
+          "BGP tunnel session.";
+      }
+      enum "p2mp-ldp" {
+        value 11;
+        description
+          "P2MP MLDP session.";
+      }
+      enum "vxlan" {
+        value 12;
+        description
+          "VXLAN session.";
+      }
+      enum "sr-be-tnl" {
+        value 13;
+        description
+          "SR_BE tunnel session.";
+      }
+      enum "sid-list" {
+        value 14;
+        description
+          "SID_LIST session.";
+      }
+    }
+    description
+      "BFD session type.";
+  }
+  typedef link-filter {
+    type enumeration {
+      enum "link-filter-all" {
+        value 0;
+        description
+          "LINK_FILTER_ALL.";
+      }
+      enum "for-ip" {
+        value 1;
+        description
+          "FOR_IP.";
+      }
+      enum "for-lsp" {
+        value 2;
+        description
+          "FOR_LSP.";
+      }
+      enum "for-te" {
+        value 3;
+        description
+          "FOR_TE.";
+      }
+      enum "for-pw" {
+        value 5;
+        description
+          "FOR_PW.";
+      }
+      enum "for-vsi-pw" {
+        value 6;
+        description
+          "FOR_VSI_PW.";
+      }
+    }
+    description
+      "BFD link filter.";
+  }
+  typedef create-link {
+    type enumeration {
+      enum "s-ip-if" {
+        value 0;
+        description
+          "Statically created BFD session that is bound to a specified interface and a specified peer IP address.";
+      }
+      enum "s-ip-peers" {
+        value 1;
+        description
+          "Statically created BFD session that is bound to a specified peer IP address.";
+      }
+      enum "s-ldp-lsp" {
+        value 2;
+        description
+          "Statically created BFD session that is bound to a specified LDP LSP.";
+      }
+      enum "s-sta-lsp" {
+        value 3;
+        description
+          "Statically created BFD session that is bound to a specified static LSP.";
+      }
+      enum "s-te-lsp" {
+        value 4;
+        description
+          "Statically created BFD session that is bound to a specified TE LSP.";
+      }
+      enum "s-te-tnl" {
+        value 5;
+        description
+          "Statically created BFD session that is bound to a specified TE TUNNEL.";
+      }
+      enum "d-ip-if" {
+        value 6;
+        description
+          "Dynamically created BFD session that is bound to a specified interface and a specified peer IP address.";
+      }
+      enum "d-ip-peer" {
+        value 7;
+        description
+          "Dynamically created BFD session that is bound to a specified peer IP address.";
+      }
+      enum "d-ldp-lsp" {
+        value 8;
+        description
+          "Dynamically created BFD session that is bound to a specified LDP LSP.";
+      }
+      enum "d-sta-lsp" {
+        value 9;
+        description
+          "Dynamically created BFD session that is bound to a specified static LSP.";
+      }
+      enum "d-te-lsp" {
+        value 10;
+        description
+          "Dynamically created BFD session that is bound to a specified TE LSP.";
+      }
+      enum "d-te-tnl" {
+        value 11;
+        description
+          "Dynamically created BFD session that is bound to a specified TE TUNNEL.";
+      }
+      enum "s-auto-if" {
+        value 12;
+        description
+          "Automatically created BFD session that is bound to a specified interface and a specified peer IP address.";
+      }
+      enum "s-auto-peer" {
+        value 13;
+        description
+          "Automatically created BFD session that is bound to a specified peer IP address.";
+      }
+      enum "e-dynamic" {
+        value 14;
+        description
+          "Dynamically created BFD session while enable passive dynamic BFD on the egress of an LSP.";
+      }
+      enum "s-pw-s" {
+        value 15;
+        description
+          "Statically created BFD session that is bound to a specified backup PW.";
+      }
+      enum "s-pw-m" {
+        value 16;
+        description
+          "Statically created BFD session that is bound to a specified primary PW.";
+      }
+      enum "s-vsi-pw" {
+        value 17;
+        description
+          "Statically created BFD session that is bound to a specified VSI PW.";
+      }
+      enum "d-pw-s" {
+        value 18;
+        description
+          "Dynamically created BFD session that is bound to a specified backup PW.";
+      }
+      enum "d-pw-m" {
+        value 19;
+        description
+          "Dynamically created BFD session that is bound to a specified primary PW.";
+      }
+      enum "d-vsi-pw" {
+        value 21;
+        description
+          "Dynamically created BFD session that is bound to a specified VSI PW.";
+      }
+      enum "other" {
+        value 23;
+        description
+          "Other sessions.";
+      }
+    }
+    description
+      "BFD create link.";
+  }
+  typedef deploy-mode {
+    type enumeration {
+      enum "distribute" {
+        value 0;
+        description
+          "BFD sessions are deployed in distributed mode.";
+      }
+      enum "central" {
+        value 1;
+        description
+          "BFD sessions are deployed in centralized mode.";
+      }
+    }
+    description
+      "BFD deploy mode.";
+  }
+  typedef not-up-reason {
+    type enumeration {
+      enum "in-negotiation" {
+        value 0;
+        description
+          "The BFD session is in negotiation.";
+      }
+      enum "in-negotiation-1" {
+        value 1;
+        description
+          "The BFD session is in negotiation.";
+      }
+      enum "board-selecting-failed" {
+        value 2;
+        description
+          "Board selection for a BFD session failed.";
+      }
+      enum "sess-state-up" {
+        value 3;
+        description
+          "The BFD session has been Up.";
+      }
+      enum "board-delayup" {
+        value 4;
+        description
+          "The BFD session enable delay up.";
+      }
+      enum "reach-centralized-mode-limit" {
+        value 5;
+        description
+          "Reach limit of centralized mode.";
+      }
+      enum "board-hardbad-macfcs-fault" {
+        value 6;
+        description
+          "Board HARD_BAD or MAC_FCS Fault.";
+      }
+      enum "unsupported-tunnel-type" {
+        value 7;
+        description
+          "Unsupported tunnel type.";
+      }
+      enum "remote-rx-equal-zero" {
+        value 8;
+        description
+          "Remote RX equal zero.";
+      }
+    }
+    description
+      "BFD notup reason.";
+  }
+  typedef lsp-role-type {
+    type enumeration {
+      enum "primary" {
+        value 0;
+        description
+          "Primary LSP.";
+      }
+      enum "backup" {
+        value 1;
+        description
+          "Backup LSP.";
+      }
+      enum "invalid" {
+        value 2;
+        description
+          "Invalid LSP role value.";
+      }
+    }
+    description
+      "BFD lsp role type.";
+  }
+  typedef perlink-role {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Non-Main-Sub session.";
+      }
+      enum "bundle-main" {
+        value 1;
+        description
+          "Main session.";
+      }
+      enum "bundle-sub" {
+        value 2;
+        description
+          "Sub session.";
+      }
+    }
+    description
+      "BFD perlink role.";
+  }
+  typedef hop-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Non-IP session.";
+      }
+      enum "ip-single-hop" {
+        value 1;
+        description
+          "Type of an IP single-hop session.";
+      }
+      enum "ip-multi-hop" {
+        value 2;
+        description
+          "Type of an IP multi-hop session.";
+      }
+    }
+    description
+      "BFD hop type.";
+  }
+  typedef bundle-mode {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None bundle session.";
+      }
+      enum "bundle-standard" {
+        value 1;
+        description
+          "Standard mode.";
+      }
+      enum "bundle-compatible" {
+        value 2;
+        description
+          "Compatible mode.";
+      }
+      enum "cfg-remote-ap" {
+        value 3;
+        description
+          "None bundle session.";
+      }
+      enum "cfg-from-master" {
+        value 4;
+        description
+          "None bundle session.";
+      }
+      enum "bundle-std-unshare" {
+        value 5;
+        description
+          "Bundle session of standard unshared mode.";
+      }
+      enum "bundle-com-unshare" {
+        value 6;
+        description
+          "Bundle session of compatible unshared mode.";
+      }
+    }
+    description
+      "BFD bundle mode.";
+  }
+  typedef sub-session-type {
+    type enumeration {
+      enum "link-bundle" {
+        value 1;
+        description
+          "Link bundle session.";
+      }
+      enum "perlink" {
+        value 2;
+        description
+          "Per-link session.";
+      }
+      enum "group" {
+        value 3;
+        description
+          "Group session.";
+      }
+    }
+    description
+      "BFD session type.";
+  }
+  typedef te-backup-type {
+    type enumeration {
+      enum "primary" {
+        value 0;
+        description
+          "Primary.";
+      }
+      enum "backup" {
+        value 1;
+        description
+          "Backup.";
+      }
+      enum "none" {
+        value 2;
+        description
+          "Invalid.";
+      }
+    }
+    description
+      "BFD backup type.";
+  }
+  typedef pwttl-mode {
+    type enumeration {
+      enum "default" {
+        value 1;
+        description
+          "Default.";
+      }
+      enum "auto" {
+        value 2;
+        description
+          "Auto.";
+      }
+      enum "config" {
+        value 3;
+        description
+          "Config.";
+      }
+    }
+    description
+      "BFD PW mode.";
+  }
+  typedef pis-sate {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable PIS.";
+      }
+      enum "enable-subif" {
+        value 2;
+        description
+          "Enable (Sub-If).";
+      }
+    }
+    description
+      "BFD state.";
+  }
+  typedef common-ability {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "BFD common ability.";
+  }
+  typedef pw-role {
+    type enumeration {
+      enum "master" {
+        value 1;
+        description
+          "Master PW.";
+      }
+      enum "secondary" {
+        value 2;
+        description
+          "Secondary PW.";
+      }
+    }
+    description
+      "BFD PW role.";
+  }
+  typedef vpws-node-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Invalid.";
+      }
+      enum "upe" {
+        value 1;
+        description
+          "UPE.";
+      }
+    }
+    description
+      "Node.";
+  }
+  typedef sbfd-discriminator-state {
+    type enumeration {
+      enum "inactive" {
+        value 0;
+        description
+          "Inactive type.";
+      }
+      enum "active" {
+        value 1;
+        description
+          "Active type.";
+      }
+    }
+    description
+      "BFD discr state.";
+  }
+  typedef sbfd-discriminator-type {
+    type enumeration {
+      enum "integer" {
+        value 0;
+        description
+          "Integer type.";
+      }
+      enum "ipv4" {
+        value 1;
+        description
+          "IPv4 type.";
+      }
+      enum "ipv6" {
+        value 2;
+        description
+          "IPv6 type.";
+      }
+      enum "dynamic" {
+        value 3;
+        description
+          "Dynamic type.";
+      }
+      enum "interface" {
+        value 4;
+        description
+          "Interface type.";
+      }
+    }
+    description
+      "BFD discr configuration state.";
+  }
+  typedef authentication-mode {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Invalid.";
+      }
+      enum "met-sha1" {
+        value 1;
+        description
+          "SHA1 algorithm.";
+      }
+    }
+    description
+      "BFD authentication mode.";
+  }
+  typedef authentication-link-type {
+    type enumeration {
+      enum "ip-single-hop" {
+        value 0;
+        description
+          "BFD authentication information for single hop IP session.";
+      }
+      enum "ip-multi-hop" {
+        value 1;
+        description
+          "BFD authentication information for multi-hop IP sessions.";
+      }
+      enum "mpls-passive" {
+        value 2;
+        description
+          "BFD authentication information for passive session.";
+      }
+      enum "lsp-tunnel" {
+        value 3;
+        description
+          "BFD authentication information for LSP TUNNEL session.";
+      }
+    }
+    description
+      "BFD authlink type.";
+  }
+  typedef crc-session-type {
+    type enumeration {
+      enum "pe" {
+        value 0;
+        description
+          "The CRC session type is pe.";
+      }
+      enum "p" {
+        value 1;
+        description
+          "The CRC session type is p.";
+      }
+      enum "ip-peer" {
+        value 2;
+        description
+          "The CRC session type is IP peer.";
+      }
+      enum "section" {
+        value 3;
+        description
+          "The CRC session type is section.";
+      }
+    }
+    description
+      "BFD CRC session type.";
+  }
+  typedef section-crc-fault-type {
+    type enumeration {
+      enum "local-section-fault" {
+        value 0;
+        description
+          "Local section fault.";
+      }
+      enum "remote-section-fault" {
+        value 1;
+        description
+          "Remote section fault.";
+      }
+      enum "local-section-fault-and-remote-section-fault" {
+        value 2;
+        description
+          "Local section fault and remote section fault.";
+      }
+    }
+    description
+      "BFD section CRC fault type.";
+  }
+  typedef lsp-crc-fault-type {
+    type enumeration {
+      enum "interface-fault" {
+        value 0;
+        description
+          "Remote pe fault.";
+      }
+      enum "transit-fault" {
+        value 1;
+        description
+          "Transit fault.";
+      }
+      enum "remote-pe-fault" {
+        value 2;
+        description
+          "Remote pe fault.";
+      }
+      enum "interface-fault-and-transit-fault" {
+        value 3;
+        description
+          "Interface fault and transit fault.";
+      }
+      enum "interface-fault-and-remote-pe-fault" {
+        value 4;
+        description
+          "Interface fault and remote pe fault.";
+      }
+      enum "transit-fault-and-remote-pe-fault" {
+        value 5;
+        description
+          "Transit fault and remote pe fault.";
+      }
+      enum "interface-fault-and-transit-fault-and-remote-pe-fault" {
+        value 6;
+        description
+          "Interface fault and transit fault and remote pe fault.";
+      }
+    }
+    description
+      "BFD lsp CRC fault type.";
+  }
+  typedef ip-crc-fault-type {
+    type enumeration {
+      enum "local-interface-fault" {
+        value 0;
+        description
+          "Local interface fault.";
+      }
+      enum "remote-interface-fault" {
+        value 1;
+        description
+          "Remote interface fault.";
+      }
+      enum "local-interface-fault-and-remote-interface-fault" {
+        value 2;
+        description
+          "Local interface fault and remote interface fault.";
+      }
+    }
+    description
+      "BFD IP CRC fault type.";
+  }
+  typedef l2vpn-encapsulation-type {
+    type enumeration {
+      enum "fr" {
+        value 1;
+        description
+          "The encapsulation type is FR.";
+      }
+      enum "atm-aal5-sdu" {
+        value 2;
+        description
+          "The encapsulation type is ATM-AAL5-SDU.";
+      }
+      enum "atm-trans-cell" {
+        value 3;
+        description
+          "The encapsulation type is ATM-TRANS-CELL.";
+      }
+      enum "vlan" {
+        value 4;
+        description
+          "The encapsulation type is VLAN.";
+      }
+      enum "ethernet" {
+        value 5;
+        description
+          "The encapsulation type is ethernet.";
+      }
+      enum "hdlc" {
+        value 6;
+        description
+          "The encapsulation type is HDLC.";
+      }
+      enum "ppp" {
+        value 7;
+        description
+          "The encapsulation type is PPP.";
+      }
+      enum "cem" {
+        value 8;
+        description
+          "The encapsulation type is CEM.";
+      }
+      enum "atm-nto1-vcc" {
+        value 9;
+        description
+          "The encapsulation type is ATM-Nto1-VCC.";
+      }
+      enum "atm-nto1-vpc" {
+        value 10;
+        description
+          "The encapsulation type is ATM-Nto1-VPC.";
+      }
+      enum "ip-layer2" {
+        value 11;
+        description
+          "The encapsulation type is IP-Layer2.";
+      }
+      enum "atm-1to1-vcc" {
+        value 12;
+        description
+          "The encapsulation type is ATM-1to1-VCC.";
+      }
+      enum "atm-1to1-vpc" {
+        value 13;
+        description
+          "The encapsulation type is ATM-1to1-VPC.";
+      }
+      enum "atm-aal5-pdu" {
+        value 14;
+        description
+          "The encapsulation type is ATM-AAL5-PDU.";
+      }
+      enum "fr-port-mode" {
+        value 15;
+        description
+          "The encapsulation type is FR-PORT-MODE.";
+      }
+      enum "cep" {
+        value 16;
+        description
+          "The encapsulation type is CEP.";
+      }
+      enum "satop-e1" {
+        value 17;
+        description
+          "The encapsulation type is SAToP-E1.";
+      }
+      enum "satop-t1" {
+        value 18;
+        description
+          "The encapsulation type is SAToP-T1.";
+      }
+      enum "satop-e3" {
+        value 19;
+        description
+          "The encapsulation type is SAToP-E3.";
+      }
+      enum "satop-t3" {
+        value 20;
+        description
+          "The encapsulation type is SAToP-T3.";
+      }
+      enum "cesopsn-basic" {
+        value 21;
+        description
+          "The encapsulation type is CESoPSN-BASIC.";
+      }
+      enum "tdmoip-aal1" {
+        value 22;
+        description
+          "The encapsulation type is TDMoIP-AAL1.";
+      }
+      enum "cesopsn-tdm" {
+        value 23;
+        description
+          "The encapsulation type is CESoPSN-TDM.";
+      }
+      enum "tdmoip-aal2" {
+        value 24;
+        description
+          "The encapsulation type is TDMoIP-AAL2.";
+      }
+      enum "fr-dlci" {
+        value 25;
+        description
+          "The encapsulation type is FR-DLCI.";
+      }
+      enum "ip-interworking" {
+        value 64;
+        description
+          "The encapsulation type is IP interworking.";
+      }
+      enum "unsupport" {
+        value 255;
+        description
+          "This encapsulation type is used when the encapsulation types of AC interfaces at the two ends of a local CCC are different, or the ATM bundle interfaces do not have any member, or the VPLS LDP PW on a router inherits the encapsulation type of a VSI.";
+      }
+    }
+    description
+      "L2VPN encapsulate type.";
+  }
+  typedef multicast-session-type {
+    type enumeration {
+      enum "multi-point-head" {
+        value 0;
+        description
+          "The multicast session type is head.";
+      }
+      enum "multi-point-tail" {
+        value 1;
+        description
+          "The multicast session type is tail.";
+      }
+      enum "multi-point-client" {
+        value 2;
+        description
+          "The multicast session type is client.";
+      }
+    }
+    description
+      "BFD multicast session type.";
+  }
+  /*****************************************************************
+  * data
+  *****************************************************************/
+  ext:task-name "bfd";
+  container bfd {
+    presence "Enable bfd";
+    description
+      "Bidirectional Forwarding Detection (BFD) is a detection mechanism used uniformly on the entire network. BFD is used to rapidly detect and monitor the connectivity of links or IP routes on a network.";
+    container global {
+      description
+        "Configure global BFD.";
+      leaf delay-up-timer {
+        type uint32 {
+          range "1..600";
+        }
+        units s;
+        description
+          "Duration during which a BFD session delays going Up. The value is expressed in seconds. By default, there is no delay when the BFD session goes Up.";
+      }
+      leaf mpls-passive {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable BFD to support the creation of an MPLS passive session. By default, such a creation is disabled.";
+      }
+      leaf ping-interval {
+        type uint32 {
+          range "30..600";
+        }
+        units s;
+        default "60";
+        description
+          "Interval between sending LSP ping packets on a regular basis. The value is expressed in seconds.";
+      }
+      leaf process-mode {
+        type deploy-mode;
+        default "distribute";
+        status obsolete;
+        description
+          "BFD deployment mode, which is configured on a logical router. The default deployment mode is distributed. If centralized is selected, the central process slot ID must be set.";
+      }
+      leaf process-central-slot {
+        when "../process-mode = 'central'";
+        type string {
+          length "1..19";
+          pattern '(^\w{0,3}\d{0,2}(/\d{1,2}){0,1}$)';
+        }
+        status obsolete;
+        description
+          "The central process slot is configured on a logical router and can be set only when BFD is deployed in centralized mode.";
+      }
+      leaf process-central-slot2 {
+        when "../process-mode = 'central' and ../process-central-slot";
+        type string {
+          length "1..19";
+          pattern '(^\w{0,3}\d{0,2}(/\d{1,2}){0,1}$)';
+        }
+        must "../process-central-slot2 != ../process-central-slot";
+        status obsolete;
+        description
+          "The central process slot is configured on a logical router and can be set only when BFD is deployed in centralized mode.";
+      }
+      leaf default-ip {
+        type inet:ipv4-address-no-zone {
+            pattern '(224)\.(0)\.(0)\.(10[7-9]|1[1-9][0-9]|2[0-4][0-9]|250)';
+        }
+        default "224.0.0.184";
+        description
+          "This address is configured on a logical router. BFD uses this address as the destination address of multicast packets.
+        Special explanation: 
+        Comstraint: If BFD is enabled, the default-ip node can be configured. The value ranges from 224.0.0.107 to 224.0.0.250.";
+      }
+      leaf tos-exp {
+        type uint32 {
+          range "0..7";
+        }
+        default "7";
+        description
+          "Priority of a dynamic BFD session packet.";
+      }
+      leaf tos-exp-static {
+        type uint32 {
+          range "0..7";
+        }
+        default "7";
+        description
+          "Priority of static session packets. By default, the value 7 indicates the highest priority. In the case of system congestion, the BFD packets with the higher priority are sent.";
+      }
+      leaf echo-passive {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable passive echo.";
+      }
+      leaf basic-acl-num {
+        when "(../echo-passive='true')";
+        type leafref  {
+          path "/acl:acl/acl:groups/acl:group/acl:identity";
+        }
+        must "/acl:acl/acl:groups/acl:group[acl:identity = current()]/acl:type = 'basic'";
+        description
+          "ACL number of a BFD session.";
+      }
+      leaf init-wait-time {
+        type uint32 {
+          range "1..3600000";
+        }
+        units ms;
+        must "../init-wait-time < ../max-wait-time";
+        default "2000";
+        description
+          "Specifies the initial delay in milliseconds before starting a BFD session. The default is 2000.";
+      }
+      leaf max-wait-time {
+        type uint32 {
+          range "1..3600000";
+        }
+        units ms;
+        must "(../init-wait-time < ../max-wait-time) and (../second-wait-time < ../max-wait-time)";
+        default "12000";
+        description
+          "Specifies the maximum delay in milliseconds before starting a BFD session. The default is 12000.";
+      }
+      leaf second-wait-time {
+        type uint32 {
+          range "1..3600000";
+        }
+        units ms;
+        must "../second-wait-time < ../max-wait-time";
+        default "5000";
+        description
+          "Specifies a secondary delay in milliseconds before starting a BFD session. The default is 5000.";
+      }
+      leaf link-bundle-init-time {
+        type uint32 {
+          range "6000..3600000";
+        }
+        units ms;
+        must "../link-bundle-init-time < ../link-bundle-max-time";
+        default "16000";
+        description
+          "Specifies the initial delay in milliseconds before starting a BFD session. For bundle members, the default is 16000.";
+      }
+      leaf link-bundle-max-time {
+        type uint32 {
+          range "20000..3600000";
+        }
+        units ms;
+        must "(../link-bundle-init-time < ../link-bundle-max-time) and (../link-bundle-second-time < ../link-bundle-max-time)";
+        default "600000";
+        description
+          "Specifies the maximum delay in milliseconds before starting a BFD session. For bundle members, the default is 600000.";
+      }
+      leaf link-bundle-second-time {
+        type uint32 {
+          range "10000..3600000";
+        }
+        units ms;
+        must "../link-bundle-second-time < ../link-bundle-max-time";
+        default "20000";
+        description
+          "Specifies a secondary delay in milliseconds before starting a BFD session. For bundle members, the default is 20000.";
+      }
+      leaf link-bundle-l3-mode {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable apply dampening, if the failure is Layer 3 (L3)-specific.";
+      }
+      leaf lsp-path-check {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable check of whether LSP path bound by BFD session mismatches. By default, it is enabled.";
+      }
+      leaf ipv6-trap-separated {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable configure the device to separately report IPv6 Up and Down traps.";
+      }
+    }
+    container sessions {
+      description
+        "List of BFD session configurations.";
+      list session {
+        key "name";
+        description
+          "Configure BFD session, which includes basic session information such as different types of sessions, local discriminator or remote discriminator of the session.";
+        leaf name {
+          type string {
+            length "1..64";
+            pattern '([^\s?]+[\s]*[^?]*[^\s?]+|[^\s?]*)';
+          }
+          description
+            "Name of a BFD session. It is the unique identifier of a BFD session and session names are case-insensitive.";
+        }
+        leaf admin-down {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a BFD session to become admin-down. By default, this parameter is not selected. To stop BFD session detection, you can enable this parameter. If this parameter is set, the applied BFD detection mechanism is disabled. Therefore, exercise caution when performing this operation.";
+        }
+        leaf description {
+          type string {
+            length "1..51";
+            pattern '([^\s?]+[\s]*[^?]*[^\s?]+|[^\s?]*)';
+          }
+          description
+            "Description about a BFD session.";
+        }
+        leaf detect-multiplier {
+          type uint32 {
+            range "3..50";
+          }
+          default "3";
+          description
+            "Number of times that a BFD session continuously detects that packets are sent but no response is returned and then the system considers the BFD session Down. The detection multiplier is configured on the systems at both ends of the BFD session and does not need to be negotiated.";
+        }
+        leaf wtr-time {
+          type uint32 {
+            range "1..60";
+          }
+          units min;
+          description
+            "Timeout duration set on the wait-to-restore (WTR) timer. The configured value is expressed in minutes. The query value is expressed in milliseconds. By default, a BFD session does not wait for restoration. When a BFD session goes Up, the BFD session status is reported to the application after a certain period. Therefore, the WTR parameter must be set to avoid the switchover between the active and standby applications caused by session flapping. When you configure a bidirectional BFD session, it is recommended that you set the same WTR value for the two sessions.";
+        }
+        choice session-type {
+          mandatory true;
+          description
+              "List of BFD session configurations.";
+          case static {
+            description
+              "List of BFD statistic session configurations.";
+            leaf tos-exp {
+              type uint32 {
+                range "0..7";
+              }
+              description
+                "Priority of a packet. The value 7 indicates the highest priority. In the case of system congestion, BFD packets with high priorities are preferentially sent.";
+            }
+            choice static-session-link-type {
+              mandatory true;
+              description
+                "List of BFD session configurations.";
+              case ip {
+                description
+                  "List of BFD statistic session configurations for IP.";
+                choice ip-address-type {
+                  mandatory true;
+                  description
+                    "List of BFD session configurations.";
+                  case ipv4 {
+                    description
+                      "List of BFD statistic session configurations for IPv4.";
+                    leaf source-address-static-ipv4 {
+                      type inet:ipv4-address-no-zone ;
+                      description
+                        "Source IP address of a BFD session. Note that the source IP address is used to ensure that BFD packets are correctly forwarded when the URPF feature is enabled. The source IP address must be configured correctly because the system checks only the validity of the source IP address format. A multicast or broadcast address is invalid. If the source IP address of the outbound interface is changed after a BFD session is successfully configured, the source IP address in BFD packets is not updated. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                    }
+                    leaf select-board-slot-static-ipv4 {
+                      type string {
+                        length "1..19";
+                      }
+                      must "../destination-address-static-unicast-ipv4 and not(../out-if-name-static-unicast-ipv4)";
+                      description
+                        "ID of the slot for forcible board selection.";
+                    }
+                    leaf select-board-slot2-static-ipv4 {
+                      when "../select-board-slot-static-ipv4";
+                      type string {
+                        length "1..19";
+                      }
+                      must "../select-board-slot-static-ipv4!=../select-board-slot2-static-ipv4";
+                      description
+                        "ID of the slot for second forcible board selection.";
+                    }
+                    choice multicast-or-unicast-ip {
+                      mandatory true;
+                      description
+                        "List of BFD session configurations.";
+                      case multicast {
+                        description
+                          "List of multicast destination address configurations.";
+                        leaf min-tx-interval-multicast-ipv4 {
+                          type uint32 {
+                            range "3..20000";
+                          }
+                          units ms;
+                          default "10";
+                          description
+                            "Minimum interval between sending packets, which is set for a BFD session.";
+                        }
+                        leaf min-rx-interval-multicast-ipv4 {
+                          type uint32 {
+                            range "3..20000";
+                          }
+                          units ms;
+                          default "10";
+                          description
+                            "Minimum interval between receiving packets, which is set for a BFD session.";
+                        }
+                        leaf local-discriminator-multicast-ipv4 {
+                          type uint32 {
+                            range "1..16384";
+                          }
+                          description
+                            "Local discriminator of a BFD session. Note that the local discriminator must correspond to the remote discriminator on the peer of the BFD session.";
+                        }
+                        leaf remote-discriminator-multicast-ipv4 {
+                          type uint32 {
+                            range "1..4294967295";
+                          }
+                          description
+                            "Remote discriminator of a BFD session. Note that the remote discriminator must correspond to the local discriminator on the peer of the BFD session.";
+                        }
+                        leaf out-if-name-multicast-ipv4 {
+                          type leafref {
+                            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                          }
+                          mandatory true;
+                          description
+                            "Name of the outbound interface of a BFD session. If only the destination IP address is specified, multi-hop routes are detected. If both the destination IP address and outbound interface name are specified, single-hop links are detected. That is, a fixed route is detected, with the interface where the BFD session resides as the outbound interface and the destination IP address as the next hop address.";
+                        }
+                        leaf process-pst-multicast-ipv4 {
+                          type boolean;
+                          default "false";
+                          description
+                            "Enable/disable update the PST when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+                        }
+                        leaf lag-multicast-ipv4 {
+                          type boolean;
+                          default "false";
+                          description
+                            "Enable/disable detect a LAG.";
+                        }
+                        leaf pis-multicast-ipv4 {
+                          type boolean;
+                          default "false";
+                          description
+                            "Enable/disable update the PIS when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+                        }
+                        leaf pis-sub-if-multicast-ipv4 {
+                          when "../pis-multicast-ipv4 = 'true'";
+                          type boolean;
+                          default "false";
+                          description
+                            "Enable/disable associate the sub-interface when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+                        }
+                        leaf pis-no-impact-multicast-ipv4 {
+                          when "../pis-multicast-ipv4 = 'true'";
+                          type boolean;
+                          default "false";
+                          description
+                            "Enable/disable impact on reboot.";
+                        }
+                        leaf dot1q-vid-multicast-ipv4 {
+                          when "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:dot1q-termination";
+                          type uint32 {
+                            range "1..4094";
+                          }
+                          description
+                            "VLAN ID of a dot1q termination sub-interface.";
+                        }
+                        leaf qinq-pe-vid-multicast-ipv4 {
+                          when "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:qinq-termination";
+                          type uint32 {
+                            range "1..4094";
+                          }
+                          must "../qinq-ce-vid-multicast-ipv4";
+                          description
+                            "Outer VLAN ID of a QinQ termination sub-interface.";
+                        }
+                        leaf qinq-ce-vid-multicast-ipv4 {
+                          when "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:qinq-termination";
+                          type uint32 {
+                            range "1..4094";
+                          }
+                          must "../qinq-pe-vid-multicast-ipv4";
+                          description
+                            "Inner VLAN ID of a QinQ termination sub-interface.";
+                        }
+                        leaf auth-algorithm-multicast-ipv4 {
+                          type authentication-mode;
+                          description
+                            "BFD session authentication mode.";
+                        }
+                        leaf key-id-multicast-ipv4 {
+                          when "../auth-algorithm-multicast-ipv4='met-sha1'";
+                          type uint32 {
+                            range "1..255";
+                          }
+                          mandatory true;
+                          description
+                            "Authentication key identifier.";
+                        }
+                        leaf cipher-string-multicast-ipv4 {
+                          when "../auth-algorithm-multicast-ipv4='met-sha1'";
+                          type pub-type:password-extend {
+                            length "1..148";
+                          }
+                          mandatory true;
+                          description
+                            "SHA1 authentication password. 1 to 20 characters for simple text or 20 to 148 characters for ciphertext.";
+                        }
+                        leaf negotiation-timeout-multicast-ipv4 {
+                          when "../auth-algorithm-multicast-ipv4='met-sha1'";
+                          type uint32 {
+                            range "3..10000";
+                          }
+                          units s;
+                          description
+                            "BFD negotiation timeout period, in seconds. After a BFD negotiation timeout period is configured, the BFD negotiation timeout timer is started when the BFD session goes Down (the event is not triggered through detecting a link fault). If the timer has expired but the BFD session is still Down, the service associated with the BFD session is notified of the BFD session Down event.";
+                        }
+                        leaf unlimited-nego-multicast-ipv4 {
+                          type boolean;
+                          default "false";
+                          description
+                            "Enable/disable default-ip unlimited negotiate.";
+                        }
+                      }
+                      case unicast {
+                        description
+                          "List of unicast destination address configurations.";
+                        leaf min-tx-interval {
+                          when "not(../one-arm-echo-static-unicast-ipv4) or ../one-arm-echo-static-unicast-ipv4='false'";
+                          type uint32 {
+                            range "3..20000";
+                          }
+                          units ms;
+                          default "10";
+                          description
+                            "Minimum interval between sending packets, which is set for a BFD session.";
+                        }
+                        leaf min-rx-interval {
+                          when "not(../one-arm-echo-static-unicast-ipv4) or ../one-arm-echo-static-unicast-ipv4='false'";
+                          type uint32 {
+                            range "3..20000";
+                          }
+                          units ms;
+                          default "10";
+                          description
+                            "Minimum interval between receiving packets, which is set for a BFD session.";
+                        }
+                        leaf min-echo-rx-interval {
+                          when "../one-arm-echo-static-unicast-ipv4='true'";
+                          type uint32 {
+                            range "3..20000";
+                          }
+                          units ms;
+                          default "10";
+                          description
+                            "Minimum interval between receiving one-arm echo session packets.";
+                        }
+                        leaf local-discriminator {
+                          when "not(../is-group-static-unicast-ipv4='true')";
+                          type uint32 {
+                            range "1..16384";
+                          }
+                          description
+                            "Local discriminator of a BFD session. Note that the local discriminator must correspond to the remote discriminator on the peer of the BFD session.";
+                        }
+                        leaf remote-discriminator {
+                          when "not(../is-group-static-unicast-ipv4='true' or ../one-arm-echo-static-unicast-ipv4='true')";
+                          type uint32 {
+                            range "1..4294967295";
+                          }
+                          description
+                            "Remote discriminator of a BFD session. Note that the remote discriminator must correspond to the local discriminator on the peer of the BFD session.";
+                        }
+                        leaf out-if-name-static-unicast-ipv4 {
+                          type leafref {
+                            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                          }
+                          must "(not(../vrf-name-static-unicast-ipv4) and (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_')) or ((../vrf-name-static-unicast-ipv4) and (../vrf-name-static-unicast-ipv4=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name))";
+                          description
+                            "Name of the outbound interface of a BFD session. If only the destination IP address is specified, multi-hop routes are detected. If both the destination IP address and outbound interface name are specified, single-hop links are detected. That is, a fixed route is detected, with the interface where the BFD session resides as the outbound interface and the destination IP address as the next hop address.";
+                        }
+                        leaf is-set-track-if-static-ipv4 {
+                          when "not(../out-if-name-static-unicast-ipv4)";
+                          type boolean;
+                          default "false";
+                          description
+                            "Enable/disable a BFD session to track an AC interface.";
+                        }
+                        leaf track-if-name-static-ipv4 {
+                          when "../is-set-track-if-static-ipv4='true'";
+                          type leafref {
+                            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                          }
+                          mandatory true;
+                          description
+                            "Name of the interface tracked by a BFD session.";
+                        }
+                        leaf process-pst-static-unicast-ipv4 {
+                          when "../out-if-name-static-unicast-ipv4";
+                          type boolean;
+                          default "false";
+                          description
+                            "Enable/disable update the PST when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+                        }
+                        leaf destination-address-static-unicast-ipv4 {
+                          type inet:ipv4-address-no-zone ;
+                          mandatory true;
+                          description
+                            "Destination IP address of a BFD session. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                        }
+                        leaf vrf-name-static-unicast-ipv4 {
+                          type leafref {
+                            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                          }
+                          must "/ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+                          description
+                            "Name of the VPN to which a BFD session belongs. If the VPN name is not specified, the destination IP address is considered as a public network address. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                        }
+                        leaf one-arm-echo-static-unicast-ipv4 {
+                          when "../out-if-name-static-unicast-ipv4";
+                          type boolean;
+                          default "false";
+                          description
+                            "Enable/disable echo session in one-arm mode, one-arm-echo must be configured for one-arm session type.";
+                        }
+                        leaf one-arm-echo-destination-address-static-unicast-ipv4 {
+                          when "../one-arm-echo-static-unicast-ipv4='true'";
+                          type inet:ipv4-address-no-zone ;
+                          description
+                            "Destination IP address of a one arm echo mode BFD session.";
+                        }
+                        leaf per-link-static-unicast-ipv4 {
+                          when "../source-address-static-ipv4 and ../one-arm-echo-static-unicast-ipv4";
+                          type boolean;
+                          default "false";
+                          description
+                            "Enable/disable detect member links of the primary link.";
+                        }
+                        leaf is-group-static-unicast-ipv4 {
+                          when "not(../out-if-name-static-unicast-ipv4)";
+                          type boolean;
+                          default "false";
+                          description
+                            "Enable/disable session group.";
+                        }
+                      }
+                    }
+                  }
+                  case ipv6 {
+                    description
+                      "List of BFD statistic session configurations for IPv6.";
+                    leaf select-board-slot-static-ipv6 {
+                      type string {
+                        length "1..19";
+                      }
+                      description
+                        "ID of the slot for forcible board selection for IPv6.";
+                    }
+                    leaf select-board-slot2-static-ipv6 {
+                      when "../select-board-slot-static-ipv6";
+                      type string {
+                        length "1..19";
+                      }
+                      must "../select-board-slot-static-ipv6!=../select-board-slot2-static-ipv6";
+                      description
+                        "ID of the slot for second forcible board selection for IPv6.";
+                    }
+                    leaf min-tx-interval-static-ipv6 {
+                      when "not(../one-arm-echo-static-ipv6) or ../one-arm-echo-static-ipv6='false'";
+                      type uint32 {
+                        range "3..20000";
+                      }
+                      units ms;
+                      default "10";
+                      description
+                        "Minimum interval between sending packets, which is set for a BFD session.";
+                    }
+                    leaf min-rx-interval-static-ipv6 {
+                      when "not(../one-arm-echo-static-ipv6) or ../one-arm-echo-static-ipv6='false'";
+                      type uint32 {
+                        range "3..20000";
+                      }
+                      units ms;
+                      default "10";
+                      description
+                        "Minimum interval between receiving packets, which is set for a BFD session.";
+                    }
+                    leaf min-echo-rx-interval-static-ipv6 {
+                      when "../one-arm-echo-static-ipv6='true'";
+                      type uint32 {
+                        range "3..20000";
+                      }
+                      units ms;
+                      default "10";
+                      description
+                        "Minimum interval between receiving one-arm echo session packets.";
+                    }
+                    leaf local-discriminator-static-ipv6 {
+                      when "not(../is-group-static-ipv6='true')";
+                      type uint32 {
+                        range "1..16384";
+                      }
+                      description
+                        "Local discriminator of a BFD session. Note that the local discriminator must correspond to the remote discriminator on the peer of the BFD session.";
+                    }
+                    leaf remote-discriminator-static-ipv6 {
+                      when "not(../is-group-static-ipv6='true' or ../one-arm-echo-static-ipv6='true')";
+                      type uint32 {
+                        range "1..4294967295";
+                      }
+                      description
+                        "Remote discriminator of a BFD session. Note that the remote discriminator must correspond to the local discriminator on the peer of the BFD session.";
+                    }
+                    leaf out-if-name-static-ipv6 {
+                      type leafref {
+                        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                      }
+                      must "(not(../vrf-name-static-ipv6) and (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_')) or ((../vrf-name-static-ipv6) and (../vrf-name-static-ipv6=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name))";
+                      description
+                        "Name of the outbound interface of a BFD session. If only the destination IP address is specified, multi-hop routes are detected. If both the destination IP address and outbound interface name are specified, single-hop links are detected. That is, a fixed route is detected, with the interface where the BFD session resides as the outbound interface and the destination IP address as the next hop address.";
+                    }
+                    leaf destination-address-static-ipv6 {
+                      type inet:ipv6-address-no-zone ;
+                      mandatory true;
+                      description
+                        "Destination IP address of a BFD session. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                    }
+                    leaf source-address-static-ipv6 {
+                      type inet:ipv6-address-no-zone ;
+                      description
+                        "Source IP address of a BFD session. This parameter must be configured when a static BFD session with automatically negotiated discriminators is created. This parameter is available only when the type of the detected link is IP. Note that the source IP address is used to ensure that BFD packets are correctly forwarded when the URPF feature is enabled. The source IP address must be configured correctly because the system checks only the validity of the source IP address format. A multicast or broadcast address is invalid. If the source IP address of the outbound interface is changed after a BFD session is successfully configured, the source IP address in BFD packets is not updated. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                    }
+                    leaf vrf-name-static-ipv6 {
+                      type leafref {
+                        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                      }
+                      must "/ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";
+                      description
+                        "Name of the VPN to which a BFD session belongs. If the VPN name is not specified, the destination IP address is considered as a public network address. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                    }
+                    leaf is-set-track-if-static-ipv6 {
+                      when "not(../out-if-name-static-ipv6)";
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable a BFD session to track an AC interface.";
+                    }
+                    leaf track-if-name-static-ipv6 {
+                      when "../is-set-track-if-static-ipv6='true'";
+                      type leafref {
+                        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                      }
+                      mandatory true;
+                      description
+                        "Name of the interface tracked by a BFD session.";
+                    }
+                    leaf one-arm-echo-static-ipv6 {
+                      when "../out-if-name-static-ipv6";
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable echo session in one-arm mode, one-arm-echo must be configured for one-arm session type.";
+                    }
+                    leaf one-arm-echo-destination-address-static-ipv6 {
+                      when "../one-arm-echo-static-ipv6='true'";
+                      type inet:ipv6-address-no-zone ;
+                      description
+                        "Destination IP address of a one arm echo mode BFD session. This parameter is available only when the session is One-Arm Echo mode.";
+                    }
+                    leaf process-pst-static-ipv6 {
+                      when "../out-if-name-static-ipv6";
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable update the PST when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+                    }
+                    leaf is-group-static-ipv6 {
+                      when "not(../out-if-name-static-ipv6)";
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable session group.";
+                    }
+                  }
+                }
+              }
+              case ldp-lsp {
+                description
+                  "List of BFD statistic session configurations for ldp-lsp.";
+                leaf min-tx-interval-static-ldp-lsp {
+                  type uint32 {
+                    range "3..20000";
+                  }
+                  units ms;
+                  default "10";
+                  description
+                    "Minimum interval between sending packets, which is set for a BFD session.";
+                }
+                leaf min-rx-interval-static-ldp-lsp {
+                  type uint32 {
+                    range "3..20000";
+                  }
+                  units ms;
+                  default "10";
+                  description
+                    "Minimum interval between receiving packets, which is set for a BFD session.";
+                }
+                leaf local-discriminator-static-ldp-lsp {
+                  type uint32 {
+                    range "1..16384";
+                  }
+                  description
+                    "Local discriminator of a BFD session. Note that the local discriminator must correspond to the remote discriminator on the peer of the BFD session.";
+                }
+                leaf remote-discriminator-static-ldp-lsp {
+                  type uint32 {
+                    range "1..4294967295";
+                  }
+                  description
+                    "Remote discriminator of a BFD session. Note that the remote discriminator must correspond to the local discriminator on the peer of the BFD session.";
+                }
+                leaf out-if-name-static-ldp-lsp {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Name of the outbound interface of a BFD session. If only the destination IP address is specified, multi-hop routes are detected. If both the destination IP address and outbound interface name are specified, single-hop links are detected. That is, a fixed route is detected, with the interface where the BFD session resides as the outbound interface and the destination IP address as the next hop address.";
+                }
+                leaf destination-address-static-ldp-lsp {
+                  type inet:ipv4-address-no-zone ;
+                  mandatory true;
+                  description
+                    "Destination IP address of a BFD session. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                }
+                leaf next-hop-address-static-ldp-lsp {
+                  type inet:ipv4-address-no-zone;
+                  mandatory true;
+                  description
+                    "Next hop IP address of a BFD session.";
+                }
+                leaf process-pst-static-ldp-lsp {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable update the PST when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+                }
+              }
+            }
+          }
+          case auto {
+            description
+              "List of BFD auto session configurations.";
+            choice auto-session-link-type {
+              mandatory true;
+              description
+                "List of BFD session configurations.";
+              case ip {
+                description
+                  "List of BFD auto session configurations for IP.";
+                leaf out-if-name-auto-ip {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Name of the outbound interface of a BFD session. This parameter is available only when the type of the detected link is IP or LDP LSP. If only the destination IP address is specified, multi-hop routes are detected. If both the destination IP address and outbound interface name are specified, single-hop links are detected. That is, a fixed route is detected, with the interface where the BFD session resides as the outbound interface and the destination IP address as the next hop address.";
+                }
+                leaf process-pst-auto-ip {
+                  when "../out-if-name-auto-ip";
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable update the PST when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+                }
+                choice address-type {
+                  mandatory true;
+                  description
+                    "List of BFD session configurations.";
+                  case ipv4 {
+                    description
+                      "List of BFD auto session configurations for IPv4.";
+                    leaf min-tx-interval-auto-ipv4 {
+                      type uint32 {
+                        range "3..20000";
+                      }
+                      units ms;
+                      default "10";
+                      description
+                        "Minimum interval between sending packets, which is set for a BFD session.";
+                    }
+                    leaf min-rx-interval-auto-ipv4 {
+                      type uint32 {
+                        range "3..20000";
+                      }
+                      units ms;
+                      default "10";
+                      description
+                        "Minimum interval between receiving packets, which is set for a BFD session.";
+                    }
+                    leaf destination-address-auto-ipv4 {
+                      type inet:ipv4-address-no-zone ;
+                      mandatory true;
+                      description
+                        "Destination IP address of a BFD session. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                    }
+                    leaf source-address-auto-ipv4 {
+                      type inet:ipv4-address-no-zone ;
+                      mandatory true;
+                      description
+                        "Source IP address of a BFD session. Note that the source IP address is used to ensure that BFD packets are correctly forwarded when the URPF feature is enabled. The source IP address must be configured correctly because the system checks only the validity of the source IP address format. A multicast or broadcast address is invalid. If the source IP address of the outbound interface is changed after a BFD session is successfully configured, the source IP address in BFD packets is not updated. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                    }
+                    leaf vrf-name-auto-ipv4 {
+                      type leafref {
+                        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                      }
+                      must "/ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+                      description
+                        "Name of the VPN to which a BFD session belongs. If the VPN name is not specified, the destination IP address is considered as a public network address. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                    }
+                    leaf select-board-slot-auto-ipv4 {
+                      type string {
+                        length "1..19";
+                      }
+                      description
+                        "ID of the slot for forcible board selection.";
+                    }
+                    leaf select-board-slot2-auto-ipv4 {
+                      when "../select-board-slot-auto-ipv4";
+                      type string {
+                        length "1..19";
+                      }
+                      must "../select-board-slot-auto-ipv4!=../select-board-slot2-auto-ipv4";
+                      description
+                        "ID of the slot for second forcible board selection.";
+                    }
+                    leaf bundle-mode-auto-ipv4 {
+                      when "../out-if-name-auto-ip";
+                      type bundle-mode;
+                      default "none";
+                      description
+                        "Mode of Link-bundle session, 'none': not bundle mode; 'Bundle_Standard': RFC7310 mode; 'Bundle_Compatible': mode of connection with other company.";
+                    }
+                    leaf pis-auto-ipv4 {
+                      when "../bundle-mode-auto-ipv4 != 'none'";
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable update the PIS when the status of a BFD IPv4 auto session changes. On each interface, only one BFD session can be set for this parameter.";
+                    }
+                    leaf pis-no-impact-auto-ipv4 {
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable impact on reboot for a BFD IPv4 auto session.";
+                    }
+                  }
+                  case ipv6 {
+                    description
+                      "List of BFD auto session configurations for IPv6.";
+                    leaf min-tx-interval-auto-ipv6 {
+                      type uint32 {
+                        range "3..20000";
+                      }
+                      units ms;
+                      default "10";
+                      description
+                        "Minimum interval between sending packets, which is set for a BFD session.";
+                    }
+                    leaf min-rx-interval-auto-ipv6 {
+                      type uint32 {
+                        range "3..20000";
+                      }
+                      units ms;
+                      default "10";
+                      description
+                        "Minimum interval between receiving packets, which is set for a BFD session.";
+                    }
+                    leaf destination-address-auto-ipv6 {
+                      type inet:ipv6-address-no-zone ;
+                      mandatory true;
+                      description
+                        "Destination IP address of a BFD session. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                    }
+                    leaf source-address-auto-ipv6 {
+                      type inet:ipv6-address-no-zone ;
+                      mandatory true;
+                      description
+                        "Source IP address of a BFD session. Note that the source IP address is used to ensure that BFD packets are correctly forwarded when the URPF feature is enabled. The source IP address must be configured correctly because the system checks only the validity of the source IP address format. A multicast or broadcast address is invalid. If the source IP address of the outbound interface is changed after a BFD session is successfully configured, the source IP address in BFD packets is not updated. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                    }
+                    leaf vrf-name-auto-ipv6 {
+                      type leafref {
+                        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                      }
+                      must "/ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";
+                      description
+                        "Name of the VPN to which a BFD session belongs. If the VPN name is not specified, the destination IP address is considered as a public network address. This parameter cannot be modified or deleted after a BFD session is configured. If you need to modify or delete this parameter, delete the BFD session and reconfigure the session.";
+                    }
+                    leaf select-board-slot-auto-ipv6 {
+                      type string {
+                        length "1..19";
+                      }
+                      description
+                        "ID of the slot for forcible board selection for IPv6.";
+                    }
+                    leaf select-board-slot2-auto-ipv6 {
+                      when "../select-board-slot-auto-ipv6";
+                      type string {
+                        length "1..19";
+                      }
+                      must "../select-board-slot-auto-ipv6!=../select-board-slot2-auto-ipv6";
+                      description
+                        "ID of the slot for second forcible board selection for IPv6.";
+                    }
+                    leaf bundle-mode-auto-ipv6 {
+                      when "../out-if-name-auto-ip";
+                      type bundle-mode;
+                      default "none";
+                      description
+                        "Mode of Link-bundle session, 'none': not bundle mode; 'Bundle_Standard': RFC7310 mode; 'Bundle_Compatible': mode of connection with other company.";
+                    }
+                    leaf pis-auto-ipv6 {
+                      when "../bundle-mode-auto-ipv6 != 'none'";
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable update the PIS when the status of a BFD IPv6 auto session changes. On each interface, only one BFD session can be set for this parameter.";
+                    }
+                    leaf pis-no-impact-auto-ipv6 {
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable impact on reboot for a BFD IPv6 auto session.";
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        container groups {
+          when "../is-group-static-unicast-ipv4='true' or ../is-group-static-ipv6='true'";
+          description
+            "List of BFD sub-session.";
+          list group {
+            key "sub-local-discriminator";
+            description
+              "Configure BFD sub-session.";
+            leaf sub-local-discriminator {
+              type uint32 {
+                range "1..16384";
+              }
+              description
+                "Local discriminator of a BFD session. When the BFD session is created in static auto-negotiation mode, you do not need to set this parameter. Note that the local discriminator must correspond to the remote discriminator on the peer of the BFD session. That is, the value of the local discriminator must be the same as the value of the remote discriminator.";
+            }
+            leaf sub-remote-discriminator {
+              type uint32 {
+                range "1..4294967295";
+              }
+              mandatory true;
+              description
+                "Remote discriminator of a BFD session. When the BFD session is created in static auto-negotiation mode, you do not need to set this parameter. Note that the remote discriminator must correspond to the local discriminator on the peer of the BFD session. That is, the value of the remote discriminator must be the same as the value of the local discriminator.";
+            }
+            leaf sub-select-slot-id {
+              type string {
+                length "1..19";
+              }
+              mandatory true;
+              description
+                "ID of the slot for forcible board selection.";
+            }
+          }
+        }
+        container running {
+          config false;
+          description
+            "Statistics of running information of the BFD session contains the session name, status, TX interval, RX interval, detection time multiplier and other information.";
+          leaf state {
+            type session-state;
+            description
+              "Status of a BFD session.";
+          }
+          leaf udp-destination-port {
+            type uint32;
+            description
+              "Destination port number of the UDP packets transmitted in a BFD session.";
+          }
+          leaf detect-mode {
+            type detect-mode;
+            description
+              "Actual detection mode for a BFD session.";
+          }
+          leaf remote-demand-mode {
+            type boolean;
+            description
+              "Whether the remote end of a BFD session is in demand mode.";
+          }
+          leaf actual-tx-interval {
+            type uint32;
+            units ms;
+            description
+              "Actual interval between sending packets in a BFD session.";
+          }
+          leaf actual-rx-interval {
+            type uint32;
+            units ms;
+            description
+              "Actual interval between receiving packets in a BFD session.";
+          }
+          leaf actual-multiplier {
+            type uint32;
+            description
+              "Actual detection multiplier for determining whether a BFD session is Down.";
+          }
+          leaf detect-time {
+            type uint32;
+            units ms;
+            description
+              "Detection interval when a BFD session is in asynchronous mode.";
+          }
+          leaf ttl {
+            type uint32 {
+              range "1..255";
+            }
+            description
+              "Time to live (TTL) value of BFD packets.";
+          }
+          leaf tx-timer-id {
+            type uint64;
+            description
+              "Sending timer of a BFD session.";
+          }
+          leaf detect-timer-id {
+            type uint64;
+            description
+              "Detect timer of a BFD session.";
+          }
+          leaf init-timer-id {
+            type uint64;
+            description
+              "Init timeout timer of a BFD session.";
+          }
+          leaf wtr-timer-id {
+            type uint64;
+            description
+              "WTR timer of a BFD session.";
+          }
+          leaf not-up-reason {
+            type not-up-reason;
+            description
+              "Reason why a BFD session cannot become Up.";
+          }
+          leaf acl-num {
+            type uint32;
+            description
+              "Number of ACLs for a BFD session.";
+          }
+          leaf local-diag {
+            type diag-state;
+            description
+              "Reason why a BFD session becomes Down last time.";
+          }
+          leaf echo-tx-timer-id {
+            type uint32;
+            description
+              "Sending timer of a BFD session with Echo.";
+          }
+          leaf local-discriminator {
+            type uint32;
+            description
+              "Local discriminator of a BFD session.";
+          }
+          leaf remote-discriminator {
+            type uint32;
+            description
+              "Remote discriminator of a BFD session.";
+          }
+          leaf min-tx-interval {
+            type uint32;
+            units ms;
+            description
+              "Minimum interval between sending packets, which is set for a BFD session.";
+          }
+          leaf min-rx-interval {
+            type uint32;
+            units ms;
+            description
+              "Minimum interval between receiving packets, which is set for a BFD session.";
+          }
+        }
+      }
+    }
+    container passive-session {
+      description
+        "Configure BFD passive session.";
+      container destination-udps {
+        description
+          "List of BFD passive session Dest UDP Port.";
+        list destination-udp {
+          key "peer-ip";
+          description
+            "Configure the Dest UDP Port of BFD passive session as 3784.";
+          leaf peer-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Modify the Dest UDP Port of BFD passive session based on Peer IP.";
+          }
+        }
+      }
+      container detect-multipliers {
+        description
+          "List of BFD passive session Pass Dm.";
+        list detect-multiplier {
+          key "peer-ip";
+          description
+            "Apply modify the detectMulti of BFD passive session policy.";
+          leaf peer-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Modify the detectMulti of BFD passive session based on Peer IP.";
+          }
+          leaf detect-multiplier {
+            type uint32 {
+              range "3..50";
+            }
+            mandatory true;
+            description
+              "Modify the detectMulti of BFD passive session based on Peer IP.";
+          }
+        }
+      }
+    }
+    container discriminator-use {
+      description
+        "Configure reserved discriminator.";
+      leaf reserved-num {
+        type uint32 {
+          range "1..500";
+        }
+        description
+          "Number of reserved discriminators.";
+      }
+      leaf-list reserved-discriminators {
+        type uint32 {
+          range "1..16384";
+        }
+        config false;
+        description
+          "Operational state of reserving local discriminator.";
+      }
+      list is-used {
+        key "local-discriminator";
+        config false;
+        description
+          "Operational state of discriminator using flag.";
+        leaf local-discriminator{
+          type uint32 {
+            range "1..16384";
+          }
+          description
+            "Local discriminator queried.";
+        }
+        leaf is-used {
+          type boolean;
+          description
+            "Local discriminator use flag.";
+        }
+      }
+    }
+    container sbfd {
+      presence "Enable sbfd";
+      description
+        "Enable/disable configure SBFD.";
+      container discriminator-maps {
+        description
+          "List of match relation between SBFD discriminator and IP.";
+        list discriminator-map {
+          key "peer-ip remote-discriminator";
+          description
+            "Configure matching relation between SBFD discriminator and IP.";
+          leaf peer-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "SBFD reflector IP.";
+          }
+          leaf remote-discriminator {
+            type uint32 {
+              range "1..4294967295";
+            }
+            description
+              "SBFD reflector discriminator.";
+          }
+        }
+      }
+      container reflector-discriminator-ids {
+        description
+          "List of SBFD reflector discriminator.";
+        list reflector-discriminator-id {
+          key "discriminator-id";
+          description
+            "Configure SBFD reflector integer type discriminator.";
+          leaf discriminator-id {
+            type uint32 {
+              range "16777216..3758096383";
+            }
+            description
+              "SBFD reflector integer type discriminator.";
+          }
+        }
+      }
+      container reflector-discriminator-ips {
+        description
+          "List of SBFD reflector IP type discriminator.";
+        list reflector-discriminator-ip {
+          key "discriminator-ip";
+          description
+            "Configure SBFD reflector IP type discriminator.";
+          leaf discriminator-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "SBFD reflector IP type discriminator.";
+          }
+        }
+      }
+      container reflector-discriminators {
+        config false;
+        description
+          "List of SBFD reflector discriminator information.";
+        list reflector-discriminator {
+          key "reflector-discriminator-id";
+          config false;
+          description
+            "Statistics of SBFD reflector discriminator information.";
+          leaf reflector-discriminator-id {
+            type uint32;
+            config false; 
+            description
+              "SBFD reflector integer type discriminator information.";
+          }
+          leaf reflector-discriminator-ip {
+            type inet:ipv4-address-no-zone;
+            config false;
+            description
+              "SBFD reflector IP type discriminator information.";
+          }
+          leaf discriminator-state {
+            type sbfd-discriminator-state;
+            config false;
+            description
+              "SBFD reflector discriminator station information.";
+          }
+          leaf create-type {
+            type sbfd-discriminator-type;
+            config false;
+            description
+              "SBFD reflector discriminator create type information.";
+          }
+        }
+      }
+    }
+    container authentication-keys {
+      description
+        "List of BFD authentication information configuration. Authentication mode is M_SHA1, authenticate the negotiate packet of BFD.";
+      list authentication-key {
+        key "peer-ip vpn-name session-type";
+        description
+          "Configure BFD authentication information.";
+        leaf peer-ip {
+          type inet:ip-address-no-zone ;
+          description
+            "Destination address of BFD authentication configuration.";
+        }
+        leaf vpn-name {
+          type leafref {
+              path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "(contains(../peer-ip,':') and /ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']) or (not(contains(../peer-ip,':')) and /ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']) or (../vpn-name = '_public_')";
+          description
+            "VPN name of BFD authentication configuration.";
+        }
+        leaf session-type {
+          type authentication-link-type;
+          description
+            "Session type of BFD authentication configuration.";
+        }
+        leaf auth-algorithm {
+          type authentication-mode;
+          must "../auth-algorithm='met-sha1'";
+          mandatory true;
+          description
+            "BFD session authentication mode.";
+        }
+        leaf key-id {
+          type uint8 {
+            range "1..255";
+          }
+          mandatory true;
+          description
+            "Key ID of BFD authentication configuration.";
+        }
+        leaf cipher-string {
+          type pub-type:password-extend {
+            length "1..148";
+          }
+          mandatory true;
+          description
+            "SHA1 authentication password. 1 to 20 characters for simple text or 20 to 148 characters for ciphertext.";
+        }
+      }
+    }
+    container statistics {
+      config false;
+      description
+        "Statistics of global BFD, contains the number of Down and Up for the BFD session and some detailed session information.";
+      leaf inner-state {
+        type inner-state;
+        description
+          "Protection status of BFD components.";
+      }
+      leaf ip-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions of the IP type.";
+      }
+      leaf ldp-lsp-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions of the LDP LSP type.";
+      }
+      leaf static-lsp-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions of the static LSP type.";
+      }
+      leaf te-lsp-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions of the TE LSP type.";
+      }
+      leaf total-session-num {
+        type uint32;
+        description
+          "Total number of BFD sessions.";
+      }
+      leaf session-up-num {
+        type uint32;
+        description
+          "Number of BFD sessions that are in the Up state.";
+      }
+      leaf session-down-num {
+        type uint32;
+        description
+          "Number of BFD sessions that are in the Down state.";
+      }
+      leaf static-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions created in static mode.";
+      }
+      leaf dyn-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions created in dynamic mode.";
+      }
+      leaf auto-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions created in static auto-negotiation mode.";
+      }
+      leaf passive-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions created in entirely dynamic mode.";
+      }
+      leaf te-tunnel-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions of the TE tunnel type.";
+      }
+      leaf used-discriminator-num {
+        type uint32;
+        description
+          "Number of used session identifiers.";
+      }
+      leaf pw-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions for the PW.";
+      }
+      leaf vsi-pw-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions for the VSI PW.";
+      }
+      leaf ldp-tunnel-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions of the LDP tunnel type.";
+      }
+      leaf bgp-tunnel-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions of the BGP tunnel type.";
+      }
+      leaf vxlan-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions of the VXLAN type.";
+      }
+      leaf srbe-tunnel-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions of the SR-BE tunnel type.";
+      }
+      leaf main-session-up-num {
+        type uint32;
+        description
+          "Number of BFD main sessions that are in the Up state.";
+      }
+      leaf main-session-down-num {
+        type uint32;
+        description
+          "Number of BFD main sessions that are in the Down state.";
+      }
+      leaf sub-session-up-num {
+        type uint32;
+        description
+          "Number of BFD sub sessions that are in the Up state.";
+      }
+      leaf sub-session-down-num {
+        type uint32;
+        description
+          "Number of BFD sub sessions that are in the Down state.";
+      }
+      leaf used-bfd-res-num {
+        type uint32;
+        description
+          "Number of BFD resources in use.";
+      }
+      leaf max-bfd-res-num {
+        type uint32;
+        description
+          "Maximum number of BFD resources supported by a device.";
+      }
+      leaf max-crc-session-num {
+        type uint32;
+        description
+          "Maximum number of BFD sessions for bit error detection supported by a device.";
+      }
+      leaf current-crc-session-num {
+        type uint32;
+        description
+          "Current number of BFD sessions for bit error detection.";
+      }
+      leaf sid-list-session-num {
+        type uint32;
+        description
+          "Number of BFD sessions of the segment list type.";
+      }
+    }
+    container all-sessions {
+      config false;
+      description
+        "List of all BFD sessions, including the statically configured sessions and dynamically generated sessions.";
+      list all-session {
+        key "name";
+        description
+          "Statistics of information about all BFD sessions, including the statically configured sessions and dynamically generated sessions.";
+        leaf name {
+          type string {
+            length "1..64";
+          }
+          description
+            "Name of a BFD session.";
+        }
+        leaf create-type {
+          type create-type;
+          description
+            "Type for creating a BFD session.";
+        }
+        leaf type {
+          type session-type;
+          description
+            "Type of a BFD session.";
+        }
+        leaf local-discriminator {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Local discriminator of a BFD session.";
+          ext:support-filter "true";
+        }
+        leaf remote-discriminator {
+          type uint32;
+          description
+            "Remote discriminator of a BFD session.";
+        }
+        leaf link-type {
+          type link-type;
+          description
+            "Type of the link detected by a BFD session.";
+        }
+        leaf destination-address {
+          type inet:ip-address-no-zone ;
+          description
+            "Destination IP address of a BFD session. This parameter is available only when the type of the detected link is IP or LDP LSP.";
+        }
+        leaf source-address {
+          type inet:ip-address-no-zone ;
+          description
+            "Source IP address of a BFD session.";
+        }
+        leaf next-hop {
+          type inet:ip-address-no-zone ;
+          description
+            "Next hop IP address of a BFD session.";
+        }
+        leaf out-if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Name of the outbound interface of a BFD session. This parameter is available only when the type of the detected link is IP or LDP LSP. If only the destination IP address is specified, multi-hop routes are detected. If both the destination IP address and outbound interface name are specified, single-hop links are detected. That is, a fixed route is detected, with the interface where the BFD session resides as the outbound interface and the destination IP address as the next hop address.";
+        }
+        leaf vrf-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "Name of the VPN to which a BFD session belongs. If the VPN name is not specified, the destination IP address is considered as a public network address.";
+        }
+        leaf tunnel-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Name of a TE tunnel. This parameter is available only when the type of the detected link is TE LSP or TE Tunnel.";
+        }
+        leaf te-backup {
+          type te-backup-type;
+          description
+            "Flag of determining whether an LSP link is a backup TE LSP.";
+        }
+        leaf min-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Minimum interval between sending packets, which is set for a BFD session.";
+        }
+        leaf min-rx-interval {
+          type uint32;
+          units ms;
+          description
+            "Minimum interval between receiving packets, which is set for a BFD session.";
+        }
+        leaf detect-multiplier {
+          type uint32 {
+            range "3..50";
+          }
+          description
+            "Number of times that a BFD session continuously detects that packets are sent but no response is returned and then the system considers the BFD session Down. The detection multiplier is configured on the systems at both ends of the BFD session and does not need to be negotiated.";
+        }
+        leaf demand-enable {
+          type boolean;
+          description
+            "Indicate whether to enable the demand mode for a BFD session.";
+        }
+        leaf wtr-timer-int {
+          type uint32 {
+             range "1..60";
+          }
+          units ms;
+          description
+            "Timeout duration set on the wait-to-restore (WTR) timer. The value 0 indicates that a BFD session does not wait for restoration.";
+        }
+        leaf tos-exp {
+          type uint32 {
+             range "0..7";
+          }
+          description
+            "Priority of a packet. The default value is 7, indicating the highest priority.";
+        }
+        leaf shut-down {
+          type boolean;
+          description
+            "Indicate whether a BFD session becomes AdminDown.";
+        }
+        leaf description {
+          type string {
+            length "1..51";
+          }
+          description
+            "Description about a BFD session.";
+        }
+        leaf config-pst {
+          type common-ability;
+          description
+            "Flag of determining whether to configure the PST when the status of a BFD session changes.";
+        }
+        leaf process-pst {
+          type common-ability;
+          description
+            "Flag of detecting a LAG.";
+        }
+        leaf pis {
+          type pis-sate;
+          description
+            "Flag of determining whether to update the PIS when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+        }
+        leaf bind-application {
+          type string {
+            length "1..127";
+          }
+          description
+            "Information about the application to which a BFD session is bound.";
+        }
+        leaf fsm-board-slot {
+          type string {
+            length "1..19";
+          }
+          description
+            "Number of board selection for a BFD session.";
+        }
+        leaf pw-ttl-mode {
+          type pwttl-mode;
+          description
+            "PW TTL mode.";
+        }
+        leaf pw-ttl {
+          type uint32 {
+            range "1..255";
+          }
+          description
+            "PW TTL.";
+        }
+        leaf node {
+          type vpws-node-type;
+          description
+            "PW node.";
+        }
+        leaf encap-type {
+          type l2vpn-encapsulation-type;
+          description
+            "Encapsulation type.";
+        }
+        leaf track-interface {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Track interface.";
+        }
+        leaf local-vc-label {
+          type uint32;
+          description
+            "Local VC label.";
+        }
+        leaf remote-vc-label {
+          type uint32;
+          description
+            "Remote VC label.";
+        }
+        leaf swap-vc-label {
+          type uint32;
+          description
+            "Swap VC label.";
+        }
+        leaf lsp-token {
+          type uint32;
+          description
+            "LSP token.";
+        }
+        leaf vsi-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "VSI name.";
+        }
+        leaf vsi-peer-address {
+          type inet:ipv4-address-no-zone ;
+          description
+            "VSI peer IP address.";
+        }
+        leaf vc-id {
+          type uint32;
+          description
+            "VC ID.";
+        }
+        leaf remote-peer {
+          type inet:ipv4-address-no-zone ;
+          description
+            "Remote peer.";
+        }
+        leaf pw-secondary {
+          type pw-role;
+          description
+            "Secondary PW.";
+        }
+        leaf dot1q-vid {
+          type uint32;
+          description
+            "VLAN ID of a dot1q termination sub-interface.";
+        }
+        leaf qinq-pe-vid {
+          type uint32;
+          description
+            "Outer VLAN ID of a QinQ termination sub-interface.";
+        }
+        leaf qinq-ce-vid {
+          type uint32;
+          description
+            "Inner VLAN ID of a QinQ termination sub-interface.";
+        }
+        leaf echo-passive {
+          type common-ability;
+          description
+            "Enabling state of a passive echo session.";
+        }
+        leaf basic-acl-num {
+          type uint32 {
+             range "2000..2999";
+          }
+          description
+            "Number of ACLs for a BFD session.";
+        }
+        leaf min-echo-rx-int {
+          type uint32 {
+             range "3..20000";
+          }
+          units ms;
+          description
+            "Minimum interval between receiving one-arm echo session packets.";
+        }
+        leaf lag {
+          type boolean;
+          description
+            "Flag of detecting a LAG.";
+        }
+        leaf main-sub-role {
+          type perlink-role;
+          description
+            "Role of session.";
+        }
+        leaf bundle-mode {
+          type bundle-mode;
+          description
+            "Mode of Link-bundle session.";
+        }
+        leaf color {
+          type uint32;
+          description
+            "Color value.";
+        }
+        leaf segment-list-id {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Segment list ID.";
+        }
+        container running {
+          description
+            "Statistics of running information of the BFD session contains the session name, status, TX interval, RX interval, detection time multiplier and other information.";
+          leaf state {
+            type session-state;
+            description
+              "Status of a BFD session.";
+          }
+          leaf udp-destination-port {
+            type uint32;
+            description
+              "Destination port number of the UDP packets transmitted in a BFD session.";
+          }
+          leaf detect-mode {
+            type detect-mode;
+            description
+              "Actual detection mode for a BFD session.";
+          }
+          leaf remote-demand-mode {
+            type boolean;
+            description
+              "Whether the remote end of a BFD session is in demand mode.";
+          }
+          leaf actual-tx-interval {
+            type uint32;
+            units ms;
+            description
+              "Actual interval between sending packets in a BFD session.";
+          }
+          leaf actual-rx-interval {
+            type uint32;
+            units ms;
+            description
+              "Actual interval between receiving packets in a BFD session.";
+          }
+          leaf actual-multiplier {
+            type uint32;
+            description
+              "Actual detection multiplier for determining whether a BFD session is Down.";
+          }
+          leaf detect-time {
+            type uint32;
+            units ms;
+            description
+              "Detection interval when a BFD session is in asynchronous mode.";
+          }
+          leaf ttl {
+            type uint32 {
+              range "1..255";
+            }
+            description
+              "Time to live (TTL) value of BFD packets.";
+          }
+          leaf tx-timer-id {
+            type uint64;
+            description
+              "Sending timer of a BFD session.";
+          }
+          leaf detect-timer-id {
+            type uint64;
+            description
+              "Detect timer of a BFD session.";
+          }
+          leaf init-timer-id {
+            type uint64;
+            description
+              "Init timeout timer of a BFD session.";
+          }
+          leaf wtr-timer-id {
+            type uint64;
+            description
+              "WTR timer of a BFD session.";
+          }
+          leaf not-up-reason {
+            type not-up-reason;
+            description
+              "Reason why a BFD session cannot become Up.";
+          }
+          leaf acl-num {
+            type uint32;
+            description
+              "Number of ACLs for a BFD session.";
+          }
+          leaf local-diag {
+            type diag-state;
+            description
+              "Reason why a BFD session becomes Down last time.";
+          }
+          leaf echo-tx-timer-id {
+            type uint32;
+            description
+              "Sending timer of a BFD session with Echo.";
+          }
+          leaf local-discriminator {
+            type uint32;
+            description
+              "Local discriminator of a BFD session.";
+          }
+          leaf remote-discriminator {
+            type uint32;
+            description
+              "Remote discriminator of a BFD session.";
+          }
+          leaf min-tx-interval {
+            type uint32;
+            units ms;
+            description
+              "Minimum interval between sending packets, which is set for a BFD session.";
+          }
+          leaf min-rx-interval {
+            type uint32;
+            units ms;
+            description
+              "Minimum interval between receiving packets, which is set for a BFD session.";
+          }
+        }
+        container statistics {
+          description
+            "Statistics of a BFD session, including the time of the session state change, the duration of the change, and the number of packets sent and received.";
+          leaf last-down-time {
+            type yang:date-and-time;
+            description
+              "Down time of a BFD session.";
+          }
+          leaf time-from-down {
+            type string {
+              length "1..31";
+            }
+            description
+              "Duration of a BFD session from last Down.";
+          }
+          leaf create-time {
+            type yang:date-and-time;
+            description
+              "Creation time of a BFD session.";
+          }
+          leaf time-from-create {
+            type string {
+              length "1..31";
+            }
+            description
+              "Duration of a BFD session from creation.";
+          }
+          leaf last-up-time {
+            type yang:date-and-time;
+            description
+              "Up time of a BFD session.";
+          }
+          leaf time-from-up {
+            type string {
+              length "1..31";
+            }
+            description
+              "Duration of a BFD session from last Up.";
+          }
+          leaf receive-packet {
+            type uint64;
+            description
+              "Number of packets received in a BFD session.";
+          }
+          leaf send-packet {
+            type uint64;
+            description
+              "Number of packets sent in a BFD session.";
+          }
+          leaf down-count {
+            type uint32;
+            description
+              "Number of times that a BFD session becomes Down.";
+          }
+          leaf receive-bad-packet {
+            type uint64;
+            description
+              "Number of bad packets received in a BFD session.";
+          }
+          leaf send-bad-packet {
+            type uint64;
+            description
+              "Number of bad packets sent in a BFD session.";
+          }
+          leaf short-break-count {
+            type uint32;
+            default "0";
+            description
+              "Number of short breaks in a BFD session.";
+          }
+          leaf lsp-ping-count {
+            type uint32;
+            description
+              "Number of LSP ping packets sent in a BFD session.";
+          }
+        }
+      }
+    }
+    container bind-interfaces {
+      config false;
+      description
+        "List of information about the interface to which a BFD session is bound.";
+      list bind-interface {
+        key "if-name";
+        description
+          "Statistics of information about the interface to which a BFD session is bound.";
+        leaf if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Name of the interface to which a BFD session is bound.";
+        }
+        leaf session-count {
+          type uint32;
+          description
+            "BFD session statistics on the interface.";
+        }
+        leaf if-oper-status {
+          type operation-state;
+          description
+            "Operating status of the interface to which a BFD session is bound.";
+        }
+      }
+    }
+    container crc-lsp-sessions {
+      config false;
+      description
+        "List of information about all LSP CRC-ERR sessions.";
+      list crc-lsp-session {
+        key "ingress-lsr-id tunnel-id lsp-id";
+        description
+          "Statistics of information about an LSP CRC-ERR session.";
+        leaf ingress-lsr-id {
+          type inet:ipv4-address-no-zone;
+          description
+            "ID of an ingress LSR.";
+        }
+        leaf tunnel-id {
+          type uint32 {
+            range "1..65535";
+          }
+          description
+            "Tunnel ID.";
+        }
+        leaf lsp-id {
+          type uint32 {
+            range "1..65535";
+          }
+          description
+            "LSP ID.";
+        }
+        leaf session-type {
+          type crc-session-type;
+          description
+            "Type of CRC-ERR sessions.";
+        }
+        leaf fault-type {
+          type lsp-crc-fault-type;
+          description
+            "Fault type.";
+        }
+        leaf tunnel-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Tunnel name.";
+          ext:support-filter "true";
+        }
+        leaf lsp-role {
+          type lsp-role-type;
+          default "invalid";
+          description
+            "LSP role.";
+          ext:support-filter "true";
+        }
+        leaf out-if-name {
+          type pub-type:if-name;
+          description
+            "Outbound interface name.";
+        }
+        leaf lsp-token {
+          type uint32;
+          description
+            "LSP token.";
+        }
+        leaf fsm-board-id {
+          type uint32;
+          description
+            "Number of board selection for a BFD session.";
+        }
+        leaf min-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Minimum interval between sending packets, which is set for a CRC-ERR session.";
+        }
+        leaf max-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Maximum interval between sending packets, which is set for a CRC-ERR session.";
+        }
+        leaf actual-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Actual interval between sending packets in a CRC-ERR session.";
+        }
+        leaf detect-multiplier {
+          type uint32;
+          description
+            "Detection multiplier of a CRC-ERR session.";
+        }
+        leaf source-address {
+          type inet:ip-address-no-zone ;
+          description
+            "Source IP address of a CRC-ERR session.";
+        }
+        leaf destination-address {
+          type inet:ip-address-no-zone ;
+          description
+            "Destination IP address of a CRC-ERR session.";
+        }
+        leaf dest-port {
+          type uint32;
+          description
+            "Destination port number of a CRC-ERR session.";
+        }
+        leaf tos-exp {
+          type uint32 {
+            range "0..7";
+          }
+          description
+            "Priority of a packet. The default value is 7, indicating the highest priority.";
+        }
+        leaf-list lsp-inbount-interfaces {
+          type pub-type:if-name;
+          config false;
+          description
+            "Statistics of inbound interface information of an LSP.";
+        }
+      }
+    }
+    container crc-sec-sessions {
+      config false;
+      description
+        "List of information about all section CRC-ERR sessions.";
+      list crc-sec-session {
+        key "if-name";
+        description
+          "Statistics of information about a section CRC-ERR session.";
+        leaf if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Interface name.";
+        }
+        leaf session-type {
+          type crc-session-type;
+          description
+            "Type of a CRC-ERR session.";
+        }
+        leaf fault-type {
+          type section-crc-fault-type;
+          description
+            "Fault type.";
+        }
+        leaf fsm-board-id {
+          type uint32;
+          description
+            "Number of board selection for a BFD session.";
+        }
+        leaf min-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Minimum interval between sending packets, which is set for a CRC-ERR session.";
+        }
+        leaf max-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Maximum interval between sending packets, which is set for a CRC-ERR session.";
+        }
+        leaf actual-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Actual interval between sending packets in a CRC-ERR session.";
+        }
+        leaf detect-multiplier {
+          type uint32;
+          description
+            "Detection multiplier of a CRC-ERR session.";
+        }
+        leaf destination-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Destination IP address of a CRC-ERR session.";
+        }
+        leaf dest-port {
+          type uint32;
+          description
+            "Destination port number of a CRC-ERR session.";
+        }
+        leaf tos-exp {
+          type uint32 {
+            range "0..7";
+          }
+          description
+            "Priority of a packet. The default value is 7, indicating the highest priority.";
+        }
+      }
+    }
+    container crc-ip-sessions {
+      config false;
+      description
+        "List of information about all IP CRC-ERR sessions.";
+      list crc-ip-session {
+        key "if-name destination-address";
+        description
+          "Statistics of information about a IP CRC-ERR session.";
+        leaf if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Interface name.";
+        }
+        leaf destination-address {
+          type inet:ip-address-no-zone ;
+          description
+            "Destination IP address of a CRC-ERR session.";
+        }
+        leaf source-address {
+          type inet:ip-address-no-zone ;
+          description
+            "Source IP address of a CRC-ERR session.";
+        }
+        leaf dest-port {
+          type uint32;
+          description
+            "Destination port number of a CRC-ERR session.";
+        }
+        leaf session-type {
+          type crc-session-type;
+          description
+            "Type of a CRC-ERR session.";
+        }
+        leaf fault-type {
+          type ip-crc-fault-type;
+          description
+            "Fault type.";
+        }
+        leaf fsm-board-id {
+          type uint32;
+          description
+            "Number of board selection for a BFD session.";
+        }
+        leaf min-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Minimum interval between sending packets, which is set for a CRC-ERR session.";
+        }
+        leaf max-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Maximum interval between sending packets, which is set for a CRC-ERR session.";
+        }
+        leaf actual-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Actual interval between sending packets in a CRC-ERR session.";
+        }
+        leaf detect-multiplier {
+          type uint32;
+          description
+            "Detection multiplier of a CRC-ERR session.";
+        }
+        leaf tos-exp {
+          type uint32 {
+            range "0..7";
+          }
+          description
+            "Priority of a packet. The default value is 7, indicating the highest priority.";
+        }
+        leaf vrf-name {
+          type pub-type:vrf-name;
+          description
+            "VPN name.";
+        }
+        leaf local-bit-err-rate {
+          type string {
+            length "1..8";
+          }
+          description
+            "Local Bit Err Rate.";
+        }
+        leaf remote-bit-err-rate {
+          type string {
+            length "1..8";
+          }
+          description
+            "Remote Bit Err Rate.";
+        }
+      }
+    }
+    container mul-cast-sessions {
+      config false;
+      description
+        "List of all BFD for P2MP sessions.";
+      list mul-cast-session {
+        key "session-name local-discriminator";
+        description
+          "Statistics of information about BFD for P2MP sessions.";
+        leaf session-name {
+          type string {
+            length "1..64";
+          }
+          description
+            "Name of a BFD session.";
+        }
+        leaf local-discriminator{
+          type uint32 {
+            range "1..32768";
+          }
+          description
+            "Local discriminator of a BFD session.";
+        }
+        leaf create-type {
+          type multicast-session-create-type;
+          description
+            "Type for creating a BFD session.";
+        }
+        leaf session-type {
+          type session-type;
+          description
+            "Type of a BFD session, including single-/multi-hop IP, LSP, tunnel, and TE LSP.";
+        }
+        leaf multicast-session-type {
+          type multicast-session-type;
+          description
+            "Type of a multicast session.";
+        }
+        leaf p2mp-id {
+          type string {
+            length "1..29";
+          }
+          description
+            "P2MP ID.";
+        }
+        leaf p2mp-ingress-lsr-id {
+          type inet:ip-address-no-zone ;
+          description
+            "ID of an ingress LSR.";
+        }
+        leaf p2mp-tunnel-id {
+          type uint32 {
+            range "1..65535";
+          }
+          description
+            "P2MP tunnel ID.";
+        }
+        leaf root-ip {
+          type inet:ipv4-address-no-zone;
+          description
+            "ROOT IP.";
+        }
+        leaf lsp-id {
+          type uint32 {
+            range "1..65535";
+          }
+          description
+            "MLDP P2MP LSPID.";
+        }
+        leaf opaque-id {
+          type string {
+            length "1..255";
+          }
+          description
+            "MLDP OPAQUE ID.";
+        }
+        leaf remote-discriminator {
+          type uint32;
+          description
+            "Remote discriminator of a BFD session. When the BFD session is created in static auto-negotiation mode, you do not need to set this parameter. Note that the remote discriminator must correspond to the local discriminator on the peer of the session. That is, the value of the remote discriminator must be the same as the value of the local discriminator.";
+        }
+        leaf link-type {
+          type link-type;
+          description
+            "Type of the link detected by a BFD session.";
+        }
+        leaf destination-address {
+          type inet:ip-address-no-zone ;
+          description
+            "Destination IP address of a BFD session. This parameter is available only when the type of the detected link is IP or LDP LSP.";
+        }
+        leaf min-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Minimum interval between sending packets, which is set for a BFD session.";
+        }
+        leaf min-rx-interval {
+          type uint32;
+          units ms;
+          description
+            "Minimum interval between receiving packets, which is set for a BFD session.";
+        }
+        leaf detect-multiplier {
+           type uint32 {
+            range "3..50";
+          }
+          description
+            "Number of times that a BFD session continuously detects that packets are sent but no response is returned and then the system considers the BFD session Down. The detection multiplier is configured on the systems at both ends of the BFD session and does not need to be negotiated.";
+        }
+        leaf tos-exp {
+          type uint32 {
+            range "0..7";
+          }
+          description
+            "Priority of a packet. The default value is 7, indicating the highest priority.";
+        }
+        leaf description {
+          type string {
+            length "1..51";
+          }
+          description
+            "Description about a BFD session.";
+        }
+        leaf bind-application {
+          type string {
+            length "1..127";
+          }
+          description
+            "Information about the application to which a BFD session is bound.";
+        }
+        leaf fsm-board-slot {
+          type string {
+            length "1..19";
+          }
+          description
+            "Number of board selection for a BFD session.";
+        }
+        leaf track-interface {
+          type pub-type:if-name;
+          description
+            "Track interface.";
+        }
+        container multi-cast-session-running {
+          description
+            "Statistics of running information about a BFD session.";
+          leaf session-state {
+            type session-state;
+            description
+              "Status of a BFD session.";
+          }
+          leaf udp-dst-port {
+            type uint32;
+            description
+              "Destination port number of the UDP packets transmitted in a BFD session.";
+          }
+          leaf detect-mode {
+            type detect-mode;
+            description
+              "Actual detection mode for a BFD session.";
+          }
+          leaf re-demand-mode {
+            type boolean;
+            description
+              "Whether the remote end of a BFD session is in demand mode.";
+          }
+          leaf act-tx-interval {
+            type uint32;
+            units ms;
+            description
+              "Actual interval between sending packets in a BFD session.";
+          }
+          leaf act-rx-interval {
+            type uint32;
+            units ms;
+            description
+              "Actual interval between receiving packets in a BFD session.";
+          }
+          leaf act-multiplier {
+            type uint32;
+            description
+              "Actual detection multiplier for determining whether a BFD session is Down.";
+          }
+          leaf detect-time {
+            type uint32;
+            units ms;
+            description
+              "Detection interval when a BFD session is in asynchronous mode.";
+          }
+          leaf ttl {
+            type uint32 {
+              range "1..255";
+            }
+            description
+              "Time to live (TTL) value of BFD packets.";
+          }
+          leaf tx-timer-id {
+            type uint64;
+            description
+              "Sending timer of a BFD session.";
+          }
+          leaf detect-timer-id {
+            type uint64;
+            description
+              "Detect timer of a BFD session.";
+          }
+          leaf init-timer-id {
+            type uint64;
+            description
+              "Init timeout timer of a BFD session.";
+          }
+          leaf wtr-timer-id{
+            type uint64;
+            description
+              "WTR timer of a BFD session.";
+          }
+          leaf not-up-reason {
+            type not-up-reason;
+            description
+              "Reason why a BFD session cannot become Up.";
+          }
+          leaf acl-num {
+            type uint32;
+            description
+              "Number of ACLs for a BFD session.";
+          }
+          leaf local-diag {
+            type diag-state;
+            description
+              "Reason why a BFD session becomes Down last time.";
+          }
+          leaf echo-tx-timer-id {
+            type uint64;
+            description
+              "Sending timer of a BFD session with Echo.";
+          }
+          leaf remote-discriminator {
+            type uint32;
+            description
+              "Remote discriminator of a BFD session.";
+          }
+          leaf min-tx-interval {
+            type uint32;
+            units ms;
+            description
+              "Minimum interval between sending packets, which is set for a BFD session.";
+          }
+          leaf min-rx-interval {
+            type uint32;
+            units ms;
+            description
+              "Minimum interval between receiving packets, which is set for a BFD session.";
+          }
+        }
+      }
+    }
+    container bfd-bundle-sessions {
+      config false;
+      description
+        "List of all bundle sessions.";
+      list bfd-bundle-session {
+        key "local-discriminator";
+        description
+          "Statistics of bundle sessions.";
+        leaf local-discriminator{
+          type uint32;
+          description
+            "Local discriminator of a BFD session.";
+        }
+        leaf remote-discriminator {
+          type uint32;
+          description
+            "Remote discriminator of a BFD session.";
+        }
+        leaf session-name {
+          type string {
+            length "1..64";
+          }
+          description
+            "Name of a BFD session.";
+        }
+        leaf main-sub-role {
+          type perlink-role;
+          description
+            "Role of session.";
+        }
+        leaf main-session-name {
+          type string {
+            length "1..64";
+          }
+          description
+            "Name of the main session.";
+        }
+        leaf state {
+          type session-state;
+          description
+            "Status of a BFD session.";
+        }
+        leaf detect-mode {
+          type detect-mode;
+          description
+            "Actual detection mode for a BFD session.";
+        }
+        leaf create-type {
+          type create-type;
+          description
+            "Type for creating a BFD session.";
+        }
+        leaf link-type {
+          type link-type;
+          description
+            "Type of the link detected by a BFD session.";
+        }
+        leaf destination-address {
+          type inet:ip-address-no-zone ;
+          description
+            "Destination IP address of a BFD session. This parameter is available only when the type of link detection is IP and LDP LSP.";
+        }
+        leaf source-address {
+          type inet:ip-address-no-zone ;
+          description
+            "Source IP address of a BFD session.";
+        }
+        leaf fsm-board-slot {
+          type string {
+            length "1..15";
+          }
+          description
+            "Number of board selection for a BFD session.";
+        }
+        leaf tos-exp {
+          type uint32 {
+            range "0..7";
+          }
+          description
+            "Priority of a packet. The value ranges from 0 to 6. By default, the value 6 indicates the highest priority. In the case of system congestion, the BFD packets with the higher priority are sent.";
+        }
+        leaf min-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Minimum interval for sending packets, which is set for a BFD session.";
+        }
+        leaf min-rx-interval {
+          type uint32;
+          units ms;
+          description
+            "Minimum interval for receiving packets, which is set for a BFD session.";
+        }
+        leaf detect-multiplier {
+          type uint32 {
+            range "3..50";
+          }
+          description
+            "Number of times when a BFD session continuously detects that packets are sent but no response is returned and then the system considers the BFD session as Down. The detection multiplier is configured by the systems at both ends of the BFD session and does not need to be negotiated.";
+        }
+        leaf act-tx-interval {
+          type uint32;
+          units ms;
+          description
+            "Actual interval for sending packets in a BFD session.";
+        }
+        leaf act-rx-interval {
+          type uint32;
+          units ms;
+          description
+            "Actual interval for receiving packets in a BFD session.";
+        }
+        leaf act-detect-multiplier {
+          type uint32 {
+            range "3..50";
+          }
+          description
+            "Actual detection multiplier for determining whether a BFD session is Down.";
+        }
+        leaf detect-time {
+          type uint32;
+          units ms;
+          description
+            "Detection interval when a BFD session is in asynchronism mode.";
+        }
+        leaf dest-port {
+          type uint32;
+          description
+            "Destination port number of the UDP packets transmitted in a BFD session.";
+        }
+        leaf wtr-timer-int {
+          type uint32 {
+            range "1..3600000";
+          }
+          units ms;
+          description
+            "Timeout duration set on the wait-to-restore (WTR) timer. Value 0 indicates that a BFD session does not wait for restoration.";
+        }
+        leaf local-diag {
+          type diag-state;
+          description
+            "Reason why a BFD session becomes Down last time.";
+        }
+        leaf bind-application {
+          type string {
+            length "1..127";
+          }
+          description
+            "Information about the binding application of a BFD session.";
+        }
+        leaf sub-session-count {
+          type uint32;
+          description
+            "Number of sub session.";
+        }
+        leaf out-if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Name of the outbound interface of a BFD session. This parameter is available only when the type of detected link is IP or LDPLSP. If only the destination IP address is specified, it indicates that multi-hop routes are detected. If both the destination IP address and outbound interface name are specified, it indicates that single hop links are detected. That is, a fixed route is detected, with the interface where the BFD session resides as the outbound interface and the destination IP address as the next hop address.";
+          ext:support-filter "true";
+        }
+        leaf bundle-mode {
+          type bundle-mode;
+          description
+            "Mode of Link-bundle session.";
+        }
+        leaf vrf-name {
+          type pub-type:vrf-name {
+            length "1..31";
+          }
+          description
+            "Name of the VPN to which a BFD session belongs. If the VPN name is not specified, the destination IP address is considered as a public network address.";
+        }
+        leaf disp-session-type {
+          type sub-session-type;
+          description
+            "Session type.";
+          ext:support-filter "true";
+        }
+        leaf te-backup {
+          type boolean;
+          default "false";
+          description
+            "Flag of determining whether an LSP link is a backup TE LSP.";
+        }
+        leaf tunnel-id {
+          type uint32 {
+            range "1..65535";
+          }
+          description
+            "Tunnel ID.";
+        }
+        leaf pw-secondary {
+          type boolean;
+          default "false";
+          description
+            "Flag of determining whether a PW is a secondary PW.";
+        }
+        leaf vsi-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "VSI name.";
+        }
+      }
+    }
+  }
+  rpc change-session-board {
+    description
+      "Change slot id of session.";
+    input {
+      leaf local-discriminator {
+        type uint32 {
+          range "1..4294967295";
+        }
+        mandatory true;
+        description
+          "Local discriminator.";
+      }
+      leaf select-slot-id {
+        type string {
+          length "1..19";
+        }
+        mandatory true;
+        description
+          "Target slot id.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Configure BFD.";
+    container bfd {
+      description
+        "Configure BFD.";
+      leaf enable-trunk-crc-bit-error {
+        when "../../ifm:type='Eth-Trunk' or ../../ifm:type='Ip-Trunk'";
+        type empty;
+        description
+          "Enable bit error detection.";
+      }
+      leaf enable-trigger-if-down {
+        type empty;
+        description
+          "Enable BFD trigger interface down.";
+      }
+    }
+  }
+}

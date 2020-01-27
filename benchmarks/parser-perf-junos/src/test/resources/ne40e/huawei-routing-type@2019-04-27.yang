@@ -1,0 +1,525 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-routing-type {
+  yang-version 1;
+  belongs-to huawei-routing {
+    prefix rt;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Defines type definitions associated with the huawei-routing modules.";
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef frr-type {
+    type enumeration {
+      enum "primary" {
+        value 0;
+        description
+          "Primary route.";
+      }
+      enum "backup" {
+        value 1;
+        description
+          "Backup route.";
+      }
+    }
+    description
+      "FRR type.";
+  }
+  typedef protocol-type {
+    type enumeration {
+      enum "init" {
+        value 0;
+        description
+          "Initial.";
+      }
+      enum "direct" {
+        value 1;
+        description
+          "Direct.";
+      }
+      enum "ospf" {
+        value 2;
+        description
+          "Open Shortest Path First.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "Intermediate System-to-Intermediate System.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Static.";
+      }
+      enum "rip" {
+        value 5;
+        description
+          "Routing Information Protocol.";
+      }
+      enum "bgp" {
+        value 6;
+        description
+          "Border Gateway Protocol.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "UNR protocol.";
+      }
+      enum "opr" {
+        value 14;
+        description
+          "OPR protocol.";
+      }
+      enum "total" {
+        value 9;
+        description
+          "All protocols.";
+      }
+    }
+    description
+      "Protocol type.";
+  }
+  typedef ipv6-protocol-type {
+    type enumeration {
+      enum "init" {
+        value 0;
+        description
+          "Initial.";
+      }
+      enum "direct" {
+        value 1;
+        description
+          "Direct.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "Intermediate System-to-Intermediate System.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Static.";
+      }
+      enum "bgp" {
+        value 6;
+        description
+          "Border Gateway Protocol.";
+      }
+      enum "ospfv3" {
+        value 7;
+        description
+          "OSPFv3.";
+      }
+      enum "ripng" {
+        value 8;
+        description
+          "Routing Information Protocol next generation.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "UNR protocol.";
+      }
+      enum "opr" {
+        value 14;
+        description
+          "OPR protocol.";
+      }
+      enum "total" {
+        value 9;
+        description
+          "All protocols.";
+      }
+    }
+    description
+      "Protocol type.";
+  }
+  typedef sub-protocol-type {
+    type enumeration {
+      enum "no-sub-protocol" {
+        value 0;
+        description
+          "NO_SUB_PROTOCOL.";
+      }
+      enum "intra-area" {
+        value 1;
+        description
+          "INTRA_AREA sub protocol.";
+      }
+      enum "inter-area" {
+        value 2;
+        description
+          "INTER_AREA sub protocol.";
+      }
+      enum "external1" {
+        value 3;
+        description
+          "EXTERNAL1 sub protocol.";
+      }
+      enum "external2" {
+        value 4;
+        description
+          "EXTERNAL2 sub protocol.";
+      }
+      enum "nssa1" {
+        value 5;
+        description
+          "NSSA1 sub protocol.";
+      }
+      enum "nssa2" {
+        value 6;
+        description
+          "NSSA2 sub protocol.";
+      }
+      enum "level1" {
+        value 7;
+        description
+          "LEVEL1 sub protocol.";
+      }
+      enum "level2" {
+        value 8;
+        description
+          "LEVEL2 sub protocol.";
+      }
+      enum "ibgp" {
+        value 9;
+        description
+          "IBGP sub protocol.";
+      }
+      enum "ebgp" {
+        value 10;
+        description
+          "EBGP sub protocol.";
+      }
+      enum "vlink" {
+        value 11;
+        description
+          "VLINK sub protocol.";
+      }
+      enum "vlink-trm" {
+        value 19;
+        description
+          "VLINK_TRM sub protocol.";
+      }
+      enum "unr-ippool" {
+        value 12;
+        description
+          "UNR_IPPOOL sub protocol.";
+      }
+      enum "unr-host" {
+        value 13;
+        description
+          "UNR_HOST sub protocol.";
+      }
+      enum "unr-ipsec" {
+        value 14;
+        description
+          "UNR_IPSEC sub protocol.";
+      }
+      enum "unr-framed" {
+        value 15;
+        description
+          "UNR_FRAMED sub protocol.";
+      }
+      enum "unr-aaa-download" {
+        value 20;
+        description
+          "UNR_AAA_DOWNLOAD sub protocol.";
+      }
+    }
+    description
+      "Route sub protocol type.";
+  }
+  typedef route-flag {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid.";
+      }
+      enum "d" {
+        value 1;
+        description
+          "The route is downloaded to FIB.";
+      }
+      enum "rd" {
+        value 2;
+        description
+          "The route is downloaded to FIB and iterated.";
+      }
+      enum "r" {
+        value 3;
+        description
+          "The route is iterated.";
+      }
+      enum "t" {
+        value 4;
+        description
+          "The next hop is a VPN instance.";
+      }
+      enum "dt" {
+        value 5;
+        description
+          "The route is downloaded to FIB, and the next hop is a VPN instance.";
+      }
+      enum "rdt" {
+        value 6;
+        description
+          "The route is downloaded to FIB and iterated, and the next hop is a VPN instance.";
+      }
+      enum "rt" {
+        value 7;
+        description
+          "The route is iterated, and the next hop is a VPN instance.";
+      }
+      enum "db" {
+        value 8;
+        description
+          "The route is downloaded to FIB.";
+      }
+      enum "rdb" {
+        value 9;
+        description
+          "The route is downloaded to FIB and iterated.";
+      }
+      enum "rb" {
+        value 10;
+        description
+          "The route is iterated.";
+      }
+      enum "tb" {
+        value 11;
+        description
+          "The next hop is a VPN instance.";
+      }
+      enum "dtb" {
+        value 12;
+        description
+          "The route is downloaded to FIB, and the next hop is a VPN instance.";
+      }
+      enum "rdtb" {
+        value 13;
+        description
+          "The route is downloaded to FIB and iterated, and the next hop is a VPN instance.";
+      }
+      enum "rtb" {
+        value 14;
+        description
+          "The route is iterated, and the next hop is a VPN instance.";
+      }
+      enum "b" {
+        value 15;
+        description
+          "The route is blackhole.";
+      }
+    }
+    description
+      "Route flag.";
+  }
+  typedef route-priority {
+    type enumeration {
+      enum "critical" {
+        value 1;
+        description
+          "The priority of a route is critical.";
+      }
+      enum "high" {
+        value 2;
+        description
+          "The priority of a route is high.";
+      }
+      enum "medium" {
+        value 3;
+        description
+          "The priority of a route is medium.";
+      }
+      enum "low" {
+        value 4;
+        description
+          "The priority of a route is low.";
+      }
+    }
+    description
+      "Route convergence priority.";
+  }
+  typedef route-state {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid.";
+      }
+      enum "active-adv" {
+        value 1;
+        description
+          "The route that is active and advertised.";
+      }
+      enum "active-noadv" {
+        value 2;
+        description
+          "The route that is active, but unadvertised.";
+      }
+      enum "inactive-adv" {
+        value 3;
+        description
+          "The route that is inactive but advertised.";
+      }
+      enum "active-adv-relied" {
+        value 4;
+        description
+          "The route that is active, advertised, and iterated.";
+      }
+      enum "invalid-adv" {
+        value 5;
+        description
+          "The route that is invalid, but advertised.";
+      }
+      enum "active-noadv-relied" {
+        value 6;
+        description
+          "The route is active and iterated, but unadvertised.";
+      }
+      enum "invalid-noadv" {
+        value 7;
+        description
+          "The route is invalid and unadvertised.";
+      }
+      enum "inactive-noadv" {
+        value 8;
+        description
+          "The route is inactive and unadvertised.";
+      }
+      enum "inactive-adv-relied" {
+        value 9;
+        description
+          "The route that is inactive, advertised, and iterated.";
+      }
+      enum "inactive-noadv-relied" {
+        value 10;
+        description
+          "The route is inactive and iterated, but unadvertised.";
+      }
+    }
+    description
+      "Route states.";
+  }
+  typedef statistic-protocol-type {
+    type enumeration {
+      enum "direct" {
+        value 1;
+        description
+          "Direct.";
+      }
+      enum "static" {
+        value 2;
+        description
+          "Static.";
+      }
+      enum "rip" {
+        value 3;
+        description
+          "Routing Information Protocol.";
+      }
+      enum "ospf" {
+        value 5;
+        description
+          "Open Shortest Path First.";
+      }
+      enum "isis" {
+        value 7;
+        description
+          "Intermediate System-to-Intermediate System.";
+      }
+      enum "bgp" {
+        value 8;
+        description
+          "Border Gateway Protocol.";
+      }
+      enum "unr" {
+        value 9;
+        description
+          "UNR protocol.";
+      }
+      enum "opr" {
+        value 11;
+        description
+          "OPR protocol.";
+      }
+      enum "total" {
+        value 12;
+        description
+          "All protocols.";
+      }
+    }
+    description
+      "Route statistic protocol type.";
+  }
+  typedef ipv6-statistic-protocol-type {
+    type enumeration {
+      enum "direct" {
+        value 1;
+        description
+          "Direct.";
+      }
+      enum "static" {
+        value 2;
+        description
+          "Static.";
+      }
+      enum "ripng" {
+        value 4;
+        description
+          "Routing Information Protocol next generation.";
+      }
+      enum "ospfv3" {
+        value 6;
+        description
+          "OSPFv3.";
+      }
+      enum "isis" {
+        value 7;
+        description
+          "Intermediate System-to-Intermediate System.";
+      }
+      enum "bgp" {
+        value 8;
+        description
+          "Border Gateway Protocol.";
+      }
+      enum "unr" {
+        value 9;
+        description
+          "UNR protocol.";
+      }
+      enum "opr" {
+        value 11;
+        description
+          "OPR protocol.";
+      }
+      enum "total" {
+        value 12;
+        description
+          "All protocols.";
+      }
+    }
+    description
+      "Route statistic protocol type.";
+  }
+}

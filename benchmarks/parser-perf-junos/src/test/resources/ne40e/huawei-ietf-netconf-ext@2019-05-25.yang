@@ -1,0 +1,85 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+/*
+module: huawei-ietf-netconf-ext
+augment /nc:commit/nc:input:
+   +---- description?   string
+rpcs:
+   +---x cancel-query
+      +---w input
+         +---w set-id    uint32
+notifications:
+   +---n netconf-rpc-keepalive
+      +--ro session-id?   uint32
+      +--ro message-id?    string
+*/
+module huawei-ietf-netconf-ext {
+  namespace "urn:huawei:yang:huawei-ietf-netconf-ext";
+  prefix nc-ext;
+
+  import ietf-netconf {
+    prefix nc;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Extension of NETCONF protocol standard operations that were used privately for Huawei device.";
+  revision 2019-05-25 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";	  
+  }
+  ext:task-name "netconf";
+  typedef flow-id-type {
+    type uint32;
+    description
+        "This type used for the attribute 'flow-id';
+         The rpc-reply of the sync-full/edit-config operation will contain the 'flow-id' XML attribute.";
+  }
+
+  notification netconf-rpc-keepalive {
+    description
+      "This notification will be generated every 20 seconds if the operation takes more time,
+       Client must use filter to subscribe this notification for a specific session,
+       and it can report error if this notification is not enabled without the filter.";
+
+    leaf session-id {
+      type uint32;
+      description
+        "Session in which client want to receive this notitification; 
+         Unique identifier for the session. This value is the NETCONF session identifier, as defined in [RFC4741].Refer to RFC 6022 section 2.1.4.";
+    }
+    
+    leaf message-id {
+      type string {
+        length "0..4095";
+      }
+      description
+        "Message id of the rpc operation that is taking long time to execute.";
+    }
+  }
+  augment /nc:commit/nc:input {
+    description
+         "Adds the <description> parameter to
+          the input of the NETCONF <commit> operation.";
+    leaf description {
+      type string {
+        length "1..60";
+      }
+      description
+        "This is used for commit comments to identify specific commit operation.";
+    }
+  }
+}

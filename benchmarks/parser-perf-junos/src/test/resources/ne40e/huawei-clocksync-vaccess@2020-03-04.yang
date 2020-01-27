@@ -1,0 +1,831 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-vaccess {
+   namespace "urn:huawei:yang:huawei-clocksync-vaccess";
+  prefix clocksync-vaccess;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Virtual access clock management.";
+
+  revision 2020-03-04 {
+    description
+      "Modify the node description and fixed some problems.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-21 {
+    description
+      "Fixed some problems.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-03 {
+    description
+      "Add nvclock-sync container node and fixed some problems.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-09-19 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef bits-id {
+    type enumeration {
+      enum "bits0" {
+	    value 0;
+        description
+          "BITS0.";
+      }
+      enum "bits1" {
+	    value 1;
+        description
+          "BITS1.";
+      }
+    }
+    description
+      "BITS ID.";
+  }
+  typedef ptp-time-source {
+    type enumeration {
+      enum "atomicclock" {
+	    value 1;
+        description
+          "Atomic clock.";
+      }
+      enum "gps" {
+	    value 2;
+        description
+          "GPS.";
+      }
+      enum "terrestrialradio" {
+	    value 3;
+        description
+          "Terrestrial radio.";
+      }
+      enum "ptp" {
+	    value 4;
+        description
+          "PTP.";
+      }
+      enum "ntp" {
+	    value 5;
+        description
+          "NTP.";
+      }
+      enum "handset" {
+	    value 6;
+        description
+          "Handset.";
+      }
+      enum "other" {
+	    value 7;
+        description
+          "Others.";
+      }
+      enum "internaloscillator" {
+	    value 8;
+        description
+          "Internal oscillator.";
+      }
+    }
+    description
+      "PTP Time Source.";
+  }
+  typedef ptp-tod-protocol {
+    type enumeration {
+      enum "ccsa" {
+	    value 2;
+        description
+          "Set the 1PPS+TOD time signals to be transmitted based on the CCSA protocol and change the 1PPS+TOD status value to the clockClass value as defined in the protocol.";
+      }
+      enum "ubx" {
+	    value 0;
+        description
+          "Set the 1PPS+TOD time signals to be transmitted in UBX format.";
+      }
+      enum "nmea" {
+	    value 1;
+        description
+          "Set the 1PPS+TOD time signals to be transmitted in NMEA format.";
+      }
+    }
+    description
+      "Tod Protocal.";
+  }
+  typedef phy-sabit-type {
+    type enumeration {
+      enum "sa4" {
+	    value 4;
+        description
+          "Sa4 timeslot.";
+      }
+      enum "sa5" {
+	    value 5;
+        description
+          "Sa5 timeslot.";
+      }
+      enum "sa6" {
+	    value 6;
+        description
+          "Sa6 timeslot.";
+      }
+      enum "sa7" {
+	    value 7;
+        description
+          "Sa7 timeslot.";
+      }
+      enum "sa8" {
+	    value 8;
+        description
+          "Sa8 timeslot.";
+      }
+    }
+    description
+      "Sabit Type.";
+  }
+  typedef clock-bits-type {
+    type enumeration {
+      enum "1pps" {
+	    value 3;
+        description
+          "Bits type is 1PPS time signal.";
+      }
+      enum "2mhz" {
+	    value 1;
+        description
+          "Bits type is 2 MHz frequency signal.";
+      }
+      enum "2mbps" {
+	    value 0;
+        description
+          "Bits type is 2 Mbps frequency signal.";
+      }
+      enum "dcls" {
+	    value 2;
+        description
+          "Bits type is DCLS time signal.";
+      }
+      enum "none" {
+	    value 255;
+        description
+          "Invalid BITS signal type.";
+      }
+    }
+    description
+      "Bits Type.";
+  }
+  typedef ptp-bits-direction {
+    type enumeration {
+      enum "in" {
+	    value 0;
+        description
+          "Input.";
+      }
+      enum "out" {
+	    value 1;
+        description
+          "Output.";
+      }
+      enum "both" {
+	    value 2;
+        description
+          "Input and output.";
+      }
+      enum "none" {
+	    value 4;
+        description
+          "Invalid.";
+      }
+    }
+    description
+      "Bits Direction Type.";
+  }
+  typedef ptp-delay-mechanism {
+    type enumeration {
+      enum "delay" {
+	    value 0;
+        description
+          "The delay measurement mechanism of PTP interface clock source is Delay.";
+      }
+      enum "pdelay" {
+	    value 1;
+        description
+          "The delay measurement mechanism of PTP interface packets is Pdelay.";
+      }
+    }
+    description
+      "Delay Mechanism Type.";
+  }
+  typedef ptp-port-step-type {
+    type enumeration {
+      enum "onestep" {
+	    value 0;
+        description
+          "The timestamps are carried in Sync packets, and Follow_Up packets do not need to be sent.";
+      }
+      enum "twostep" {
+	    value 1;
+        description
+          "The timestamps are not carried in Sync packets but in Follow-Up packets.";
+      }
+    }
+    description
+      "Port Step Type.";
+  }
+  typedef ptp-pack-type {
+    type enumeration {
+      enum "mac" {
+	    value 0;
+        description
+          "Layer 2 MAC encapsulation for PTP packets.";
+      }
+      enum "udp" {
+	    value 1;
+        description
+          "Layer 3 UDP packet encapsulation for PTP packets.";
+      }
+    }
+    description
+      "Pack Type.";
+  }
+  typedef ptp-sign-flag {
+    type enumeration {
+      enum "negative" {
+	    value 0;
+        description
+          "Negative.";
+      }
+      enum "positive" {
+	    value 1;
+        description
+          "Positive.";
+      }
+    }
+    description
+      "Sign Type.";
+  }
+  typedef phy-ssm-level {
+    type enumeration {
+      enum "none" {
+	    value 16;
+        description
+          "Null.";
+      }
+      enum "prc" {
+	    value 2;
+        description
+          "G.811 clock.";
+      }
+      enum "ssua" {
+	    value 4;
+        description
+          "G.812 transit node clock.";
+      }
+      enum "ssub" {
+	    value 8;
+        description
+          "G.812 local node clock.";
+      }
+      enum "sec" {
+	    value 11;
+        description
+          "SDH.";
+      }
+      enum "dnu" {
+	    value 15;
+        description
+          "The clock source is unavailable.";
+      }
+      enum "unk" {
+	    value 0;
+        description
+          "The SSM level is unknown.";
+      }
+    }
+    description
+      "SSM Level Type.";
+  }
+  ext:task-name  "clksync";
+  container clocksync-vaccess {
+    description
+      "Virtual access clock management.";
+    container network-plane {
+      description
+        "Configure Network.";
+      container va-common {
+        description
+          "Configure vaccess common information.";
+        leaf freq-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable frequency synchronization in virtual access scenarios.";
+        }
+        leaf time-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable time synchronization in virtual access scenarios.";
+        }
+      }
+      container va-clock {
+        description
+          "Configure vaccess lock.";
+        leaf freq-check-enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable frequency offset detection on the clock board.";
+        }
+        leaf wtr-time {
+          type uint32 {
+            range "0..12";
+          }
+          units "min";
+          default "5";
+          description
+            "WTR time for a Down interface.";
+        }
+        leaf holdoff-time {
+          type uint32 {
+            range "300..1800";
+          }
+          units "ms";
+          default "1000";
+          description
+            "Holdoff time of the clock source after an interface changes from normal to abnormal.";
+        }
+        leaf out-threshold {
+          type phy-ssm-level;
+          must "((../out-threshold ='prc' or ../out-threshold ='ssua' or ../out-threshold ='ssub' or ../out-threshold ='sec' or ../out-threshold ='dnu') )";
+          default "dnu";
+          description
+            "Lowest SSM level of the clock signals output by the BITS interface.";
+        }
+        leaf ssm-unk-map {
+          type phy-ssm-level;
+          must "((../ssm-unk-map='prc' or ../ssm-unk-map='ssua' or ../ssm-unk-map='ssub' or ../ssm-unk-map='sec' or ../ssm-unk-map='dnu') )";
+          default "dnu";
+          description
+            "Map UNK to an SSM level so that the clock source with the unknown SSM level can be selected.";
+        }
+        leaf max-out-ssm-sys {
+          type phy-ssm-level;
+          must "((../max-out-ssm-sys='none' or ../max-out-ssm-sys='prc' or ../max-out-ssm-sys='ssua' or ../max-out-ssm-sys='ssub' or ../max-out-ssm-sys='sec') )";
+          default "none";
+          description
+            "Highest SSM level of the output system clock signals. If the SSM level of a system clock is greater than the set highest SSM level, the system clock signals are output based on the highest SSM level.";
+        }
+        leaf max-out-ssm-2m1 {
+          type phy-ssm-level;
+          must "((../max-out-ssm-2m1='none' or ../max-out-ssm-2m1='prc' or ../max-out-ssm-2m1='ssua' or ../max-out-ssm-2m1='ssub' or ../max-out-ssm-2m1='sec') )";
+          default "none";
+          description
+            "Highest SSM level of the output 2M-1 clock signals. If the SSM level of a 2M-1 clock is greater than the set highest SSM level, the 2M-1 clock signals are output based on the highest SSM level.";
+        }
+        leaf max-out-ssm-2m2 {
+          type phy-ssm-level;
+          must "((../max-out-ssm-2m2='none' or ../max-out-ssm-2m2='prc' or ../max-out-ssm-2m2='ssua' or ../max-out-ssm-2m2='ssub' or ../max-out-ssm-2m2='sec') )";
+          default "none";
+          description
+            "Highest SSM level of the output 2M-2 clock signals. If the SSM level of a 2M-2 clock is greater than the set highest SSM level, the 2M-2 clock signals are output based on the highest SSM level.";
+        }
+      }
+      container va-ptp {
+        when "(../va-common/time-enable='true')";
+        description
+          "Configure PTP.";
+        leaf domain {
+          type uint32 {
+            range "0..255";
+          }
+          default "0";
+          description
+            "PTP device domain. Only devices in the same PTP domain can be synchronized.";
+        }
+        leaf dly-measure-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable auto-measurement of ring-network asymmetry delay of optical fibers. If enabled, the fiber length change will be tested as the interface connecting to the fiber goes from Down to Up.";
+        }
+        leaf passive-measure-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable performance monitoring. If performance monitoring is enabled on passive interfaces and devices remain in a stable time synchronization state, devices will monitor the time offset values (between the master and slave devices) on passive interfaces every 1000s.";
+        }
+        leaf passive-alarm-threshold {
+          type int32 {
+            range "55..10000";
+          }
+          units "ns";
+          default "200";
+          description
+            "Set passive alarm threshold. After performance monitoring is enabled on passive interfaces, if the time offset value between the master and slave devices exceeds the alarm threshold, an alarm indicating that the passive interface optical fiber length has changed will be reported to the NMS.";
+        }
+        leaf time-source {
+          type ptp-time-source;
+          default "internaloscillator";
+          description
+            "Type of the local PTP clock source.";
+        }
+        leaf accuracy {
+          type pub-type:hex-binary {
+            length "1..4";
+            pattern '(0x)[0-9a-f]{1,2}';
+          }
+          default "0x31";
+          description
+            "Accuracy of the local PTP clock source.";
+        }
+        leaf clk-class {
+          type uint32 {
+            range "0..255";
+          }
+          default "187";
+          description
+            "Class of the local PTP clock source.";
+        }
+        leaf priority1 {
+          type uint32 {
+            range "0..255";
+          }
+          default "128";
+          description
+            "Priority1 of the local PTP clock source.";
+        }
+        leaf priority2 {
+          type uint32 {
+            range "0..255";
+          }
+          default "128";
+          description
+            "Priority2 of the local PTP clock source.";
+        }
+      }
+    }
+    container nvclock-sync {
+      description
+        "Configure access point.";
+      container va-ap-comms {
+        description
+          "List of configure common AP.";
+        list va-ap-comm {
+          key "ap-id";
+          description
+            "Configure common AP.";
+          leaf ap-id {
+            type uint32 {
+              range "1024..8191";
+            }
+            description
+              "AP ID.";
+          }
+          leaf clock-tod-protocol {
+            type ptp-tod-protocol;
+            default "ubx";
+            description
+              "TOD format of 1PPS+TOD time signals.";
+          }
+          leaf ptp-local-clock-id {
+            type string {
+              length "3..10";
+              pattern '(0x)[0-9a-f]{1,8}';
+            }
+            default "0x0";
+            description
+              "Number of the local PTP clock source.";
+          }
+        }
+      }
+      container va-ap-bits-srcs {
+        description
+          "List of configure virtual access bits attributes of a single AP.";
+        list va-ap-bits-src {
+          key "ap-id ptp-bits-id slot-id";
+          description
+            "Configure virtual access bits attributes of a single AP.";
+          leaf ap-id {
+            type uint32 {
+              range "1024..8191";
+            }
+            description
+              "AP ID.";
+          }
+          leaf ptp-bits-id {
+            type bits-id;
+            description
+              "BITS ID.";
+          }
+          leaf slot-id {
+            type uint32;
+            description
+              "Slot ID.";
+          }
+          leaf phy-bits-sabit {
+            when "../ptp-bits-id='bits0'";
+            type phy-sabit-type;
+            default "sa4";
+            description
+              "Sa timeslot used by the BITS interface to send or receive the SSM level.";
+          }
+          leaf phy-bits-type {
+            type clock-bits-type;
+            must "((../phy-bits-type='1pps' or ../phy-bits-type='dcls') and (../ptp-bits-direction='in' or ../ptp-bits-direction='out') and (../ptp-bits-id='bits1')) or ((../phy-bits-type='2mhz' or ../phy-bits-type='2mbps') and (../ptp-bits-id='bits0')) or (../phy-bits-type='none')" ;
+            default "none";
+            description
+              "BITS signal type.";
+          }
+          leaf ptp-bits-direction {
+            when "(../phy-bits-type='1pps' or ../phy-bits-type='dcls')" ;
+            type ptp-bits-direction;
+            default "none";
+            description
+              "Transmission direction of BITS signals. If the signal type is 1PPS, you must specify the input and output directions of BITS signals.";
+          }
+          leaf ptp-bits-recv-delay {
+            when "../ptp-bits-id='bits1'";
+            type int32 {
+              range "0..2000000";
+            }
+            default "0";
+            description
+              "Delay for receiving BITS time signals.";
+          }
+          leaf ptp-bits-send-delay {
+            when "../ptp-bits-id='bits1'";
+              type int32 {
+              range "0..10000";
+            }
+            default "0";
+            description
+              "Delay for sending BITS time signals.";
+          }
+          leaf sync-enable {
+            when "../ptp-bits-id='bits0'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable synchronization.";
+          }
+        }
+      }
+      container va-remote-clocks {
+        description
+          "List of configure remote physical interface.";
+        list va-remote-clock {
+          key "clock-if-name";
+          description
+            "Configure remote physical interface.";
+          leaf clock-if-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Interface name.";
+          }
+          leaf phy-sync-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable clock synchronization for the physical clock source.";
+          }
+          leaf cfg-ssm {
+            type phy-ssm-level;
+            default "none";
+            description
+              "Configure the physical layer SSM level.";
+          }
+        }
+      }
+      container va-remote-ptps {
+        when "(../../network-plane/va-common/time-enable='true')";
+        description
+          "List of configure remote time interface.";
+        list va-remote-ptp {
+          key "ptp-if-name";
+          description
+            "Configure remote time interface.";
+          leaf ptp-if-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            must "../ptp-port-enable='false'";
+            description
+              "Interface name.";
+          }
+          leaf ptp-port-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable 1588v2 for PTP interface clock sources.";
+          }
+          leaf ptp-delay-mechanism {
+            type ptp-delay-mechanism;
+            default "delay";
+            description
+              "Delay measurement mechanism for PTP packets, including Delay or Pdelay.";
+          }
+          leaf ptp-clock-step {
+            type ptp-port-step-type;
+            default "onestep";
+            description
+              "Clock step mode: one-step or two-step.";
+          }
+          leaf ptp-pkt-pack-type {
+            type ptp-pack-type;
+            default "mac";
+            description
+              "PTP packet encapsulation mode. A PTP packet can be encapsulated in a Layer 2 frame or in a Layer 3 UDP packet.";
+          }
+          leaf ptp-mac-egress-dest-mac {
+            when "(../ptp-pkt-pack-type='mac')";
+            type pub-type:mac-address;
+            default "011b-1900-0000";
+            description
+              "Destination MAC address for a PTP packet encapsulated in a Layer 2 frame.";
+          }
+          leaf ptp-mac-egress-vlan-id {
+            when "(../ptp-pkt-pack-type='mac')";
+            type int32 {
+              range "0..4094";
+            }
+            default "0";
+            description
+              "VLAN ID for a PTP packet encapsulated in a Layer 2 frame.";
+          }
+          leaf ptp-mac-egress-pkt-priority {
+            when "(../ptp-pkt-pack-type='mac')";
+            type int32 {
+              range "0..7";
+            }
+            must "(../ptp-mac-egress-vlan-id!='0') or ((../ptp-mac-egress-vlan-id =0) and (../ptp-mac-egress-pkt-priority=7))";
+            default "7";
+            description
+              "Packet priority of a PTP packet encapsulated in a Layer 2 frame.";
+          }
+          leaf ptp-udp-egress-src-ip {
+            when "not(../ptp-pkt-pack-type='mac')";
+            type inet:ipv4-address-no-zone;
+            description
+              "Source IP address for a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+          leaf ptp-udp-egress-dest-ip {
+            when "not(../ptp-pkt-pack-type='mac')";
+            type inet:ipv4-address-no-zone;
+            must "(../ptp-udp-egress-src-ip!='0.0.0.0' or (../ptp-udp-egress-src-ip ='0.0.0.0' and ../ptp-udp-egress-dest-ip='0.0.0.0'))";
+            description
+              "Destination IP address for a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+          leaf ptp-udp-egress-dscp {
+            when "not(../ptp-pkt-pack-type='mac')";
+            type int32 {
+              range "0..63";
+            }
+            must "(../ptp-udp-egress-src-ip!='0.0.0.0' or (../ptp-udp-egress-src-ip='0.0.0.0' and ../ptp-udp-egress-dscp=0))";
+            default "56";
+            description
+              "DSCP value for a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+          leaf ptp-udp-egress-vlan-id {
+            when "not(../ptp-pkt-pack-type='mac')";
+            type int32 {
+              range "0..4094";
+            }
+            must "(../ptp-udp-egress-src-ip!='0.0.0.0' or (../ptp-udp-egress-src-ip='0.0.0.0' and ../ptp-udp-egress-vlan-id=0))";
+            default "0";
+            description
+              "VLAN ID for a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+          leaf ptp-udp-egress-pkt-priority {
+            when "not(../ptp-pkt-pack-type='mac')";
+            type int32 {
+              range "0..7";
+            }
+            must "(../ptp-udp-egress-vlan-id!=0 or (../ptp-udp-egress-vlan-id=0 and ../ptp-udp-egress-pkt-priority=7))";
+            default "7";
+            description
+              "Priority of a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+          leaf ptp-udp-egress-dest-mac {
+            when "not(../ptp-pkt-pack-type='mac')";
+            type pub-type:mac-address;
+            must "(../ptp-udp-egress-src-ip!='0.0.0.0' or (../ptp-udp-egress-src-ip='0.0.0.0' and ../ptp-udp-egress-dest-mac='0100-5e00-0181'))";
+            default "0100-5e00-0181";
+            description
+              "Destination MAC address for a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+          leaf ptp-announce-interval {
+            type int32 {
+              range "0..20";
+            }
+            default "7";
+            description
+              "Interval at which Announce packets are sent on a PTP interface. the calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+          }
+          leaf ptp-announce-receipt-timeout {
+            type int32 {
+              range "2..255";
+            }
+            default "3";
+            description
+              "Timeout occurrences of announce packet receiving on the PTP interface. If the number of timeouts exceeds the set value, the newly received Announce packets will enter the timeout processing procedure.";
+          }
+          leaf ptp-sync-interval {
+            type int32 {
+              range "0..20";
+            }
+            default "3";
+            description
+              "Interval at which Sync packets are sent on a PTP interface. the calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+          }
+          leaf ptp-min-delay-req-interval {
+            type int32 {
+              range "0..20";
+            }
+            default "7";
+            description
+              "Minimum interval at which Delay_Req packets are sent on a PTP interface. the calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+          }
+          leaf ptp-min-pdelay-req-interval {
+            type int32 {
+              range "0..20";
+            }
+            default "7";
+            description
+              "Minimum interval at which Pdelay_Req packets are sent on a PTP interface. the calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+          }
+          leaf ptp-announce-drop {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable an interface to discard the received Announce packets.";
+          }
+        }
+      }
+      container va-clock-ports {
+        when "(../../network-plane/va-common/time-enable='true')";
+        description
+          "List of configure AP clock port.";
+        list va-clock-port {
+          key "ap-id ap-if-name";
+          description
+            "Configure AP clock port.";
+          leaf ap-id {
+            type uint32 {
+              range "1024..8191";
+            }
+            description
+              "AP ID.";
+          }
+          leaf ap-if-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Interface name.";
+          }
+          leaf ptp-correction-flag {
+            type ptp-sign-flag;
+            default "positive";
+            description
+              "Signal flag of correction value. Calculate the correction value after auto-measurement of ring-network asymmetry delay is enabled and asymmetry delay of optical fibers is tested, including positive and negative flags as well as the value to be corrected, and set the value on the interface.";
+          }
+          leaf ptp-correction-value {
+            type int32 {
+              range "0..2000000";
+            }
+            default "0";
+            description
+              "Correction-value. Calculate the correction value after auto-measurement of ring-network asymmetry delay is enabled and asymmetry delay of optical fibers is tested, including positive and negative flags as well as the value to be corrected, and set the value on the interface.";
+          }
+        }
+      }
+    }
+  }
+}

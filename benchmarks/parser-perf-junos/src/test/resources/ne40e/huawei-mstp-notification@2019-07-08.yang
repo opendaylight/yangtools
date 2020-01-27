@@ -1,0 +1,96 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mstp-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-mstp-notification";
+  prefix mstp-notification;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of mstp.";
+  revision 2019-07-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mstp";
+  notification tc-flap-receive {
+    description
+      "The local device received many TC BPDUs from neighbors.";
+    leaf process-id {
+      type uint32;
+      description
+        "Process ID.";
+    }
+    leaf instance-id {
+      type uint32;
+      description
+        "MSTP instance ID.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf pw-name {
+      type string {
+        length "1..15";
+      }
+      description
+        "PW name.";
+    }
+    leaf src-mac {
+      type pub-type:mac-address;
+      description
+        "Source MAC address.";
+    }
+  }
+  notification tc-flap {
+    description
+      "The local device proactively detected that its STP topology was flapping.";
+    leaf process-id {
+      type uint32;
+      description
+        "MSTP process ID.";
+    }
+    leaf instance-id {
+      type uint32;
+      description
+        "Multiple spanning tree instance (MSTI) ID.";
+    }
+  }
+  notification tc-flap-resume {
+    description
+      "The STP topology of the local device stopped flapping.";
+    leaf process-id {
+      type uint32;
+      description
+        "MSTP process ID.";
+    }
+    leaf instance-id {
+      type uint32;
+      description
+        "Multiple spanning tree instance (MSTI) ID.";
+    }
+  }
+}

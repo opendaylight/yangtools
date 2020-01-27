@@ -1,0 +1,49 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-emdi-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-emdi-deviations-CH-NE-X3";
+  prefix "emdi-devs-CH-NE-X3";
+
+  import huawei-emdi {
+    prefix "emdi";
+  }
+  import huawei-vlan {
+    prefix "vlan";
+  }
+  import huawei-devm {
+    prefix "devm";
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Enhanced Media Delivery Index.";
+    
+  revision 2019-11-01 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+  deviation "/emdi:emdi/emdi:emdi-enable/emdi:emdi-channel-groups/emdi:emdi-channel-group/emdi:emdi-channels/emdi:emdi-channel/emdi:channel-group-parameters/emdi:vlan-id/emdi:vlan-id" {
+    deviate replace {
+      type leafref {
+        path "/vlan:vlan/vlan:vlans/vlan:vlan/vlan:id";
+      }
+    }
+  }
+  deviation "/emdi:emdi/emdi:emdi-enable/emdi:emdi-lpu-groups/emdi:emdi-lpu-group/emdi:bind-lpu/emdi:bind-slots/emdi:slot" {
+    deviate replace {
+      type leafref {
+        path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+      }
+    }
+  }
+}

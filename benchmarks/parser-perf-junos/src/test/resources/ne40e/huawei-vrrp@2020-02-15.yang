@@ -1,0 +1,1113 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-vrrp {
+  namespace "urn:huawei:yang:huawei-vrrp";
+  prefix vrrp;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-bfd {
+    prefix bfd;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-monitor-group {
+    prefix monitor-group;
+  }
+  import huawei-ip {
+    prefix ip;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global VRRP configuration.";
+  revision 2020-02-15 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  typedef vrrp-type {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal VRRP.";
+      }
+      enum "admin" {
+        value 1;
+        description
+          "Admin VRRP.";
+      }
+      enum "member" {
+        value 2;
+        description
+          "Member VRRP.";
+      }
+      enum "lbrg" {
+        value 3;
+        description
+          "LBRG VRRP.";
+      }
+      enum "lbrg-mem" {
+        value 4;
+        description
+          "LBRG member VRRP.";
+      }
+      enum "mem-lbrg" {
+        value 5;
+        description
+          "Member LBRG VRRP.";
+      }
+      enum "mem-lbrg-mem" {
+        value 6;
+        description
+          "Member LBRG Member VRRP.";
+      }
+      enum "unicast" {
+        value 7;
+        description
+          "Unicast VRRP.";
+      }
+    }
+    description
+      "VRRP type is like normal/admin/member.";
+  }
+  typedef vrrp-bfd-type {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal BFD session.";
+      }
+      enum "link" {
+        value 1;
+        description
+          "Link BFD session.";
+      }
+      enum "peer" {
+        value 2;
+        description
+          "Peer BFD session.";
+      }
+    }
+    description
+      "VRRP bfd type is like normal/link/peer.";
+  }
+  typedef vrrp-track-mode {
+    type enumeration {
+      enum "increase" {
+        value 0;
+        description
+          "Increase priority.";
+      }
+      enum "reduce" {
+        value 1;
+        description
+          "Reduce priority.";
+      }
+    }
+    description
+      "VRRP track mode is like increase/reduce.";
+  }
+  typedef vrrp-track-bfd-state {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "Bfd state down.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "Bfd state up.";
+      }
+      enum "admin-down" {
+        value 2;
+        description
+          "Bfd state admindown.";
+      }
+      enum "unknow" {
+        value 3;
+        description
+          "Bfd state unknow.";
+      }
+    }
+    description
+      "VRRP track bfd state is like down/up/admin-down/unknow.";
+  }
+  typedef vrrp-oper-state {
+    type enumeration {
+      enum "initialize" {
+        value 0;
+        description
+          "Initialize state.";
+      }
+      enum "backup" {
+        value 1;
+        description
+          "Backup state.";
+      }
+      enum "master" {
+        value 2;
+        description
+          "Master state.";
+      }
+    }
+    description
+      "VRRP oper state is like initialize/backup/master.";
+  }
+  typedef vrrp6cksm-mode {
+    type enumeration {
+      enum "include-pseudo-header" {
+        value 0;
+        description
+          "Include a pseudo header.";
+      }
+      enum "exclude-pseudo-header" {
+        value 1;
+        description
+          "Exclude a pseudo header.";
+      }
+    }
+    description
+      "VRRP6 cksm-mode is like include-pseudo-header/exclude-pseudo-header.";
+  }
+  typedef vrrpauthen-mode {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "simple" {
+        value 1;
+        description
+          "Simple.";
+      }
+      enum "md5" {
+        value 2;
+        description
+          "MD5.";
+      }
+      enum "hmac-sha256" {
+        value 3;
+        description
+          "SHA256.";
+      }
+    }
+    description
+      "VRRP authen-mode is like none/simple/md5.";
+  }
+  typedef vrrp-v3-sendmode {
+    type enumeration {
+      enum "v3-only" {
+        value 0;
+        description
+          "Only VRRPv3 Advertisement packets are sent.";
+      }
+      enum "v2v3-both" {
+        value 1;
+        description
+          "Both VRRPv2 and VRRPv3 Advertisement packets are sent.";
+      }
+      enum "v2-only" {
+        value 2;
+        description
+          "Only VRRPv2 Advertisement packets are sent.";
+      }
+    }
+    description
+      "VRRP V3 send mode is like v2-only/v2v3-both/v3-only.";
+  }
+  typedef vrrp-version {
+    type enumeration {
+      enum "v2" {
+        value 0;
+        description
+          "VRRPv2 version.";
+      }
+      enum "v3" {
+        value 1;
+        description
+          "VRRPv3 version.";
+      }
+    }
+    description
+      "VRRP version is like v2/v3.";
+  }
+  typedef vrrptrack-mode {
+    type enumeration {
+      enum "increase" {
+        value 0;
+        description
+          "Increase priority.";
+      }
+      enum "reduce" {
+        value 1;
+        description
+          "Reduce priority.";
+      }
+    }
+    description
+      "VRRP track mode is like increase/reduce.";
+  }
+  typedef mtgrptrack-mode {
+    type enumeration {
+      enum "link" {
+        value 0;
+        description
+          "Link mode.";
+      }
+      enum "reduce" {
+        value 1;
+        description
+          "Mode in which the priority is reduced.";
+      }
+    }
+    description
+      "Monitor-group track mode is like normal/link.";
+  } 
+  ext:task-name "vrrp";
+  container vrrp {
+    description
+      "Virtual router redundancy protocol.";
+    container global {
+      description
+        "Configure global VRRP configuration.";
+      leaf gratuitous-arp-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable a device to periodically send gratuitous ARP packets.";
+      }
+      leaf gratuitous-timeout {
+        when "../gratuitous-arp-enable='true'";
+        type uint16 {
+          range "30..1200";
+        }
+        units s;
+        default "30";
+        description
+          "Interval at which gratuitous ARP packets are sent.";
+      }
+      leaf adv-time-learn {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable learning the interval at which VRRP packets are sent.";
+      }
+      leaf ping-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable ping virtual IP address.";
+      }
+      leaf recover-delay {
+        type uint16 {
+          range "0..3600";
+        }
+        units s;
+        default "0";
+        description
+          "Delay in recovering after an interface goes up. The delay is used for interface flapping suppression.";
+      }
+      leaf version {
+        type vrrp-version;
+        default "v2";
+        description
+          "Global VRRP version.";
+      }
+      leaf virtual-iproute-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable virtual IP routing function.";
+      }
+      leaf virtual-ospf-enable {
+        when "not(../virtual-iproute-enable='false')";
+        type boolean;
+        default "true";
+        description
+          "Enable/disable advertising the virtual IP route by OSPF.";
+      }
+      leaf virtual-isis-enable {
+        when "not(../virtual-iproute-enable='false')";
+        type boolean;
+        default "true";
+        description
+          "Enable/disable advertising the virtual IP route by ISIS.";
+      }
+      leaf virtual-rip-enable {
+        when "not(../virtual-iproute-enable='false')";
+        type boolean;
+        default "true";
+        description
+          "Enable/disable advertising the virtual IP route by RIP.";
+      }
+      leaf v6-cks-mode {
+        type vrrp6cksm-mode;
+        default "include-pseudo-header";
+        description
+          "VRRP6 checksum mode.";
+      }
+      leaf smooth-switch-time {
+        when "not(../adv-time-learn='false')";
+        type uint8 {
+          range "1..255";
+        }
+        units s;
+        default "100";
+        description
+          "Interval carried in smooth VRRP switching packets.";
+      }
+      leaf unicast-port {
+        type uint32 {
+          range "1025..65535";
+        }
+        default "3077";
+        description
+          "Number of a UDP interface for sending and receiving unicast VRRP packets.";
+      }
+      leaf gratuitous-enhance-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable gratuitous ARP enhance.";
+      }
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance" {
+    description
+      "VRRP configurations on l3vpn.";
+    container vrrp {
+      description
+        "Configure VRRP backup groups under network-instance.";
+      container groups {
+        description
+          "List of VRRP backup groups.";
+        list group {
+          key "id if-name";
+          description
+            "Configure VRRP operations on a device. It lists a series of VRRP operation entries. You can use this table to query the VRRP configuration on the device. In addition, you can create virtual router instances and modify the configuration.";
+          leaf id {
+            type uint8 {
+              range "1..255";
+            }
+            description
+              "VRRP backup group ID.";
+          }
+          leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              must "../../../../ni:name=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name";
+              description
+                "Name of the outbound interface of a BFD session. This parameter is available only when the type of the detected link is IP or LDP LSP. If only the destination IP address is specified, multi-hop routes are detected. If both the destination IP address and outbound interface name are specified, single-hop links are detected. That is, a fixed route is detected, with the interface where the BFD session resides as the outbound interface and the destination IP address as the next hop address.";
+          }
+          leaf priority {
+            type uint8 {
+              range "1..254";
+            }
+            default "100";
+            description
+              "Configured VRRP priority. The value ranges from 1 to 254. A larger value indicates a higher priority.";
+          }
+          leaf preempt-mode {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable whether a high-priority router can preempt the Master state. By default, a high-priority router can preempt the Master state.";
+          }
+          leaf delay-time {
+            when "../preempt-mode='true'";
+            type uint16 {
+              range "0..3600";
+            }
+            units s;
+            default "0";
+            description
+              "Preemption delay.";
+          }
+          leaf adver-interval {
+            type uint32 {
+              range "100..255000";
+            }
+            units "ms";
+            default "1000";
+            description
+              "Configure an interval (in milliseconds) at which the master sends VRRP advertisement packets. This interval must be a multiple of 1000. If the device supports fast advertisement sending, this interval can be set to 100ms 200ms or 500ms.";
+          }
+          leaf isplain {
+            when "../authentication-mode='simple'";
+            type boolean;
+            must "../authentication-mode='simple' and ../authentication-key";
+            default "false";
+            description
+              "Enable/disable selecting the display mode of an authentication key.";
+          }
+          leaf authentication-key {
+            when "not(../authentication-mode='none')";
+            type pub-type:password {
+              length "1..108";
+              pattern '(\S+.*\S+|\S*)';
+            }
+            must "(../authentication-mode='none' and not(../authentication-key)) or (not(../authentication-mode='none') and ../authentication-key)";
+            description
+              "Authentication key, which is set based on the authentication type. Value description: If non-authentication is specified, the value is empty. If simple authentication, MD5 authentication, or HMAC-SHA256 authentication is specified, the value is a plaintext password with the length ranging from 1 to 8 bytes or a ciphertext password with the corresponding length.";
+          }
+          leaf authentication-mode {
+            type vrrpauthen-mode;
+            must "((not(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()/../if-name]/ifm:type='LoopBack') and not(../authentication-mode='hmac-sha256')) or ((/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()/../if-name]/ifm:type='LoopBack') and not(../authentication-mode='simple'))) and ((../authentication-mode='none' and not(../authentication-key)) or (not(../authentication-mode='none') and ../authentication-key))";
+            default "none";
+            description
+              "Authentication type used for VRRP packet exchanges between virtual routers. The values are as follows: noAuthentication, simpleTextPassword, md5Authentication. The default value is noAuthentication.";
+          }
+          leaf hold-multi {
+            type uint8 {
+              range "3..10";
+            }
+            default "3";
+            description
+              "Set the hello packet sending interval multiplier. The value ranges from 3 to 10.The default value is 3.";
+          }
+          leaf backup-forward {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable VRRP backup forward mode.";
+          }
+          leaf fast-resume {
+            when "../admin-flag";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable VRRP fast resume mode.";
+          }
+          leaf v3-sendmode {
+            when "not(/vrrp:vrrp/vrrp:global/vrrp:version='v2')";
+            type vrrp-v3-sendmode;
+            default "v3-only";
+            description
+              "VRRP advertisement packet mode on the interface.";
+          }
+          choice vrrp-type {
+            description
+              "Type of VRRP.";
+            case member-vrrp {
+              description
+                "Member VRRP.";
+              leaf admin-id {
+                type uint8 {
+                  range "1..255";
+                }
+                must "../admin-if-name";
+                description
+                  "Tracked mVRRP ID.";
+              }
+              leaf admin-if-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "../admin-id";
+                description
+                  "Tracked mVRRP interface name.";
+              }
+            }
+            case admin-vrrp {
+              description
+                "Admin VRRP.";
+              leaf admin-flag {
+                type empty;
+                description
+                  "Management VRRP.";
+              }
+              leaf admin-ignore-ifdown {
+                when "../admin-flag";
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable ignoring an interface down event.";
+              }
+            }
+          }
+          leaf type {
+            type vrrp-type;
+            default "normal";
+            config false;
+            description
+              "Type of a VRRP backup group.";
+          }
+          leaf state {
+            type vrrp-oper-state;
+            config false;
+            description
+              "Running status of the virtual router. This object has three defined values:
+Initialize: The virtual router is waiting for a startup event.
+Backup: The virtual router is monitoring the availability of the master router.
+Master: The virtual router is forwarding packets for IP addresses that are associated with this router.";
+          }
+          leaf create-time {
+            type yang:date-and-time;
+            config false;
+            description
+              "Time when the VRRP backup group was created.";
+          }
+          leaf last-change-time {
+            type yang:date-and-time;
+            config false;
+            description
+              "Time when the status of the VRRP backup group last changed.";
+          }
+          container virtual-ips {
+            description
+              "List of IP address table related to virtual routers. A VRRP backup group can have 0 to 16 extended virtual IP addresses.";
+            list virtual-ip {
+              key "address";
+              max-elements  "16";
+              description
+                "Configure virtual IP address configuration. A VRRP backup group can have 0 to 16 extended virtual IP addresses.";
+              leaf address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Virtual IP address.";
+              }
+            }
+          }
+          container track-interfaces {
+            when "not(../admin-id)";
+            description
+              "List of interfaces tracked by a VRRP backup group. A VRRP backup group can track a maximum of 16 interfaces.";
+            list track-interface {
+              key "ifname";
+              max-elements  "16";
+              description
+                "Configure VRRP backup group tracking interface.";
+              leaf ifname {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                description
+                  "Name of the interface tracked by the VRRP backup group.";
+              }
+              leaf track-mode {
+                type vrrptrack-mode;
+                default "reduce";
+                description
+                  "Mode in which the VRRP backup group tracks the interface.";
+              }
+              leaf priority-change {
+                type uint8 {
+                  range "1..255";
+                }
+                default "10";
+                description
+                  "Value by which the priority increases or reduces when the VRRP backup group tracks the interface.";
+              }
+            }
+          }
+          container track-bfds {
+            when "not(../admin-id)";
+            description
+              "List of BFD sessions tracked by the VRRP backup group.";
+            list track-bfd {
+              key "session-name session-type";
+              max-elements  "17";
+              description
+                "Configure VRRP backup group tracking BFD session.";
+              leaf session-name {
+                type leafref {
+                  path "/bfd:bfd/bfd:sessions/bfd:session/bfd:name";
+                }
+                description
+                  "Name of the BFD session tracked by the VRRP backup group.";
+              }
+              leaf session-type {
+                type vrrp-bfd-type;
+                description
+                  "Type of the BFD session tracked by the VRRP backup group.";
+              }
+              leaf track-mode {
+                when "../session-type='normal'";
+                type vrrp-track-mode;
+                default "reduce";
+                description
+                  "Mode in which the VRRP backup group tracks the BFD session.";
+              }
+              leaf priority-change {
+                when "../session-type='normal'";
+                type uint8 {
+                  range "1..255";
+                }
+                default "10";
+                description
+                  "Value by which the priority increases or reduces when the VRRP backup group tracks the common BFD session. The default value is 10.";
+              }
+              leaf session-id {
+                type uint32 {
+                  range "1..32768";
+                }
+                config false;
+                description
+                  "ID of the BFD session tracked by the VRRP backup group.";
+              }
+              leaf session-state {
+                type vrrp-track-bfd-state;
+                config false;
+                description
+                  "State of the BFD session tracked by the VRRP backup group.";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "VRRP configurations on interface.";
+    container vrrp {
+      description
+        "Configure virtual router redundancy protocol.";
+      container backup-groups {
+        description
+          "Configure VRRP backup groups under interface. The configured attributes apply to all backup groups on the interface.";
+        leaf ttlcheck-flag {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable TTL check which is performed for a received VRRP Advertisement packet. The check is successful only when the TTL value is 255. By default, a TTL check is performed.";
+        }
+        leaf recover-delay {
+          type uint16 {
+            range "0..3600";
+          }
+          units s;
+          default "0";
+          description
+            "Delay in recovering after an interface goes Up. The delay is used for interface flapping suppression.";
+        }
+        leaf arpsend-simple {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable simple send mode for gratuitous ARP packets.";
+        }
+        choice advertise-send-mode {
+          description
+            "VRRP backup groups send packets mode.";
+          case all-subvlans {
+            description
+              "Packets are sent in all sub-VLANs of the super VLAN.";
+            leaf sendmode-all {
+              type empty;
+              description
+                "Packets are sent in all sub-VLANs of the super VLAN.";
+            }
+          }        
+          case one-subvlan {
+            description
+              "Packets are sent in one sub-VLAN of the super VLAN.";
+            leaf send-subvlanid {
+              type uint16 {
+                range "1..4094";
+              }
+              description
+                "Specifies the ID of a sub-VLAN in which packets are sent. By default, packets are sent from the active VLAN with the minimum ID. This configuration is valid only for a super VLAN.";
+            }
+          }
+        }	
+      }
+      container track-admins {
+        description
+          "List of service interfaces.";
+        list track-admin{
+          key "id if-name";
+          description
+            "Configure service interface.";
+          leaf id {
+            type uint8 {
+              range "1..255";
+            }
+            description
+              "Tracked mVRRP ID.";
+          }
+          leaf if-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Tracked mVRRP interface name.";
+          }
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ip:ipv4" {
+    description
+      "VRRP configurations on interface.";
+    container vrrp {
+      description
+        "Configure all VRRP backup groups.";
+      container groups {
+        description
+          "List of all VRRP backup groups.";
+        list group {
+          key "id";
+          description
+            "Configure VRRP operations on a device. It lists a series of VRRP operation entries. You can use this table to query the VRRP configuration on the device. In addition, you can create virtual router instances and modify the configuration.";
+          leaf id {
+            type uint8 {
+              range "1..255";
+            }
+            description
+              "VRRP backup group ID.";
+          }
+          leaf priority {
+            type uint8 {
+              range "1..254";
+            }
+            default "100";
+            description
+              "Configured VRRP priority. The value ranges from 1 to 254. A larger value indicates a higher priority.";
+          }
+          container preempt {
+            description
+              "Configure a higher priority VRRP backup router to preempt a lower priority VRRP master.";
+            leaf preempt-enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable whether a high priority router can preempt the master state.";
+            }
+            leaf delay-time {
+              when "../preempt-enable='true'";
+              type uint16 {
+                range "0..3600";
+              }
+              units s;
+              default "0";
+              description
+                "Preemption delay.";
+            }
+          }
+          leaf adver-interval {
+            type uint32 {
+              range "100..255000";
+            }
+            units "ms";
+            default "1000";
+            description
+              "Configure an interval at which the master sends VRRP advertisement packets. This interval must be a multiple of 1000. If the device supports fast advertisement sending, this interval can be set to 100ms 200ms or 500 ms.";
+          }
+          leaf authentication-mode {
+            type vrrpauthen-mode;
+            must "((not(../../../../../ifm:type='LoopBack') and not(../authentication-mode='hmac-sha256')) or ((../../../../../ifm:type='LoopBack') and not(../authentication-mode='simple'))) and ((../authentication-mode='none' and not(../authentication-key)) or (not(../authentication-mode='none') and ../authentication-key))";
+            default "none";
+            description
+              "Authentication type used for VRRP packet exchanges between virtual routers. The values are as follows: noAuthentication, simpleTextPassword, md5Authentication.";
+          }
+          leaf isplain {
+            when "../authentication-mode='simple'";
+            type boolean;
+            must "../authentication-mode='simple' and ../authentication-key";
+            default "false";
+            description
+              "Enable/disable selecting the display mode of an authentication key.";
+          }
+          leaf authentication-key {
+            when "not(../authentication-mode='none')";
+            type pub-type:password {
+              length "1..108";
+              pattern '(\S+.*\S+|\S*)';
+            }
+            must "(../authentication-mode='none' and not(../authentication-key)) or (not(../authentication-mode='none') and ../authentication-key)";
+            description
+              "Authentication key, which is set based on the authentication type. Value description: If non-authentication is specified, the value is empty. If simple authentication, MD5 authentication, or HMAC-SHA256 authentication is specified, the value is a plaintext password with the length ranging from 1 to 8 bytes or a ciphertext password with the corresponding length.";
+          }
+          leaf link-bfddown-num {
+            type uint8 {
+              range "1..8";
+            }
+            description
+              "Specify the threshold for the number of link BFD sessions in the Down state tracked by the mVRRP backup group.";
+          }
+          leaf hold-multiper {
+            type uint8 {
+              range "3..10";
+            }
+            default "3";
+            description
+              "Set the hello packet sending interval multiplier.";
+          }
+          leaf backup-forward {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable VRRP backup forward mode.";
+          }
+          leaf fast-resume {
+            when "../admin-flag";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable VRRP fast resume mode.";
+          }
+          leaf v3-sendmode {
+            when "/vrrp:vrrp/vrrp:global/vrrp:version='v3'";
+            type vrrp-v3-sendmode;
+            default "v3-only";
+            description
+              "VRRP advertisement packet mode on the interface.";
+          }
+          choice vrrp-type {
+            description
+              "Type of VRRP.";
+            case member-vrrp {
+              description
+                "Member VRRP.";
+              leaf admin-id {
+                type uint8 {
+                  range "1..255";
+                }
+                must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../vrrp:admin-if-name]/ip:ipv4/vrrp:vrrp/vrrp:groups/vrrp:group[vrrp:id=current()]/vrrp:admin-flag";
+                description
+                  "Tracked mVRRP ID.";
+              }
+              leaf admin-if-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ip:ipv4/vrrp:vrrp/vrrp:groups/vrrp:group[vrrp:id=current()/../vrrp:admin-id]/vrrp:admin-flag";
+                description
+                  "Tracked mVRRP interface name.";
+              }
+              leaf unflowdown {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable the flowdown function for service VRRP.";
+              }
+            }
+            case admin-vrrp {
+              description
+                "Admin VRRP.";
+              leaf admin-flag {
+                type empty;
+                description
+                  "Management VRRP.";
+              }
+              leaf admin-ignore-ifdown {
+                when "../admin-flag";
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable ignoring an interface down event.";
+              }
+              leaf init-state-holdtime {
+                when "../admin-ignore-ifdown='true'";
+                  type uint32 {
+                  range "0..3600";
+                }
+                units s;
+                description
+                  "Hold time of the Initialize state after the management VRRP backup group is configured to ignore an interface down event.";
+              }
+            }
+          }
+          leaf type {
+            type vrrp-type;
+            default "normal";
+            config false;
+            description
+              "Type of a VRRP backup group.";
+          }
+          leaf state {
+            type vrrp-oper-state;
+            config false;
+            description
+              "Running status of the virtual router. This object has three defined values:
+Initialize: The virtual router is waiting for a startup event.
+Backup: The virtual router is monitoring the availability of the master router.
+Master: The virtual router is forwarding packets for IP addresses that are associated with this router.";
+          }
+          leaf create-time {
+            type yang:date-and-time;
+            config false;
+            description
+              "Time when the VRRP backup group was created.";
+          }
+          leaf last-change-time {
+            type yang:date-and-time;
+            config false;
+            description
+              "Time when the status of the VRRP backup group last changed.";
+          }
+          container virtual-ips {
+            description
+              "List of IP address table related to virtual routers. A VRRP backup group can have 0 to 16 extended virtual IP addresses.";
+            list virtual-ip {
+              key "address";
+              max-elements  "16";
+              description
+                "Configure virtual IP address configuration. A VRRP backup group can have 0 to 16 extended virtual IP addresses.";
+              leaf address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Virtual IP address.";
+              }
+            }
+          }
+          container track-interfaces {
+            when "not(../admin-id)";
+            description
+              "List of interfaces tracked by a VRRP backup group. A VRRP backup group can track a maximum of 16 interfaces.";
+            list track-interface {
+              key "if-name";
+              max-elements  "16";
+              description
+                "Configure interface tracked by a VRRP backup group.";
+              leaf if-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                description
+                  "Name of the interface tracked by the VRRP backup group.";
+              }
+              leaf priority-change {
+                type uint8 {
+                  range "1..255";
+                }
+                mandatory true;
+                description
+                  "Value by which the priority increases or reduces when the VRRP backup group tracks the interface.";
+              }
+              leaf track-mode {
+                type vrrptrack-mode;
+                default "reduce";
+                description
+                  "Mode in which the VRRP backup group tracks the interface.";
+              }
+            }
+          }
+          container track-bfds {
+            when "not(../admin-id)";
+            description
+              "List of BFD sessions tracked by the VRRP backup group.";
+            list track-bfd {
+              key "session-name session-type";
+              max-elements  "17";
+              description
+                "Configure BFD session tracked by the VRRP backup group.";
+              leaf session-name {
+                type leafref {
+                  path "/bfd:bfd/bfd:sessions/bfd:session/bfd:name";
+                }
+                description
+                  "Name of the BFD session tracked by the VRRP backup group.";
+              }
+              leaf session-type {
+                type vrrp-bfd-type;
+                description
+                  "Type of the BFD session tracked by the VRRP backup group.";
+              }
+              leaf priority-change {
+                when "../session-type='normal'";
+                type uint8 {
+                  range "1..255";
+                }
+                mandatory true;
+                description
+                  "Value by which the priority increases or reduces when the VRRP backup group tracks the common BFD session.";
+              }
+              leaf track-mode {
+                when "../session-type='normal'";
+                type vrrp-track-mode;
+                default "reduce";
+                description
+                  "Mode in which the VRRP backup group tracks the BFD session.";
+              }
+              leaf session-id {
+                type uint32 {
+                  range "1..32768";
+                }
+                config false;
+                description
+                  "ID of the BFD session tracked by the VRRP backup group.";
+              }
+              leaf session-state {
+                type vrrp-track-bfd-state;
+                config false;
+                description
+                  "State of the BFD session tracked by the VRRP backup group.";
+              }
+            }
+          }
+          container track-mtgrps {
+            description
+              "List of VRRP backup groups to track interface monitoring groups.";
+            list track-mtgrp {
+              key "monitor-group-name";
+              max-elements  "3";
+              description
+                "Configure VRRP backup groups to track interface monitoring groups.";
+              leaf monitor-group-name {
+                type leafref {
+                  path "/monitor-group:monitor-group/monitor-group:groups/monitor-group:group/monitor-group:name";
+                }
+                description
+                  "Name of the interface monitoring group tracked by a VRRP backup group.";
+              }
+              leaf failure-ratio {
+                type uint8 {
+                  range "1..100";
+                }
+                mandatory true;
+                description
+                  "Link failure ratio threshold for an interface monitoring group.";
+              }
+              leaf priority-change {
+                when "../track-mode='reduce'";
+                type uint8 {
+                  range "1..255";
+                }
+                mandatory true;
+                description
+                  "Value by which the priority of the VRRP backup group reduces if the status of the tracked interface monitoring group changes to Down.";
+              }
+              leaf track-mode {
+                type mtgrptrack-mode;
+                default "reduce";
+                description
+                  "Mode in which a VRRP backup group tracks an interface monitoring group.";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

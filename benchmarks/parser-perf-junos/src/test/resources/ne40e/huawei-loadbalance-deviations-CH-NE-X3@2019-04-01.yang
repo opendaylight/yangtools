@@ -1,0 +1,70 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-loadbalance-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-loadbalance-deviations-CH-NE-X3";
+  prefix "loadbalance-devs-CH-NE-X3";
+  import huawei-devm {
+    prefix "devm";
+  }
+  import huawei-loadbalance {
+    prefix "loadbalance";
+  }
+  import huawei-devm-vnf {
+    prefix devm-vnf;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Load balance.";
+  revision 2019-04-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  deviation "/loadbalance:loadbalance/loadbalance:global-attribute/loadbalance:avoid-ipv4-enable" {
+    deviate not-supported;
+  }
+  
+  deviation "/loadbalance:loadbalance/loadbalance:global-attribute/loadbalance:avoid-ipv6-enable" {
+    deviate not-supported;
+  }
+  deviation "/loadbalance:loadbalance/loadbalance:global-attribute/loadbalance:avoid-mpls-enable" {
+    deviate not-supported;
+  }
+  deviation "/loadbalance:loadbalance/loadbalance:global-attribute/loadbalance:mpls-trunk-enhance-fwd" {
+    deviate not-supported;
+  }
+  deviation "/loadbalance:loadbalance/loadbalance:global-attribute/loadbalance:trunk-enhance-fwd" {
+    deviate not-supported;
+  }
+  deviation "/loadbalance:loadbalance/loadbalance:global-attribute/loadbalance:mpls-sr-transit-enable" {
+    deviate not-supported;
+  }
+  deviation "/loadbalance:loadbalance/loadbalance:global-attribute/loadbalance:mpls-te-convergence-enable" {
+    deviate not-supported;
+  }
+  deviation "/loadbalance:loadbalance/loadbalance:avoid-degradations" {
+    deviate not-supported;
+  }
+  deviation "/loadbalance:loadbalance/loadbalance:hash-key-ip" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:mpu-boards/devm:mpu-board/loadbalance:loadbalance" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:lpu-boards/devm:lpu-board/loadbalance:loadbalance/loadbalance:hashs" {
+    deviate not-supported;
+  }
+  deviation "/devm-vnf:devm-vnf/devm-vnf:vnf-boards/devm-vnf:vnf-board/loadbalance:loadbalance" {
+    deviate not-supported;
+  }
+}

@@ -1,0 +1,69 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ippmmgr {
+  namespace "urn:huawei:yang:huawei-ippmmgr";
+  prefix ippmmgr;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  ext:task-name  "forwarding";
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "IP performance management.";
+  revision 2020-03-06 {
+    description
+      "Change description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-10 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  container ippmmgr {
+    description
+      "IP performance management.";
+    container global-enable {
+      description
+        "Configure the protocol packets hardware multicast in global.";
+      leaf status {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the global status.";
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Protocol packets hardware multicast interface configuration.";
+    container hwmc-if-enable {
+      when "../ethernet:ethernet/ethernet:l3-sub-interface/ethernet:qinq-termination or ../ethernet:ethernet/ethernet:l3-sub-interface/ethernet:dot1q-termination or ../ifm:type='Vlanif'";
+      description
+        "Configure the protocol packets hardware multicast in interface.";
+      leaf status {
+        type boolean;
+        description
+          "Enable/disable the interface status.";
+      }
+    }
+  }
+}

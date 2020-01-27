@@ -1,0 +1,43 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mac-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-mac-deviations-CH-NE-X3";
+  prefix mac-devs-CH-NE-X3;
+
+  import huawei-mac {
+    prefix mac;
+  }
+  import huawei-vlan {
+    prefix vlan;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "MAC address forwarding.";
+
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/vlan:vlan/vlan:vlans/vlan:vlan/mac:mac-limit/mac:alarm" {
+    deviate not-supported;
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/mac:mac/mac:mac-limit/mac:alarm" {
+    deviate not-supported;
+  }
+}

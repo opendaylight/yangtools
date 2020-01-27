@@ -1,0 +1,1129 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-emdi {
+  yang-version 1;
+  namespace urn:huawei:yang:huawei-emdi;
+  prefix emdi;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-bd {
+    prefix bd;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Enhanced Media Delivery Index.";
+  reference
+    "Huawei private.";
+
+  revision 2019-06-27 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "emdi";
+  typedef channel-ref {
+    type leafref {
+        path "/emdi:emdi/emdi:emdi-channels/emdi:emdi-channel/emdi:channel-name";
+    }
+    description
+        "This type is used by data models that need to reference configured channels.";
+  }
+  container emdi {
+    description
+      "On-board EMDI detection that obtains packet header information to sample multicast quality data.";
+    container emdi-enable {
+      presence "Enable EMDI";
+      description
+        "Enable/disable EMDI detection.";
+      container emdi-channel-groups {
+        description
+          "List of configure channel group information. Multiple channels can be bound to a channel group.";
+        list emdi-channel-group {
+          key channel-group-name;
+          max-elements  "32";
+          description
+            "Configure channel group information. Multiple channels can be bound to a channel group.";
+          leaf channel-group-name {
+            type string {
+              length 1..31;
+            }
+            description
+              "Channel group name.";
+          }
+          container emdi-channels {
+            description
+              "List of configure channel information.";
+            list emdi-channel {
+              key "channel-name";
+              max-elements  "2100";
+              description
+                "Configure channel information.";
+              leaf channel-name {
+                type string {
+                  length 1..31;
+                }
+                description
+                  "Channel name.";
+              }
+              leaf source-address {
+                type inet:ipv4-address-no-zone;
+                mandatory true;
+                description
+                  "Multicast IP source address.";
+              }
+              leaf group-address {
+                type inet:ipv4-address-no-zone;
+                mandatory true;
+                description
+                  "Multicast IP address.";
+              }
+              choice channel-group-parameters {
+                description 
+                  "EMDI channel group parameters.";
+                case vpn-name {
+                  description
+                    "Specify the name of a VPN instance. Multicast traffic is bound to a VPN tunnel.";
+                  leaf vpn-name {
+                    type leafref {
+                      path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                    }
+                    must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast'] and ../vpn-name!='_public_'";
+                    description
+                      "Specify the name of a VPN instance. Multicast traffic is bound to a VPN tunnel.";
+                  }
+                }
+                case vlan-id {
+                  description
+                    "VLAN information. Multicast traffic is bound to VLANs.";
+                  leaf vlan-id {
+                    type uint16 {
+                      range 1..4094;
+                    }
+                    description
+                      "VLAN information. Multicast traffic is bound to VLANs.";
+                  }
+                }
+                case vsi-name {
+                  description
+                    "Name of a VSI. Multicast traffic is bound to a VSI tunnel.";
+                  leaf vsi-name {
+                    type leafref {
+                      path "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:name";
+                    }
+                    must "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance[l2vpn:name=current()][l2vpn:type='vpls']";
+                    description
+                      "Name of a VSI. Multicast traffic is bound to a VSI tunnel.";
+                  }
+                }
+                case bd-id {
+                  description
+                    "DB information. Multicast traffic is bound to a BD.";
+                  leaf bd-id {
+                    type leafref {
+                      path "/bd:bd/bd:instances/bd:instance/bd:id";
+                    }
+                    description
+                      "DB information. Multicast traffic is bound to a BD.";
+                  }
+                }
+                case transit {
+                  description 
+                    "In the P node scenario, enable the transit detection function to ensure that the P node detection function is proper.";
+                  leaf transit {
+                    type empty;
+                    description
+                      "In the P node scenario, enable the transit detection function to ensure that the P node detection function is proper.";
+                  }
+                }
+              }
+              leaf pt-value {
+                type uint16 {
+                  range "25..34 | 96..127";
+                }
+                must "(../clock-rate='clock-90khz') or (../clock-rate!='clock-90khz' and ../pt-value >= 96 and ../pt-value <= 127)";
+                default "33";
+                description
+                  "Payload type. Only payload type (PT) videos are detected.";
+              }
+              leaf clock-rate {
+                type enumeration {
+                  enum clock-90khz {
+                    value 0;
+                    description
+                      "Clock rate 90kHz frequency.";
+                  }
+                  enum clock-27000khz {
+                    value 1;
+                    description
+                      "Clock rate 27000kHz frequency.";
+                  }
+                  enum clock-148500khz {
+                    value 2;
+                    description
+                      "Clock rate 148500kHz frequency.";
+                  }
+                  enum clock-about-148mhz {
+                    value 3;
+                    description
+                      "Clock rate 148.5/1.001MHz frequency.";
+                  }
+                }
+                must "(../clock-rate='clock-90khz') or (../clock-rate!='clock-90khz' and ../pt-value >= 96 and ../pt-value <= 127)";
+                default clock-90khz;
+                description
+                  "Clock frequency information.";
+              }
+              leaf uncompressed {
+                type empty;
+                description
+                  "Whether non-compressed multicast traffic detection is enabled.";
+              }
+            }
+          }
+        }
+      }
+      container emdi-lpu-groups {
+        description
+          "List of configure Board group information.";
+        list emdi-lpu-group {
+          key lpu-group-name;
+          max-elements  "32";
+          description
+            "Configure board group information.";
+          leaf lpu-group-name {
+            type string {
+              length 1..31;
+            }
+            description
+              "Board group name.";
+          }
+          choice bind-lpu {
+            description 
+              "Bind slot <all> or <slot-number>.";
+            case bind-all {
+              description 
+                "Bind slot <all>.";
+              container bind-all {
+                description 
+                  "Configure bind slot <all>.";
+                leaf all {
+                  type empty;
+                  description
+                    "Bind slot <all>.";
+                }
+              }
+            }
+            case bind-slots {
+              description
+                "Bind slot <slot-number>.";
+              leaf-list slot {
+                type string {
+                  length 1..15;
+                }
+                max-elements "128";
+                description
+                  "Configure slot number."; 
+              }
+            }
+          }
+        }
+      }
+      container channel-group-bind-lpu-groups {
+        description
+          "List of configure binding between a channel group and a board.";
+        list channel-group-bind-lpu-group {
+          key "lpu-group-name channel-group-name";
+          unique "channel-group-name";
+          max-elements  "32";
+          description
+            "Configure binding between a channel group and a board.";
+          leaf lpu-group-name {
+            type leafref {
+              path "../../../emdi-lpu-groups/emdi-lpu-group/lpu-group-name";
+            }
+            description
+              "Name of a bound board group.";
+          }
+          leaf channel-group-name {
+            type leafref {
+              path "../../../emdi-channel-groups/emdi-channel-group/channel-group-name";
+            }
+            description
+              "Name of a bound channel group.";
+          }
+        }
+      }
+      container outbound-channel-group-bind-lpu-groups {
+        description
+          "List of configure outbound binding between a channel group and a board.";
+        list outbound-channel-group-bind-lpu-group {
+          key "lpu-group-name channel-group-name";
+          unique "channel-group-name";
+          max-elements  "32";
+          description
+            "Configure outbound binding between a channel group and a board.";
+          leaf lpu-group-name {
+            type leafref {
+              path "../../../emdi-lpu-groups/emdi-lpu-group/lpu-group-name";
+            }
+            description
+              "Name of a bound board group.";
+          }
+          leaf channel-group-name {
+            type leafref {
+              path "../../../emdi-channel-groups/emdi-channel-group/channel-group-name";
+            }
+            description
+              "Name of a bound channel group.";
+          }
+        }
+      }
+    }
+    container emdi-history-records {
+      config false;
+      description
+        "List of query historical EMDI detection state.";
+      list emdi-history-record {
+        key "channel-name record-index direction";
+        config false;
+        description
+          "Query historical EMDI detection state.";
+        leaf channel-name {
+          type string {
+            length 1..31;
+          }
+          config false;
+          description
+            "Channel name.";
+        }
+        leaf record-index {
+          type uint16 {
+            range 1..1000;
+          }
+          config false;
+          description
+            "Index of each detection message.";
+        }
+        leaf direction {
+          type enumeration {
+            enum inbound {
+              value 0;
+              description
+                "Inbound.";
+            }
+            enum outbound {
+              value 1;
+              description
+                "Outbound.";
+            }
+          }
+          config false;
+          description
+            "Specify the direction of EMDI.";
+        }
+        leaf record-time {
+          type string {
+            length 1..19;
+          }
+          config false;
+          description
+            "Time when each piece of information is detected.";
+        }
+        leaf monitor-period {
+          type enumeration {
+            enum second-10s {
+              value 10;
+              description
+                "Monitor period is 10 second.";
+            }
+            enum second-30s {
+              value 30;
+              description
+                "Monitor period is 30 second.";
+            }
+            enum second-60s {
+              value 60;
+              description
+                "Monitor period is 60 second.";
+            }
+          }
+          config false;
+          description
+            "Detection period of each detection message.";
+        }
+        leaf monitor-status {
+          type enumeration {
+            enum normal {
+              value 0;
+              description
+                "Status normal.";
+            }
+            enum car-drop {
+              value 1;
+              description
+                "Status abnormal, NP drop.";
+            }
+            enum rate-only {
+              value 2;
+              description
+                "Status abnormal, Forward Drop.";
+            }
+          }
+          config false;
+          description
+            "Detection status of each detection message.";
+        }
+        leaf receive-packet {
+          type uint64;
+          config false;
+          description
+            "Number of received packets.";
+        }
+        leaf rate-pps {
+          type uint64;
+          config false;
+          description
+            "Rate (pps) at which packets are received.";
+        }
+        leaf rate-bps {
+          type uint64;
+          config false;
+          description
+            "Rate (bit/s) at which packets are received.";
+        }
+        leaf lost-packet {
+          type uint64;
+          config false;
+          description
+            "Number of lost packets on a channel.";
+        }
+        leaf disorder-packet {
+          type uint64;
+          config false;
+          description
+            "Number of disordered channels.";
+        }
+        leaf rtp-lr {
+          type uint32;
+          config false;
+          description
+            "Packet loss rate of a channel.";
+        }
+        leaf rtp-ser {
+          type uint32;
+          config false;
+          description
+            "Check the channel disorder rate.";
+        }
+        leaf rtp-jitter {
+          type string {
+            length 1..9;
+          }
+          config false;
+          description
+            "Check the jitter of the channel.";
+        }
+        leaf slot-id {
+          type string {
+            length 1..15;
+          }
+          config false;
+          description
+            "Slot ID.";
+          ext:support-filter "true";
+        }
+        leaf interface-name {
+          type string {
+            length 1..63;
+          }
+          config false;
+          description
+            "Interface name.";
+        }
+      }
+    }
+    container emdi-channels {
+      config false;
+      description
+        "List of Channel state.";
+      list emdi-channel {
+        key "channel-name";
+		config false;
+        description
+          "Channel state.";
+        leaf channel-name {
+          type string {
+            length 1..31;
+          }
+          config false;
+          description
+            "Channel name.";
+        }
+      }
+    }
+    container emdi-telem-reps {
+      config false;
+      description
+        "List of EMDI Telemetry IPTV Report Yang Models state.";
+      list emdi-telem-rep {
+        key "vr-id channel-name";
+		config false;
+        description
+          "EMDI Telemetry IPTV Report Yang Model state.";
+        leaf vr-id {
+          type uint32 {
+            range 0..32;
+          }
+          config false;
+          description
+            "Index of the VR that the channel belongs to.";
+        }
+        leaf channel-name {
+          type emdi:channel-ref;
+          config false;
+          description
+            "Name of the multicast channel.";
+        }
+        leaf channel-source-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IPv4 source adddress of the multicast channel.";
+        }
+        leaf channel-group-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IPv4 group adddress of the multicast channel.";
+        }
+        leaf channel-vpn-type {
+          type uint32 {
+            range 0..4;
+          }
+          config false;
+          description
+            "The VPN type that the multicast channel belongs to.";
+        }
+        leaf vpn-name {
+          type string {
+            length 1..31;
+          }
+          config false;
+          description
+            "The L3VPN name of the multicast channel.";
+        }
+        leaf vlan-id {
+          type uint32 {
+            range 0..65535;
+          }
+          config false;
+          description
+            "The L2VPN VLAN Id of the multicast channel.";
+        }
+        leaf vsi-name {
+          type string {
+            length 1..31;
+          }
+          config false;
+          description
+            "The L2VPN VSI name of the multicast channel.";
+        }
+        leaf bd-id {
+          type uint32 {
+            range 0..16777215;
+          }
+          config false;
+          description
+            "The L2VPN BD name of the multicast channel.";
+        }
+        leaf report-period {
+          type uint32 {
+            range 0..65535;
+          }
+          config false;
+          description
+            "The EMDI statistics data report period.";
+        }
+        leaf report-time {
+          type uint64;
+          units s;
+          config false;
+          description
+            "The report time of current report period.";
+        }
+        leaf total-recv-packets {
+          type uint64;
+          config false;
+          description
+            "The total received RTP packets number in current report period.";
+        }
+        leaf total-loss-packets {
+          type uint64;
+          config false;
+          description
+            "The total lost RTP packets number in current report period.";
+        }
+        leaf total-disorderd-packets {
+          type uint64;
+          config false;
+          description
+            "The total disordered RTP packets number in current report period.";
+        }
+        leaf monitor-period {
+          type uint32 {
+            range 0..65535;
+          }
+          config false;
+          description
+            "The EMDI statistics data monitor period.";
+        }
+        leaf monitor-time {
+          type uint64;
+          units s;
+          config false;
+          description
+            "The start time of current monitor period.";
+        }
+        leaf worst-recv-packets {
+          type uint64;
+          config false;
+          description
+            "The received RTP packets number in the worst monitor period in current report period.";
+        }
+        leaf worst-loss-packets {
+          type uint64;
+          config false;
+          description
+            "The lost RTP packets number in the worst monitor period in current report period.";
+        }
+        leaf worst-disorderd-packets {
+          type uint64;
+          config false;
+          description
+            "The disordered RTP packets number in the worst monitor period in current report period.";
+        }
+      }
+    }
+    container emdi-telem-rtps {
+        config false;
+        description
+          "List of EMDI Telemetry RTP Report Yang Models state.";
+        list emdi-telem-rtp {
+        key "vr-id channel-name";
+		config false;
+        description
+          "EMDI Telemetry RTP Report Yang Model state.";
+        leaf vr-id {
+          type uint32 {
+            range 0..32;
+          }
+          config false;
+          description
+            "Index of the VR that the channel belongs to.";
+        }
+        leaf channel-name {
+          type emdi:channel-ref;
+          config false;
+          description
+            "Name of the multicast channel.";
+        }
+        leaf channel-source-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IPv4 source adddress of the multicast channel.";
+        }
+        leaf channel-group-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IPv4 group adddress of the multicast channel.";
+        }
+        leaf channel-vpn-type {
+          type uint32 {
+            range 0..4;
+          }
+          config false;
+          description
+            "The VPN type that the multicast channel belongs to.";
+        }
+        leaf vpn-name {
+          type string {
+            length 1..31;
+          }
+          config false;
+          description
+            "The L3VPN name of the multicast channel.";
+        }
+        leaf vlan-id {
+          type uint32 {
+            range 0..65535;
+          }
+          config false;
+          description
+            "The L2VPN VLAN Id of the multicast channel.";
+        }
+        leaf vsi-name {
+          type string {
+            length 1..31;
+          }
+          config false;
+          description
+            "The L2VPN VSI name of the multicast channel.";
+        }
+        leaf bd-id {
+          type uint32 {
+            range 0..16777215;
+          }
+          config false;
+          description
+            "The L2VPN BD name of the multicast channel.";
+        }
+        leaf report-period {
+          type uint32 {
+            range 0..65535;
+          }
+          config false;
+          description
+            "The EMDI statistics data report period.";
+        }
+        leaf report-time {
+          type uint64;
+          units s;
+          config false;
+          description
+            "The report time of current report period.";
+        }
+        leaf recv-packets {
+          type uint64;
+          config false;
+          description
+            "The received RTP packets number in current report period.";
+        }
+        leaf loss-packets {
+          type uint64;
+          config false;
+          description
+            "The lost RTP packets number in current report period.";
+        }
+        leaf disorderd-packets {
+          type uint64;
+          config false;
+          description
+            "The disordered RTP packets number in current report period.";
+        }
+        leaf monitor-period {
+          type uint32 {
+            range 0..65535;
+          }
+          config false;
+          description
+            "The EMDI statistics data monitor period.";
+        }
+        leaf monitor-time {
+          type uint64;
+          units s;
+          config false;
+          description
+            "The start time of current monitor period.";
+        }
+      }
+    }
+    container out-telem-reps {
+      config false;
+      description
+        "List of outbound EMDI Telemetry IPTV Report Yang Models state.";
+      list out-telem-rep {
+        key "vr-id channel-name slot-id";
+        config false;
+        description
+          "Outbound EMDI Telemetry IPTV Report Yang Model state.";
+        leaf vr-id {
+          type uint32;
+          config false;
+          description
+            "Index of the VR that the channel belongs to.";
+        }
+        leaf channel-name {
+          type emdi:channel-ref;
+          config false;
+          description
+            "Name of the multicast channel.";
+        }
+        leaf slot-id {
+          type string {
+            length 1..15;
+          }
+          config false;
+          description
+            "Slot name of the multicast channel.";
+        }
+        leaf channel-source-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IPv4 source adddress of the multicast channel.";
+        }
+        leaf channel-group-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IPv4 group adddress of the multicast channel.";
+        }
+        leaf channel-vpn-type {
+          type uint32 {
+            range 0..1;
+          }
+          config false;
+          description
+            "The VPN type that the multicast channel belongs to.";
+        }
+        leaf vpn-name {
+          type string {
+            length 1..31;
+          }
+          config false;
+          description
+            "The L3VPN name of the multicast channel.";
+        }
+        leaf interface-name {
+          type string {
+            length 1..63;
+          }
+          config false;
+          description
+            "Interface name of the multicast channel.";
+        }
+        leaf report-period {
+          type uint32 {
+            range 0..65535;
+          }
+          config false;
+          description
+            "The EMDI statistics data report period.";
+        }
+        leaf report-time {
+          type uint64;
+          units s;
+          config false;
+          description
+            "The report time of current report period.";
+        }
+        leaf total-recv-packets {
+          type uint64;
+          config false;
+          description
+            "The total received REP packets number in current report period.";
+        }
+        leaf total-loss-packets {
+          type uint64;
+          config false;
+          description
+            "The total lost REP packets number in current report period.";
+        }
+        leaf total-disorderd-packets {
+          type uint64;
+          config false;
+          description
+            "The total disordered REP packets number in current report period.";
+        }
+        leaf monitor-period {
+          type uint32 {
+            range 0..65535;
+          }
+          config false;
+          description
+            "The EMDI statistics data monitor period.";
+        }
+        leaf monitor-time {
+          type uint64;
+          units s;
+          config false;
+          description
+            "The start time of current monitor period.";
+        }
+        leaf worst-recv-packets {
+          type uint64;
+          config false;
+          description
+            "The received REP packets number in the worst monitor period in current report period.";
+        }
+        leaf worst-loss-packets {
+          type uint64;
+          config false;
+          description
+            "The lost REP packets number in the worst monitor period in current report period.";
+        }
+        leaf worst-disorderd-packets {
+          type uint64;
+          config false;
+          description
+            "The disordered REP packets number in the worst monitor period in current report period.";
+        }
+      }
+    }
+  }
+  rpc reset-statistic-history {
+    description
+      "Reset channel statistics.";
+    ext:node-ref "/emdi/emdi-history-statistic-records/emdi-history-statistic-record";
+    input  {
+      leaf channel-name {
+        type string {
+          length 1..31;
+        }
+        description
+          "Channel name.";
+      }
+    }
+  }
+  rpc reset-outbound-history-statistic {
+    description
+      "Reset outbound channel statistics.";
+    ext:node-ref "/emdi/emdi-history-statistic-records/emdi-history-statistic-record";
+    input  {
+      leaf slot-id {
+        type string {
+          length 1..15;
+        }
+        mandatory true;
+        description
+          "Slot ID.";
+      }
+      leaf channel-name {
+        type string {
+          length 1..31;
+        }
+        description
+          "Channel name.";
+      }
+    }
+  }
+  rpc filter-history-statistic {
+    description
+      "Filter EMDI history statistics.";
+    ext:node-ref "/emdi/emdi-history-statistic-records/emdi-history-statistic-record";
+    input {
+      leaf channel-name {
+        type string {
+          length 1..31;
+        }
+        description
+          "Channel name.";
+      }
+      leaf start-index {
+        type uint16 {
+          range 1..1000;
+        }
+        description
+          "Start index. This parameter is used only as a filter criterion and is not displayed.";
+      }
+      leaf end-index {
+        type uint16 {
+          range 1..1000;
+        }
+        description
+          "End index. It is only used as a filter criterion and is not displayed.";
+      }
+      leaf last-record-num {
+        type uint8 {
+          range 1..5;
+        }
+        description
+          "Query the latest specified number of detection records. This parameter is used only as a filter criterion and is not displayed.";
+      }
+      leaf direction {
+        type enumeration {
+          enum inbound {
+            value 0;
+            description
+              "Inbound.";
+          }
+          enum outbound {
+            value 1;
+            description
+              "Outbound.";
+          }
+        }
+        description
+          "Specify the direction of EMDI.";
+      }
+      leaf slot-id {
+        type string {
+          length 1..15;
+        }
+        description
+          "Slot ID.";
+      }
+    }
+    output {
+      container emdi-history-statistic-records {
+        description
+          "List of configure query historical EMDI detection information.";
+        list emdi-history-statistic-record {
+          key "channel-name record-index direction";
+          description
+            "Configure query historical EMDI detection information.";
+          leaf channel-name {
+            type string {
+              length 1..31;
+            }
+            description
+              "Channel name.";
+          }
+          leaf record-index {
+            type uint16 {
+              range 1..1000;
+            }
+            description
+              "Index of each detection message.";
+          }
+          leaf direction {
+            type enumeration {
+              enum inbound {
+                value 0;
+                description
+                  "Inbound.";
+              }
+              enum outbound {
+                value 1;
+                description
+                  "Outbound.";
+              }
+            }
+            description
+              "Specify the direction of EMDI.";
+          }
+          leaf record-time {
+            type string {
+              length 1..19;
+            }
+            description
+              "Time when each piece of information is detected.";
+          }
+          leaf monitor-period {
+            type enumeration {
+              enum second-10s {
+                value 10;
+                description
+                  "Monitor period is 10 second.";
+              }
+              enum second-30s {
+                value 30;
+                description
+                  "Monitor period is 30 second.";
+              }
+              enum second-60s {
+                value 60;
+                description
+                  "Monitor period is 60 second.";
+              }
+            }
+            description
+              "Detection period of each detection message.";
+          }
+          leaf monitor-status {
+            type enumeration {
+              enum normal {
+                value 0;
+                description
+                  "Status normal.";
+              }
+              enum car-drop {
+                value 1;
+                description
+                  "Status abnormal, NP drop.";
+              }
+              enum rate-only {
+                value 2;
+                description
+                  "Status abnormal, Forward Drop.";
+              }
+            }
+            description
+              "Detection status of each detection message.";
+          }
+          leaf receive-packet {
+            type uint64;
+            description
+              "Number of received packets.";
+          }
+          leaf rate-pps {
+            type uint64;
+            description
+              "Rate (pps) at which packets are received.";
+          }
+          leaf rate-bps {
+            type uint64;
+            description
+              "Rate (bit/s) at which packets are received.";
+          }
+          leaf lost-packet {
+            type uint64;
+            description
+              "Number of lost packets on a channel.";
+          }
+          leaf disorder-packet {
+            type uint64;
+            description
+              "Number of disordered channels.";
+          }
+          leaf rtp-lr {
+            type uint32;
+            description
+              "Packet loss rate of a channel.";
+          }
+          leaf rtp-ser {
+            type uint32;
+            description
+              "Check the channel disorder rate.";
+          }
+          leaf rtp-jitter {
+            type string {
+              length 1..9;
+            }
+            description
+              "Check the jitter of the channel.";
+          }
+          leaf slot-id {
+            type string {
+              length 1..15;
+            }
+            description
+              "Slot ID.";
+          }
+          leaf interface-name {
+            type string {
+              length 1..63;
+            }
+            description
+              "Interface name.";
+          }
+        }
+      }
+    }
+  }
+}

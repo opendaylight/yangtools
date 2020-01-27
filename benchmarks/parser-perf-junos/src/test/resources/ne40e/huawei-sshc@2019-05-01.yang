@@ -1,0 +1,413 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-sshc {
+  namespace "urn:huawei:yang:huawei-sshc";
+  prefix sshc;
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-sm2 {
+    prefix sm2;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+    import huawei-rsa {
+    prefix rsa;
+  }
+  import huawei-dsa {
+   prefix dsa;
+  }
+  import huawei-ecc {
+   prefix ecc;
+  }
+  include huawei-sshc-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "SSH client.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ssh-client";
+  container sshc {
+    description
+      "SSH client.";
+    container client {
+      description
+        "Configure SSH client.";
+      leaf keep-alive-time {
+        type int32 {
+          range "0..3600";
+        }
+        default "0";
+        description
+          "If Client does not receive any data from Server for KeepAlive interval time, it sends first KeepAlive message to Server. Further KeepAlive messages are sent after every expiry of KeepAlive interval only for max number of times configured. If Client does not get any response from Server still, Client disconnects the current connection. 0 seconds means do not send KeepAlive message to Server.";
+      }
+      leaf keep-alive-count {
+        type int32 {
+          range "1..30";
+        }
+        default "3";
+        description
+          "If Client does not receive any data from Server for KeepAlive interval time, it sends first KeepAlive message to Server. Further KeepAlive messages are sent after every expiry of KeepAlive interval only for max number of times configured. If Client does not get any response from Server still, Client disconnects the current connection. By default, KeepAlive maximum count is configured to 3.";
+      }
+      leaf first-time-enable {
+        type sshcenableflag;
+        default "disable";
+        description
+          "If enabled, then RSA public key check for SSH server will be skipped for any new incoming connection. By default, it is disabled.";
+      }
+      leaf src-interface {
+        type pub-type:if-name;
+        description
+          "The specified source interface must exist and an IP address must be configured on the interface.";
+      }
+      leaf src-ipv4-addr {
+        when "not(../src-interface)";
+        type inet:ipv4-address-no-zone;
+        description
+          "SFTP IPv4 source ip address.";
+      }
+      leaf vpn-instance-name {
+        when "../src-ipv4-addr";
+        type string {
+          length "1..31";
+        }
+        description
+          "The specified VPN instance must exist and IPv4-family must be enabled in the VPN instance.";
+      }
+      leaf scp-src-interface {
+        type pub-type:if-name;
+        description
+          "The specified source interface must exist and an IP address must be configured on the interface.";
+      }
+      leaf scp-src-ipv4-addr {
+        when "not(../scp-src-interface)";
+        type inet:ipv4-address-no-zone;
+        description
+          "SCP IPv4 source ip address.";
+      }
+      leaf scp-vpn-instance-name {
+        when "../scp-src-ipv4-addr";
+        type string {
+          length "1..31";
+        }
+        description
+          "The specified VPN instance must exist and IPv4-family must be enabled in the VPN instance.";
+      }
+      leaf sftp-src-ipv6-addr {
+        type inet:ipv6-address-no-zone;
+        description
+          "SFTP source IPv6 address.";
+      }
+      leaf sftp-ipv6-vpn-instance-name {
+        when "../sftp-src-ipv6-addr";
+        type string {
+          length "1..31";
+        }
+        description
+          "The specified VPN instance must exist and IPv6-family must be enabled in the VPN instance.";
+      }
+      leaf packet-dscp {
+        type uint32 {
+          range "0..63";
+        }
+        default "48";
+        description
+          "Config DSCP value.";
+      }
+      leaf sm2-host-key {
+          type leafref {
+            path "/sm2:sm2/sm2:sm2-key-pairs/sm2:sm2-key-pair/sm2:key-pair-label";
+          }
+        description
+          "User can assign the sm2 host key for sm2 connection.";
+        }
+    }
+
+    container server-authentications {
+      description
+        "List of SSH host name and key name configuration.";
+      list server-authentication {
+        key "server-name pubkey-type key-name";
+        description
+          "Configure SSH host name and key name policy.";
+        leaf server-name {
+          type string {
+            length "1..255";
+          }
+          description
+            "Set SSH host name.";
+        }
+        leaf pubkey-type {
+          type pubkeytype;
+          description
+            "SSH server public key type.";
+        }
+        leaf key-name {
+          type string {
+            length "1..40";
+          }
+          must "(../pubkey-type = 'RSA' and ../key-name = /rsa:rsa/rsa:peer-keys/rsa:peer-key[rsa:key-name=current()]/rsa:key-name) or ../pubkey-type != 'RSA'";
+          must "(../pubkey-type = 'DSA' and ../key-name = /dsa:dsa/dsa:peer-keys/dsa:peer-key[dsa:key-name=current()]/dsa:key-name) or ../pubkey-type != 'DSA'";
+          must "(../pubkey-type = 'ECC' and ../key-name = /ecc:ecc/ecc:peer-keys/ecc:peer-key[ecc:key-name=current()]/ecc:key-name) or ../pubkey-type != 'ECC'";
+          must "(../pubkey-type = 'SM2' and ../key-name = /sm2:sm2/sm2:sm2-peer-keys/sm2:sm2-peer-key[sm2:key-name=current()]/sm2:key-name) or ../pubkey-type != 'SM2'";
+          description
+            "Key Name.";
+        }
+      }
+    }
+	
+    container cipher-alg {
+      must "../cipher-alg/descbc = 'true' or ../cipher-alg/des3cbc = 'true' or ../cipher-alg/aes128cbc = 'true' or ../cipher-alg/aes192cbc = 'true' or ../cipher-alg/aes256cbc = 'true' or ../cipher-alg/aes128ctr = 'true' or ../cipher-alg/aes192ctr = 'true' or ../cipher-alg/aes256ctr = 'true' or ../cipher-alg/arcfour128 = 'true' or ../cipher-alg/arcfour256 = 'true' or ../cipher-alg/aes128gcm = 'true' or ../cipher-alg/aes256gcm = 'true'";
+      description
+        "Configure Encryption algorithms supported for SSHS.";
+      leaf descbc {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "DES CBC encryption algorithm.";
+      }
+      leaf des3cbc {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "3DES CBC encryption algorithm.";
+      }
+      leaf aes128cbc {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "AES128 CBC encryption algorithm.";
+      }
+      leaf aes192cbc {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "AES192 CBC encryption algorithm.";
+      }
+      leaf aes256cbc {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "AES256 CBC encryption algorithm.";
+      }
+      leaf aes128ctr {
+        type sshsshcbooltype;
+        default "true";
+        description
+          "AES128 CTR encryption algorithm.";
+      }
+      leaf aes192ctr {
+        type sshsshcbooltype;
+        default "true";
+        description
+          "AES192 CTR encryption algorithm.";
+      }
+      leaf aes256ctr {
+        type sshsshcbooltype;
+        default "true";
+        description
+          "AES256 CTR encryption algorithm.";
+      }
+      leaf arcfour128 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "ARCFOUR128 encryption algorithm.";
+      }
+      leaf arcfour256 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "ARCFOUR256 encryption algorithm.";
+      }
+      leaf aes128gcm {
+        type sshsshcbooltype;
+        default "true";
+        description
+          "AES128 GCM encryption algorithm.";
+      }
+      leaf aes256gcm {
+        type sshsshcbooltype;
+        default "true";
+        description
+          "AES256 GCM encryption algorithm.";
+      }
+    }
+    container hmac-alg {
+      must "../hmac-alg/md5 = 'true' or ../hmac-alg/md596 = 'true' or ../hmac-alg/sha1 = 'true' or ../hmac-alg/sha196 = 'true' or ../hmac-alg/sha2256 = 'true' or ../hmac-alg/sha225696 = 'true' or ../hmac-alg/sha2512 = 'true'";
+      description
+        "Configure HMAC algorithms supported for SSHS.";
+      leaf md5 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "MD5 Hmac Algorithm.";
+      }
+      leaf md596 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "MD5_96 Hmac Algorithm.";
+      }
+      leaf sha1 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "SHA1 Hmac Algorithm.";
+      }
+      leaf sha196 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "SHA1_96 Hmac Algorithm.";
+      }
+      leaf sha2256 {
+        type sshsshcbooltype;
+        default "true";
+        description
+          "SHA2_256 Hmac Algorithm.";
+      }
+      leaf sha225696 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "SHA2_256_96 Hmac Algorithm.";
+      }
+      leaf sha2512 {
+        type sshsshcbooltype;
+        default "true";
+        description
+          "SHA2_512 Hmac Algorithm.";
+      }
+    }
+    container kex-alg {
+      must "../kex-alg/dh-group-exchange-sha-256 = 'true' or ../kex-alg/dh-group-exchange-sha1 = 'true' or ../kex-alg/dh-group1-sha1 = 'true' or ../kex-alg/ecdh-sha2-nistp-256 = 'true' or ../kex-alg/ecdh-sha2-nistp-384 = 'true' or ../kex-alg/ecdh-sha2-nistp-521 = 'true' or ../kex-alg/sm2-kep = 'true' or ../kex-alg/dh-group14-sha1 = 'true'";
+      description
+        "Configure Key Exchange Algorithm.";
+      leaf dh-group14-sha1 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "Diffie-hellman-group14-sha1 algorithm.";
+      }
+      leaf dh-group1-sha1 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "Diffie-hellman-group1-sha1 algorithm.";
+      }
+      leaf ecdh-sha2-nistp-521 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "Ecdh-sha2-nistp521 algorithm.";
+      }
+      leaf ecdh-sha2-nistp-384 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "Ecdh-sha2-nistp384 algorithm.";
+      }
+      leaf ecdh-sha2-nistp-256 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "Ecdh-sha2-nistp256 algorithm.";
+      }
+      leaf dh-group-exchange-sha-256 {
+        type sshsshcbooltype;
+        default "true";
+        description
+          "Diffie-hellman-group-exchange-sha256 algorithm.";
+      }
+      leaf dh-group-exchange-sha1 {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "Diffie-hellman-group-exchange-sha1 algorithm.";
+      }
+      leaf sm2-kep {
+        type sshsshcbooltype;
+        default "false";
+        description
+          "Sm2kep-sha2-nistp256 algorithm.";
+      }
+    }
+    container pubkey-alg {
+      must "../pubkey-alg/dsa = 'true' or ../pubkey-alg/ecc = 'true' or ../pubkey-alg/rsa = 'true' or ../pubkey-alg/sm2 = 'true'";
+      description
+        "Configure public key algorithm.";
+      leaf dsa {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable DSA public key algorithm.";
+      }
+      leaf ecc {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable ECC public key algorithm.";
+      }
+      leaf rsa {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable RSA public key algorithm.";
+      }
+      leaf sm2 {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable SM2 public key algorithm.";
+      }
+    }
+    container rekey {
+      description
+        "Configure reKey.";
+      leaf max-packet {
+        type uint32 {
+          range "268435456..2147483648";
+        }
+        default "2147483648";
+        description
+          "Rekey Max Packet Number.";
+      }
+      leaf time {
+        type int32 {
+          range "30..1440";
+        }
+        units min;
+        default "60";
+        description
+          "Rekey Time.";
+      }
+      leaf max-data {
+        type int32 {
+          range "100..10000";
+        }
+        units MB;
+        default "1000";
+        description
+          "Rekey Max Data.";
+      }
+    }
+  }
+}

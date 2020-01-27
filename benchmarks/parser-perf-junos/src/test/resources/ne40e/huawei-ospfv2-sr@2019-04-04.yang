@@ -1,0 +1,218 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ospfv2-sr {
+  namespace "urn:huawei:yang:huawei-ospfv2-sr";
+  prefix ospfv2-sr;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-ospfv2 {
+    prefix ospfv2;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-segment-routing {
+    prefix sr;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "OSPF segment routing management.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "ospf";
+  typedef lsp-trigger-type {
+    type enumeration {
+      enum "ip-prefix" {
+        value 0;
+        description
+          "Trigger IP prefix list for segment routing.";
+      }
+      enum "none" {
+        value 1;
+        description
+          "Do not trigger FECs for segment routing.";
+      }
+      enum "host" {
+        value 2;
+        description
+          "Trigger host FECs for segment routing.";
+      }
+    }
+    description
+      "Segment routing lsp trigger type.";
+  }
+  typedef prefix-sid-type {
+    type enumeration {
+      enum "absolute" {
+        value 1;
+        description
+          "Absolute value.";
+      }
+      enum "index" {
+        value 2;
+        description
+          "Index.";
+      }
+    }
+    description
+      "Prefix SID type.";
+  }
+  augment /ni:network-instance/ni:instances/ni:instance/ospfv2:ospfv2/ospfv2:sites/ospfv2:site {
+    description
+      "OSPFv2 segment routing augment to OSPFv2.";
+    container segment-routing {
+      description
+        "Configure segment routing.";
+        leaf enable {
+          type boolean;        
+          must "../enable='false' or (../../../../../sr:segment-routing/sr:enable='true' and ../../../../../ni:name='_public_' and ../../ospfv2:opaque='true')";
+          default "false";
+          description
+            "Enable/disable MPLS on the segment routing forwarding plane.";
+        }
+        container binding {
+          when "../enable='true'";
+          description
+            "Configure segment routing prefix and SID mapping information.";
+          leaf receive {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable segment routing prefix and SID mapping information receiving function.";
+          }
+          leaf advertise {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable segment routing prefix and SID mapping information sending function.";
+          }
+        }
+        container lsp-trigger {
+          when "../enable='true'";
+          description
+            "Configure LSP trigger policy.";
+          leaf type {
+            type lsp-trigger-type;
+            must "../type='ip-prefix' and ../ip-prefix or ../type!='ip-prefix'";
+            default "host";
+            description
+              "LSP trigger type.";
+          }
+          leaf ip-prefix {
+            when "../type='ip-prefix'";
+            type leafref {
+              path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+            }
+            description
+              "IP prefix name.";
+          }
+        }
+    }
+    container srgbs {
+      when "(../../../../sr:segment-routing/sr:enable='true' and ../../../../ni:name='_public_' and ../ospfv2:opaque='true')";                
+      description
+        "List of segment routing global block (SRGB).";
+      list srgb {
+        key "lower-bound upper-bound";
+        max-elements 1;
+        description
+          "Configure segment routing global block (SRGB).";
+        leaf lower-bound {
+          type uint32 {
+            range "16..1048575";
+          }
+          description
+            "Start value of a segment routing global block (SRGB).";
+        }
+        leaf upper-bound {
+          type uint32 {
+            range "16..1048575";
+          }
+          description
+            "End value of a segment routing global block (SRGB).";
+        }
+      }
+    }   
+    container sr-avoid-micro-loop {
+      when "../ospfv2-sr:segment-routing/ospfv2-sr:enable='true'";
+      description
+        "Configure OSPF SR avoid microloop.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable SR avoid microloop.";
+      }
+      leaf rib-update-delay {
+        type uint32 {
+          range "1000..10000";
+        }
+        default "5000";
+        description
+          "Set the route delivery delay for SR avoid microloop.";
+      }
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance/ospfv2:ospfv2/ospfv2:sites/ospfv2:site/ospfv2:areas/ospfv2:area/ospfv2:interfaces/ospfv2:interface {
+    description
+      "Prefix SID augment to OSPF.";
+        container prefix-sids {
+          when "../../../../../ospfv2-sr:segment-routing/ospfv2-sr:enable='true' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../ospfv2:name]/ifm:type='LoopBack'";
+          description
+            "List of prefix segment ID.";
+          list prefix-sid {
+            key "algorithm";
+            description
+              "Configure prefix segment ID.";
+            leaf algorithm {
+              type uint32 {
+                range 0;
+              }
+              description
+                "Prefix SID algorithm.";
+            }
+            leaf type {
+              type prefix-sid-type;
+              mandatory "true";
+              description
+                "Prefix segment ID type on the Loopback interface.";
+            }
+            leaf label {
+              type uint32 {
+                range "0..1048575";
+              }
+              mandatory "true";
+              description
+                "Prefix segment ID label on the Loopback interface.";
+            }
+            leaf node-flag {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the N flag on the Loopback interface.";
+            }
+          }
+        }
+    }
+}

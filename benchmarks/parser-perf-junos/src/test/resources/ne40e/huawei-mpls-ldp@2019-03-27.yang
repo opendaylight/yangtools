@@ -1,0 +1,3138 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls-ldp {
+  namespace "urn:huawei:yang:huawei-mpls-ldp";
+  prefix mpls-ldp;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-routing {
+    prefix rt;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-bfd {
+    prefix bfd;
+  }
+  include huawei-mpls-ldp-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+  revision 2019-03-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mpls-ldp";
+  rpc reset-ldp-session {
+    description
+      "Reset LDP Session.";
+    input {
+      leaf peer-id {
+        type inet:ipv4-address-no-zone;
+        description
+          "Peer ID of an LDP session to be restarted.";
+      }
+      leaf graceful {
+        type boolean;
+        default "false";
+        description
+          "GR flag.";
+      }
+      leaf vrfname {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of an LDP instance.";
+      }
+    }
+  }
+  rpc reset-all-ldp {
+    description
+      "Resets LDP.";
+    input {
+      leaf graceful {
+        type boolean;
+        default "false";
+        description
+          "Keep uninterrupted forwarding.";
+      }
+      leaf vrfname {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of an LDP instance.";
+      }
+    }
+  }
+  rpc reset-ldp-traffic-statistics {
+    description
+      "Reset LDP traffic statistics.";
+    input {
+      leaf ipv4-dest-address{
+        type inet:ipv4-address-no-zone;
+        description
+          "Prefix.";
+      }
+      leaf ipv4-masklen{
+        type uint32;
+        description
+          "Length of mask.";
+      }
+    }
+  }
+  rpc reset-mldp-traffic-statistics {
+    description
+      "Reset MLDP P2MP traffic statistics.";
+    input {
+      leaf root-ip {
+        type inet:ipv4-address-no-zone;
+        description
+          "MLDP P2MP lsp traffic statistics root IP address.";
+      }
+      leaf lsp-id {
+        type uint32;
+        description
+          "MLDP P2MP LSP ID.";
+      }
+    }
+  }
+  rpc reset-mldp-all-traffic-statistics {
+    description
+      "Reset all MLDP P2MP traffic statistics.";
+    input {
+      leaf is-all {
+        type boolean;
+        default "false";
+        description
+          "Reset all MLDP P2MP traffic statistics.";
+      }
+    }
+  }
+  /*
+   * augment-stmt
+   */
+  augment /mpls:mpls {
+    description
+      "MPLS LDP Configuration information augment to module MPLS.";
+    container ldp {
+      when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true'";
+      description
+        "Configure LDP, query and modify LDP Configuration information.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable LDP.";
+      }
+      leaf lsp-trigger-mode {
+        type ldp-trigger-type;
+        must "(current()='ip-prefix' and ../lsp-ip-prefix-name) or (current()!='ip-prefix' and not(../lsp-ip-prefix-name))";
+        default "host";
+        description
+          "Specifies a triggering mode for establishing LSPs by LDP. The value can be: 1. All mode (in which LDP is triggered by all static routes and IGP routes to establish LSPs); 2. Host mode (in which LDP is triggered by 32- or 128-bit IP routes to establish LSPs); 3. None mode (in which LDP is not triggered to establish LSPs); 4. IP-prefix mode (in which LDP is triggered by the IP address prefix list to establish LSPs.";
+      }
+      leaf lsp-ip-prefix-name {
+        type leafref {
+          path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+        }
+        must "../lsp-trigger-mode='ip-prefix'";
+        description
+          "Specifies or clear the IP prefix triggering mode, LDP is triggered to establish or to clear LSPs by IP address prefixes.";
+      }
+      leaf proxy-egress-lsp-disable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable establish proxy LDP LSP.";
+      }
+      leaf bgp-label {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable of triggering LDP alloc label for BGP label route.";
+      }
+      leaf bgp-ip-prefix-name {
+        when "../bgp-label='true'";
+        type leafref {
+          path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+        }
+        description
+          "Trigger policy when LDP alloc label for BGP label route.";
+      }
+      leaf bgp-not-only-host {
+        when "../bgp-label='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable LDP to allocate labels for labeled BGP routes with non-32-bit masks.";
+      }
+      leaf sr-lsp-trigger-mode {
+        type sr-lsp-trigger-type;
+        default "none";
+        description
+          "SR LSP Triggering Mode.";
+      }
+      container global {
+        when "../enable='true'";
+        description
+          "Configure global LDP. Query and modify global LDP parameters.";
+        leaf mtu-signaling-mode {
+          type mtu-signaling-type;
+          default "mtu-signaling";
+          description
+            "The MTU signaling.";
+        }
+        leaf gr-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable LDP GR capability. Enabling or disabling of GR will cause the re-establishment of all LDP sessions.";
+        }
+        leaf reconnect-time {
+          when "../gr-enable='true'";
+          type uint32 {
+            range "3..259200";
+          }
+          units s;
+          default "300";
+          description
+            "Specifies the value of the LDP session reconnection timer.";
+        }
+        leaf recovery-time {
+          when "../gr-enable='true'";
+          type uint32 {
+            range "3..259200";
+          }
+          units s;
+          default "300";
+          description
+            "Specifies the value of the LSP recovery timer.";
+        }
+        leaf peer-live-time {
+          when "../gr-enable='true'";
+          type uint32 {
+            range "3..259200";
+          }
+          units s;
+          default "600";
+          description
+            "Specifies the value of the neighbor keeplive timer.";
+        }
+        leaf trap-pub-session {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable trap LDP session.";
+        }
+        leaf trap-session-rlfa-disable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable a device from generating traps when LDP sessions go down due to RLFA route deletion.";
+        }
+        leaf gr-no-delete-flag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the modification of GR parameters, it will not affect established sessions, but only affect new created sessions.";
+        }
+        leaf announcement-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable dynamic announcement for LDP.";
+        }
+        leaf back-off-init-time {
+          type uint32 {
+            range "5..2147483";
+          }
+          units s;
+          default "15";
+          description
+            "Specifies the init value of the exponential backoff timer.";
+        }
+        leaf back-off-max-time {
+          type uint32 {
+            range "5..2147483";
+          }
+          units s;
+          default "120";
+          description
+            "Specifies the maximum value of the exponential backoff timer.";
+        }
+        leaf entropy-label-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable LDP entropy label capability.";
+        }
+        leaf prot-packet-suppress-disable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable LDP packet suppress capability.";
+        }
+        leaf disable-unknown-tlv {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable unknowntlv.";
+        }
+        leaf ecmp-frr-coexist-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable ECMP And FRR Coexist Capability.";
+        }
+        leaf bit-err-detect-level {
+          type leafref {
+            path "/mpls:mpls/mpls:common/mpls:bit-err-levels/mpls:bit-err-level/mpls:level-number";
+          }
+          description
+            "Config LDP bit error level.";            
+        }
+      }
+      container mldp {
+        when "../enable='true'";
+        description
+          "Configure MLDP. Query and modify MLDP parameters.";
+          container p2mp {
+            description
+              "Configure MLDP P2MP. Query and modify MLDP P2MP parameters.";
+            leaf enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable P2MP for MLDP.";
+            }
+            leaf traffic-statistic-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable MLDP traffic statistic.";
+            }
+            container attributes {
+              when "../enable='true'";
+              description
+                "Configure MLDP attributes.";
+              leaf make-before-break-enable {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable MBB capability for MLDP.";
+              }
+              leaf mbb-traffic-detect {
+                when "../make-before-break-enable='true'";
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable MLDP MBB P2MP traffic detect.";
+              }
+              leaf mbb-switch-delay-time {
+                when "../make-before-break-enable='true'";
+                type uint32 {
+                  range "100..600000";
+                }
+                units ms;
+                default "100";
+                description
+                  "MLDP MBB Switch Delay Time.";
+              }
+              leaf mbb-wait-ack-time {
+                when "../make-before-break-enable='true'";
+                type uint32 {
+                  range "1..600";
+                }
+                units s;
+                default "60";
+                description
+                  "MLDP MBB ACK Notification Wait Time.";
+              }
+              leaf recursive-fec {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable Recursive FEC for MLDP.";
+              }
+              leaf p2mp-link-frr-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable MLDP P2MP Frr Link Proteciton.";
+              }
+              leaf p2mp-best-effort {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable MLDP P2MP best effort.";
+              }
+              leaf label-withdraw-delay-time {
+              type uint32 {
+                range "2..60";
+              }
+              units s;
+              default "2";
+              description
+                "MLDP label withdraw delay time.";
+              }
+              leaf reoptimize-time {
+              type uint32 {
+                range "1..1440";
+              }
+              units min;
+              default "30";
+              description
+                "MLDP reoptimize timer.";
+              }
+              leaf p2mp-topo-name-all {
+                type leafref {
+                 path "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/rt:routing/rt:routing-manage/rt:topologys/rt:topology/rt:name";
+                }
+                must "count(/ni:network-instance/ni:instances/ni:instance[ni:name = '_public_']/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']/rt:routing/rt:routing-manage/rt:topologys/rt:topology[rt:name = current()]) = 1";
+                description
+                  "Delivers MLDP P2MP topology capability.";
+              }
+            }
+            container leaf-lsps {
+              description
+                "List of MLDP P2MP leaf LSPs.";
+              list leaf-lsp {
+                key "lsp-name";
+                unique "root-ip lsp-id";
+                max-elements  "8192";
+                description
+                  "Configure MLDP P2MP leaf LSP.";
+                leaf lsp-name {
+                  type string {
+                    length "1..31";
+                  }
+                  description
+                    "MLDP P2MP leaf LSP name.";
+                }
+                leaf root-ip {
+                  type inet:ipv4-address-no-zone;
+                  mandatory true;
+                  description
+                    "MLDP P2MP leaf LSP root IP address.";
+                }
+                leaf lsp-id {
+                  type uint32 {
+                    range "1..8192";
+                  }
+                  mandatory true;
+                  description
+                    "MLDP P2MP leaf LSP ID.";
+                }
+              }
+            }
+            container tunnels {
+              description
+                "List of mLDP P2MP tunnels.";
+              list tunnel {
+                key "name";
+                unique "root-ip lsp-id";
+                max-elements  "8192";
+                description
+                  "Configure MLDP P2MP tunnel. The max-elements is controlled by the PAF.";
+                leaf name {
+                  type string {
+                    length "1..31";
+                  }
+                  description
+                    "MLDP P2MP tunnel name.";
+                }
+                leaf root-ip {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "MLDP P2MP tunnel root IP address.";
+                }
+                leaf lsp-id {
+                  when "../root-ip";
+                  type uint32 {
+                    range "1..8192";
+                  }
+                  mandatory true;
+                  description
+                    "MLDP P2MP tunnel LSP ID.";
+                }
+              }
+            }
+            container lsps {
+              config false;
+              description
+                "List of MLDP P2MP LSPs.";
+              list lsp {
+                key "root-ip lsp-id";
+                config false;
+                description
+                  "Operational data of MLDP P2MP LSP.";
+                leaf root-ip {
+                  type inet:ipv4-address-no-zone;
+                  config false;
+                  description
+                    "MLDP P2MP LSP root IP address.";
+                }
+                leaf lsp-id {
+                  type uint32;
+                  config false;
+                  description
+                    "MLDP P2MP LSP ID.";
+                }
+                leaf opaque-value {
+                  type string {
+                    length "1..256";
+                  }
+                  config false;
+                  description
+                    "MLDP P2MP LSP opaque value.";
+                }
+                leaf lsp-name {
+                  type string {
+                    length "1..31";
+                  }
+                  config false;
+                  description
+                    "MLDP P2MP LSP name.";
+                }
+                leaf forward-id {
+                  type uint32;
+                  config false;
+                  description
+                    "MLDP P2MP LSP forward ID.";
+                }
+                leaf lsp-type {
+                  type ldp-lsp-type;
+                  config false;
+                  description
+                    "MLDP P2MP LSP type.";
+                }
+                leaf trigger-type {
+                  type mldp-p2mp-lsp-trigger-type;
+                  config false;
+                  description
+                    "MLDP P2MP LSP trigger type.";
+                }
+                leaf insegment-number {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of MLDP P2MP insegments.";
+                }
+                leaf outsegment-number {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of MLDP P2MP outsegments.";
+                }
+                container insegments {
+                  config false;
+                  description
+                    "List of MLDP P2MP LSP insegments.";
+                  list insegment {
+                    key "in-label";
+                    config false;
+                    description
+                      "Operational state of MLDP P2MP LSP insegment information.";
+                    leaf in-label {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      config false;
+                      description
+                        "Incoming label.";
+                    }
+                    leaf is-active {
+                      type boolean;
+                      config false;
+                      description
+                        "Whether it is active.";
+                    }
+                    leaf time-stamp {
+                      type string {
+                        length "1..20";
+                      }
+                      config false;
+                      description
+                        "Insegment timestamp.";
+                    }
+                    leaf is-mbb {
+                      type boolean;
+                      config false;
+                      description
+                        "Whether MBB is used.";
+                    }
+                    leaf upstream-peer {
+                      type inet:ipv4-address-no-zone;
+                      config false;
+                      description
+                        "Upstream peer.";
+                    }
+                  }
+                }
+                container outsegments {
+                  config false;
+                  description
+                    "List of MLDP P2MP LSP outsegments.";
+                  list outsegment {
+                    key "index frr-lsp-type";
+                    config false;
+                    description
+                      "Operational state of MLDP P2MP LSP outsegment information.";
+                    leaf index {
+                      type uint32;
+                      config false;
+                      description
+                        "Outsegment index.";
+                    }
+                    leaf frr-lsp-type {
+                      type mldp-frr-lsp-type;
+                      config false;
+                      description
+                        "FRR LSP Type.";
+                    }
+                    leaf out-label {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      config false;
+                      description
+                        "Outgoing label.";
+                    }
+                    leaf out-interface-name {
+                      type pub-type:if-name;
+                      config false;
+                      description
+                        "Outbound interface name.";
+                    }
+                    leaf next-hop {
+                      type inet:ipv4-address-no-zone;
+                      config false;
+                      description
+                        "LSP next-hop IP address.";
+                    }
+                    leaf downstream-peer {
+                      type inet:ipv4-address-no-zone;
+                      config false;
+                      description
+                        "Downstream peer.";
+                    }
+                    leaf lsp-mtu {
+                      type uint32 {
+                        range "0..65535";
+                      }
+                      config false;
+                      description
+                        "LSP MTU.";
+                    }
+                    leaf time-stamp {
+                      type string {
+                        length "1..20";
+                      }
+                      config false;
+                      description
+                        "Outsegment timestamp.";
+                    }
+                    leaf is-mbb {
+                      type boolean;
+                      config false;
+                      description
+                        "Whether MBB is used.";
+                    }
+                    leaf frr-dest-address {
+                      type inet:ipv4-address-no-zone;
+                      config false;
+                      description
+                        "FRR Destination Address.";
+                    }
+                  }
+                }
+              }
+            }
+            container flows {
+              config false;
+              description
+                "List of MLDP P2MP lsp traffic statistics.";
+              list flow {
+                key "root-ip lsp-id";
+                config false;
+                description
+                  "MLDP P2MP lsp traffic statistics.";
+                leaf root-ip {
+                  type inet:ipv4-address-no-zone;
+                  config false;
+                  description
+                    "MLDP P2MP lsp traffic statistics root IP address.";
+                }
+                leaf lsp-id {
+                  type uint32;
+                  config false;
+                  description
+                    "MLDP P2MP LSP ID.";
+                }
+                leaf opaque-value {
+                  type string {
+                    length "1..256";
+                  }
+                  config false;
+                  description
+                    "MLDP P2MP LSP opaque value.";
+                }
+                leaf forward-id {
+                  type uint32;
+                  config false;
+                  description
+                    "MLDP P2MP LSP forward ID.";
+                }
+                leaf lsp-type {
+                  type ldp-lsp-type;
+                  config false;
+                  description
+                    "MLDP P2MP LSP type.";
+                }
+                leaf in-label {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  config false;
+                  description
+                    "Incoming label.";
+                }
+                leaf outsegment-number {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of mLDP P2MP lsp traffic statistics outsegments.";
+                }
+                container outsegments {
+                  config false;
+                  description
+                    "List of mLDP P2MP lsp traffic statistics outsegments.";
+                  list outsegment {
+                    key "index";
+                    config false;
+                    description
+                      "Statistics of MLDP P2MP lsp traffic outsegment information.";
+                    leaf index {
+                      type uint32;
+                      config false;
+                      description
+                        "Outsegment index.";
+                    }
+                    leaf out-label {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      config false;
+                      description
+                        "Outgoing label.";
+                    }
+                    leaf out-interface-name {
+                      type pub-type:if-name;
+                      config false;
+                      description
+                        "Outbound interface name.";
+                    }
+                    leaf next-hop {
+                      type inet:ipv4-address-no-zone;
+                      config false;
+                      description
+                        "LSP next-hop IP address.";
+                    }
+                    leaf flow-period {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      config false;
+                      description
+                        "Flow period.";
+                    }
+                    leaf last-period-byte-rate {
+                      type uint64 {
+                        range "0..18446744073709551615";
+                      }
+                      config false;
+                      description
+                        "Last period byte rate.";
+                    }
+                    leaf last-period-packet-rate {
+                       type uint64 {
+                        range "0..18446744073709551615";
+                      }
+                      config false;
+                      description
+                        "Last period Pkt rate.";
+                    }
+                    leaf display-interval {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      config false;
+                      description
+                        "Display interval.";
+                    }
+                    leaf interval-byte-rate {
+                      type uint64 {
+                        range "0..18446744073709551615";
+                      }
+                      config false;
+                      description
+                        "Interval byte rate.";
+                    }
+                    leaf interval-packet-rate {
+                      type uint64 {
+                        range "0..18446744073709551615";
+                      }
+                      config false;
+                      description
+                        "Interval Pkt rate.";
+                    }
+                    leaf total-byte {
+                      type uint64 {
+                        range "0..18446744073709551615";
+                      }
+                      config false;
+                      description
+                        "MLDP P2MP lsp traffic statistics total byte.";
+                    }
+                    leaf total-packet {
+                      type uint64 {
+                        range "0..18446744073709551615";
+                      }
+                      config false;
+                      description
+                        "MLDP P2MP lsp traffic statistics total packet.";
+                    }
+                  }
+                }
+              }
+            }
+            container lsp-number {
+              config false;
+              description
+                "Statistics of P2MP LSPs.";
+              leaf ingress-lsp {
+                type uint32;
+                config false;
+                description
+                  "Number of P2MP ingress LSPs.";
+              }
+              leaf egress-lsp {
+                type uint32;
+                config false;
+                description
+                  "Number of P2MP egress LSPs.";
+              }
+              leaf transit-lsp {
+                type uint32;
+                config false;
+                description
+                  "Number of P2MP transit LSPs.";
+              }
+              leaf bud-lsp {
+                type uint32;
+                config false;
+                description
+                  "Number of P2MP bud LSPs.";
+              }
+              leaf total-lsp {
+                type uint32;
+                config false;
+                description
+                  "Number of P2MP total LSPs.";
+              }
+            }
+        }
+      }
+      container bfd {
+        description
+          "Configure dynamic BFD for LDP LSP.";
+        container fec-lists {
+          description
+            "List of FECs. Config FEC list for dynamic BFD for LDP LSP.Fec list can only create one.";
+          list fec-list {
+            key "name";
+            max-elements "1";
+            description
+              "Configure FEC list for dynamic BFD for LDP LSP.";
+            leaf name {
+              type string {
+                  length "1..31";
+              }
+              description
+                  "Config FEC list for the FEC list of name dynamic BFD for LDP LSP.";
+            }
+            container fec-nodes {
+              description
+                "List of FEC nodes' infos. Config FEC nodes for the FEC list of dynamic BFD for LDP LSP. Keys in different lists cannot be the same.";
+              list address {
+                key "ip-address";
+                description
+                  "Configure only IP address for FEC node of dynamic BFD for LDP LSP.";
+                leaf ip-address {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "Config IP address for FEC node of dynamic BFD for LDP LSP.";
+                }
+              }
+              list address-interface {
+                key "ip-address out-interface-name";
+                description
+                  "Configure FEC node for FEC list of dynamic BFD for LDP LSP.";
+                leaf ip-address {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "Config IP address for FEC node of dynamic BFD for LDP LSP.";
+                }
+                leaf out-interface-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Config the out interface for FEC node of dynamic BFD for LDP LSP.The name is case-insensitive.";
+                }
+              }
+              list address-nexthop {
+                key "ip-address next-hop";
+                description
+                  "Configure FEC node for FEC list of dynamic BFD for LDP LSP.";
+                leaf ip-address {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "Config IP address for FEC node of dynamic BFD for LDP LSP.";
+                }
+                leaf next-hop {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "Config the next hop for FEC node of dynamic BFD for LDP LSP.";
+                }
+              }
+              list address-interface-nexthop {
+                key "ip-address out-interface-name next-hop";
+                description
+                  "Configure FEC node for FEC list of dynamic BFD for LDP LSP.";
+                leaf ip-address {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "Config IP address for FEC node of dynamic BFD for LDP LSP.";
+                }
+                leaf out-interface-name {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  description
+                    "Config the out interface for FEC node of dynamic BFD for LDP LSP.The name is case-insensitive.";
+                }
+                leaf next-hop {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "Config the next hop for FEC node of dynamic BFD for LDP LSP.";
+                }
+              }
+            }
+          }
+        }
+        container p2p {
+          description
+            "Configure LDP BFD.";
+          leaf enable {
+            when "/bfd:bfd";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable dynamic BFD for LDP LSP.";
+          }
+          leaf min-tx {
+            type uint32 {
+              range "3..20000";
+            }
+            units ms;
+            description
+              "BFD sending interval.";
+          }
+          leaf min-rx {
+            type uint32 {
+              range "3..20000";
+            }
+            units ms;
+            description
+              "BFD receiving interval.";
+          }
+          leaf detect-multiplier {
+            type uint32 {
+              range "3..50";
+            }
+            default "3";
+            description
+              "Maximum number of allowed dropped BFD packets. When BFD is enabled for an LDP LSP, a BFD session can be set up. If the number of lost BFD messages exceeds the maximum number of allowed dropped BFD packets, the LDP LSP is considered faulty.";
+          }
+          leaf trigger {
+            when "/bfd:bfd";
+            type ldp-bfd-trigger-type;
+            must "(current()='fec-list' and ../feclist-name) or (current()!='fec-list' and not(../feclist-name))";
+            default "none";
+            description
+              "Config LDP BFD Trigger Policy.";
+          }
+          leaf feclist-name {
+            when "/bfd:bfd";
+            type leafref {
+              path "../../fec-lists/fec-list/name";
+            }
+			must "../trigger='fec-list'";
+            description
+              "Configure LDP BFD triggered by a FEC list name.";
+          }
+          leaf next-hop-address {
+            when "/bfd:bfd and ../trigger='host'";
+            type inet:ipv4-address-no-zone;
+            description
+              "When trigger policy is host, we could set next hop address, which of the LSP will be create BFD sessions, and others will not.";
+          }
+          leaf out-interface-name {
+            when "/bfd:bfd and ../trigger='host'";
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "When trigger policy is host, we could set out or clear up interface, which of the LSP will be create or clear BFD sessions, and others will not. The name is case-insensitive.";
+          }
+          leaf trigger-opt-tlv {
+            when "/bfd:bfd and ../trigger!='none'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable BFD For LDP LSP Option Tlv.";
+          }
+          leaf opt-tlv-ip-prefix-name {
+            when "/bfd:bfd";
+            type leafref {
+              path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+            }
+            description
+              "IP Prefix of BFD Compatible Mode.";
+          }
+          leaf trigger-tunnel {
+            when "/bfd:bfd";
+            type ldp-bfd-trigger-tnnl-type;
+            must "(current()='ip-prefix' and ../tunnel-ip-prefix-name and not(../tunnel-feclist-name)) or (current()='fec-list' and not(../tunnel-ip-prefix-name) and ../tunnel-feclist-name) or (current()!='ip-prefix' and current()!='fec-list' and not(../tunnel-ip-prefix-name) and not(../tunnel-feclist-name))";
+            default "none";
+            description
+              "Config Trigger Mode of BFD For LDP Tunnel Policy.";
+          }
+          leaf tunnel-ip-prefix-name {
+            when "/bfd:bfd";
+            type leafref {
+              path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+            }
+            must "../trigger-tunnel='ip-prefix'";
+            description
+              "Config IP Prefix of BFD For LDP Tunnel.";
+          }
+          leaf tunnel-feclist-name {
+            when "/bfd:bfd";
+            type leafref {
+              path "../../fec-lists/fec-list/name";
+            }
+			must "../trigger-tunnel='fec-list'";
+            description
+              "Configure BFD For LDP Tunnel triggered by a FEC list name, the sepcified FEC list including the FEC node with outgoing interface must be Invalid0 and next hop information must be 0.0.0.0.";
+          }
+          leaf tunnel-min-tx {
+            type uint32 {
+              range "3..20000";
+            }
+            units ms;
+            description
+              "BFD sending interval For LDP Tunnel.";
+          }
+          leaf tunnel-min-rx {
+            type uint32 {
+              range "3..20000";
+            }
+            units ms;
+            description
+              "BFD receiving interval For LDP Tunnel.";
+          }
+          leaf tunnel-detect-multiplier {
+            type uint32 {
+              range "3..50";
+            }
+            default "3";
+            description
+              "Maximum number of allowed dropped BFD packets. When BFD is enabled for an LDP LSP, a BFD session can be set up. If the number of lost BFD messages exceeds the maximum number of allowed dropped BFD packets, the LDP LSP is considered faulty.";
+          }
+        }
+        container mldp {
+          description
+            "Configure dynamic BFD for MLDP P2MP Tunnel.";
+          leaf enable {
+            when "/bfd:bfd";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable dynamic BFD for MLDP P2MP Tunnel.";
+          }
+          leaf p2mp-tunnel-min-tx {
+            type uint32 {
+              range "3..20000";
+            }
+            units ms;
+            description
+              "BFD sending interval.";
+          }
+          leaf p2mp-tunnel-dm {
+            type uint32 {
+              range "3..50";
+            }
+            default "3";
+            description
+              "Maximum number of allowed dropped BFD packets. When BFD is enabled for an MLDP P2MP Tunnel, a BFD session can be set up. If the number of lost BFD messages exceeds the maximum number of allowed dropped BFD packets, the MLDP P2MP Tunnel is considered faulty.";
+          }
+          leaf p2mp-tunnel-trigger {
+            when "/bfd:bfd";
+            type mldp-bfd-trigger-tunnel-type;
+            default "none";
+            description
+              "Config P2MP Tunnel BFD Trigger Policy.";
+          }
+        }
+        container sessions {
+          config false;
+          description
+            "List of all the sessions of dynamic BFD for LDP LSP.";
+          list session {
+            key "fec-address out-interface-name next-hop";
+            config false;
+            description
+              "Operational data of a session information of dynamic BFD for LDP LSP.";
+            leaf fec-address {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Show the FEC address of the session of dynamic BFD for LDP LSP.";
+            }
+            leaf out-interface-name {
+              type pub-type:if-name;
+              config false;
+              description
+                "Show the out interface of the BFD session which is created by a LDP LSP, and the out interface is the LDP LSP's out interface. The name is case-insensitive.";
+            }
+            leaf next-hop {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Show the next hop of the BFD session which is created by a LDP LSP, and the next hop is the LDP LSP's next hop.";
+            }
+            leaf lsp-index {
+              type uint32;
+              config false;
+              description
+                "Show the LSP index of the BFD session which is created by a LDP LSP, and the LSP index is the LDP LSP's next hop.";
+            }
+            leaf discriminator {
+              type uint32;
+              config false;
+              description
+                "Show the BFD discriminator of the BFD session of dynamic BFD for LDP LSP.";
+            }
+            leaf session-state {
+              type ldp-bfd-session-state;
+              config false;
+              description
+                "Show the BFD session state of dynamic BFD for LDP LSP.";
+            }
+            leaf min-tx-int {
+              type uint32;
+              config false;
+              description
+                "Show BFD sending interval of the BFD session of dynamic BFD for LDP LSP. The value is expressed in milliseconds.";
+            }
+            leaf min-rx-int {
+              type uint32;
+              config false;
+              description
+                "Show BFD receiving interval of the BFD session of dynamic BFD for LDP LSP. The value is expressed in milliseconds.";
+            }
+            leaf detect-multi {
+              type uint32;
+              config false;
+              description
+                "Show BFD detect multiplier of the BFD session of dynamic BFD for LDP LSP.";
+            }
+            leaf session-age {
+              type uint32;
+              config false;
+              description
+                "Show the BFD session age of dynamic BFD for LDP LSP.";
+            }
+          }
+        }
+        container tunnel-sessions {
+          config false;
+          description
+            "List of all the sessions of BFD For LDP Tunnel.";
+          list tunnel-session {
+            key "fec-address";
+            config false;
+            description
+              "Operational data of a session information of BFD For LDP Tunnel.";
+            leaf fec-address {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Show the FEC address of the session of BFD For LDP Tunnel.";
+            }
+            leaf lsp-index {
+              type uint32;
+              config false;
+              description
+                "Show the LSP index of the BFD session which is created by a LDP LSP, and the LSP index is the LDP LSP's next hop.";
+            }
+            leaf discriminator {
+              type uint32;
+              config false;
+              description
+                "Show the BFD discriminator of the BFD session of BFD For LDP Tunnel.";
+            }
+            leaf session-state {
+              type ldp-bfd-session-state;
+              config false;
+              description
+                "Show the BFD session state of BFD For LDP Tunnel.";
+            }
+            leaf min-tx-int {
+              type uint32;
+              config false;
+              description
+                "Show BFD sending interval of the BFD session of BFD For LDP Tunnel. The value is expressed in milliseconds.";
+            }
+            leaf min-rx-int {
+              type uint32;
+              config false;
+              description
+                "Show BFD receiving interval of the BFD session of BFD For LDP Tunnel. The value is expressed in milliseconds.";
+            }
+            leaf detect-multi {
+              type uint32;
+              config false;
+              description
+                "Show BFD detect multiplier of the BFD session of BFD For LDP Tunnel.";
+            }
+            leaf session-age {
+              type uint32;
+              config false;
+              description
+                "Show the BFD session age of BFD For LDP Tunnel.";
+            }
+          }
+        }
+      }
+      container statistic {
+        config false;
+        description
+          "LDP statistics.";
+        container adjacency {
+          config false;
+          description
+            "LDP Adjacency statistics.";
+          leaf local-number {
+            type uint32 {
+              range "0..4294967295";
+            }
+            config false;
+            description
+              "Total number of LDP local adjacencies.";
+          }
+          leaf remote-number {
+            type uint32 {
+              range "0..4294967295";
+            }
+            config false;
+            description
+              "Total number of LDP remote adjacencies.";
+          }
+          leaf total-number {
+            type uint32 {
+              range "0..4294967295";
+            }
+            config false;
+            description
+              "Total number of LDP adjacencies.";
+          }
+        }
+        container peer {
+          config false;
+          description
+            "LDP peer statistics.";
+          leaf local-number {
+            type uint32 {
+              range "0..4294967295";
+            }
+            config false;
+            description
+              "Total number of LDP local peers.";
+          }
+          leaf remote-number {
+            type uint32 {
+              range "0..4294967295";
+            }
+            config false;
+            description
+              "Total number of LDP remote peers.";
+          }
+          leaf local-remote-number {
+            type uint32 {
+              range "0..4294967295";
+            }
+            config false;
+            description
+              "Total number of LDP local&remote peers.";
+          }
+          leaf total-number {
+            type uint32 {
+              range "0..4294967295";
+            }
+            config false;
+            description
+              "Total number of LDP peer.";
+          }
+        }
+        container sessions {
+          config false;
+          description
+            "List of LDP session statistics.";
+          list session {
+            key "type";
+            config false;
+            description
+              "LDP session statistics.";
+            leaf type {
+              type ldp-session-statist-type;
+              config false;
+              description
+                  "Session type.";
+            }
+            leaf total-number {
+              type uint32 {
+                  range "0..4294967295";
+              }
+              config false;
+              description
+                  "Number of local peers.";
+            }
+            leaf local-number {
+              type uint32 {
+                  range "0..4294967295";
+              }
+              config false;
+              description
+                  "Number of local sessions.";
+            }
+            leaf remote-number {
+              type uint32 {
+                  range "0..4294967295";
+              }
+              config false;
+              description
+                  "Number of remote sessions.";
+            }
+            leaf local-remote-number {
+              type uint32 {
+                  range "0..4294967295";
+              }
+              config false;
+              description
+                  "Total number of LDP local&remote sessions.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance/mpls:mpls {
+    when "/mpls:mpls/mpls-ldp:ldp/mpls-ldp:enable='true'";
+    description
+      "MPLS LDP Configuration information augment to network instance.";
+    container ldp {
+      description
+        "Configure LDP and query information.";
+      container instance {
+        ext:operation-exclude create|delete {
+          when "../../../ni:name='_public_'";
+          description 
+            "The 'instance' cannot be created or deleted, when the VPN name is '_public_'.";
+        }
+        when "../../../ni:name='_public_' or (../../../ni:name!='_public_' and ../../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast'])";
+        presence "When enable mpls ldp vpn-instance";
+        description
+          "Configure an LDP VPN instance by using query, modify, create, or delete.";
+        leaf lsr-id {
+          type inet:ipv4-address-no-zone;
+          description
+            "LSR ID of an instance.";
+        }
+        leaf igp-sync-delay-time {
+          type uint32 {
+            range "0..65535";
+          }
+          units s;
+          default "10";
+          description
+            "Specifies the interval at which an interface waits to establish an LSP after an LDP session is set up.";
+        }
+        leaf graceful-delete-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable of graceful delete.";
+        }
+        leaf graceful-delete-time {
+          when "../graceful-delete-enable='true'";
+          type uint32 {
+            range "1..65535";
+          }
+          units s;
+          default "5";
+          description
+            "Delay time for removing a upstream label after the LDP session between the NE and the upstream node goes down.";
+        }
+        leaf no-mapping-enable {
+          when "../../../../ni:name='_public_'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the sending of mappings to a remote neighbor.";
+        }
+        leaf auto-dod-request-enable {
+          when "../../../../ni:name='_public_'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Auto Dod Request.";
+        }
+        leaf split-horizon {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the sending of IPv4 label mapping messages to downstream LDP peers.";
+        }
+        leaf send-all-loopback {
+          when "../../../../ni:name='_public_'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable to advertise routes to all local loopback addresses to LDP peers.";
+        }
+        leaf longest-match {
+          when "../../../../ni:name='_public_'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Longest Match.";
+        }
+        leaf loop-detect {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable loop detect on an LSR.";
+        }
+        leaf label-ctrl-mode {
+          type ldp-label-ctrl-mode-type;
+          default "ordered";
+          description
+            "Specifies label distribution control mode to be Independent or Ordered.";
+        }
+        leaf auto-remote-keep-alive-hold {
+          when "../../../../ni:name='_public_'";
+          type uint16 {
+            range "30..65535";
+          }
+          units s;
+          default "45";
+          description
+            "Specifies the value of the keepalive packet holding timer for auto remote peer.";
+        }
+        leaf traffic-statistic-mode {
+          when "../../../../ni:name='_public_'";
+          type ldp-traffic-statistic-type;
+          must "(current()='host-ip-prefix' and ../traffic-statistic-ip-prefix-name) or (current()!='host-ip-prefix' and not(../traffic-statistic-ip-prefix-name))";
+          default "none";
+          description
+            "LDP traffic statistic mode.";
+        }
+        leaf traffic-statistic-ip-prefix-name {
+          when "../../../../ni:name='_public_'";
+          type leafref {
+            path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+          }
+          must "../traffic-statistic-mode='host-ip-prefix'";
+          description
+          "Specifies or clear the IP prefix triggering mode, LDP is triggered to establish or to clear LSPs by IP address prefixes.";
+        }
+        container authentication {
+          presence "Specifies authentication is enabled";
+          description
+            "Enable/disable global LDP authentication.";
+          leaf auth-mode {
+            ext:operation-exclude update;
+            type ldp-auth-type-all;
+            mandatory true;
+            description
+              "Global LDP authentication type. If you want to clear the authentication, you can delete the presence container 'authentication'.";
+          }
+          leaf md5-type {
+            when "../auth-mode = 'md5'";
+            type ldp-auth-type-all-group;
+            mandatory true;
+            description
+              "Global LDP md5 authentication type.";
+          }
+          leaf md5-password {
+            when "../md5-type='md5-ciper' or ../md5-type='md5-plain'";
+            type pub-type:password-extend {
+              length "1..432";
+            }
+            mandatory true;
+            description
+              "Global LDP MD5 Password. The password is a string ranging from 1 to 255 characters for a simple password and 20 to 432 characters for a ciphertext password.
+               If you want to clear the authentication, you can delete the presence container 'authentication'.";
+          }
+          leaf keychain-name {
+            when "../auth-mode = 'keychain'";
+            type string {
+              length "1..47";
+            }
+            ext:case-sensitivity upper2lower;
+            mandatory true;
+            description
+              "Global LDP keychain name. The name is case-insensitive. If you want to clear the authentication, you can delete the presence container 'authentication'.";
+          }
+        }
+        container interfaces {
+          description
+            "List of LDP interfaces.";
+          list interface {
+            key "name";
+            description
+              "Configure LDP interfaces. Query, modify, create, or delete LDP interfaces.";
+            leaf name {
+              type leafref {
+                path "/ni:network-instance/ni:instances/ni:instance/mpls:mpls/mpls:common/mpls:mpls-interfaces/mpls:mpls-interface/mpls:name";
+              }
+              description
+                "Interface name. The name is case-insensitive.";
+            }
+            leaf hello-send-time {
+              type uint16 {
+                range "1..65535";
+              }
+              units s;
+              description
+                "Specifies the value of the Hello packet sending timer.";
+            }
+            leaf hello-hold-time {
+              type uint16 {
+                range "3..65535";
+              }
+              units s;
+              default "15";
+              description
+                "Specifies the interval value of the Hello hold timer.";
+            }
+            leaf keep-alive-send-time {
+              type uint16 {
+                range "1..65535";
+              }
+              units s;
+              description
+                "Specifies the value of the keepalive packet sending timer.";
+            }
+            leaf keep-alive-hold-time {
+              type uint16 {
+                range "30..65535";
+              }
+              units s;
+              default "45";
+              description
+                "Specifies the value of the keepalive packet holding timer.";
+            }
+            leaf igp-sync-delay-time {
+              type uint32 {
+                range "0..65535";
+              }
+              units s;
+              description
+                "Specifies an interval at which an interface waits to establish an LSP after an LDP session is set up.";
+            }
+            leaf mldp-p2mp-disable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable mldp p2mp for interface.";
+            }
+            leaf transport-address {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Configures an interface address to be used as the transport address.";
+            }
+            leaf local-lsr-id-address {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Configures an interface address to be used as local lsr-id address.";
+            }
+            leaf label-advertise-mode {
+              type ldp-label-distribute-mode-cfg;
+              default "DU";
+              description
+                "Specifies the label distribute mode.";
+            }
+            container status {
+              config false;
+              description
+                "Operational data of LDP interface status data set.";
+              leaf if-state {
+                type ldp-state;
+                config false;
+                description
+                  "Interface status.";
+              }
+              leaf label-distribution-mode {
+                type ldp-label-distribute-mode;
+                config false;
+                description
+                  "Specifies a label distribution mode used by an interface.";
+              }
+              leaf negotiated-hello-hold-time {
+                type uint16 {
+                  range "0..65535";
+                }
+                units s;
+                config false;
+                description
+                  "Specifies a negotiated value of the hello hold timer used by an interface.";
+              }
+              leaf effective-mtu {
+                type uint32 {
+                  range "0..65535";
+                }
+                config false;
+                description
+                  "Specifies a valid MTU configured on an interface.";
+              }
+              leaf auto-trigger-type {
+                type ldp-if-auto-config-type;
+                config false;
+                description
+                  "Specifies auto config flag of LDP interface by IGP. For example, ISIS, OSPF, ISIS&OSPF trigger config.";
+              }
+            }
+          }
+        }
+        container remote-peers {
+          when "../../../../ni:name='_public_'";
+          description
+            "List of remote LDP neighbor.";
+          list remote-peer {
+            key "name";
+            description
+              "Configure remote LDP peers. Query, modify, create, or delete remote LDP peers.";
+            leaf name {
+              type string {
+                length "1..32";
+              }
+              description
+                "Specifies the name of a remote neighbor.";
+            }
+            leaf remote-ip {
+              type inet:ipv4-address-no-zone;
+              description
+                "Specifies the IPv4 address of a remote neighbor.";
+            }
+            leaf description {
+              type string {
+                length "1..242";
+              }
+              description
+                "Specifies the description of a remote neighbor.";
+            }
+            leaf no-mapping {
+              when "../remote-ip";
+              type ldp-peer-no-mapping-type;
+              default "default";
+              description
+                "Prohibits the sending of mappings to a remote neighbor.";
+            }
+            leaf auto-dod-request-mode {
+              type auto-dod-request-type;
+              default "default";
+              description
+                "Auto Dod Request Mode.";
+            }
+            leaf hello-send-time {
+              type uint16 {
+                range "1..65535";
+              }
+              units s;
+              description
+                "Specifies the value of the Hello packet sending timer.";
+            }
+            leaf hello-hold-time {
+              type uint16 {
+                range "3..65535";
+              }
+              units s;
+              default "45";
+              description
+                "Specifies the value of the Hello packet holding timer.";
+            }
+            leaf keep-alive-send-time {
+              type uint16 {
+                range "1..65535";
+              }
+              units s;
+              description
+                "Specifies the value of the Keepalive packet sending timer.";
+            }
+            leaf keep-alive-hold-time {
+              type uint16 {
+                range "30..65535";
+              }
+              units s;
+              default "45";
+              description
+                "Specifies the value of the Keepalive holding timer.";
+            }
+            leaf igp-sync-delay-time {
+              type uint32 {
+                range "0..65535";
+              }
+              units s;
+              description
+                "Specifies an interval at which an interface waits to establish an LSP after an LDP session is set up.";
+            }
+            leaf local-lsr-id-address {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Configures an interface address to be used as local lsr-id address. The name is case-insensitive.";
+            }
+            leaf label-advertise-mode {
+              type ldp-label-distribute-mode-cfg;
+              default "DU";
+              description
+                "Specifies the label distribution mode used by a remote neighbor.";
+            }
+            container status {
+              config false;
+              description
+                "Operational state of the remote neighbor.";
+              leaf remote-neighbor-state {
+                type ldp-state;
+                config false;
+                description
+                  "Specifies the value status of a remote neighbor.";
+              }
+              leaf negotiated-hello-hold-time {
+                type uint16 {
+                  range "3..65535";
+                }
+                units s;
+                config false;
+                description
+                  "Specifies the length of a negotiated Hello holding time on an interface.";
+              }
+              container auto-create-type {
+                config false;
+                description
+                  "Operational state of the type of automatically create remote LDP peers.";
+                leaf l2vpn {
+                  type remote-peer-auto-config-l2;
+                  config false;
+                  description
+                    "Remote peer that is automatically created using an L2VPN.";
+                }
+                leaf session-protection {
+                  type remote-peer-auto-config-session-protection;
+                  config false;
+                  description
+                    "Remote peer that is automatically created using session protection.";
+                }
+                leaf rlfa {
+                  type remote-peer-auto-config-rlfa;
+                  config false;
+                  description
+                    "Remote peer that is automatically created using RLFA.";
+                }
+                leaf auto-accept-function {
+                  type remote-peer-auto-config-accept-function;
+                  config false;
+                  description
+                    "Remote peer that is automatically created using the automatic accept function.";
+                }
+              }
+            }
+          }
+        }
+        container auth-peers {
+          description
+            "List of LDP peers.";
+          list auth-peer {
+            must "not(authen-enable='true' and authen-exclude='true') and not(authen-enable='false' and authen-exclude='false' and out-bound='false')";
+            key "id";
+            description
+              "Configure LDP peer policy status information on an LDP interface.";
+            leaf id {
+              type inet:ipv4-address-no-zone;
+              description
+                "Specifies an LDP peer ID.";
+            }
+            leaf authen-exclude {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable LDP authentication exclude flag.";
+            }
+            leaf authen-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable LDP authentication mode.";
+            }
+            leaf authen-mode {
+              ext:operation-exclude update;
+              when "../authen-enable='true'";
+              type ldp-peer-auth-mode;
+              mandatory true;
+              description
+                "LDP peer authentication mode. You can configure the authentication mode to 'md5' for cipher or plain MD5 password, meanwhile you can configure the authentication mode to 'keychain' for keychain name.";
+            }
+            leaf md5-type {
+              when "../authen-mode='md5'";
+              type ldp-auth-type;
+              mandatory true;
+              description
+                "LDP peer MD5 authentication type.";
+            }
+            leaf md5-password {
+              when "../md5-type='md5-ciper' or ../md5-type='md5-plain'";
+              type pub-type:password-extend;
+              mandatory true;
+              description
+                "LDP peer MD5 Password. If cipher MD5 authentication type is used, the password is a string ranging from 1 to 255 characters for a simple password and 20 to 432 characters for a ciphertext password. If plain MD5 authentication type is used, the password is a string ranging from 1 to 255 characters.";
+            }
+            leaf keychain-name {
+              when "../authen-mode='keychain'";
+              type string {
+                length "1..47";
+              }
+              ext:case-sensitivity upper2lower;
+              mandatory true;
+              description
+                "LDP peer keychain name. The name is case-insensitive.";
+            }
+            leaf out-bound {
+              when "../../../split-horizon='false'";
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the sending of IPv4 label mapping messages to downstream LDP peers.";
+            }
+          }
+        }
+        container auth-peer-groups {
+          description
+            "List of LDP authentication groups.";
+          list auth-peer-group {
+            key "preference";
+            max-elements "1";
+            description
+              "Apply query, modify, create, or delete the authentication function to a single local LDP peer and a label mapping control policy.";
+            leaf preference {
+              type uint32 {
+                range "1";
+              }
+              description
+                "Authentication group priority currently only support 1.";
+            }
+            leaf name {
+              type leafref {
+                path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+              }
+              mandatory true;
+              description
+                "Authentication group name.";
+            }
+            leaf authen-mode {
+              ext:operation-exclude update;
+              type ldp-peer-auth-mode;
+              mandatory true;
+              description
+                "LDP peer group authentication mode.";
+            }
+            leaf md5-type {
+              when "../authen-mode='md5'";
+              type ldp-auth-type;
+              mandatory true;
+              description
+                "LDP peer group MD5 authentication type.";
+            }
+            leaf md5-password {
+              when "../md5-type='md5-ciper' or ../md5-type='md5-plain'";
+              type pub-type:password-extend;
+              mandatory true;
+              description
+                "LDP peer group MD5 Password. If cipher MD5 authentication type is used, the password is a string ranging from 1 to 255 characters for a simple password and 20 to 432 characters for a ciphertext password. If plain MD5 authentication type is used, the password is a string ranging from 1 to 255 characters.";
+            }
+            leaf keychain-name {
+              when "../authen-mode='keychain'";
+              type string {
+                length "1..47";
+              }
+              ext:case-sensitivity upper2lower;
+              mandatory true;
+              description
+                "Authentication group keychain name. The name is case-insensitive.";
+            }
+          }
+        }
+        container gtsms {
+          when "../../../../ni:name='_public_'";
+          description
+            "List of GTSM security attributes.";
+          list gtsm {
+            key "peer-transport-address";
+            description
+              "Configure GTSM attributes that reach by query, modify, create, or delete.";
+            leaf peer-transport-address {
+              type inet:ipv4-address-no-zone;
+              description
+                "Specifies a GTSM transport address.";
+            }
+            leaf hops {
+              type uint16 {
+                range "1..255";
+              }
+              mandatory true;
+              description
+                "Specifies the maximum number of GTSM hops.";
+            }
+          }
+        }
+        container session-protection {
+          when "../../../../ni:name='_public_'";
+          presence "When enable session protect";
+          description
+            "Enable/disable LDP session protection.";
+          leaf mode {
+            type session-protection-mode;
+            default "all";
+            description
+              "The flag of enabling session protect.";
+          }
+          leaf ip-prefix-name {
+            when "../mode='peer-group'";
+            type leafref {
+              path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+            }
+            mandatory true;
+            description
+              "Specifies an ip-prefix name to establish an IP prefix or to clear an IP prefix.";
+          }
+          leaf duration-type {
+            type protection-duration-type;
+            default "fixed-duration";
+            description
+              "Session protection duration type.";
+          }
+          leaf duration {
+            when "../duration-type='fixed-duration'";
+            type uint32 {
+              range "30..2147483";
+            }
+            units s;
+            default "86400";
+            description
+              "Duration.";
+          }
+        }
+        container accept-target-hello {
+          when "../../../../ni:name='_public_'";
+          description
+            "Configure the function of automatically receiving remote Hello messages and automatically creating remote peers based on the received Hello messages.";
+            leaf mode {
+            type accept-target-hello-type;
+            must "(current()='peer-group' and ../ip-prefix-name) or (current()!='peer-group' and not(../ip-prefix-name))";
+            default "none";
+            description
+              "Mode of receiving remote Hello messages.";
+          }
+          leaf ip-prefix-name {
+            type leafref {
+              path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+            }
+            must "../mode='peer-group'";
+            description
+              "IP prefix name to establish an IP prefix or to clear an IP prefix.";
+          }
+        }
+        container topology-instances {
+          description
+            "List of LDP Topo instances.";
+          list topology-instance {
+            key "topology-id ip-family";
+            max-elements "1";
+            description
+              "Configure and query LSP policies mapped to the topology instances, which realizes by query and modify LDP topology instance information.";
+            leaf topology-id {
+              type uint16 {
+                range "0";
+              }
+              description
+                "Currently Topo Instance ID only support 0.";
+            }
+            leaf ip-family {
+              type uint32 {
+                range "0";
+              }
+              description
+                "Currently Address family of an LDP topology instance only support 0.";
+            }
+            leaf topology-name {
+              type string {
+                length "1..31";
+              }
+              default "TopoID";
+              config false;
+              description
+                "Name of an LDP Tope instance. The name is case-insensitive.";
+            }
+            leaf lsp-transit-policy-name {
+              when "../../../../../../ni:name='_public_'";
+              type leafref {
+                path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+              }
+              description
+                "Specifies the IP prefix policy name. After this policy is configured, an IP prefix list can be used to filter received LDP routes. Only the routes that match the specified prefix list can be used to establish LDP LSPs on which the local node is the transit node.";
+            }
+            leaf auto-frr-lsp-trigger-mode {
+              type auto-frr-ldp-trigger-type;
+              default "host";
+              description
+                "Specifies a triggering mode for establishing LSPs by LDP in FRR.";
+            }
+            leaf auto-frr-lsp-ip-prefix-name {
+              when "../auto-frr-lsp-trigger-mode='ip-prefix'";
+              type leafref {
+                path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+              }
+              mandatory true;
+              description
+                "Name of an IP prefix list used to establish Auto FRR LSPs or to clear Auto FRR LSPs.";
+            }
+            container outbound {
+              when "../../../../../../ni:name='_public_'";
+              description "Configure Outbound Policy.";
+              container fec-peer-all {
+                description
+                  "Configure global outbound FEC policy. LSPs can be established only for FECs allowed by the policy.";
+                leaf fec-policy-mode {
+                  type fec-ip-prefix-type;
+                  description
+                    "Config outbound policy of FEC by prefix mode when needed to assign the except FEC LSP.";
+                }
+                leaf fec-ip-prefix-name {
+                  when "../fec-policy-mode='ip-prefix'";
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                  }
+                  mandatory true;
+                  description
+                    "Name of an IP prefix list used to establish an outbound FEC policy or to clear an outbound FEC policy.";
+                }
+              }
+              container bgp-peer-all {
+                description
+                  "Configure global outbound BGP policy. LSPs can be established only for BGP labeled routes allowed by the policy.";
+                leaf bgp-policy-mode {
+                  type bgp-ip-prefix-type;
+                  description
+                    "Config outbound policy of BGP by prefix mode when needed to assign the except FEC LSP.";
+                }
+                leaf bgp-ip-prefix-name {
+                  when "../bgp-policy-mode='ip-prefix'";
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                  }
+                  mandatory true;
+                  description
+                    "Config or clear outbound policy of BGP by prefix name when needed to assign or clear the except FEC LSP.";
+                }
+              }
+              container fec-peer-groups {
+                when "not (../fec-peer-all/fec-policy-mode)";
+                description
+                  "List of FEC peer groups. Configure a FEC outbound policy if a device does not need to establish a specified FEC LSP based on a specified peer group.";
+                list fec-peer-group {
+                  key "peer-group-name";
+                  description
+                    "Configure or clear a FEC outbound policy if a device does not need to establish or clear a specified FEC LSP based on a specified peer group.";
+                  leaf peer-group-name {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    description
+                      "Name of a peer group used in an outbound policy.";
+                  }
+                  leaf fec-policy-mode {
+                    type fec-ip-prefix-group-type;
+                    mandatory true;
+                    description
+                      "FEC Prefix Mode Global outbound FEC policy.";
+                  }
+                  leaf fec-ip-prefix-name {
+                    when "../fec-policy-mode='ip-prefix'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    mandatory true;
+                    description
+                      "Name of a FEC prefix used in a FEC outbound policy if a device does not need to establish or clear a specified FEC LSP based on a specified peer group.";
+                  }
+                }
+              }
+              container bgp-peer-groups {
+                when "not (../bgp-peer-all/bgp-policy-mode)";
+                description
+                  "List of BGP peer groups. Configure or clear a BGP outbound policy for a peer group if a device does not need to establish or clear a specified FEC LSP based on a specified peer group.";
+                list bgp-peer-group {
+                  key "peer-group-name";
+                  description
+                    "Configure or clear a BGP outbound policy for a peer group if a device does not need to establish or clear a specified FEC LSP based on a specified peer group.";
+                  leaf peer-group-name {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    description
+                      "Name of a peer group used in an outbound policy.";
+                  }
+                  leaf bgp-policy-mode {
+                    type bgp-ip-prefix-group-type;
+                    mandatory true;
+                    description
+                      "Mode of a BGP prefix used in a BGP outbound policy.";
+                  }
+                  leaf bgp-ip-prefix-name {
+                    when "../bgp-policy-mode='ip-prefix'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    mandatory true;
+                    description
+                      "Name of a BGP prefix used in a BGP outbound policy if a device does not need to establish or clear a specified FEC LSP based on a specified peer group.";
+                  }
+                }
+              }
+              container fec-peers {
+                when "not (../fec-peer-all/fec-policy-mode)";
+                description
+                  "List of FEC peers. Outbound FEC policy of a specified LDP peer. LSPs can be established only for FECs allowed by the policy.";
+                list fec-peer {
+                  key "peer-id";
+                  description
+                    "Configure or clear outbound policy when needed to assign or clear the except LSP.";
+                  leaf peer-id {
+                    type inet:ipv4-address-no-zone;
+                    description
+                      "Specifies an LDP peer ID.";
+                  }
+                  leaf fec-policy-mode {
+                    type fec-ip-prefix-group-type;
+                    mandatory true;
+                    description
+                      "FEC Prefix Mode Global outbound FEC policy.";
+                  }
+                  leaf fec-ip-prefix-name {
+                    when "../fec-policy-mode='ip-prefix'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    mandatory true;
+                    description
+                      "Config outbound policy of FEC by prefix name when needed to assign or clear the except FEC LSP.";
+                  }
+                }
+              }
+              container bgp-peers {
+                when "not (../bgp-peer-all/bgp-policy-mode)";
+                description
+                  "List of BGP peers. Config outbound policy when needed to assign the except LSP.";
+                list bgp-peer {
+                  key "peer-id";
+                  description
+                    "Configure outbound policy when needed to assign the except LSP.";
+                  leaf peer-id {
+                    type inet:ipv4-address-no-zone;
+                    description
+                      "Specifies an LDP peer ID.";
+                  }
+                  leaf bgp-policy-mode {
+                    type bgp-ip-prefix-group-type;
+                    mandatory true;
+                    description
+                      "Config outbound policy of FEC by prefix mode when needed to assign the except FEC LSP.";
+                  }
+                  leaf bgp-ip-prefix-name {
+                    when "../bgp-policy-mode='ip-prefix'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    mandatory true;
+                    description
+                      "Config or clear outbound policy of FEC by prefix name when needed to assign or clear the except FEC LSP.";
+                  }
+                }
+              }
+            }
+            container inbound {
+              when "../../../../../../ni:name='_public_'";
+              description "Configure Inbound Policy.";
+              container fec-peer-all {
+                description
+                  "Configure inbound policy when needed to assign the except LSP.";
+                leaf fec-policy-mode {
+                  type fec-ip-prefix-type;
+                  description
+                    "Configure inbound policy of FEC by prefix mode when needed to assign the except FEC LSP.";
+                }
+                leaf fec-ip-prefix-name {
+                  when "../fec-policy-mode='ip-prefix'";
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                  }
+                  mandatory true;
+                  description
+                    "Config or clear inbound policy of FEC by prefix name when needed to assign or clear the except FEC LSP.";
+                }
+              }
+              container fec-peer-groups {
+                when "not (../fec-peer-all/fec-policy-mode)";
+                description
+                  "List of FEC peer groups. Configure a FEC inbound policy if a device does not need to establish a specified FEC LSP based on a specified peer group.";
+                list fec-peer-group {
+                  key "peer-group-name";
+                  description
+                    "Configure a FEC inbound policy if a device does not need to establish a specified FEC LSP based on a specified peer group.";
+                  leaf peer-group-name {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    description
+                      "Name of a peer group used in an inbound policy.";
+                  }
+                  leaf fec-policy-mode {
+                    type fec-ip-prefix-group-type;
+                    mandatory true;
+                    description
+                      "Mode of a FEC prefix used in a FEC inbound policy if a device does not need to establish a specified FEC LSP based on a specified peer group.";
+                  }
+                  leaf fec-ip-prefix-name {
+                    when "../fec-policy-mode='ip-prefix'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    mandatory true;
+                    description
+                      "Name of a FEC prefix used in a FEC inbound policy if a device does not need to establish or clear a specified FEC LSP based on a specified peer group.";
+                  }
+                }
+              }
+              container fec-peers {
+                when "not (../fec-peer-all/fec-policy-mode)";
+                description
+                  "List of FEC peers. Config inbound policy when needed to assign the except LSP.";
+                list fec-peer {
+                  key "peer-id";
+                  description
+                    "Configure inbound policy when needed to assign the except LSP.";
+                  leaf peer-id {
+                    type inet:ipv4-address-no-zone;
+                    description
+                      "Specifies an LDP peer ID.";
+                  }
+                  leaf fec-policy-mode {
+                    type fec-ip-prefix-group-type;
+                    mandatory true;
+                    description
+                      "Config inbound policy of FEC by prefix mode when needed to assign the except FEC LSP.";
+                  }
+                  leaf fec-ip-prefix-name {
+                    when "../fec-policy-mode='ip-prefix'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    mandatory true;
+                    description
+                      "Config inbound policy of FEC by prefix name when needed to assign the except FEC LSP.";
+                  }
+                }
+              }
+            }
+          }
+        }
+        container adjacencys {
+          config false;
+          description
+            "List of LDP adjacency information.";
+          list adjacency {
+            key "peer-id type src-address";
+            config false;
+            description
+              "Operational data of LDP adjacency information.";
+            leaf peer-id {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "LDP peer ID.";
+            }
+            leaf type {
+              type string {
+                length "1..17";
+              }
+              config false;
+              description
+                "Adjacency type.";
+            }
+            leaf src-address {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "UDP source address of received Hello packets.";
+            }
+            leaf create-date {
+              type string {
+                length "1..10";
+              }
+              config false;
+              description
+                "Date when an LDP adjacency was created.";
+            }
+            leaf create-time {
+              type string {
+                length "1..8";
+              }
+              config false;
+              description
+                "Time when an LDP adjacency was created.";
+            }
+            leaf age-time {
+              type string {
+                length "1..16";
+              }
+              config false;
+              description
+                "Time when an LDP adjacency ages.";
+            }
+            leaf discovery-source-name {
+              type pub-type:if-name;
+              config false;
+              description
+                "Discovery-Source of an LDP adjacency.";
+            }
+            leaf udp-socket-id {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "UDP Socket ID.";
+            }
+            leaf cfg-hello-hold-time {
+              type uint16 {
+                range "0..65535";
+              }
+              units s;
+              config false;
+              description
+                "Configured Hello Hold timer.";
+            }
+            leaf sequence-no {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Sequence number of a Hello message sent by a peer.";
+            }
+            leaf received-hello {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Numbers of messages sent to an adjacency.";
+            }
+            leaf crc-error-rate {
+              type string {
+                length "1..9";
+              }
+              config false;
+              description
+                "Bit error rate received by an adjacency.";
+            }
+          }
+        }
+        container peer-infos {
+          config false;
+          description
+            "List of LDP neighbours.";
+          list peer-info {
+            key "lsr-id label-advertise-mode";
+            config false;
+            description
+              "Operational data of LDP peer information.";
+            leaf lsr-id {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Specifies peer LSR ID.";
+            }
+            leaf label-advertise-mode {
+              type ldp-label-distribute-mode;
+              config false;
+              description
+                "Specifies peer label advertising mode.";
+            }
+            leaf max-pdu-len {
+              type uint16;
+              config false;
+              description
+                "Specifies peer max PDU length.";
+            }
+            leaf loop-detect {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "Specifies peer supported loop detect capability.";
+            }
+            leaf support-ft-flag {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "Specifies peer supported FT capability.";
+            }
+            leaf transport-address {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Specifies peer transport address.";
+            }
+            leaf path-vector-limit {
+              type uint16;
+              config false;
+              description
+                "Specifies peer PV limit.";
+            }
+            leaf keep-alive-send-time {
+              type uint16 {
+                range "0..65535";
+              }
+              units s;
+              config false;
+              description
+                "Specifies peer keep-alive send time.";
+            }
+            leaf recovery-timer {
+              type uint16 {
+                range "1..65535";
+              }
+              units s;
+              config false;
+              description
+                "Specifies peer recovery timer.";
+            }
+            leaf reconnect-timer {
+              type uint16 {
+                range "1..65535";
+              }
+              units s;
+              config false;
+              description
+                "Specifies peer reconnect timer.";
+            }
+            leaf announcement-capability {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "Specifies peer supported announcement capability.";
+            }
+            leaf mldp-p2mp-capability {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "Ldp peer p2mp capability.";
+            }
+            leaf mldp-mbb-capability {
+              type boolean;
+              default "false";
+              config false;
+              description
+              "Ldp peer MBB capability.";
+            }
+            leaf-list discovery-source {
+              type string {
+                length "1..64";
+              }
+              config false;
+              description
+                "Operational data of peer discovery source. The name is case-insensitive.";
+            }
+          }
+        }
+        container sessions {
+          config false;
+          description
+            "List of LDP sessions.";
+          list session {
+            key "peer-lsr-id";
+            config false;
+            description
+              "Operational state of LDP session.";
+            leaf peer-lsr-id {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Specifies a peer LSR ID.";
+            }
+            leaf local-lsr-id {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Specifies a local LSR ID.";
+            }
+            leaf tcp-source-address {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "TCP connection source address used by a session.";
+            }
+            leaf tcp-dest-address {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Destination address of the TCP connection used by a session.";
+            }
+            leaf state {
+              type ldp-session-state;
+              config false;
+              description
+                "Session state.";
+            }
+            leaf role {
+              type ldp-session-role;
+              config false;
+              description
+                "Session role.";
+            }
+            leaf type {
+              type ldp-session-type;
+              config false;
+              description
+                "Session type.";
+            }
+            leaf negotiate-keep-alive-hold-time {
+              type uint32 {
+                range "1..65535";
+              }
+              units s;
+              config false;
+              description
+                "Specifies the negotiated value of the Keepalive hold timer.";
+            }
+            leaf keep-alive-sent {
+              type uint32 {
+                range "0..4294967295";
+              }
+              units s;
+              config false;
+              description
+                "Specifies the number of sent Keepalive messages.";
+            }
+            leaf keep-alive-received {
+              type uint32 {
+                range "0..4294967295";
+              }
+              units s;
+              config false;
+              description
+                "Specifies the number of received Keepalive messages.";
+            }
+            leaf distribute-mode {
+              type ldp-label-distribute-mode;
+              config false;
+              description
+                "Specifies the label distribution mode used by a session.";
+            }
+            leaf peer-label-state {
+              type ldp-peer-label-state;
+              config false;
+              description
+                "Indicates that a neighbor label for a session is available.";
+            }
+            leaf ft-flag {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "The current session supports the FT capability.";
+            }
+            leaf md5-flag {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "Indicates whether the current session supports the MD5 algorithm.";
+            }
+            leaf reconnect-time {
+              type uint32 {
+                range "1..65535";
+              }
+              units s;
+              config false;
+              description
+                "Value of the reconnect timer.";
+            }
+            leaf recovery-time {
+              type uint32 {
+                range "1..65535";
+              }
+              units s;
+              config false;
+              description
+                "Value of the recovery timer.";
+            }
+            leaf age {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Time length for establishing an session. The value is in the format of 0000:00:00.";
+            }
+            leaf announcement-capability {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "The enabling state of dynamic announcement for session.";
+            }
+            leaf mldp-p2mp-capability {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "The enabling state of p2mp for session.";
+            }
+            leaf mldp-mbb-capability {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "The enabling state of mbb capability for session.";
+            }
+            leaf msg-count-in-last-period {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Number of suppression in the suppression period of protocol packets.";
+            }
+            leaf over-run-period-count {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Number of Protocol message suppress period.";
+            }
+          }
+        }
+        container lsps {
+          config false;
+          description
+            "List of LDP LSPs.";
+          list lsp {
+            key "address prefix-length index type out-interface-name next-hop";
+            config false;
+            description
+              "Operational data of an LDP LSP.";
+            leaf address {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Destination address of an LSP.";
+            }
+            leaf prefix-length {
+              type uint32 {
+                range "1..32";
+              }
+              config false;
+              description
+                "Prefix length of the destination address of an LSP.";
+            }
+            leaf index {
+              type uint32;
+              config false;
+              description
+                "Specifies an LSP index.";
+            }
+            leaf type {
+              type ldp-lsp-type;
+              config false;
+              description
+                "LSP type.";
+            }
+            leaf out-interface-name {
+              type pub-type:if-name;
+              config false;
+              description
+                "Out-going interface. The name is case-insensitive.";
+            }
+            leaf next-hop {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Next hop.";
+            }
+            leaf is-frr-lsp {
+              type boolean;
+              config false;
+              description
+                "Whether it is an FRR LSP.";
+            }
+            leaf is-rlfa-lsp {
+              type boolean;
+              config false;
+              description
+                "Whether it is an RLFA FRR LSP.";
+            }
+            leaf is-tilfa-lsp {
+              type boolean;
+              config false;
+              description
+                "Whether it is a TI-LFA FRR LSP.";
+            }
+            leaf mtu {
+              type uint32 {
+                range "0..65535";
+              }
+              config false;
+              description
+                "Specifies an LSP MTU.";
+            }
+            leaf time-stamp {
+              type uint32 {
+                range "0..4294967295";
+              }
+              units s;
+              config false;
+              description
+                "Time length for establishing an LSP.";
+            }
+            leaf in-label {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "In-coming label.";
+            }
+            leaf out-label {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Out-going label.";
+            }
+            leaf entropy-label-capability {
+              type string {
+                length "1..64";
+              }
+              config false;
+              description
+                "Delivers LDP entropy label capability on the ingress.";
+            }
+          }
+        }
+        container fecs {
+          config false;
+          description
+            "List of LDP FECs.";
+          list fec {
+            key "address prefix-length out-interface-name next-hop route-type";
+            config false;
+            description
+              "Operational data of LDP FECs.";
+            leaf address {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Specifies a destination address.";
+            }
+            leaf prefix-length {
+              type uint32 {
+                range "1..32";
+              }
+              config false;
+              description
+                "Prefix length.";
+            }
+            leaf out-interface-name {
+              type pub-type:if-name;
+              config false;
+              description
+                "Out-going interface. The name is case-insensitive.";
+            }
+            leaf next-hop {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Next hop.";
+            }
+            leaf route-type {
+              type ldp-route-type;
+              config false;
+              description
+                "FEC route type.";
+            }
+            leaf state {
+              type ldp-fec-state;
+              config false;
+              description
+                "Specifies an FEC state.";
+            }
+            leaf lsp {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Specifies the value of the LSP numer.";
+            }
+          }
+        }
+        container flows {
+          when "../../../../ni:name='_public_'";
+          config false;
+          description
+            "List of the infos of LDP LSP traffic.";
+          list flow {
+            key "ipv4-dest-address ipv4-masklen out-interface-name next-hop lsr-type";
+            description
+              "Operational data of the traffic statistical table of SRBE.";
+            leaf ipv4-dest-address {
+              type inet:ipv4-address-no-zone;
+              description
+                "Prefix.";
+            }
+            leaf ipv4-masklen {
+              type uint32 {
+                range "0..32";
+              }
+              description
+                "Length of mask.";
+            }
+            leaf out-interface-name {
+              type string {
+                length "1..49";
+              }
+              description
+                "The name of interface.";
+            }
+            leaf next-hop {
+              type inet:ipv4-address-no-zone;
+              description
+                "The ip address of next hop.";
+            }
+            leaf lsr-type {
+              type ldp-lsp-type;
+              description
+                "Tunnel role.";
+            }
+            leaf in-label {
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "Inlabel.";
+            }
+            leaf out-label {
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "OutLabel.";
+            }
+            leaf flow-period {
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "Out period of the last period.";
+            }
+            leaf last-period-byte-rate {
+              type uint64 {
+                range "0..18446744073709551615";
+              }
+              description
+                "Out bites rate of the last period.";
+            }
+            leaf last-period-packet-rate {
+              type uint64 {
+                range "0..18446744073709551615";
+              }
+              description
+                "Out packet rate of the last period.";
+            }
+            leaf display-interval {
+              type uint64 {
+                range "0..18446744073709551615";
+              }
+              description
+                "Query interval.";
+            }
+            leaf interval-byte-rate {
+              type uint64 {
+                range "0..18446744073709551615";
+              }
+              description
+                "Rate at which bytes are sent within a specified interval.";
+            }
+            leaf interval-packet-rate {
+              type uint64 {
+                range "0..18446744073709551615";
+              }
+              description
+                "Rate at which packets are sent within a specified interval.";
+            }
+            leaf total-byte {
+              type uint64 {
+                range "0..18446744073709551615";
+              }
+              description
+                "Counting bytes.";
+            }
+            leaf total-packet {
+              type uint64 {
+                range "0..18446744073709551615";
+              }
+              description
+                "The number of packets.";
+            }
+          }
+        }
+        container auto-config-interfaces {
+          when "../../../../ni:name='_public_'";
+          config false;
+          description
+            "List of auto config LDP interfaces.";
+          list auto-config-interface {
+            key "name";
+            description
+              "Operational state of an auto config LDP interface. LDP instance that is automatically created using an IGP.";
+            leaf name {
+              type pub-type:if-name;
+              description
+                "Interface name. The name is case-insensitive.";
+            }
+            leaf state {
+              type ldp-state;
+              config false;
+              description
+                "Interface status.";
+            }
+            leaf negotiated-hello-hold-time {
+              type uint16 {
+                range "0..65535";
+              }
+              units s;
+              config false;
+              description
+                "Specifies a negotiated value of the Hello hold timer used by an interface.in seconds.";
+            }
+            leaf auto-trigger-type {
+              type ldp-if-auto-config-type;
+              config false;
+              description
+                "Specifies auto config flag of LDP interface by IGP. For example, ISIS, OSPF, ISIS&OSPF trigger config. By default, there is no auto config.";
+            }
+          }
+        }
+        container auto-config-remote-peers {
+          when "../../../../ni:name='_public_'";
+          config false;
+          description
+            "List of auto config remote LDP neighbor.";
+          list auto-config-remote-peer {
+            key "remote-ip";
+            config false;
+            description
+              "Operational state of an auto config remote LDP neighbor.";
+            leaf remote-ip {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Specifies the IPv4 address of a remote neighbor.";
+            }
+            leaf remote-peer-name {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Specifies the name of a remote neighbor.";
+            }
+            leaf peer-state {
+              type ldp-state;
+              config false;
+              description
+                "Specifies the value status of a remote neighbor.";
+            }
+            leaf negotiated-hello-hold-time {
+              type uint16 {
+                range "0..65535";
+              }
+              config false;
+              description
+                "Specifies the length of a negotiated hello holding time on an interface.";
+            }
+            container auto-config-type {
+              config false;
+              description
+                "Operational state of auto config type.";
+              leaf l2vpn {
+                type remote-peer-auto-config-l2;
+                config false;
+                description
+                  "Remote peer that is automatically created using an L2VPN.";
+              }
+              leaf session-protection {
+                type remote-peer-auto-config-session-protection;
+                config false;
+                description
+                  "Remote peer that is automatically created using session protection.";
+              }
+              leaf rlfa {
+                type remote-peer-auto-config-rlfa;
+                config false;
+                description
+                  "Remote peer that is automatically created using RLFA.";
+              }
+              leaf auto-accept-function {
+                type remote-peer-auto-config-accept-function;
+                config false;
+                description
+                  "Remote peer that is automatically created using the automatic accept function.";
+              }
+            }
+          }
+        }
+        container instance-status {
+          config false;
+          description
+            "Statistics of the status information about the LDP VPN instance.";
+          leaf label-dist-mode {
+            type ldp-label-dist-mode-all;
+            config false;
+            description
+              "Specifies a label distribution control mode.";
+          }
+          leaf label-retention-mode {
+            type ldp-label-ret-mode-all;
+            config false;
+            description
+              "Specifies a label retention mode.";
+          }
+          leaf lsp-number {
+            type uint32;
+            config false;
+            description
+              "Specifies the number of LSPs.";
+          }
+          leaf session-number {
+            type uint32;
+            config false;
+            description
+              "Number of sessions.";
+          }
+          leaf adjacency-number {
+            type uint32;
+            config false;
+            description
+              "Number of adjacencies.";
+          }
+          leaf interface-number {
+            type uint32;
+            config false;
+            description
+              "Number of interfaces.";
+          }
+          leaf fec-number {
+            type uint32;
+            config false;
+            description
+              "Specifies the number of FECs.";
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,169 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-dsvpn-nhrp {
+  namespace "urn:huawei:yang:huawei-dsvpn-nhrp";
+  prefix dsvpn-nhrp;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Dynamic Smart Virtual Private Network (DSVPN) refers to a technology for dynamically
+     establishing VPN between a branch and a headquarters, a branch, and a branch in the
+     Hub-Spoke network model.
+     The Next Hop Resolution Protocol (NHRP) is an extension of the ATM ARP routing mechanism
+     that is sometimes used to improve the efficiency of routing computer network traffic over
+     Non-Broadcast, Multiple Access (NBMA) Networks.";
+  revision 2020-03-26 {
+    description
+      "White-box errors are resolved.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-10 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+
+  typedef entry-type {
+    type enumeration {
+      enum "hub" {
+        value 0;
+        description
+          "Hub.";
+      }
+      enum "static" {
+        value 1;
+        description
+          "Static.";
+      }
+      enum "local" {
+        value 2;
+        description
+          "Local.";
+      }
+      enum "registered" {
+        value 3;
+        description
+          "Registered or spoke.";
+      }
+      enum "remote" {
+        value 4;
+        description
+          "Remote.";
+      }
+      enum "remote-network" {
+        value 5;
+        description
+          "Remote-network.";
+      }
+    }
+    description
+      "NHRP peer type.";
+  }
+  typedef entry-flag {
+    type enumeration {
+      enum "up" {
+        value 0;
+        description
+          "Up.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "Down.";
+      }
+      enum "up.unique" {
+        value 2;
+        description
+          "Up|unique.";
+      }
+      enum "up.no-unique" {
+        value 3;
+        description
+          "Up|no-unique.";
+      }
+    }
+    description
+      "NHRP peer flag.";
+  }
+  typedef scenario-type {
+    type enumeration {
+      enum "hub" {
+        value 0;
+        description
+          "Hub.";
+      }
+      enum "spoke" {
+        value 1;
+        description
+          "Spoke.";
+      }
+      enum "hub-spoke" {
+        value 2;
+        description
+          "Hub-spoke.";
+      }
+    }
+    description
+      "Scenario type.";
+  }
+  typedef authen-mode {
+    type enumeration {
+      enum "md5" {
+        value 0;
+        description
+          "MD5.";
+      }
+      enum "sha1" {
+        value 1;
+        description
+          "SHA1.";
+      }
+      enum "sha2-256" {
+        value 2;
+        description
+          "SHA2-256.";
+      }
+      enum "sha2-384" {
+        value 3;
+        description
+          "SHA2-384.";
+      }
+      enum "sha2-512" {
+        value 4;
+        description
+          "SHA2-512.";
+      }
+    }
+    description
+      "Authentication algorithm.";
+  }
+
+  ext:task-name "nhrp";
+  container dsvpn-nhrp {
+    description
+      "Dynamic Smart Virtual Private Network, Next Hop Resolution Protocol.";
+    container global {
+      description
+        "Configure NHRP on DSVPN.";
+      leaf enabled {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable global NHRP on DSVPN.";
+      }
+    }
+  }
+}

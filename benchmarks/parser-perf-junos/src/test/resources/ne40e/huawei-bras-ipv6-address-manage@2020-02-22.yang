@@ -1,0 +1,1283 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-ipv6-address-manage {
+  namespace "urn:huawei:yang:huawei-bras-ipv6-address-manage";
+  prefix bras-ipv6-address-manage;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-bras-ipv4-address-manage {
+    prefix bras-ipv4-address-manage;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "IPv6 address management.";
+  revision 2020-02-22 {
+    description
+      "Description modification.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-17 {  
+    description  
+      "Second revision.";  
+    reference  
+      "Huawei private.";  
+  }  
+  revision 2019-05-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ipv6pool";
+
+/****************************type definitions*************************************/
+  typedef reserved-type {
+    type enumeration {
+      enum "mac" {
+        value 1;
+        description
+          "Reserves IPv6-address or IPv6-prefix by mac.";
+      }
+      enum "duid" {
+        value 2;
+        description
+          "Reserves IPv6-address or IPv6-prefix by duid.";
+      }
+    }
+    description
+      "Reserve IPv6-address or IPv6-prefix type.";
+  }
+  typedef pool-type {
+    type enumeration {
+      enum "local" {
+        value 1;
+        description
+          "The type of local IPv6 address pool.";
+      }
+      enum "delegation" {
+        value 2;
+        description
+          "The type of delegation IPv6 address pool.";
+      }
+      enum "remote" {
+        value 3;
+        description
+          "The type of remote IPv6 address pool.";
+      }
+      enum "relay" {
+        value 4;
+        description
+          "The type of relay IPv6 address pool.";
+      }
+    }
+    description
+      "IPv6 pool type.";
+  }
+  typedef prefix-type {
+    type enumeration {
+      enum "local" {
+        value 1;
+        description
+          "Local type.";
+      }
+      enum "delegation" {
+        value 2;
+        description
+          "Delegation type.";
+      }
+      enum "remote" {
+        value 3;
+        description
+          "Remote type.";
+      }
+    }
+    description
+      "IPv6 prefix type.";
+  }
+  typedef pool-usage-type {
+    type enumeration {
+      enum "domain" {
+        value 0;
+        description
+          "Domain-based statistics.";
+      }
+    }
+    description
+      "Statistical granularity.";
+  }
+  typedef threshold-type {
+    type enumeration {
+      enum "all-threshold" {
+        value 0;
+        description
+          "All threshold.";
+      }
+      enum "upper-threshold" {
+        value 1;
+        description
+          "Upper threshold.";
+      }
+      enum "lower-threshold" {
+        value 2;
+        description
+          "Lower threshold.";
+      }
+    }
+    description
+      "Define the threshod limite type.";
+  }
+/*****************************type definitions************************************/
+
+/********************************groupings***************************************/
+  grouping specified-up {
+    description
+      "Configure an IPv6 prefix pool to be exclusively used by a vBRAS-UP or UP backup policy profile in CU separation multi-instance scenarios.";
+    container occupied-policy {
+      must "(master-up and slave-up and master-up != slave-up) or (not (master-up) and not (slave-up))";
+      description
+        "Configure a specific policy to specify the IPv6 prefix pool to be occupied.";
+      choice occupied-policy {
+        description
+          "Select a specific policy to specify the IPv6 prefix pool to be occupied.";
+        case hot-standby-up-group {
+          description
+            "The specified IPv6 prefix pool is exclusive to be used by vBRAS-UP hot backup groups.";
+          leaf master-up {
+            type uint16 {
+              range "1024..1279";
+            }
+            description
+              "Specify the ID of the vBRAS-UP where the master interface in a vBRAS-UP hot backup group resides.";
+          }
+          leaf slave-up {
+            type uint16 {
+              range "1024..1279";
+            }
+            description
+              "Specify the ID of the vBRAS-UP where the slave interface in a vBRAS-UP hot backup group resides.";
+          }
+        }
+      }
+    }
+  }
+  grouping vpn-instance {
+    description
+      "Specify the VPN instance name of a IPv6 prefix pool.";
+    container vpn-instance {
+      description
+        "Configure the VPN instance name of a IPv6 prefix pool.";
+      leaf name {
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast'] and ../name != '_public_'";
+        description
+          "Specify the VPN instance name of a IPv6 prefix pool.";
+      }
+    }
+  }
+  grouping dhcpv6-unshare-only {
+    description
+      "Configure an IPv6 prefix pool to assign only IPv6 addresses not prefixes to users.";
+      leaf enable {
+        type empty;
+        description
+          "Configure an IPv6 prefix pool to assign only IPv6 addresses not prefixes to users.";
+      }
+  }
+  grouping lifetime-config {
+    description
+      "Configure the preferred lifetime anf valid lifetime of an IPv6 prefix.";
+    container lifetime {
+      must 'not(./preferred-infinite) or ./valid-infinite';
+      description
+        "Configure the preferred lifetime anf valid lifetime of an IPv6 prefix.
+         The valid lifetime should not be smaller than the preferred lifetime.";
+      choice preferred-lifetime {
+        default preferred-time;
+        description
+          "Configure the preferred lifetime.";
+        case preferred-infinite {
+          description
+            "Specify the preferred lifetime of IPv6 prefix is infinite.";
+        leaf preferred-infinite {
+          type empty;
+          description
+            "Specify the preferred lifetime of IPv6 prefix is infinite.";
+          }
+        }
+        case preferred-time {
+          description
+            "Configure the preferred lifetime that is not infinite.";
+          leaf preferred-day {
+            type uint16 {
+              range "0..999";
+            }
+            units "d";
+            must '../preferred-day != 0 or ../preferred-hour != 0 or ../preferred-minute != 0';
+            default "2";
+            description
+              "Prefer day.";
+          }
+          leaf preferred-hour {
+            type uint8 {
+              range "0..23";
+            }
+            units "h";
+            default "0";
+            description
+              "Prefer hour.";
+          }
+          leaf preferred-minute {
+            type uint8 {
+              range "0..59";
+            }
+            units "min";
+            default "0";
+            description
+              "Prefer minute.";
+          }
+        }
+      }
+      choice valid-lifetime {
+        default valid-time;
+        description
+          "Configure the valid lifetime.";
+        case valid-infinite {
+          description
+            "Configure the valid lifetime of IPv6 prefix is infinite.";
+        leaf valid-infinite {
+          type empty;
+          description
+            "Specify the valid lifetime of IPv6 prefix is infinite.";
+          }
+        }
+        case valid-time {
+          description
+            "Configure the valid lifetime that is not infinite.";
+          leaf valid-day {
+            type uint16 {
+              range "0..999";
+            }
+            units "d";
+            must '../valid-day != 0 or ../valid-hour != 0 or ../valid-minute != 0';
+            default "3";
+            description
+              "Valid day.";
+          }
+          leaf valid-hour {
+            type uint8 {
+              range "0..23";
+            }
+            units "h";
+            default "0";
+            description
+              "Valid hour.";
+          }
+          leaf valid-minute {
+            type uint8 {
+              range "0..59";
+            }
+            units "min";
+            default "0";
+            description
+              "Valid minute.";
+          }
+        }
+      }
+    }
+  }
+  grouping rapid-commit-config {
+    description
+      "Configure the DHCPv6 server to support a rapid two-message exchange (solicit, reply).";
+    container rapid-commit {
+      description
+        "Configure the DHCPv6 server to support a rapid two-message exchange (solicit, reply).";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable rapid commit.";
+      }
+    }
+  }
+  grouping remote-not-support {
+    description
+      "Configure the common information for IPv6 pool which is not remote type.";
+    container dns-server {
+      must 'not(./ipv6-address1) or not(./ipv6-address2) or ./ipv6-address1!=./ipv6-address2';
+      description
+        "Configure an IPv6 address for binding a DNS server to an IPv6 address pool.";
+        leaf ipv6-address1 {
+          type inet:ipv6-address-no-zone;
+          description
+            "Specify the first IPv6 address of a DNS server.";
+        }
+        leaf ipv6-address2 {
+          type inet:ipv6-address-no-zone;
+          description
+            "Specify the second IPv6 address of a DNS server.";
+        }
+    }
+    container dns-search-list {
+      description
+        "Configure a domain name suffix.";
+      leaf name {
+        type string {
+          length "1..32";
+          pattern "[a-zA-Z0-9._-]{1,32}";
+        }
+        must "../name != '-' and ../name != '--'";
+        description
+          "Specify the domain name suffix.";
+      }
+    }
+    container renew-rebind-time {
+      must "./rebind-time-percent >= ./renew-time-percent + 10";
+      description
+        "Configure the renewal time of an IPv6 address pool. renew-time-percent is the percentage of the renewal time to the preferred lifetime.";
+      leaf renew-time-percent {
+        type uint8 {
+          range "10..99";
+        }
+        units "%";
+        default "50";
+        description
+          "Set the renewal time and rebinding time of an IPv6 address pool.";
+      }
+      leaf rebind-time-percent {
+        type uint8 {
+          range "10..99";
+        }
+        units "%";
+        default "80";
+        description
+          "Specify the rebinding time of an IPv6 address pool. rebind-time-percent is the percentage of the rebinding time to the preferred lifetime.";
+      }
+    }
+  }
+  grouping lock {
+    description
+      "Lock an IPv6 prefix pool.";
+    container lock {
+      description
+        "Configure a locked IPv6 prefix pool.";
+      leaf enable {
+        type empty;
+        description
+          "Lock an IPv6 prefix pool.";
+      }
+    }
+  }
+  grouping reserved-ipv6 {
+    description
+      "Configure a reservation type for the prefix pool.";
+    container reserved-ipv6 {
+      description
+        "Configure a reservation type for the prefix pool.";
+      leaf reserved-type {
+        type reserved-type;
+          description
+            "Reservation type for the IPv6 prefix or address, after the reserved type of an IPv6 prefix or address is set to mac, one-to-many mapping between one MAC address and multiple sessions cannot be enabled.";
+      }
+      leaf lease {
+        when '../reserved-type';
+        type empty;
+        description
+          "Reserve the IPv6 prefixes or address during a lease.";
+      }
+    }
+  }
+  grouping frame-ipv6-lease {
+    description
+      "Configure lease for an IPv6 prefix pool.";
+    container frame-ipv6-lease {
+      description
+        "Configure manage the leases of RADIUS-delivered IPv6 addresses that are in the supported address pools.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable manage the leases of RADIUS-delivered IPv6 addresses that are in the supported address pools.";
+      }
+    }
+  }
+  grouping exclude-ipv6-address {
+    description
+      "List of specified IPv6 addresses to prevent it from being allocated to users. The start IPv6 address must be smaller than or equal to the end IPv6 address.";
+    list exclude-ipv6-address {
+      key "start-ipv6-address end-ipv6-address";
+      description
+        "Configure a specified IPv6 address to prevent it from being allocated to users. The start IPv6 address must be smaller than or equal to the end IPv6 address.";
+      leaf start-ipv6-address {
+        type inet:ipv6-address-no-zone;
+        description
+          "Specify the start IPv6 address.";
+      }
+      leaf end-ipv6-address {
+        type inet:ipv6-address-no-zone;
+        description
+          "Specify the end IPv6 address.";
+      }
+    }
+  }
+  grouping ipv6-constant-index {
+    description
+      "Configure a constant index for an IPv6 address or prefix pool.";
+    container constant-index {
+      config false;
+      description
+        "Statistics of a constant index for an IPv6 address or prefix pool.";
+      leaf value {
+        type uint16 {
+          range "0..1023";
+        }
+        description
+          "Specify an index for an IPv6 address or prefix pool.";
+      }
+    }
+  }
+  grouping ipv6-pool-comm {
+    description
+      "Set the preference value of an IPv6 address pool.";
+    container preference {
+      description
+        "Configure the preference value of an IPv6 address pool.";
+      leaf value {
+        type uint8 {
+           range "0..255";
+        }
+        default "255";
+        description
+          "Specify the preference value of an IPv6 address pool.";
+      }
+    }
+    container lock {
+      presence "Create lock pool";
+      description
+        "Enable/disable an IPv6 address pool.";
+      leaf drain {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable an IPv6 address pool. If it is disable, the address pool cannot be used to assign IPv6 addresses to new users and DHCP renew or rebind.";
+      }
+    }
+    container wait-request-time {
+      description
+        "Configure the timeout period for a router to wait for a request message from a client in response to an advertise message sent to the client.";
+      leaf value {
+        type uint8 {
+          range "5..60";
+        }
+        units "s";
+        description
+          "Specify the timeout period for a router to wait for a request message from a client.";
+      }
+    }
+    container warning {
+      description
+        "Configure warning of IPv6 address usage.";
+      leaf threshold-value {
+        type uint8 {
+          range "0..100";
+        }
+        default "80";
+        description
+          "The alarm threshold for the address usage of an IPv6 address pool is a percentage.";
+      }
+      leaf exhaust {
+        type empty;
+        description
+          "Enable the address exhaustion alarm function for an IPv6 address pool.";
+      }
+    }
+    container unr-tag {
+      description
+        "Configure a route tag for an IPv6 address pool.";
+      leaf value {
+        type uint32 {
+          range "0..4294967295";
+        }
+        description
+          "Specify the route tag for the IPv6 address pool.";
+      }
+    }
+  }
+  grouping weight {
+    description
+      "Configure a weight for an IPv6 address pool.";
+    leaf value {
+      type uint8 {
+        range "0..100";
+      }
+      default "5";
+      description
+        "Specify a weight for an IPv6 address pool.";
+      }
+  }
+  grouping aftr-config {
+    description
+      "Configure an Address Family Transition Router (AFTR) name.";
+    container aftr {
+      description
+        "Configure an Address Family Transition Router (AFTR) name.";
+      leaf name {
+        type string {
+          length "1..63";
+          pattern "[a-zA-Z0-9._-]{1,63}";
+        }
+        must "../name != '-' and ../name != '--'";
+        description
+          "Specify an AFTR name.";
+      }
+    }
+  }
+  grouping export-host-route {
+    description
+      "Enable a device to advertise host routes in a remote address pool.";
+    container export-host-route {
+      description
+        "Configure a device to advertise host routes in a remote address pool.";
+      leaf ipv6-address {
+        type empty;
+        description
+          "Advertise IPv6 routes.";
+      }
+      leaf pd-prefix {
+        type empty;
+        description
+          "Advertise PD routes.";
+      }
+      leaf nd-prefix {
+        type empty;
+        description
+          "Advertise ND routes.";
+      }
+    }
+  }
+  grouping pool-usage {
+    description
+      "Display IPv6 address pool usage.";
+    leaf address-total-number {
+      type uint32;
+      description
+        "Total number of IPv6 address.";
+    }
+    leaf address-used-number {
+      type uint32;
+      description
+        "Used number of IPv6 address.";
+    }
+    leaf address-used-radio {
+      type uint32;
+      description
+        "IPv6 address usage (in percentage).";
+    }
+    leaf ndra-total-number {
+      type uint32;
+      description
+        "Total number of in-use unshare NDRA prefixs.";
+    }
+    leaf ndra-used-number {
+      type uint32;
+      description
+        "Used number of in-use unshare NDRA prefixs.";
+    }
+    leaf ndra-used-radio {
+      type uint32;
+      description
+        "Usage (in percentage) of unshared NDRA prefixes.";
+    }
+    leaf delegation-total-number {
+      type uint32;
+      description
+        "Total number of delegation prefixs.";
+    }
+    leaf delegation-used-number {
+      type uint32;
+      description
+        "Used number of delegation prefixs.";
+    }
+    leaf delegation-used-radio {
+      type uint32;
+      description
+        "Usage (in percentage) of delegation prefixes.";
+    }
+  }
+    grouping pool-statistics {
+    description
+      "Statistics of IPv6 pool.";
+    leaf address-idle-total-number {
+      type int32;
+      description
+        "Number of idle IPv6 addresses on the equipment.";
+    }
+    leaf address-used-total-number {
+      type int32;
+      description
+        "Number of IPv6 addresses in use on the equipment.";
+    }
+    leaf prefix-idle-total-number {
+      type int32;
+      description
+        "Number of idle IPv6 prefixes on the equipment.";
+    }
+    leaf prefix-used-total-number {
+      type int32;
+      description
+        "Number of IPv6 prefixes in use on the equipment.";
+    }
+    leaf address-total-number {
+      type int32;
+      description
+        "The total IPv6 address number.";
+    }
+    leaf address-used-number {
+      type int32;
+      description
+        "The used IPv6 address number.";
+    }
+    leaf address-idle-number {
+      type int32;
+      description
+        "The free IPv6 address number.";
+    }
+    leaf address-conflict-number {
+      type int32;
+      description
+        "The conflict IPv6 address number.";
+      }
+    leaf address-excluded-number {
+      type int32;
+      description
+        "The excluded IPv6 address number.";
+    }
+    leaf address-used-percent {
+      type int32;
+      description
+        "The percent of used IPv6 address.";
+    }
+    leaf ndra-total-number {
+      type int32;
+      description
+        "The total NDRA prefix number.";
+    }
+    leaf ndra-used-number {
+      type int32;
+      description
+        "The used NDRA prefix number.";
+    }
+    leaf ndra-free-number {
+      type int32;
+      description
+        "The free NDRA prefix number.";
+    }
+    leaf ndra-conflict-number {
+      type int32;
+      description
+        "The conflict NDRA prefix number.";
+    }
+    leaf ndra-excluded-number {
+      type int32;
+      description
+        "The excluded NDRA prefix number.";
+    }
+    leaf ndra-used-percent {
+      type int32;
+      description
+        "The percent of used IPv6 NDRA prefix.";
+    }
+    leaf pd-total-number {
+      type int32;
+      description
+        "The total PD prefix number.";
+    }
+    leaf pd-used-number {
+      type int32;
+      description
+        "The used PD prefix number.";
+    }
+    leaf pd-free-number {
+      type int32;
+      description
+        "The free PD prefix number.";
+    }
+    leaf pd-conflict-number {
+      type int32;
+      description
+        "The conflict PD prefix number.";
+    }
+    leaf pd-excluded-number {
+      type int32;
+      description
+        "The excluded PD prefix number.";
+    }
+    leaf pd-used-percent {
+      type int32;
+      description
+        "The percent of used IPv6 PD prefix.";
+    }
+  }
+/*********************************groupings**************************************/
+
+  container bras-ipv6-address-manage {
+    description
+      "Configure the IPv6 repfix pool and IPv6 address pool.";
+    container ipv6-prefixs {
+      description
+        "List of IPv6 prefix pools.";
+      list ipv6-prefix {
+        key "name";
+        max-elements 1024;
+        description
+          "Configure an IPv6 prefix pool.";
+        leaf name {
+          ext:case-sensitivity lower-only;
+          type string {
+            length "1..32";
+            pattern "[a-z0-9._-]{1,32}";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Specify the name of the IPv6 prefix pool to be created.";
+        }
+        leaf type {
+          ext:operation-exclude update;
+          type prefix-type;
+          mandatory true;
+          description
+            "Specify the type of the IPv6 prefix pool, and the type cannot be modified.";
+        }
+        container local {
+          when "../type = 'local'";
+          description
+            "Configure a local IPv6 prefix pool. The specified IPv6 address must be in the IPv6 prefix pool.";
+          uses specified-up;
+          container prefix-address {
+            description
+              "Configure the IPv6 prefix address for an IPv6 prefix pool.";
+            leaf prefix {
+              type inet:ipv6-prefix;
+              description
+                "Specify the address and length of an IPv6 prefix, not support modify. The prefix address must be calculated based on the prefix length.";
+            }
+          }
+          uses vpn-instance;
+          container exclude-ipv6-addresss {
+            when "../prefix-address/prefix";
+            description
+              "Configure IPv6 addresses to prevent it from being allocated to users. The start IPv6 address must be smaller than or equal to the end IPv6 address.";
+            uses exclude-ipv6-address;
+          }
+          uses lifetime-config;
+          uses reserved-ipv6;
+          uses frame-ipv6-lease;
+          uses ipv6-constant-index;
+        }
+        container delegation {
+          when "../type = 'delegation'";
+          description
+            "Configure a delegation IPv6 prefix pool. The specified IPv6 address must be in the IPv6 prefix pool.";
+          uses specified-up;
+          container prefix-address {
+            description
+              "Configure the IPv6 prefix address for an IPv6 prefix pool.";
+            leaf prefix {
+              type inet:ipv6-prefix;
+              description
+                "Specify the address and length of an IPv6 prefix, not support modify. The prefix address must be calculated based on the prefix length.";
+            }
+            leaf prefix-length {
+            when "../prefix";
+              type uint8 {
+                range "1..128";
+              }
+              default "64";
+              description
+                "Specify the length of the IPv6 prefix assigned by the delegating router to the requesting router. Not support modify or delete.
+                 The delegating prefix length must be longer than or the same as IPv6 prefix length.";
+            }
+          }
+          container dhcpv6-unshare-only {
+            when "../prefix-address/prefix";
+            description
+            "Configure an IPv6 prefix pool to assign only IPv6 addresses not prefixes to users.";
+            uses dhcpv6-unshare-only;
+          }
+          uses vpn-instance;
+          container exclude-ipv6-addresss {
+            when "../dhcpv6-unshare-only/enable";
+            description
+              "Configure IPv6 addresses to prevent it from being allocated to users.";
+            uses exclude-ipv6-address;
+          }
+          uses lifetime-config;
+          uses reserved-ipv6;
+          uses frame-ipv6-lease;
+          uses ipv6-constant-index;
+        }
+        container remote {
+        when "../type = 'remote'";
+          description
+            "Configure a remote IPv6 prefix pool.";
+          uses specified-up;
+          uses vpn-instance;
+          container link-address {
+            description
+              "Configure a link address.";
+            leaf ipv6-address {
+              type inet:ipv6-prefix;
+              description
+                "Specify a global unicast address or a site-local unicast address.";
+            }
+          }
+          container dhcpv6-only {
+            description
+              "Configure a remote prefix pool for only DHCPv6 prefix or address allocation.";
+            leaf enable {
+            type empty;
+            description
+              "Specify a remote prefix pool for only DHCPv6 prefix or address allocation.";
+            }
+          }
+          container lease-management {
+            description
+              "Configure the lease management function for remote IPv6 prefix pool.";
+            leaf enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the lease management function for remote IPv6 prefix pool.";
+            }
+          }
+          uses reserved-ipv6;
+          uses lock;
+          uses ipv6-constant-index;
+        }
+      }
+    }
+    container ipv6-pools {
+      description
+        "List of IPv6 address pools.";
+      list ipv6-pool {
+        key "name";
+        max-elements 1024;
+        description
+          "Configure an IPv6 address pool.";
+        leaf name {
+          ext:case-sensitivity lower-only;
+          type string {
+            length "1..32";
+            pattern "[a-z0-9._-]{1,32}";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Specify the name of an IPv6 address pool.";
+        }
+        leaf type {
+          ext:operation-exclude update;
+          type pool-type;
+          mandatory true;
+          description
+            "Specify the type of the IPv6 address pool, and the type cannot be modified.";
+        }
+        leaf rui-slave {
+          ext:operation-exclude update|delete;
+          when "not(../type = 'relay')";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a hybrid IP address pool that can be used as a local address pool or remote address pool or delegation address pool. The rui-slave cannot be modified.";
+        }
+          container local {
+          when "../type = 'local'";
+            description
+              "Configure a local IPv6 address pool.";
+            container bind-prefix {
+              description
+                "Configure binding an IPv6 prefix pool to an IPv6 address pool.";
+              leaf prefix-name {
+                type leafref {
+                  path "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-prefixs/bras-ipv6-address-manage:ipv6-prefix/bras-ipv6-address-manage:name";
+                }
+                must "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-prefixs/bras-ipv6-address-manage:ipv6-prefix[name=current()]/bras-ipv6-address-manage:type ='local'";
+                description
+                  "Bind an IPv6 prefix pool to an IPv6 address pool.";
+              }
+            }
+            uses remote-not-support;
+            uses rapid-commit-config;
+            container weight {
+              when "../../rui-slave = 'true'";
+              description
+              "Configure a weight for an IPv6 address pool.";
+               uses weight;
+             }
+            uses ipv6-pool-comm;
+            uses aftr-config;
+            container export-host-route {
+              description
+                "Configure a device to advertise host routes in a remote address pool.";
+              leaf ipv6-address {
+                type empty;
+                  description
+                  "Advertise IPv6 routes.";
+               }
+            }
+            uses ipv6-constant-index;
+          }
+          container delegation {
+            when "../type = 'delegation'";
+            description
+              "Configure a delegation IPv6 address pool.";
+            container bind-prefix {
+              description
+                "Configure binding an IPv6 prefix pool to an IPv6 address pool.";
+              leaf prefix-name {
+                type leafref {
+                  path "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-prefixs/bras-ipv6-address-manage:ipv6-prefix/bras-ipv6-address-manage:name";
+                }
+                must "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-prefixs/bras-ipv6-address-manage:ipv6-prefix[name=current()]/bras-ipv6-address-manage:type ='delegation'";
+                description
+                  "Bind an IPv6 prefix pool to an IPv6 address pool.";
+              }
+            }
+            uses remote-not-support;
+            uses rapid-commit-config;
+          container weight {
+            when "../../rui-slave = 'true'";
+            description
+            "Configure a weight for an IPv6 address pool.";
+             uses weight;
+           }
+          uses ipv6-pool-comm;
+          uses aftr-config;
+          uses export-host-route;
+          uses ipv6-constant-index;
+          }
+          container remote {
+            when "../type = 'remote'";
+            description
+              "Configure a remote IPv6 address pool.";
+            container bind-prefix {
+              description
+                "Configure binding an IPv6 prefix pool to an IPv6 address pool.";
+              leaf prefix-name {
+                type leafref {
+                  path "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-prefixs/bras-ipv6-address-manage:ipv6-prefix/bras-ipv6-address-manage:name";
+                }
+                must "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-prefixs/bras-ipv6-address-manage:ipv6-prefix[name=current()]/bras-ipv6-address-manage:type ='remote'";
+                description
+                  "Bind an IPv6 prefix pool to an IPv6 address pool.";
+              }
+            }
+          container weight {
+              description
+              "Configure a weight for an IPv6 address pool.";
+               uses weight;
+          }
+          uses ipv6-pool-comm;
+          uses export-host-route;
+          uses ipv6-constant-index;
+          }
+          container relay {
+            when "../type = 'relay'";
+            description
+              "Configure a relay IPv6 address pool.";
+            container bind-prefix {
+              description
+                "Configure binding an IPv6 prefix pool to an IPv6 address pool.";
+              leaf prefix-name {
+                type leafref {
+                  path "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-prefixs/bras-ipv6-address-manage:ipv6-prefix/bras-ipv6-address-manage:name";
+                }
+                must "/bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-prefixs/bras-ipv6-address-manage:ipv6-prefix[name=current()]/bras-ipv6-address-manage:type ='local'";
+                description
+                  "Bind an IPv6 prefix pool to an IPv6 address pool.";
+              }
+            }
+            uses remote-not-support;
+            uses rapid-commit-config;
+         uses ipv6-pool-comm;
+         uses ipv6-constant-index;
+        }
+        container usage {
+          config false;
+          description
+            "Display the usage statistics for IPv6 address pool.";
+          leaf vpn-instance {
+            type leafref {
+              path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+            }
+            description
+              "Specify the VPN instance name.";
+            ext:support-filter "true"; 
+          }
+          uses pool-usage;
+        }
+        container statistic {
+          config false;
+          description
+            "Display the IPv6 address or prefix statistics.";
+          leaf pool-index {
+            type int32 {
+              range "0..1023";
+            }
+            description
+              "The index of IPv6 pool.";
+          }
+          uses pool-statistics;
+        }
+      }
+    }
+    container ipv6-unr-route-tag {
+      description
+        "Configure route tags for IPv6 users.";
+      leaf delegated-ipv6-prefix-tag {
+        type uint32;
+        default "0";
+        description
+          "Set a route tag for PD IPv6 addresses delivered by a RADIUS server.";
+      }
+      leaf delegated-pool-tag {
+        type uint32;
+        default "0";
+        description
+          "Set a route tag for delegation IPv6 address pools.";
+      }
+      leaf framed-ipv6-address-tag {
+        type uint32;
+        default "0";
+        description
+          "Set a route tag for IA_NA IPv6 addresses delivered by a RADIUS server.";
+      }
+      leaf framed-ipv6-prefix-tag {
+        type uint32;
+        default "0";
+        description
+          "Set a route tag for ND IPv6 addresses delivered by a RADIUS server.";
+      }
+      leaf framed-ipv6-route-tag {
+        type uint32;
+        default "0";
+        description
+          "Set a route tag for IPv6 route addresses delivered by a RADIUS server.";
+      }
+      leaf local-pool-tag {
+        type uint32;
+        default "0";
+        description
+          "Set a route tag for local IPv6 address pools.";
+      }
+      leaf relay-pool-tag {
+        type uint32;
+        default "0";
+        description
+          "Set a route tag for relay IPv6 address pools.";
+      }
+      leaf remote-pool-tag {
+        type uint32;
+        default "0";
+        description
+          "Set a route tag for remote IPv6 address pools.";
+      }
+    }
+    container address-assign-eui-64 {
+      description
+        "Configure an interface ID to be in the standard EUI-64 format when DHCPv6 is used to allocate addresses.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable an interface ID to be in the standard EUI-64 format when DHCPv6 is used to allocate addresses.";
+      }
+    }
+    container statistic-include-shared-user {
+      description
+        "Configure the IPv6 address pool statistics to include statistics about users sharing the prefix pool.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the IPv6 address pool statistics to include statistics about users sharing the prefix pool.";
+      }
+    }
+    container pool-select-algorithm {
+      description
+        "Configure a device to assign addresses from IPv6 remote address pools based on weights of the address pools.";
+      leaf remote-loading-share {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a device to assign addresses from IPv6 remote address pools based on weights of the address pools.";
+      }
+    }
+    container statistics-by-domains {
+      config false;
+      description
+        "List of domain-based statistics.";
+      list statistics-by-domain {
+        key "domain-name";
+        description
+          "Domain-based statistics.";
+        leaf domain-name {
+          type leafref {
+            path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+          }
+          description
+            "Specify the name of a domain.";
+        }
+        container pool-usage {
+          description
+            "Display the statistics for IPv6 address pool usage.";
+          uses pool-usage;
+        }
+        container usage-threshold {
+          description
+            "Display the statistics for domains whose IPv6 address pool or prefix pool usage exceeds a specified threshold.";
+          leaf threshold-type {
+            type threshold-type;
+            description
+              "Include upper-threshold and lower-threshold.";
+            ext:support-filter "true";
+          }
+          uses pool-usage;
+        }
+      }
+    }
+    container pool-statistics {
+      config false;
+      description
+        "Statistics of IPv6 pool usage.";
+      leaf statistical-unit {
+        type pool-usage-type;
+        default "domain";
+        description
+          "Statistical unit.";
+      }
+      uses pool-usage;
+    }
+    container statistics-by-vpn-instance {
+      config false;
+      description
+        "Display the statistics for IPv6 address pools bound by the vpn-instance.";
+      container statistics {
+        description
+          "List of statistics for IPv6 address pools bound by the vpn-instance.";
+        list statistic {
+          key "vpn-instance";
+          description
+            "Display the statistics for IPv6 address pools bound by the vpn-instance.";
+          leaf vpn-instance {
+            type leafref {
+              path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+            }
+            description
+              "Specify the VPN instance name.";
+          }
+          container usage {
+            description
+              "Display the usage statistics for IPv6 address pools bound by vpn-instance.";
+            uses pool-usage;
+          }
+          container usage-warning-threshold {
+            config false;
+            description
+              "Display the statistics for address pool usage based on a specified VPN instance.";
+            leaf total-number {
+              type int32;
+              description
+                "Total number of IP addresses.";
+            }
+            leaf used-number {
+              type int32;
+              description
+                "Number of used IP addresses.";
+            }
+            leaf idle-number {
+              type int32;
+              description
+                "Number of idle IP addresses.";
+            }
+            leaf conflict-number {
+              type int32;
+              description
+                "Number of conflicting IP addresses.";
+            }
+            leaf exclude-number {
+              type int32;
+              description
+                "Number of excluded IP addresses.";
+            }
+            leaf used-ratio {
+              type int32;
+              description
+                "IP address usage.";
+            }
+          }
+        }
+      }
+      container total-usage {
+        description
+          "Display the usage statistics for IPv6 address pools which are for all vpn-instance.";
+        uses pool-usage;
+      }
+    }
+    container global-statistic {
+      config false;
+      description
+        "Statistics of IPv6 pool.";
+      leaf total-pool-number {
+        type int32;
+        description
+          "Number of configured IPv6 address pools.";
+      }
+      uses pool-statistics;
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/bras-ipv4-address-manage:bas" {
+    description
+      "The vpn instance who is enabled the IPv6 address family.";
+    container ipv6-address-manage {
+      when "../../l3vpn:type='ipv6-unicast' and ../../../../ni:name!='_public_'";
+      description
+        "Configure the vpn instance who is enabled the IPv6 address family.";
+      container warning-threshold {
+        description
+          "Configure the warning threshold of IPv6 pools who bound with the vpn instance.";
+        leaf value {
+          type uint8 {
+            range "0..100";
+          }
+          default "80";
+          description
+            "The percentage of IPv6 pools warning threshold.";
+        }
+      }
+    }
+  }
+}

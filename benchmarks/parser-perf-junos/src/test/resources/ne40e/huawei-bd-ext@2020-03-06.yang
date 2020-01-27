@@ -1,0 +1,430 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bd-ext {
+  namespace "urn:huawei:yang:huawei-bd-ext";
+  prefix bd-ext;
+  import huawei-bd {
+    prefix bd;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "BD ext.";
+  revision 2020-03-06 {
+    description
+      "Add pipe type.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-13 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-23 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  typedef bd-pipe-mode {
+    type enumeration {
+      enum "pipe" {
+        value 1;
+        description
+          "BD pipe mode.";
+      }
+      enum "shortpipe" {
+        value 2;
+        description
+          "BD Short Pipe mode.";
+      }
+      enum "uniform" {
+        value 3;
+        description
+          "BD uniform mode.";
+      }
+    }
+    description
+      "BD pipe mode.";
+  }
+  typedef bd-service-class {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "Specify the CoS as BE.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "Specify the CoS as AF1.";
+      }
+      enum "af2" {
+        value 2;
+        description
+          "Specify the CoS as AF2.";
+      }
+      enum "af3" {
+        value 3;
+        description
+          "Specify the CoS as AF3.";
+      }
+      enum "af4" {
+        value 4;
+        description
+          "Specify the CoS as AF4.";
+      }
+      enum "ef" {
+        value 5;
+        description
+          "Specify the CoS as EF.";
+      }
+      enum "cs6" {
+        value 6;
+        description
+          "Specify the CoS as CS6.";
+      }
+      enum "cs7" {
+        value 7;
+        description
+          "Specify the CoS as CS7.";
+      }
+    }
+    description
+      "Description of CoS.";
+  }
+  typedef bd-color {
+    type enumeration {
+      enum "green" {
+        value 0;
+        description
+          "Specify the packet color as green.";
+      }
+      enum "yellow" {
+        value 1;
+        description
+          "Specify the packet color as yellow.";
+      }
+      enum "red" {
+        value 2;
+        description
+          "Specify the packet color as red.";
+      }
+    }
+    description
+      "Description of packet color.";
+  }
+  typedef bd-trust-type {
+    type enumeration {
+      enum "outpri" {
+        value 0;
+        description
+          "Specify the trust type as OUTTER-VLAN-8021P.";
+      }
+      enum "inpri" {
+        value 1;
+        description
+          "Specify the trust type as INNER-VLAN-8021P.";
+      }
+      enum "ipdscp" {
+        value 2;
+        description
+          "Specify the trust type as IP-DSCP.";
+      }
+    }
+    description
+      "Description of trust type.";
+  }
+  ext:task-name "forwarding";
+  augment "/bd:bd/bd:instances/bd:instance" {
+    description "BD configuration.";
+    container pipe {
+      description
+        "Configure the diffserv mode of bridge domain.";
+      leaf split-mode {
+        type boolean;
+        must "((../split-mode='false' and not(../ingress-pipe-mode) and not(../egress-pipe-mode) and ../pipe-mode) or (../split-mode='true' and not(../pipe-mode) and ../ingress-pipe-mode and ../egress-pipe-mode and not(../ingress-pipe-mode='uniform' and ../egress-pipe-mode='uniform')))";
+        default "false";
+        description
+          "Enable/disable split mode.";
+      }
+      leaf pipe-mode {
+        when "../split-mode='false'";
+        type bd-pipe-mode;
+        must "(../split-mode='false') and ((../pipe-mode='pipe' and (../service-class) and (../color)) or (../pipe-mode='shortpipe' and (../service-class) and (../color) and (../domain-name)) or (../pipe-mode='uniform'))";
+        default "uniform";
+        description
+          "Pipe mode.";
+      }
+      leaf ingress-pipe-mode {
+        when "../split-mode='true'";
+        type bd-pipe-mode;
+        must "((../split-mode='true') and (((../service-class) and (../color) and (../ingress-pipe-mode='shortpipe' or ../ingress-pipe-mode='pipe')) or (../ingress-pipe-mode='uniform' and ../egress-pipe-mode!='uniform')))";
+        default "uniform";
+        description
+          "Ingress pipe mode.";
+      }
+      leaf egress-pipe-mode {
+        when "../split-mode='true'";
+        type bd-pipe-mode;
+        must "((../split-mode='true') and (((../domain-name) and (../trust-type) and (../egress-pipe-mode='shortpipe')) or (../egress-pipe-mode='pipe') or (../egress-pipe-mode='uniform' and ../ingress-pipe-mode!='uniform')))";
+        default "uniform";
+        description
+          "Egress pipe mode.";
+      }
+      leaf service-class {
+        when "(../pipe-mode='pipe' or ../pipe-mode='shortpipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortpipe')";
+        type bd-service-class;
+        must "(../pipe-mode='pipe' or ../pipe-mode='shortpipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortpipe')";
+        default "be";
+        description
+          "Service class.";
+      }
+      leaf color {
+        when "(../pipe-mode='pipe' or ../pipe-mode='shortpipe'  or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortpipe')";
+        type bd-color;
+        must "(../pipe-mode='pipe' or ../pipe-mode='shortpipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortpipe')";
+        default "green";
+        description
+          "Color.";
+      }
+      leaf domain-name  {
+        when "(../pipe-mode='shortpipe'  or ../egress-pipe-mode='shortpipe')";
+        type leafref {
+          path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+        }
+        must "(../pipe-mode='shortpipe' or ../egress-pipe-mode='shortpipe')";
+        default "default";
+        description
+          "Domain name.";
+      }
+      leaf trust-type {
+        when "../egress-pipe-mode='shortpipe'";
+        type bd-trust-type;
+        must "../egress-pipe-mode='shortpipe'";
+        default "outpri";
+        description
+          "Trust type.";
+      }
+    }
+  }
+  augment "/bd:bd/bd:instances/bd:instance/bd:service-points/bd:service-point" {
+    description
+      "EVC service configuration.";
+    container ac-suppression {
+      config false;
+      description
+        "Statistics of the bridge domain AC suppression.";
+      leaf time {
+        type string {
+          length "1..60";
+        }
+        config false;
+        description
+          "AC suppression time.";
+      }
+      leaf unicast-inbound-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Unicast inbound suppression flag.";
+      }
+      leaf unicast-inbound-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast packets passed in the inbound direction of an AC interface.";
+      }
+      leaf unicast-inbound-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast bytes passed in the inbound direction of an AC interface.";
+      }
+      leaf unicast-inbound-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast packets dropped in the inbound direction of an AC interface.";
+      }
+      leaf unicast-inbound-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast bytes dropped in the inbound direction of an AC interface.";
+      }
+      leaf unicast-outbound-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Unicast outbound suppression flag.";
+      }
+      leaf unicast-outbound-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast packets passed in the outbound direction of an AC interface.";
+      }
+      leaf unicast-outbound-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast bytes passed in the outbound direction of an AC interface.";
+      }
+      leaf unicast-outbound-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast packets dropped in the outbound direction of an AC interface.";
+      }
+      leaf unicast-outbound-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of unknown unicast bytes dropped in the outbound direction of an AC interface.";
+      }
+      leaf multicast-inbound-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Multicast inbound suppression flag.";
+      }
+      leaf multicast-inbound-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of multicast packets passed in the inbound direction of an AC interface.";
+      }
+      leaf multicast-inbound-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of multicast bytes passed in the inbound direction of an AC interface.";
+      }
+      leaf multicast-inbound-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of multicast packets dropped in the inbound direction of an AC interface.";
+      }
+      leaf multicast-inbound-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of multicast bytes dropped in the inbound direction of an AC interface.";
+      }
+      leaf multicast-outbound-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Multicast outbound suppression flag.";
+      }
+      leaf multicast-outbound-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of multicast packets passed in the outbound direction of an AC interface.";
+      }
+      leaf multicast-outbound-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of multicast bytes passed in the outbound direction of an AC interface.";
+      }
+      leaf multicast-outbound-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of multicast packets dropped in the outbound direction of an AC interface.";
+      }
+      leaf multicast-outbound-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of multicast bytes dropped in the outbound direction of an AC interface.";
+      }
+      leaf broadcast-inbound-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Broadcast inbound suppression flag.";
+      }
+      leaf broadcast-inbound-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast packets passed in the inbound direction of an AC interface.";
+      }
+      leaf broadcast-inbound-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast bytes passed in the inbound direction of an AC interface.";
+      }
+      leaf broadcast-inbound-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast packets dropped in the inbound direction of an AC interface.";
+      }
+      leaf broadcast-inbound-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast bytes dropped in the inbound direction of an AC interface.";
+      }
+      leaf broadcast-outbound-flag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Broadcast outbound suppression flag.";
+      }
+      leaf broadcast-outbound-pass-packets {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast packets passed in the outbound direction of an AC interface.";
+      }
+      leaf broadcast-outbound-pass-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast bytes passed in the outbound direction of an AC interface.";
+      }
+      leaf broadcast-outbound-drop-packets {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast packets dropped in the outbound direction of an AC interface.";
+      }
+      leaf broadcast-outbound-drop-bytes {
+        type uint64;
+        config false;
+        description
+          "Number of broadcast bytes dropped in the outbound direction of an AC interface.";
+      }
+    }
+  }
+}

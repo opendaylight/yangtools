@@ -1,0 +1,50 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-pnp {
+  namespace "urn:huawei:yang:huawei-pnp";
+  prefix pnp;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Plug and play.";
+  revision 2019-09-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "pnp";
+  container pnp {
+    description
+      "Configure the plug and play.";
+    container global {
+      description
+        "Configure PNP (Plug and play) global attributes.";
+      leaf enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable PNP (Plug and play).";
+      }
+      leaf paf-val {
+        type uint8 {
+          range "0..4";
+        }
+        config false;
+        description
+          "PNP (Plug and play) mode.";
+      }
+    }
+  }
+}

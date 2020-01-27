@@ -1,0 +1,224 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-tty-type {
+  belongs-to huawei-tty {
+    prefix tty;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of tty type submodule.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef ttycamllinetype {
+    type enumeration {
+      enum "CON" {
+        value 1;
+        description
+          "Line type console.";
+      }
+      enum "AUX" {
+        value 2;
+        description
+          "Line type AUX.";
+      }
+      enum "TTY" {
+        value 3;
+        description
+          "Line type TTY.";
+      }
+      enum "VTY" {
+        value 4;
+        description
+          "Line type VTY.";
+      }
+      enum "LTT" {
+        value 5;
+        description
+          "Line type LTT.";
+      }
+      enum "NCA" {
+        value 6;
+        description
+          "Line type netconf.";
+      }
+      enum "RPC" {
+        value 8;
+        description
+          "Line type grpc.";
+      }
+    }
+    description
+      "TTY CAML line type list.";
+  }
+  typedef ttycamlconnstate {
+    type enumeration {
+      enum "YES" {
+        value 1;
+        description
+          "Terminal is connected.";
+      }
+      enum "NO" {
+        value 2;
+        description
+          "Terminal is not connected.";
+      }
+    }
+    description
+      "TTY CAML connection state list.";
+  }
+  typedef ttyflwcntrltype {
+    type enumeration {
+      enum "none" {
+        value 1;
+        description
+          "Flow control as none.";
+      }
+      enum "software" {
+        value 2;
+        description
+          "Flow control as software.";
+      }
+      enum "hardware" {
+        value 3;
+        description
+          "Flow control as hardware.";
+      }
+    }
+    description
+      "TTY flow control type list.";
+  }
+  typedef ttystpbitstype {
+    type enumeration {
+      enum "1" {
+        value 1;
+        description
+          "Stopbit as 1.";
+      }
+      enum "1.5" {
+        value 2;
+        description
+          "Stop bit as 1.5.";
+      }
+      enum "2" {
+        value 3;
+        description
+          "Stop bit as 2.";
+      }
+    }
+    description
+      "TTY stop bits type list.";
+  }
+  typedef ttydatabitstype {
+    type enumeration {
+      enum "5" {
+        value 1;
+        description
+          "Data bits as 5.";
+      }
+      enum "6" {
+        value 2;
+        description
+          "Data bits as 6.";
+      }
+      enum "7" {
+        value 3;
+        description
+          "Data bits as 7.";
+      }
+      enum "8" {
+        value 4;
+        description
+          "Databits as 8.";
+      }
+    }
+    description
+      "TTY data bits type list.";
+  }
+  typedef ttyparitytype {
+    type enumeration {
+      enum "none" {
+        value 1;
+        description
+          "Parity as None.";
+      }
+      enum "odd" {
+        value 2;
+        description
+          "Parity as odd.";
+      }
+      enum "even" {
+        value 3;
+        description
+          "Parity as even.";
+      }
+      enum "mark" {
+        value 4;
+        description
+          "Parity as mark.";
+      }
+      enum "space" {
+        value 5;
+        description
+          "Parity as space.";
+      }
+    }
+    description
+      "TTY parity type list.";
+  }
+  typedef ttyauthmodetype {
+    type enumeration {
+      enum "none" {
+        value 1;
+        description
+          "Authentication mode none.";
+      }
+      enum "password" {
+        value 2;
+        description
+          "Authentication mode password.";
+      }
+      enum "aaa" {
+        value 3;
+        description
+          "Authentication mode aaa.";
+      }
+      enum "init" {
+        value 4;
+        description
+          "Undo authentication mode.";
+      }
+    }
+    description
+      "TTY authentication mode type list.";
+  }
+  typedef ttybooltype {
+    type enumeration {
+      enum "false" {
+        value 0;
+        description
+          "VTY shell disable.";
+      }
+      enum "true" {
+        value 1;
+        description
+          "VTY shell enable.";
+      }
+    }
+    description
+      "Vty and tty bool type.";
+  }
+}

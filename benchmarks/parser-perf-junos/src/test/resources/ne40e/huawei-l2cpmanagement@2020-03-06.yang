@@ -1,0 +1,208 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2cpmanagement {
+  namespace "urn:huawei:yang:huawei-l2cpmanagement";
+  prefix l2cpmanagement;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  ext:task-name  "l2cpmanagement";
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "L2 control protocol management.";
+  revision 2020-03-06 {
+    description
+      "Change description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-10 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  typedef global-action-status {
+    type enumeration {
+      enum "forwarding" {
+        value 1;
+        description
+          "Link protocol forwarding.";
+      }
+      enum "discard" {
+        value 2;
+        description
+          "Link protocol discard.";
+      }
+    }
+    description
+      "Global link protocol action.";
+  }
+
+  typedef action-status {
+    type enumeration {
+      enum "transport" {
+        value 0;
+        description
+          "Link protocol transport.";
+      }
+      enum "forwarding" {
+        value 1;
+        description
+          "Link protocol forwarding.";
+      }
+      enum "discard" {
+        value 2;
+        description
+          "Link protocol discard.";
+      }
+    }
+    description
+      "Link protocol action.";
+  }
+
+  typedef protocol-type {
+    type enumeration {
+      enum "bpdu" {
+        value 13;
+        description
+          "Bridge Protocol Data Unit.";
+      }
+      enum "c-stp" {
+        value 2;
+        description
+          "Customer Spanning Tree Protocol.";
+      }
+      enum "s-stp" {
+        value 3;
+        description
+          "Provider Spanning Tree Protocol.";
+      }
+      enum "lacp" {
+        value 5;
+        description
+          "Link Aggregation Marker Protocol.";
+      }
+      enum "lamp" {
+        value 6;
+        description
+          "Link Aggregation Control Protocol.";
+      }
+      enum "lldp" {
+        value 10;
+        description
+          "Link Layer Discovery Protocol.";
+      }
+      enum "eapol" {
+        value 8;
+        description
+          "Port-Authentication Protocol(802.1X).";
+      }
+      enum "elmi" {
+        value 4;
+        description
+          "Ethernet Local Management Interface Protocol.";
+      }
+      enum "link-oam" {
+        value 14;
+        description
+          "Ethernet in the First Mile OAM (802.3AH).";
+      }
+      enum "esmc" {
+        value 9;
+        description
+          "Synchronization Status Message Protocol (SSM).";
+      }
+      enum "ptp" {
+        value 15;
+        description
+          "Precision Time Protocol (PTP-peer-delay).";
+      }
+      enum "mrp" {
+        value 7;
+        description
+          "Multicast Registration Protocol (MRP).";
+      }
+    }
+    description
+      "Link protocol type.";
+  }
+
+  container l2cpmanagement {
+    description
+      "L2 control protocol management.";
+    container link-protocol-global {
+      description
+        "Configure the global link protocol action.";
+      leaf elmi-status {
+        type global-action-status;
+        default "discard";
+        description
+          "Specify Ethernet Local Management Interface Protocol (E-LMI) configuration information.";
+      }
+      leaf eoam3ah-status {
+        type global-action-status;
+        default "discard";
+        description
+          "Specify Ethernet in the First Mile OAM (802.3AH) configuration information.";
+      }
+      leaf linkoam-status {
+        type global-action-status;
+        default "discard";
+        description
+          "Specify Ethernet in the First Mile OAM (802.3AH) configuration information.";
+      }
+      leaf ptp-status {
+        type global-action-status;
+        default "discard";
+        description
+          "Specify Precision Time Protocol (PTP-peer-delay) configuration information.";
+      }
+      leaf bpdubridge-status {
+        type global-action-status;
+        default "discard";
+        description
+          "Specify bpdu bridge configuration information.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+      description
+       "Interface link protocol actions.";
+      container protocol-actions {
+        when "(../ifm:class='main-interface') and (../ifm:type='Ethernet' or ../ifm:type='GigabitEthernet' or ../ifm:type='Eth-Trunk' or ../ifm:type='100GE' or ../ifm:type='XGigabitEthernet' or ../ifm:type='40GE' or ../ifm:type='10GE' or ../ifm:type='400GE' or ../ifm:type='25GE' or ../ifm:type='FlexE' or ../ifm:type='50GE' or ../ifm:type='50|100GE')";
+        description
+          "List of the interface link protocol actions.";
+        list protocol-action {
+          key "protocol-type";
+          description
+            "Configure the link protocol action.";
+          leaf protocol-type {
+            type protocol-type;
+            description
+              "Protocol type.";
+          }
+          leaf action {
+            type action-status;
+            mandatory true;
+            description
+              "Protocol action.";
+          }
+        }
+      }
+  }
+}

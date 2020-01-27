@@ -1,0 +1,833 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-devm-type {
+  belongs-to huawei-devm {
+    prefix devm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "The submodule of devm : devm_type.";
+	
+  revision 2019-09-09 {
+    description
+      "Add new leafs.";
+    reference
+      "Huawei private.";
+  }
+
+  revision 2019-04-05 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  typedef entity-class-type {
+    type enumeration {
+      enum "other" {
+        value 0;
+        description
+          "Other.";
+      }
+      enum "chassis" {
+        value 1;
+        description
+          "Chassis.";
+      }
+      enum "mpuModule" {
+        value 4;
+        description
+          "MPU.";
+      }
+      enum "lpuModule" {
+        value 5;
+        description
+          "LPU.";
+      }
+      enum "sfuModule" {
+        value 6;
+        description
+          "SFU.";
+      }
+      enum "clockModule" {
+        value 7;
+        description
+          "CLK.";
+      }
+      enum "cardModule" {
+        value 9;
+        description
+          "Card module.";
+      }
+      enum "port" {
+        value 10;
+        description
+          "Port.";
+      }
+      enum "fan" {
+        value 16;
+        description
+          "Fan.";
+      }
+      enum "powerSupply" {
+        value 17;
+        description
+          "Power supply.";
+      }
+      enum "container" {
+        value 18;
+        description
+          "Container.";
+      }
+      enum "ppModule" {
+        value 4108;
+        description
+          "PP Module.";
+      }
+      enum "swfModule" {
+        value 4109;
+        description
+          "Swf Module.";
+      }
+      enum "ecuModule" {
+        value 4110;
+        description
+          "ECU.";
+      }
+      enum "icuModule" {
+        value 4111;
+        description
+          "ICU.";
+      }
+      enum "lfe" {
+        value 4162;
+        description
+          "LFE.";
+      }
+      enum "cfModule" {
+        value 4170;
+        description
+          "CF card.";
+      }  
+      enum "lcd" {
+        value 4181;
+        description
+          "LCD.";
+      }
+      enum "cmuModule" {
+        value 5010;
+        description
+          "CMU.";
+      }
+      enum "pic" {
+        value 5011;
+        description
+          "Pic.";
+      }
+      enum "Tsu" {
+        value 5012;
+        description
+          "Tsu.";
+      }
+      enum "PEM" {
+        value 5006;
+        description
+          "PEM.";
+      }
+      enum "pmu" {
+        value 5031;
+        description
+          "Pmu.";
+      }
+      enum "PM" {
+        value 5032;
+        description
+          "PM.";
+      }      
+    }
+    description
+      "Physical entity class.";
+  }
+  
+   typedef entity-admin-state {
+    type enumeration {
+       enum "inactive" {
+        value 0;
+        description
+          "Inactive state that disables service supply.";
+      }
+      enum "active" {
+        value 1;
+        description
+          "Active state that enabled service supply.";
+      }
+      enum "notSupported" {
+        value 2;
+        description
+          "Administration state not supported.";
+      }
+    }
+    description
+      "Entity admin state.";
+  }
+
+  typedef entity-oper-state-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }
+      enum "normal" {
+        value 1;
+        description
+          "Normal.";
+      }
+      enum "fault" {
+        value 2;
+        description
+          "Fault.";
+      }
+      enum "offline" {
+        value 3;
+        description
+          "Offline.";
+      }
+      enum "notSupported" {
+        value 4;
+        description
+          "Not supported.";
+      }
+      enum "opticalNotEquipped" {
+        value 5;
+        description
+          "Optical module is not equipped.";
+      }
+
+      enum "notInstall" {
+        value 6;
+        description
+          "Board is not installed.";
+      }
+      enum "wrongType" {
+        value 7;
+        description
+          "Wrong board type.";
+      }
+      enum "registered" {
+        value 8;
+        description
+          "Registered.";
+      }
+      enum "unregistered" {
+        value 9;
+        description
+          "Unregistered.";
+      }
+      enum "poweroff" {
+        value 10;
+        description
+          "Poweroff.";
+      }
+      enum "port-physical-down" {
+        value 11;
+        description
+          "Port physical down.";
+      }
+    }
+    description
+      "Entity operate state.";
+  }
+  
+  typedef entity-standby-state {
+    type enumeration {
+      enum "master" {
+        value 0;
+        description
+          "Master.";
+      }
+      enum "slave" {
+        value 1;
+        description
+          "Slave.";
+      }
+      enum "notSupported" {
+        value 2;
+        description
+          "Not supported.";
+      }
+      enum "systemMaster" {
+        value 3;
+        description
+          "System master.";
+      }
+      enum "systemSlave" {
+        value 4;
+        description
+          "System slave.";
+      }
+    }
+    description
+      "Entity standby state.";
+  }
+
+  typedef offline-class-type {
+    type enumeration {
+      enum "chassis" {
+        value 1;
+        description
+          "Chassis.";
+      }
+      enum "board" {
+        value 3;
+        description
+          "Board.";
+      }
+      enum "card" {
+        value 8;
+        description
+          "Card position.";
+      }
+    }
+    description
+      "Offline class type.";
+  }
+
+  typedef container-class-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }
+      enum "boardSlot" {
+        value 1;
+        description
+          "Board slot.";
+      }
+      enum "mpuSlot" {
+        value 2;
+        description
+          "MPU slot.";
+      }
+      enum "lpuSlot" {
+        value 3;
+        description
+          "LPU slot.";
+      }
+      enum "sfuSlot" {
+        value 4;
+        description
+          "SFU slot.";
+      }
+      enum "icuSlot" {
+        value 5;
+        description
+          "ICU slot.";
+      }
+      enum "ecuSlot" {
+        value 6;
+        description
+          "ECU slot.";
+      }
+      enum "clkSlot" {
+        value 7;
+        description
+          "CLK slot.";
+      }
+      enum "cmuSlot" {
+        value 8;
+        description
+          "CMU slot.";
+      }
+      enum "fanSlot" {
+        value 9;
+        description
+          "Fan slot.";
+      }
+      enum "powerSlot" {
+        value 10;
+        description
+          "Power slot.";
+      }
+      enum "lcdSlot" {
+        value 11;
+        description
+          "LCD slot.";
+      }
+      enum "picSlot" {
+        value 12;
+        description
+          "PIC slot.";
+      }
+      enum "ofcSlot" {
+        value 13;
+        description
+          "OFC slot.";
+      }
+      enum "cfcardSlot" {
+        value 14;
+        description
+          "CF card slot.";
+      }
+      enum "virtualSlot" {
+        value 15;
+        description
+          "Virtual slot.";
+      }
+      enum "virtualSubSlot" {
+        value 16;
+        description
+          "Virtual sub-slot.";
+      }
+    }
+    description
+      "Container type.";
+  }
+
+  typedef lpu-service-type {
+    type enumeration {
+      enum "lpu" {
+        value 0;
+        description
+          "LPU.";
+      }
+      enum "rnr" {
+        value 1;
+        description
+          "RNR.";
+      }
+      enum "tsu" {
+        value 2;
+        description
+          "TSU.";
+      }
+      enum "ns" {
+        value 3;
+        description
+          "NS.";
+      }
+      enum "gre" {
+        value 4;
+        description
+          "GRE.";
+      }
+      enum "vsu" {
+        value 5;
+        description
+          "VSU.";
+      }
+    }
+    description
+      "Lpu service type.";
+  }
+
+  typedef board-role-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }
+      enum "mmb" {
+        value 1; 
+        description
+          "MMB.";
+      }
+      enum "plmb" {
+        value 2;
+        description
+          "PLMB.";
+      }
+      enum "acmb" {
+        value 3;
+        description
+          "ACMB.";
+      }
+      enum "mb" {
+        value 4;
+        description
+          "MB.";
+      }
+      enum "lc" {
+        value 5;
+        description
+          "LC.";
+      }
+      enum "sysmmb" {
+        value 6;
+        description
+          "System mmb.";
+      }
+      enum "sysmb" {
+        value 7;
+        description
+          "System mb.";
+      }
+    }
+    description
+      "Board role.";
+  } 
+ 
+  typedef port-class-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }
+      enum "Eth" {
+        value 1;
+        description
+          "Ethernet.";
+      }
+      enum "Pos" {
+        value 2;
+        description
+          "POS.";
+      }
+      enum "Cpos" {
+        value 3;
+        description
+          "CPOS port.";
+      }
+      enum "E1" {
+        value 4;
+        description
+          "E1 port.";
+      }
+      enum "GE" {
+        value 5;
+        description
+          "GE port.";
+      }
+      enum "10GE" {
+        value 6;
+        description
+          "10GE port.";
+      }
+      enum "GF" {
+        value 7;
+        description
+          "GF port.";
+      }
+      enum "10GF" {
+        value 8;
+        description
+          "10GF port.";
+      }
+      enum "40GF" {
+        value 9;
+        description
+          "40GF port.";
+      }
+      enum "10GFCOM" {
+        value 10;
+        description
+          "Combinable 10GF port.";
+      }
+      enum "40GFSPLIT" {
+        value 11;
+        description
+          "Splitable 40GF port.";
+      }
+      enum "Otn" {
+        value 12;
+        description
+          "OTN port.";
+      }
+    }
+    description
+      "Port type.";
+  }
+
+  typedef port-level-type {
+    type enumeration {
+      enum "GE" {
+        value 1;
+        description
+          "GE.";
+      }
+    }
+    description
+      "Port level type.";
+  }
+
+  typedef port-hardware-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }      
+    }
+    description
+      "Port hardtype.";
+  }
+  
+
+  typedef port-medium-type {
+    type enumeration {
+      enum "notSupported" {
+        value 0;
+        description
+          "Unsupported Type.";
+      }
+      enum "copper" {
+        value 1;
+        description
+          "Copper.";
+      }
+      enum "fiber" {
+        value 2;
+        description
+          "Fiber.";
+      }
+    }
+    description
+      "Port medium type.";
+  }
+
+  typedef hardware-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }      
+    }
+    description
+      "Entity hardtype.";
+  }
+
+  typedef loopback-state-type {
+    type enumeration {
+      enum "noLoopback" {
+        value 0;
+        description
+          "No loopback.";
+      }
+      enum "localLoopback" {
+        value 1;
+        description
+          "Local Loopback.";
+      }
+      enum "remoteLoopback" {
+        value 2;
+        description
+          "Remote Loopback.";
+      }
+    }
+    description
+      "Port loopback state.";
+  }
+
+  typedef init-status-type {
+    type enumeration {
+      enum "fail" {
+        value 0;
+        description
+          "Fail.";
+      }
+      enum "success" {
+        value 1;
+        description
+          "Success.";
+      }
+      enum "unknown" {
+        value 2;
+        description
+          "Unknown.";
+      }
+    }
+    description
+      "Card init status.";
+  }
+  
+  typedef register-status-type {
+    type enumeration {
+      enum "unregistered" {
+        value 0;
+        description
+          "Unregistered.";
+      }
+      enum "registered" {
+        value 1;
+        description
+          "Registered.";
+      }
+      enum "unknown" {
+        value 2;
+        description
+          "Unknown.";
+      }
+    }
+    description
+      "Card registered status.";
+  }  
+
+  typedef logic-status-type {
+    type enumeration {
+      enum "fail" {
+        value 0;
+        description
+          "Fail.";
+      }
+      enum "success" {
+        value 1;
+        description
+          "Success.";
+      }
+      enum "unknown" {
+        value 2;
+        description
+          "Unknown.";
+      }
+    }
+    description
+      "Card logic status.";
+  }
+
+  typedef server-type {
+    type enumeration {
+      enum "ftp" {
+        value 0;
+        description
+          "FTP.";
+      }
+      enum "tftp" {
+        value 1;
+        description
+          "TFTP.";
+      }
+      enum "sftp" {
+        value 2;
+        description
+          "SFTP.";
+      }
+    }
+    description
+      "Service type.";
+  }
+
+  typedef trans-type {
+    type enumeration {
+      enum "get" {
+        value 0;
+        description
+          "GET.";
+      }
+      enum "put" {
+        value 1;
+        description
+          "PUT.";
+      }
+    }
+    description
+      "Transmission type.";
+  }
+
+  typedef prefer-kex-type {
+    type enumeration {
+      enum "dh-exchange-group" {
+        value 0;
+        description
+          "KEX_DH_EXCHANGE_GROUP.";
+      }
+      enum "dh-group1" {
+        value 1;
+        description
+          "KEX_DH_GROUP1.";
+      }
+    }
+    description
+      "Prefer kex type.";
+  }
+
+  typedef cipher-type {
+    type enumeration {
+      enum "ase128" {
+        value 1;
+        description
+          "ASE128.";
+      }
+      enum "aes128" {
+        value 2;
+        description
+          "AES128.";
+      }
+    }
+    description
+      "Cipher type.";
+  }
+
+  typedef stoc-hmac-type {
+    type enumeration {
+      enum "md5" {
+        value 0;
+        description
+          "MD5.";
+      }
+      enum "md5-96" {
+        value 1;
+        description
+          "MD5-96.";
+      }
+      enum "sha1" {
+        value 2;
+        description
+          "SHA1.";
+      }
+      enum "sha1-96" {
+        value 3;
+        description
+          "SHA1-96.";
+      }
+    }
+    description
+      "Hmac type.";
+  }
+
+
+  typedef product-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }
+      enum "single" {
+        value 1;
+        description
+          "Single.";
+      }
+      enum "ccc-0" {
+        value 2;
+        description
+          "CCC-0.";
+      }
+      enum "ccc-1" {
+        value 3;
+        description
+          "CCC-1.";
+      }
+      enum "ccc-2" {
+        value 4;
+        description
+          "CCC-2.";
+      }
+    }
+    description
+      "Product type.";
+  }
+}

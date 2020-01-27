@@ -1,0 +1,355 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-xpl {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-xpl";
+  prefix xpl;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Extended router policy language.";
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "route-base";
+  typedef xpl-filter-name {
+    type string {
+      length "1..200";
+      pattern '\s*(([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})|([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200}[\(](($)?[0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})(([,]($)?[0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200}){0,7})[\)]))\s*';
+    }
+    description
+      "XPL route-filter's name.";
+  }
+  typedef filter-parameter-type {
+    type string {
+      length "1..1609";
+      pattern '(\([^\)]*\))';
+    }
+    description
+      "XPL route-filter's parameter name.";
+  }
+  container xpl {
+    description
+      "Extended router policy language.";
+    container global {
+      description
+        "Configure global variable.";
+      leaf content {
+        type string {
+          length "1..16380";
+        }
+        description
+          "Global variable config.";
+      }
+    }
+    container route-flow-group-lists {
+      description
+        "List of route flow group.";
+      list route-flow-group-list {
+      key "name";
+      max-elements 65535;
+      description
+        "Configure of route flow group. A route flow group is used to create a QPPB attribute configuration group to assign a value to the QoS attribute of routes.";
+      leaf name {
+        type string {
+          length "1..200";
+          pattern '\s*([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})\s*';
+        }
+        description
+          "Name.";
+      }
+      leaf content {
+        type string {
+          length "1..16380";
+        }
+        mandatory true;
+        description
+          "List config.";
+      }
+    }
+    }
+    container as-path-lists {
+      description
+        "List of AS_PATH.";
+      list as-path-list {
+      key "name";
+      max-elements 65535;
+      description
+        "Configure a list of AS_PATH. A group of AS_Path data and can be used by a route-filter to filter BGP routes.";
+      leaf name {
+        type string {
+          length "1..200";
+          pattern '\s*([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})\s*';
+        }
+        description
+          "Name.";
+      }
+      leaf content {
+        type string {
+          length "1..16380";
+        }
+        mandatory true;
+        description
+          "List config.";
+      }
+    }
+    }
+    container community-lists {
+      description
+        "List of community attributes.";
+      list community-list {
+      key "name";
+      max-elements 65535;
+      description
+        "Configure a list of community attributes.";
+      leaf name {
+        type string {
+          length "1..200";
+          pattern '\s*([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})\s*';
+        }
+        description
+          "Name.";
+      }
+      leaf content {
+        type string {
+          length "1..16380";
+        }
+        mandatory true;
+        description
+          "List config.";
+      }
+    }
+    }
+    container ext-community-rt-lists {
+      description
+        "List of Extcommunity RT Attributes.";
+      list ext-community-rt-list {
+      key "name";
+      max-elements 65535;
+      description
+        "Configure a list of extcommunity RT attributes.";
+      leaf name {
+        type string {
+          length "1..200";
+          pattern '\s*([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})\s*';
+        }
+        description
+          "Name.";
+      }
+      leaf content {
+        type string {
+          length "1..16380";
+        }
+        mandatory true;
+        description
+          "List config.";
+      }
+    }
+    }
+    container ext-community-soo-lists {
+      description
+        "List of Extcommunity SoO Attributes.";
+      list ext-community-soo-list {
+      key "name";
+      max-elements 65535;
+      description
+        "Configure a list of extcommunity SoO attributes configuration.";
+      leaf name {
+        type string {
+          length "1..200";
+          pattern '\s*([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})\s*';
+        }
+        description
+          "Name.";
+      }
+      leaf content {
+        type string {
+          length "1..16380";
+        }
+        mandatory true;
+        description
+          "List config.";
+      }
+    }
+    }
+    container ipv4-prefix-lists {
+      description
+        "List of Prefix.";
+      list ipv4-prefix-list {
+      key "name";
+      max-elements 65535;
+      description
+        "Configure a list of IPv4 prefix.";
+      leaf name {
+        type string {
+          length "1..200";
+          pattern '\s*([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})\s*';
+        }
+        description
+          "Name.";
+      }
+      leaf content {
+        type string {
+          length "1..16380";
+        }
+        mandatory true;
+        description
+          "List config.";
+      }
+    }
+    }
+    container ipv6-prefix-lists {
+      description
+        "List of IPv6 Prefix.";
+      list ipv6-prefix-list {
+      key "name";
+      max-elements 65535;
+      description
+        "Configure a list of IPv6 prefix.";
+      leaf name {
+        type string {
+          length "1..200";
+          pattern '\s*([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})\s*';
+        }
+        description
+          "Name.";
+      }
+      leaf content {
+        type string {
+          length "1..16380";
+        }
+        mandatory true;
+        description
+          "List config.";
+      }
+    }
+    }
+    container rd-lists {
+      description
+        "List of RD.";
+      list rd-list {
+      key "name";
+      max-elements 65535;
+      description
+        "Configure a list of RD.";
+      leaf name {
+        type string {
+          length "1..200";
+          pattern '\s*([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})\s*';
+        }
+        description
+          "Name.";
+      }
+      leaf content {
+        type string {
+          length "1..16380";
+        }
+        mandatory true;
+        description
+          "List config.";
+      }
+    }
+    }
+    container large-community-lists {
+      description
+        "List of large community sets.";
+      list large-community-list {
+      key "name";
+      max-elements 65535;
+      description
+        "Configure a list of large community.";
+      leaf name {
+        type string {
+          length "1..200";
+          pattern '\s*([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})\s*';
+        }
+        description
+          "Name.";
+      }
+      leaf content {
+        type string {
+          length "1..16380";
+        }
+        mandatory true;
+        description
+          "List config.";
+      }
+    }
+    }
+    container interface-lists {
+      description
+        "List of interface.";
+      list interface-list {
+        key "name";
+        max-elements 1000;
+        description
+          "Configure a list of interface.";
+        leaf name {
+          type string {
+            length "1..200";
+            pattern '\s*([0-9a-zA-Z][0-9a-zA-Z\-_\.]{0,200})\s*';
+          }
+          description
+            "Interface list name.";
+        }
+        container interface-sets {
+          description
+            "List of interface set. An interface set can be applied to route-filters to filter routes based on outbound interfaces.";
+          list interface-set {
+            key "interface-name";
+            max-elements 256;
+            description
+              "Specify interface configuration, based on which routes are filtered.";
+            leaf interface-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Interface set name.";
+            }
+          }
+        }
+      }
+    }
+    container route-filters {
+      description
+        "List of extended policies.";
+      list route-filter {
+        key "name";
+        max-elements 15000;
+        description
+          "Configure a list of extended policy. A route-filter can use its condition clauses to filter routes and use its action clauses to set or modify route attributes of the routes that match the condition clauses.";
+        leaf name {
+          type xpl-filter-name;
+          description
+            "Policy name in the format of a string.";
+        }
+        leaf content {
+          type string {
+            length "1..16380";
+          }
+          mandatory true;
+          description
+            "Policy config.";
+        }
+      }
+    }
+  }
+}

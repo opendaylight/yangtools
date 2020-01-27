@@ -1,0 +1,87 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-local-backup {
+  namespace urn:huawei:yang:huawei-bras-local-backup;
+  prefix bras-local-backup;
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras local backup.";
+  
+  revision 2019-04-02 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+  container bras-local-backup {
+    description
+      "Bras local backup.";
+    container backup-user {
+      description
+        "Configure the backup of local user information.";
+      leaf enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the backup of local user information.";
+      }
+      leaf quota-out-backup-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable information backup for users who are logged out due to duration or traffic volume quota exhaustion.";
+      }
+    }
+    container backup-user-limit {
+      description
+        "Configure the maximum number of users whose information can be backed up.";
+      leaf value {
+        type uint32 {
+          range "1..128";
+        }
+        default "128";
+        description
+          "Specifies the maximum number of users whose information can be backed up.";
+      }
+    }
+  }
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "Bras local backup domain configuration.";
+    container local-backup {
+      description
+        "Configure local backup domain.";
+      container local-user-backup {
+        description
+          "Configure local user information backup in a domain.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable local user information backup in a domain.";
+        }
+      }
+    }
+  }
+
+
+}

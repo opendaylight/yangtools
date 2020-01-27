@@ -1,0 +1,726 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-qos-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-qos-notification";
+  prefix qos-notification;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of qos.";
+  revision 2019-09-07 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "qos";
+  typedef qos-service-class {
+    type enumeration {
+      enum "be" {
+        value 1; 
+        description
+          "BE service-class.";
+      }
+      enum "af1" {
+        value 2; 
+        description
+          "AF1 service-class.";
+      }
+      enum "af2" {
+        value 3; 
+        description
+          "AF2 service-class.";
+      }
+      enum "af3" {
+        value 4; 
+        description
+          "AF3 service-class.";
+      }
+      enum "af4" {
+        value 5; 
+        description
+          "AF4 service-class.";
+      }
+      enum "ef" {
+        value 6; 
+        description
+          "EF service-class.";
+      }
+      enum "cs6" {
+        value 7; 
+        description
+          "CS6 service-class.";
+      }
+      enum "cs7" {
+        value 8; 
+        description
+          "CS7 service-class.";
+      }
+    }
+    description
+      "Queue type.";
+  }
+  typedef drop-type {
+    type enumeration {
+      enum "discard-packet" {
+        value 1; 
+        description
+          "Discard by packet.";
+      }
+      enum "discard-byte" {
+        value 2; 
+        description
+          "Discard by byte.";
+      }
+      enum "discard-packet-ratio" {
+        value 3; 
+        description
+          "Discard by packet ratio.";
+      }
+    }
+    description
+      "Discard type.";
+  }
+  typedef qos-direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 1; 
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        value 2; 
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "Direction type.";
+  }
+  typedef pool-type {
+    type enumeration {
+      enum "pool-0" {
+        value 1;
+        description
+          "Pool 0.";
+      }
+      enum "pool-1" {
+        value 2;
+        description
+          "Pool 1.";
+      }
+    }
+    description
+      "Pool ID.";
+  }
+  notification hqos-buffer-alarm {
+    description
+      "The buffersize on slot [SLOTID] chip [CHIPID] has reached [BufferSize]%%.";
+    leaf slot-id {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf chip-id {
+      type string {
+        length "0..7";
+      }
+      description
+        "Chip ID.";
+    }
+    leaf buffer-size {
+      type string {
+        length "0..63";
+      }
+      units "kB";
+      description
+        "Queue buffer size.";
+    }
+  }
+  notification hqos-buffer-alarm-resume {
+    description
+      "Queue buffer alarm on slot [SLOTID] chip [CHIPID] cleared.";
+    leaf slot-id {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf chip-id {
+      type string {
+        length "0..7";
+      }
+      description
+        "Chip ID.";
+    }
+    leaf buffer-size {
+      type string {
+        length "0..63";
+      }
+      units "kB";
+      description
+        "Queue buffer size.";
+    }
+  }
+  notification hqos-port-queue-statistics-discard-alarm {
+    description
+      "On interface [InterfaceName],[Queue] in queue [DiscardType] is [DiscardValue],it reached alarm-threshold.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Interface name.";
+    }
+    leaf queue {
+      type qos-service-class;
+      description
+        "Queue index.";
+    }
+    leaf discard-type {
+      type drop-type;
+      description
+        "Discard type.";
+    }
+    leaf discard-value {
+      type string {
+        length "1..32";
+      }
+      description
+        "Discard value.";
+    }
+  }
+  notification hqos-port-queue-statistics-discard-alarm-resume {
+    description
+      "On interface [InterfaceName],[Queue] in queue [DiscardType] is [DiscardValue],it is Less than alarm-threshold.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Interface name.";
+    }
+    leaf queue {
+      type qos-service-class;
+      description
+        "Queue index.";
+    }
+    leaf discard-type {
+      type drop-type;
+      description
+        "Discard type.";
+    }
+    leaf discard-value {
+      type string {
+        length "1..32";
+      }
+      description
+        "Discard value.";
+    }
+  }
+  notification hqos-user-queue-apply-pir-fail-alarm {
+    description
+      "The sum of the pirs requested by all users exceeded the maximum configuration specification of the TM chip.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Indicates the name of the physical entity.";
+    }
+    leaf direction {
+      type qos-direction-type;
+      description
+        "Direction. - 1: inbound - 2: outbound.";
+    }
+  }
+  notification hqos-user-queue-apply-pir-success-alarm {
+    description
+      "All users successfully requested pirs.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Indicates the name of the physical entity.";
+    }
+    leaf direction {
+      type qos-direction-type;
+      description
+        "Direction. - 1: inbound - 2: outbound.";
+    }
+  }
+  notification hqos-user-queue-apply-pir-from-pool-fail-alarm {
+    description
+      "The sum of the PIRs requested from resource pool by all users exceeded the maximum configuration specification of the TM chip.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Indicates the name of a physical entity.";
+    }
+    leaf pool {
+      type pool-type;
+      description
+        "Resource pool. - 1: pool-0 - 2: pool-1.";
+    }
+  }
+  notification hqos-user-queue-apply-pir-from-pool-success-alarm {
+    description
+      "All users successfully requested pirs.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Indicates the name of a physical entity.";
+    }
+    leaf pool {
+      type pool-type;
+      description
+        "Resource pool. - 1: pool-0 - 2: pool-1.";
+    }
+  }
+  notification xqos-4queue-resource-over-alarm {
+    description
+      "The number of outbound 4queue user-queue exceeded the specification of the forwarding engine resources.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Name of a physical entity.";
+    }
+    leaf chip-id {
+      type uint32;
+      description
+        "Chip ID.";
+    }
+  }
+  notification xqos-4queue-resource-over-alarm-resume {
+    description
+      "The number of Outbound 4queue user-queue under the specification of the forwarding engine resources.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Name of a physical entity.";
+    }
+    leaf chip-id {
+      type uint32;
+      description
+        "Chip ID.";
+    }
+  }
+  notification xqos-4queue-resource-pre-alarm {
+    description
+      "The number of outbound 4queue user-queue exceeded 90 percent of the specification of the forwarding engine resources.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Name of a physical entity.";
+    }
+    leaf chip-id {
+      type uint32;
+      description
+        "Chip ID.";
+    }
+  }
+  notification xqos-4queue-resource-pre-alarm-resume {
+    description
+      "The number of Outbound 4queue user-queue under 90 percent of the specification of the forwarding engine resources.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Name of a physical entity.";
+    }
+    leaf chip-id {
+      type uint32;
+      description
+        "Chip ID.";
+    }
+  }
+  notification xqos-8queue-resource-over-alarm {
+    description
+      "The number of outbound 8queue user-queue exceeded the specification of the forwarding engine resources.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Name of a physical entity.";
+    }
+    leaf chip-id {
+      type uint32;
+      description
+        "Chip ID.";
+    }
+  }
+  notification xqos-8queue-resource-over-alarm-resume {
+    description
+      "The number of Outbound 8queue user-queue under the specification of the forwarding engine resources.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Name of a physical entity.";
+    }
+    leaf chip-id {
+      type uint32;
+      description
+        "Chip ID.";
+    }
+  }
+  notification xqos-8queue-resource-pre-alarm {
+    description
+      "The number of outbound 8queue user-queue exceeded 90 percent of the specification of the forwarding engine resources.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Name of a physical entity.";
+    }
+    leaf chip-id {
+      type uint32;
+      description
+        "Chip ID.";
+    }
+  }
+  notification xqos-8queue-resource-pre-alarm-resume {
+    description
+      "The number of outbound 8queue user-queue under 90 percent of the specification of the forwarding engine resources.";
+    leaf ent-physical-index {
+      type uint32;
+      description
+        "Indicates the index of the physical entity.";
+    }
+    leaf ent-physical-name {
+      type string {
+        length "0..255";
+      }
+      description
+        "Name of a physical entity.";
+    }
+    leaf chip-id {
+      type uint32;
+      description
+        "Chip ID.";
+    }
+  }
+  notification xqos-hard-pipe-ac-band-over-alarm {
+    description
+      "The hard pipe configured on the interface [InterfaceName] over port bandwidth or port shaping.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Hardpipe interface name.";
+    }
+  }
+  notification xqos-hard-pipe-ac-band-over-alarm-resume {
+    description
+      "The hard pipe configured on the interface [InterfaceName] over port bandwidth or port shaping has cleared.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Hardpipe interface name.";
+    }
+  }
+  notification xqos-hard-pipe-alarm {
+    description
+      "The hard-pipe service on interface [InterfaceName] has reached [BandwidthUsage]%% of interface's hard-pipe capability.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Hardpipe interface name.";
+    }
+    leaf bandwidth-usage {
+      type uint32;
+      units "%";
+      description
+        "Hardpipe bandwitdh usage.";
+    }
+  }
+  notification xqos-hard-pipe-alarm-resume {
+    description
+      "The hard-pipe service alarm on interface [InterfaceName] has cleared.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Hardpipe interface name.";
+    }
+  }
+  notification xqos-hard-pipe-apply-fail-alarm {
+    description
+      "The hard pipe configured on the interface [InterfaceName] does not take effect.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Hardpipe interface name.";
+    }
+  }
+  notification xqos-hard-pipe-apply-fail-alarm-resume {
+    description
+      "The hard pipe not taking effect alarm on the interface [InterfaceName] has cleared.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Hardpipe interface name.";
+    }
+  }
+  notification xqos-hard-pipe-apply-user-queue-fail-alarm {
+    description
+      "The hard pipe of the interface specified by [InterfaceName] fails to apply for forwarding resources.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Interface name.";
+    }
+  }
+  notification xqos-hard-pipe-apply-user-queue-fail-alarm-resume {
+    description
+      "The alarm indicating that the hard pipe of the interface specified by [InterfaceName] fails to apply for forwarding resources is cleared.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Interface name.";
+    }
+  }
+  notification xqos-hard-pipe-bandwidth-alarm {
+    description
+      "The hard-pipe bandwidth configuration on interface [InterfaceName] exceeded the max available bandwidth [MaxCfgBandwidth]Kbps.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Interface name of the hard pipe.";
+    }
+    leaf max-cfg-bandwidth {
+      type uint32;
+      units "kbit/s";
+      description
+        "Maximum configurable bandwidth of the hard pipe.";
+    }
+  }
+  notification xqos-hard-pipe-bandwidth-alarm-resume {
+    description
+      "The hard-pipe config alarm on interface [InterfaceName] has cleared.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Interface name of the hard pipe.";
+    }
+  }
+  notification xqos-port-queue-alarm {
+    description
+      "The alarm of port-queue occurs, only when the used queue is in excess of the configured length.";
+    leaf interface-index {
+      type int32;
+      description
+        "Interface index.";
+    }
+    leaf queue {
+      type string {
+        length "1..4";
+      }
+      description
+        "Queue index.";
+    }
+    leaf trunk-index {
+      type int32;
+      description
+        "Trunk interface index.";
+    }
+  }
+  notification xqos-port-queue-alarm-resume {
+    description
+      "Port queue alarm cleared.";
+    leaf interface-index {
+      type int32;
+      description
+        "Interface index.";
+    }
+    leaf queue {
+      type string {
+        length "1..4";
+      }
+      description
+        "Queue index.";
+    }
+    leaf trunk-index {
+      type int32;
+      description
+        "Trunk interface index.";
+    }
+  }
+  notification xqos-soft-pipe-alarm {
+    description
+      "The soft-pipe service on interface [InterfaceName] has reached [BandwidthUsage]%% of interface's soft-pipe capability.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Interface name of the soft pipe.";
+    }
+    leaf bandwidth-usage {
+      type uint32;
+      units "%";
+      description
+        "Bandwidth usage of the soft pipe.";
+    }
+  }
+  notification xqos-soft-pipe-alarm-resume {
+    description
+      "The soft-pipe service alarm on interface [InterfaceName] has cleared.";
+    leaf interface-name {
+      type string {
+        length "1..511";
+      }
+      description
+        "Interface name of the soft pipe.";
+    }
+  }
+  notification xqos-tm-performance-alarm {
+    description
+      "The traffic bandwidth usage almost reached the maximum forwarding capability of the TM chip.";
+    leaf slot-id {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf chip-id {
+      type uint32;
+      description
+        "Chip ID.";
+    }
+  }
+  notification xqos-tm-performance-alarm-resume {
+    description
+      "The TM performance alarm was cleared.";
+    leaf slot-id {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf chip-id {
+      type uint32;
+      description
+        "Chip ID.";
+    }
+  }
+  notification global-acl-not-support-board {
+    description
+      "The trap of the board does not support acl.";
+    leaf slot-id {
+      type uint32;
+      description
+        "Slot ID.";
+    }
+    leaf direction {
+      type qos-direction-type;
+      description
+        "Direction.";
+    }
+  }
+}

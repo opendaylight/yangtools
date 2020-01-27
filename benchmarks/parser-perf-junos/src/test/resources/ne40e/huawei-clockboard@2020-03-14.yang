@@ -1,0 +1,128 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clockboard {
+ namespace "urn:huawei:yang:huawei-clockboard";
+  prefix clockboard;
+  import huawei-extension {
+    prefix ext;
+  }
+  
+ import huawei-pub-type {
+    prefix pub-type;
+  }
+  
+ import huawei-devm {
+    prefix devm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "System clock synchronization management, including frequency synchronization and time synchronization.";
+
+  revision 2020-03-14 {
+    description
+      "Modify the node description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-04 {
+    description
+      "Modify the node description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "clksync";
+  typedef devm-board-type {
+   type enumeration {
+      enum "clock" {
+        value 1;
+        description
+          "Clock board.";
+      }
+      enum "unknow" {
+        value 0;
+        description
+          "Unknown board type.";
+      }
+    }
+    description
+      "Clock board type.";
+  }
+ 
+  typedef devm-run-state {
+    type enumeration {
+      enum "normal" {
+        value 1;
+        description
+          "Normal.";
+      }
+      enum "abnormal" {
+        value 0;
+        description
+          "Abnormal.";
+      }
+      enum "unknown" {
+        value 2;
+        description
+          "Unknown.";
+      }
+    }
+    description
+      "Devm run state.";
+  }
+  augment "/devm:devm" {
+    description
+      "Information of clockboard.";
+    container clockboards {
+      config false;
+      description
+        "List of statistics of clock board.";
+      list clockboard {
+        key "position";
+        description
+          "Statistics of clock board.";
+        leaf position {
+          type string {
+            length "0..32";
+          }
+          description
+            "Clock board position.";
+        }
+        leaf ent-index {
+          type uint32;
+          description
+            "Clock board index.";
+        }
+        leaf board-type {
+          type devm-board-type;
+          description
+            "Type of a clock board.";
+        }
+        leaf up-time {
+          type pub-type:time-tick;
+          description
+            "Up time of a clock board, the unit is timetick.";
+        }
+        leaf sram-state {
+          type devm-run-state;
+          description
+            "SRAM state.";
+        }
+      }
+    }
+  }
+}

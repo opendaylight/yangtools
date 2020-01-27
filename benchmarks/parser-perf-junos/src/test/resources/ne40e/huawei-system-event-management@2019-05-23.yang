@@ -1,0 +1,218 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-system-event-management {
+  namespace "urn:huawei:yang:huawei-system-event-management";
+  prefix sem;
+
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "System Event Management (SEM).";
+  revision 2019-05-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "device-mgr";
+ 
+  typedef slave-switch-mode {
+    type enumeration {
+      enum "enable" {
+        value 0;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 1;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Switchover enable type.";
+  } 
+  typedef slave-switch-policy {
+    type enumeration {
+      enum "board-switchover" {
+        value 0;
+        description
+          "Board switchover.";
+      }
+      enum "process-switchover" {
+        value 1;
+        description
+          "Process switchover.";
+      }
+    }
+    description
+      "Switchover policy.";
+  }
+  container system-event-management {
+    description
+      "System Event Management (SEM).";
+    container slave-switch {
+      description
+        "Configure swithover.";
+      leaf enable {
+        type slave-switch-mode;
+        default "enable";
+        description
+          "Indicates whether to enable slave switch.";
+      }
+      leaf status {
+	    type string {
+		  length "1..80";
+	    }
+        config false;
+	    description
+	  	"Switchover status.";
+        }
+      leaf primary-board-postion {
+	    type string {
+		  length "1..32";
+	    }
+        config false;
+	  description
+	 	"Master board position.";
+	  }
+      leaf slave-board-postion {
+        type string {
+		  length "1..32";
+	    }
+        config false;
+	    description
+		  "Slave board position.";
+      }
+    }
+    container multi-chassis-slave-switch {
+      description
+        "Configure multi chassis swithover list.";
+      list config {
+        key "chassis-name";
+        description
+          "Configure chassis swithover.";
+        leaf chassis-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Chassis name.";
+        }
+        leaf enable {
+          type slave-switch-mode;
+          default "enable";
+          description
+            "Indicates whether to enable slave switch.";
+        }
+      }
+      list state {
+        key "chassis-name";
+        config false;
+        description
+          "Display chassis switchover state.";
+        leaf chassis-name {
+          type string {
+            length "0..31";
+          }
+          description
+            "Chassis name.";
+        }
+        leaf status {
+          type string {
+            length "1..80";
+          }
+          description
+            "Switch state.";
+        }
+        leaf policy {
+          type slave-switch-policy;
+          description
+            "Switchover status.";
+        }
+        leaf primary-board-postion {
+          type string {
+            length "0..32";
+          }
+          description
+            "Main board postion.";
+        }
+        leaf slave-board-postion {
+          type string {
+            length "0..32";
+          }
+          description
+            "Slave board postion.";
+        }
+      }
+    }
+    container batch-backup-timeout {
+      description
+        "Configure batch backup timeout.";
+      leaf self-healing-timeout {
+        type uint32 {
+          range "10..14400";
+        }
+        units min;
+        description
+          "Self healing timeout.";
+      }
+    }
+    container chassis-batch-backup-timeouts {
+      description
+        "List of chassis batch backup timeout configs.";
+      list chassis-batch-backup-timeout {
+        key "chassis-name";	
+        description
+          "Configure chassis batch backup timeout.";
+        leaf chassis-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Chassis name.";
+        }
+        leaf self-healing-timeout {
+          type uint32 {
+            range "10..14400";
+          }
+          units min;
+          description
+            "Self healing timeout.";
+        }
+      }
+    }
+  }
+  rpc switch-over {
+    description
+      "Switch over.";
+    input {
+      leaf chassis-name {
+        type string {
+          length "1..31";
+        }
+        description
+          "Chassis name.";
+      }
+      leaf position {
+        type string {
+          length "1..32";
+        }
+        description
+          "Chassis position.";
+      }
+    }
+  }
+}

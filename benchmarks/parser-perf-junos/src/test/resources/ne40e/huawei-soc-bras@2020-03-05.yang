@@ -1,0 +1,438 @@
+/******************************************************
+* Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+* Module description & tree structure
+***************************************************/
+module huawei-soc-bras {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-soc-bras";
+  prefix soc-bras;
+  import huawei-bras-user-manage {
+    prefix bras-user-manage;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Security operation center for bras.";
+  revision 2020-03-05 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef board-type {
+    type enumeration {
+      enum "mpu-or-sru" {
+        value 1;
+        description
+          "Main Processing Unit or Switch Router Unit.";
+      }
+      enum "lpu" {
+        value 2;
+        description
+          "Line Processing Unit.";
+      }
+    }
+    description
+      "The board type of the device.";
+  }
+  ext:task-name "soc";
+  typedef system-state-type {
+    type enumeration {
+      enum "main-memory-usage" {
+        value 0;
+        description
+          "The memory usage of the MPU.";
+      }
+      enum "slot-memory-usage" {
+        value 1;
+        description
+          "The memory usage of the LPU.";
+      }
+      enum "main-cpu-usage" {
+        value 2;
+        description
+          "The CPU usage of the MPU.";
+      }
+      enum "slot-cpu-usage" {
+        value 3;
+        description
+          "The CPU usage of the LPU.";
+      }
+      enum "access-queue" {
+        value 4;
+        description
+          "The access queue usage.";
+      }
+      enum "ppp-cpcar-drop" {
+        value 5;
+        description
+          "The rate of PPP packets discarded by CAR when being sent to the CPU.";
+      }
+      enum "ppp-receive-queue" {
+        value 6;
+        description
+          "The usage of queues for receiving PPP packets.";
+      }
+      enum "pppoe-receive-queue" {
+        value 7;
+        description
+          "The usage of queues for receiving PPPOE packets.";
+      }
+      enum "l2tp-queue" {
+        value 8;
+        description
+          "The usage of L2TP queues.";
+      }
+      enum "dhcp-slot-queue" {
+        value 9;
+        description
+          "The usage of DHCP queues.";
+      }
+      enum "fes-queue" {
+        value 10;
+        description
+          "The usage of UM FES queues.";
+      }
+      enum "lns-cpcar-drop" {
+        value 11;
+        description
+          "The rate of LNS packets discarded by CAR when being sent to the CPU.";
+      }
+      enum "dhcp-server-queue" {
+        value 13;
+        description
+          "The usage of DHCP server queues.";
+      }
+      enum "dhcpv6-server-queue" {
+        value 14;
+        description
+          "The usage of DHCPv6 server queues.";
+      }
+    }
+    description
+      "The system status for adjusting the user access rate.";
+  }
+  augment "/bras-user-manage:bras-user-manage/bras-user-manage:access-speed" {
+    description
+      "Sets the access rate limitation.";
+    container adjust-thresholds {
+      description
+        "List of configure the system status threshold for decreasing the user access rate and the threshold for restoring the user access rate.";
+      list adjust-threshold {
+        ext:generated-by system;
+        ext:operation-exclude "create|delete";
+        key "system-state";
+        description
+          "Configure the system status threshold for decreasing the user access rate and the threshold for restoring the user access rate.";
+        leaf system-state {
+          type system-state-type;
+          description
+            "Monitor Type.";
+        }
+        leaf alarm-percent {
+          type uint32 {
+            range "1..100";
+          }
+          ext:dynamic-default {
+            ext:default-value "85" {
+              when "../system-state = 'main-memory-usage'";
+              description "The default value is 85 when system-state is main-memory-usage.";
+            }
+            ext:default-value "85" {
+              when "../system-state = 'slot-memory-usage'";
+              description "The default value is 85 when system-state is slot-memory-usage.";
+            }
+            ext:default-value "90" {
+              when "../system-state = 'main-cpu-usage'";
+              description "The default value is 90 when system-state is main-cpu-usage.";
+            }
+            ext:default-value "85" {
+              when "../system-state = 'slot-cpu-usage'";
+              description "The default value is 85 when system-state is slot-cpu-usage.";
+            }
+            ext:default-value "4" {
+              when "../system-state = 'access-queue'";
+              description "The default value is 4 when system-state is access-queue.";
+            }
+            ext:default-value "2" {
+              when "../system-state = 'ppp-cpcar-drop'";
+              description "The default value is 2 when system-state is ppp-cpcar-drop.";
+            }
+            ext:default-value "2" {
+              when "../system-state = 'ppp-receive-queue'";
+              description "The default value is 2 when system-state is ppp-receive-queue.";
+            }
+            ext:default-value "2" {
+              when "../system-state = 'pppoe-receive-queue'";
+              description "The default value is 2 when system-state is pppoe-receive-queue.";
+            }
+            ext:default-value "10" {
+              when "../system-state = 'l2tp-queue'";
+              description "The default value is 10 when system-state is l2tp-queue.";
+            }
+            ext:default-value "6" {
+              when "../system-state = 'dhcp-slot-queue'";
+              description "The default value is 6 when system-state is dhcp-slot-queue.";
+            }
+            ext:default-value "9" {
+              when "../system-state = 'fes-queue'";
+              description "The default value is 9 when system-state is fes-queue.";
+            }
+            ext:default-value "2" {
+              when "../system-state = 'lns-cpcar-drop'";
+              description "The default value is 2 when system-state is lns-cpcar-drop.";
+            }
+            ext:default-value "5" {
+              when "../system-state = 'dhcp-server-queue'";
+              description "The default value is 5 when system-state is dhcp-server-queue.";
+            }
+            ext:default-value "5" {
+              when "../system-state = 'dhcpv6-server-queue'";
+              description "The default value is 5 when system-state is dhcpv6-server-queue.";
+            }
+          }
+          must ../alarm-percent>../resume-percent;
+          description
+            "The threshold for decreasing the user access rate.";
+        }
+        leaf resume-percent {
+          type uint32 {
+            range "1..100";
+          }
+          ext:dynamic-default {
+            ext:default-value "83" {
+              when "../system-state = 'main-memory-usage'";
+              description "The default value is 83 when system-state is main-memory-usage.";
+            }
+            ext:default-value "75" {
+              when "../system-state = 'slot-memory-usage'";
+              description "The default value is 75 when system-state is slot-memory-usage.";
+            }
+            ext:default-value "85" {
+              when "../system-state = 'main-cpu-usage'";
+              description "The default value is 85 when system-state is main-cpu-usage.";
+            }
+            ext:default-value "84" {
+              when "../system-state = 'slot-cpu-usage'";
+              description "The default value is 84 when system-state is slot-cpu-usage.";
+            }
+            ext:default-value "2" {
+              when "../system-state = 'access-queue'";
+              description "The default value is 2 when system-state is access-queue.";
+            }
+            ext:default-value "1" {
+              when "../system-state = 'ppp-cpcar-drop'";
+              description "The default value is 1 when system-state is ppp-cpcar-drop.";
+            }
+            ext:default-value "1" {
+              when "../system-state = 'ppp-receive-queue'";
+              description "The default value is 1 when system-state is ppp-receive-queue.";
+            }
+            ext:default-value "1" {
+              when "../system-state = 'pppoe-receive-queue'";
+              description "The default value is 1 when system-state is pppoe-receive-queue.";
+            }
+            ext:default-value "5" {
+              when "../system-state = 'l2tp-queue'";
+              description "The default value is 5 when system-state is l2tp-queue.";
+            }
+            ext:default-value "3" {
+              when "../system-state = 'dhcp-slot-queue'";
+              description "The default value is 3 when system-state is dhcp-slot-queue.";
+            }
+            ext:default-value "5" {
+              when "../system-state = 'fes-queue'";
+              description "The default value is 5 when system-state is fes-queue.";
+            }
+            ext:default-value "1" {
+              when "../system-state = 'lns-cpcar-drop'";
+              description "The default value is 1 when system-state is lns-cpcar-drop.";
+            }
+            ext:default-value "3" {
+              when "../system-state = 'dhcp-server-queue'";
+              description "The default value is 3 when system-state is dhcp-server-queue.";
+            }
+            ext:default-value "3" {
+              when "../system-state = 'dhcpv6-server-queue'";
+              description "The default value is 3 when system-state is dhcpv6-server-queue.";
+            }
+          }
+          must ../alarm-percent>../resume-percent;
+          description
+            "The threshold for restoring the user access rate.";
+        }
+      }
+    }
+    container adjust-cpcar-level {
+      description
+        "Configure a minimum adjustable threshold for CP-CAR and intervals for decreasing the CP-CAR value from the minimum adjustable threshold to extremely low threshold and for restoring the value to the minimum adjustable threshold.";
+      leaf minimum-adjustable-threshold {
+        type uint32 {
+          range "2..20";
+        }
+        default "10";
+        description
+          "The minimum adjustable threshold for the CP-CAR value, in percentage.";
+      }
+      leaf decrease-interval {
+        type uint32 {
+          range "10..600";
+        }
+        units "s";
+        default "10";
+        description
+          "The interval for decreasing the CP-CAR value from the minimum adjustable threshold to extremely low threshold (1%).";
+      }
+      leaf resume-interval {
+        type uint32 {
+          range "60..1800";
+        }
+        units "s";
+        default "60";
+        description
+          "The interval for restoring the CP-CAR value from the extremely low threshold (1%) to minimum adjustable threshold.";
+      }
+    }
+    container adjust-user-type {
+      description
+        "Configure the user type for adjusting the user access rate based on the system status.";
+      leaf dhcp {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable DHCP users.";
+      }
+      leaf pppoe {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable PPPoE users.";
+      }
+      leaf ipv4-trigger {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable IPv4 users.";
+      }
+      leaf ipv6-trigger {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable IPv6 users.";
+      }
+      leaf dot1x {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable 802.1x users.";
+      }
+      leaf l2tp {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable L2TP users.";
+      }
+      leaf dhcpv6 {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable DHCPv6 users.";
+      }
+    }
+    container adjust-switch {
+      description
+        "Configure the router to adjust the user access rate based on system status.";
+      leaf enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable adjust the user access rate based on the system status.";
+      }
+      leaf strict-check {
+        when "../enable='true'";
+        type boolean;
+        default "true";
+        description
+          "Enable/disable strict check, which allows the router to check the usages of access-queue, ppp-cpcar-drop, ppp-send-queue, and ppp-receive-queue. The router decreases the user access rate if the usage of any of these parameters is high.";
+      }
+      leaf strict-check-l2tp {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable adjust the l2tp user access rate based on the system status.";
+      }
+    }
+    container adjust-times {
+      description
+        "List of configure an interval at which the system status is detected for adjusting the user access rate and the minimum number of detection intervals after which the user access rate is increased.";
+      list adjust-time {
+        ext:generated-by system;
+        ext:operation-exclude "create|delete";
+        key "board-type";
+        description
+          "Configure an interval at which the system status is detected for adjusting the user access rate and the minimum number of detection intervals after which the user access rate is increased.";
+        leaf board-type {
+          type board-type;
+          description
+            "The board type of the device.";
+        }
+        leaf adjust-interval {
+          type uint32 {
+            range "1..60";
+          }
+          units "s";
+          default "1";
+          description
+            "Specifies the interval at which the system status is detected for adjusting the user access rate.";
+        }
+        leaf adjust-delay-count {
+          type uint32 {
+            range "1..300";
+          }
+          ext:dynamic-default {
+            ext:default-value "2" {
+              when "../board-type = 'mpu-or-sru'";
+              description "The default value is 2 when board-type is mpu-or-sru.";
+            }
+            ext:default-value "1" {
+              when "../board-type = 'lpu'";
+              description "The default value is 1 when board-type is LPU.";
+            }
+          }
+          description
+            "Specifies the minimum number of detection intervals after which the user access rate is increased.";
+        }
+      }
+    }
+    container radius-proxy-active-session {
+      description
+        "Configure the acctive session for the threshold for restoring the user access rate.";
+      leaf restrain-threshold {
+        type uint32 {
+          range "10..1000";
+        }
+        default "250";
+        description
+          "Specify the suppresion threshold.";
+      }
+      leaf resume-threshold {
+        type uint32 {
+          range "10..1000";
+        }
+        default "200";
+        description
+          "Specify the restoration threshold.";
+      }
+    }
+  }
+}

@@ -1,0 +1,412 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-debug {
+  namespace "urn:huawei:yang:huawei-debug";
+  prefix debug;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Global configuration.";
+  revision 2019-04-10 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "diagnose";
+  container debug {
+    description
+      "Debug information.";
+    container cpu-infos {
+      description
+        "List of CPU information of boards.";
+      list cpu-info {
+        key "position";
+		ext:operation-exclude create|delete;
+        description
+          "Configure CPU information of a board.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Board position.";
+        }
+        leaf overload-threshold {
+          type uint32 {
+            range "4..100";
+          }
+          units %;
+          default "90";
+          description
+            "Overload threshold.";
+        }
+        leaf unoverload-threshold {
+          type uint32 {
+            range "1..97";
+          }
+          units %;
+          default "75";
+          description
+            "Overload alarm clear threshold.";
+        }
+        leaf interval {
+          type uint32 {
+            range "1..60";
+          }
+          units min;
+          default "8";
+          description
+            "Overload alarm cycle.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "Board index.";
+        }
+        leaf system-cpu-usage {
+          type uint32 {
+            range "0..100";
+          }
+          units %;
+          default "0";
+          config false;
+          description
+            "CPU usage.";
+        }
+        leaf monitor-number {
+          type uint32 {
+            range "6..360";
+          }
+          config false;
+          description
+            "Monitor number in one alarm cycle.";
+        }
+        leaf monitor-cycle {
+          type uint32;
+          units s;
+          config false;
+          description
+            "Monitor cycle.";
+        }
+        leaf overload-state-change-time {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Last overload state changetime.";
+        }
+        leaf current-overload-state {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Current overload state.";
+        }
+      }
+    }
+    container memory-infos {
+      description
+        "List of memory information of boards.";
+      list memory-info {
+	    must "unoverload-threshold <= (overload-threshold - 3)";
+	    must "overload-threshold <= memreli-overload-threshold";
+	    must "memreli-notice-threshold < memreli-overload-threshold";
+        key "position";
+		ext:operation-exclude create|delete;
+        description
+          "Configure memory information about a board.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Board position.";
+        }
+        leaf overload-threshold {
+		  ext:dynamic-default;
+          type uint32 {
+            range "75..100";
+          }
+          units %;
+          description
+            "Overload threshold.";
+        }
+        leaf unoverload-threshold {
+		  ext:dynamic-default;
+          type uint32 {
+            range "1..97";
+          }
+          units %;
+          description
+            "Overload alarm clear threshold.";
+        }
+        leaf memreli-notice-threshold {
+		  ext:dynamic-default;
+          type uint32 {
+            range "85..99";
+          }
+          units %;
+          description
+            "Board memory reliability notice threshold.";
+        }
+        leaf memreli-overload-threshold {
+		  ext:dynamic-default;
+          type uint32 {
+            range "86..100";
+          }
+          units %;
+          description
+            "Board memory reliability overload threshold.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "Board index.";
+        }
+        leaf os-memory-total {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Total OS memory.";
+        }
+        leaf os-memory-use {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Used OS memory.";
+        }
+        leaf os-memory-free {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Available OS memory.";
+        }
+        leaf os-memory-usage {
+          type uint32 {
+            range "0..100";
+          }
+          units %;
+          config false;
+          description
+            "OS memory usage.";
+        }
+        leaf do-memory-total {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Total VRP memory.";
+        }
+        leaf do-memory-use {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Used VRP memory.";
+        }
+        leaf do-memory-free {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Available VRP memory.";
+        }
+        leaf do-memory-usage {
+          type uint32 {
+            range "0..100";
+          }
+          units %;
+          config false;
+          description
+            "VRP memory usage.";
+        }
+        leaf simple-memory-total {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Total simple memory.";
+        }
+        leaf simple-memory-use {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Used simple memory.";
+        }
+        leaf simple-memory-free {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Available simple memory.";
+        }
+        leaf simple-memory-usage {
+          type uint32 {
+            range "0..100";
+          }
+          units %;
+          config false;
+          description
+            "Simple memory usage.";
+        }
+        leaf overload-state-change-time {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Last overload state changetime.";
+        }
+        leaf current-overload-state {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Current overload state.";
+        }
+      }
+    }
+    container resouce-reliability {
+      description
+        "Configure resouce reliability info.";
+      container memory-reliability {
+        description
+          "Configure memory reliability info.";
+        leaf enable { 
+          type boolean;
+          default false;
+          description
+            "Enable/disable memory reliability.";
+        }
+      }
+      container flow-control-message-reliability {
+        description
+          "Configure flow-control-message reliability info.";
+        leaf enable { 
+          type boolean;
+          default true;
+          description
+            "Enable/disable flow-control-message reliability.";
+        }
+      }
+    }
+    container service-cpu-infos {
+      config false;
+      description
+        "List of service cpu-usage information of boards.";
+      list service-cpu-info {
+        key "position service-name";
+        config false;
+        description
+          "Service cpu-usage statistics for a board.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Board position.";
+        }
+        leaf service-name {
+          type string {
+            length "0..50";
+          }
+          config false;
+          description
+            "Service name.";
+        }
+        leaf service-cpu-usage {
+          type uint32 {
+            range "0..100";
+          }
+          units %;
+          config false;
+          description
+            "CPU usage of service.";
+        }
+      }
+    }
+    container board-resouce-states {
+      config false;
+      description
+        "List of board monitoring information.";
+      list board-resouce-state {
+        key "position";
+        config false;
+        description
+          "Board monitoring statistics.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Board position.";
+        }
+        leaf entity-index {
+          type uint32;
+          config false;
+          description
+            "Board index.";
+        }
+        leaf board-name {
+          type string {
+            length "0..128";
+          }
+          config false;
+          description
+            "Board name.";
+        }
+        leaf cpu-usage {
+          type uint32;
+          units %;
+          config false;
+          description
+            "CPU usage.";
+        }
+        leaf memory-total-size {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Total memory size.";
+        }
+        leaf memory-used-size {
+          type uint32;
+          units kB;
+          config false;
+          description
+            "Used memory size.";
+        }
+        leaf memory-usage {
+          type uint32;
+          units %;
+          config false;
+          description
+            "Memory usage.";
+        }
+      }
+    }
+  }
+}

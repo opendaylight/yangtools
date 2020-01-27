@@ -1,0 +1,947 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-loadbalance {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-loadbalance";
+  prefix loadbalance;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-devm-vnf {
+    prefix devm-vnf;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Load balancing.";
+  revision 2020-03-14 {
+    description
+      "Update description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef forward-type {
+    type enumeration {
+      enum "ipv4" {
+        value 0;
+        description
+          "IPv4 two-level load balancing.";
+      }
+      enum "ipv6" {
+        value 1;
+        description
+          "IPv6 two-level load balancing.";
+      }
+      enum "mpls" {
+        value 2;
+        description
+          "MPLS packet two-level load balancing.";
+      }
+      enum "vll" {
+        value 3;
+        description
+          "VLL packet two-level load balancing.";
+      }
+    }
+    description
+      "Forward type.";
+  }
+  typedef hash-arithmetic {
+    type enumeration {
+      enum "arithmetic1" {
+        value 1;
+        description
+          "Arithmetic 1.";
+      }
+      enum "arithmetic2" {
+        value 2;
+        description
+          "Arithmetic 2.";
+      }
+      enum "arithmetic3" {
+        value 3;
+        description
+          "Arithmetic 3.";
+      }
+    }
+    description
+      "Load balancing arithmetic.";
+  }
+  typedef hash-type {
+    type enumeration {
+      enum "arithmetic" {
+        value 3;
+        description
+          "Set the hash algorithm.";
+      }
+      enum "box" {
+        value 1;
+        description
+          "Hash box.";
+      }
+      enum "fields" {
+        value 4;
+        description
+          "Hash fields.";
+      }
+      enum "seed" {
+        value 2;
+        description
+          "Hash seed random number.";
+      }
+    }
+    description
+      "Load balancing hash type.";
+  }
+  typedef trunk-ecmp {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid value.";
+      }
+      enum "ecmp" {
+        value 4;
+        description
+          "IIP module load balancing.";
+      }
+      enum "ecmp1" {
+        value 1;
+        description
+          "IIP module one-level load balancing.";
+      }
+      enum "ecmp2" {
+        value 2;
+        description
+          "IIP module two-level load balancing.";
+      }
+      enum "trunk" {
+        value 3;
+        description
+          "Trunk mode.";
+      }
+      enum "ip" {
+        value 5;
+        description
+          "IP mode.";
+      }
+      enum "mac" {
+        value 6;
+        description
+          "MAC mode.";
+      }
+      enum "vll" {
+        value 7;
+        description
+          "VLL mode.";
+      }
+    }
+    description
+      "Load balancing trunk ecmp.";
+  }
+  typedef hash-material {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid value.";
+      }
+      enum "l2" {
+        value 1;
+        description
+          "L2 (Hash based on the source MAC address and destination MAC address. If the source IP address and destination IP address of the uplink traffic on the interface board remain unchanged but the MAC address changes, L2 is recommended as the hash factor.).";
+      }
+      enum "l3" {
+        value 2;
+        description
+          "L3 (Hash based on the source IP address and destination IP address. If the source IP address and destination IP address of the uplink traffic on the interface board are evenly distributed, L3 is recommended as the hash factor.).";
+      }
+      enum "l4" {
+        value 3;
+        description
+          "L4 (Hash based on the source IP address, destination IP address, source port number, destination port number, and protocol number. If the source IP address and destination IP address of the uplink traffic on the interface board are not evenly distributed, L4 is recommended as the hash factor.).";
+      }
+    }
+    description
+      "Load balancing hash material.";
+  }
+  typedef cx-hash-arithmetic {
+    type enumeration {
+      enum "arithmetic1" {
+        value 1;
+        description
+          "Arithmetic 1.";
+      }
+      enum "arithmetic2" {
+        value 2;
+        description
+          "Arithmetic 2.";
+      }
+      enum "arithmetic3" {
+        value 3;
+        description
+          "Arithmetic 3.";
+      }
+      enum "arithmetic4" {
+        value 4;
+        description
+          "Arithmetic 4.";
+      }
+      enum "arithmetic5" {
+        value 5;
+        description
+          "Arithmetic 5.";
+      }
+      enum "random" {
+        value 6;
+        description
+          "Random algorithm.";
+      }
+    }
+    description
+      "CX load balancing arithmetic.";
+  }
+  typedef cx-trunk-ecmp {
+    type enumeration {
+      enum "ip" {
+        value 5;
+        description
+          "IP mode.";
+      }
+      enum "mac" {
+        value 6;
+        description
+          "MAC mode.";
+      }
+      enum "vll" {
+        value 7;
+        description
+          "VLL mode.";
+      }
+      enum "tunnel-info" {
+        value 8;
+        description
+          "Tunnel information.";
+      }
+      enum "tunnel-inner-ip" {
+        value 9;
+        description
+          "Tunnel inner IP information.";
+      }
+      enum "gtp" {
+        value 10;
+        description
+          "GTP tunnel.";
+      }	  
+    }
+    description
+      "CX load balancing trunk ecmp.";
+  }
+  typedef cx-hash-material {
+    type enumeration {
+      enum "l2" {
+        value 1;
+        description
+          "L2 (Hash based on the source MAC address and destination MAC address. If the source IP address and destination IP address of the uplink traffic on the interface board remain unchanged but the MAC address changes, L2 is recommended as the hash factor.).";
+      }
+      enum "l3" {
+        value 2;
+        description
+          "L3 (Hash based on the source IP address and destination IP address. If the source IP address and destination IP address of the uplink traffic on the interface board are evenly distributed, L3 is recommended as the hash factor.).";
+      }
+      enum "l4" {
+        value 3;
+        description
+          "L4 (Hash based on the source IP address, destination IP address, source port number, destination port number, and protocol number. If the source IP address and destination IP address of the uplink traffic on the interface board are not evenly distributed, L4 is recommended as the hash factor.).";
+      }
+      enum "undo-disable" {
+        value 4;
+        description
+          "Enable the tunnel information function for the hash factor when an IP tunnel's fragmented packets are balanced.";
+      }
+      enum "disable" {
+        value 5;
+        description
+          "Disable the tunnel information function for the hash factor when an IP tunnel's fragmented packets are balanced.";
+      }
+      enum "label-ip" {
+        value 6;
+        description
+          "Label-IP.";
+      }
+      enum "label" {
+        value 7;
+        description
+          "Pw-label in VLL.";
+      }
+    }
+    description
+      "CX load balancing hash material.";
+  }
+  typedef cx-mulpe-flag {
+    type enumeration {
+      enum "enable" {
+        value 0;
+        description
+          "Enable multi-path load balancing.";
+      }
+      enum "disable" {
+        value 255;
+        description
+          "Disable multi-path load balancing.";
+      }
+    }
+    description
+      "CX load balancing multi-path.";
+  }
+  typedef hash-ip-type {
+    type enumeration {
+      enum "destination-ip" {
+        value 4;
+        description
+          "Use destination IP addresses as hash key.";
+      }
+      enum "source-ip" {
+        value 5;
+        description
+          "Use source IP addresses as hash key.";
+      }
+    }
+    description
+      "Hash key type.";
+  }
+  typedef cfg-type {
+    type enumeration {
+      enum "all" {
+        value 0;
+        description
+          "Query load balancing hash information on all boards.";
+      }
+      enum "slot" {
+        value 1;
+        description
+          "Query load balancing hash information on a board.";
+      }
+    }
+    description
+      "Query mode.";
+  }
+  ext:task-name "forwarding";
+  container loadbalance {
+    description
+      "Load balancing configuration.";
+    container global-attribute {
+      description
+        "Configure global attribute.";
+      leaf ucmp-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable UCMP globally.";
+      }
+      leaf avoid-ipv4-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable two-level load balancing for IPv4 packets.";
+      }
+      leaf avoid-ipv6-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable global IPv6 hash configuration.";
+      }
+      leaf avoid-mpls-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable global MPLS hash configuration.";
+      }
+      leaf mpls-ucmp-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MPLS UCMP.";
+      }
+      leaf mpls-sr-transit-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MPLS transit node segment-routing enhance.";
+      }
+      leaf mpls-trunk-enhance-fwd {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MPLS trunk hash enhance forward.";
+      }
+      leaf vxlan-l2vni-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable L2VXLAN VNI-based load balancing.";
+      }
+      leaf vxlan-l3vni-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable L3VXLAN VNI-based load balancing.";
+      }
+      leaf vxlan-l2deep-hash-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable L2VXLAN DEEP HASH load balancing.";
+      }
+      leaf trunk-enhance-fwd {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable trunk UCMP.";
+      }
+      leaf trunk-multicast-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable trunk multicast load balancing.";
+      }
+      leaf mpls-te-convergence-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MPLS TE convergence separate.";
+      }
+      leaf mpls-loadblc-wtr {
+        type uint32 {
+          range "0|5..60";
+        }
+        default "0";
+        description
+          "Set the global WTR for the ECMP switchback. The value can be 0 or an integer ranging from 5 to 60, in seconds.";
+      }
+    }
+    container avoid-degradations {
+      description
+        "List of configurations of the two-level load balancing function on a board.";
+      list avoid-degradation {
+        key "position forward-type";
+        description
+          "Configure the two-level load balancing function on a board.";
+        leaf position {
+          type string {
+            length "1..16";
+          }
+          description
+            "Slot ID of an interface board. The value range varies according to router hardware.";
+        }
+        leaf forward-type {
+          type forward-type;
+          description
+            "Set packet type.";
+        }
+      }
+    }
+    container hash-key-ip {
+      description
+        "Configure a device to use source or destination IP addresses as hash key to balance all incoming IP packets on a specific or all interface boards.";
+      leaf ip-type {
+        type hash-ip-type;
+        description
+          "Set IP hash type.";
+      }
+    }
+    container hash-key-ip-slots {
+      description
+        "List of configurations that enable a device to use source or destination IP addresses as hash key to balance all incoming IP packets on a specific or all interface boards.";
+      list hash-key-ip-slot {
+        key "slot-id";
+        description
+          "Configure a device to use source or destination IP addresses as hash key to balance all incoming IP packets on a specific or all interface boards.";
+        leaf slot-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "Slot ID of an interface board. The value range varies according to router hardware. NULL is for all slot.";
+        }
+        leaf ip-type {
+          type hash-ip-type;
+          mandatory true;
+          description
+            "Set IP hash type.";
+        }
+      }
+    }
+    container hash-instructions {
+      config false;
+      description
+        "List of load balancing hash information on a specified board or on all boards.";
+      list hash-instruction {
+        key "slot-id query-type";
+        config false;
+        description
+          "Statistics of load balancing hash information on a specified board or on all boards.";
+        leaf slot-id {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "Slot ID of an interface board. The value range varies according to router hardware.";
+        }
+        leaf query-type {
+          type cfg-type;
+          config false;
+          description
+            "Query mode of load balancing hash information.";
+        }
+        container infos {
+          config false;
+          description
+            "Statistics of load balancing hash-related configurations.";
+          leaf info {
+            type string {
+              length "1..127";
+            }
+            config false;
+            status deprecated;
+            description
+              "Load balancing hash information. To check load balancing information, querying the load-balancing configuration node is recommended.";
+          }
+        }
+        leaf tunnel-gtp-enable {
+            type boolean;
+            config false;
+            description
+              "This node displays whether tunnel information is used as a hash factor during hash calculation for GTP tunnel load balancing.";
+          }
+      }
+    }
+    container ecmp-stateful {
+      must "maximum>minimum or not(maximum) or not(minimum)";
+      description
+        "Configure ECMP stateful load balancing.";
+      leaf minimum {
+        type uint32 {
+          range "1..63";
+        }
+        description
+          "Minimum interface number.";
+      }
+      leaf maximum {
+        type uint32 {
+          range "2..64";
+        }
+        description
+          "Maximum interface number.";
+      }
+      leaf accuracy {
+        type uint32 {
+          range "1..4";
+        }
+        description
+          "Accuracy of ECMP load balancing.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Load balancing configuration to the ifm module.";
+    container loadbalance {
+      description
+        "Configure Load balancing.";
+      container ucmp {
+        when "../../ifm:type = 'GigabitEthernet' or ../../ifm:type = 'Pos' or ../../ifm:type = '40GE' or ../../ifm:type = '100GE' or ../../ifm:type = 'XGigabitEthernet' or ../../ifm:type = 'ATM'";
+        presence "Enable UCMP on the interface";
+        description
+          "Enable/disable UCMP on an interface. To implement UCMP on equal-cost links with different bandwidth values, you can configure this function on each interface. Enabling or disabling UCMP on a physical interface takes effect only after the interface is restarted. UCMP is only for equal-cost routes. UCMP applies only to equal-cost routes and is independent of routing protocols, such as an IGP or BGP.";
+      }
+      container packet {
+        when "../../ifm:type = 'Ethernet' or ../../ifm:type = '100GE' or ../../ifm:type = '400GE' or ../../ifm:type = '40GE' or ../../ifm:type = 'GigabitEthernet' or ../../ifm:type = 'XGigabitEthernet' or ../../ifm:type = 'Ip-Trunk' or ../../ifm:type = 'Eth-Trunk'";
+        presence "Enable per-packet load balancing on an interface";
+        description
+          "Enable/disable per-packet load balancing on specified interfaces.";
+        }
+      }
+    }
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "Load balancing configuration to the devm module.";
+    container loadbalance {
+      description
+        "Configure load balancing.";
+      container hashs {
+        description
+          "List of PE2 hash configuration on a specified board.";
+        list hash {
+          key "type trunk-ecmp";
+          description
+            "Configure PE2 hash load balancing.";
+          leaf type {
+            type hash-type;
+            description
+              "Set hash configuration type.";
+          }
+          leaf trunk-ecmp {
+            type trunk-ecmp;
+            must "(../type='arithmetic' and ../trunk-ecmp='invalid') or (../type='box' and (../trunk-ecmp='ecmp1' or ../trunk-ecmp='ecmp2' or ../trunk-ecmp='trunk') ) or (../type='fields' and (../trunk-ecmp='ip' or ../trunk-ecmp='mac' or ../trunk-ecmp='vll') ) or (../type='seed' and (../trunk-ecmp='ecmp' or ../trunk-ecmp='trunk') ) or not(../type='arithmetic' or ../type='box' or ../type='fields' or ../type='seed')";
+            description
+              "Set hash mode, that is, the box attribute, indicating which load balancing mode is applicable to the box.";
+          }
+          leaf arithmetic {
+            when "../type='arithmetic'";
+            type hash-arithmetic;
+            default "arithmetic2";
+            description
+              "Set hash algorithm.";
+          }
+          leaf box1 {
+            when "../type='box'";
+            type pub-type:hex-binary {
+              length "1..4";
+              pattern '(0x|0X)?[0-9a-fA-F]{1,2}';
+            }
+            default "0x0";
+            description
+              "Hash box 1.";
+          }
+          leaf box2 {
+            when "../type='box'";
+            type pub-type:hex-binary {
+              length "1..10";
+              pattern '(0x|0X)?[0-9a-fA-F]{1,8}';
+            }
+            default "0x0";
+            description
+              "Hash box 2.";
+          }
+          leaf material {
+            when "../type='fields'";
+            type hash-material;
+            must "(../material='l2' or ../material='l3' or ../material='l4') or not(../type='fields' or ../trunk-ecmp='ip' or ../trunk-ecmp='mac')";
+            default "l4";
+            description
+              "Set hash material.";
+          }
+          leaf random-flag {
+            when "../type='seed'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable random flag.";
+          }
+          leaf custom-seed {
+            when "../type='seed' and ../random-flag='false'";
+            type pub-type:hex-binary {
+              length "1..10";
+              pattern '(0x|0X)?[0-9a-fA-F]{1,8}';
+            }
+            default "0x0";
+            description
+              "User-defined hash seed random number.";
+          }
+        }
+      }
+      container dynamic-adjust {
+        description
+          "Configure dynamic load balancing.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable dynamic load balancing.";
+        }
+      }
+      container hash-arithmetic {
+        description
+          "Configure FE1 hash arithmetic on a specified board.";
+        leaf arithmetic {
+          type cx-hash-arithmetic;
+          default "random";
+          description
+            "Set hash algorithm.";
+        }
+        leaf second-hash-flag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable second hash flag.";
+        }
+      }
+      container hash-fields {
+        description
+          "List of FE1 hash fields configuration on a specified board.";
+        list hash-field {
+          key "trunk-ecmp";
+          description
+            "Configure hash mode, that is, the box attribute, indicating which load balancing mode is applicable to the box.";
+          ext:generated-by system {
+            description "The all instances are generated automatically.";
+          }
+          ext:operation-exclude create|delete {
+            description "The all instances cannot be created or deleted.";
+          }
+          leaf trunk-ecmp {
+            type cx-trunk-ecmp;
+            description
+              "Hash mode.";
+          }
+          leaf material {
+            type cx-hash-material;
+            ext:dynamic-default {
+              ext:default-value "l4" {
+                when "../trunk-ecmp='ip' or ../trunk-ecmp='mac' or ../trunk-ecmp='vll'";
+                description "The default value is l4 when trunk-ecmp is IP or MAC or VLL.";
+              }
+              ext:default-value "disable" {
+                when "../trunk-ecmp='tunnel-inner-ip'";
+                description "The default value is disable when trunk-ecmp is tunnel-inner-ip.";
+              }
+              ext:default-value "undo-disable" {
+                when "../trunk-ecmp='tunnel-info' or ../trunk-ecmp='gtp'";
+                description "The default value is enable when trunk-ecmp is tunnel-info or GTP.";
+              }
+            }
+            must "(../trunk-ecmp='ip' and (../material='l2' or ../material='l3' or ../material='l4') ) or (../trunk-ecmp='mac' and (../material='l2' or ../material='l3' or ../material='l4' or ../material='label-ip') ) or ( (../trunk-ecmp='tunnel-info'  or ../trunk-ecmp='tunnel-inner-ip' or ../trunk-ecmp='gtp') and (../material='undo-disable' or ../material='disable') ) or (../trunk-ecmp='vll' and (../material='l2' or ../material='l3' or ../material='l4' or ../material='label-ip') )";
+            description
+              "Set hash material. Please query the hash-instructions/hash-instruction/tunnel-gtp-enable node to check load balancing among GTP tunnels.";
+            ext:support-filter "true";
+          }
+        }
+      }
+      container hash-seed {
+        presence "FE1 hash seed configuration on a specified board.";
+        description
+          "Enable/disable FE1 hash seed on a specified board.";
+        leaf random-flag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable random flag.";
+        }
+        leaf custom-seed {
+          type pub-type:hex-binary;
+          must "../custom-seed='0x0' or ../random-flag='false'";
+          default "0x0";
+          description
+            "User-defined hash seed random number.";
+        }
+      }
+      container hash-multipe {
+        description
+          "Configure FE1 hash Multi-path on a specified board.";
+        leaf multipe-flag {
+          type cx-mulpe-flag;
+          default "disable";
+          description
+            "Enable multi-path load balancing.";
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+      "Load balancing configuration to the devm module.";
+    container loadbalance {
+      description
+        "Configure load balancing.";
+      container dynamic-adjust {
+        description
+          "Configure dynamic load balancing.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable dynamic load balancing.";
+        }
+      }
+      container hash-arithmetic {
+        description
+          "Configure FE1 hash arithmetic on a specified board.";
+        leaf arithmetic {
+          type cx-hash-arithmetic;
+          default "random";
+          description
+            "Arithmetic.";
+        }
+        leaf second-hash-flag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable second hash.";
+        }
+      }
+      container hash-fields {
+        description
+          "List of FE1 hash fields configuration on a specified board.";
+        list hash-field {
+          key "trunk-ecmp";
+          description
+            "Configure hash mode, that is, the box attribute, indicating which load balancing mode is applicable to the box.";
+          ext:generated-by system {
+            description "The all instances are generated automatically.";
+          }
+          ext:operation-exclude create|delete {
+            description "The all instances cannot be created or deleted.";
+          }
+          leaf trunk-ecmp {
+            type cx-trunk-ecmp;
+            description
+              "Hash mode.";
+          }
+          leaf material {
+            type cx-hash-material;
+            ext:dynamic-default {
+              ext:default-value "l4" {
+                when "../trunk-ecmp='ip' or ../trunk-ecmp='mac' or ../trunk-ecmp='vll'";
+                description "The default value is l4 when trunk-ecmp is IP or MAC or VLL.";
+              }
+              ext:default-value "disable" {
+                when "../trunk-ecmp='tunnel-inner-ip'";
+                description "The default value is disable when trunk-ecmp is tunnel-inner-ip.";
+              }
+              ext:default-value "undo-disable" {
+                when "../trunk-ecmp='tunnel-info' or ../trunk-ecmp='gtp'";
+                description "The default value is enable when trunk-ecmp is tunnel-info or GTP.";
+              }
+            }
+            must "(../trunk-ecmp='ip' and (../material='l2' or ../material='l3' or ../material='l4') ) or (../trunk-ecmp='mac' and (../material='l2' or ../material='l3' or ../material='l4' or ../material='label-ip') ) or ( (../trunk-ecmp='tunnel-info'  or ../trunk-ecmp='tunnel-inner-ip' or ../trunk-ecmp='gtp') and (../material='undo-disable' or ../material='disable') ) or (../trunk-ecmp='vll' and (../material='l2' or ../material='l3' or ../material='l4' or ../material='label-ip') )";
+            description
+              "Set hash material. Please query the hash-instructions/hash-instruction/tunnel-gtp-enable node to check load balancing among GTP tunnels.";
+            ext:support-filter "true";
+          }
+        }
+      }
+      container hash-seed {
+        presence "FE1 hash seed configuration on a specified board.";
+        description
+          "Enable/disable FE1 hash seed on a specified board.";
+        leaf random-flag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable random flag.";
+        }
+        leaf custom-seed {
+          type pub-type:hex-binary;
+          must "../custom-seed='0x0' or ../random-flag='false'";
+          default "0x0";
+          description
+            "User-defined hash seed random number.";
+        }
+      }
+      container hash-multipe {
+        description
+          "Configure FE1 hash Multi-PE on a specified board.";
+        leaf multipe-flag {
+          type cx-mulpe-flag;
+          default "disable";
+          description
+            "Multi-path load balancing.";
+        }
+      }
+    }
+  }
+  augment "/devm-vnf:devm-vnf/devm-vnf:vnf-boards/devm-vnf:vnf-board" {
+    description
+      "Load balancing configuration to the devm module.";
+    container loadbalance {
+      description
+        "Configure Load balance.";
+      container hash-arithmetic {
+        description
+          "Configure FE1 hash arithmetic on a specified board.";
+        leaf arithmetic {
+          type cx-hash-arithmetic;
+          default "random";
+          description
+            "Set hash algorithm.";
+        }
+        leaf second-hash-flag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable second hash.";
+        }
+      }
+      container hash-fields {
+        description
+          "List of FE1 hash fields configuration on a specified board.";
+        list hash-field {
+          key "trunk-ecmp";
+          description
+            "Configure hash mode, that is, the box attribute, indicating which load balancing mode is applicable to the box.";
+          ext:generated-by system {
+            description "The all instances are generated automatically.";
+          }
+          ext:operation-exclude create|delete {
+            description "The all instances cannot be created or deleted.";
+          }
+          leaf trunk-ecmp {
+            type cx-trunk-ecmp;
+            description
+              "Hash mode.";
+          }
+          leaf material {
+            type cx-hash-material;
+            ext:dynamic-default {
+              ext:default-value "l4" {
+                when "../trunk-ecmp='ip'";
+                description "The default value is l4 when trunk-ecmp is IP or MAC or VLL.";
+              }
+              ext:default-value "undo-disable" {
+                when "../trunk-ecmp='tunnel-info' or ../trunk-ecmp='gtp'";
+                description "The default value is enable when trunk-ecmp is tunnel-info or GTP.";
+              }
+            }
+            must "(../trunk-ecmp='ip' and (../material='l2' or ../material='l3' or ../material='l4') ) or ( (../trunk-ecmp='tunnel-info' or ../trunk-ecmp='gtp') and (../material='undo-disable' or ../material='disable') )";
+            description
+              "Set hash material. Please query the hash-instructions/hash-instruction/tunnel-gtp-enable node to check load balancing among GTP tunnels.";
+            ext:support-filter "true";
+          }
+        }
+      }
+      container hash-seed {
+        presence "FE1 hash seed configuration on a specified board.";
+        description
+          "Enable/disable FE1 hash seed on a specified board.";
+        leaf random-flag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable random flag.";
+        }
+        leaf custom-seed {
+          type pub-type:hex-binary;
+          must "../custom-seed='0x0' or ../random-flag='false'";
+          default "0x0";
+          description
+            "User-defined hash seed random number.";
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,268 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-comm {
+ namespace "urn:huawei:yang:huawei-clocksync-comm";
+ prefix clocksync-comm;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Clock comm data model define.";
+
+  revision 2020-03-04 {
+    description
+      "Modify the node description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-09-29 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "clksync";
+
+  typedef clock-pull-in-status {
+    type enumeration {
+      enum "out" {
+        value 0;
+        description
+          "Pull-out.";
+      }
+      enum "in" {
+        value 1;
+        description
+          "Pull-in.";
+      }
+    }
+    description
+      "Clock pull-in state.";
+  }
+  typedef clock-run-mode {
+    type enumeration {
+      enum "free" {
+        value 2;
+        description
+          "Run mode type is free.";
+      }
+      enum "hold" {
+        value 1;
+        description
+          "Run mode type is hold.";
+      }
+      enum "normal" {
+        value 0;
+        description
+          "Run mode type is normal.";
+      }
+    }
+    description
+      "Clock run mode.";
+  }
+  typedef clock-bits-type {
+    type enumeration {
+      enum "1pps" {
+        value 3;
+        description
+          "Bits type is 1pps.";
+      }
+      enum "2mhz" {
+        value 1;
+        description
+          "Bits type is 2mhz.";
+      }
+      enum "2mbps" {
+        value 0;
+        description
+          "Bits type is 2mbps.";
+      }
+      enum "dcls" {
+        value 2;
+        description
+          "Bits type is dcls.";
+      }
+      enum "none" {
+        value 255;
+        description
+          "Bits type is none.";
+      }
+    }
+    description
+      "Clock bits type.";
+  }
+  typedef clock-trace-status {
+    type enumeration {
+      enum "freerun" {
+        value 0;
+        description
+          "Trace ststus is freerun.";
+      }
+      enum "fastlock" {
+        value 1;
+        description
+          "Trace ststus is fastlock.";
+      }
+      enum "trace" {
+        value 2;
+        description
+          "Trace ststus is trace.";
+      }
+      enum "hold" {
+        value 3;
+        description
+          "Trace ststus is hold.";
+      }
+    }
+    description
+      "Clock trace status.";
+  }
+  typedef clock-time-sync-mode {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Time sync mode is none.";
+      }
+      enum "ptp" {
+        value 1;
+        description
+          "Time sync mode is ptp.";
+      }
+    }
+    description
+      "Clock time sync mode.";
+  }
+  typedef clock-freq-sync-mode {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Freq sync mode is none.";
+      }
+      enum "phyfreq" {
+        value 1;
+        description
+          "Freq sync mode is phyfreq.";
+      }
+      enum "ptpfreq" {
+        value 2;
+        description
+          "Freq sync mode is ptpfreq.";
+      }
+      enum "ptpacrfreq" {
+        value 3;
+        description
+          "Freq sync mode is ptpacrfreq.";
+      }
+    }
+    description
+      "Clock freq sync mode.";
+  }
+  typedef clock-time-sync-status {
+    type enumeration {
+      enum "sync" {
+        value 0;
+        description
+          "Time sync status is sync.";
+      }
+      enum "unsync" {
+        value 1;
+        description
+          "Time sync status is unsync.";
+      }
+    }
+    description
+      "Clock time sync status.";
+  }
+
+  container clocksync-comm {
+    config false;
+    description
+      "Common clock information.";
+    container clock-status {
+      description
+        "Statistics of system clock status.";
+      leaf clk-pull-in-status {
+        type clock-pull-in-status;
+        description
+          "Clock pull-in state.";
+      }
+      leaf time-sync-mode {
+        type clock-time-sync-mode;
+        default "none";
+        description
+          "Mode of time synchronization.";
+      }
+      leaf time-sync-status {
+        type clock-time-sync-status;
+        default "unsync";
+        description
+          "Status of time synchronization.";
+      }
+      leaf time-lock-status {
+        type boolean;
+        default "false";
+        description
+          "Locking status of time synchronization.";
+      }
+      leaf freq-sync-mode {
+        type clock-freq-sync-mode;
+        default "none";
+        description
+          "Mode of frequency synchronization.";
+      }
+      leaf sys-clk-trace-status {
+        type clock-trace-status;
+        default "freerun";
+        description
+          "Status of frequency synchronization.";
+      }
+      leaf freq-lock-status {
+        type boolean;
+        default "false";
+        description
+          "Locking status of frequency synchronization.";
+      }
+    }
+  }
+  
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Interface.";
+    container clocksync-flexe {
+      description
+        "Configure clock synchronization on FlexE interfaces.";
+      container phy-ports {
+        description
+          "Configure physical FlexE interface.";
+        container phy-port {
+          description
+            "Configure physical FlexE interface.";
+          leaf lgc-port-name {
+            type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='FlexE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='FlexE-200GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='FlexE-50G' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='FlexE-100G' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='FlexE-50|100G'";
+            description
+              "Logical FlexE interface name.";
+          }
+        }
+      }
+    }
+  }
+}

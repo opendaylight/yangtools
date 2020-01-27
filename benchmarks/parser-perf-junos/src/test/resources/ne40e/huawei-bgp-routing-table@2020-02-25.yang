@@ -1,0 +1,843 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp-routing-table {
+  namespace "urn:huawei:yang:huawei-bgp-routing-table";
+  prefix bgp-rt;
+  import huawei-bgp {
+    prefix bgp;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "bgp";
+  
+  typedef bgp-origin-type {
+    type enumeration {
+      enum "igp" {
+        value 1;
+        description
+          "IBGP route.";
+      }
+      enum "egp" {
+        value 2;
+        description
+          "EBGP route.";
+      }
+      enum "incomplete" {
+        value 3;
+        description
+          "Route whose source is unknown.";
+      }
+    }
+    description
+      "The origin of bgpcommon.";
+  }
+  typedef bgp-external-flag-type {
+    type bits {
+      bit "type5-ip-prefix" {
+        position 5;
+        description
+          "Ip prefix.";
+      }
+      bit "type2-irb" {
+        position 13;
+        description
+          "IRB.";
+      }
+    }
+    description
+      "Route external flags.";
+  }
+  typedef bgp-route-type-flag {
+    type bits {
+      bit ibgp {
+        description
+          "IBGP route.";
+      }
+      bit ebgp {
+        description
+          "EBGP route.";
+      }
+      bit network {
+        description
+          "Network route.";
+      }
+      bit import {
+        description
+          "Imported route.";
+      }
+      bit auto-summary {
+        description
+          "Automatcially summarized route.";
+      }
+      bit aggregate {
+        description
+          "Aggregated route.";
+      }
+      bit cpri {
+        description
+          "Route received by CBGP from PD-BGP.";
+      }
+      bit pcri {
+        description
+          "Route received by PD-BGP from CBGP.";
+      }
+      bit suppressed {
+        description
+          "Suppressed.";
+      }
+      bit nhp-empty {
+        description
+          "NHP-empty.";
+      }
+      bit no-adv {
+        description
+          "Routes that are not advertised to other routers.";
+      }
+      bit local-cross {
+        description
+          "Locally crossed routes.";
+      }
+      bit remote-cross {
+        description
+          "Remotely crossed routes.";
+      }
+      bit vd-bgp {
+        description
+          "VD-BGP route.";
+      }
+      bit path-local {
+        description
+          "Path_Local route.";
+      }
+      bit path-gateway {
+        description
+          "Path_Gateway route.";
+      }
+      bit policy-nopass {
+        description
+          "Policy_NoPass route.";
+      }
+      bit supprenet {
+        description
+          "Supernet route.";
+      }
+      bit dampened {
+        description
+          "Dampened route.";
+      }
+      bit history {
+        description
+          "History route.";
+      }
+      bit select {
+        description
+          "Selected route.";
+      }
+      bit best {
+        description
+          "Best route.";
+      }
+      bit backup {
+        description
+          "Backup route.";
+      }
+      bit attr-change {
+        description
+          "ATTR_Change route.";
+      }
+      bit nhlfe-created {
+        description
+          "NHLFE_Created route.";
+      }
+      bit ilm-created {
+        description
+          "ILM_Created route.";
+      }
+      bit nexthop-change {
+        description
+          "Route whose next hop changed.";
+      }
+      bit invalid {
+        description
+          "Invalid route.";
+      }
+      bit source-change {
+        description
+          "Route whose source address changed.";
+      }
+      bit in-selectedq {
+        description
+          "Route in a selected queue.";
+      }
+      bit exitif-error {
+        description
+          "EXITIF_ERROR route.";
+      }
+      bit group-head {
+        description
+          "GROUP_HEAD route.";
+      }
+    }
+    description
+      "BGP-route-type-flag.";
+  }
+  grouping routing-table-vpn-name {
+    description
+      "BGP routing-table attributes.";
+    leaf vpn-name {
+      type leafref {
+        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+      }
+      description
+        "VPN name of a BGP instance.";
+    }
+  }
+  grouping routing-table-key-type {
+    description
+      "BGP routing-table attributes.";
+    leaf route-distinguisher {
+      type string {
+        length "1..22";
+      }
+      description
+        "Route distinguisher.";
+    }
+    leaf prefix {
+      type inet:ip-address-no-zone;
+      description
+        "BGP route prefix.";
+    }
+    leaf mask-length {
+      type uint8;
+      description
+        "Prefix mask length.";
+    }
+    leaf route-type {
+      type bgp-rt:bgp-route-type-flag;
+      description
+        "Route type.";
+    }
+    leaf im-table-id {
+      type uint32;
+      description
+        "ID of the routing table to which routes are imported.";
+    }
+    leaf from {
+      type inet:ip-address-no-zone;
+      description
+        "Source peer that sends a route.";
+    }
+    leaf path-id {
+      type string {
+        length "1..50";
+      }
+      description
+        "Path ID.";
+    }
+  }
+  grouping routing-table-type {
+    description
+      "BGP routing-table attributes.";
+    uses routing-table-key-type;
+    leaf remote-nexthop-tunnel-address {
+      type inet:ip-address-no-zone;
+      description
+        "The remote next hop tunnel address.";
+    }
+    leaf remote-nexthop-mac-address {
+      type pub-type:mac-address;
+      description
+        "The remote next hop mac.";
+    }
+    leaf nexthop {
+      type inet:ip-address-no-zone;
+      description
+        "Next hop address to which packets are forwarded.";
+    }
+    leaf local-preference {
+      type uint32;
+      description
+        "Local priority. The attribute is only fit for the routes from IBGP peer, not suit for which of EBGP peer.";
+    }
+    leaf preferred-value {
+      type uint32;
+      description
+        "Preferred value of a protocol.";
+    }
+    leaf preference {
+      type uint8;
+      description
+        "Priority of BGP routes.";
+    }
+    leaf path-as {
+      type string {
+        length "1..300";
+      }
+      description
+        "List of the AS_Paths that packets pass through.";
+    }
+    leaf origin {
+      type bgp-rt:bgp-origin-type;
+      description
+        "Route origin.";
+    }
+    leaf med {
+      type uint32;
+      description
+        "Route MED.The attribute is only fit for the routes from EBGP peer, not suit for which of IBGP peer.";
+    }
+    leaf flag-string {
+      type string {
+        length "1..100";
+      }
+      description
+        "Route flag that contains a string of characters.";
+    }
+    leaf worse-reason {
+      type string {
+        length "1..50";
+      }
+      description
+        "Reason why a route is not selected.";
+    }
+    leaf sending-peers {
+      type string {
+        length "1..300";
+      }
+      description
+        "List of route sending peers.";
+    }
+    leaf time {
+      type pub-type:time-tick;
+      description
+        "Time stamp of a route.";
+    }
+    leaf community {
+      type string {
+        length "1..300";
+      }
+      description
+        "Community attribute.";
+    }
+    leaf large-community {
+      type string {
+        length "1..200";
+      }
+      description
+        "Large-community attribute information.";
+    }
+    leaf ext-community {
+      type string {
+        length "1..300";
+      }
+      description
+        "Extended community attribute.";
+    }
+    leaf interface-name {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Name of the outbound interface of a route.";
+    }
+    leaf originator {
+      type inet:ip-address-no-zone;
+      description
+        "Router ID of the route initiator.";
+    }
+    leaf cluster-list {
+      type string {
+        length "1..300";
+      }
+      description
+        "List of cluster IDs.";
+    }
+    leaf remote-route-id {
+      type inet:ipv4-address-no-zone;
+      description
+        "Router ID of a peer.";
+    }
+    leaf relay-nexthop {
+      type inet:ip-address-no-zone;
+      description
+        "Next hop to which a route is iterated.";
+    }
+    leaf relay-tunnel-name {
+      type string {
+        length "1..64";
+      }
+      description
+        "Name of a tunnel to which a route is iterated.";
+    }
+    leaf atomic-aggregate {
+      type boolean;
+      description
+        "Route carrying the atomic-aggregate attribute.";
+    }
+    leaf aggregator-as {
+      type string {
+        length "1..11";
+      }
+      description
+        "AS number of the route summarizer.";
+    }
+    leaf aggregator-id {
+      type inet:ip-address-no-zone;
+      description
+        "ID of the route summarizer.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "In-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "Out-label.";
+    }
+    leaf iterated-vpn {
+      type string {
+        length "1..31";
+      }
+      description
+        "Iterated vrf.";
+    }
+    leaf remote-nexthop-vni {
+      type uint32;
+      description
+        "The remote next hop vni.";
+    }
+    leaf advertise-nexthop {
+      type inet:ip-address-no-zone;
+      description
+        "Advertise next hop.";
+    }
+    leaf prefix-sid {
+      type string {
+        length "1..60";
+      }
+      description
+        "PrefixSid attribute information of route.";
+    }
+    leaf aigp {
+      type uint64;
+      description
+        "AIGP attribute information of route.";
+    }
+    leaf attribute-set {
+      type string {
+        length "1..300";
+      }
+      description
+        "The attribute set information of route.";
+    }
+    leaf gateway-ip {
+      type inet:ip-address-no-zone;
+      description
+        "Gateway IP address.";
+    }
+    leaf external-flags {
+      type bgp-rt:bgp-external-flag-type;
+      description
+        "Route External Flags.";
+    }
+  }
+  grouping route-type {
+    description
+      "Information about routes.";
+    container routes {
+      config false;
+      description
+        "List of displayed route information in an address family.";
+      list route {
+        key "vpn-name route-distinguisher prefix mask-length route-type im-table-id from path-id";
+        description
+          "Statistics of routes.";
+        uses routing-table-vpn-name;
+        uses routing-table-type;
+      }
+    }
+  }
+  grouping peer-advertise-route-type {
+    description
+      "Information about advertised routes.";
+    container peer-advertise-routes {
+      config false;
+      description
+        "List of displayed advertised route information in an address family.";
+      list peer-advertise-route {
+        key "vpn-name remote-peer-address route-distinguisher prefix mask-length route-type im-table-id from path-id";
+        description
+          "Statistics of advertised routes.";
+        uses routing-table-vpn-name;
+        leaf remote-peer-address {
+          type inet:ip-address-no-zone;
+          description
+            "BGP neighbour address.";
+        }
+        uses routing-table-type;
+      }
+    }
+  }
+  grouping peer-receive-route-type {
+    description
+      "Information about received routes.";
+    container peer-receive-routes {
+      config false;
+      description
+        "List of displayed received route information in an address family.";
+      list peer-receive-route {
+        key "vpn-name remote-peer-address route-distinguisher prefix mask-length route-type im-table-id from path-id";
+        description
+          "Statistics of received routes.";
+        uses routing-table-vpn-name;
+        leaf remote-peer-address {
+          type inet:ip-address-no-zone;
+          description
+            "BGP neighbour address.";
+        }
+        uses routing-table-type;
+      }
+    }
+  }
+  grouping peer-receive-active-route-type {
+    description
+      "Information about received active routes.";
+    container peer-receive-active-routes {
+      config false;
+      description
+        "List of displayed received active route information in an address family.";
+      list peer-receive-active-route {
+        key "vpn-name remote-peer-address route-distinguisher prefix mask-length route-type im-table-id from path-id";
+        description
+          "Statistics of received routes.";
+        uses routing-table-vpn-name;
+        leaf remote-peer-address {
+          type inet:ip-address-no-zone;
+          description
+            "BGP neighbour address.";
+        }
+        uses routing-table-type;
+      }
+    }
+  }
+  grouping ipv4uni-routing-table-type {
+    description
+      "BGP routing-table attributes in an address family.";
+    uses routing-table-type;
+    leaf entropy-label-padding {
+      type string {
+        length "1..50";
+      }
+      description
+        "The padding value of the entropy label attribute.";
+    }
+  }
+  grouping ipv4uni-route-type {
+    description
+      "Information about routes.";
+    container routes {
+      config false;
+      description
+        "List of displayed route information in an address family.";
+      list route {
+        key "vpn-name route-distinguisher prefix mask-length route-type im-table-id from path-id";
+        description
+          "Statistics of routes.";
+        uses routing-table-vpn-name;
+        uses ipv4uni-routing-table-type;
+      }
+    }
+  }
+  grouping ipv4uni-peer-advertise-route-type {
+    description
+      "Information about advertised routes.";
+    container peer-advertise-routes {
+      config false;
+      description
+        "List of displayed advertised route information in an address family.";
+      list peer-advertise-route {
+        key "vpn-name remote-peer-address route-distinguisher prefix mask-length route-type im-table-id from path-id";
+        description
+          "Statistics of advertised routes.";
+        uses routing-table-vpn-name;
+        leaf remote-peer-address {
+          type inet:ip-address-no-zone;
+          description
+            "BGP neighbour address.";
+        }
+        uses ipv4uni-routing-table-type;
+      }
+    }
+  }
+  grouping ipv4uni-peer-receive-route-type {
+    description
+      "Information about received routes.";
+    container peer-receive-routes {
+      config false;
+      description
+        "List of displayed received route information in an address family.";
+      list peer-receive-route {
+        key "vpn-name remote-peer-address route-distinguisher prefix mask-length route-type im-table-id from path-id";
+        description
+          "Statistics of received routes.";
+        uses routing-table-vpn-name;
+        leaf remote-peer-address {
+          type inet:ip-address-no-zone;
+          description
+            "BGP neighbour address.";
+        }
+        uses ipv4uni-routing-table-type;
+      }
+    }
+  }
+  grouping active-route-st-type {
+    description
+      "BGP active routes statistics infomation.";
+    leaf advertise-rm-total-number {
+      type uint32;
+      description
+        "Total number of prefix advertised to RM.";
+    }
+    leaf active-route-number {
+      type uint32;
+      description
+        "Total number of active route.";
+    }
+  }
+  grouping best-route-st-type {
+    description
+      "BGP active routes statistics information.";
+    leaf best-route-number {
+      type uint32;
+      description
+        "Total number of best routes.";
+    }
+    leaf add-path-route-number {
+      type uint32;
+      description
+        "Total number of add-path routes.";
+    }
+    leaf best-external-route-number {
+      type uint32;
+      description
+        "Total number of best-external routes.";
+    }
+  }
+  grouping cidr-route-st-type {
+    description
+      "BGP classless inter-domain routes statistics information.";
+    leaf cidr-route-number {
+      type uint32;
+      description
+        "Total number of cidr routes.";
+    }
+  }
+  grouping community-route-st-type {
+    description
+      "BGP routes matched with communities statistics information.";
+    leaf community-route-number {
+      type uint32;
+      description
+        "Total number of community routes.";
+    }
+  }
+  grouping different-origin-as-route-st-type {
+    description
+      "Routes with the same destination address&mask but originating from different origin ASs statistics information.";
+    leaf different-origin-as-route-number {
+      type uint32;
+      description
+        "Total number of different-origin-as routes.";
+    }
+  }
+  grouping dampened-route-st-type {
+    description
+      "Routes with the same destination address&mask but originating from different origin ASs statistics information.";
+    leaf dampened-route-number {
+      type uint32;
+      description
+        "Total number of dampened routes.";
+    }
+  }
+  grouping route-total-st-type {
+    description
+      "Labeled route statistics information.";
+    leaf total-number {
+      type uint32;
+      description
+        "Total number of routes.";
+    }
+  }
+  grouping active-rt-num-type {
+    description
+      "BGP active routes statistics information.";
+    leaf active-route-number {
+      type uint32;
+      description
+        "Total number of active route.";
+    }
+  }
+  augment /bgp:bgp/bgp:base-process {
+    description
+      "Top level container for BGP routes information.";
+    container bgp-route {
+      config false;
+      description
+        "Statistics of BGP routes information.";
+      container ipv4-unicast {
+        config false;
+        description
+          "Statistics of BGP routes information of IPv4-unicast address family.";
+        uses ipv4uni-route-type;
+        uses ipv4uni-peer-advertise-route-type;
+        uses ipv4uni-peer-receive-route-type;
+        uses peer-receive-active-route-type;
+        container statistics {
+          description
+            "List of BGP routes statistics information of IPv4-unicast address family.";
+          list statistic {
+            key "vpn-name";
+            description
+              "BGP IPv4-unicast address family routes statistics.";
+            uses routing-table-vpn-name;
+            uses route-total-st-type;
+            uses active-route-st-type;
+            uses best-route-st-type;
+            uses cidr-route-st-type;
+            uses community-route-st-type;
+            uses different-origin-as-route-st-type;
+            uses dampened-route-st-type;
+          }
+        }
+      }
+      container ipv6-unicast {
+        config false;
+        description
+          "Statistics of BGP routes information of IPv6-unicast address family.";
+        uses route-type;
+        uses peer-advertise-route-type;
+        uses peer-receive-route-type;
+        uses peer-receive-active-route-type;
+        container statistics {
+          description
+            "List of BGP routes statistics information of IPv6-unicast address family.";
+          list statistic {
+            key "vpn-name";
+            description
+              "BGP IPv6-unicast address family routes statistics.";
+            uses routing-table-vpn-name;
+            uses route-total-st-type;
+            uses active-route-st-type;
+            uses best-route-st-type;
+            uses community-route-st-type;
+            uses dampened-route-st-type;
+          }
+        }
+      }
+      container ipv4-vpn {
+        config false;
+        description
+          "Statistics of BGP routes information of IPv4-VPN address family.";
+        uses route-type;
+        uses peer-advertise-route-type;
+        uses peer-receive-route-type;
+        uses peer-receive-active-route-type;
+        container statistic {
+          description
+            "Statistics of BGP routes information of IPv4-VPN address family.";
+          uses route-total-st-type;
+          uses active-rt-num-type;
+          uses best-route-st-type;
+          uses cidr-route-st-type;
+          uses community-route-st-type;
+          uses different-origin-as-route-st-type;
+          uses dampened-route-st-type;
+        }
+      }
+      container ipv6-vpn {
+        config false;
+        description
+          "Statistics of BGP routes information of IPv6-VPN address family.";
+        uses route-type;
+        uses peer-advertise-route-type;
+        uses peer-receive-route-type;
+        uses peer-receive-active-route-type;
+        container statistic {
+          description
+            "Statistics of BGP routes information of IPv6-VPN address family.";
+          uses route-total-st-type;
+          uses active-rt-num-type;
+          uses best-route-st-type;
+          uses community-route-st-type;
+          uses different-origin-as-route-st-type;
+        }
+      }
+      container ipv4-labeluni {
+        config false;
+        description
+          "Statistics of BGP routes information of IPv4-label-uni address family.";
+        container statistics {
+          description
+            "List of BGP routes statistics information of IPv4-label-uni address family.";
+          list statistic {
+            key "vpn-name";
+            description
+              "BGP IPv4-label-uni address family routes statistics.";
+            uses routing-table-vpn-name;
+            uses route-total-st-type;
+            uses active-route-st-type;
+            uses best-route-st-type;
+            uses cidr-route-st-type;
+            uses community-route-st-type;
+            uses different-origin-as-route-st-type;
+            uses dampened-route-st-type;
+          }
+        }
+      }
+      container ipv4-multicast {
+        config false;
+        description
+          "Statistics of BGP routes information of IPv4-multicast address family.";
+        uses route-type;
+      }
+    }
+  }
+}

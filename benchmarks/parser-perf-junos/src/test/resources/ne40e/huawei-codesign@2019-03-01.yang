@@ -1,0 +1,167 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-codesign {
+  namespace "urn:huawei:yang:huawei-codesign";
+  prefix codesign;
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  } 
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Indicate code signature management.";
+  revision 2019-03-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+
+  ext:task-name "patch";
+
+  typedef crl-status {
+    type enumeration {
+      enum "0" {
+        value 0;
+        description
+          "Invalid file.";
+      }
+      enum "1" {
+        value 1;
+        description
+          "Valid file.";
+      }
+    }
+    status deprecated;
+    description
+      "CRL status value. The alternative enumeration node is valid-type.";
+  }
+  typedef valid-type {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid file.";
+      }
+      enum "valid" {
+        value 1;
+        description
+          "Valid file.";
+      }
+    }
+    description
+      "CRL status value.";
+  }
+  
+  container codesign {
+    config false;
+    description
+      "Indicate code signature management.";
+    container software-crls {
+      description
+        "List of operational state of CRL information.";
+      list software-crl {
+        key "slot";
+        description
+          "Operational state of CRL information.";
+        leaf slot {
+          type string {
+            length "1..64";
+          }
+          description
+            "Slot ID of a board.";
+        }
+        leaf publisher {
+          type string {
+            length "1..256";
+          }
+          description
+            "CRL publisher.";
+        }
+        leaf date {
+          type yang:date-and-time;
+          description
+            "CRL publish date.";
+        }
+        leaf valid {
+          type crl-status;
+          status deprecated;
+          description
+            "CRL status. The alternative leaf node is valid-type.";
+        }
+        leaf valid-type {
+          type valid-type;
+          description
+            "CRL status.";
+        }
+      }
+    }
+    container packages-verify-faileds {
+      description
+        "List of operational state of package digital signature verification failed.";
+      list packages-verify-failed {
+        key "slot";
+        description
+          "Operational state of package digital signature verification failed.";
+        leaf slot {
+          type string {
+            length "1..64";
+          }
+          description
+            "Slot ID of a board.";
+        }
+        leaf name {
+          type string {
+            length "5..63";
+          }
+          ext:support-filter "true";
+          description
+            "Package name that package digital signature verification failed to be verified.";
+        }
+      }
+    }
+    container crl-names {
+      description
+        "List of operational data of CRL file.";
+      list crl-name {
+        key "name";
+        description
+          "Operational data of CRL file.";
+        leaf name {
+          type string {
+            length "5..63";
+          }
+          description
+            "CRL file name.";
+        }
+      }
+    }
+  }
+
+  rpc software-crl-load {
+    description
+      "Load CRL file.";
+    ext:node-ref "/codesign/crl-names/crl-name";
+    input {
+      leaf name {
+        type leafref {
+          path "/codesign/crl-names/crl-name/name";
+        }
+        mandatory true;
+        description
+          "CRL file name.";
+      }
+    }
+  }
+}

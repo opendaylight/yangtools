@@ -1,0 +1,1162 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-lldp {
+  namespace "urn:huawei:yang:huawei-lldp";
+  prefix lldp;
+
+  import huawei-extension {
+    prefix ext;
+  }  
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Link layer discovery protocol.";
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "lldp";   
+  
+  typedef man-addr-if-sub-type {
+    type enumeration {
+      enum "other" {
+	    value 0;
+        description
+          "The if type of management address is other.";
+      }
+      enum "unknown" {
+	    value 1;
+        description
+          "The if type of management address is unknown.";
+      }
+      enum "if-index" {
+	    value 2;
+        description
+          "The if type of management address is if-index.";
+      }
+      enum "system-port-number" {
+	    value 3;
+        description
+          "The if type of management address is system-port-number.";
+      }
+    }
+    description
+      "The if type of management address.";
+  }
+
+  typedef dot3-mau-type {
+    type enumeration {
+      enum "dot3-mau-type-1000-base-sxhd" {
+	    value 25;
+        description
+          "The dot3 mau type is dot3-mau-type-1000-base-sxhd.";
+      }
+      enum "dot3-mau-type-1000-base-sxfd" {
+	    value 26;
+        description
+          "The dot3 mau type is dot3-mau-type-1000-base-sxfd.";
+      }
+      enum "dot3-mau-type-1000-base-cxhd" {
+	    value 27;
+        description
+          "The dot3 mau type is dot3-mau-type-1000-base-cxhd.";
+      }
+      enum "dot3-mau-type-1000-base-cxfd" {
+	    value 28;
+        description
+          "The dot3 mau type is dot3-mau-type-1000-base-cxfd.";
+      }
+      enum "dot3-mau-type-1000-base-thd" {
+	    value 29;
+        description
+          "The dot3 mau type is dot3-mau-type-1000-base-thd.";
+      }
+      enum "dot3-mau-type-1000-base-tfd" {
+	    value 30;
+        description
+          "The dot3 mau type is dot3-mau-type-1000-base-tfd.";
+      }
+      enum "dot3-mau-type-10gig-base-x" {
+	    value 31;
+        description
+          "The dot3 mau type is dot3-mau-type-10gig-base-x.";
+      }
+      enum "dot3-mau-type-10gig-base-lx4" {
+	    value 32;
+        description
+          "The dot3 mau type is dot3-mau-type-10gig-base-lx4.";
+      }
+      enum "dot3-mau-type-10gig-base-r" {
+	    value 33;
+        description
+          "The dot3 mau type is dot3-mau-type-10gig-base-r.";
+      }
+      enum "dot3-mau-type-10gig-base-er" {
+	    value 34;
+        description
+          "The dot3 mau type is dot3-mau-type-10gig-base-er.";
+      }
+      enum "dot3-mau-type-10gig-base-lr" {
+	    value 35;
+        description
+          "The dot3 mau type is dot3-mau-type-10gig-base-lr.";
+      }
+      enum "dot3-mau-type-10gig-base-sr" {
+	    value 36;
+        description
+          "The dot3 mau type is dot3-mau-type-10gig-base-sr.";
+      }
+      enum "dot3-mau-type-10gig-base-w" {
+	    value 37;
+        description
+          "The dot3 mau type is dot3-mau-type-10gig-base-w.";
+      }
+      enum "dot3-mau-type-10gig-base-ew" {
+	    value 38;
+        description
+          "The dot3 mau type is dot3-mau-type-10gig-base-ew.";
+      }
+      enum "dot3-mau-type-10gig-base-lw" {
+	    value 39;
+        description
+          "The dot3 mau type is dot3-mau-type-10gig-base-lw.";
+      }
+      enum "dot3-mau-type-10gig-base-sw" {
+	    value 40;
+        description
+          "The dot3 mau type is dot3-mau-type-10gig-base-sw.";
+      }
+      enum "unknown" {
+	    value 0;
+        description
+          "The dot3 mau type is other.";
+      }
+      enum "dot3-mau-type-aui" {
+	    value 1;
+        description
+          "The dot3 mau type is dot3-mau-type-aui.";
+      }
+      enum "dot3-mau-type-10-base-5" {
+	    value 2;
+        description
+          "The dot3 mau type is dot3-mau-type-10-base-5.";
+      }
+      enum "dot3-mau-type-foirl" {
+	    value 3;
+        description
+          "The dot3 mau type is dot3-mau-type-foirl.";
+      }
+      enum "dot3-mau-type-10-base-2" {
+	    value 4;
+        description
+          "The dot3 mau type is dot3-mau-type-10-base-2.";
+      }
+      enum "dot3-mau-type-10-base-t" {
+	    value 5;
+        description
+          "The dot3 mau type is dot3-mau-type-10-base-t.";
+      }
+      enum "dot3-mau-type-10-base-fp" {
+	    value 6;
+        description
+          "The dot3 mau type is dot3-mau-type-10-base-fp.";
+      }
+      enum "dot3-mau-type-10-base-fb" {
+	    value 7;
+        description
+          "The dot3 mau type is dot3-mau-type-10-base-fb.";
+      }
+      enum "dot3-mau-type-10-base-fl" {
+	    value 8;
+        description
+          "The dot3 mau type is dot3-mau-type-10-base-fl.";
+      }
+      enum "dot3-mau-type-10-base-36" {
+	    value 9;
+        description
+          "The dot3 mau type is dot3-mau-type-10-base-36.";
+      }
+      enum "dot3-mau-type-10-base-thd" {
+	    value 10;
+        description
+          "The dot3 mau type is dot3-mau-type-10-base-thd.";
+      }
+      enum "dot3-mau-type-10-base-tfd" {
+	    value 11;
+        description
+          "The dot3 mau type is dot3-mau-type-10-base-tfd.";
+      }
+      enum "dot3-mau-type-10-base-flhd" {
+	    value 12;
+        description
+          "The dot3 mau type is dot3-mau-type-10-base-flhd.";
+      }
+      enum "dot3-mau-type-10-base-flfd" {
+	    value 13;
+        description
+          "The dot3 mau type is dot3-mau-type-10-base-flfd.";
+      }
+      enum "dot3-mau-type-100-base-t4" {
+	    value 14;
+        description
+          "The dot3 mau type is dot3-mau-type-100-base-t4.";
+      }
+      enum "dot3-mau-type-100-base-txhd" {
+	    value 15;
+        description
+          "The dot3 mau type is dot3-mau-type-100-base-txhd.";
+      }
+      enum "dot3-mau-type-100-base-txfd" {
+	    value 16;
+        description
+          "The dot3 mau type is dot3-mau-type-100-base-txfd.";
+      }
+      enum "dot3-mau-type-100-base-fxhd" {
+	    value 17;
+        description
+          "The dot3 mau type is dot3-mau-type-100-base-fxhd.";
+      }
+      enum "dot3-mau-type-100-base-fxfd" {
+	    value 18;
+        description
+          "The dot3 mau type is dot3-mau-type-100-base-fxfd.";
+      }
+      enum "dot3-mau-type-100-base-t2hd" {
+	    value 19;
+        description
+          "The dot3 mau type is dot3-mau-type-100-base-t2hd.";
+      }
+      enum "dot3-mau-type-100-base-t2fd" {
+	    value 20;
+        description
+          "The dot3 mau type is dot3-mau-type-100-base-t2fd.";
+      }
+      enum "dot3-mau-type-1000-base-xhd" {
+	    value 21;
+        description
+          "The dot3 mau type is dot3-mau-type-1000-base-xhd.";
+      }
+      enum "dot3-mau-type-1000-base-xfd" {
+	    value 22;
+        description
+          "The dot3 mau type is dot3-mau-type-1000-base-xfd.";
+      }
+      enum "dot3-mau-type-1000-base-lxhd" {
+	    value 23;
+        description
+          "The dot3 mau type is dot3-mau-type-1000-base-lxhd.";
+      }
+      enum "dot3-mau-type-1000-base-lxfd" {
+	    value 24;
+        description
+          "The dot3 mau type is dot3-mau-type-1000-base-lxfd.";
+      }
+      enum "dot3-mau-type-40gig-base-kr4" {
+	    value 70;
+        description
+          "The dot3 mau type is dot3-mau-type-40gig-base-kr4.";
+      }
+      enum "dot3-mau-type-40gig-base-cr4" {
+	    value 71;
+        description
+          "The dot3 mau type is dot3-mau-type-40gig-base-cr4.";
+      }
+      enum "dot3-mau-type-40gig-base-sr4" {
+	    value 72;
+        description
+          "The dot3 mau type is dot3-mau-type-40gig-base-sr4.";
+      }
+      enum "dot3-mau-type-40gig-base-fr" {
+	    value 73;
+        description
+          "The dot3 mau type is dot3-mau-type-40gig-base-fr.";
+      }
+      enum "dot3-mau-type-40gig-base-lr4" {
+	    value 74;
+        description
+          "The dot3 mau type is dot3-mau-type-40gig-base-lr4.";
+      }
+      enum "dot3-mau-type-100gig-base-cr10" {
+	    value 75;
+        description
+          "The dot3 mau type is dot3-mau-type-100gig-base-cr10.";
+      }
+      enum "dot3-mau-type-100gig-base-sr10" {
+	    value 76;
+        description
+          "The dot3 mau type is dot3-mau-type-100gig-base-sr10.";
+      }
+      enum "dot3-mau-type-100gig-base-lr4" {
+	    value 77;
+        description
+          "The dot3 mau type is dot3-mau-type-100gig-base-lr4.";
+      }
+      enum "dot3-mau-type-100gig-base-er4" {
+	    value 78;
+        description
+          "The dot3 mau type is dot3-mau-type-100gig-base-er4.";
+      }
+    }
+    description
+      "Dot3 mau type.";
+  }
+ 
+  typedef admin-status {
+    type enumeration {
+      enum "tx-only" {
+	    value 1;
+        description
+          "Administrative status is tx only.";
+      }
+      enum "rx-only" {
+	    value 2;
+        description
+          "Administrative status is rx only.";
+      }
+      enum "tx-rx" {
+	    value 3;
+        description
+          "Administrative status is tx and rx.";
+      }
+      enum "disabled" {
+	    value 4;
+        description
+          "Administrative status is disabled.";
+      }
+    }
+    description
+      "Administrative status.";
+  }
+  
+  typedef chassis-id-sub-type {
+    type enumeration {
+      enum "other" {
+	    value 0;
+        description
+          "Other extended retention.";
+      }
+      enum "chassis-component" {
+	    value 1;
+        description
+          "Chassis component.";
+      }
+      enum "interface-alias" {
+	    value 2;
+        description
+          "Interface alias.";
+      }
+      enum "port-component" {
+	    value 3;
+        description
+          "Interface component.";
+      }
+      enum "mac-address" {
+	    value 4;
+        description
+          "MAC address.";
+      }
+      enum "network-address" {
+	    value 5;
+        description
+          "Network address.";
+      }
+      enum "interface-name" {
+	    value 6;
+        description
+          "Interface name.";
+      }
+      enum "local" {
+	    value 7;
+        description
+          "Local name.";
+      }
+    }
+    description
+      "Chassis ID sub type.";
+  }
+  typedef management-address-type {
+    type enumeration {
+      enum "other" {
+	    value 0;
+        description
+          "The type of management address is other.";
+      }
+      enum "ipv4" {
+	    value 1;
+        description
+          "The type of management address is IPv4.";
+      }
+      enum "ipv6" {
+	    value 2;
+        description
+          "The type of management address is IPv6.";
+      }
+      enum "nsap" {
+	    value 3;
+        description
+          "The type of management address is NSAP.";
+      }
+      enum "hdlc" {
+	    value 4;
+        description
+          "The type of management address is HDLC.";
+      }
+      enum "bbn1822" {
+	    value 5;
+        description
+          "The type of management address is BBN1822.";
+      }
+      enum "mac" {
+	    value 6;
+        description
+          "The type of management address is MAC.";
+      }
+      enum "e163" {
+	    value 7;
+        description
+          "The type of management address is E163.";
+      }
+      enum "e164" {
+	    value 8;
+        description
+          "The type of management address is E164.";
+      }
+      enum "f69" {
+	    value 9;
+        description
+          "The type of management address is F69.";
+      }
+      enum "x121" {
+	    value 10;
+        description
+          "The type of management address is X121.";
+      }
+      enum "ipx" {
+	    value 11;
+        description
+          "The type of management address is IPX.";
+      }
+      enum "apple-talk" {
+	    value 12;
+        description
+          "The type of management address is APPLE-TALK.";
+      }
+      enum "decnet-iv" {
+	    value 13;
+        description
+          "The type of management address is DECNET-IV.";
+      }
+      enum "banyan-vines" {
+	    value 14;
+        description
+          "The type of management address is BANYAN-VINES.";
+      }
+      enum "e164-with-nsap" {
+	    value 15;
+        description
+          "The type of management address is E164-with-NSAP.";
+      }
+      enum "dns" {
+	    value 16;
+        description
+          "The type of management address is DNS.";
+      }
+      enum "distinguished-name" {
+	    value 17;
+        description
+          "The type of management address is distinguished-name.";
+      }
+      enum "as-number" {
+	    value 18;
+        description
+          "The type of management address is AS-NUMBER.";
+      }
+      enum "xtp-over-ipv4" {
+	    value 19;
+        description
+          "The type of management address is XTP-over-IPv4.";
+      }
+      enum "xtp-over-ipv6" {
+	    value 20;
+        description
+          "The type of management address is XTP-over-IPv6.";
+      }
+      enum "xtp-native-mode-xtp" {
+	    value 21;
+        description
+          "The type of management address is XTP-native-mode-XTP.";
+      }
+      enum "fibre-channel-wwpn" {
+	    value 22;
+        description
+          "The type of management address is fibre-channel-WWPN.";
+      }
+      enum "fibre-channel-wwn" {
+	    value 23;
+        description
+          "The type of management address is fibre-channel-WWN.";
+      }
+      enum "gwid" {
+	    value 24;
+        description
+          "The type of management address is GWID.";
+      }
+    }
+    description
+      "Management address type.";
+  }
+  typedef port-id-sub-type {
+    type enumeration {
+      enum "other" {
+	    value 0;
+        description
+          "The Port id sub type is other.";
+      }
+      enum "interface-alias" {
+	    value 1;
+        description
+          "The Port id sub type is interface-alias.";
+      }
+      enum "port-component" {
+	    value 2;
+        description
+          "The Port id sub type is port-component.";
+      }
+      enum "mac-address" {
+	    value 3;
+        description
+          "The Port id sub type is mac-address.";
+      }
+      enum "network-address" {
+	    value 4;
+        description
+          "The Port id sub type is network-address.";
+      }
+      enum "interface-name" {
+	    value 5;
+        description
+          "The Port id sub type is interface-name.";
+      }
+      enum "agent-circuit-id" {
+	    value 6;
+        description
+          "The Port id sub type is agent-circuit-id.";
+      }
+      enum "local" {
+	    value 7;
+        description
+          "The Port id sub type is local.";
+      }
+    }
+    description
+      "Port id sub type.";
+  }
+  typedef global-status {
+    type enumeration {
+      enum "enabled" {
+	    value 1;
+        description
+          "The global state is enabled.";
+      }
+      enum "disabled" {
+	    value 0;
+        description
+          "The global state is disabled.";
+      }
+    }
+    description
+      "Global status.";
+  }
+
+  typedef support-status {
+    type enumeration {
+      enum "yes" {
+	    value 1;
+        description
+          "The supoort state is yes.";
+      }
+      enum "no" {
+	    value 0;
+        description
+          "The supoort state is no.";
+      }
+    }
+    description
+      "Support status.";
+  }
+  typedef enable-status {
+    type enumeration {
+      enum "yes" {
+	    value 1;
+        description
+          "Yes.";
+      }
+      enum "no" {
+	    value 0;
+        description
+          "No.";
+      }
+    }
+    description
+      "Enable status.";
+  }
+  container lldp {
+    presence "Enables LLDP";
+    description
+      "Link layer discovery protocol.";
+    container global-attribute {
+      description
+        "Configure LLDP global attribute.";
+      leaf message-transmission-interval {
+        type int32 {
+          range "5..32768";
+        }
+        units s;
+        must "../message-transmission-interval>=(../message-transmission-delay*4)";
+        default "30";
+        description
+          "Interval at which LLDP messages are transmitted.";
+      }
+      leaf message-transmission-delay {
+        type int32 {
+          range "1..8192";
+        }
+        units s;
+        must "../message-transmission-interval>=(../message-transmission-delay*4)";
+        default "2";
+        description
+          "Time between two successive LLDP messages.";
+      }
+      leaf message-transmission-hold-multiplier {
+        type int32 {
+          range "2..10";
+        }
+        default "4";
+        description
+          "Multiplier on the message transmission interval that determines the actual TTL value used in an LLDPDU.";
+      }
+      leaf restart-delay {
+        type int32 {
+          range "1..10";
+        }
+        units s;
+        default "2";
+        description
+          "Delay from when LLDP interface status becomes disabled until re-initialization will be attempted.";
+      }
+      leaf trap-interval {
+        type int32 {
+          range "5..3600";
+        }
+        units s;
+        default "5";
+        description
+          "LLDP trap notification interval.";
+      }
+      leaf fast-count {
+        type int32 {
+          range "1..8";
+        }
+        default "4";
+        description
+          "Number of rapidly transmitted LLDP messages.";
+      }
+      leaf managment-address {
+        type inet:ipv4-address-no-zone;
+        description
+          "IP address for network management, which must exist in the device.";
+      }
+      leaf trap-enable {
+        type global-status;
+        default "disabled";
+        config false;
+        description
+          "Enable the LLDP neighbor change trap function.";
+      }
+    }
+  }
+  
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {  
+    when "/lldp:lldp";
+    description
+      "LLDP interface.";
+    container lldp {
+      description
+        "Configure LLDP interfaces.";
+      container session {
+        description
+          "Configure LLDP interface.";
+        leaf admin-status {
+          type admin-status;
+          default 'tx-rx';
+          description
+            "LLDP enable status.";
+        }
+		container tlv-enable {
+          when "not(../admin-status='disabled')";
+          description
+            "Configure LLDP TLV.";
+          leaf  management-address {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the device to send the management address TLV.";
+          }
+          leaf port-description {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the device to send the interface description TLV.";
+          }
+          leaf system-capability {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the device to send the system capability TLV.";
+          }
+          leaf system-description {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the device to send the system description TLV.";
+          }
+          leaf system-name {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the device to send the system name TLV.";
+          }			
+          leaf port-vlan-id  {
+            when "../../../../ifm:type !='Pos'";
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the device to send the interface VLAN ID TLV.";
+          }
+          leaf protocol-vlan-id-enable {
+            when "../../../../ifm:type !='Pos'";
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the device to send the protocol VLAN ID TLV.";
+          }
+          leaf protocol-vlan-id {
+            when "(not(../protocol-vlan-id-enable='false')) and (../../../../ifm:type !='Pos')";
+            type int32 {
+              range "1..4094";
+            }
+            description
+              "The protocol VLAN ID is sent.";
+          }
+          leaf vlan-name-enable {
+            when "../../../../ifm:type !='Pos'";
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the device to send the VLAN name TLV.";
+          }
+          leaf vlan-name-id {
+            when "(not(../vlan-name-enable='false')) and (../../../../ifm:type !='Pos')";
+            type int32 {
+              range "1..4094";
+            }
+            description
+              "The VLAN ID of the VLAN name TLV is sent.";
+          }
+          leaf protocol-identity {
+            when "../../../../ifm:type !='Pos'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the device to send the protocol identity TLV.";
+          }			  			
+          leaf mac-physic {
+            when "../../../../ifm:type !='Pos'";
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the device to send the MAC/PHY TLV.";
+          }
+          leaf link-aggregation {
+            when "../../../../ifm:type !='Pos'";
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the device to send the link aggregation TLV.";
+          }
+          leaf max-frame-size {
+            when "../../../../ifm:type !='Pos'";
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the device to send the maximum frame size TLV.";
+          }
+          leaf ddp {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the device to send the DDP TLV.";
+          }
+        }  
+        container neighbors {
+          config false;
+          description
+            "List of information about LLDP neighbors.";
+          list neighbor {
+            key "index";
+            description
+              "Statistics of information about an LLDP neighbor.";
+            leaf index {
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "Neighbor index.";
+            }
+            leaf chassis-id-sub-type {
+              type chassis-id-sub-type;
+              description
+                "Chassis type.";
+            }
+            leaf chassis-id {
+              type string {
+                length "1..765";
+              }
+              description
+                "Chassis ID.";
+            }
+            leaf port-id-sub-type {
+              type port-id-sub-type;
+              description
+                "Interface ID subtype.";
+            }
+            leaf port-id {
+              type string {
+                length "1..765";
+              }
+              description
+                "Interface ID.";
+            }
+            leaf port-description {
+              type string {
+                length "1..256";
+              }
+              description
+                "Interface description.";
+            }
+            leaf system-name {
+              type string {
+                length "1..256";
+              }
+              description
+                "System name.";
+            }
+            leaf system-description {
+              type string {
+                length "1..256";
+              }
+              description
+                "System description.";
+            }
+            leaf system-capabilities-enabled {
+              type string {
+                length "1..90";
+              }
+              description
+                "System capabilities enabled.";
+            }
+            leaf system-capabilities-supported {
+              type string {
+                length "1..90";
+              }
+              description
+                "System capabilities supported.";
+            }
+            leaf expired-time {
+              type int32 {
+                range "0..65535";
+              }
+              units s;
+              description
+                "Expired time.";
+            }
+            leaf port-vlan-id {
+              type int32 {
+                range "0..4094";
+              }
+              description
+                "Interface VLAN ID, 0 means not supported.";
+            }
+            leaf protocol-identity {
+              type string {
+                length "1..64";
+              }
+              description
+                "Protocol supported by the device.";
+            }
+            leaf auto-negotiation-supported {
+              type support-status;
+              description
+                "Whether the interface supports auto-negotiation.";
+            }
+            leaf auto-negotiation-enabled {
+              type enable-status;
+              description
+                "Whether auto-negotiation is enabled on the interface.";
+            }
+            leaf auto-negotiation-capability {
+              type string {
+                length "1..192";
+              }
+              description
+                "Auto-negotiation capability of the interface.";
+            }
+            leaf oper-mau-type {
+              type dot3-mau-type;
+              description
+                "Operational MAU type.";
+            }
+            leaf link-aggregation-supported  {
+              type support-status;
+              description
+                "Whether the interface supports link aggregation.";
+            }
+            leaf link-aggregation-enabled {
+              type enable-status;
+              description
+                "Whether link aggregation is enabled on the interface.";
+            }
+            leaf aggregation-port-id  {
+              type int32 {
+                range "0..2147483647";
+              }
+              description
+                "If link aggregation is disabled, the value is 0.";
+            }
+            leaf maximum-frame-size {
+              type int32 {
+                range "0..65535";
+              }
+              description
+                "Maximum frame size supported by an interface.";
+            }
+            leaf discovered-time {
+              type yang:date-and-time;
+              description
+                "Time when the neighbor was discovered.";
+            }
+            container management-addresss {
+              description
+                "List of management addresses of LLDP neighbors.";
+              list management-address {
+                key "type value length";
+                description
+                  "Statistics of management address of an LLDP neighbor.";
+                leaf type {
+                  type management-address-type;
+                  description
+                    "Management address type of an LLDP neighbor.";
+                }
+                leaf value {
+                  type string {
+                    length "1..93";
+                  }
+                  description
+                    "Management address of an LLDP neighbor.";
+                }
+                leaf length {
+                  type int32 {
+                    range "0..2147483647";
+                  }
+                  description
+                    "Management address length of an LLDP neighbor.";
+                }
+                leaf if-sub-type {
+                  type man-addr-if-sub-type;
+                  description
+                    "Management address interface type of an LLDP neighbor.";
+                }
+                leaf if-id {
+                  type int32 {
+                    range "0..2147483647";
+                  }
+                  description
+                    "Management address interface ID of an LLDP neighbor.";
+                }
+                leaf oid {
+                  type string {
+                    length "1..640";
+                  }
+                  description
+                    "Management address OID of an LLDP neighbor.";
+                }
+              }
+            }
+            container protocol-vlans {
+              description
+                "List of protocol VLANs of LLDP neighbors.";
+              list protocol-vlan {
+                key "id";
+                description
+                  "Statistics of protocol VLAN of an LLDP neighbor.";
+                leaf id {
+                  type int32 {
+                    range "0..4094";
+                  }
+                  description
+                    "Protocol VLAN ID, 0 means not supported.";
+                }
+                leaf supported {
+                  type support-status;
+                  description
+                    "Whether the interface supports protocol VLAN.";
+                }
+                leaf enabled {
+                  type enable-status;
+                  description
+                    "Whether protocol VLAN is enabled on the interface.";
+                }
+              }
+            }
+            container vlan-names {
+              description
+                "List of VLAN names of LLDP neighbors.";
+              list vlan-name {
+                key "id";
+                description
+                  "Statistics of VLAN name of an LLDP neighbor.";
+                leaf id {
+                  type int32 {
+                    range "0..4094";
+                  }
+                  description
+                    "VLAN ID, 0 means not supported.";
+                }
+                leaf value {
+                  type string {
+                    length "1..33";
+                  }
+                  description
+                    "VLAN name.";
+                }
+              }
+            }
+            container unknown-tlvs {
+              description
+                "List of unrecognized TLVs.";
+              list unknown-tlv {
+                key "type";
+                description
+                  "Statistics of unrecognized TLV.";
+                leaf type {
+                  type int32 {
+                    range "9..126";
+                  }
+                  description
+                    "Unrecognized TLV type.";
+                }
+                leaf info {
+                  type string {
+                    length "1..1600";
+                  }
+                  description
+                    "Unrecognized TLV information.";
+                }
+              }
+            }
+            container unknown-organizationally-defined-tlvs {
+              description
+                "List of unrecognized organizationally defined TLVs.";
+              list unknown-organizationally-defined-tlv {
+                key "oui sub-type index";
+                description
+                  "Statistics of unrecognized organizationally defined TLV.";
+                leaf oui {
+                  type string {
+                    length "1..12";
+                  }
+                  description
+                    "OUI of an unrecognized organizationally defined TLV.";
+                }
+                leaf sub-type {
+                  type int32 {
+                    range "1..256";
+                  }
+                  description
+                    "Subtype of an unrecognized organizationally defined TLV.";
+                }
+                leaf index {
+                  type int32 {
+                    range "0..2147483647";
+                  }
+                  description
+                    "Index of an unrecognized organizationally defined TLV.";
+                }
+                leaf info {
+                  type string {
+                    length "1..1600";
+                  }
+                  description
+                    "Information about an unrecognized organizationally defined TLV.";
+                }
+              }
+            }
+            container ddp-tlv {
+              description
+                "Statistics of information about neighbor DDP TLV.";
+              leaf serial-number {
+                type string {
+                  length "1..33";
+                }
+                description
+                  "Neighbor serial number.";
+              }
+              leaf if-index {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "IfIndex of neighbor DDP TLV enabled.";
+              }
+              leaf ipv4-address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Neighbor IP.";
+              }
+              leaf mac-address {
+                type pub-type:mac-address {
+                  length "0..14";
+                  pattern '[0-9a-fA-F]{4}(-[0-9a-fA-F]{4}){2}';
+                }
+                description
+                  "Neighbor system MAC.";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

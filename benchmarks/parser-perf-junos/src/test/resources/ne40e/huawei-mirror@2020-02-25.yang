@@ -1,0 +1,1166 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mirror {
+  namespace "urn:huawei:yang:huawei-mirror";
+  prefix mirror;
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-bd {
+    prefix bd;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-ethernet  {
+    prefix ethernet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Network monitor.";
+  revision 2020-02-25 {
+    description
+      "Optimization constraints.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-19 {
+    description
+      "Optimization constraints.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-14 {
+    description
+      "Add global observes container.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-24 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-13 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-21 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-24 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mirror";
+  typedef direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 0;
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        value 1;
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "Direction.";
+  }
+
+  typedef without-filter {
+    type enumeration {
+      enum "true" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "false" {
+        value 0;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Disable observe filter in observe port.";
+  }
+  typedef with-linklayer-header {
+    type enumeration {
+      enum "true" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "false" {
+        value 0;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "With linklayer header observe filter in observe port.";
+  }
+
+  typedef pop-label {
+    type enumeration {
+      enum "one" {
+        value 1;
+        description
+          "One POP.";
+      }
+      enum "two" {
+        value 2;
+        description
+          "Two POP.";
+      }
+      enum "all" {
+        value 3;
+        description
+          "One and two POP.";
+      }
+    }
+    description
+      "Specify POP MPLS label.";
+  }
+  typedef identifier-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "pe-vid" {
+        value 1;
+        description
+          "PE-VID.";
+      }
+      enum "ce-vid" {
+        value 2;
+        description
+          "CE-VID.";
+      }
+      enum "pe-ce-vid" {
+        value 3;
+        description
+          "PE-CE-VID.";
+      }
+    }
+    description
+      "Identifier type.";
+  }
+  container mirror { 
+     description
+      "Mirror.";
+    container statistic-enable {
+      presence "create statistic-enable";
+      description
+        "Enable/disable mirror statistic.";
+    }
+    container instances {
+      description
+        "List of mirror instance.";
+      list instance {
+        key "instance-name";
+        description
+          "Configure mirror instance.";
+        leaf instance-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Mirror instance name.";
+        }
+        container instance-car {
+          must "(./pir and ./pbs) or (not(./pir) and not(./pbs) or (not(./pir) and ./pbs>=1))";
+          presence "create instance-car";
+          description
+            "Enable/disable mirror instance car.";
+          leaf cir {
+            type uint32 {
+              range "0..4294967295";
+            }
+            units "kbit/s";
+            mandatory true;
+            description
+              "Committed information rate.";
+          }
+          leaf pir {
+            type uint32 {
+              range "1..4294967295";
+            }
+            units "kbit/s";
+            must "../pir>=../cir";
+            description
+              "Peak information rate.";
+          }
+          leaf cbs {
+            type uint32 {
+              range "0..4294967295";
+            }
+            units "Byte";
+            mandatory true;
+            description
+              "Committed burst size, which has dynamic defaults.";
+          }
+          leaf pbs {
+            type uint32 {
+              range "0..4294967295";
+            }
+            units "Byte";
+            description
+              "Peak burst size, which has dynamic defaults.";
+          }
+        }
+      }
+    }
+    container observe-user-define-acls {
+      description
+        "List of observe user-defined acl.";
+      list observe-user-define-acl {
+        key "filter-id";
+        max-elements  "8";
+        description
+          "Configure observe user-defined acl.";
+        leaf filter-id {
+          type uint8 {
+            range "1..8";
+          }
+          description
+            "Filter index.";
+        }
+        container offsets {
+          description
+            "List of observe user-defined offset.";
+          list offset {
+            key "config-index";
+            unique "offset-value";
+            min-elements  "1";
+            max-elements  "4";
+            description
+              "Configure observe user-defined offset.";
+            leaf config-index {
+              type uint32 {
+                range "1..4";
+              }
+              description
+                "Offset index.";
+            }
+            leaf offset-value {
+              type uint32 {
+                range "0..114";
+              }
+              mandatory true;
+              description
+                "Offset.";
+            }
+            leaf payload-value {
+              type pub-type:hex-binary;
+              mandatory true;
+              description
+                "Payload value, Value range HEX[0,ffffffff].";
+            }
+            leaf payload-mask {
+              type pub-type:hex-binary;
+              mandatory true;
+              description
+                "Payload mask, Value range HEX[0,ffffffff].";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+        "Observing boards.";
+    container mirror {
+         description
+            "Configure Mirror.";
+      container slot-observe {
+        presence "create slot-observe";
+          description
+            "Enable/disable observing board.";
+        leaf observe-index {
+              type uint8 {
+                range "1..255";
+              }
+            mandatory true;
+          description
+            "Observing index.";
+        }
+      }
+      container observe-filters {
+        description
+          "List of mirror filter rules.";
+        list observe-filter {
+          must "./src-ipaddr or ./dst-ipaddr or ./dst-ipaddr or ./src-port or ./dst-port or ./src-macaddr or ./pppoe-session-id or ./dst-macaddr or ./vlan or ./eth-type or ./ppp-protocol or ./ip-protocol";
+          key "filter-id";
+          max-elements  "8";
+          description
+            "Configure mirror filter rule.";
+          leaf filter-id {
+            type uint8 {
+              range "0..7";
+            }
+            description
+              "User ID number.";
+          }
+          leaf src-ipaddr {
+            type inet:ipv4-address-no-zone;
+            must "(../src-ipaddr-mask)";
+            description
+              "Source IP.";
+          }
+          leaf src-ipaddr-mask {
+            type inet:ipv4-address-no-zone;
+            must "(../src-ipaddr)";
+            description
+              "Source IP mask.";
+          }
+          leaf dst-ipaddr {
+            type inet:ipv4-address-no-zone;
+            must "(../dst-ipaddr-mask)";
+            description
+              "Destination IP.";
+          }
+          leaf dst-ipaddr-mask {
+            type inet:ipv4-address-no-zone;
+            must "(../dst-ipaddr)";
+            description
+              "Destination IP mask.";
+          }
+          leaf src-port {
+            type uint16;
+            description
+              "Source port.";
+          }
+          leaf dst-port {
+            type uint16;
+            description
+              "Destination port.";
+          }
+          leaf src-macaddr {
+            type pub-type:mac-address;
+            description
+              "Source MAC.";
+          }
+          leaf pppoe-session-id {
+            type uint16 {
+              range "1..65535";
+            }
+            description
+              "PPPOE session ID.";
+          }
+          leaf dst-macaddr {
+            type pub-type:mac-address;
+            description
+              "Destination MAC.";
+          }
+          leaf vlan {
+            type uint16 {
+              range "1..4094";
+            }
+            description
+              "VLAN ID.";
+          }
+          leaf eth-type {
+            type pub-type:hex-binary {
+              length "1..6";
+              pattern '(0x|0X)?[0-9a-fA-F]{1,4}';
+            }
+            description
+              "Ethernet type.";
+          }
+          choice protocol-type {
+              description
+                "Protocol type."; 
+              case ppp {
+                  description
+                    "PPP.";
+                  leaf ppp-protocol {
+                    type pub-type:hex-binary {
+                      length "1..6";
+                      pattern '(0x|0X)?[0-9a-fA-F]{1,4}';
+                    }
+                    description
+                      "PPP protocol.";
+                  }
+              }
+
+              case ip {
+                description
+                  "IP.";
+                  leaf ip-protocol {
+                    type uint32 {
+                      range "1..255";
+                    }
+                    description
+                      "IP protocol.";
+                  }
+              }
+          }
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+        "Observing boards.";
+    container mirror {
+         description
+            "Configure mirror.";        
+      container slot-observe {
+        presence "create slot-observe";
+          description
+            "Enable/disable observing board.";
+        leaf observe-index {
+              type uint8 {
+                range "1..255";
+              }
+            mandatory true;
+          description
+            "Observing index.";
+        }
+      }
+      container observe-filters {
+        description
+          "List of mirror filter rules.";
+        list observe-filter {
+          must "./src-ipaddr or ./dst-ipaddr or ./dst-ipaddr or ./src-port or ./dst-port or ./src-macaddr or ./pppoe-session-id or ./dst-macaddr or ./vlan or ./eth-type or ./ppp-protocol or ./ip-protocol";
+          key "filter-id";
+          max-elements  "8";
+          description
+            "Configure mirror filter rule.";
+          leaf filter-id {
+            type uint8 {
+              range "0..7";
+            }
+            description
+              "User ID number.";
+          }
+          leaf src-ipaddr {
+            type inet:ipv4-address-no-zone;
+            must "(../src-ipaddr-mask)";
+            description
+              "Source IP.";
+          }
+          leaf src-ipaddr-mask {
+            type inet:ipv4-address-no-zone;
+            must "(../src-ipaddr)";
+            description
+              "Source IP mask.";
+          }
+          leaf dst-ipaddr {
+            type inet:ipv4-address-no-zone;
+            must "(../dst-ipaddr-mask)";
+            description
+              "Destination IP.";
+          }
+          leaf dst-ipaddr-mask {
+            type inet:ipv4-address-no-zone;
+            must "(../dst-ipaddr)";
+            description
+              "Destination IP mask.";
+          }
+          leaf src-port {
+            type uint16;
+            description
+              "Source port.";
+          }
+          leaf dst-port {
+            type uint16;
+            description
+              "Destination port.";
+          }
+          leaf src-macaddr {
+            type pub-type:mac-address;
+            description
+              "Source MAC.";
+          }
+          leaf pppoe-session-id {
+            type uint16 {
+              range "1..65535";
+            }
+            description
+              "PPPOE session ID.";
+          }
+          leaf dst-macaddr {
+            type pub-type:mac-address;
+            description
+              "Destination MAC.";
+          }
+          leaf vlan {
+            type uint16 {
+              range "1..4094";
+            }
+            description
+              "VLAN ID.";
+          }
+          leaf eth-type {
+            type pub-type:hex-binary {
+              length "1..6";
+              pattern '(0x|0X)?[0-9a-fA-F]{1,4}';
+            }
+            description
+              "Ethernet type.";
+          }
+          choice protocol-type {
+              description
+                "Protocol type."; 
+              case ppp {
+                  description
+                    "PPP.";
+                  leaf ppp-protocol {
+                    type pub-type:hex-binary {
+                      length "1..6";
+                      pattern '(0x|0X)?[0-9a-fA-F]{1,4}';
+                    }
+                    description
+                      "PPP protocol.";
+                  }
+              }
+
+              case ip {
+                description
+                  "IP.";
+                  leaf ip-protocol {
+                    type uint32 {
+                      range "1..255";
+                    }
+                    description
+                      "IP protocol.";
+                  }
+              }
+          }
+        }
+      }
+    }
+  }
+  augment "/qos:qos/qos:global-config"{
+    description
+        "Observing boards..";
+    container mirror {
+         description
+           "Configure mirror.";
+      container to-observe {
+        presence "create to-observe";
+          description
+            "Enable/disable observing board.";
+          leaf index {
+              type uint8 {
+                range "1..8";
+              }
+            mandatory true;
+          description
+            "Observing index.";
+        }
+      }
+    }
+  }
+  
+  augment "/qos:qos/qos:classifier-template/qos:traffic-behaviors/qos:traffic-behavior" {
+    description
+      "Mirror.";
+    container mirror {
+      description
+        "Configure Mirror.";
+      container mirror-enable {
+        presence "create mirror-enable";
+        description
+          "Enable/disable flow mirroring action.";
+      }
+      container mirror-car {
+        must "(./pir and ./pbs) or (not(./pir) and not(./pbs) or (not(./pir) and ./pbs>=1))";
+        presence "create mirror-car";
+        description
+          "Enable/disable flow mirroring car action.";
+        leaf cir {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "kbit/s";
+          mandatory true;
+          description
+            "Committed information rate.";
+        }
+        leaf pir {
+          type uint32 {
+            range "1..4294967295";
+          }
+          units "kbit/s";
+          must "../pir>=../cir";
+          description
+            "Peak information rate.";
+        }
+        leaf cbs {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "Byte";
+          mandatory true;
+          description
+            "Committed burst size.";
+        }
+        leaf pbs {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "Byte";
+          description
+            "Peak burst size.";
+        }
+      }
+      container mirror-to {
+        presence "create mirror-to";
+        description
+          "Enable/disable flow mirroring to.";
+        leaf observe-index {
+          type string {
+            length "1..50";
+            pattern '((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|[1-9]){1}((,(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|[1-9])){0,4}))';
+          }
+          mandatory true;
+          description
+            "Observing index. Enter the observation index value, which is separated by a comma (,). For example, 1 or 1,3,5,7,9.";
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+     description
+      "Port-mirror.";
+    container mirror {
+      description
+        "Configure mirror.";
+      container port-mirrors {
+        must "not(count(./port-mirror)>0 and (../port-observe or count(../integrateds/integrated)>0))";
+        description
+          "List of mirroring interfaces.";
+        list port-mirror {
+          must "((./direction='inbound' and not(../../evc-l2-port-mirrors/pubs/pub[direction='inbound'])) or (./direction='outbound' and not(../../evc-l2-port-mirrors/pubs/pub[direction='outbound'])))";
+          must "((./direction='inbound' and not(../../evc-l2-port-mirrors/dot1q-types/dot1q-type[direction='inbound'])) or (./direction='outbound' and not(../../evc-l2-port-mirrors/dot1q-types/dot1q-type[direction='outbound'])))";
+          must "((./direction='inbound' and not(../../evc-l2-port-mirrors/qinq-types/qinq-type[direction='inbound'])) or (./direction='outbound' and not(../../evc-l2-port-mirrors/qinq-types/qinq-type[direction='outbound'])))";
+          key "direction cpu-packet";
+          description
+            "Configure mirroring interface.";
+          leaf direction {
+            type direction-type;
+            description
+              "Direction.";
+          }
+          leaf cpu-packet {
+            type boolean;
+            must "../direction!='outbound' or ../cpu-packet!='true'";
+            description
+              "Enable/disable a separate mirroring function for sending CPU packets.";
+          }
+          choice property {
+            description
+              "Port mirroring property.";
+            case vlan {
+              description
+                "Virtual LAN."; 
+              leaf cevlan {
+                type pub-type:vlan-range;
+                must "../../../../ethernet:ethernet/ethernet:main-interface/ethernet:l2-attribute";
+                must "not(../cpu-packet='true' or ../../../port-observe or count(../../../evc-l2-port-mirrors/pubs/pub)>0 or
+                count(../../../evc-l2-port-mirrors/dot1q-types/dot1q-type)>0 or count(../../../evc-l2-port-mirrors/qinq-types/qinq-type)>0)";
+                description
+                  "VLAN ID.";
+              }
+            }
+            case user-defined-filter-rule {
+              description
+                "Mirror user-defined-filter rule."; 
+              leaf filter-id {
+                type leafref {
+                    path "/mirror:mirror/mirror:observe-user-define-acls/mirror:observe-user-define-acl/mirror:filter-id";
+                }
+                description
+                  "Filter index.";
+              }
+            }
+          }
+        }
+      }
+      container without-header {
+        must "../port-mirrors/port-mirror/direction";
+        must "not(../port-mirrors/port-mirror/cevlan or count(../integrateds/integrated)>0 or count(../evc-l2-port-mirrors/pubs/pub)>0 or
+        count(../evc-l2-port-mirrors/dot1q-types/dot1q-type)>0 or count(../evc-l2-port-mirrors/qinq-types/qinq-type)>0 or ../port-observe)";
+        presence "create without-header";
+        description
+          "Enable/disable specify packet mirroring from layer 3."; 
+      }
+      container port-mirror-car {
+        must "not(../port-observe)";
+        must "(./pir and ./pbs) or (not(./pir) and not(./pbs) or (not(./pir) and ./pbs>=1))";
+        presence "create port-mirror-car";
+        description
+          "Enable/disable flow mirroring car action.";
+        leaf cir {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "kbit/s";
+          mandatory true;
+          description
+            "Committed information rate.";
+        }
+        leaf pir {
+          type uint32 {
+            range "1..4294967295";
+          }
+          units "kbit/s";
+          must "../pir>=../cir";
+          description
+            "Peak information rate.";
+        }
+        leaf cbs {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "Byte";
+          mandatory true;
+          description
+            "Committed burst size.";
+        }
+        leaf pbs {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "Byte";
+          description
+            "Peak burst size.";
+        }
+      }
+      container port-mirror-to {
+        must "not(../port-observe )";
+        presence "create port-mirror-to";
+        description
+          "Enable/disable flow mirroring to.";
+          leaf observe-index {
+          type string {
+            length "1..50";
+            pattern '(null0)|((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|[1-9]){1}((,(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|[1-9])){0,4}))';
+          }
+          mandatory true;
+          description
+            "Observing index. Enter the observation index value, which is separated by a comma (,). For example, 1 or 1, 3, 5, 7, 9. If mirroring based on no observing port is required, enter null0.";
+        }
+      }
+      container port-fragments {
+          must "not(count(./port-fragment)>0 and (../port-mirrors/port-mirror/cevlan or ../port-observe or count(../integrateds/integrated)>0 or
+          count(../evc-l2-port-mirrors/pubs/pub)>0 or count(../evc-l2-port-mirrors/dot1q-types/dot1q-type)>0 or count(../evc-l2-port-mirrors/qinq-types/qinq-type)>0))";
+          description
+            "List of fragment mirroring interfaces.";
+          list port-fragment {
+            key "direction";
+            description
+              "Configure fragment mirroring interface (supported by some subcards).";
+            leaf direction {
+              type direction-type;
+              description
+                "Direction.";
+            }
+          }
+      }
+      container integrateds {
+        must "not(count(./integrated)>0 and (../port-observe or ../port-mirror-to))";
+        description
+          "List of the port-mirroring to interface command configures port mirroring in integrated mode.";
+        list integrated {
+          key "direction cpu-packet";
+          description
+            "Configure the port-mirroring to interface command configures port mirroring in integrated mode.";
+          leaf direction {
+            type direction-type;
+            description
+              "Direction.";
+          }
+          leaf cpu-packet {
+            type boolean;
+            must "../direction!='outbound' or ../cpu-packet!='true'";
+            description
+              "Enable/disable a separate mirroring function for sending CPU packets.";
+          }
+          leaf filter-id {
+            type leafref {
+              path "/mirror:mirror/mirror:observe-user-define-acls/mirror:observe-user-define-acl/mirror:filter-id";
+            }
+            description
+              "User-defined-filter rule number.";
+          }
+          choice observe-port {
+            mandatory true;
+            description
+              "Observe port.";
+              case port-null0 {
+                leaf null0 {
+                  type empty;
+                    description
+                        "Specify observing port null0.";
+                  }
+                  description
+                      "Specify observing port null0.";
+              }
+              case port-observe {
+                description
+                    "Port observe.";
+                leaf if-name {
+                  type leafref {
+                      path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                  }
+                  must "../observe-index";
+                  description
+                      "Name of an observing interface.";
+                }
+                leaf observe-index {
+                  type uint8 {
+                      range "1..255";
+                  }
+                  must "../if-name";
+                  description
+                      "Observing index.";
+                }
+              }
+          }
+        }
+      }
+      container bas-port-mirrors {
+        must "not (count(./bas-port-mirror)>0 and (../port-observe or ../without-header or count(../integrateds/integrated)>0 or count(../evc-l2-port-mirrors/pubs/pub)>0
+        or count(../evc-l2-port-mirrors/dot1q-types/dot1q-type)>0 or count(../evc-l2-port-mirrors/qinq-types/qinq-type)>0))";
+        description
+          "List of QinQ match port mirrors.";
+        list bas-port-mirror {
+          must "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:user-vlan-any or /ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:user-vlan-common/ethernet:user-vlan-qinqs";
+          must "./pevlan-begin <= ./pevlan-end";
+          must "./cevlan-begin <= ./cevlan-end";
+          must "((./direction='inbound' and not(../../port-mirrors/port-mirror[direction='inbound'])) or (./direction='outbound' and not(../../port-mirrors/port-mirror[direction='outbound'])))";
+          key "direction pevlan-begin pevlan-end cevlan-begin cevlan-end";
+          description
+            "Configure QinQ match port mirror.";
+          leaf direction {
+            type direction-type;
+            description
+              "Direction.";
+          }
+          leaf pevlan-begin {
+            type uint16 {
+              range "1..4094";
+            }
+            description
+              "PEVLANBegin.";
+          }
+          leaf pevlan-end {
+            type uint16 {
+              range "1..4094";
+            }
+            description
+              "PEVLANEnd.";
+          }
+          leaf cevlan-begin {
+            type uint16 {
+              range "1..4094";
+            }
+            description
+              "CEVLANBegin.";
+          }
+          leaf cevlan-end {
+            type uint16 {
+              range "1..4094";
+            }
+            description
+              "CEVLANEnd.";
+          }
+        }
+      }
+      container evc-l2-port-mirrors {
+        description
+          "Configure EVC l2 port mirror.";
+        choice evc-l2-port-cfg {
+          description
+            "EVC l2 port cfg.";
+          case pub {
+            description
+             "EVC l2 untag port mirror.";
+          container pubs {
+            must "not (count(./pub)>0 and (../../port-observe or ../../port-mirror-to or count(../../integrateds/integrated)>0))";
+            description
+                 "List of EVC l2 port mirror.";
+              list pub {
+                  must "(../../../../ethernet:ethernet/ethernet:l2-sub-interface/ethernet:default or ../../../../ethernet:ethernet/ethernet:l2-sub-interface/ethernet:untag or ../../../../ethernet:ethernet/ethernet:l2-sub-interface/ethernet:dot1q/ethernet:vlans or ../../../../ethernet:ethernet/ethernet:l2-sub-interface/ethernet:qinqs)";
+                  must "((./direction='inbound' and not(../../../port-mirrors/port-mirror[direction='inbound'])) or
+                  (./direction='outbound' and not(../../../port-mirrors/port-mirror[direction='outbound'])))";
+                  key "direction";
+                  description
+                    "Configure EVC l2 port mirror.";
+                  leaf direction {
+                    type direction-type;
+                    description
+                      "Direction.";
+                  }
+                  leaf instance-name {
+                    type leafref {
+                          path "/mirror:mirror/mirror:instances/mirror:instance/mirror:instance-name";
+                    }
+                    mandatory true;
+                    description
+                      "Mirror instance name.";
+                  }
+                  leaf group-name {
+                    type string {
+                      length "1..31";
+                    }
+                    description
+                      "Group name.";
+                  }
+              }
+          }
+          }
+          case dot1q-type {
+            description
+             "EVC l2 dot1q-terminal port mirror.";
+            container dot1q-types { 
+               must "not (count(./dot1q-type)>0 and (../../port-observe or ../../port-mirror-to or count(../../integrateds/integrated)>0))";
+               description
+                 "List of EVC l2 port mirror.";
+              list dot1q-type {
+                  must "../../../../ethernet:ethernet/ethernet:l2-sub-interface/ethernet:dot1q/ethernet:vlans";
+                  must "((./direction='inbound' and not(../../../port-mirrors/port-mirror[direction='inbound'])) or
+                 (./direction='outbound' and not(../../../port-mirrors/port-mirror[direction='outbound'])))";
+                  must "./vlan-begin <= ./vlan-end";
+                  key "direction vlan-begin vlan-end";
+                  description
+                    "Configure EVC l2 port mirror.";
+                  leaf direction {
+                    type direction-type;
+                    description
+                      "Direction.";
+                  }
+                  leaf vlan-begin {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "CE VLAN begin.";
+                  }
+                  leaf vlan-end {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "CE VLAN end.";
+                  }
+                  leaf instance-name {
+                    type leafref {
+                      path "/mirror:mirror/mirror:instances/mirror:instance/mirror:instance-name";
+                    }
+                    mandatory true;
+                    description
+                      "Mirror instance name.";
+                  }
+                  leaf identify {
+                    type identifier-type;
+                    must "../identify='none' or ../identify='ce-vid'";
+                    mandatory true;
+                    description
+                      "Identify.";
+                  }
+                  leaf group-name {
+                    type string {
+                      length "1..31";
+                    }
+                    description
+                      "Group name.";
+                  }
+              }
+          }
+          }
+          case qinq-type {
+            description
+             "EVC l2 QinQ-terminal port mirror.";
+            container qinq-types {
+               must "not (count(./qinq-type)>0 and (../../port-observe or ../../port-mirror-to or count(../../integrateds/integrated)>0))";
+               description
+                 "List of EVC l2 port mirror.";
+              list qinq-type {
+                  must "../../../../ethernet:ethernet/ethernet:l2-sub-interface/ethernet:qinqs";
+                  must "((./direction='inbound' and not(../../../port-mirrors/port-mirror[direction='inbound'])) or
+                  (./direction='outbound' and not(../../../port-mirrors/port-mirror[direction='outbound'])))";
+                  must "./cevlan-begin <= ./cevlan-end";
+                  key "direction pevlan cevlan-begin cevlan-end";
+                  description
+                    "Configure EVC l2 port mirror.";
+                  leaf direction {
+                    type direction-type;
+                    description
+                      "Direction.";
+                  }
+                  leaf pevlan {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "PE VLAN.";
+                  }
+                  leaf cevlan-begin {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "CE VLAN begin.";
+                  }
+                  leaf cevlan-end {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "CE VLAN end.";
+                  }
+                  leaf instance-name {
+                    type leafref {
+                      path "/mirror:mirror/mirror:instances/mirror:instance/mirror:instance-name";
+                    }
+                    mandatory true;
+                    description
+                      "Mirror instance name.";
+                  }
+                  leaf identify {
+                    type identifier-type;
+                    mandatory true;
+                    description
+                      "Identify.";
+                  }
+                  leaf group-name {
+                    type string {
+                      length "1..31";
+                    }
+                    description
+                      "Group name.";
+                  }
+              }
+            }
+          }
+        }
+      }
+      container port-observe {
+        presence port-observe;
+        description
+          "Enable/disable specify observing port index.";
+        leaf observe-index {
+          type uint8 {
+            range "1..255";
+          }
+          mandatory true;
+          description
+            "Observing index.";
+        }
+        leaf without-filter {
+          type without-filter;
+          default "false";
+          description
+            "Disable observe filter in observe port.";
+        }
+        leaf destination-mac {
+          type pub-type:mac-address;
+          description
+            "The observer port specifies the MAC address.";
+        }
+         leaf pop-label {
+          type pop-label;
+          must "../with-linklayer-header!='true'";           
+          description
+            "Type of POP MPLS label.";
+        }
+        leaf sub-extend { 
+          when "../pop-label";        
+          type empty;
+          description
+            "The MPLS label-POP function enable on sub-interface.";
+        }
+        leaf with-linklayer-header {
+          type with-linklayer-header;
+          must "../../../ifm:class='sub-interface' or ../with-linklayer-header='false'";
+          must "not(../pop-label) or ../with-linklayer-header='false'";    
+          default "false";
+          description
+            "Specify packet mirroring from layer 3.";
+        }
+      }
+    }
+  }
+  augment "/bd:bd/bd:instances/bd:instance" {
+        description
+            "Port mirror under bridge domain.";
+        container mirror {
+           description
+                "Configure mirror.";
+            container bd-port-mirrors {
+              description
+                "List of BD port mirror.";
+              list bd-port-mirror {
+                key "direction";
+                description
+                  "Configure BD port mirror.";
+                leaf direction {
+                  type direction-type;
+                  description
+                    "Direction.";
+                }
+                leaf instance-name {
+                  type leafref {
+                      path "/mirror:mirror/mirror:instances/mirror:instance/mirror:instance-name";
+                  }
+                  mandatory true;
+                  description
+                    "Mirror instance name.";
+                }
+                leaf group-name {
+                  type string {
+                    length "1..31";
+                  }
+                  description
+                    "Group name.";
+                }
+              }
+            }
+        }
+    }
+}

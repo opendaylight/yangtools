@@ -1,0 +1,89 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-isis-srv6 {
+  namespace "urn:huawei:yang:huawei-isis-srv6";
+  prefix isis-srv6;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-isis {
+    prefix isis;
+  }
+  import huawei-srv6 {
+    prefix srv6;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "ISIS segment routing IPv6 management.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "isis";
+  augment /ni:network-instance/ni:instances/ni:instance/isis:isis/isis:sites/isis:site/isis:afs/isis:af {
+    description
+      "ISIS segment routing IPv6 augment to ISIS.";
+    container srv6 {
+      when "../../../../../../ni:name='_public_' and ../isis:type='afipv6'";
+      description
+        "Configure ISIS segment routing IPv6.";
+      container locators {
+        description
+          "List of segment routing IPv6 locator.";
+          list locator {
+          key "locator-name";
+          description
+          "Configure segment routing IPv6 locator.";
+          leaf locator-name {
+            type leafref {
+              path "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srv6:locators/srv6:locator/srv6:name";
+            }
+            description
+              "Enable ISIS segment routing IPv6 with specified Locator.";
+          }
+          leaf auto-sid {
+            type boolean;
+            must "../auto-sid='true' or (../locator-name)";
+            default "true";
+            description
+              "Enable/disable automatic application for SID.";
+          }
+      }
+      }
+      container avoid-microloop {
+        when "../locators/locator";
+        description
+          "Configure IPv6 segment routing avoid microloop.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable IPv6 segment routing avoid microloop.";
+        }
+        leaf delay-value {
+          type uint16 {
+            range "1000..60000";
+          }
+          default "5000";
+          description
+            "Set the route delivery delay for IPv6 segment routing avoid microloop.";
+        }
+      }
+    }
+  }
+}

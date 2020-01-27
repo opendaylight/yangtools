@@ -1,0 +1,2546 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-multicast-forward {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-multicast-forward";
+  prefix multicast-forward;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-vlan {
+    prefix vlan;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Multicast forwarding table."; 
+  revision 2019-10-22 {
+    description
+      "Add new nodes.";
+    reference
+      "Huawei private.";
+  }      
+  revision 2019-03-30 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forwarding";
+  typedef af-type {
+    type enumeration {
+      enum "ipv4unicast" {
+        value 1;
+        description
+          "IPv4 address family.";
+      }
+      enum "ipv6unicast" {
+        value 2;
+        description
+          "IPv6 address family.";
+      }
+    }
+    description
+      "Address family type.";
+  }
+  typedef rule-direction {
+    type enumeration {
+      enum "in-bound" {
+	    value 0;
+        description
+          "Input Interface.";
+      }
+      enum "out-bound" {
+	    value 1;
+        description
+          "Output Interface.";
+      }
+    }
+    description
+      "Rule direction.";
+  }  
+  typedef cycle {
+    type enumeration {
+      enum "20" {
+        value 20;
+        description
+          "Monitor cycle of 20.";
+      }
+      enum "40" {
+        value 40;
+        description
+          "Monitor cycle of 40.";
+      }
+      enum "100" {
+        value 100;
+        description
+          "Monitor cycle of 100.";
+      }
+      enum "200" {
+        value 200;
+        description
+          "Monitor cycle of 200.";
+      }
+      enum "500" {
+        value 500;
+        description
+          "Monitor cycle of 500.";
+      }
+    }
+    description
+      "Monitor cycle.";
+  }
+  typedef queue1 {
+    type enumeration {
+      enum "be" {
+      value 1;
+        description
+          "QoS queue BE.";
+      }
+      enum "af1" {
+        value 2;	  
+        description
+          "QoS queue AF1.";
+      }
+    }
+    description
+      "QoS queue1.";
+  }
+  typedef queue2 {
+    type enumeration {
+      enum "af2" {
+        value 3;	  
+        description
+          "QoS queue AF2.";
+      }
+      enum "af3" {
+        value 4;	  
+        description
+          "QoS queue AF3.";
+      }
+    }
+    description
+      "QoS queue2.";
+  }
+  typedef queue3 {
+    type enumeration {
+      enum "af4" {
+        value 5;	  
+        description
+          "QoS queue AF4.";
+      }
+      enum "cs6" {
+        value 6;	  
+        description
+          "QoS queue CS6.";
+      }
+    }
+    description
+      "QoS queue3.";
+  }
+  typedef queue4 {
+    type enumeration {
+      enum "ef" {
+        value 7;	  
+        description
+          "QoS queue EF.";
+      }
+      enum "cs7" {
+        value 8;	  
+        description
+          "QoS queue CS7.";
+      }
+    }
+    description
+      "QoS queue4.";
+  }
+  typedef status {
+    type enumeration {
+      enum "one" {
+        value 1;	  
+        description
+          "Static configuration.";
+      }
+	
+      enum "two" {
+        value 2;
+        description
+          "Dynamic learning.";
+      }
+    }
+    description
+      "Generation mode.";
+  }
+  typedef mpls-type {
+    type enumeration {
+      enum "p2mpte" {
+        value 4;	  
+        description
+          "P2MPTE type.";
+      }
+      enum "mldp" {
+        value 5;	  
+        description
+          "MLDP type.";
+      }
+    }
+    description
+      "Indicate the MPLS bandwidth type.";
+  }
+  typedef source-mac-change-type {
+    type enumeration {
+      enum "not-translate" {
+        value 0;
+        description
+          "No translation.";
+      }
+      enum "auto-translate" {
+        value 1;
+        description
+          "Auto translation.";
+      }
+    }
+    description
+      "Source MAC address modification mode.";
+  }
+  typedef rtp-ssrc-change-type {
+    type enumeration {
+      enum "not-translate" {
+        value 0;
+        description
+          "No translation.";
+      }	
+      enum "auto-translate" {
+        value 1;	  
+        description
+          "Auto translation.";
+      }
+    }
+    description
+      "RTP SSRC modification mode.";
+  }
+  typedef switch-mode {
+    type enumeration {
+      enum "default-switch" {
+        value 0;
+        description
+          "Default switch mode.";
+      }
+      enum "clean-switch" {
+        value 1;
+        description
+          "Clean switch mode.";
+      }      
+    }
+    description
+      "Switch mode.";
+  }
+  typedef switch-field-type {
+    type enumeration {
+      enum "default-field" {
+        value 0;
+        description
+          "Default field type.";
+      }
+      enum "first-field" {
+        value 1;	  
+        description
+          "First field type.";
+      }
+      enum "second-field" {
+        value 2;	  
+        description
+          "Second field type.";
+      }
+    }
+    description
+      "Switch field type.";
+  }
+  typedef rtp-seq-num-change-type {
+    type enumeration {
+      enum "not-translate" {
+        value 0;	  
+        description
+          "No translation.";
+      }	
+      enum "auto-translate" {
+        value 1;	  
+        description
+          "Auto translation.";
+      }
+    }
+    description
+      "Indicate that the sequence number of multicast streams is automatically translated.";
+  }
+  typedef rtp-ext-seq-num-change-type {
+    type enumeration {
+      enum "not-translate" {
+        value 0;	  
+        description
+          "No translation.";
+      }	
+      enum "auto-translate" {
+        value 1;	  
+        description
+          "Auto translation.";
+      }
+    }
+    description
+      "RTP extended sequence number modification mode.";
+  }
+  typedef stream-type {
+    type enumeration {
+      enum "default-stream-type" {
+        value 0;
+        description
+          "Default stream type.";
+      }
+      enum "video-stream" {
+        value 1;	  
+        description
+          "Video stream.";
+      }
+      enum "ancillary-data" {
+        value 2;	  
+        description
+          "Ancillary data.";
+      }
+      enum "audio-stream" {
+        value 3;	  
+        description
+          "Audio stream.";
+      }
+    }
+    description
+      "Stream type.";
+  }
+  typedef resource-pool-type {
+    type enumeration {
+      enum "0" {
+        value 0;	  
+        description
+          "Resource pool 0. The outgoing interface of each multicast group preferentially applies for resource pool 0, and only one can be applied for.";
+      }
+      enum "1" {
+        value 1;	  
+        description
+          "Resource pool 1. If a multicast group has applied for an outgoing interface resource in resource pool 0, it applies for other outgoing interface resources in resource pool 1.";
+      }
+      enum "NULL" {
+        value 255;	  
+        description
+          "Null type.";
+      }
+    }
+    description
+      "Resource pool type.";
+  }
+  typedef board-type {
+    type enumeration {
+      enum "board-type-total" {
+        value 0;
+        description
+          "All board types.";
+      }
+      enum "board-type-mpu" {
+        value 1;	  
+        description
+          "Board type of MPU.";
+      }
+      enum "board-type-lpu" {
+        value 2;	  
+        description
+          "Board type of LPU.";
+      }
+    }
+    description
+      "Multicast rui static board type.";
+  }
+  typedef service-type {
+    type enumeration {
+      enum "l3mcv4" {
+        value 1;	  
+        description
+          "Layer3 IPv4 multicast.";
+      }
+      enum "l3mcv6" {
+        value 2;	  
+        description
+          "Layer3 IPv6 multicast.";
+      }
+    }
+    description
+      "Service type.";
+  }
+  container multicast-forward {
+    description
+      "Table of multicast-forward.";
+    container global {
+      description
+        "Configure multicast forwarding global attributes.";
+      leaf shaping-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable multicast shaping.";
+      }
+      leaf bw-car-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable multicast virtual scheduling information.";
+      }
+      leaf monitor-frr-cycle {
+        type cycle;
+        units ms;
+        default "20";
+        description
+          "Set multicast frr monitor cycle.";
+      }
+      leaf frr-revert-disable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable multicast frr revert.";
+      }
+      leaf reliability-enhance-enable {
+        type boolean;
+        default false;
+        description
+          "Enable/disable multicast reliability enhancement.";
+      }
+      leaf qos-queue1 {
+        type queue1;
+        default "be";
+        description
+          "Multicast QoS queue1.";
+      }
+      leaf qos-queue2 {
+        type queue2;
+        default "af2";
+        description
+          "Multicast QoS queue2.";
+      }
+      leaf qos-queue3 {
+        type queue3;
+        default "af4";
+        description
+          "Multicast QoS queue3.";
+      }
+      leaf qos-queue4 {
+        type queue4;
+        default "ef";
+        description
+          "Multicast QoS queue4.";
+      }
+      leaf fragment-enable {
+        type boolean;
+        default false;
+        description
+          "Enable/disable multicast fragmentation. The configuration is performed based on a board.";
+      }
+    }
+    container nat {  
+      presence "multicast nat enable";
+      description
+        "Enable/disable multicast nat configurations.";
+      leaf ttl-decrease-disable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the multicast NAT TTL decrement function.";
+      }		
+      container inbound-interfaces {
+        description
+          "List of interfaces enabled with multicast NAT.";
+        list inbound-interface {
+          key "interface-name";
+          description
+            "Configure interface on which multicast NAT is enabled.";
+          leaf interface-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            must "(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = 'GigabitEthernet' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '50GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '40GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '400GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '25GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '10GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '100GE')";
+            description
+              "Name of an interface.";
+          }
+          leaf igmp-enable {
+            type boolean;
+            default false;
+            description
+              "Enable/disable multicast NAT IGMP on an interface.";
+          }
+        }
+      }
+      container instances {
+        description
+          "List of multicast NAT instances.";
+        list instance {
+          key "instance-id";
+          unique "instance-name";
+          description
+            "Configure multicast NAT instance.";
+          leaf instance-id {
+            type uint32 {
+              range "1..16000";
+            }
+            description
+              "ID of a multicast NAT instance.";
+          }
+          leaf instance-name {
+            type string {
+              length "1..127";
+            }
+            description
+              "Name of a multicast NAT instance.";
+          }
+          leaf behavior-name {
+            type string {
+              length "1..127";
+            }
+            config false;
+            description
+              "Name of a traffic behavior to which the multicast NAT instance is bound.";
+          }
+          container outbounds {
+            config false;
+            description
+              "List of output streams.";
+            list outbound {
+              key "outbound-id";
+              description
+                "Output stream state.";
+              leaf outbound-id {
+                type uint32 {
+                  range "1..16000";
+                }
+                description
+                  "ID of an outgoing flow.";
+              }
+              leaf outbound-name {
+                type string {
+                  length "1..127";
+                }
+                description
+                  "Name of an outgoing flow.";
+              }
+              leaf src-mac-trans-mode {
+                type string {
+                  length "1..31";
+                }
+                default "not-translate";
+                description
+                  "Source MAC Address Modification Mode/Whether the source MAC address is automatically modified or not modified.";
+              }
+              leaf src-address-trans-mode {
+                type string {
+                  length "1..31";
+                }
+                default "not-translate";
+                description
+                  "Enable or disable the function of modifying the source IP address.";
+              }
+              leaf source-address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Multicast source address.";
+              }
+              leaf dst-address-trans-mode {
+                type string {
+                  length "1..31";
+                }
+                default "not-translate";
+                description
+                  "Enable or disable the function of modifying the destination MAC address.";
+              }
+              leaf destination-address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Destination IP address of a packet.";
+              }
+              leaf source-udp-trans-mode {
+                type string {
+                  length "1..31";
+                }
+                description
+                  "Enable or disable the function of modifying the source UDP port.";
+              }
+              leaf source-udp-port {
+                type uint32 {
+                  range "0..65535";
+                }
+                description
+                  "Source UDP port number of a packet.";
+              }
+              leaf dst-udp-trans-mode {
+                type string {
+                  length "1..31";
+                }
+                default "not-translate";
+                description
+                  "Enable or disable the function of modifying the destination UDP port.";
+              }
+              leaf dst-udp-port {
+                type uint32 {
+                  range "0..65535";
+                }
+                description
+                  "Destination UDP port number of a packet.";
+              }
+              leaf rtp-ssrc-trans-mode {
+                type string {
+                  length "1..31";
+                }
+                default "not-translate";
+                description
+                  "RTP SSRC modification mode.";
+              }
+              leaf rtp-seq-num-trans-mode {
+                type string {
+                  length "1..31";
+                }
+                description
+                  "Indicate that the sequence number of multicast streams is automatically translated.";
+              }
+              leaf rtp-ext-seq-num-trans-mode {
+                type string {
+                  length "1..31";
+                }
+                description
+                  "Indicate that the extended sequence number of multicast streams is automatically translated.";
+              }              
+              leaf interface-name {
+                type pub-type:if-name;
+                description
+                  "Name of an interface.";
+              }
+            }
+          }     
+        }
+      }
+      container outbounds {
+        description
+          "List of NAT configurations for multicast streams on outbound interfaces.";
+        list outbound {
+          key "interface-name outbound-id";
+          unique "outbound-name";
+          description
+            "Configure multicast stream translation on an outbound interface and configures multicast stream translation parameters.";
+          leaf interface-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            must "(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = 'GigabitEthernet' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '50GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '40GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '400GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '25GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '10GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = '100GE')";
+            description
+              "Name of an interface.";
+          }
+          leaf outbound-id {
+            type uint32 {
+              range "1..16000";
+            }
+            description
+              "Specify the ID of an output multicast stream on an outbound interface.";
+          }
+          leaf outbound-name {
+            type string {
+              length "1..127";
+            }
+            description
+              "Specify the name of an output multicast stream on an outbound interface.";
+          }
+          leaf source-mac-trans-mode {
+            type source-mac-change-type;
+            default "not-translate";
+            description
+              "Source MAC address modification mode/Whether the source MAC address is automatically modified or not modified.";
+          }
+          leaf source-address-trans-mode {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the function of modifying the source address.";
+          }
+          leaf destination-address-trans-mode {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the function of modifying the destination MAC address.";
+          }
+          leaf source-udp-trans-mode {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the function of modifying the source UDP port.";
+          }
+          leaf destination-udp-trans-mode {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the function of modifying the destination UDP port.";
+          }
+          leaf rtp-ssrc-trans-mode {
+            type rtp-ssrc-change-type;
+            default "not-translate";
+            description
+              "RTP SSRC modification mode.";
+          }
+          leaf rtp-seq-num-trans-mode {
+            type rtp-seq-num-change-type;
+            default "not-translate";
+            description
+              "Indicate that the sequence number of multicast streams is automatically translated.";
+          }
+          leaf rtp-ext-seq-num-trans-mode {
+		    when "../rtp-seq-num-trans-mode='auto-translate'";
+            type rtp-ext-seq-num-change-type;
+            default "not-translate";
+            description
+              "RTP extended sequence number modification mode.";
+          }
+          leaf source-address {
+            when "../source-address-trans-mode='true'";
+            type inet:ipv4-address-no-zone;
+            mandatory true;
+            description
+              "Multicast source address.";
+          }
+          leaf destination-address {
+            when "../destination-address-trans-mode='true'";
+            type inet:ipv4-address-no-zone;
+            mandatory true;			  
+            description
+              "Destination IP address of a packet.";
+          }
+          leaf source-udp-port {
+            when "../source-udp-trans-mode='true'";			
+            type uint32 {
+              range "0..65535";
+            }
+            mandatory true;
+            description
+              "Source UDP port number of a packet.";
+          }
+          leaf destination-udp-port {
+            when "../destination-udp-trans-mode='true'";			
+            type uint32 {
+              range "0..65535";
+            }
+            mandatory true;			  
+            description
+              "Destination UDP port number of a packet.";
+          }
+        }
+      }
+      container instance-groups {
+        description
+          "List of multicast NAT instance groups.";
+        list instance-group {
+          key "group-id";
+          unique "group-name";
+          description
+            "Configure multicast NAT instance group.";
+          leaf group-id {
+            type uint32 {
+            range "1..4000";
+            }
+            description
+              "ID of a multicast NAT instance group.";
+          }
+          leaf group-name {
+            type string {
+            length "1..127";
+            }
+            description
+              "Name of a multicast NAT instance group.";
+          }   
+          container part-instances {
+            description
+              "List of multicast NAT part instances.";
+            list part-instance {
+              key "part-id";
+              description
+                "Assign an instance id to instance group.";
+              leaf part-id {
+                type uint32 {
+                range "1..16";
+                }
+                description
+                  "Location of a multicast NAT instance in an instance group.";
+              }
+              leaf instance-id {
+                type leafref {
+                  path "/multicast-forward/nat/instances/instance/instance-id";
+                } 
+                mandatory true;
+                description
+                  "ID of a multicast NAT instance.";
+              }
+              leaf instance-name {
+              type leafref {
+                path "/multicast-forward/nat/instances/instance[instance-id=current()/../instance-id]/instance-name";
+                }              
+                description
+                  "Name of a multicast NAT instance.";
+              }
+              leaf stream-type {
+                type stream-type;
+                must "(../stream-type='default-stream-type' and not(/multicast-forward/nat/instance-groups/instance-group/part-instances/part-instance[stream-type!='default-stream-type'])) or (../stream-type !='default-stream-type' and not(/multicast-forward/nat/instance-groups/instance-group/part-instances/part-instance[stream-type='default-stream-type']))";                
+                default "default-stream-type";
+                description
+                  "Stream type. The default value and the specified value (ancillary-data, audio-stream, or video-stream) in the stream-type values of multiple part-instances in the same instance group cannot coexist. That is, all the values must be default or the specified values.";
+              }  
+            }
+          }
+        }
+      }
+      container outbound-groups {
+        description
+         "List of output stream groups.";
+        list outbound-group {
+          key "group-id";
+          unique "group-name";
+          description
+          "Configure output stream group.";
+          leaf group-id {
+            type uint32 {
+            range "1..4000";
+            }
+            description
+            "ID of an output stream group.";
+          }
+          leaf group-name {
+            type string {
+            length "1..127";
+            }
+            description
+            "Name of an output stream group.";
+          }
+          container part-outbounds {
+            description
+              "List of output part outbounds.";
+            list part-outbound {
+              key "part-id";
+              unique "outbound-id";
+              description
+          "Assign outbound id to outbound group.";
+              leaf part-id {
+                type uint32 {
+                  range "1..16";
+                }
+                description
+                  "Location of an output stream in an output stream group.";
+              } 
+              leaf outbound-id {
+                type leafref {
+                  path "/multicast-forward/nat/outbounds/outbound/outbound-id";
+                }
+                mandatory true;
+                description
+                  "ID of an outgoing flow.";
+              }
+              leaf outbound-name {
+                type leafref {
+                  path "/multicast-forward/nat/outbounds/outbound[outbound-id=current()/../outbound-id]/outbound-name";
+                }
+                description
+                  "Name of an outgoing flow.";
+              }
+              leaf stream-type {
+                type stream-type;
+                must "(../stream-type='default-stream-type' and not(/multicast-forward/nat/outbound-groups/outbound-group/part-outbounds/part-outbound[stream-type!='default-stream-type'])) or (../stream-type !='default-stream-type' and not(/multicast-forward/nat/outbound-groups/outbound-group/part-outbounds/part-outbound[stream-type='default-stream-type']))";
+                default "default-stream-type";
+                description
+                  "Stream type. The default value and the specified value (ancillary-data, audio-stream, or video-stream) in the stream-type values of multiple part-outbounds in the same outbound group cannot coexist. That is, all the values must be default or the specified values.";
+              }            
+            } 
+          }
+        }
+      }
+      container bind {  
+        presence "multicast nat bind configuration";
+        description
+          "Enable/disable single or group binding configuration.";        
+        container single-binds {
+          description
+            "List of bindings between output multicast streams and multicast NAT instances.";
+          list single-bind {
+            key "outbound-id";
+            description
+              "Configure binding between output multicast streams and multicast NAT instances.";
+            leaf outbound-id {
+              type leafref {
+                path "/multicast-forward/nat/outbounds/outbound/outbound-id";
+              }                          
+              description
+                "ID of an outgoing flow.";
+            }
+            leaf fast-mode-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the function of fast switch. Switch parameters (e.g.instance-id/switch-mode/witch-field-type) can not be modified when fast-mode-enable is true.";
+            }            
+            leaf outbound-name {              
+              type leafref {
+                path "/multicast-forward/nat/outbounds/outbound[outbound-id=current()/../outbound-id]/outbound-name";
+              }
+              description
+                "Name of an outgoing flow.";
+            }
+            leaf instance-id {
+              ext:operation-exclude update {
+                when "../fast-mode-enable = 'true'";    
+                description "The current node cannot be modified, when fast-mode-enable node is 'true'.";
+              }
+              type leafref {
+                path "/multicast-forward/nat/instances/instance/instance-id";
+              }                            
+              mandatory true;
+              description
+                "ID of a multicast NAT instance.";
+            }
+            leaf instance-name {
+              type leafref {
+                path "/multicast-forward/nat/instances/instance[instance-id=current()/../instance-id]/instance-name";
+              }              
+              description
+                "Name of a multicast NAT instance.";
+            }
+            leaf switch-mode {
+              ext:operation-exclude update|delete {
+                when "../fast-mode-enable = 'true'";    
+                description "The current node cannot be modified, when fast-mode-enable node is 'true'.";
+              }
+              type switch-mode;
+              default "default-switch";          
+              description
+                "Switch mode.";
+            }
+            leaf switch-field-type {
+              ext:operation-exclude update|delete {
+                when "../fast-mode-enable = 'true'";    
+                description "The current node cannot be modified, when fast-mode-enable node is 'true'.";
+              }
+              when "../switch-mode='clean-switch'";
+              type switch-field-type;
+              default "default-field";
+              description
+                "Specify a switch field type.";
+            }
+            leaf switch-packet-offset {
+              ext:operation-exclude update|delete {
+                when "../fast-mode-enable = 'true'";    
+                description "The current node cannot be modified, when fast-mode-enable node is 'true'.";
+              }
+              when "../switch-mode='clean-switch'";
+              type uint32 {
+                range "0..65535";
+              }
+              default "0";
+              description
+                "Set the offset of the packet to be switched.";
+            }
+          }
+        }
+        container group-binds {
+          description
+            "List of bindings between output stream groups and multicast NAT instance groups.";
+          list group-bind {
+            key "outbound-group-id";
+            description
+              "Configure binding between output stream groups and multicast NAT instance groups.
+               eg. output stream group1: part count (value:outbound-count), part list[1]:outbound-1-part-1,outbound-1,outbound-1-streamtype-1, part list[2]:outbound-2-part-2,outbound-2,outbound-2-streamtype-2...; 
+                instance group2:part count (value:instance-count), part list[1]:instance-1-part-1,instance-1,instance-1-streamtype-1, part list[2]:instance-2-part-2,instance-2,instance-2-streamtype-2...; 
+                outbound-count == instance-count, outbound-count ~= 0, instance-count ~= 0, 
+                outbound-1-part-1 == instance-1-part-1, outbound-1-streamtype-1 == instance-1-streamtype-1;outbound-2-part-2 == instance-2-part-2, outbound-2-streamtype-2 == instance-2-streamtype-2;...;outbound-n-part-n == instance-n-part-n, outbound-n-streamtype-n == instance-n-streamtype-n.";
+            leaf outbound-group-id {
+              type leafref {
+                path "/multicast-forward/nat/outbound-groups/outbound-group/group-id";
+              } 
+              description
+                "Output stream group ID.";
+            }
+            leaf fast-mode-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the function of fast switch. Switch parameters (e.g.instance-group-id/switch-mode/switch-field-type) can not be modified when fast-mode-enable is true.";
+            }             
+            leaf outbound-group-name {
+            type leafref {
+              path "/multicast-forward/nat/outbound-groups/outbound-group[group-id=current()/../outbound-group-id]/group-name";
+            }            
+            description
+              "Output stream group name.";
+            }
+            leaf instance-group-id {
+              ext:operation-exclude update {
+                when "../fast-mode-enable = 'true'";    
+                description "The current node cannot be modified, when fast-mode-enable node is 'true'.";
+              }
+              type leafref {
+                path "/multicast-forward/nat/instance-groups/instance-group/group-id";
+              }
+              mandatory true;
+              description
+                "ID of a multicast NAT instance group.";
+            }
+            leaf instance-group-name {
+            type leafref {
+              path "/multicast-forward/nat/instance-groups/instance-group[group-id=current()/../instance-group-id]/group-name";
+            }             
+            description
+              "Name of a multicast NAT instance group.";
+            }
+            leaf switch-mode {
+              ext:operation-exclude update|delete {
+                when "../fast-mode-enable = 'true'";    
+                description "The current node cannot be modified, when fast-mode-enable node is 'true'.";
+              }
+              type switch-mode;
+              default "default-switch";          
+              description
+                "Switch mode.";
+            }
+            leaf switch-field-type {
+              ext:operation-exclude update|delete {
+                when "../fast-mode-enable = 'true'";    
+                description "The current node cannot be modified, when fast-mode-enable node is 'true'.";
+              }
+              when "../switch-mode='clean-switch'";
+              type switch-field-type;              
+              default "default-field";
+              description
+                "Specify a switch field type.";
+            }
+            leaf switch-packet-offset {
+              ext:operation-exclude update|delete {
+                when "../fast-mode-enable = 'true'";    
+                description "The current node cannot be modified, when fast-mode-enable node is 'true'.";
+              }
+              when "../switch-mode='clean-switch'";
+              type uint32 {
+                range "0..65535";
+              }
+              default "0";
+              description
+                "Set the offset of the packet to be switched.";
+            }
+          }
+        }      
+      }
+    }
+    container egress-forward-mode {
+      description
+        "Configure switch downstream multicast traffic replication by NP to replication by TM. The configuration is performed based on a board.";
+      container global {
+        description
+         "Configure on all boards."; 
+        leaf enable {
+          type empty;
+          description
+            "Globally enable the configuration of switching downstream multicast traffic replication by NP to replication by TM. The configuration is performed based on a board.";
+        }
+      }
+    }
+    container mcfwd-entrys {
+      config false;
+      description
+        "List of multicast forwarding table.";
+      list mcfwd-entry {
+        key "vrf-name address-family";
+        description
+          "Configure multicast forwarding table state.";
+        leaf vrf-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "Virtual private network.";
+        }
+        leaf address-family {
+          type af-type;
+          description
+            "Multicast address family type.";
+        }
+        container forward-infors {
+          description
+            "List of multicast forwarding information.";
+          list forward-infor {
+            key "source-address group-address oif-name";
+            description
+              "Multicast forwarding information state.";
+            leaf source-address {
+              type inet:ip-address-no-zone;
+              description
+                "Multicast source address.";
+            }
+            leaf group-address {
+              type inet:ip-address-no-zone;
+              description
+                "Multicast group address.";
+            }
+            leaf oif-name {
+              type string {
+                length "1..255";
+              }
+              description
+                "The name of outgoing interface.";
+            }
+            leaf mid {
+              type uint32;
+              description
+                "ID of multicast forwarding.";
+            }
+            leaf flag {
+              type string {
+                length "1..255";
+              }
+              description
+                "Flag of multicast forwarding.";
+            }
+            leaf sg-up-time {
+              type string {
+                length "1..255";
+              }
+              description
+                "Living time of multicast forwarding table.";
+            }
+            leaf sg-up-exp-time {
+              type string {
+                length "1..255";
+              }
+              description
+                "Overtime of multicast forwarding table.";
+            }
+            leaf sg-iif-name {
+              type string {
+                length "1..255";
+              }
+              description
+                "The name of incoming interface.";
+            }
+            leaf sg-up-neighbor {
+              type inet:ip-address-no-zone;
+              description
+                "Root ip.";
+            }
+            leaf mtoken {
+              type pub-type:hex-binary;
+              default "00000000";
+              description
+                "Mtoken of the tunnel.";
+            }
+            leaf active-time {
+              type string {
+                length "1..255";
+              }
+              description
+                "Active time.";
+            }
+            leaf token {
+              type pub-type:hex-binary;
+              default "00000000";
+              description
+                "The token information of the tunnel.";
+            }
+            leaf forward-rate-pps {
+              type uint64;
+              description
+                "Packet forwarding rate.";
+            }
+            leaf forward-rate-bps {
+              type uint64;
+              description
+                "Bit forwarding rate.";
+            }
+            leaf match-packet {
+              type uint64;
+              description
+                "The statistics of matched packets.";
+            }
+            leaf match-byte {
+              type uint64;
+              description
+                "The statistics of matched bytes.";
+            }
+            leaf wrongif-packet {
+              type uint64;
+              description
+                "The statistics of wrongif packets.";
+            }
+            leaf forward-packet {
+              type uint64;
+              description
+                "The statistics of multicast forwarding packets.";
+            }
+            leaf forward-byte {
+              type uint64;
+              description
+                "The statistics of multicast forwarding bytes.";
+            }
+            leaf bas-flag {
+              type uint32;
+              description
+                "Broadband access server flag.";
+            }
+            leaf clone-source-adress {
+              type inet:ip-address-no-zone;
+              description
+                "Cloned source address.";
+            }
+          }
+        }
+      }
+    }
+    container multicast-speed-states {
+      config false;
+      description
+        "List of muticast speed statistic information.";
+      list multicast-speed-state {
+        key "source-address group-address interface-name flow-direction vlan-id pe-vid ce-vid";
+        description
+          "Muticast speed statistics.";
+        leaf source-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Multicast source address.";
+        }
+        leaf group-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Multicast group address.";
+        }
+        leaf interface-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Name of the interface which the rate statistics.";
+        }
+        leaf flow-direction {
+          type rule-direction;
+          description
+            "Data flow direction of interface.";
+        }
+        leaf vlan-id {
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "VLAN ID.";
+        }
+        leaf pe-vid {
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "Outer VLAN ID.";
+        }
+        leaf ce-vid {
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "Inner VLAN ID.";
+        }
+        container interface-statistics {
+          description
+            "Multicast speed statistics.";
+          leaf receive-byte {
+            type uint64;
+            description
+              "Bytes received in 2 sceconds.";
+          }
+          leaf receive-byte-rate {
+            type uint64;
+            description
+              "Byte-rate received in 2 sceconds.";
+          }
+          leaf receive-packet {
+            type uint64;
+            description
+              "Packets received in 2 sceconds.";
+          }
+          leaf receive-packet-rate {
+            type uint64;
+            description
+              "Packet-rate received in 2 sceconds.";
+          }
+        }
+      }
+    }
+    container spatial-multicast {
+	  presence "spatial multicast enable";
+      description
+        "Enable/disable spatial multicast."; 
+      container ipv4-multicast-bandwidths {
+        description
+          "List of IPv4 multicast bandwidth configurations.";
+        list ipv4-multicast-bandwidth {
+          key "vrf-name group-address group-address-mask source-address";
+          description
+            "Configure IPv4 multicast smc bandwidth configuration.";
+          leaf vrf-name {
+            type leafref {
+              path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+            }
+            description
+              "VPN instance name.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast group address.";
+          }
+          leaf group-address-mask {
+            type uint32 {
+              range "4..32";
+            }
+            description
+              "Length of multicast group address mask.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast source address.";
+          }
+          leaf bandwidth {
+            type uint64 {
+              range "1..62500000";
+            }
+            mandatory true;
+            description
+              "Bandwidth based on which load balancing is performed for IPv4 Layer 3 multicast flows.";
+          }
+        }
+      }
+      container vlan-multicast-bandwidths {
+        description
+          "List of VLAN Layer 2 multicast bandwidth configurations.";
+        list vlan-multicast-bandwidth {
+          key "vlan-id group-address group-address-mask source-address";
+          description
+            "Configure VLAN Layer 2 multicast bandwidth configuration.";
+          leaf vlan-id {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "VLAN ID.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast group address.";
+          }
+          leaf group-address-mask {
+            type uint32 {
+              range "4..32";
+            }
+            description
+              "Length of multicast group address mask.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast source address.";
+          }
+          leaf bandwidth {
+            type uint64 {
+              range "1..62500000";
+            }
+            mandatory true;
+            description
+              "Bandwidth based on which load balancing is performed for VLAN Layer 2 multicast flows.";
+          }
+        }
+      }
+      container vsi-multicast-bandwidths {
+        description
+          "List of VSI Layer 2 multicast bandwidth configurations.";
+        list vsi-multicast-bandwidth {
+          key "vsi-name group-address group-address-mask source-address";
+          description
+            "Configure VSI Layer 2 multicast bandwidth configuration.";
+          leaf vsi-name {
+            type string {
+              length "1..31";
+            }
+            description
+              "VSI instance name.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast group address.";
+          }
+          leaf group-address-mask {
+            type uint32 {
+              range "4..32";
+            }
+            description
+              "Length of multicast group address mask.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast source address.";
+          }
+          leaf bandwidth {
+            type uint64 {
+              range "1..62500000";
+            }
+            mandatory true;
+            description
+              "Bandwidth based on which load balancing is performed for VSI Layer 2 multicast flows.";
+          }
+        }
+      }
+      container mpls-bandwidths {
+        description
+          "List of MPLS bandwidth configurations.";
+        list mpls-bandwidth {
+          key "service-type";
+          description
+            "Configure MPLS bandwidth configuration.";
+          leaf service-type {
+            type mpls-type;
+            description
+              "Service-type: P2MP or MLDP.";
+          }
+          leaf bandwidth {
+            type uint64 {
+              range "1..62500000";
+            }
+            mandatory true;
+            description
+              "Bandwidth based on which load balancing is performed for P2MP TE or MLDP flows.";
+          }
+        }
+      }
+      container board-enables {
+        description
+          "List of enable spatial multicast for specified boards.";
+        list board-enable {
+          key "slot";
+          description
+            "Configure spatial multicast enabled on a board.";
+          leaf slot {
+            type string {
+              length "1..512";
+            }
+            description
+              "Slot ID.";
+          } 			
+        }
+      } 
+      container channel-bandwiths {
+        config false;
+        description
+          "List of each replication channel's bandwidth information of the SFUs in a spatial multicast scenario.";
+        list channel-bandwith {
+          key "sc-id";
+          description
+            "Display each replication channel's bandwidth information of the SFUs in a spatial multicast scenario state.";
+          leaf sc-id {
+            type uint32;
+            description
+              "ID of the channel used for multicast traffic replication on an SFU.";
+          }
+          leaf bandwith-use {
+            type uint64;
+            description
+              "Bandwidth consumed for multicast traffic replication in a channel, in kbit/s.";
+          }
+          leaf bandwith-free {
+            type uint64;
+            description
+              "Bandwidth available for multicast traffic replication in a channel, in kbit/s.";
+          }
+        }
+      }
+      container vlan-multicast-bandwidth-states {
+        config false;
+        description
+          "List of the bandwidth based on which load balancing is performed for Layer 2 multicast flows of a VLAN in a spatial multicast scenario.";
+        list vlan-multicast-bandwidth-state {
+          key "vlan-id group-address source-address";
+          description
+            "Display the bandwidth based on which load balancing is performed for Layer 2 multicast flows of a VLAN in a spatial multicast scenario state.";
+          leaf vlan-id {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "VLAN ID.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast group address.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast source address.";
+          }			
+          leaf sc-id {
+            type uint32;
+            description
+              "ID of the channel used for multicast traffic replication on an SFU.";
+          }
+          leaf bandwidth {
+            type uint64 {
+              range "1..62500000";
+            }
+            mandatory true;
+            description
+              "Bandwidth based on which load balancing is performed for VLAN Layer 2 multicast flows.";
+          }
+        }
+      }
+      container vsi-multicast-bandwidth-states {
+        config false;
+        description
+          "List of the bandwidth based on which load balancing is performed for Layer 2 multicast flows of a VSI in a spatial multicast scenario.";
+        list vsi-multicast-bandwidth-state {
+          key "vsi-name group-address source-address";
+          description
+            "Display the bandwidth based on which load balancing is performed for Layer 2 multicast flows of a VSI in a spatial multicast scenario state.";
+          leaf vsi-name {
+            type string {
+              length "1..31";
+            }
+            description
+              "VSI instance name.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast group address.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast source address.";
+          }			
+          leaf sc-id {
+            type uint32;
+            description
+              "ID of the channel used for multicast traffic replication on an SFU.";
+          }
+          leaf bandwidth {
+            type uint64 {
+              range "1..62500000";
+            }
+            mandatory true;
+            description
+              "Bandwidth based on which load balancing is performed for VSI Layer 2 multicast flows.";
+          }
+        }
+      }
+      container ipv4-multicast-bandwidth-states {
+        config false;
+        description
+          "List of the bandwidth based on which load balancing is performed for IPv4 Layer 3 multicast flows of a VPN instance in a spatial multicast scenario.";
+        list ipv4-multicast-bandwidth-state {
+          key "vrf-name group-address source-address";
+          description
+            "Display the bandwidth based on which load balancing is performed for IPv4 Layer 3 multicast flows of a VPN instance in a spatial multicast scenario state.";
+          leaf vrf-name {
+            type string {
+              length "1..31";
+            }
+            description
+              "VPN instance name.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast group address.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Multicast source address.";
+          }			
+          leaf sc-id {
+            type uint32;
+            description
+              "ID of the channel used for multicast traffic replication on an SFU.";
+          }
+          leaf bandwidth {
+            type uint64 {
+              range "1..62500000";
+            }
+            mandatory true;
+            description
+              "Bandwidth based on which load balancing is performed for IPv4 Layer 3 multicast flows.";
+          }
+        }
+      }     	  
+    }
+    container multicast-remote-users {
+      config false;
+      description
+        "List of whether the traffic of a specified multicast group is forwarded by the local device.";
+      list multicast-remote-user {
+        key "source-address group-address trunk-id vrf-name";
+        description
+          "Query whether the traffic of a specified multicast group is forwarded by the local device state.";
+        leaf source-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Multicast source address.";
+        }
+        leaf group-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Multicast group address.";
+        }
+        leaf trunk-id {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Specify the ID of an Eth-Trunk interface.";
+        }
+        leaf vrf-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Name of virtual private network.";
+        }
+        leaf flow {
+          type string {
+            length "1..127";
+          }
+          description
+            "Flow information.";
+        }
+      }
+    }	
+    container multicast-outgoing-interface-statics {
+      config false;
+      description
+        "List of statistics about the usage of multicast outbound interfaces on a specified board.";
+      list multicast-outgoing-interface-static {
+        key "slot";
+        description
+          "Statistics of the usage of multicast outbound interfaces on a specified board.";
+        leaf slot {
+          type string {
+            length "1..15";
+          }
+          description
+            "Slot ID of an interface board. The value range varies according to router hardware.";
+        }
+        leaf device-id {
+          type uint32;
+          description
+            "Forwarding engine index.";
+        }
+        leaf resource-pool-index {
+          type resource-pool-type;
+          description
+            "Index of the resource pool on a board where the multicast outbound interface resides.";
+        }
+        leaf total-number {
+          type uint32;
+          description
+            "Maximum number of multicast outbound interfaces supported by the forwarding engine.";
+        }
+        leaf left-number {
+          type uint32;
+          description
+            "Number of multicast outbound interfaces that are not in use in the forwarding engine.";
+        }
+        leaf used-number {
+          type uint32;
+          description
+            "Number of multicast outbound interfaces that are in use in the forwarding engine.";
+        }
+        leaf ipv4-used-number {
+          type string {
+            length "1..15";
+          }
+          description
+            "Number of Layer 3 IPv4 multicast outbound interfaces that are in use in the forwarding engine.";
+        }
+        leaf ipv6-used-number {
+          type string {
+            length "1..15";
+          }
+          description
+            "Number of Layer 3 IPv6 multicast outbound interfaces that are in use in the forwarding engine.";
+        }
+        leaf others-number {
+          type string {
+            length "1..15";
+          }
+          description
+            "Number of multicast outbound interfaces used by services except Layer 3 IPv4 multicast and Layer 3 IPv6 multicast.";
+        }
+      }
+    }
+    container l3-egress-statistics {
+		description
+			"Configure Layer 3 IPv4 multicast downstream packet statistics.";
+		container enable-slots {
+			description
+			  "List of Layer 3 IPv4 multicast downstream packet statistics based on slots.";
+			list enable-slot {
+			  key "slot-id";
+			  description
+				"Configure Layer 3 IPv4 multicast downstream packet statistics based on slots.";
+			  leaf slot-id {
+				type string {
+				  length "1..15";
+  }
+				description
+				  "Slot ID.";
+			  }
+			}
+		}
+		container vpn-enables {
+			description
+			  "List of Layer 3 IPv4 multicast downstream packet statistics based on multicast groups and slots.";
+			list vpn-enable {
+			  key "slot-id vpn-name source-address group-address";
+			  description
+				"Configure Layer 3 IPv4 multicast downstream packet statistics based on multicast groups and slots.";
+			  leaf slot-id {
+				type string {
+				  length "1..15";
+				}
+				description
+				  "Slot ID.";
+			  }
+			  leaf vpn-name {
+				type leafref {
+					path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+				}
+				description
+				  "Name of a VPN instance.";
+			  }
+			  leaf source-address {
+			  type inet:ipv4-address-no-zone {
+          pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+        }        
+				description
+				  "Multicast source IP address.";
+			  }
+			  leaf group-address {
+				type inet:ipv4-address-no-zone {
+          pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+        }
+				description
+				  "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+			  }
+			}
+		}
+		container vpn-statistics {
+			config false;
+			description
+			  "List of statistics on Layer 3 IPv4 multicast downstream packets based on multicast groups and slots.";
+			list vpn-statistic {
+			  key "slot-id vpn-name source-address group-address";
+			  description
+				"Statistics of Layer 3 IPv4 multicast downstream packets based on multicast groups and slots.";
+			  leaf slot-id {
+				type string {
+				  length "1..15";
+				}
+				description
+				  "Slot ID.";
+			  }
+			  leaf vpn-name {
+				type leafref {
+					path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+				}
+				description
+				  "Name of a VPN instance.";
+			  }
+			  leaf source-address {
+			  type inet:ipv4-address-no-zone {
+          pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+        }
+				description
+				  "Multicast source IP address.";
+			  }
+			  leaf group-address {
+        type inet:ipv4-address-no-zone {
+          pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+        }
+				description
+				  "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+			  }
+			  leaf interface-name {
+				type string {
+				  length "1..255";
+				}
+				description
+				  "Name of an outbound interface.";
+			  }
+			  leaf packet-number {
+				type uint64;
+				description
+				  "Number of forwarded packets.";
+			  }
+			  leaf byte-number {
+				type uint64;
+				description
+				  "Number of forwarded bytes.";
+			  }
+			  leaf packet-rate {
+				type uint64;
+				description
+				  "Packet forwarding rate.";
+			  }
+			  leaf bit-rate {
+				type uint64;
+				description
+				  "Bit forwarding rate.";
+			  }
+			}
+		}	
+	}
+    container l2-egress-statistics {
+      description
+        "Configure Layer 2 IPv4 multicast downstream packet statistics.";
+      container enable-slots {
+        description
+          "List of statistics about downstream Layer 2 IPv4 multicast packets based on slots.";
+        list enable-slot {
+          key "slot-id";
+          description
+            "Configure statistics about downstream Layer 2 IPv4 multicast packets based on slots.";
+          leaf slot-id {
+            type string {
+              length "1..15";
+            }
+            description
+              "Slot ID.";
+          }
+        }
+      }
+      container vlan-enables {
+        description
+          "List of Layer 2 VLAN IPv4 multicast downstream packet statistics based on multicast groups and slots.";
+        list vlan-enable {
+          key "slot-id vlan-id source-address group-address";
+          description
+            "Configure Layer 2 VLAN IPv4 multicast downstream packet statistics based on multicast groups and slots.";
+          leaf slot-id {
+            type string {
+              length "1..15";
+            }
+            description
+              "Slot ID.";
+          }
+          leaf vlan-id {
+            type leafref {
+              path "/vlan:vlan/vlan:vlans/vlan:vlan/vlan:id";
+            }
+            description
+              "VLAN ID.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+            }
+            description
+              "Multicast source IP address.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+            }
+            description
+              "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+          }
+        }
+      }
+      container vsi-enables {
+        description
+          "List of Layer 2 VSI IPv4 multicast downstream packet statistics based on multicast groups and slots.";
+        list vsi-enable {
+          key "slot-id vsi-name source-address group-address";
+          description
+            "Configure Layer 2 VSI IPv4 multicast downstream packet statistics based on multicast groups and slots.";
+          leaf slot-id {
+            type string {
+              length "1..15";
+            }
+            description
+              "Slot ID.";
+          }
+          leaf vsi-name {
+            type string {
+              length "1..31";
+            }
+            description
+              "VSI name.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+            }
+            description
+              "Multicast source IP address.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+            }
+            description
+              "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+          }
+        }
+      }
+      container bd-enables {
+        description
+          "List of Layer 2 BD IPv4 multicast downstream packet statistics based on multicast groups and slots.";
+        list bd-enable {
+          key "slot-id bd-id source-address group-address";
+          description
+            "Configure Layer 2 BD IPv4 multicast downstream packet statistics based on multicast groups and slots.";
+          leaf slot-id {
+            type string {
+              length "1..15";
+            }
+            description
+              "Slot ID.";
+          }
+          leaf bd-id {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "Bridge domain instance ID.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+            }
+            description
+              "Multicast source IP address.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+            }
+            description
+              "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+          }
+        }
+      }
+      container vlan-statistics {
+        config false;
+        description
+          "List of statistics on Layer 2 VLAN IPv4 multicast downstream packets.";
+        list vlan-statistic {
+          key "slot-id vlan-id source-address group-address";
+          description
+            "Statistics of Layer 2 VLAN IPv4 multicast downstream packets.";
+          leaf slot-id {
+            type string {
+              length "1..15";
+            }
+            description
+              "Slot ID.";
+          }
+          leaf vlan-id {
+            type leafref {
+              path "/vlan:vlan/vlan:vlans/vlan:vlan/vlan:id";
+            }
+            description
+              "VLAN ID.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+            }
+            description
+              "Multicast source IP address.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+            }
+            description
+              "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+          }
+          leaf interface-type {
+            type string {
+              length "1..15";
+            }
+            description
+              "Type of an outbound interface. Switch: main interface of l2; Sub: sub-interface (non-termination); Qinq: qinq termination sub-interface; PW: VSI-PW.";
+          }
+          leaf interface-name {
+            type string {
+              length "1..255";
+            }
+            description
+              "Name of an outbound interface.";
+          }
+          leaf packet-number {
+            type uint64;
+            description
+              "Number of forwarded packets.";
+          }
+          leaf byte-number {
+            type uint64;
+            description
+              "Number of forwarded bytes.";
+          }
+          leaf packet-rate {
+            type uint64;
+            description
+              "Packet forwarding rate.";
+          }
+          leaf bit-rate {
+            type uint64;
+            description
+              "Bit forwarding rate.";
+          }
+        }
+      }
+      container vsi-statistics {
+        config false;
+        description
+          "List of statistics on Layer 2 VSI IPv4 multicast downstream packets.";
+        list vsi-statistic {
+          key "slot-id vsi-name source-address group-address";
+          description
+            "Statistics of Layer 2 VSI IPv4 multicast downstream packets.";
+          leaf slot-id {
+            type string {
+              length "1..15";
+            }
+            description
+              "Slot ID.";
+          }
+          leaf vsi-name {
+            type string {
+              length "1..31";
+            }
+            description
+              "VSI name.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+            }
+            description
+              "Multicast source IP address.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+            }
+            description
+              "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+          }
+          leaf interface-type {
+            type string {
+              length "1..15";
+            }
+            description
+              "Type of an outbound interface. Switch: main interface of l2; Sub: sub-interface (non-termination); Qinq: qinq termination sub-interface; PW: VSI-PW.";
+          }
+          leaf interface-name {
+            type string {
+              length "1..255";
+            }
+            description
+              "Name of an outbound interface.";
+          }
+          leaf packet-number {
+            type uint64;
+            description
+              "Number of forwarded packets.";
+          }
+          leaf byte-number {
+            type uint64;
+            description
+              "Number of forwarded bytes.";
+          }
+          leaf packet-rate {
+            type uint64;
+            description
+              "Packet forwarding rate.";
+          }
+          leaf bit-rate {
+            type uint64;
+            description
+              "Bit forwarding rate.";
+          }
+        }
+      }
+      container bd-statistics {
+        config false;
+        description
+          "List of statistics on Layer 2 BD IPv4 multicast downstream packets.";
+        list bd-statistic {
+          key "slot-id bd-id source-address group-address";
+          description
+            "Statistics of Layer 2 BD IPv4 multicast downstream packets.";
+          leaf slot-id {
+            type string {
+              length "1..15";
+            }
+            description
+              "Slot ID.";
+          }
+          leaf bd-id {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "Bridge domain instance ID.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+            }
+            description
+              "Multicast source IP address.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+            }
+            description
+              "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+          }
+          leaf interface-type {
+            type string {
+              length "1..15";
+            }
+            description
+              "Type of an outbound interface. Switch: main interface of l2; Sub: sub-interface (non-termination); Qinq: qinq termination sub-interface; PW: VSI-PW.";
+          }
+          leaf interface-name {
+            type string {
+              length "1..255";
+            }
+            description
+              "Name of an outbound interface.";
+          }
+          leaf packet-number {
+            type uint64;
+            description
+              "Number of forwarded packets.";
+          }
+          leaf byte-number {
+            type uint64;
+            description
+              "Number of forwarded bytes.";
+          }
+          leaf packet-rate {
+            type uint64;
+            description
+              "Packet forwarding rate.";
+          }
+          leaf bit-rate {
+            type uint64;
+            description
+              "Bit forwarding rate.";
+          }
+        }
+      }
+	}
+  }
+  rpc reset-bas-multicast-rui-statics {
+    description
+      "Delete the number of remote user informations.";
+    ext:node-ref "/bras-multicast:bras-multicast/multicast-forward:bas-multicast-rui-statics/multicast-forward:bas-multicast-rui-static";
+  }
+  rpc send-igmp-packet {
+    description
+      "Send IGMP packets.";
+    input {
+      leaf interface-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Name of an interface.";
+      }
+      leaf igmp-packet {
+        type string {
+          length "1..512";
+        }
+        mandatory true;
+        description
+          "Igmp packet.";
+      }
+    }
+  }
+  rpc reset-l3-egress-all-statistics {
+    description
+      "Clears statistics about downstream Layer 3 IPv4 multicast packets based on slots.";
+    input {
+      leaf slot-id {
+        type string {
+          length "1..15";
+        }
+        mandatory true;
+        description
+          "Slot ID.";
+      }
+    }
+  } 
+  rpc reset-l3-egress-statistics {
+    description
+      "Clears statistics about Layer 3 IPv4 multicast downstream packets.";
+    input {
+      leaf slot-id {
+        type string {
+          length "1..15";
+        }
+        mandatory true;
+        description
+          "Slot ID.";
+      }
+      leaf vpn-name {
+        type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        mandatory true;
+        description
+          "Name of a VPN instance.";
+      }
+      leaf source-address {
+        type inet:ipv4-address-no-zone {
+          pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+        }
+        mandatory true;
+        description
+          "Multicast source IP address.";
+      }
+      leaf group-address {
+        type inet:ipv4-address-no-zone {
+          pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+        }
+        mandatory true;
+        description
+          "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+      }
+    }
+  }
+  rpc reset-l2-egress-all-statistics {
+    description
+      "Clears statistics about downstream Layer 2 IPv4 multicast packets.";
+    input {
+      leaf slot-id {
+        type string {
+          length "1..15";
+        }
+        mandatory true;
+        description
+          "Slot ID.";
+      }
+    }
+  }
+  rpc reset-vlan-egress-statistics {
+    description
+      "Clears statistics about Layer 2 VLAN IPv4 multicast downstream packets.";
+    input {
+      leaf slot-id {
+        type string {
+          length "1..15";
+        }
+        mandatory true;
+        description
+          "Slot ID.";
+      }
+      leaf vlan-id {
+        type leafref {
+          path "/vlan:vlan/vlan:vlans/vlan:vlan/vlan:id";
+        }
+        mandatory true;
+        description
+          "VLAN ID.";
+      }
+      leaf source-address {
+        type inet:ipv4-address-no-zone {
+          pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+        }
+        mandatory true;
+        description
+          "Multicast source IP address.";
+      }
+      leaf group-address {
+        type inet:ipv4-address-no-zone {
+          pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+        }
+        mandatory true;
+        description
+          "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+      }
+    }
+  }
+  rpc reset-vsi-egress-statistics {
+    description
+      "Clears statistics about Layer 2 VSI IPv4 multicast downstream packets.";
+    input {
+      leaf slot-id {
+        type string {
+          length "1..15";
+        }
+        mandatory true;
+        description
+          "Slot ID.";
+      }
+      leaf vsi-name {
+        type string {
+          length "1..31";
+        }
+        mandatory true;
+        description
+          "VSI name.";
+      }
+      leaf source-address {
+        type inet:ipv4-address-no-zone {
+          pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+        }
+        mandatory true;
+        description
+          "Multicast source IP address.";
+      }
+      leaf group-address {
+        type inet:ipv4-address-no-zone {
+          pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+        }
+        mandatory true;
+        description
+          "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+      }
+    }
+  }
+  rpc reset-bd-egress-statistics {
+    description
+      "Clears statistics about Layer 2 BD IPv4 multicast downstream packets.";
+    input {
+      leaf slot-id {
+        type string {
+          length "1..15";
+        }
+        mandatory true;
+        description
+          "Slot ID.";
+      }
+      leaf bd-id {
+        type uint32 {
+          range "1..16777215";
+        }
+        mandatory true;
+        description
+          "Bridge domain instance ID.";
+      }
+      leaf source-address {
+        type inet:ipv4-address-no-zone {
+          pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|0(\.0){3}';
+        }
+        mandatory true;
+        description
+          "Multicast source IP address.";
+      }
+      leaf group-address {
+        type inet:ipv4-address-no-zone {
+          pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+        }
+        mandatory true;
+        description
+          "Multicast group IP address, the value ranges from 224.0.1.0 to 239.255.255.255.";
+      }
+    }
+  }
+  rpc single-fast-switch {
+    description
+      "Set single fast switch.";
+    ext:node-ref "/multicast-forward:multicast-forward/multicast-forward:nat/multicast-forward:bind/multicast-forward:single-binds/multicast-forward:single-bind";
+    input {
+      leaf outbound-id {
+        type leafref {
+          path "/multicast-forward/nat/outbounds/outbound/outbound-id";
+        }
+        mandatory true;
+        description
+          "ID of an outgoing flow.";
+      }
+      leaf instance-id {
+        type leafref {
+          path "/multicast-forward/nat/instances/instance/instance-id";
+        }
+        mandatory true;
+        description
+          "ID of a multicast NAT instance.";
+      }
+      leaf switch-mode {
+        type switch-mode;
+        description
+          "Switch mode.";
+      }
+      leaf switch-field-type {
+        when "../switch-mode='clean-switch'";
+        type switch-field-type;
+        description
+          "Specify a switch field type.";
+      }      
+    }
+  }   
+  rpc group-fast-switch {
+    description
+      "Set group fast switch.";
+    ext:node-ref "/multicast-forward:multicast-forward/multicast-forward:nat/multicast-forward:bind/multicast-forward:group-binds/multicast-forward:group-bind";
+    input {
+      leaf outbound-group-id {
+        type leafref {
+          path "/multicast-forward/nat/outbound-groups/outbound-group/group-id";
+        }
+        mandatory true;
+        description
+          "Output stream group ID.";
+      }
+      leaf instance-group-id {
+        type leafref {
+          path "/multicast-forward/nat/instance-groups/instance-group/group-id";
+        } 
+        mandatory true;
+        description
+          "ID of a multicast NAT instance group.";
+      }
+      leaf switch-mode {
+        type switch-mode;
+        description
+          "Switch mode.";
+      }
+      leaf switch-field-type {
+        when "../switch-mode='clean-switch'";
+        type switch-field-type;
+        description
+          "Specify a switch field type.";
+      }
+    }
+  }
+  rpc get-multicast-forwarding-device {
+    description
+      "Query whether the traffic of a specified multicast group is forwarded by the local device.";
+    input {
+        leaf source-address {
+          type inet:ipv4-address-no-zone;
+          mandatory true;
+          description
+            "Multicast source address.";
+        }
+        leaf group-address {
+          type inet:ipv4-address-no-zone;
+          mandatory true;
+          description
+            "Multicast group address.";
+        }
+        leaf trunk-id {
+          type uint32 {
+            range "0..65535";
+          }
+          mandatory true;
+          description
+            "Specify the ID of an Eth-Trunk interface.";
+        }
+        leaf vrf-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "Name of virtual private network.";
+        }
+    }
+    output {
+        leaf flow {
+          type string {
+            length "1..127";
+          }
+          description
+            "Flow information.";
+        }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Multicast forward configuration to the ifm module.";  
+    container multicast-forward {
+      description
+        "Configure multicast forward list.";	  
+      container shaping {
+        description
+          "Configure multicast shaping of interface.";
+        leaf shaping-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable multicast shaping on an interface.";
+        }
+      }
+    }
+  }  
+  augment "/qos:qos/qos:classifier-template/qos:traffic-behaviors/qos:traffic-behavior" {
+    description
+      "Multicast forward configuration to the QoS module."; 
+    container behavior-bind-multicast-nat-instance {
+      when "/multicast-forward/nat";
+      description
+        "Configure multicast NAT instances and bind them to the traffic behavior.";
+      list behavior-bind-multicast-nat {
+        key "instance-id";
+        description
+          "Configure a multicast NAT instance and bind it to the traffic behavior.";
+        leaf instance-id {
+          type uint32 {
+            range "1..16000";
+          }
+          description
+            "ID of a multicast NAT instance.";
+        }
+        leaf instance-name {
+          type leafref {
+            path "/multicast-forward/nat/instances/instance/instance-name";
+          }
+          description
+            "Name of a multicast NAT instance.";
+        }
+      }
+    }
+  } 
+}

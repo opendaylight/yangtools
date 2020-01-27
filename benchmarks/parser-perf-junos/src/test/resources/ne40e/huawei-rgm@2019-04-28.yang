@@ -1,0 +1,89 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-rgm {
+  namespace "urn:huawei:yang:huawei-rgm";
+  prefix rgm;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ip {
+    prefix ip;
+  }  
+  import huawei-vrrp {
+    prefix vrrp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "IPv4 Direct Route Association.";
+  revision 2019-04-28 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "rgm";  
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ip:ipv4" {
+    description
+      "Association between direct routes and a VRRP backup group.";
+    container rgm {
+      description
+        "IPv4 direct route track VRRP, PWs, virtual-access and so on under the ifm interface.";
+      choice rgm-track {
+        description
+          "Association between direct routes and a VRRP backup group, PW status and delay for advertising direct routes.";
+        case track-vrrp {
+          description
+            "Association between direct routes and a VRRP backup group.";
+          container track-vrrp {
+            description
+              "Association between direct routes and a VRRP backup group.";
+            leaf vrrp-id {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ip:ipv4/vrrp:vrrp/vrrp:groups/vrrp:group/vrrp:id";
+              }
+              mandatory true;
+              description
+                "Virtual router identifier.";
+            }
+            leaf cost-change {
+              type uint32 {
+                range "1..4294967295";
+              }
+              mandatory true;
+              description
+                "Value that is used as the cost of direct routes when the associated VRRP backup group status changes.";
+            }
+          }
+        }
+        case track-pw {
+          description
+            "Association between direct routes and PW status.";
+          container track-pw {
+            when "../../../ifm:type='Remote-Ap' or ../../../ifm:type='VBridge' or ../../../ifm:type='Virtual-Ethernet' or ../../../ifm:type='Global-VE'";
+            description
+              "Association between direct routes and PW status.";
+            leaf cost-change {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Value that is used as the cost of direct routes when the associated PW status changes.";
+            }
+          }
+        }      
+      }
+    }
+  }
+}

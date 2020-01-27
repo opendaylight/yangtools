@@ -1,0 +1,283 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ftps {
+  namespace "urn:huawei:yang:huawei-ftps";
+  prefix ftps;
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "FTP server component.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ftp-server";
+  typedef ftps-bool-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable the FTP server service.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable the FTP server service.";
+      }
+    }
+    description
+      "FTP server bool datatype for ftps server.";
+  }
+  container ftps {
+    description
+      "FTP server component.";
+    container server {
+      description
+        "Configure FTP server configuration statistics.";
+      leaf server-enable {
+        type ftps-bool-type;
+        default "disable";
+        description
+          "Whether to enable the FTP server service. By default, the FTP server service is disabled.";
+      }
+      leaf ipv6-server-enable {
+        type ftps-bool-type;
+        default "disable";
+        description
+          "Whether to enable the IPv6 FTP server service. By default, the IPv6 FTP server service is disabled.";
+      }
+      leaf listen-port-number {
+        type uint32 {
+          range "21..65535";
+        }
+        default "21";
+        description
+          "Listening port of the FTP server. The default port number is 21.";
+      }
+      leaf ipv6-listen-port-number {
+        type uint32 {
+          range "21..65535";
+        }
+        default "21";
+        description
+          "Listening port of the IPv6 FTP server. The default port number is 21.";
+      }
+      leaf idle-timeout {
+        type uint32 {
+          range "1..35791";
+        }
+        default "10";
+        description
+          "Users can set the timeout period for an idle client to connect to the FTP server. The value is expressed in minutes. The default value is 10.";
+      }
+      leaf ipv6-idle-timeout {
+        type uint32 {
+          range "1..35791";
+        }
+        default "10";
+        description
+          "Users can set the timeout period for an idle client to connect to the IPv6 FTP server. The value is expressed in minutes. The default value is 10.";
+      }
+      leaf default-dir {
+        type string {
+          length "1..255";
+        }
+        description
+          "When no root directory is configured for RADIUS/TACACS users, they can log in to the FTP server using the default root directory.";
+      }
+    }
+    container users-status {
+      config false;
+      description
+        "FTP server configuration statistics.";
+      leaf current-number-of-users {
+        type uint32;
+        config false;
+        description
+          "Number of FTP clients connected.";
+      }
+      leaf max-number-of-users {
+        type uint32;
+        config false;
+        description
+          "Maximum number of FTP clients.";
+      }
+    }
+    container ip-block {
+      description
+        "Configure FTP IP Block Configuration.";
+      leaf ip-block-enable {
+        type ftps-bool-type;
+        default "enable";
+        description
+          "Whether to enable Ip Block function. By default, the Ip Block function is enabled by default.";
+      }
+      leaf ip-block-failed-times {
+        type uint32 {
+          range "1..10";
+        }
+        default "6";
+        description
+          "Ip Block continuous authentication failures.";
+      }
+      leaf ip-block-period {
+        type uint32 {
+          range "1..120";
+        }
+        units min;
+        default "5";
+        description
+          "Ip Block continuous authentication failure time period (minutes).";
+      }
+      leaf ip-block-react-period {
+        type uint32 {
+          range "1..1000";
+        }
+        units min;
+        default "5";
+        description
+          "Ip Block automatically unlock time (Minutes).";
+      }
+    }
+    container login-fail-alarm {
+      description
+        "Configure login failed frequently.";
+      leaf upper-limit {
+        type uint32 {
+          range "0..100";
+        }
+        must "../upper-limit >= ../lower-limit";
+        default "30";
+        description
+          "Login failed Alarm report times.";
+      }
+      leaf lower-limit {
+        type uint32 {
+          range "0..45";
+        }
+        must "../upper-limit >= ../lower-limit";
+        default "20";
+        description
+          "Login failed Alarm resume times.";
+      }
+      leaf period {
+        type uint32 {
+          range "1..120";
+        }
+        units min;
+        default "5";
+        description
+          "Login failed Alarm period.";
+      }
+    }
+    container ipv4-addr-sources {
+      description
+        "List of FTP IPv4 server source address list.";
+      list ipv4-addr-source {
+        key "source-ipv4-address";
+        description
+          "Configure FTP IPv4 server source address.";
+        leaf source-ipv4-address {
+          type inet:ipv4-address-no-zone ;
+          description
+            "FTP IPv4 server source address.";
+        }
+      }
+    }
+    container ipv4-source-interfaces {
+      description
+        "List of specify the source interface list.";
+      list ipv4-source-interface {
+        key "src-interface";
+        description
+          "Configure specify the source interface.";
+        leaf src-interface {
+          type pub-type:if-name;
+          description
+            "Specify the source interface name. The specified source interface must exist and an IP address must be configured on the interface.";
+        }
+      }
+    }
+    container ipv6-server-sources {
+      description
+        "List of FTP IPv6 server source address list.";
+      list ipv6-server-source {
+        key "src-ipv6-addr";
+        description
+          "Configure FTP IPv6 server source address.";
+        leaf src-ipv6-addr {
+          type inet:ipv6-address-no-zone ;
+          description
+            "FTP IPv6 server source IP address.";
+        }
+        leaf src-ipv6-vpn-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Specify the source VPN instance. The specified VPN instance must exist and IPv6-family must be enabled in the VPN instance.";
+          ext:support-filter "true";
+        }
+      }
+    }
+    container all-server-source {
+      description
+        "Configure specify all interfaces.";
+      leaf all-ipv4-interface {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable specify all IPv4 interfaces.";
+      }
+      leaf all-ipv6-interface {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable specify all IPv6 interfaces.";
+      }
+    }
+  }
+  rpc activate-ip {
+    description
+      "Activate ip.";
+    input {
+      leaf ip-address {
+        type inet:ip-address-no-zone;
+        mandatory true;
+        description
+          "IP Address.";
+      }
+      leaf vpn-name {
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        description
+          "VPN Name.";
+      }
+    }
+  }
+}

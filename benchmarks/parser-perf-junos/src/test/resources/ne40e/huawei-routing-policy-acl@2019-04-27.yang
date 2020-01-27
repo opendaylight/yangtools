@@ -1,0 +1,206 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-routing-policy-acl {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-routing-policy-acl";
+  prefix rtp-acl;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Routing policies are used to filter routes and control the receiving and advertising of routes. By changing the route attributes, such as reachability, you can change the path through which the traffic passes.";
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "route-base";
+  augment "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:conditions/rtp:match-ipv4-destination" {
+    description
+      "Augment the huawei-routing-policy model to add ACL specific configuration.";
+    case acl {
+      description
+        "ACL.";
+      container match-acl {
+        description
+          "Configure an ACL-based filtering rule to match the destination address of IPv4 routes.";
+        leaf acl-ref {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          description
+            "Name of the specified ACL filter when destination addresses are matched, which can be a value ranging from 2000 to 2999 or a string beginning with a-z or A-Z.";
+        }
+      }
+    }
+  }
+  augment "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:conditions/rtp:match-ipv6-destination" {
+    description
+      "Augment the huawei-routing-policy model to add ACL specific configuration.";
+    case acl6 {
+      description
+        "ACL.";
+      container match-acl6 {
+        description
+          "Configure an ACL-based filtering rule to match the destination address of IPv6 routes.";
+        leaf acl6-ref {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          description
+           "Name of the specified ACL filter when IPv6 destination addresses are matched, which can be a value ranging from 2000 to 2999 or a string beginning with a-z or A-Z.";
+        }
+      }
+    }
+  }
+  augment "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:conditions/rtp:match-route-originator" {
+    description
+      "Augment the huawei-routing-policy model to add ACL specific configuration.";
+    case acl {
+      description
+        "ACL.";
+      container match-originator-acl {
+        description
+          "Configure an ACL-based filtering rule to match the destination address of IPv4 routes.";
+        leaf acl-ref {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          description
+            "Name of the specified ACL filter when destination addresses are matched, which can be a value ranging from 2000 to 2999 or a string beginning with a-z or A-Z.";
+        }
+      }
+    }
+  }
+  augment "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:conditions/rtp:match-group-address" {
+    description
+      "Augment the huawei-routing-policy model to add ACL specific configuration.";
+    case acl {
+      description
+        "ACL.";
+      container match-group-address-acl {
+        description
+          "Configure an ACL-based filtering rule to match the destination address of IPv4 routes.";
+        leaf acl-ref {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          description
+            "Name of the specified ACL filter when destination addresses are matched, which can be a value ranging from 2000 to 2999 or a string beginning with a-z or A-Z.";
+        }
+      }
+    }
+  }
+  augment "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:conditions/rtp:match-ipv4-nexthop" {
+    description
+      "Augment the huawei-routing-policy model to add ACL specific configuration.";
+    case acl {
+      description
+        "ACL.";
+      container match-nexthop-acl {
+        description
+          "Configure an ACL-based filtering rule to match the destination address of IPv4 routes.";
+        leaf acl-ref {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          description
+            "Name of the specified ACL filter when destination addresses are matched, which can be a value ranging from 2000 to 2999 or a string beginning with a-z or A-Z.";
+        }
+      }
+    }
+  }
+  augment "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:conditions/rtp:match-ipv6-nexthop" {
+    description
+      "Augment the huawei-routing-policy model to add ACL specific configuration.";
+    case acl6 {
+      description
+        "ACL.";
+      container match-nexthop-acl6 {
+        description
+          "Configure an ACL-based filtering rule to match the destination address of IPv6 routes.";
+        leaf acl6-ref {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          description
+           "Name of the specified ACL filter when IPv6 destination addresses are matched, which can be a value ranging from 2000 to 2999 or a string beginning with a-z or A-Z.";
+        }
+      }
+    }
+  }
+  augment "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:conditions/rtp:match-ipv4-route-source" {
+    description
+      "Augment the huawei-routing-policy model to add ACL specific configuration.";
+    case acl {
+      description
+        "ACL.";
+      container match-route-source-acl {
+        description
+          "Configure an ACL-based filtering rule to match the destination address of IPv4 routes.";
+        leaf acl-ref {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          description
+            "Name of the specified ACL filter when destination addresses are matched, which can be a value ranging from 2000 to 2999 or a string beginning with a-z or A-Z.";
+        }
+      }
+    }
+  }
+  augment "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:conditions/rtp:match-ipv6-route-source" {
+    description
+      "Augment the huawei-routing-policy model to add ACL specific configuration.";
+    case acl6 {
+      description
+        "ACL.";
+      container match-route-source-acl6 {
+        description
+          "Configure an ACL-based filtering rule to match the destination address of IPv6 routes.";
+        leaf acl6-ref {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          description
+           "Name of the specified ACL filter when IPv6 destination addresses are matched, which can be a value ranging from 2000 to 2999 or a string beginning with a-z or A-Z.";
+        }
+      }
+    }
+  }
+  augment "/rtp:routing-policy/rtp:tunnel-selectors/rtp:tunnel-selector/rtp:nodes/rtp:node/rtp:conditions/rtp:match-ipv4-nexthop" {
+    description
+      "Augment the huawei-routing-policy model to add ACL specific configuration.";
+    case acl {
+      description
+        "ACL.";
+      container match-nexthop-acl {
+        description
+          "Configure an ACL-based filtering rule to match the destination address of IPv4 routes.";
+        leaf acl-ref {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          description
+            "Name of the specified ACL filter when destination addresses are matched, which can be a value ranging from 2000 to 2999 or a string beginning with a-z or A-Z.";
+        }
+      }
+    }
+  }
+}

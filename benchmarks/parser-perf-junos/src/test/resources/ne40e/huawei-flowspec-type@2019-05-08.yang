@@ -1,0 +1,140 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-flowspec-type {
+  yang-version 1;
+  belongs-to huawei-flowspec {
+    prefix flowspec;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Flowspec type.";
+  revision 2019-05-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef af-type {
+    type enumeration {
+      enum "ipv4flow" {
+        value 7;
+        description
+          "IPv4flow.";
+      }
+      enum "ipv6flow" {
+        value 15;
+        description
+          "IPv6flow.";
+      }
+    }
+    description
+      "The type of flow route address family.";
+  }
+  typedef operator-type {
+    type enumeration {
+      enum "less-than" {
+        value 1;
+        description
+          "Less than.";
+      }
+      enum "greater-than" {
+        value 2;
+        description
+          "Greater than.";
+      }
+      enum "equal" {
+        value 3;
+        description
+          "Equal.";
+      }
+    }
+    description
+      "Operator.";
+  }
+  typedef match-fragment-type {
+    type enumeration {
+      enum "fragment" {
+        value 1;
+        description
+          "Check fragments.";
+      }
+      enum "fragment-spe-first" {
+        value 2;
+        description
+          "Check the first fragment.";
+      }
+      enum "non-fragment" {
+        value 3;
+        description
+          "Check unfragmented packets.";
+      }
+    }
+    description
+      "Fragment type name.";
+  }
+  typedef match-port-type {
+    type enumeration {
+      enum "match-port" {
+        value 4;
+        description
+          "Match the port.";
+      }
+      enum "match-dest-port" {
+        value 5;
+        description
+          "Match the destination port.";
+      }
+      enum "match-source-port" {
+        value 6;
+        description
+          "Match the source port.";
+      }
+    }
+    description
+      "Port type.";
+  }
+  typedef match-origin-as-type {
+    type enumeration {
+      enum "match-dest-origin-as" {
+        value 201;
+        description
+          "Specify an origin-AS rule for the destination IP.";
+      }
+    }
+    description
+      "Origin-AS type.";
+  }
+  typedef as-number-type {
+    type string {
+      length "1..11";
+      pattern '((([1-9]\d{0,8})|([1-3]\d{9})|(4[0-1]\d{8})|(42[0-8]\d{7})|(429[0-3]\d{6})|(4294[0-8]\d{5})|(42949[0-5]\d{4})|(429496[0-6]\d{3})|(4294967[0-1]\d{2})|(42949672[0-8]\d{1})|(429496729[0-5]))|((([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))[\.](([0-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))))';
+    }
+    description
+      "AS number in asplain format or in asdot format.";
+  }
+  typedef flow-match-operator-type {
+    type enumeration {
+      enum "match" {
+        value 1;
+        description
+          "Match operator.";
+      }
+      enum "not" {
+        value 2;
+        description
+          "Not operator.";
+      }
+    }
+    description
+      "Match-operator-type.";
+  }
+}

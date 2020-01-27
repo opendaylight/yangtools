@@ -1,0 +1,57 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-isis-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-isis-deviations-CH-NE-X3";
+  prefix isis-devs-CH-NE-X3;
+
+  import huawei-isis {
+    prefix isis;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "IS-IS management.";
+
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/ni:network-instance/ni:instances/ni:instance/isis:isis/isis:sites/isis:site/isis:afs/isis:af/isis:max-load-balancing" {
+    deviate replace {
+      type uint32 {
+        range "1..64";
+      }
+      default "64";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/isis:isis/isis:sites/isis:site/isis:afs/isis:af/isis:topologys/isis:topology/isis:max-load-balancing" {
+    deviate replace {
+      type uint32 {
+        range "1..64";
+      }
+      default "64";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/isis:isis-import-rts/isis:isis-import-rt/isis:src-vrf" {
+    deviate add {
+      must "(../../../l3vpn:type='ipv4-unicast' and /ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']) or (../../../l3vpn:type='ipv6-unicast' and /ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast'])";
+    }
+  }
+}

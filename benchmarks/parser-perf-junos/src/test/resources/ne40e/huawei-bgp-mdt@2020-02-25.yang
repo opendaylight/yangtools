@@ -1,0 +1,74 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp-mdt {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bgp-mdt";
+  prefix bgp-mdt;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-bgp {
+    prefix bgp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af" {
+    description
+      "BGP mdt address family configuration.";
+    container mdt {
+      when "../bgp:type = 'mdt'";
+      description
+        "Configure IPv4-family mdt options.";
+      container common {
+        description
+          "Configure BGP mdt address family common options.";
+        leaf policy-vpntarget {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable VPN target-based filtering for the received VPN routes. Only the VPN route whose Export RT attribute matches the local Import RT attribute can be added to the routing table. This option can be used in the inter-AS VPN Option B solution and the ASBR MP-EBGP inter-AS L2VPN solution in Kompella mode.";
+        }
+        uses bgp:reflector-cluster-type;
+        leaf reflect-between-client {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable route reflection between clients. If clients of a route reflector (RR) are fully meshed, you can disable route reflection among clients to reduce the cost.";
+        }
+        leaf bestroute-igp-metric-ignore {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable BGP to ignore the IGP cost of each BGP route to the next hop in route selection. By default, a BGP route with a smaller IGP cost to the next hop is preferred.";
+        }
+      }
+      uses bgp:slow-peer-type;
+    }
+  }
+  ext:task-name "bgp";
+}

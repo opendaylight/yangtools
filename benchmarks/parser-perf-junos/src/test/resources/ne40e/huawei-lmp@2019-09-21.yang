@@ -1,0 +1,116 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-lmp {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-lmp";
+  prefix lmp;
+
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Link management protocol.";
+
+  revision 2019-09-21 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "lmp";
+  typedef neighbor-mode {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None mode.";
+      }
+      enum "static" {
+        value 1;
+        description
+          "Static mode.";
+      }
+    }
+    description
+      "The LMP neighbor mode.";
+  }
+
+  typedef link-state {
+    type enumeration {
+      enum "up" {
+        value 0;
+        description
+          "State up.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "State down.";
+      }
+    }
+    description
+      "The link state.";
+  }
+
+  typedef encode-type {
+    type enumeration {
+      enum "ethernet" {
+        value 2;
+        description
+          "Ethernet.";
+      }
+    }
+    description
+      "The data link encode type.";
+  }
+  container lmp {
+    description
+      "Configure link management protocol.";
+    container global {
+      description
+        "Configure LMP global attributes.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable LMP.";
+      }
+    }
+    container neighbors {
+      when "../global/enable='true'";
+      description
+        "List of LMP peers.";
+      list neighbor {
+        key "name";
+        max-elements "255";
+        description
+          "Configure LMP operations on devices. It lists a series of LMP operation entries.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern "[a-zA-Z][^?'\"|<>]{0,}";
+          }
+          description
+            "LMP peer name.";
+        }
+        leaf mode {
+          type neighbor-mode;
+          default "none";
+          description
+            "LMP peer type.";
+        }
+      }
+    }
+  }
+}

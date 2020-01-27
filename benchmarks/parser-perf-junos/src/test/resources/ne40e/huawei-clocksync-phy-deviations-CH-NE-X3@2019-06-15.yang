@@ -1,0 +1,144 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-phy-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-clocksync-phy-deviations-CH-NE-X3";
+  prefix "clocksync-phy-devs-CH-NE-X3";
+
+  import huawei-clocksync-phy {
+    prefix "clocksync-phy";
+  }
+  import huawei-ifm {
+    prefix "ifm";
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "System clock synchronization management, including frequency synchronization and time synchronization.";
+  revision 2019-06-15 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+typedef input-ssm-level-deviations {
+    type enumeration {
+      enum "prc" {
+	     value 2;
+        description
+          "SSM level of the G.811 clock (PRC).";
+      }
+      enum "ssua" {
+	    value 4;
+        description
+          "G.812 transit clock (SSUA).";
+      }
+      enum "ssub" {
+	    value 8;
+        description
+          "G.812 local clock (SSUB).";
+      }
+      enum "sec" {
+	    value 11;
+        description
+          "SDH (sec).";
+      }
+      enum "dnu" {
+	    value 15;
+        description
+          "The quality level of the clock source is unavailable (DNU).";
+      }
+    }
+    description
+      "SSM level type.";
+  }
+typedef ssm-level-deviations{
+    type enumeration {
+      enum "none" {
+	    value 16;
+        description
+          "Invalid SSM level.";
+      }
+      enum "prc" {
+	     value 2;
+        description
+          "SSM level of the G.811 clock (PRC).";
+      }
+      enum "ssua" {
+	    value 4;
+        description
+          "G.812 transit clock (SSUA).";
+      }
+      enum "ssub" {
+	    value 8;
+        description
+          "G.812 local clock (SSUB).";
+      }
+      enum "sec" {
+	    value 11;
+        description
+          "SDH (sec).";
+      }
+    }
+    description
+      "SSM level type.";
+  }
+  deviation /clocksync-phy:clocksync-phy/clocksync-phy:common/clocksync-phy:ssm-control-on {
+    deviate replace {
+      default "false";
+    }
+  }
+
+  deviation /clocksync-phy:clocksync-phy/clocksync-phy:common/clocksync-phy:freq-check-enable {
+    deviate replace {
+      default "true";
+    }
+  }
+deviation /clocksync-phy:clocksync-phy/clocksync-phy:common/clocksync-phy:max-out-ssm-2m1{
+  deviate replace {
+    type clocksync-phy-devs-CH-NE-X3:ssm-level-deviations;
+  }
+}
+deviation /clocksync-phy:clocksync-phy/clocksync-phy:common/clocksync-phy:max-out-ssm-2m2{
+  deviate replace {
+    type clocksync-phy-devs-CH-NE-X3:ssm-level-deviations;
+  }
+}
+deviation /clocksync-phy:clocksync-phy/clocksync-phy:common/clocksync-phy:max-out-ssm-system{
+  deviate replace {
+    type clocksync-phy-devs-CH-NE-X3:ssm-level-deviations;
+  }
+}
+deviation /clocksync-phy:clocksync-phy/clocksync-phy:common/clocksync-phy:min-out-ssm-bits{
+  deviate replace {
+    type clocksync-phy-devs-CH-NE-X3:input-ssm-level-deviations;
+  }
+}
+deviation /clocksync-phy:clocksync-phy/clocksync-phy:common/clocksync-phy:ssm-unk-map{
+  deviate replace {
+    type clocksync-phy-devs-CH-NE-X3:input-ssm-level-deviations;
+  }
+}
+deviation /clocksync-phy:clocksync-phy/clocksync-phy:external-clock-sources/clocksync-phy:source/clocksync-phy:bits-sources/clocksync-phy:force-cutoff-enable{
+  deviate not-supported;
+}
+
+deviation /ifm:ifm/ifm:interfaces/ifm:interface/clocksync-phy:clock-port-sources/clocksync-phy:source/clocksync-phy:cpos-ais-enable{
+  deviate not-supported;
+}
+
+deviation /ifm:ifm/ifm:interfaces/ifm:interface/clocksync-phy:clock-port-sources/clocksync-phy:source/clocksync-phy:cpos-exc-enable{
+  deviate not-supported;
+}
+
+deviation /clocksync-phy:clocksync-phy/clocksync-phy:common/clocksync-phy:internal-clock-ssm{
+  deviate not-supported;
+}
+}

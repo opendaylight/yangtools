@@ -1,0 +1,55 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bfd-notification-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bfd-notification-deviations-CH-NE-X3";
+  prefix bfd-notification-devs-CH-NE-X3;
+
+  import huawei-bfd-notification {
+    prefix bfd-notification;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Notification of bfd-notification-deviations-ne40e.";
+
+  revision 2019-07-08 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/bfd-notification:bfd-pw-sess-down" {
+    deviate not-supported;
+  }
+  deviation "/bfd-notification:bfd-pw-sess-up" {
+    deviate not-supported;
+  }
+  deviation "/bfd-notification:bfd-sess-down-trap" {
+    deviate not-supported;
+  }
+  deviation "/bfd-notification:bfd-sess-up-trap" {
+    deviate not-supported;
+  }
+  deviation "/bfd-notification:bfd-v6-multi-hop-sess-down-trap" {
+    deviate not-supported;
+  }
+  deviation "/bfd-notification:bfd-v6-multi-hop-sess-up-trap" {
+    deviate not-supported;
+  }
+  deviation "/bfd-notification:bfd-v6-single-hop-sess-down-trap" {
+    deviate not-supported;
+  }
+  deviation "/bfd-notification:bfd-v6-single-hop-sess-up-trap" {
+    deviate not-supported;
+  }
+}

@@ -1,0 +1,202 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-grpc {
+  namespace "urn:huawei:yang:huawei-grpc";
+  prefix "hw-grpc";
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  
+  import huawei-ssl {
+    prefix ssl;
+  }
+  
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "GRPC, which is short for Google Remote Procedure Call Protocol, is a high-performance general RPC framework running over HTTP/2 protocols at the transport layer.";
+  revision 2020-01-10 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "grpc";
+  container grpc {
+    description
+      "Google Remote Procedure Call Protocol.";
+    container service {
+      must "server-enable='false' or source-address";
+      description
+        "Configure the gRPC service.";
+      leaf server-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the gRPC service.";
+      }
+      leaf source-address {
+        type inet:ipv4-address-no-zone;
+        description
+          "IP address listened by the gRPC service. Only the address 0.0.0.0 or valid IP addresses in class A, B, or C are supported.";
+      }
+      leaf vpn-name {
+        when "../source-address";
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        must "/ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+        default "_public_";
+        description
+          "Name of a VPN instance listened by the gRPC service.";
+      }
+      leaf server-port {
+        type uint32 {
+          range "10000..57999";
+        }
+        default "57400";
+        description
+          "Number of a port listened by the gRPC service.";
+      }
+      leaf idle-timeout {
+        type uint32 {
+          range "1..3600";
+        }
+        units s;
+        default "10";
+        description
+          "Idle (RPC is not invoked) timeout period for gRPC service access. After the timeout period expires, the gRPC service is disconnected.";
+      }
+      leaf acl-number-or-name {
+        type leafref {
+          path "/acl:acl/acl:groups/acl:group/acl:identity";
+        }
+        must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+        description
+          "Specify the name or number of an ACL to configure an access control connection for the gRPC service.";
+      }
+      leaf ssl-policy {
+        type leafref {
+          path "/ssl:ssl/ssl:ssl-policys/ssl:ssl-policy/ssl:policy-name";
+        }
+        description
+          "Specify the name of an SSL policy to bind an SSL policy to the gRPC server.";
+      }
+      leaf ssl-policy-peer {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable SSL two-way authentication.";
+      }
+    }
+    container service-ipv6 {
+      must "server-enable='false' or source-address";
+      description
+        "Configure the IPv6 gRPC service.";
+      leaf server-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the IPv6 gRPC service.";
+      }
+      leaf source-address {
+        type inet:ipv6-address-no-zone;
+        description
+          "IPv6 address listened by the IPv6 gRPC service. The multicast address, link-local address, loopback address, IPv4-compatible IPv6 address, and IPv4-mapped IPv6 address are not supported.";
+      }
+      leaf vpn-name {
+        when "../source-address";
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        must "/ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";
+        default "_public_";
+        description
+          "Name of a VPN instance listened by the IPv6 gRPC service.";
+      }
+      leaf server-port {
+        type uint32 {
+          range "10000..57999";
+        }
+        default "57400";
+        description
+          "Number of a port listened by the IPv6 gRPC service.";
+      }
+      leaf idle-timeout {
+        type uint32 {
+          range "1..3600";
+        }
+        units s;
+        default "10";
+        description
+          "Idle (RPC is not invoked) timeout period for IPv6 gRPC service access. After the timeout period expires, the IPv6 gRPC service is disconnected.";
+      }
+      leaf acl-number-or-name {
+        type leafref {
+          path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+        }
+        must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+        description
+          "Specify the name or number of an ACL6 to configure an access control connection for the IPv6 gRPC service.";
+      }
+      leaf ssl-policy {
+        type leafref {
+          path "/ssl:ssl/ssl:ssl-policys/ssl:ssl-policy/ssl:policy-name";
+        }
+        description
+          "Specify the name of an SSL policy to bind an SSL policy to the IPv6 gRPC server.";
+      }
+      leaf ssl-policy-peer {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable SSL two-way authentication.";
+      }
+    }
+    container client {
+      description
+        "Configure the gRPC client.";
+      leaf ssl-policy {
+        type leafref {
+          path "/ssl:ssl/ssl:ssl-policys/ssl:ssl-policy/ssl:policy-name";
+        }
+        description
+          "Specify the name of an SSL policy to bind an SSL policy to the gRPC client.";
+      }
+      leaf ssl-verify-cn-name {
+        when "../ssl-policy";
+        type string {
+          length "1..32";
+        }
+        description
+          "Specify a CN name to set the value of the CN field in the SSL verification certificate.";
+      }
+      leaf ssl-policy-peer {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable SSL two-way authentication.";
+      }
+    }
+  }
+}

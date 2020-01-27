@@ -1,0 +1,318 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-dhcp-relay {
+  yang-version 1;
+  belongs-to huawei-dhcp {
+    prefix dhcp;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+    description
+    "This module contains a collection of YANG definitions for managing DHCP relay.";
+  revision 2019-04-29 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef dhcp-relay-reply-type {
+    type enumeration {
+      enum "broadcast-always" {
+        value 1;
+        description
+          "Always broadcast the reply.";
+      }
+    }
+    description
+      "The type of relay reply.";
+  }
+  typedef dhcp-opt82-sub6-format {
+    type enumeration {
+      enum "self-define" {
+        value 1;
+        description
+          "DHCP option82 self-define format.";
+      }
+    }
+    description
+      "The type of DHCP option82 suboption6 format.";
+  }
+  grouping dhcp-relay-type {
+    description
+      "DHCP relay.";
+    container global {
+      description
+        "Configure DHCP relay global attributes.";
+      leaf user-detect-interval {
+        type uint16 {
+          range "0..60";
+        }
+        units "min";
+        default "20";
+        description
+          "DHCP relay ARP user-detect interval.";
+      }
+      leaf user-autosave-flag {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a DHCP relay agent to store user entries.";
+      }
+      leaf user-store-interval {
+        type uint32 {
+          range "300..86400";
+        }
+        units "s";
+        default "300";
+        description
+          "DHCP relay unnumbered table write-delay.";
+      }
+      leaf distribute-flag {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable DHCP relay distribute flag.";
+      }
+      leaf opt82-inner-vlan-insert-flag {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable DHCP option82 inner-VLAN change flag.";
+      }
+      container option {
+        description
+          "Configure the information instance of DHCP packet option code.";
+        leaf option-code {
+          type uint8 {
+            range "1..255";
+          }
+          description
+            "Option code.";
+        }
+        leaf sub-option {
+          when "../option-code";
+          type uint8 {
+            range "1..255";
+          }
+          description
+            "Sub-option code.";
+        }
+      }
+      container source-ip {
+        description
+          "Configure DHCP relay global source IP attributes.";
+        leaf source-ip-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Relay source address.";
+        }
+        leaf vpn-name {
+          when "../source-ip-address";
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          default "_public_";
+          description
+            "VPN name.";
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description "Extend interface attribute.";
+      container dhcp-relay-attribute {
+        description
+          "Configure DHCP relay attributes on an interface.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable DHCP relay.";
+          }
+          leaf reply-packet-policy {
+            type dhcp-relay-reply-type;
+            description
+              "Reply packets policy.";
+          }
+          container option82 {
+            must "(subscriber-id-enable='true' and subscriber-id-mode='self-define' and subscriber-id-self-define-text) or (subscriber-id-enable='false')";
+            description
+              "Configure DHCP relay option82 on an interface.";
+            leaf vendor-specific-enable {
+              when "../../../ifm:type='Vbdif'";
+              type boolean;
+              default "false";
+              description
+                "Enable/disable to insert suboption9 of option82.";
+            }
+            leaf subscriber-id-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable to insert subscriber ID.";
+            }
+            leaf subscriber-id-mode {
+              when "../subscriber-id-enable='true'";
+              type dhcp-opt82-sub6-format;
+              default "self-define";
+               description
+                "Subscriber ID mode.";
+            }
+            leaf subscriber-id-self-define-text {
+              when "../subscriber-id-enable='true' and ../subscriber-id-mode='self-define'";
+              type string {
+                length "1..251";
+                pattern '([^\t]{0,})';
+              }
+              description
+                "Configure a DHCP option82 self-defined string for subscriber ID.";
+            }
+          }
+          container server-addresses {
+            description
+              "List of configuring server addresses on interfaces.";
+            list server-address {
+              must "(vendor='false' and vendor-class='-') or (vendor='true' and option-code=60)";
+              key "address vendor option-code vendor-class";
+              description
+                "Configure a server address on an interface.";
+              leaf address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Server address.";
+              }
+              leaf vendor {
+                type boolean;
+                description
+                  "Enable/disable to carry a vendor identifier.";
+               }
+              leaf option-code {
+                type uint8 {
+                  range "0..254";
+                }
+                description
+                  "Option code, 0 means NULL.";
+              }
+              leaf vendor-class {
+                type string {
+                  length "1..128";
+                  pattern '([^\t]{0,})';
+                }
+                description
+                  "Vendor identifier.";
+              }
+           }
+        }
+      }
+      container dhcp-relay-if {
+        presence "Enable/disable DHCP relay functions on an interface.";
+        status deprecated;
+        description 
+          "Configure DHCP relay attributes on an interface, it was replaced by a container named dhcp-relay-attribute.";
+          leaf is-enable {
+            type boolean;
+            default "false";
+            status deprecated;
+            description
+              "Enable/disable DHCP relay on an interface.";
+          }
+          leaf reply-packet-policy {
+            type dhcp-relay-reply-type;
+            must "../reply-packet-policy='broadcast-always'";
+            status deprecated;
+            description
+              "Reply packets policy.";
+          }
+          container option82 {
+            must "(subscriber-id-enable='true' and subscriber-id-mode='self-define' and subscriber-id-self-define-text) or (subscriber-id-enable='false')";
+            presence "Enable/disable DHCP relay option82 functions on an interface.";
+            status deprecated;
+            description
+              "Configure DHCP relay option82 on an interface.";
+            leaf subscriber-id-enable {
+              type boolean;
+              default "false";
+              status deprecated;
+              description
+                "Enable/disable to insert a subscriber ID.";
+            }
+            leaf subscriber-id-mode {
+              when "../subscriber-id-enable='true'";
+              type dhcp-opt82-sub6-format;
+              default "self-define";
+              status deprecated;
+               description
+                "Subscriber ID mode.";
+            }
+            leaf subscriber-id-self-define-text {
+              when "../subscriber-id-enable='true' and ../subscriber-id-mode='self-define'";
+              type string {
+                length "1..251";
+                pattern '([^\t]{0,})';
+              }
+              status deprecated;
+              description
+                "Configure a DHCP option82 self-defined string for subscriber ID.";
+            }
+          }
+          container server-addresses {
+            status deprecated;
+            description
+              "List of configuring server addresses on interfaces.";
+            list server-address {
+              must "(is-vendor='false' and vendor-class='-') or (is-vendor='true' and option-code=60)";
+              key "address is-vendor option-code vendor-class";
+              status deprecated;
+              description
+                "Configure a server address on an interface.";
+              leaf address {
+                type inet:ipv4-address-no-zone;
+                status deprecated;
+                description
+                  "Server address.";
+              }
+              leaf is-vendor {
+                type boolean;
+                status deprecated;
+                description
+                  "Enable/disable to carry a vendor identifier.";
+               }
+              leaf option-code {
+                type uint8 {
+                  range "0..254";
+                }
+                status deprecated;
+                description
+                  "Option code.";
+              }
+              leaf vendor-class {
+                type string {
+                  length "1..128";
+                  pattern '([^\t]{0,})';
+                }
+                status deprecated;
+                description
+                  "Vendor identifier.";
+              }
+            }
+         }
+      }
+   }
+}

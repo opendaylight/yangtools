@@ -1,0 +1,105 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-routing-policy-ext {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-routing-policy-ext";
+  prefix rtp-ext;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-mpls-te {
+    prefix mpls-te;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Routing policies are used to filter routes and control the receiving and advertising of routes. By changing the route attributes, such as reachability, you can change the path through which the traffic passes.";
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "route-base";
+  augment "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:actions/rtp:apply-qos-parameter/rtp:set-qos-parameter" {
+    description
+      "Augment the huawei-routing-policy model to add apply behavior configuration.";
+    case behavior {
+        description
+          "Set behavior.";
+        leaf name {
+        type leafref {
+          path "/qos:qos/qos:classifier-template/qos:traffic-behaviors/qos:traffic-behavior/qos:name";
+        }
+        description
+          "Name of traffic behavior.";
+      }
+    }
+  }
+  augment "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:nodes/rtp:node/rtp:actions" {
+    description
+      "Augment the huawei-routing-policy model to add actions configuration.";
+    container apply-stitch-pmsi {
+      presence "Create parameters of apply stitch-pmsi.";
+      description
+        "Enable/disable the PMSI attribute.";
+      leaf pmsi-type {
+          type enumeration {
+            enum "mldp" {
+              value 0;
+              description
+                "MLDP type.";
+            }
+            enum "rsvp-te" {
+              value 1;
+              description
+                "RSVP-TE type.";
+            }
+            enum "incoming" {
+              value 2;
+              description
+                "Incoming type.";
+            }
+          }
+          mandatory true;
+          description
+            "PMSI attribute type.";
+      }
+      leaf root-ip {
+        when "not(../pmsi-type='rsvp-te')";
+        type inet:ipv4-address-no-zone;
+        must "../p2mp-template or not(../pmsi-type='incoming')";
+        description
+          "MLDP root ip address.";
+      }
+      leaf p2mp-template {
+        when "not(../pmsi-type='mldp')";
+        type leafref {
+            path "/mpls:mpls/mpls-te:te/mpls-te:p2mp-templates/mpls-te:p2mp-template/mpls-te:name";
+          }
+        description
+          "P2MP TE template.";
+      }
+    }
+  }
+}

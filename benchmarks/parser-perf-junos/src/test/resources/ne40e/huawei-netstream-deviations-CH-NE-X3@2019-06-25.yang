@@ -1,0 +1,49 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-netstream-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-netstream-deviations-CH-NE-X3";
+  prefix netstream-devs-CH-NE-X3;
+
+  import huawei-netstream {
+    prefix netstream;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global Configuration.";
+
+  revision 2019-06-25 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/devm:devm/devm:mpu-boards/devm:mpu-board/netstream:netstream" {
+    deviate not-supported;
+  }
+  ext:deviation-ext "/netstream:netstream/netstream:flow-instances/netstream:flow-instance/netstream:export-version" {
+    ext:deviate-ext add {
+      ext:dynamic-default {
+        ext:default-value "5" {
+          when "../flow-type='ip-flow'";
+          description "The default value is 5 of version when flow type is IPv4.";
+        }
+      }
+    }
+  }
+}

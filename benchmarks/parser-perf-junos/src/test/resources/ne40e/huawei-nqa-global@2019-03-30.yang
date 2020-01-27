@@ -1,0 +1,129 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-nqa-global {
+  yang-version 1;
+  belongs-to huawei-nqa {
+    prefix nqa;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of submodule nqa-global.";
+  revision 2019-03-30 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  grouping global-type {
+    description
+      "Global configuration.";
+    leaf fec-validation-ldp-enable {
+      type boolean;
+      default "true";
+      description
+        "Enable/disable LDP FEC validation.";
+    }
+    leaf fec-validation-sr-prefix-enable {
+      type boolean;
+      default "true";
+      description
+        "Enable/disable Sr-prefix FEC validation.";
+    }
+    leaf lspv-cpu-limit {
+      type uint16 {
+        range "10..65535";
+      }
+      default "1000";
+      description
+        "Lspv cpu limit.";
+    }
+    leaf jitter-tag-version {
+      type uint32 {
+        range "1..2";
+      }
+      default "1";
+      description
+        "Version number of jitter.";
+    }
+    leaf lbm-receive-enable {
+      type boolean;
+      default "true";
+      description
+        "Enable/disable a device from receiving LBM packets.";
+    }
+    leaf ltm-receive-enable {
+      type boolean;
+      default "true";
+      description
+        "Enable/disable a device from receiving LTM packets.";
+    }
+    leaf gmac-ltm-receive-enable {
+      type boolean;
+      default "true";
+      description
+        "Enable/disable a device from receiving GMAC-LTM packets.";
+    }
+    leaf lspv-enable {
+      type boolean;
+      default "true";
+      description
+        "Enable/disable a device to respond to MPLS echo request packets.";
+    }
+    leaf lspv-ipv6-enable {
+      type boolean;
+      default "true";
+      description
+        "Enable/disable a device to respond to MPLS echo request IPv6 packets.";
+    }
+    leaf lspv-fec-compitable-enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable the LSPV's compatibility function, and reply response packets don't carry FEC information.";
+    }
+    leaf gmac-ping-enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable general GMAC ping function.";
+    }
+    leaf gmac-trace-enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable general GMAC trace function.";
+    }
+    container vxlan-echo-v4 {
+      presence "If enabled vxlan echo IPv4";
+      description
+        "Enable/disable NQA VXLANECHO.";
+      leaf port {
+        type uint16 {
+          range "1..65535";
+        }
+        mandatory true;
+        description
+          "Port of NQA VXLANECHO server.";
+      }
+      leaf source-ip-if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Source IP interface of VXLANECHO.";
+      }
+    }
+  }
+}

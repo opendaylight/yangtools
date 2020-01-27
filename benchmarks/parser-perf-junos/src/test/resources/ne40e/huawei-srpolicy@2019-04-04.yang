@@ -1,0 +1,1499 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-srpolicy {
+  namespace "urn:huawei:yang:huawei-srpolicy";
+  prefix srpolicy;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-segment-routing {
+    prefix sr;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-srv6 {
+    prefix srv6;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+
+  include huawei-srpolicy-type;
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Segment Routing Policy.";
+
+  revision 2019-04-04 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "srpolicy";
+  grouping bfd {
+    description
+      "SR Policy bfd configuration.";
+    container bfd {
+      description
+        "Configure SR Policy BFD.";
+      leaf enable {
+        type bfd-enable-type;
+        default "disable";
+        description
+          "Enable seamless-bfd for all SR Policies.";
+      }
+      leaf min-tx {
+        type uint32 {
+        range "1..4294967295";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval for sending seamless-bfd packets to the peer end. The range and default are based on PAF.";
+        }
+      leaf min-rx {
+        type uint32 {
+          range "1..4294967295";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval for receiving seamless-bfd packets from the peer end. The range and default are based on PAF.";
+      }
+      leaf multi-num {
+        type uint32 {
+          range "3..50";
+        }
+        default "3";
+        description
+          "Local detection multiplier.";
+      }
+    }
+  }
+  grouping global-attributes {
+    description
+      "SR Policy global configuration.";
+    leaf switch-delay {
+      type uint32 {
+        range "0..600000";
+      }
+      units ms;
+      default "5000";
+      description
+        "MBB switch delay time.";
+    }
+    leaf delete-delay {
+      type uint32 {
+        range "0..600000";
+      }
+      units ms;
+      default "20000";
+      description
+        "MBB delete delay time.";
+    }
+    leaf hsb-enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable hot standby.";
+    }
+    leaf traffic-statistics-enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable traffic statistics collection.";
+    }
+    leaf bgp-ls-enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable BGP-LS.";
+    }
+    leaf policy-threshold-upper {
+      type uint32 {
+        range "1..100";
+      }
+      must "(../policy-threshold-upper>../policy-threshold-lower)";
+      default "80";	  
+      description
+        "SR Policy threshold upper limit.";
+    }
+    leaf policy-threshold-lower {
+      type uint32 {
+        range "1..100";
+      }
+      must "(../policy-threshold-upper>../policy-threshold-lower)";
+      default "75";
+      description
+        "SR Policy threshold lower limit.";
+    }
+    leaf list-threshold-upper {
+      type uint32 {
+        range "1..100";
+      }
+      must "(../list-threshold-upper>../list-threshold-lower)";
+      default "80";	  
+      description
+        "Segment List threshold upper limit.";
+    }
+    leaf list-threshold-lower {
+      type uint32 {
+        range "1..100";
+      }
+      must "(../list-threshold-upper>../list-threshold-lower)";
+      default "75";	  
+      description
+        "Segment List threshold lower limit.";
+    }
+    uses bfd;
+  }
+  grouping segment-lists {
+    description
+      "Global segment lists.";
+    container segment-lists {
+      description
+        "List of global segment lists.";
+      list segment-list {
+        key "name";
+        description
+          "Configure a global segment list.";
+        leaf name {
+          type string {
+            length "1..31";
+            pattern '[^ \?]*';
+          }
+          description
+            "Global segment list name.";
+        }
+        container segments {
+          description
+            "List of segments in a global segment list.";
+          list segment {
+            key "index";
+            max-elements  "10";
+            description
+              "Configure a segment in a global segment list.";
+            leaf index {
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "The segment index.";
+            }
+            choice type {
+              mandatory true;
+              description
+                  "The segment type.";
+              case segment-type-1 {
+                description
+                  "The segment is declared by MPLS label.";
+                leaf sid-value-1 {
+                  type uint32 {
+                    range "16..1048575";
+                  }
+                  description
+                    "MPLS label value.";
+                }
+              }
+              case segment-type-2 {
+                description
+                  "The segment is declared by SRv6 SID value.";
+                leaf sid-value-2 {
+                  type inet:ipv6-address-no-zone;
+                    description 
+                      "SRv6 sid value.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  grouping srv6-policy-attributes {
+    description
+      "Grouping containing attributes applicable to all SR policies.";
+    container policy-attributes {
+      description
+         "Configure attributes for all SR policies.";
+      uses global-attributes;
+      leaf locator {
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srv6:locators/srv6:locator/srv6:name";
+        }
+        description
+          "Locator Name.";
+      }
+      uses segment-lists;
+    }
+  }
+  grouping srv4-policy-attributes {
+    description
+      "Grouping containing attributes applicable to all SR policies.";
+    container policy-attributes {
+      description
+         "Configure attributes for all SR policies.";
+      uses global-attributes;
+      uses segment-lists;
+    }
+  }
+  grouping policys {
+    description "SR policy grouping.";
+    container policys {
+      description "List of SR Policies.";
+      list policy {
+        key "endpoint color";
+        description
+          "Configure an SR Policy.";
+        leaf endpoint {
+          type inet:ip-address;
+          description
+            "SR Policy endpoint address.";
+        }
+        leaf color {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "SR Policy color.";
+        }
+        leaf name {
+          type string {
+            length "1..31";
+            pattern '[^ \?]*';
+          }
+          mandatory true;
+          description
+            "SR Policy name.";
+        }
+        container binding-sid {
+          description "Configure a binding SID.";
+          leaf dataplane {
+            type dataplane-type;
+            mandatory true;
+            description 
+              "Binding sid dataplane type.";
+          }
+          leaf value {
+            type sid-value-type;
+            mandatory true;
+            description 
+              "Binding sid value.";
+          }
+        }
+        leaf admin-state {
+          type state-type;
+          default "up";
+          description
+            "Close the function of SR Policy.";
+        }
+        leaf mtu {
+          type uint32 {
+            range "512..9600";
+          }
+          description
+            "SR Policy mtu value.";
+        }
+        leaf hsb-enable {
+          type enable-3types;
+          default "not-configured";
+          description
+            "SR Policy hot standby.";
+        }
+        leaf bfd-enable {
+          type policy-bfd-enable-type;
+          default "not-configured";
+          description
+            "SR Policy BFD.";
+        }
+        leaf traffic-statistics-enable {
+          type enable-3types;
+          default "not-configured";
+          description
+            "SR Policy traffic statistics.";
+        }
+        container diffserv-mode {
+          description
+            "Configure the DiffServ mode in an SR Policy.";
+          leaf pipe-mode {
+            type pipe-mode-type;
+            description
+              "Specifies the pipe mode of SR Policy.";
+          }
+          leaf service-class {
+            when "../pipe-mode='pipe'";
+            type serv-class-types;
+            mandatory true;
+            description
+              "Service class of SR Policy.";
+          }
+          leaf service-color {
+            when "../pipe-mode='pipe'";
+            type serv-color-types;
+            mandatory true;
+            description
+              "Service color of SR Policy.";
+          }
+        }
+        container candidate-paths {
+          description
+            "List of candidate paths in an SR Policy.";
+          list candidate-path {
+            key "protocol-origin originator discriminator";
+            max-elements  "64";
+            description
+              "Configure a candidate path.";
+              leaf protocol-origin  {
+              type protocol-origin-type;
+              description
+                "Candidate path protocol origin.";
+            }
+            leaf originator {
+              type string {
+                length "1..60";
+              }
+              description
+                "Candidate path originator.";
+            }
+            leaf discriminator {
+              type uint32 {
+                range "1..65535";
+              }
+              description
+                "Candidate path discriminator.";
+            }
+            leaf preference {
+              type uint32 {
+                range "1..65535";
+              }
+              mandatory true;
+              description
+                "Candidate path preference.";
+            }
+            choice type {
+              description
+                "Type of candidate paths.";
+              case explicit {
+                description "Candidate path with explicitly defined set/s of segment-lists.";
+                container segment-lists {
+                  description
+                    "List of segment lists in a candidate path.";
+                  list segment-list {
+                    key "name";
+                    max-elements  "64";
+                    description
+                      "Configure a segment list for a candidate path.";
+                    leaf name {
+                      type leafref {
+                        path "../../../../../../../policy-attributes/segment-lists/segment-list/name";
+                      }
+                      description
+                        "Segment list name.";
+                    }
+                    leaf weight {
+                      type uint32 {
+                        range "1..4294967295";
+                      }
+                      default "1";
+                      description
+                        "Segment-list weighted loadshare.";
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  grouping policy-groups {
+    description "SR-MPLS TE Policy group grouping.";
+    container policy-groups {
+      description
+        "List of SR-MPLS TE Policy groups.";
+      list policy-group {
+        key "index";
+        description
+          "Configure an SR-MPLS TE Policy group.";
+        leaf index {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "SR-MPLS TE Policy group id.";
+        }
+        leaf endpoint {
+          type inet:ip-address;
+          description
+            "SR-MPLS TE Policy IPv4 endPoint address.";
+        }
+        leaf state {
+          type state-type;
+          config false;
+          description
+            "SR-MPLS TE Policy group state.";
+        }
+        leaf tunnel-id {
+          type uint32;
+          config false;
+          description
+            "SR-MPLS TE Policy group tunnel id.";
+        }
+        leaf tunnel-type {
+          type tunnel-type;
+          config false;
+          description
+            "SR-MPLS TE Policy group tunnel type.";
+        }
+        leaf match-count {
+          type uint32;
+          config false;
+          description
+            "SR-MPLS TE Policy group match count.";
+        }
+        leaf up-match-count {
+          type uint32;
+          config false;
+          description
+            "SR-MPLS TE Policy group up match count.";
+        }
+        container color-dscp-matchs {
+          description
+            "List of color-address family-DSCP mappings for an SR-MPLS TE Policy.";
+          list color-dscp-match {
+            key "color af-type";
+            max-elements  "128";
+            description
+              "Configure a color-address family-DSCP mapping for an SR-MPLS TE Policy.";
+            leaf color {
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "SR-MPLS TE Policy color.";
+            }
+            leaf af-type {
+              type address-family-type;
+              description
+                "Address family.";
+            }
+            leaf default {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the default SR-MPLS TE Policy.";
+            }
+            leaf dscp-value {
+              when "not(../default='true')";
+              type pub-type:id-range {
+                ext:value-range "0..63";
+              }
+              mandatory true;
+              description
+                "DSCP Value.";
+            }
+            leaf policy-tunnel-id {
+              type uint32;
+              config false;
+              description
+                "SR-MPLS TE Policy tunnel ID.";
+            }
+          }
+        }
+      }
+    }
+  }
+  grouping traffic-statistics {
+    description
+        "SR Policy traffic statistics grouping.";
+    container policy-traffic-statistics {
+      config false;
+      description
+        "List of traffic statistics for SR Policies.";
+      list policy-traffic-statistic {
+        key "endpoint color";
+        description
+          "Traffic statistics for an SR Policy.";
+        leaf endpoint {
+          type inet:ip-address-no-zone;
+          description
+            "Destination address of an SR Policy.";
+        }
+        leaf color {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Color of an SR Policy.";
+        }
+        leaf name {
+          type string {
+            length "1..32";
+          }
+          ext:support-filter "true";
+          description
+            "Policy name.";
+        }
+        leaf binding-sid {
+          type sid-value-type;
+          ext:support-filter "true";
+          description
+            "Binding SID of an SR Policy.";
+        }
+        leaf tunnel-id {
+          type uint32;
+          description
+            "Tunnel ID of an SR Policy.";
+        }
+        leaf flow-period {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "s";
+          description
+            "Traffic statistics collection period.";
+        }
+        leaf last-period-byte-rate {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "Byte/s";
+          description
+            "Byte rate in the latest period.";
+        }
+        leaf last-period-pkt-rate {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "pps";
+          description
+            "Packet rate in the latest period.";
+        }
+        leaf display-interval {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "s";
+          description
+            "Interval between two queries.";
+        }
+        leaf interval-byte-rate {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "Byte/s";
+          description
+            "Byte rate between two queries.";
+        }
+        leaf interval-pkt-rate {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "pps";
+          description
+            "Packet rate between two queries.";
+        }
+        leaf total-byte {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "Byte";
+          description
+            "Total number of transmitted bytes.";
+        }
+        leaf total-packet {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "packet";
+          description
+            "Total number of transmitted packets.";
+        }
+      }
+    }
+    container list-traffic-statistics {
+      config false;
+      description
+        "List of traffic statistics for segment lists.";
+      list list-traffic-statistic {
+        key "segment-list-id";
+        description
+          "Traffic statistics for a segment list.";
+        leaf segment-list-id {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Segment list ID.";
+        }
+        leaf xc-index {
+          type uint32;
+          description
+            "XC index.";
+        }
+        leaf policy-name {
+          type string {
+            length "1..32";
+          }
+          ext:support-filter "true";
+          description
+            "Policy name.";
+        }
+        leaf endpoint {
+          type inet:ip-address-no-zone;
+          ext:support-filter "true";
+          description
+            "Destination address of an SR Policy.";
+        }
+        leaf color {
+          type uint32 {
+            range "0..4294967295";
+          }
+          ext:support-filter "true";
+          description
+            "Color of an SR Policy.";
+        }
+        leaf binding-sid {
+          type sid-value-type;
+          ext:support-filter "true";
+          description
+            "Binding SID of an SR Policy.";
+        }
+        leaf tunnel-id {
+          type uint32;
+          description
+            "Tunnel ID of an SR Policy.";
+        }
+        leaf preference {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Preference of a candidate path.";
+        }
+        leaf protocol-origin  {
+          type protocol-origin-type;
+          description
+            "Protocol origin of a candidate path.";
+        }
+        leaf asn {
+          type uint32;
+          description
+            "AS number.";
+        }
+        leaf node-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Node address.";
+        }
+        leaf discriminator {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Discriminator of a candidate path.";
+        }
+        leaf path-type {
+          type path-type;
+          description
+            "Type of a candidate path.";
+        }
+        container sids {
+          description
+            "List of SIDs.";
+          list sid {
+            key "index";
+            max-elements  "10";
+            description
+              "Operational data of SID.";
+            leaf index {
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "SID index.";
+            }
+            leaf value {
+              type sid-value-type;
+              description
+                "SID value.";
+            }
+          }
+        }
+        leaf flow-period {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "s";
+          description
+            "Traffic statistics collection period.";
+        }
+        leaf last-period-byte-rate {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "Byte/s";
+          description
+            "Byte rate in the latest period.";
+        }
+        leaf last-period-pkt-rate {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "pps";
+          description
+            "Packet rate in the latest period.";
+        }
+        leaf display-interval {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "s";
+          description
+            "Interval between two queries.";
+        }
+        leaf interval-byte-rate {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "Byte/s";
+          description
+            "Byte rate between two queries.";
+        }
+        leaf interval-pkt-rate {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "pps";
+          description
+            "Packet rate between two queries.";
+        }
+        leaf total-byte {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "Byte";
+          description
+            "Total number of transmitted bytes.";
+        }
+        leaf total-packet {
+          type uint64 {
+            range "0..18446744073709551615";
+          }
+          units "packet";
+          description
+            "Total number of transmitted packets.";
+        }
+        leaf no-resource-flag {
+          type boolean;
+          default "false";
+          description
+            "Flag indicating that no statistical resource exists.";
+        }
+      }
+    }
+  }
+  grouping srv6-policy-infos {
+    description "SRv6 Policy infos grouping.";
+    container policy-infos {
+      config false;
+      description
+        "List of SRv6 TE Policies.";
+      list policy-info {
+        key "endpoint color";
+        config false;
+        description
+          "Operational state of an SRv6 TE Policy.";
+        leaf endpoint {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "SR Policy endpoint address.";
+        }
+        leaf color {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "SR Policy color.";
+        }
+        leaf name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "SR Policy name.";
+          ext:support-filter "true";
+        }
+        leaf state {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "SR Policy states.";
+        }
+        leaf state-change-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "SR Policy state change time.";
+        }
+        leaf admin-state {
+          type state-type;
+          config false;
+          description
+            "SR Policy admin states.";
+        }
+        leaf binding-sid {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "SR Policy binding SID.";
+          ext:support-filter "true";
+        }
+        leaf tunnel-id {
+          type uint32;
+          config false;
+          description
+            "SR Policy tunnel ID.";
+        }
+        leaf tunnel-type {
+          type tunnel-type;
+          config false;
+          description
+            "SR Policy tunnel type.";
+        }
+        leaf traffic-statistics-enable {
+          type enable-type;
+          config false;
+          description
+            "SR Policy traffic statistics enable flag.";
+        }
+        leaf candidate-path-count {
+          type uint32;
+          config false;
+          description
+            "SR Policy candidate path count.";
+        }
+        container candidate-paths {
+          when "../endpoint and ../color";
+          config false;
+          description
+            "List of candidate paths in an SRv6 TE Policy.";
+          list candidate-path {
+            key "protocol-origin asn node-address discriminator preference";
+            config false;
+            max-elements  "64";
+            description
+              "Operational state of a candidate path in an SRv6 TE Policy.";
+            leaf protocol-origin  {
+              type protocol-origin-type;
+              config false;
+              description
+                "Candidate path protocol origin.";
+            }
+            leaf asn {
+              type uint32 {
+                range "1..65535";
+              }
+              config false;
+              description
+                "Candidate path AS No.";
+            }
+            leaf node-address {
+              type uint32 {
+                range "1..65535";
+              }
+              config false;
+              description
+               "Candidate path nodeAddress.";
+            }
+            leaf discriminator {
+              type uint32 {
+                range "1..65535";
+              }
+              config false;
+              description
+                "Candidate path discriminator.";
+            }
+            leaf preference {
+              type uint32 {
+                range "1..65535";
+              }
+              config false;
+              description
+                "Candidate path preference.";
+            }
+            leaf path-state {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Candidate path state.";
+            }
+            leaf path-type {
+              type path-type;
+              config false;
+              description
+                "Candidate path type.";
+            }
+            leaf binding-sid {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "Candidate path binding SID.";
+            }
+            leaf group-id {
+              type uint32;
+              config false;
+              description
+                "Candidate path groupId.";
+            }
+            leaf policy-name {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Candidate path policy name.";
+            }
+            leaf delay-timer-remain {
+              type uint32;
+              config false;
+              description
+                "Delay Timer Remain.";
+            }
+            leaf segment-list-count {
+              type uint32;
+              config false;
+              description
+                "Candidate path segment list count.";
+            }
+            container segment-lists {
+              when "../../../endpoint and ../../../color and ../preference and ../protocol-origin and ../asn and ../node-address and ../discriminator";
+              config false;
+              description
+                "List of segment list information in a candidate path.";
+              list segment-list {
+                key "id";
+                config false;
+                max-elements  "64";
+                description
+                  "Operational state of a segment list in a candidate path.";
+                leaf id {
+                  type uint32;
+                  config false;
+                  description
+                    "Segment list ID.";
+                }
+                leaf name {
+                  type string {
+                    length "1..32";
+                  }
+                  config false;
+                  description
+                    "Segment list name.";
+                }
+                leaf xc-index {
+                  type uint32;
+                  config false;
+                  description
+                    "XC index.";
+                }
+                leaf delay-timer-remain {
+                  type uint32;
+                  config false;
+                  description
+                    "Delay timer remain.";
+                }
+                leaf state {
+                  type string {
+                    length "1..16";
+                  }
+                  config false;
+                  description
+                    "Segment list state.";
+                }
+                leaf weight {
+                  type uint32 {
+                    range "1..4294967295";
+                  }
+                  config false;
+                  description
+                    "Segment-list weighted loadshare.";
+                }
+                container sids {
+                  when "../../../../../endpoint and ../../../../../color and ../../../preference and ../../../protocol-origin and ../../../asn and ../../../node-address and ../../../discriminator and ../id";
+                  config false;
+                  description
+                    "List of SIDs.";
+                  list sid {
+                    key "index";
+                    config false;
+                    max-elements  "10";
+                    description
+                      "Operational data of SID.";
+                    leaf index {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      config false;
+                      description
+                        "Id.";
+                    }
+                    leaf value {
+                      type inet:ipv6-address-no-zone;
+                      config false;
+                      description
+                        "Val.";
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  grouping srv4-policy-infos {
+    description "SR-MPLS TE Policy infos grouping.";
+    container policy-infos {
+      config false;
+      description
+        "List of SR-MPLS TE Policies.";
+      list policy-info {
+        key "endpoint color";
+        config false;
+        description
+          "Operational state of an SR-MPLS TE Policy.";
+        leaf endpoint {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "SR Policy endpoint address.";
+        }
+        leaf color {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "SR Policy color.";
+        }
+        leaf name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "SR Policy name.";
+          ext:support-filter "true";
+        }
+        leaf state {
+          type state-type;
+          config false;
+          description
+            "SR Policy state.";
+        }
+        leaf admin-state {
+          type state-type;
+          config false;
+          description
+            "SR Policy admin state.";
+        }
+        leaf binding-sid {
+          type uint32;
+          config false;
+          description
+            "SR Policy binding SID.";
+          ext:support-filter "true";
+        }
+        leaf mtu {
+          type uint32 {
+            range "512..9600";
+          }
+          config false;
+          description
+            "SR Policy mtu value.";
+        }
+        leaf tunnel-id {
+          type uint32;
+          config false;
+          description
+            "SR Policy tunnel ID.";
+        }
+        leaf tunnel-type {
+          type tunnel-type;
+          config false;
+          description
+            "SR Policy tunnel type.";
+        }
+        leaf pipe-mode {
+          type pipe-mode-type;
+          config false;
+          description
+            "Pipe mode of SR Policy.";
+        }
+        leaf service-class {
+          type serv-class-disp-types;
+          config false;
+          description
+            "Service class of SR Policy.";
+        }
+        leaf service-color {
+          type serv-color-disp-types;
+          config false;
+          description
+            "Service color of SR Policy.";
+        }
+        leaf bfd-enable {
+          type bfd-enable-type;
+          config false;
+          description
+            "SR Policy BFD enable flag.";
+        }
+        leaf hsb-enable {
+          type enable-type;
+          config false;
+          description
+            "SR Policy HSB enable flag.";
+        }
+        leaf traffic-statistics-enable {
+          type enable-type;
+          config false;
+          description
+            "SR Policy traffic statistics enable flag.";
+        }
+        leaf state-change-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "SR Policy state change time.";
+        }
+        leaf candidate-path-count {
+          type uint32;
+          config false;
+          description
+            "SR Policy candidate path count.";
+        }
+        container candidate-paths {
+          when "../endpoint and ../color";
+          config false;
+          description
+            "List of candidate paths in an SR-MPLS TE Policy.";
+          list candidate-path {
+            key "protocol-origin asn node-address discriminator preference";
+            config false;
+            max-elements  "64";
+            description
+              "Operational state of a candidate path in an SR-MPLS TE Policy.";
+            leaf protocol-origin  {
+              type protocol-origin-type;
+              config false;
+              description
+                "Candidate path protocol origin.";
+            }
+            leaf asn {
+              type uint32 {
+                range "0..65535";
+              }
+              config false;
+              description
+                "Candidate path AS No.";
+            }
+            leaf node-address {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Candidate path nodeAddress.";
+            }
+            leaf discriminator {
+              type uint32 {
+                range "1..65535";
+              }
+              config false;
+              description
+                "Candidate path discriminator.";
+            }
+            leaf preference {
+              type uint32 {
+                range "1..65535";
+              }
+              config false;
+              description
+                "Candidate path preference.";
+            }
+            leaf path-state {
+              type path-state-type;
+              config false;
+              description
+                "Candidate path state.";
+            }
+            leaf path-type {
+              type path-type;
+              config false;
+              description
+                "Candidate path type.";
+            }
+            leaf binding-sid {
+              type uint32;
+              config false;
+              description
+                "Candidate path binding SID.";
+            }
+            leaf group-id {
+              type uint32;
+              config false;
+              description
+                "Candidate path groupId.";
+            }
+            leaf policy-name {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "Candidate path policy name.";
+            }
+            leaf template-id {
+              type uint32;
+              config false;
+              description
+                "Candidate path template Id.";
+            }
+            leaf segment-list-count {
+              type uint32;
+              config false;
+              description
+                "Candidate path segment list count.";
+            }
+            container segment-lists {
+              when "../../../endpoint and ../../../color and ../protocol-origin and ../asn and ../node-address and ../discriminator and ../preference";
+              config false;
+              description
+                "List of segment list information in a candidate path.";
+              list segment-list {
+                key "id";
+                config false;
+                max-elements  "64";
+                description
+                  "Operational state of a segment list in a candidate path.";
+                leaf id {
+                  type uint32;
+                  config false;
+                  description
+                    "Segment list ID.";
+                }
+                leaf name {
+                  type string {
+                    length "1..32";
+                  }
+                  config false;
+                  description
+                    "Segment list name.";
+                }
+                leaf xc-index {
+                  type uint32;
+                  config false;
+                  description
+                    "XC index.";
+                }
+                leaf delay-time-remain {
+                  type uint32;
+                  config false;
+                  description
+                    "Delay delete timer remain.";
+                }
+                leaf state {
+                  type string {
+                    length "1..16";
+                  }
+                  config false;
+                  description
+                    "Segment list state.";
+                }
+                leaf bfd-state {
+                  type string {
+                    length "1..32";
+                  }
+                  config false;
+                  description
+                    "Segment list BFD state.";
+                }
+                leaf exp-value {
+                  type uint32;
+                  config false;
+                  description
+                    "EXP value.";
+                }
+                leaf ttl-value {
+                  type uint32;
+                  config false;
+                  description
+                    "TTL value.";
+                }
+                container sids {
+                  when "../../../../../endpoint and ../../../../../color and ../../../protocol-origin and ../../../asn and ../../../node-address and ../../../discriminator and ../../../preference and ../id";
+                  config false;
+                  description
+                    "List of SIDs.";
+                  list sid {
+                    key "index";
+                    config false;
+                    max-elements "10";
+                    description
+                      "Operational data of SID.";
+                    leaf index {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      config false;
+                      description
+                        "Index.";
+                    }
+                    leaf value {
+                      type uint32 {
+                        range "16..1048575";
+                      }
+                      config false;
+                      description
+                        "Value.";
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  grouping sr-template-infos {
+    description
+      "SR Policy template infos.";
+    container template-infos {
+      config false;
+      description
+        "List of SR Policy template information.";
+      list template-info {
+        key "template-id";
+        config false;
+        description
+          "Operational state of SR Policy template.";
+        leaf template-id {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "The template ID.";
+        }
+        leaf bfd-enable {
+          type enable-3types;
+          description
+            "Enable/disable Seamless-BFD.";
+        }
+        leaf hsb-enable {
+          type enable-3types;
+          description
+            "Enable/disable hot standby.";
+        }
+        leaf traffic-statistics-enable {
+          type enable-3types;
+          description
+            "Enable/disable traffic statistics.";
+        }
+      }
+    }
+  }
+  grouping reset-traffic-statistics {
+    description
+      "Reset SR Policy traffic statistics.";
+    leaf name {
+      type string {
+        length "1..32";
+      }
+      description
+        "SR Policy name.";
+    }
+    leaf endpoint {
+      type inet:ip-address;
+      description
+        "SR Policy endpoint address.";
+    }
+    leaf color {
+      type uint32 {
+        range "0..4294967295";
+      }
+      description
+        "SR Policy color.";
+    }
+    leaf binding-sid {
+      type sid-value-type;
+      description
+        "SR Policy binding sid.";
+    }
+  }
+  rpc reset-srv6-te-policy-traffic-statistics {
+    description
+      "Reset SRv6 TE Policy traffic statistics.";
+    input {
+      uses reset-traffic-statistics;
+    }
+  }
+  rpc reset-sr-mpls-te-policy-traffic-statistics {
+    description
+      "Reset SR-MPLS TE Policy traffic statistics.";
+    input {
+      uses reset-traffic-statistics;
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance/srv6:srv6 {
+    description "Augment for Segment Routing Policy.";
+    container srpolicy {
+      when "../srv6:enable='true'";
+      description
+        "Configure SR Policy parameters.";
+      uses srv6-policy-attributes;
+      uses policys;
+      uses traffic-statistics;
+      uses srv6-policy-infos;
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance/sr:segment-routing {
+    description "Augment for SR Policy.";
+    container srpolicy {
+      when "../sr:enable='true'";
+      description
+        "Configure SR Policy parameters.";
+      uses srv4-policy-attributes;
+      uses policys;
+      uses srv4-policy-infos;
+      uses policy-groups;
+      uses traffic-statistics;
+      uses sr-template-infos;
+    }
+  }
+}

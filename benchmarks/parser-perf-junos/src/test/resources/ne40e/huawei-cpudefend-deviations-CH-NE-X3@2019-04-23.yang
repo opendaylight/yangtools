@@ -1,0 +1,990 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-cpudefend-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-cpudefend-deviations-CH-NE-X3";
+  prefix "cpudefend-devs-CH-NE-X3";
+
+  import huawei-cpudefend {
+    prefix "cpudefend";
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Policies for global management and service plane protection.";
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef protocol-name-deviations {
+    type enumeration {
+      enum "802dot1ag" {
+        value 1;
+        description
+          "802.1AG protocol.";
+      }
+      enum "arp" {
+        value 3;
+        description
+          "ARP protocol.";
+      }
+      enum "arp-miss" {
+        value 4;
+        description
+          "ARP miss protocol.";
+      }
+      enum "atm-inarp" {
+        value 5;
+        description
+          "ATM inARP protocol.";
+      }
+      enum "bfd" {
+        value 6;
+        description
+          "BFD protocol.";
+      }
+      enum "bgp" {
+        value 7;
+        description
+          "BGP protocol.";
+      }
+      enum "bgpv6" {
+        value 8;
+        description
+          "BGPv6 protocol.";
+      }
+      enum "blacklist" {
+        value 9;
+        description
+          "Blacklist.";
+      }
+      enum "bpdu" {
+        value 10;
+        description
+          "BPDU protocol.";
+      }
+      enum "dhcp" {
+        value 15;
+        description
+          "DHCP protocol.";
+      }
+      enum "dhcpv6" {
+        value 16;
+        description
+          "DHCPv6 protocol.";
+      }
+      enum "diameter" {
+        value 17;
+        description
+          "Diameter protocol.";
+      }
+      enum "dns-client" {
+        value 18;
+        description
+          "DNS client protocol.";
+      }
+      enum "dnsv6" {
+        value 19;
+        description
+          "DNSv6 protocol.";
+      }
+      enum "eapol" {
+        value 20;
+        description
+          "EAPOL protocol.";
+      }
+      enum "fragment" {
+        value 21;
+        description
+          "Fragment protocol.";
+      }
+      enum "ftp-client" {
+        value 22;
+        description
+          "FTP client protocol.";
+      }
+      enum "ftp-server" {
+        value 23;
+        description
+          "FTP server protocol.";
+      }
+      enum "ftpv6-client" {
+        value 24;
+        description
+          "FTPv6 client protocol.";
+      }
+      enum "ftpv6-server" {
+        value 25;
+        description
+          "FTPv6 server protocol.";
+      }
+      enum "http-redirect-chasten" {
+        value 27;
+        description
+          "Http-redirect packet of chasten user.";
+      }
+      enum "hwtacacs" {
+        value 28;
+        description
+          "HWTACACS protocol.";
+      }
+      enum "icmp" {
+        value 29;
+        description
+          "ICMP protocol.";
+      }
+      enum "icmp-broadcast-address-echo" {
+        value 30;
+        description
+          "Broadcast ICMP echo request packets.";
+      }
+      enum "icmpv6" {
+        value 33;
+        description
+          "ICMPv6 protocol.";
+      }
+      enum "icmpv6-na" {
+        value 34;
+        description
+          "ICMPv6-NA protocol.";
+      }
+      enum "icmpv6-ns" {
+        value 35;
+        description
+          "ICMPv6-NS protocol.";
+      }
+      enum "icmpv6-ra" {
+        value 36;
+        description
+          "ICMPv6-RA protocol.";
+      }
+      enum "icmpv6-rs" {
+        value 37;
+        description
+          "ICMPv6-RS protocol.";
+      }
+      enum "igmp" {
+        value 38;
+        description
+          "IGMP protocol.";
+      }
+      enum "ipv4-fib-miss" {
+        value 41;
+        description
+          "IPv4 FIB miss.";
+      }
+      enum "ipv4-multicast-fib-miss" {
+        value 42;
+        description
+          "IPv4 multicast FIB miss.";
+      }
+      enum "ipv4-ttl-expire" {
+        value 43;
+        description
+          "IPv4 TTL expires packets.";
+      }
+      enum "ipv6-fib-miss" {
+        value 44;
+        description
+          "IPv6 FIB miss.";
+      }
+      enum "ipv6-nd-miss" {
+        value 46;
+        description
+          "IPv6 ND miss.";
+      }
+      enum "ipv6-ttl-expire" {
+        value 47;
+        description
+          "IPv6 TTL expires packets.";
+      }
+      enum "isis" {
+        value 48;
+        description
+          "ISIS protocol.";
+      }
+      enum "lacp" {
+        value 49;
+        description
+          "LACP protocol.";
+      }
+      enum "ldp" {
+        value 50;
+        description
+          "LDP protocol.";
+      }
+      enum "lldp" {
+        value 51;
+        description
+          "LLDP protocol.";
+      }
+      enum "lspping" {
+        value 52;
+        description
+          "LSPPING protocol.";
+      }
+      enum "mka" {
+        value 53;
+        description
+          "MKA protocol.";
+      }
+      enum "mld" {
+        value 54;
+        description
+          "IPv6 MLD protocol.";
+      }
+      enum "mpls-arp-miss" {
+        value 55;
+        description
+          "MPLS ARP miss.";
+      }
+      enum "mpls-ttl-expire" {
+        value 58;
+        description
+          "MPLS ttl expires packets.";
+      }
+      enum "msdp" {
+        value 59;
+        description
+          "MSDP protocol.";
+      }
+      enum "netstream" {
+        value 61;
+        description
+          "NetStream protocol.";
+      }
+      enum "ntp" {
+        value 62;
+        description
+          "NTP protocol.";
+      }
+      enum "openflow" {
+        value 63;
+        description
+          "OpenFlow protocol.";
+      }
+      enum "ospf" {
+        value 64;
+        description
+          "OSPF protocol.";
+      }
+      enum "ospfv3" {
+        value 65;
+        description
+          "OSPFv3 protocol.";
+      }
+      enum "pim" {
+        value 66;
+        description
+          "PIM protocol.";
+      }
+      enum "pimv6" {
+        value 67;
+        description
+          "PIMv6 protocol.";
+      }
+      enum "portal" {
+        value 68;
+        description
+          "Portal protocol.";
+      }
+      enum "radius" {
+        value 70;
+        description
+          "Radius protocol.";
+      }
+      enum "rip" {
+        value 71;
+        description
+          "RIP protocol.";
+      }
+      enum "rsvp" {
+        value 73;
+        description
+          "RSVP protocol.";
+      }
+      enum "snmp" {
+        value 74;
+        description
+          "SNMP protocol.";
+      }
+      enum "snmpv6" {
+        value 75;
+        description
+          "SNMPv6 protocol.";
+      }
+      enum "soft-gre" {
+        value 76;
+        description
+          "Soft GRE protocol.";
+      }
+      enum "ssh-client" {
+        value 77;
+        description
+          "SSH client protocol.";
+      }
+      enum "ssh-server" {
+        value 78;
+        description
+          "SSH server protocol.";
+      }
+      enum "sshv6-server" {
+        value 79;
+        description
+          "SSHv6 server protocol.";
+      }
+      enum "syslog" {
+        value 80;
+        description
+          "SYSLOG protocol.";
+      }
+      enum "tcpsyn" {
+        value 81;
+        description
+          "TCP SYN protocol.";
+      }
+      enum "telnet-client" {
+        value 82;
+        description
+          "TELNET client protocol.";
+      }
+      enum "telnet-server" {
+        value 83;
+        description
+          "TELNET server protocol.";
+      }
+      enum "telnetv6-client" {
+        value 84;
+        description
+          "TELNETv6 client protocol.";
+      }
+      enum "telnetv6-server" {
+        value 85;
+        description
+          "TELNETv6 server protocol.";
+      }
+      enum "tftp" {
+        value 86;
+        description
+          "TFTP protocol.";
+      }
+      enum "tftpv6-client" {
+        value 87;
+        description
+          "TFTPv6 client protocol.";
+      }
+      enum "traffic-behavior-log" {
+        value 88;
+        description
+          "Traffic Behavior Log.";
+      }
+      enum "unicast-vrrp" {
+        value 89;
+        description
+          "Unicast VRRP protocol.";
+      }
+      enum "user-defined-flow-1" {
+        value 90;
+        description
+          "User defined flow 1.";
+      }
+      enum "user-defined-flow-2" {
+        value 91;
+        description
+          "User defined flow 2.";
+      }
+      enum "user-defined-flow-3" {
+        value 92;
+        description
+          "User defined flow 3.";
+      }
+      enum "user-defined-flow-4" {
+        value 93;
+        description
+          "User defined flow 4.";
+      }
+      enum "user-defined-flow-5" {
+        value 94;
+        description
+          "User defined flow 5.";
+      }
+      enum "user-defined-flow-6" {
+        value 95;
+        description
+          "User defined flow 6.";
+      }
+      enum "user-defined-flow-7" {
+        value 96;
+        description
+          "User defined flow 7.";
+      }
+      enum "user-defined-flow-8" {
+        value 97;
+        description
+          "User defined flow 8.";
+      }
+      enum "user-defined-flow-9" {
+        value 98;
+        description
+          "User defined flow 9.";
+      }
+      enum "user-defined-flow-10" {
+        value 99;
+        description
+          "User defined flow 10.";
+      }
+      enum "user-defined-flow-11" {
+        value 100;
+        description
+          "User defined flow 11.";
+      }
+      enum "user-defined-flow-12" {
+        value 101;
+        description
+          "User defined flow 12.";
+      }
+      enum "user-defined-flow-13" {
+        value 102;
+        description
+          "User defined flow 13.";
+      }
+      enum "user-defined-flow-14" {
+        value 103;
+        description
+          "User defined flow 14.";
+      }
+      enum "user-defined-flow-15" {
+        value 104;
+        description
+          "User defined flow 15.";
+      }
+      enum "user-defined-flow-16" {
+        value 105;
+        description
+          "User defined flow 16.";
+      }
+      enum "user-defined-flow-17" {
+        value 106;
+        description
+          "User defined flow 17.";
+      }
+      enum "user-defined-flow-18" {
+        value 107;
+        description
+          "User defined flow 18.";
+      }
+      enum "user-defined-flow-19" {
+        value 108;
+        description
+          "User defined flow 19.";
+      }
+      enum "user-defined-flow-20" {
+        value 109;
+        description
+          "User defined flow 20.";
+      }
+      enum "user-defined-flow-21" {
+        value 110;
+        description
+          "User defined flow 21.";
+      }
+      enum "user-defined-flow-22" {
+        value 111;
+        description
+          "User defined flow 22.";
+      }
+      enum "user-defined-flow-23" {
+        value 112;
+        description
+          "User defined flow 23.";
+      }
+      enum "user-defined-flow-24" {
+        value 113;
+        description
+          "User defined flow 24.";
+      }
+      enum "user-defined-flow-25" {
+        value 114;
+        description
+          "User defined flow 25.";
+      }
+      enum "user-defined-flow-26" {
+        value 115;
+        description
+          "User defined flow 26.";
+      }
+      enum "user-defined-flow-27" {
+        value 116;
+        description
+          "User defined flow 27.";
+      }
+      enum "user-defined-flow-28" {
+        value 117;
+        description
+          "User defined flow 28.";
+      }
+      enum "user-defined-flow-29" {
+        value 118;
+        description
+          "User defined flow 29.";
+      }
+      enum "user-defined-flow-30" {
+        value 119;
+        description
+          "User defined flow 30.";
+      }
+      enum "user-defined-flow-31" {
+        value 120;
+        description
+          "User defined flow 31.";
+      }
+      enum "user-defined-flow-32" {
+        value 121;
+        description
+          "User defined flow 32.";
+      }
+      enum "user-defined-flow-33" {
+        value 122;
+        description
+          "User defined flow 33.";
+      }
+      enum "user-defined-flow-34" {
+        value 123;
+        description
+          "User defined flow 34.";
+      }
+      enum "user-defined-flow-35" {
+        value 124;
+        description
+          "User defined flow 35.";
+      }
+      enum "user-defined-flow-36" {
+        value 125;
+        description
+          "User defined flow 36.";
+      }
+      enum "user-defined-flow-37" {
+        value 126;
+        description
+          "User defined flow 37.";
+      }
+      enum "user-defined-flow-38" {
+        value 127;
+        description
+          "User defined flow 38.";
+      }
+      enum "user-defined-flow-39" {
+        value 128;
+        description
+          "User defined flow 39.";
+      }
+      enum "user-defined-flow-40" {
+        value 129;
+        description
+          "User defined flow 40.";
+      }
+      enum "user-defined-flow-41" {
+        value 130;
+        description
+          "User defined flow 41.";
+      }
+      enum "user-defined-flow-42" {
+        value 131;
+        description
+          "User defined flow 42.";
+      }
+      enum "user-defined-flow-43" {
+        value 132;
+        description
+          "User defined flow 43.";
+      }
+      enum "user-defined-flow-44" {
+        value 133;
+        description
+          "User defined flow 44.";
+      }
+      enum "user-defined-flow-45" {
+        value 134;
+        description
+          "User defined flow 45.";
+      }
+      enum "user-defined-flow-46" {
+        value 135;
+        description
+          "User defined flow 46.";
+      }
+      enum "user-defined-flow-47" {
+        value 136;
+        description
+          "User defined flow 47.";
+      }
+      enum "user-defined-flow-48" {
+        value 137;
+        description
+          "User defined flow 48.";
+      }
+      enum "user-defined-flow-49" {
+        value 138;
+        description
+          "User defined flow 49.";
+      }
+      enum "user-defined-flow-50" {
+        value 139;
+        description
+          "User defined flow 50.";
+      }
+      enum "user-defined-flow-51" {
+        value 140;
+        description
+          "User defined flow 51.";
+      }
+      enum "user-defined-flow-52" {
+        value 141;
+        description
+          "User defined flow 52.";
+      }
+      enum "user-defined-flow-53" {
+        value 142;
+        description
+          "User defined flow 53.";
+      }
+      enum "user-defined-flow-54" {
+        value 143;
+        description
+          "User defined flow 54.";
+      }
+      enum "user-defined-flow-55" {
+        value 144;
+        description
+          "User defined flow 55.";
+      }
+      enum "user-defined-flow-56" {
+        value 145;
+        description
+          "User defined flow 56.";
+      }
+      enum "user-defined-flow-57" {
+        value 146;
+        description
+          "User defined flow 57.";
+      }
+      enum "user-defined-flow-58" {
+        value 147;
+        description
+          "User defined flow 58.";
+      }
+      enum "user-defined-flow-59" {
+        value 148;
+        description
+          "User defined flow 59.";
+      }
+      enum "user-defined-flow-60" {
+        value 149;
+        description
+          "User defined flow 60.";
+      }
+      enum "user-defined-flow-61" {
+        value 150;
+        description
+          "User defined flow 61.";
+      }
+      enum "user-defined-flow-62" {
+        value 151;
+        description
+          "User defined flow 62.";
+      }
+      enum "user-defined-flow-63" {
+        value 152;
+        description
+          "User defined flow 63.";
+      }
+      enum "user-defined-flow-64" {
+        value 153;
+        description
+          "User defined flow 64.";
+      }
+      enum "vrrp" {
+        value 154;
+        description
+          "VRRP protocol.";
+      }
+      enum "web" {
+        value 155;
+        description
+          "Web protocol.";
+      }
+      enum "web-auth-server" {
+        value 156;
+        description
+          "Web authentication server protocol.";
+      }
+      enum "whitelist" {
+        value 157;
+        description
+          "Whitelist.";
+      }
+      enum "whitelist-bgp" {
+        value 158;
+        description
+          "Whitelist of BGP protocol.";
+      }
+      enum "whitelist-isis" {
+        value 159;
+        description
+          "Whitelist of ISIS protocol.";
+      }
+      enum "whitelist-ldp" {
+        value 160;
+        description
+          "Whitelist of LDP protocol.";
+      }
+      enum "whitelist-ospf" {
+        value 161;
+        description
+          "Whitelist of OSPF protocol.";
+      }
+      enum "whitelist-radius" {
+        value 162;
+        description
+          "Whitelist of Radius protocol.";
+      }
+      enum "whitelist-rsvp" {
+        value 163;
+        description
+          "Whitelist of RSVP protocol.";
+      }
+      enum "whitelistv6" {
+        value 164;
+        description
+          "IPv6 whitelist.";
+      }
+      enum "whitelistv6-bgpv6" {
+        value 165;
+        description
+          "IPv6 whitelist of BGPv6 protocol.";
+      }
+      enum "whitelistv6-ospfv3" {
+        value 166;
+        description
+          "IPv6 whitelist of OSPFv3 protocol.";
+      }
+      enum "hwtacacsv6" {
+        value 167;
+        description
+          "HWTACACSV6 protocol.";
+      }
+      enum "lsppingv6" {
+        value 168;
+        description
+          "Lsppingv6 packet.";
+      }
+      enum "pcep" {
+        value 169;
+        description
+          "Pcep packet.";
+      }
+      enum "radiusv6" {
+        value 170;
+        description
+          "Radiusv6 packet.";
+      }
+      enum "syslogv6" {
+        value 171;
+        description
+          "Syslogv6 packet.";
+      }
+      enum "vrrpv6" {
+        value 172;
+        description
+          "Vrrpv6 packet.";
+      }
+      enum "web-auth-serverv6" {
+        value 173;
+        description
+          "Web-auth-serverv6 packet.";
+      }
+    }
+    description
+      "Protocol name.";
+  }
+  typedef protocol-group-deviations {
+    type enumeration {
+      enum "management" {
+        value 1;
+        description
+          "Management packets.";
+      }
+      enum "whitelist" {
+        value 2;
+        description
+          "Group of authorized users or high-priority users.";
+      }
+      enum "access-user" {
+        value 3;
+        description
+          "Access packets.";
+      }
+      enum "multicast" {
+        value 4;
+        description
+          "Multicast packets.";
+      }
+      enum "link-layer" {
+        value 5;
+        description
+          "Data link layer packets, including connectivity packets and reliability packets.
+          Data link layer packets also include protocol packets that influence services and links on the data link layer.";
+      }
+      enum "mpls" {
+        value 6;
+        description
+          "MPLS packets.";
+      }
+      enum "network-layer" {
+        value 7;
+        description
+          "Network layer packets, including entries that the forwarding plane instructs the control plane to deliver.";
+      }
+      enum "user-defined-flow" {
+        value 8;
+        description
+          "User-defined flows.";
+      }
+      enum "arp" {
+        value 9;
+        description
+          "ARP packets.";
+      }
+      enum "route" {
+        value 10;
+        description
+          "Routing protocol packets.";
+      }
+    }
+    description
+      "Protocol group.";
+  }
+  deviation /cpudefend:cpudefend/cpudefend:policys/cpudefend:policy/cpudefend:cpcar-protocol-names/cpudefend:cpcar-protocol-name/cpudefend:protocol-name {
+    deviate replace {
+      type cpudefend-devs-CH-NE-X3:protocol-name-deviations;
+    }
+  }
+  deviation "/devm:devm/devm:mpu-boards/devm:mpu-board/cpudefend:cpudefend" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:mpu-boards/devm:mpu-board/cpudefend:cpudefend-devm" {
+    deviate not-supported;
+  }
+  deviation /cpudefend:cpudefend/cpudefend:cpcar/cpudefend:protocol-name-statisticss/cpudefend:protocol-name-statistics/cpudefend:protocol-name {
+    deviate replace {
+      type cpudefend-devs-CH-NE-X3:protocol-name-deviations;
+    }
+  }
+  deviation /ifm:ifm/ifm:interfaces/ifm:interface/cpudefend:cpudefend/cpudefend:protocol-port-car {
+    deviate not-supported;
+  }
+  deviation /cpudefend:cpudefend/cpudefend:arp-attack-defense/cpudefend:arp-attack-currents/cpudefend:arp-attack-current/cpudefend:vlan-id {
+    deviate not-supported;
+  }
+  deviation /cpudefend:cpudefend/cpudefend:arp-attack-defense/cpudefend:arp-attack-historys/cpudefend:arp-attack-history/cpudefend:vlan-id {
+    deviate not-supported;
+  }
+  deviation /cpudefend:cpudefend/cpudefend:policys/cpudefend:policy/cpudefend:enable {
+    deviate not-supported;
+  }
+  deviation /cpudefend:cpudefend/cpudefend:policys/cpudefend:policy/cpudefend:alarm-protocol-names {
+    deviate not-supported;
+  }
+  deviation /cpudefend:cpudefend/cpudefend:policys/cpudefend:policy/cpudefend:tm-three-level-scheduling/cpudefend:protocol-group-settings/cpudefend:protocol-group-setting/cpudefend:protocol-group {
+    deviate replace {
+      type cpudefend-devs-CH-NE-X3:protocol-group-deviations;
+    }
+  }
+  deviation "/cpudefend:cpudefend/cpudefend:tm-three-level-scheduling/cpudefend:protocol-group-statisticss/cpudefend:protocol-group-statistics/cpudefend:protocol-group" {
+    deviate replace {
+      type cpudefend-devs-CH-NE-X3:protocol-group-deviations;
+    }
+  }
+  deviation "/cpudefend:cpudefend/cpudefend:tm-three-level-scheduling/cpudefend:protocol-group-states/cpudefend:protocol-group-state/cpudefend:protocol-group" {
+    deviate replace {
+      type cpudefend-devs-CH-NE-X3:protocol-group-deviations;
+    }
+  }
+  deviation "/cpudefend:cpudefend/cpudefend:protocol-port-car" {
+    deviate not-supported;
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/cpudefend:cpudefend/cpudefend:mac-filter" {
+    deviate not-supported;
+  }
+  deviation "/cpudefend:cpudefend/cpudefend:port-mac-filter" {
+    deviate not-supported;
+  }
+  deviation /cpudefend:cpudefend/cpudefend:urpf/cpudefend:global-urpf {
+    deviate not-supported;
+  }
+  ext:deviation-ext "/cpudefend:cpudefend/cpudefend:policys/cpudefend:policy/cpudefend:tm-three-level-scheduling/cpudefend:protocol-group-settings/cpudefend:protocol-group-setting/cpudefend:weight" {
+    ext:deviate-ext add {
+      ext:dynamic-default {
+        ext:default-value "20" {
+          when "../protocol-group = 'management'";
+          description "The default value is 20 when type is management.";
+        }
+        ext:default-value "60" {
+          when "../protocol-group = 'whitelist'";
+          description "The default value is 60 when type is whitelist.";
+        }
+        ext:default-value "30" {
+          when "../protocol-group = 'access-user'";
+          description "The default value is 30 when type is access-user.";
+        }
+        ext:default-value "25" {
+          when "../protocol-group = 'multicast'";
+          description "The default value is 25 when type is multicast.";
+        }
+        ext:default-value "63" {
+          when "../protocol-group = 'link-layer'";
+          description "The default value is 63 when type is link-layer.";
+        }
+        ext:default-value "20" {
+          when "../protocol-group = 'mpls'";
+          description "The default value is 20 when type is MPLS.";
+        }
+        ext:default-value "10" {
+          when "../protocol-group = 'network-layer'";
+          description "The default value is 10 when type is network-layer.";
+        }
+        ext:default-value "30" {
+          when "../protocol-group = 'user-defined-flow'";
+          description "The default value is 30 when type is user-defined-flow.";
+        }
+        ext:default-value "20" {
+          when "../protocol-group = 'arp'";
+          description "The default value is 20 when type is ARP.";
+        }
+        ext:default-value "20" {
+          when "../protocol-group = 'route'";
+          description "The default value is 20 when type is route.";
+        }
+      }
+    }
+  }
+}

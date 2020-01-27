@@ -1,0 +1,943 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-license {
+  namespace "urn:huawei:yang:huawei-license";
+  prefix lcs;
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Proof of permission granted.";
+  revision 2019-06-11 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "license";
+  typedef auth-type {
+    type enumeration {
+      enum "demo" {
+        value 0;
+        description
+          "Demo of a license file.";
+      }
+      enum "commercial" {
+        value 1;
+        description
+          "Commercial of a license file.";
+      }
+    }
+    description
+      "Type of license authority.";
+  }
+  typedef spec-type {
+    type enumeration {
+      enum "resource" {
+        value 0;
+        description
+          "The resource of item.";
+      }
+      enum "function" {
+        value 1;
+        description
+          "The function of item.";
+      }
+      enum "minimum" {
+        value 2;
+        description
+          "The minimum of item.";
+      }
+      enum "default" {
+        value 3;
+        description
+          "The default of item.";
+      }
+      enum "maximum" {
+        value 4;
+        description
+          "The maximum of item.";
+      }
+    }
+    description
+      "Type of license spec.";
+  }
+  typedef state-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "To indicate the license activating state of the system, the value is 'default'.";
+      }
+      enum "trial" {
+        value 1;
+        description
+          "To indicate the license activating state of the system, the value is 'trial'.";
+      }
+      enum "normal" {
+        value 2;
+        description
+          "To indicate the license activating state of the system, the value is 'normal'.";
+      }
+      enum "emergency" {
+        value 3;
+        description
+          "To indicate the license activating state of the system, the value is 'emergency'.";
+      }
+      enum "demo" {
+        value 4;
+        description
+          "To indicate the license activating state of the system, the value is 'demo'.";
+      }
+    }
+    description
+      "Type of license state.";
+  }
+  container license {
+    description
+      "Proof of permission granted.";
+    container global-states {
+      config false;
+      description
+        "List of the global license informations.";
+      list global-state {
+        key "chassis-id";
+        config false;
+        description
+          "Operational state of the global license information.";
+        leaf chassis-id {
+          type string {
+            length "0..31";
+          }
+          config false;
+          description
+            "The device ID of a license file.";
+        }
+        leaf active-filename {
+          type string {
+            length "5..127";
+          }
+          config false;
+          description
+            "The name of a license file.";
+        }
+        leaf active-state {
+          type string {
+            length "1..49";
+          }
+          config false;
+          description
+            "To indicate the license activating state of the system, the value can be 'normal' or 'default'.";
+        }
+        leaf revoke-ticket {
+          type string {
+            length "1..135";
+          }
+          config false;
+          description
+            "The revoket-ticket of a license file.";
+        }
+        leaf esn {
+          type string {
+            length "1..2047";
+          }
+          config false;
+          description
+            "The License ESN.";
+        }
+      }
+    }
+    container license-items {
+      description
+        "List of all license items.";
+      list license-item {
+        ext:operation-exclude create|delete;
+        key "name";
+        description
+          "Configure license item.";
+        leaf name {
+          type string {
+            length "1..31";
+          }
+          description
+            "License item name.";
+        }
+        leaf description {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "The description of a license item.";
+        }
+        leaf default-value {
+          type uint32;
+          config false;
+          description
+            "The default value of a license item.";
+        }
+        leaf maximum-value {
+          type uint32;
+          config false;
+          description
+            "The maximum value of a license item.";
+        }
+        leaf current-value {
+          type uint32;
+          config false;
+          description
+            "The current value of a license item.";
+        }
+        leaf used-value {
+          type uint32;
+          config false;
+          description
+            "The usage value of a license item.";
+        }
+        leaf status {
+          type string {
+            length "1..49";
+          }
+          config false;
+          description
+            "The status of a license item.";
+        }
+        leaf expired-date {
+          type string {
+            length "1..71";
+          }
+          config false;
+          description
+            "The expired date of a license item.";
+        }
+        leaf type {
+          type string {
+            length "1..49";
+          } 
+          config false;
+          description
+            "The type of a license item.";
+        }         
+        leaf trial-state {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "Trial status of a control item.";
+        }
+        leaf trial-remain-day {
+          type uint32;
+          config false;
+          description
+            "Remaining trial days of a license control item.";
+        }
+        leaf trial-remain-times {
+          type uint32;
+          config false;
+          description
+            "Remaining trial times of a license control item.";
+        }
+	    }
+	  }
+    container license-sale-items {
+      config false;
+      description
+        "List of all license saleitems.";
+      list license-sale-item {
+        key "name";
+        config false;
+        description
+          "Operational state of license saleitem.";
+        leaf name {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "License saleitem name.";
+        }
+        leaf description {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "The description of a license saleitem.";
+        }
+        leaf sale-value {
+          type uint32;
+          config false;
+          description
+            "The sales value of a license saleitem.";
+        }
+        container license-items {
+          description
+            "List of all license items.";
+          list license-item {
+            key "name";
+            description
+              "Operational state of license item.";
+            leaf name {
+              type string {
+                length "1..31";
+              }
+              description
+                "License item name.";
+            }
+            leaf description {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "The description of a license item.";
+            }
+            leaf default-value {
+              type uint32;
+              config false;
+              description
+                "The default value of a license item.";
+            }
+            leaf maximum-value {
+              type uint32;
+              config false;
+              description
+                "The maximum value of a license item.";
+            }
+            leaf current-value {
+              type uint32;
+              config false;
+              description
+                "The current value of a license item.";
+            }
+            leaf used-value {
+              type uint32;
+              config false;
+              description
+                "The usage value of a license item.";
+            }
+            leaf status {
+              type string {
+                length "1..49";
+              }
+              config false;
+              description
+                "The status of a license item.";
+            }
+            leaf expired-date {
+              type string {
+                length "1..71";
+              }
+              config false;
+              description
+                "The expired date of a license item.";
+            }
+            leaf type {
+              type string {
+                length "1..49";
+              } 
+              config false;
+              description
+                "The type of a license item.";
+            }         
+            leaf trial-state {
+              type string {
+                length "1..15";
+              }
+              config false;
+              description
+              "Trial status of a control item.";
+            }
+            leaf trial-remain-day {
+              type uint32;
+              config false;
+              description
+                "Remaining trial days of a license control item.";
+            }
+            leaf trial-remain-times {
+              type uint32;
+              config false;
+              description
+                "Remaining trial times of a license control item.";
+            }
+          }
+        }
+      }
+    }
+    container stack-sale-items {
+      config false;
+      description
+        "List of all license sale items.";
+      list stack-sale-item {
+        key "chassis-id";
+        config false;
+        description
+          "Operational state of license sale item.";
+        leaf chassis-id {
+          type string {
+            length "0..31";
+          }
+          config false;
+          description
+            "The device ID of license sale item.";
+        }
+        container license-sale-items {
+          config false;
+          description
+            "List of all license saleitems.";
+          list license-sale-item {
+            key "name";
+            config false;
+            description
+              "Operational state of license saleitem.";
+            leaf name {
+              type string {
+                length "1..31";
+              }
+              config false;
+              description
+                "License saleitem name.";
+            }
+            leaf description {
+              type string {
+                length "1..255";
+              }
+              config false;
+              description
+                "The description of a license saleitem.";
+            }
+            leaf sale-value {
+              type uint32;
+              config false;
+              description
+                "The sales value of a license saleitem.";
+            }
+            container license-items {
+              description
+                "List of all license items.";
+              list license-item {
+                key "name";
+                description
+                  "Operational state of license item.";
+                leaf name {
+                  type string {
+                    length "1..31";
+                  }
+                  description
+                    "License item name.";
+                }
+                leaf description {
+                  type string {
+                    length "1..255";
+                  }
+                  config false;
+                  description
+                    "The description of a license item.";
+                }
+                leaf default-value {
+                  type uint32;
+                  config false;
+                  description
+                    "The default value of a license item.";
+                }
+                leaf maximum-value {
+                  type uint32;
+                  config false;
+                  description
+                    "The maximum value of a license item.";
+                }
+                leaf current-value {
+                  type uint32;
+                  config false;
+                  description
+                    "The current value of a license item.";
+                }
+                leaf used-value {
+                  type uint32;
+                  config false;
+                  description
+                    "The usage value of a license item.";
+                }
+                leaf status {
+                  type string {
+                    length "1..49";
+                  }
+                  config false;
+                  description
+                    "The status of a license item.";
+                }
+                leaf expired-date {
+                  type string {
+                    length "1..71";
+                  }
+                  config false;
+                  description
+                    "The expired date of a license item.";
+                }
+                leaf type {
+                  type string {
+                    length "1..49";
+                  } 
+                  config false;
+                  description
+                    "The type of a license item.";
+                }         
+                leaf trial-state {
+                  type string {
+                    length "1..15";
+                  }
+                  config false;
+                  description
+                  "Trial status of a control item.";
+                }
+                leaf trial-remain-day {
+                  type uint32;
+                  config false;
+                  description
+                    "Remaining trial days of a license control item.";
+                }
+                leaf trial-remain-times {
+                  type uint32;
+                  config false;
+                  description
+                    "Remaining trial times of a license control item.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container spec-items {
+      config false;
+      description
+        "List of all specific license items.";
+      list spec-item {
+        key "name";
+        config false;
+        description
+          "Operational state of specific license item.";
+        leaf name {
+          type string {
+            length "0..63";
+          }
+          config false;
+          description
+            "The name of a specific item.";
+        }
+        leaf description {
+          type string {
+            length "0..127";
+          }
+          config false;
+          description
+            "Description of the specification.";
+        }
+        leaf current-value {
+          type uint32;
+          config false;
+          description
+            "The value of a specific item.";
+        }
+        leaf type {
+          type spec-type;
+          config false;
+          description
+            "The type of a specific item.";
+        }
+        leaf default-value {
+          type uint32;
+          config false;
+          description
+            "The specification default value.";
+        }
+        leaf minimum-value {
+          type uint32;
+          config false;
+          description
+            "The specification minimum value.";
+        }
+        leaf maximum-value {
+          type uint32;
+          config false;
+          description
+            "The specification maximum value.";
+        }
+      }
+    }
+    container license-files {
+      config false;
+      description
+        "List of all information of a license file.";
+      list license-file {
+        key "chassis-id filename";
+        config false;
+        description
+          "Operational state of the information of a license file.";
+        leaf chassis-id {
+          type string {
+            length "0..31";
+          }
+          config false;
+          description
+            "The device ID of a license file.";
+        }
+        leaf filename {
+          type string {
+            length "5..127";
+          }
+          config false;
+          description
+            "The name of a license file.";
+        }
+        leaf filesize {
+          type uint32;
+          config false;
+          description
+            "The size of a license file.";
+        }
+        container general {
+          config false;
+          description
+            "Operational state of the general information of a license file.";
+          leaf serial-number {
+            type string {
+              length "0..63";
+            }
+            config false;
+            description
+              "The serial number of a license file.";
+          }
+          leaf creator {
+            type string {
+              length "0..63";
+            }
+            config false;
+            description
+              "The creator of a license file.";
+          }
+          leaf created-time {
+            type yang:date-and-time;
+            config false;
+            description
+              "The created time of a license file.";
+          }
+          leaf country {
+            type string {
+              length "0..63";
+            }
+            config false;
+            description
+              "The country information of a license file.";
+          }
+          leaf customer {
+            type string {
+              length "0..63";
+            }
+            config false;
+            description
+              "The customer information of a license file.";
+          }
+          leaf office {
+            type string {
+              length "0..63";
+            }
+            config false;
+            description
+              "The office information of a license file.";
+          }
+        }
+        container features {
+          config false;
+          description
+            "List of all the feature information of a license file.";
+          list feature {
+            key "name";
+            config false;
+            description
+              "Operational state of the feature information of a license file.";
+            leaf name {
+              type string {
+                length "0..63";
+              }
+              config false;
+              description
+                "The feature information name of a license file.";
+            }
+            leaf product {
+              type string {
+                length "0..63";
+              }
+              config false;
+              description
+                "The product information of a license file.";
+            }
+            leaf esn {
+              type string {
+                length "0..2055";
+              }
+              config false;
+              description
+                "The ESN of a license file.";
+            }
+            leaf auth-type {
+              type auth-type;
+              config false;
+              description
+                "The authorizing type of a license file.";
+            }
+            leaf running-deadline {
+              type pub-type:date;
+              config false;
+              description
+                "The running deadline of a license file.";
+            }
+            leaf trial-days {
+              type uint32;
+              config false;
+              description
+                "List of the trial days of a license file.";
+            }
+            leaf software-deadline {
+              type pub-type:date;
+              config false;
+              description
+                "The software deadline of a license file.";
+            }
+            leaf hardware-deadline {
+              type pub-type:date;
+              config false;
+              description
+                "The hardware deadline of a license file.";
+            }
+            leaf upgrate-deadline {
+              type pub-type:date;
+              config false;
+              description
+                "The upgrate deadline of a license file.";
+            }
+            container feature-items {
+              config false;
+              description
+                "List of all feature items of a license file.";
+              list feature-item {
+                key "name";
+                config false;
+                description
+                  "Operational state of feature item of a license file.";
+                leaf name {
+                  type string {
+                    length "0..63";
+                  }
+                  config false;
+                  description
+                    "Feature item name of a license file.";
+                }
+                leaf value {
+                  type uint32;
+                  config false;
+                  description
+                    "Feature item value of a license file.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container resource-usages {
+      config false;
+      description
+        "List of all license resource usages.";
+      list resource-usage {
+        key "name";
+        config false;		
+        description
+          "Operational state of license resource usage.";
+        leaf name {
+          type string {
+            length "0..31";
+          }
+          config false;		  
+          description
+            "The name of resource item.";
+        }
+        leaf usage {
+          type uint32;
+          config false;
+          description
+            "The usage of resource item.";
+        }
+        leaf active-value {
+          type uint32;
+          config false;
+          description
+            "The active value of resource item.";
+        }
+      }
+    }
+    container resource-thresholds {
+      config false;
+      description
+        "List of license resource usage thresholds.";
+      list resource-threshold {
+        key "name";
+        config false;
+        description
+          "Operational state of license resource usage threshold.";
+        leaf name {
+          type string {
+            length "0..31";
+          }
+          config false;
+          description
+            "Name of a license resource control item.";
+        }
+        leaf threshold {
+          type uint32 {
+            range "50..95";
+          }
+          config false;
+          description
+            "Usage threshold of a license control resource item.";
+        }
+        leaf configurable-switch {
+          type uint32 {
+            range "0..1";
+          }
+          default "0";
+          config false;
+          description
+            "Configurable flag of a license resource item.";
+        }
+        leaf description {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "Description of a license resource control item.";
+        }
+      }
+    }
+  }
+  rpc license-active {
+    description
+      "To active a license file.";
+    input {
+      leaf filename {
+        type string {
+          length "5..127";
+        }
+        description
+          "The name of a license file.";
+      }
+    }
+  }
+  rpc license-revoke {
+    description
+      "To revoke a license file.";
+  }
+  rpc license-verify {
+    description
+      "To verify a license file.";
+    ext:node-ref "/lcs";
+    input {
+      leaf filename {
+        type string {
+          length "5..127";
+        }
+        description
+          "The name of a license file.";
+      }
+    }
+  }
+  rpc license-revoke-chassis {
+    description
+      "To revoke a license file by device ID.";
+    input {
+      leaf chassis-id {
+        type string {
+          length "1..31";
+        }
+        description
+          "The device ID of revoke license action.";
+      }
+    }
+  }
+  rpc license-delete {
+    description
+      "To delete a license file in $_license.";
+    input {
+      leaf filename {
+        type string {
+          length "1..127";
+        }
+        description
+          "The name of a license file.";
+      }
+    }
+  }
+  rpc license-trial{
+    description
+      "Enable or disable the trial of a specific control item.";
+    input {
+      leaf trial-switch {
+        type boolean;
+        mandatory true;
+        description
+          "Whether to enable or disable the trial function of a control item.";
+      }
+    }
+  }
+  rpc license-export {
+    description
+      "Export the license to a file.";
+    input {
+      leaf filename {
+        type string {
+          length "5..127";
+        }
+        description
+          "The file name of exporting license.";
+      }
+    }
+  }
+  rpc startup-paf {
+    description
+      "Configure an existing paf file as the startup paf file.";
+    input {
+      leaf filename {
+        type string {
+          length "5..48";
+        }
+        mandatory true;
+        description
+          "Name of a paf file.";
+      }
+    }
+  }
+  rpc license-emergency {
+    description
+      "To activate license emergency mode.";
+  }
+}

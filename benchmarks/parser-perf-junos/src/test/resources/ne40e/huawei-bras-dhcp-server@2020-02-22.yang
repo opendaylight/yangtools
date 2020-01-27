@@ -1,0 +1,390 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-dhcp-server {
+  namespace "urn:huawei:yang:huawei-bras-dhcp-server";
+  prefix bras-dhcp-server;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Configure the DHCP server.";
+  revision 2020-02-22 {
+    description
+      "Description modification.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-17 {  
+    description  
+      "Second revision.";  
+    reference  
+      "Huawei private.";  
+  }  
+  revision 2019-04-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ippool";
+/****************************type definitions*************************************/ 
+  typedef dhcp-server-algorithm-type {
+    type enumeration {
+      enum "master-backup" {
+        value 1;
+        description
+          "The master-backup algorithm.";
+      }
+      enum "loading-share" {
+        value 2;
+        description
+          "The load sharing algorithm.";
+      }
+      enum "polling" {
+        value 3;
+        description
+          "The polling algorithm.";
+      }
+    }
+    description
+      "DHCP server algorithm type.";
+  }
+/****************************type definitions*************************************/
+
+/********************************groupings***************************************/
+  grouping server-property{
+    description
+      "Configure dhcp-server property.";
+    leaf dead-count {
+      type uint8 {
+        range "1..64";
+      }
+      description
+        "Specify the maximum number of times at which the DHCP server does not send response packets.";
+    }
+    leaf timeout {
+      type uint8 {
+        range "1..60";
+      }
+      units "s";
+      default "25";
+      description
+        "Specify the timeout period for waiting for response packets from a DHCP server.";
+    }
+    leaf dead-time {
+      type uint16 {
+        range "1..65535";
+      }
+      units "min";
+      default "3";
+      description
+        "Specify the recovery time of a DHCP server.";
+    }
+    leaf nak-count {
+      type uint8 {
+        range "0..255";
+      }
+      default "10";
+      description
+        "Specify the maximum number of NAK packets a DHCP server can receive consecutively.";
+    }
+  }
+/********************************groupings***************************************/
+  container bras-dhcp-server {
+    description
+      "Configure the DHCP server.";
+    container dhcp-servers {
+      description
+        "List of DHCP servers. A DHCP server must be bound to at least one dhcp-server group at the same time.";
+      list dhcp-server {
+        key "ip-address vpn-instance";
+        description
+          "Configure a DHCP server and must bind it to at least one dhcp-server group at the same time.";
+        leaf ip-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "The IP address of the DHCP server.";
+        }
+        leaf vpn-instance {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+          description
+            "Define the vpn-instance of a DHCP server. If dhcp-server belongs to the public network, vpn-instance can be defined as '_public_'.";
+        }
+        uses server-property;
+
+        container statistics {
+          config false;
+          description
+            "Display DHCPv4 server statistics.";
+          leaf send-packets {
+            type uint32;
+            description
+              "Number of sent packets.";
+          }
+          leaf receive-packets {
+            type uint32;
+            description
+              "Number of received packets.";
+          }
+          leaf error-packets {
+            type uint32;
+            description
+              "Number of error packets.";
+          }
+          leaf limit-number {
+            type uint32;
+            description
+              "Number of packets discarded due to rate limiting.";
+          }
+          leaf timeout-packets {
+            type uint32;
+            description
+              "Number of times that a DHCP server fails to respond to a DHCP request before the timer expires.";
+          }
+          leaf latest-send-time {
+            type yang:date-and-time;
+            description
+              "Last time when a packet was sent.";
+          }
+          leaf lastest-receive-time {
+            type yang:date-and-time;
+            description
+              "Last time when a packet was received.";
+          }
+          leaf discover-packets {
+            type uint32;
+            description
+              "Number of discover messages.";
+          }
+          leaf request-packets {
+            type uint32;
+            description
+              "Number of request messages.";
+          }
+          leaf decline-packets {
+            type uint32;
+            description
+              "Number of decline messages.";
+          }
+          leaf release-packets {
+            type uint32;
+            description
+              "Number of release messages.";
+          }
+          leaf inform-packets {
+            type uint32;
+            description
+              "Number of inform messages.";
+          }
+          leaf offer-packets {
+            type uint32;
+            description
+              "Number of offer messages.";
+          }
+          leaf ack-packets {
+            type uint32;
+            description
+              "Number of ACK messages.";
+          }
+          leaf nak-packets {
+            type uint32;
+            description
+              "Number of NAK messages.";
+          }
+          leaf bootp-requset-packets {
+            type uint32;
+            description
+              "Number of BOOTP request packets.";
+          }
+          leaf bootp-ack-packets {
+            type uint32;
+            description
+              "Number of BOOTP reply packets.";
+          }
+          leaf force-renew-packets {
+            type uint32 ;
+            description
+            "Number of force renew packets.";
+          }
+        }
+      }
+    }
+    container dhcp-server-groups {
+      description
+        "List of DHCPv4 server groups.";
+      list dhcp-server-group {
+        key "name";
+        max-elements 4096;
+        description
+          "Configure the DHCPv4 server group.";
+        leaf name {
+          ext:case-sensitivity lower-only;
+          type string {
+            length "1..32";
+            pattern "[a-z0-9._-]{1,32}";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Specify the name of the DHCPv4 server group.";
+        }
+        container bind-servers {
+          description
+            "List of IP addresses of a DHCPv4 server and the weight of a specified DHCPv4 server when it performs load balancing.";
+          list bind-server {
+            key "ip-address vpn-instance";
+            max-elements 8;
+            description
+              "Configure the IP address of a DHCPv4 server and the weight of a specified DHCPv4 server when it performs load balancing.";
+            leaf ip-address {
+              type leafref {
+                path "/bras-dhcp-server:bras-dhcp-server/bras-dhcp-server:dhcp-servers/bras-dhcp-server:dhcp-server/bras-dhcp-server:ip-address";
+              }
+              description
+                "Specify the IP address of the DHCPv4 server in the dotted decimal format.";
+            }
+            leaf vpn-instance {
+              type leafref {
+                path "/bras-dhcp-server:bras-dhcp-server/bras-dhcp-server:dhcp-servers/bras-dhcp-server:dhcp-server/bras-dhcp-server:vpn-instance";
+              }
+              description
+                "Specify the VPN instance name. If the dhcp-server belongs to the public netwaork, vpn-instance can be defined as '_public_'.";
+            }
+            leaf weight {
+              type uint32 {
+                range "0..100";
+              }
+              default "5";
+              description
+                "Specify the weight of a DHCPv4 server.";
+            }
+          }
+        }
+        container giaddr {
+          must "not(./vpn-instance) or ./ip-address";
+          description
+            "Configure the giaddr address of packets sent by a DHCPv4 server group.";
+          choice giaddr {
+            description
+              "Configure the giaddr address of packets sent by a DHCPv4 server group.";
+            case if-name {
+              description
+                "Specify the interface whose IP address that is used as the GiAddr address.";
+              leaf if-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                description
+                  "Specify the interface whose IP address that is used as the GiAddr address of packets sent by the DHCPv4 server group.";
+              }
+            }
+            case ip-address {
+              description
+                "Specify the IP address that is used as the GiAddr address.";
+              leaf ip-address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Specify the IP address that is used as the GiAddr address of packets sent by the DHCPv4 server group. The address is in dotted decimal notation.";
+              }
+              leaf vpn-instance {
+                type leafref {
+                  path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+                }
+                description
+                  "Specify the VPN instance name.";
+              }
+            }
+          }
+        }
+        container server-algorithm {
+          description
+            "Configure an algorithm of DHCPv4 servers.";
+          leaf type {
+            type dhcp-server-algorithm-type;
+            default "master-backup";
+            description
+              "Specify the type of algorithm.";
+          }
+          leaf loose-check {
+            when "../type = 'polling'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable DHCPv4 server algorithm as check-loose when algorithmType is polling.";
+          }
+        }
+        container server-forward {
+          when "../server-algorithm/type = 'polling'";
+          description
+            "Configure the device to forward DHCP rebind messages to all DHCPv4 servers in a DHCPv4 server group.";
+          leaf rebind-forward {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the device to forward DHCP rebind messages to all DHCPv4 servers in a DHCPv4 server group.";
+          }
+        }
+        container server-source {
+          description
+            "Configure the source IP address of the packets sent by a DHCPv4 server group.";
+          choice config {
+            description
+              "Configure the source IP address of the packets sent by a DHCPv4 server group.";
+            case gateway-mode {
+              description
+                "Indicate the gateway address of the user address pool as source address.";
+              leaf gateway-mode {
+                type empty;
+                description
+                  "Indicate that the source address of the packets sent by the DHCPv4 server group is the gateway address of the user address pool.";
+              }
+            }
+            case if-name {
+              description
+                "Indicate the IP address of the interface as the source address.";
+              leaf if-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                description
+                  "Indicate that the source address of the packets sent by the DHCPv4 server group is the IP address of the interface.";
+              }
+            }
+          }
+        }
+      }
+    }
+    container server-global-property {
+      description
+        "Configure DHCP server global property.";
+      uses server-property;
+    }
+  }
+}

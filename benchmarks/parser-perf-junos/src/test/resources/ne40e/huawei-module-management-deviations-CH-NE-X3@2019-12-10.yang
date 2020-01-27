@@ -1,0 +1,33 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-module-management-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-module-management-deviations-CH-NE-X3";
+  prefix module-management-devs-CH-NE-X3;
+
+  import huawei-module-management {
+    prefix module-management;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Module deviations.";
+
+  revision 2019-12-10 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/module-management:module-management/module-management:operation-schedules/module-management:operation-schedule/module-management:name" {
+    deviate not-supported;
+  }
+}

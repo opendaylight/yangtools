@@ -1,0 +1,48 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mc-fwd-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-mc-fwd-notification";
+  prefix multicast-forward-notification;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of multicast-forward-notification.";
+  revision 2019-11-26 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forwarding";
+  notification nat-igmp-report-event {
+    description
+      "Send IGMP package data.";
+    leaf ifname {
+      type pub-type:if-name;
+      description
+        "Name of an interface.";
+    }
+    leaf igmp-package-data {
+      type string {
+        length "1..512";
+      }
+      description
+        "Igmp package data.";
+    }
+  }
+}

@@ -1,0 +1,209 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-igmp-mld-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-igmp-mld-notification";
+  prefix igmp-mld-n;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "The module defines notifications for IGMP and MLD.";
+  revision 2019-07-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef ip-addr-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown type.";
+      }
+      enum "ipv4unicast" {
+        value 1;
+        description
+          "IPv4 unicast.";
+      }
+      enum "ipv6unicast" {
+        value 2;
+        description
+          "IPv6 unicast.";
+      }
+    }
+    description
+      "Address family.";
+  }
+  typedef instance-name {
+    type string {
+      length "1..31";
+    }
+    description
+      "Instance name.";
+  }
+  notification hw-igmp-mld-interface-limit {
+    description
+      "Membership report message is discarded because the interface-specific IGMP or MLD group membership limitation is exceeded.";
+    leaf address-family {
+      type igmp-mld-n:ip-addr-type;
+      description
+        "Address family.";
+    }
+    leaf src-addr {
+      type inet:ip-address-no-zone;
+      description
+        "Source address.";
+    }
+    leaf grp-addr {
+      type inet:ip-address-no-zone;
+      description
+        "Group address.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf current-count {
+      type uint32;
+      description
+        "Limit on the number of IGMP entries on the device.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Name of the interface.";
+    }
+    leaf instance-name {
+      type igmp-mld-n:instance-name;
+      description
+        "Name of the instance where the number of IGMP entries on the interface exceeded the limit.";
+    }
+  }
+  notification hw-igmp-mld-interface-limit-clear {
+    description
+      "The new Report message can be processed because the number of IGMP or MLD group memberships on the interface falls below the upper limit.";
+    leaf address-family {
+      type igmp-mld-n:ip-addr-type;
+      description
+        "Address family.";
+    }
+    leaf src-addr {
+      type inet:ip-address-no-zone;
+      description
+        "Source address.";
+    }
+    leaf grp-addr {
+      type inet:ip-address-no-zone;
+      description
+        "Group address.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf current-count {
+      type uint32;
+      description
+        "Limit on the number of IGMP entries on the device.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Name of the interface.";
+    }
+    leaf instance-name {
+      type igmp-mld-n:instance-name;
+      description
+        "Name of the instance where the number of IGMP entries on the interface exceeded the limit.";
+    }
+  }
+  notification hw-igmp-mld-interface-threshold-exceed {
+    description
+      "The number of IGMP or MLD entries on the interface reached the upper threshold.";
+    leaf address-family {
+      type igmp-mld-n:ip-addr-type;
+      description
+        "Address family.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf current-count {
+      type uint32;
+      description
+        "Number of created IGMP/MLD entries on the interface.";
+    }
+    leaf threshold-count {
+      type uint32;
+      description
+        "Threshold at which the alarm is generated.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Name of the interface.";
+    }
+    leaf instance-name {
+      type igmp-mld-n:instance-name;
+      description
+        "Instance of which the number of created (S, G) entries on the device reaches the specified limit.";
+    }
+  }
+  notification hw-igmp-mld-interface-threshold-exceed-clear {
+    description
+      "The number of IGMP or MLD entries on the interface fell below the lower threshold.";
+    leaf address-family {
+      type igmp-mld-n:ip-addr-type;
+      description
+        "Address family.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf current-count {
+      type uint32;
+      description
+        "Number of created IGMP/MLD entries on the interface.";
+    }
+    leaf threshold-count {
+      type uint32;
+      description
+        "Threshold at which the alarm is generated.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Name of the interface.";
+    }
+    leaf instance-name {
+      type igmp-mld-n:instance-name;
+      description
+        "Instance of which the number of created (S, G) entries on the device reaches the specified limit.";
+    }
+  }
+  ext:task-name "igmp";
+}

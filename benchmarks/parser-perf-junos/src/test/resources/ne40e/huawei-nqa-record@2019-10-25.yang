@@ -1,0 +1,866 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-nqa-record {
+  yang-version 1;
+  belongs-to huawei-nqa {
+    prefix nqa;
+  }
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of submodule nqa-record.";
+
+  revision 2019-10-25 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef test-finsh-status-type {
+    type enumeration {
+      enum finished {
+        value 1;
+        description
+          "Finished.";
+      }
+      enum running {
+        value 0;
+        description
+          "Running.";
+      }
+    }
+    description
+      "Description of test-finsh-status-type.";
+  }
+  typedef test-step-type {
+    type enumeration {
+      enum simple-cir {
+        value 0;
+        description
+          "Simple CIR.";
+      }
+      enum percent-25-cir {
+        value 1;
+        description
+          "Step 25% CIR.";
+      }
+      enum percent-50-cir {
+        value 2;
+        description
+          "Step 50% CIR.";
+      }
+      enum percent-75-cir {
+        value 3;
+        description
+          "Step 75% CIR.";
+      }
+      enum percent-100-cir {
+        value 4;
+        description
+          "Step 100% CIR.";
+      }
+      enum color-blind-eir {
+        value 5;
+        description
+          "Color-blind EIR.";
+      }
+      enum color-aware-eir {
+        value 6;
+        description
+          "Color-aware EIR.";
+      }
+      enum color-blind-traffic-policing {
+        value 7;
+        description
+          "Color-blind traffic policing.";
+      }
+      enum color-aware-traffic-policing {
+        value 8;
+        description
+          "Color-aware traffic policing.";
+      }
+      enum performance {
+        value 9;
+        description
+          "Performance.";
+      }
+      enum green-eir {
+        value 10;
+        description
+          "EIR green packet test.";
+      }
+      enum yellow-eir {
+        value 11;
+        description
+          "EIR yellow packet test.";
+      }
+      enum total-eir {
+        value 12;
+        description
+          "Total EIR test.";
+      }
+      enum green-traffic-policing {
+        value 13;
+        description
+          "Traffic policing green packet test.";
+      }
+      enum yellow-traffic-policing {
+        value 14;
+        description
+          "Traffic policing yellow packet test.";
+      }
+      enum total-traffic-policing {
+        value 15;
+        description
+          "Total traffic policing test.";
+      }
+      enum init {
+        value 16;
+        description
+          "Init status.";
+      }
+    }
+    description
+      "Description of test-step-type.";
+  }
+  typedef result-status-type {
+    type enumeration {
+      enum success {
+        value 0;
+        description
+          "Success.";
+      }
+      enum failed {
+        value 1;
+        description
+          "Failed.";
+      }
+      enum no-result {
+        value 2;
+        description
+          "Init status.";
+      }
+      enum negotiate-failed {
+        value 3;
+        description
+          "Negotiate failed.";
+      }
+    }
+    description
+      "Description of result-status-type.";
+  }
+  typedef test-result-type {
+    type enumeration {
+      enum pass {
+        value 0;
+        description
+          "Pass.";
+      }
+      enum failed {
+        value 1;
+        description
+          "Failed.";
+      }
+      enum abort {
+        value 2;
+        description
+          "Abort.";
+      }
+      enum abnormal {
+        value 3;
+        description
+          "Abnormal.";
+      }
+      enum nil {
+        value 4;
+        description
+          "--";
+      }
+    }
+    description
+      "Description of test-result-type.";
+  }
+  typedef test-mode-type {
+    type enumeration {
+      enum round-trip {
+        value 0;
+        description
+          "Round-trip.";
+      }
+    }
+    description
+      "Description of test-mode-type.";
+  }
+  typedef test-last-step-type {
+    type enumeration {
+      enum simple-cir {
+        value 0;
+        description
+          "Simple CIR.";
+      }
+      enum percent-25-cir {
+        value 1;
+        description
+          "Step 25% CIR.";
+      }
+      enum percent-50-cir {
+        value 2;
+        description
+          "Step 50% CIR.";
+      }
+      enum percent-75-cir {
+        value 3;
+        description
+          "Step 75% CIR.";
+      }
+      enum percent-100-cir {
+        value 4;
+        description
+          "Step 100% CIR.";
+      }
+      enum color-blind-eir {
+        value 5;
+        description
+          "Color-blind EIR.";
+      }
+      enum color-aware-eir {
+        value 6;
+        description
+          "Color-aware EIR.";
+      }
+      enum color-blind-traffic-policing {
+        value 7;
+        description
+          "Color-blind traffic policing.";
+      }
+      enum color-aware-traffic-policing {
+        value 8;
+        description
+          "Color-aware traffic policing.";
+      }
+      enum performance {
+        value 9;
+        description
+          "Performance.";
+      }
+      enum green-eir {
+        value 10;
+        description
+          "CIR/EIR Test.";
+      }
+      enum yellow-eir {
+        value 11;
+        description
+          "CIR/EIR Test.";
+      }
+      enum total-eir {
+        value 12;
+        description
+          "CIR/EIR Test.";
+      }
+      enum green-traffic-policing {
+        value 13;
+        description
+          "Traffic Policing Test.";
+      }
+      enum yellow-traffic-policing {
+        value 14;
+        description
+          "Traffic Policing Test.";
+      }
+      enum total-traffic-policing {
+        value 15;
+        description
+          "Traffic Policing Test.";
+      }
+      enum init {
+        value 16;
+        description
+          "Init status.";
+      }
+    }
+    description
+      "Description of test-last-step-type.";
+  }
+  typedef test-stage-type {
+    type enumeration {
+      enum configuration-test {
+        value 0;
+        description
+          "Configuration test.";
+      }
+      enum performance-test {
+        value 1;
+        description
+          "Performance test.";
+      }
+    }
+    description
+      "Description of test-stage-type.";
+  }
+  typedef result-path-jitter-status-type {
+    type enumeration {
+      enum initial {
+        value 0;
+        description
+          "PatchJitter test status initial.";
+      }
+      enum trace-start {
+        value 1;
+        description
+          "PatchJitter test status trace start.";
+      }
+      enum trace-end {
+        value 2;
+        description
+          "PatchJitter test status trace end.";
+      }
+      enum jitter-start {
+        value 3;
+        description
+          "PatchJitter test status jitter start.";
+      }
+      enum jitter-end {
+        value 4;
+        description
+          "PatchJitter test status jitter end.";
+      }
+      enum close {
+        value 5;
+        description
+          "PatchJitter test status close.";
+      }
+    }
+    description
+      "Description of result-path-jitter-status-type.";
+  }
+  typedef finish-status-type {
+    type enumeration {
+      enum running {
+        value 0;
+        description
+          "Running.";
+      }
+      enum finished {
+        value 1;
+        description
+          "Finished.";
+      }
+    }
+    description
+      "Description of finish-status-type.";
+  }
+  typedef test-record-measure-type {
+    type enumeration {
+      enum delay {
+        value 1;
+        description
+          "Delay Test.";
+      }
+      enum loss {
+        value 2;
+        description
+          "Loss Test.";
+      }
+      enum throughput {
+        value 3;
+        description
+          "Throughput Test.";
+      }
+    }
+    description
+      "Description of test-record-measure-type.";
+  }
+  typedef test-record-rate-type {
+    type enumeration {
+      enum information-rate {
+        value 2;
+        description
+          "Information rate.";
+      }
+      enum utilized-line-rate {
+        value 1;
+        description
+          "Utilized line rate.";
+      }
+    }
+    description
+      "Description of test-record-rate-type.";
+  }
+  typedef lsp-sr-policy-path {
+    type enumeration {
+      enum main-path {
+        value 1;
+        description
+          "MAIN-PATH.";
+      }
+      enum backup-path {
+        value 0;
+        description
+          "BACK-PATH.";
+      }
+      enum unknown {
+        value 255;
+        description
+          "UNKNOWN.";
+      }
+    }
+    description
+      "Description of lsp-sr-policy-path.";
+  }
+  typedef lsp-protocol-origin {
+    type enumeration {
+      enum pecp {
+        value 10;
+        description
+          "PECP.";
+      }
+      enum bgp {
+        value 20;
+        description
+          "BGP.";
+      }
+      enum local {
+        value 30;
+        description
+          "LOCAL.";
+      }
+      enum unknown {
+        value 255;
+        description
+          "UNKNOWN.";
+      }
+    }
+    description
+      "Description of lsp-protocol-origin.";
+  }
+  typedef gflow-result-status {
+    type enumeration {
+      enum no-result {
+        value 0;
+        description
+          "No result.";
+      }
+      enum success {
+        value 1;
+        description
+          "Success.";
+      }
+      enum failed {
+        value 2;
+        description
+          "Failed.";
+      }
+      enum finished {
+        value 3;
+        description
+          "Finished.";
+      }
+    }
+    description
+      "Description of gflow-result-status.";
+  }
+  grouping record-type {
+    description
+      "NQA test instance test result.";
+    container results {
+      config false;
+      description
+        "List of NQA test instance test result record.";
+      list result {
+        key "admin-name test-name running-index";
+        config false;
+        description
+          "Statistics of NQA test instance test result record.";
+        leaf admin-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Administrator name.";
+        }
+        leaf test-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Test instance name.";
+        }
+        leaf running-index {
+          type uint32 {
+            range "0..100000";
+          }
+          config false;
+          description
+            "Running index.";
+        }
+        leaf status {
+          type test-finsh-status-type;
+          config false;
+          description
+            "Test finished status (finished or running).";
+        }
+        leaf completions {
+          type result-status-type;
+          config false;
+          description
+            "Running results.";
+        }
+        leaf sent-probes {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Total number of sent packets.";
+        }
+        leaf response-probes {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Total number of received packets.";
+        }
+        leaf rtd-thresholds {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Counts of RTD over Threshold.";
+        }
+        leaf test-attempts {
+          type uint32 {
+            range "1..100000";
+          }
+          config false;
+          description
+            "Attempts times (the value is 1).";
+        }
+        leaf drops {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Number of packets lost.";
+        }
+        leaf disconnects {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Number of consecutive failures.";
+        }
+        leaf timeouts {
+          type uint32 {
+            range "0..65535";
+          }
+          units "s";
+          config false;
+          description
+            "Timeout period.";
+        }
+        leaf busies {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Number of times that system is busy.";
+        }
+        leaf no-connections {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Number of connection errors.";
+        }
+        leaf sequence-errors {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Number of packets index errors.";
+        }
+        leaf rtt-status-errors {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Number of Rtt statistical failures.";
+        }
+        leaf dest-address {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "Destination IP address.";
+        }
+        leaf rtt-min {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Minimum RTT of all test packets, expressed in milliseconds.";
+        }
+        leaf rtt-average {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Average RTT of all test packets, expressed in milliseconds.";
+        }
+        leaf rtt-max {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Maximum RTT of all test packets, expressed in milliseconds.";
+        }
+        leaf rtt-sum {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Sum of all test packets'RTT, expressed in milliseconds.";
+        }
+        leaf rtt-sum-square {
+          type uint64;
+          config false;
+          description
+            "Sum of RTT square.";
+        }
+        leaf packet-loss-ratio {
+          type uint8 {
+            range "0..100";
+          }
+          units "%";
+          config false;
+          description
+            "Packet loss ratio.";
+        }
+        leaf last-probe-time {
+          type yang:date-and-time;
+          config false;
+          description
+            " Last good probe time.";
+        }
+      }
+    }
+    container trace-results {
+      description
+        "List of NQA test instance test trace result record.";
+      list trace-result {
+        key "admin-name test-name running-index";
+        description
+          "Statistics of NQA test instance test trace result record.";
+        leaf admin-name {
+          type string {
+            length "1..32";
+          }
+          description
+            "Administrator name.";
+        }
+        leaf test-name {
+          type string {
+            length "1..32";
+          }
+          description
+            "Test instance name.";
+        }
+        leaf running-index {
+          type uint32 {
+            range "0..100000";
+          }
+          description
+            "Running index.";
+        }
+        leaf status {
+          type test-finsh-status-type;
+          description
+            "Test finished status.";
+        }
+        leaf completions {
+          type result-status-type;
+          description
+            "Running results.";
+        }
+        leaf disconnects {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Number of consecutive failures.";
+        }
+        leaf test-attempts {
+          type uint32 {
+            range "1..100000";
+          }
+          description
+            "Attempts times (the value is 1).";
+        }
+        leaf timeouts {
+          type uint32 {
+            range "0..65535";
+          }
+          units "s";
+          description
+            "Timeout period.";
+        }
+        leaf busies {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Number of times that system is busy.";
+        }
+        leaf no-connections {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Number of connection errors.";
+        }
+        leaf sequence-errors {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Number of packets index errors.";
+        }
+        leaf rtt-status-errors {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Number of Rtt statistical failures.";
+        }
+        leaf drops {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Number of packets lost.";
+        }
+        container hops {
+          description
+            "List of result records of a single hop.";
+          list hop {
+            key "index";
+            description
+              "Statistics of result records of a single hop.";
+            leaf index {
+              type uint32 {
+                range "1..1000000";
+              }
+              description
+                "Hop index.";
+            }
+            leaf sent-probes {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "Total number of sent packets.";
+            }
+            leaf response-probes {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "Total number of received packets.";
+            }
+            leaf rtt-min {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "Minimum RTT of all test packets, expressed in milliseconds.";
+            }
+            leaf rtt-average {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "Average RTT of all test packets, expressed in milliseconds.";
+            }
+            leaf rtt-max {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "Maximum RTT of all test packets, expressed in milliseconds.";
+            }
+            leaf rtt-sum {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "Sum of all test packets'RTT, expressed in milliseconds.";
+            }
+            leaf rtt-sum-square {
+              type uint64;
+    
+              description
+                "Sum of RTT square.";
+            }
+            leaf rtd-thresholds {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "Counts of RTD over Threshold.";
+            }
+            leaf last-probe-time {
+              type yang:date-and-time;
+    
+              description
+                " Last good probe time.";
+            }
+            leaf dest-address {
+              type inet:ip-address-no-zone;
+    
+              description
+                "Destination IP address.";
+            }
+            leaf packet-loss-ratio {
+              type uint8 {
+                range "0..100";
+              }
+              units "%";
+              description
+                "Packet loss ratio.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

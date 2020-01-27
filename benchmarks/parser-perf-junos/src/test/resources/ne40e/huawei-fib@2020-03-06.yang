@@ -1,0 +1,175 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-fib {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-fib";
+  prefix fib;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Forwarding information base.";
+  revision 2020-03-06 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef af-type {
+    type enumeration {
+      enum "ipv4unicast" {
+        value 1;
+        description
+          "IPv4 address family type.";
+      }
+      enum "ipv6unicast" {
+        value 2;
+        description
+          "IPv6 address family type.";
+      }
+    }
+    description
+      "Af type.";
+  }
+  ext:task-name "forwarding";
+  container fib {
+    config false;
+    description
+      "Forwarding information base.";
+    container unicast-afs {
+      description
+        "List of forwarding information base.";
+      list unicast-af {
+        key "vrf-name af-type position";
+        description
+          "Operational state of forwarding information base.";
+        leaf vrf-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "Virtual private network.";
+        }
+        leaf af-type {
+          type af-type;
+          description
+            "Address type.";
+        }
+        leaf position {
+          type string {
+            length "0..16";
+          }
+          description
+            "Slot number.";
+        }
+        container routes {
+          description
+            "List of FIB entry.";
+          list route {
+            key "destination mask nexthop if-name tunnel-id";
+            description
+              "Operational state of FIB entry.";
+            leaf destination {
+              type inet:ip-address-no-zone;
+              description
+                "Destination address.";
+            }
+            leaf mask {
+              type uint32 {
+                range "0..128";
+              }
+              description
+                "The length of mask address.";
+            }
+            leaf nexthop {
+              type inet:ip-address-no-zone;
+              description
+                "Next hop address.";
+            }
+            leaf if-name {
+              type pub-type:if-name;
+              description
+                "Interface name.";
+            }
+            leaf tunnel-id {
+              type string {
+                length "0..49";
+              }
+              description
+                "Tunnel ID.";
+            }
+            leaf vlan-id {
+              type uint32;
+              description
+                "VLAN ID.";
+            }
+            leaf inner-label {
+              type pub-type:hex-binary;
+              description
+                "Inner label.";
+            }
+            leaf lsp-token {
+              type pub-type:hex-binary;
+              description
+                "The token of label switch path.";
+            }
+            leaf bak-nexthop {
+              type inet:ip-address-no-zone;
+              description
+                "Backup next hop address.";
+            }
+            leaf bak-if-name {
+              type pub-type:if-name;
+              description
+                "Backup interface name.";
+            }
+            leaf bak-inner-lable {
+              type pub-type:hex-binary;
+              description
+                "Backup inner label.";
+            }
+            leaf bak-lsp-token {
+              type pub-type:hex-binary;
+              description
+                "Backup LSP token.";
+            }
+          }
+        }
+        container statistics {
+          description
+            "FIB total number statistics.";
+          leaf total-num {
+            type uint32;
+            description
+              "FIB total number.";
+          }
+        }
+      }
+    }
+  }
+}

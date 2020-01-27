@@ -1,0 +1,34 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ietf-netconf-notifications-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-ietf-netconf-notifications-deviations-CH-NE-X3";
+  prefix hw-ncn-devs-CH-NE-X3;
+
+  import ietf-netconf-notifications {
+    prefix ncn;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Ietf-netconf-notifications deviation file.";
+
+  revision 2019-05-25 {
+    description
+      "Initial revision.";
+    reference "RFC 6470: NETCONF Base Notifications";
+  }
+
+  deviation "/ncn:netconf-config-change/ncn:edit" {
+    deviate not-supported;
+  }
+}

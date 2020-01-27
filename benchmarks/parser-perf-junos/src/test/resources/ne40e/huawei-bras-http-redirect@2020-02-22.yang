@@ -1,0 +1,698 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-http-redirect {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bras-http-redirect";
+  prefix bras-http-redirect;
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-bras-vas {
+    prefix bras-vas;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-bras-web-authen {
+    prefix bras-web-authen;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Bras-http-redirect.";
+  revision 2020-02-22 {
+    description
+      "Description modification.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-16 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+  
+  grouping work-mode-group {
+    description
+      "Work mode group.";
+    leaf work-mode {
+      type enumeration {
+      enum "get" {
+        value 1;
+        description
+          "Indicates that the working mode is get.";
+      }
+      enum "post" {
+        value 2;
+        description
+          "Indicates that the working mode is post.";
+      }
+    }
+    default "get";
+      description
+        "Indicates that the working mode.";
+    }
+  }
+  grouping web-server-url-group {
+    description
+      "Web server url group.";
+    leaf url-name {
+      type string {
+      length "1..200";
+      }
+      must "../url-name != '-' and ../url-name != '--'";
+      description
+        "Specifies the redirection URL for mandatory web authentication.";
+    }
+    leaf auth-ip-address {
+      when "../url-name";
+      type leafref {
+        path "/bras-web-authen:bras-web-authen/bras-web-authen:ip-servers/bras-web-authen:ip-server/bras-web-authen:ip";
+      }
+      description
+        "Specifies the IPv4 or IPv6 address of the web authentication server to which the mandatory web server is bound, in dotted decimal notation.";
+    }
+    leaf vpn-name {
+      when "../auth-ip-address";
+      type leafref {
+        path "/bras-web-authen:bras-web-authen/bras-web-authen:ip-servers/bras-web-authen:ip-server[bras-web-authen:ip=current()/../auth-ip-address]/bras-web-authen:vpn-name";
+      }
+      mandatory true;
+      description
+        "Specifies the name of the VPN instance to which the bound web authentication server belongs. Public network vpn-name value is '_public_'.";
+    }
+  }
+  grouping web-server-address-group {
+    description
+      "Web server address group.";
+    leaf ip-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Specifies the IP address of the web server.";
+    }
+    leaf ipv6-address {
+      type inet:ipv6-address-no-zone;
+        description
+          "Specifies the IPv6 address of the web server.";
+    }
+    leaf auth-ip-address {
+      when '../ipv6-address or ../ip-address';
+      type leafref {
+        path "/bras-web-authen:bras-web-authen/bras-web-authen:ip-servers/bras-web-authen:ip-server/bras-web-authen:ip";
+      }
+      description
+          "Specifies the IPv4 or IPv6 address of the web authentication server to which the mandatory web server is bound, in dotted decimal notation.";
+    }
+    leaf vpn-instance {
+      when "../auth-ip-address";
+      type leafref {
+        path "/bras-web-authen:bras-web-authen/bras-web-authen:ip-servers/bras-web-authen:ip-server[bras-web-authen:ip=current()/../auth-ip-address]/bras-web-authen:vpn-name";
+      }
+      mandatory true;
+      description
+        "Specifies the name of the VPN instance to which the bound web authentication server belongs. Public network vpn-name value is '_public_'.";
+    }
+  }
+  container bras-http-redirect {
+    description
+      "Bras http redirect.";
+    container web-url-profiles {
+      description
+        "List of redirect templates.";
+      list web-url-profile {
+        key "name";
+        description
+          "Configure a redirect template.";
+        leaf name {
+          type string {
+            length "1..64";
+            pattern "[a-z0-9._-]{1,64}";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Specifies the name of the redirect template.";
+            ext:case-sensitivity "lower-only";
+        }
+        container url {
+          description
+            "Configure a redirect URL in a redirect template. By default, no redirect URL is configured in the redirect template scenario.";
+          leaf content {
+            type string {
+              length "1..200";
+            }
+            description
+              "Specifies the redirect URL, either in a domain name or an IP address, such as 1.1.1.1, http://1.1.1.1, www.huawei.com or http://www.huawei.com.";
+          }
+        }
+      }
+    }
+    container url-or-dnss {
+      description
+        "List of blacklists of URLs for which web authentication or portal redirection will be performed forcibly or configures a whitelist for users who access web services using HTTPS.";
+      list url-or-dns {
+        key "url-string deny-or-permit";
+        description
+          "Configure a blacklist of URLs for which web authentication or portal redirection will be performed forcibly or configures a whitelist for users who access web services using HTTPS.";
+        leaf url-string {
+          type string {
+            length "1..200";
+          }
+          description
+            "Specifies an address of a web page.";
+        }
+        leaf deny-or-permit {
+          type boolean;
+          description
+            "Enable/disable a whitelist for users who access web services using HTTPS or a blacklist of URLs for which web authentication or portal redirection will be performed forcibly.";
+        }
+        container url-deny-counts {
+          config false;
+          description
+            "List of statistics for times that an HTTP blacklist is hit.";
+          list url-deny-count {
+            key "slot-id";
+            description
+              "Display the statistics for times that an HTTP blacklist is hit.";
+            leaf slot-id {
+              type string {
+                length "1..15";
+              }
+              description
+                "Display the slot ID.";
+            }
+            leaf deny-count {
+              type uint32;
+              description
+                "Number of times that an HTTP blacklist is hit.";
+            }
+          }
+        }
+      }
+    }
+    container http-redirect-profiles {
+      description
+        "List of redirection templates.";
+      list http-redirect-profile {
+        key "name";
+        max-elements 255;
+        description
+          "Configure the redirection template.";
+        leaf name {
+          type string {
+            length "1..31";
+            pattern "[a-z0-9._-]{1,31}";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "The redirection template name.";
+            ext:case-sensitivity "lower-only";
+        }
+        uses work-mode-group;
+        leaf url {
+          type string {
+            length "1..200";
+          }
+          description
+            "Specifies the URL address.";
+        }
+        leaf push-times {
+          type uint8 {
+            range "1..5";
+          }
+          default "2";
+          description
+            "Sets number of times to push advertisements.";
+        }
+      }
+    }
+    container http-redirect {
+      description
+        "Configure HTTP packet redirection.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable HTTP packet redirection.";
+      }
+    }
+    container portal-age-time {
+      description
+        "Configure the captive portal timeout period.";
+      leaf value {
+        type uint32 {
+          range "1..900";
+        }
+        description
+          "Configure captive portal timeout period (configuration in the domain has high priority) in second.";
+      }
+    }
+  }
+  augment "/qos:qos/qos:classifier-template/qos:traffic-behaviors/qos:traffic-behavior/bras-vas:bas" {
+    description
+      "Traffic behaviors.";
+    container http-redirect {
+      description
+        "Configure http-redirect under qos traffic-behavior model.";
+      container redirect-cpu-portal {
+        description
+          "Configure the next hop of the packets to send to the CPU according to limits of idle web users.";
+        leaf enable {
+          type enumeration {
+            enum "http-enable" {
+              value 0;
+              description
+                "Parsing the user MAC address by duid.";
+            }
+            enum "http-plus-enable" {
+              value 1;
+              description
+                "Enables or disables httpRedirect Plus.";
+            }
+            enum "cpu-redirect-enable" {
+              value 2;
+              description
+                "The redirect-cpu portal command configures flow-based captive portal redirection.";
+            }
+            enum "redirect-chasten-enable" {
+              value 3;
+              description
+                "The redirect-cpu http-redirect-chasten command to run to configure the next hop of the packets to send to the CPU according to limits of idle web users.";
+            }
+            enum "dns-enable" {
+              value 4;
+              description
+                "Configures dns redirection.";
+            }
+          }
+          description
+            "Redirects login users to an authentication web page.";
+        }
+      }
+    }
+  }
+  augment /aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas {
+    description
+      "Creates a domain and enters the domain scenario; alternatively, you can enter the scenario of an existing domain. Exceptionally, in this module it cannot be deleted or removed to delete its child.";
+    container http-redirect {
+      must 'not(./web-server-url/auth-ip-address and ./web-server-address/auth-ip-address and ./web-server-url/auth-ip-address!=./web-server-address/auth-ip-address)';
+      must 'not(./web-server-url-slave/auth-ip-address and ./web-server-address-slave/auth-ip-address and ./web-server-url-slave/auth-ip-address!=./web-server-address-slave/auth-ip-address)';
+      must 'not(./web-server-address/ip-address and ./web-server-address-slave/ip-address and ./web-server-address/ip-address=./web-server-address-slave/ip-address)';
+      must 'not(./web-server-address/ipv6-address and ./web-server-address-slave/ipv6-address and ./web-server-address/ipv6-address=./web-server-address-slave/ipv6-address)';
+      must 'not(./web-server-url/url-name = ./web-server-url-slave/url-name)';
+      description
+        "Configure HTTP redirect.";
+      container portal-redirect-age {
+        description
+          "Configure the portal redirect function.";
+        leaf time {
+          type uint32 {
+            range "1..900";
+          }
+          description
+            "Specifies the captive portal timeout period.";
+        }
+      }
+      container portal-redirect-pppoe-url {
+        description
+          "Configure the portal redirect function.";
+        leaf authenticate {
+          type string {
+            length "1..200";
+          }
+          description
+            "Sets the URL for forcibly redirecting an authenticated PPPoE user to a portal.";
+        }
+      }
+      container portal-redirect-identical-url {
+        description
+          "Configure the portal redirect function.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable IPv4 and IPv6 users to use identical URL and the IPv6 redirection web page to be pushed to users in IPv6 forcible redirection scenarios.";
+        }
+      }
+      container portal-server {
+        description
+          "Configure the mandatory parameters in the domain. Including the IP address of the portal server, redirected URL, number of forcible redirection attempts, URL parameters, and whether a user is redirected to the first URL entered by the user, user MAC address in redirection packets.";
+        leaf url-parameter {
+          type empty;
+          description
+            "Indicates whether the redirected URL carries wlanusername.";
+        }
+        leaf ip-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Specifies the IPv4 address of the portal server.";
+        }
+        leaf ipv6-address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Specifies the IPv6 address of the portal server.";
+        }
+        leaf redirect-limit {
+          type uint32 {
+            range "1..5";
+          }
+          default "2";
+          description
+            "Specifies the number of forcible redirection attempts.";
+        }
+        leaf url {
+          type string {
+            length "1..200";
+          }
+          description
+            "Indicates the redirected URL address.";
+        }
+      }
+      container web-server-url {
+        presence "Create web-server-url.";
+        description
+          "Enable/disable a redirection URL for mandatory web authentication and configures the web authentication server bound to the mandatory web authentication server in a domain.";
+        uses web-server-url-group;
+      }
+      container web-server-url-slave {
+        presence "Create web-server-url-slave.";
+        description
+          "Enable/disable a redirection URL for mandatory web authentication and configures the web authentication server bound to the mandatory web authentication server in a domain as slave.";
+        uses web-server-url-group;
+      }
+      container web-server-address {
+        presence "Create web-server-address.";
+        description
+          "Enable/disable an IP address or an IPv6 address for the web server and configures the web authentication server bound to the mandatory web authentication server in a domain.";
+        uses web-server-address-group;
+      }
+      container web-server-address-slave {
+        presence "Create web-server-address-slave.";
+        description
+          "Enable/disable an IP address or an IPv6 address for the web server and configures the web authentication server bound to the mandatory web authentication server in a domain as slave.";
+        uses web-server-address-group;
+      }
+      container web-redirect {
+        description
+          "Configure web redirect.";
+        uses work-mode-group;
+      }
+      container web-redirect-identical {
+        description
+          "Configure web redirect identical url.";
+        leaf url {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable identical url.";
+        }
+      }
+      container redirect-users-to-urls {
+        description
+          "List of forcibly redirects users in a domain to a URL.";
+        list redirect-users-to-url {
+          key "index";
+          description
+            "Configure forcibly redirects users in a domain to a URL.";
+          leaf index {
+            type uint32 {
+              range "1..5";
+            }
+            description
+              "Specifies the index of a URL.";
+          }
+          leaf value {
+            type string {
+              length "1..200";
+            }
+            mandatory true;
+            description
+              "Specifies the URL to which users are forcibly redirected. The URL can be a domain name or an IP address, such as 1.1.1.1, http://1.1.1.1, www.huawei.com, and http://www.huawei.com.";
+          }
+        }
+      }
+      container web-first-url {
+        must "not(./key-string and ./default-name='true')";
+        description
+          "Configure the web-first-url.";
+        leaf key-string {
+          type string {
+            length "1..31";
+            pattern "[a-zA-Z0-9._-]{1,31}";
+          }
+          must "../key-string != '-' and ../key-string != '--'";
+          description
+            "Specifies a homepage to be displayed after a user is authenticated by a web server. By default, a homepage will not be displayed after a user is authenticated by a web server.";
+        }
+        leaf default-name {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the default keyword used when a homepage to be displayed after a user is authenticated by a web server is wlanuserfirsturl.";
+        }
+      }
+      container web-individualization {
+        must "not(./subscription-id-keyword and ./agent-remoteid-keyword)";
+        must "(./user-mac-aes128-cipher-text='false' and ./user-mac-simple-text-keyword='false') or (./user-mac-aes128-cipher-text='false' and ./user-mac-encrypt-in-des='false') or (./user-mac-encrypt-in-des='false' and ./user-mac-simple-text-keyword='false')";
+        must "(./ap-mac-aes128-cipher-text='false' and ./ap-mac-simple-text-keyword='false') or (./ap-mac-aes128-cipher-text='false' and ./ap-mac-encrypted-in-des='false') or (./ap-mac-encrypted-in-des='false' and ./ap-mac-simple-text-keyword='false')";
+        description
+          "Configure the web individualization.";
+        leaf user-ipaddress-keyword {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies the keyword of the user IP address.";
+        }
+        leaf ipaddress-of-router-keyword {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies the keyword of the IP address of the router. If a source interface on the BRAS to the web server is specified using the web-auth-server source command in the system scenario, mscg-ip is the IP address of the outbound interface. If no source interface is specified, mscg-ip is the IP address of the outbound interface of the route to the network segment of the IP address of the web server in the routing table of the BRAS.";
+        }
+        leaf bras-name-for-users-login-keyword {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies the keyword of the router name for users' login.";
+        }
+        leaf logical-host-name {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies the logical host name.";
+        }
+        leaf user-defined-ssid-keyword {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies the key value of the user-defined portal parameter SSID.";
+        }
+        leaf physical-location-keyword {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies the keyword of physical location information.";
+        }
+        leaf agent-remoteid-keyword {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies the key value of the user-defined portal parameter agent-remote-id.";
+        }
+        leaf subscription-id-keyword {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies the key value of the user-defined portal parameter subscription-id.";
+        }
+        leaf user-mac-keyword {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies the keyword of the user MAC address.";
+        }
+        leaf user-mac-simple-text-keyword {
+          when "../user-mac-keyword";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the keyword of the user MAC address in simple text.";
+        }
+        leaf user-mac-display-format {
+          when "../user-mac-simple-text-keyword='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the user MAC address is displayed in the format of aa:bb:cc:dd:ee:ff. By default, the MAC address is displayed in the format of aa-bb-cc-dd-ee-ff.";
+        }
+        leaf user-mac-aes128-cipher-text {
+          when "../user-mac-keyword";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the keyword of the user MAC address to be encrypted in AES128 mode and to be transmitted in ciphertext.";
+        }
+        leaf user-mac-encrypt-in-cbc {
+          when "../user-mac-aes128-cipher-text='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the keyword of user MAC address to be encrypted in CBC mode.";
+        }
+        leaf user-mac-encrypt-in-des {
+          when "../user-mac-keyword";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the keyword of user MAC address to be encrypted in DES mode.";
+        }
+        leaf ap-mac-keyword {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies the keyword of the AP MAC address.";
+        }
+        leaf ap-mac-simple-text-keyword {
+          when "../ap-mac-keyword";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the keyword of the AP MAC address in simple text.";
+        }
+        leaf ap-mac-display-format {
+          when "../ap-mac-simple-text-keyword='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the AP MAC address is displayed in the format of aa:bb:cc:dd:ee:ff. By default, the MAC address is displayed in the format of aa-bb-cc-dd-ee-ff.";
+        }
+        leaf ap-mac-aes128-cipher-text {
+          when "../ap-mac-keyword";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the keyword of the AP MAC address to be encrypted in AES128 mode and to be transmitted in ciphertext.";
+        }
+        leaf ap-mac-encrypted-in-cbc {
+          when "../ap-mac-aes128-cipher-text='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the keyword of AP MAC address to be encrypted in CBC mode.";
+        }
+        leaf ap-mac-encrypted-in-des {
+          when "../ap-mac-keyword";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the keyword of AP MAC address to be encrypted in DES mode.";
+        }
+      }
+      container web-share-key {
+        description
+          "Configure the web share key.";
+        leaf carried-in-url-of-web-page {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the keywords carried in the URL of a web page pushed by the portal server. The keywords are user-ip and ac-name nas-serial.";
+        }
+        leaf shared-key-cipher {
+          type pub-type:password-extend {
+            length "1..128";
+          }
+          description
+            "Specifies the keyword for generating ciphertext user MAC address or AP MAC address to be displayed.";
+        }
+      }
+      container portal-individualization {
+        must "not(./first-page-url-keyword and ./first-page-url-default-keyword='true')";
+        description
+          "Configure the portal individualization.";
+        leaf user-macaddress {
+          type string {
+            length "1..32";
+          }
+          description
+            "Specifies a user MAC address.";
+        }
+        leaf user-macaddress-in-simple-mode {
+          when "../user-macaddress";
+          type boolean;
+          must "../user-macaddress-in-aes128-cbc='false' or ../user-macaddress-in-simple-mode='false'";
+          default "false";
+          description
+            "Enable/disable the user MAC address carried in redirection packets is encapsulated in simple mode.";
+        }
+        leaf delimiter-of-user-macaddress {
+          when "../user-macaddress-in-simple-mode='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the delimiter of user MAC addresses is a colon (:).";
+        }
+        leaf user-macaddress-in-aes128-cbc {
+          when "../user-macaddress";
+          type boolean;
+          must "../user-macaddress-in-aes128-cbc='false' or ../user-macaddress-in-simple-mode='false'";
+          default "false";
+          description
+            "Enable/disable the user MAC address carried in redirection packets is encrypted in AES128 and CBC mode and to be transmitted in ciphertext.";
+        }
+        leaf first-page-url-keyword {
+          type string {
+            length "1..31";
+          }
+          description
+            "Specifies the keyword used in the function of displaying the page at the first URL.";
+        }
+        leaf first-page-url-default-keyword {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the default keyword wlanuserfirsturl in the function of displaying the page at the first URL.";
+        }
+      }
+      container dns-redirect {
+        description
+          "Configure DNS redirect Web server address.";
+        leaf server-ip {
+          type inet:ipv4-address-no-zone;
+          description
+            "The IP address of the redirect Web server.";
+        }
+      }
+    }
+  }
+}

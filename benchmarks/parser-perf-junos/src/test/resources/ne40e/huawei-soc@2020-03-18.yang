@@ -1,0 +1,1429 @@
+/******************************************************
+* Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+* Module description & tree structure
+***************************************************/
+module huawei-soc {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-soc";
+  prefix soc;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Security operation center.";
+  revision 2020-03-18 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef determine-probability-object {
+    type enumeration {
+      enum "top5-user" {
+        value 0;
+        description
+          "Indicates the top 5 VLAN packets in sampled packets, including single-tagged and double-tagged VLAN packets.";
+      }
+      enum "top5-source-mac" {
+        value 1;
+        description
+          "Indicates the top 5 packets listed by source MAC addresses in sampled packets.";
+      }
+      enum "top5-source-ip" {
+        value 2;
+        description
+          "Indicates the top 5 packets listed by source IP addresses in sampled packets.";
+      }
+      enum "broadcast-flood" {
+        value 3;
+        description
+          "Indicates the broadcast packets in sampled packets.";
+      }
+      enum "app-error-percent" {
+        value 6;
+        description
+          "Indicates the invalid packets and sessions on a protocol module.";
+      }
+    }
+    description
+      "Determining object of probability of attack event.";
+  }
+  typedef protocol-name {
+    type enumeration {
+      enum "802.1ag" {
+        value 48;
+        description
+          "802.1AG protocol.";
+      }
+      enum "white-list" {
+        value 55;
+        description
+          "Whitelist.";
+      }
+      enum "arp" {
+        value 0;
+        description
+          "ARP protocol.";
+      }
+      enum "bfd" {
+        value 33;
+        description
+          "BFD protocol.";
+      }
+      enum "bgp" {
+        value 9;
+        description
+          "BGP protocol.";
+      }
+      enum "bgpv6" {
+        value 58;
+        description
+          "BGPv6 protocol.";
+      }
+      enum "dhcp" {
+        value 2;
+        description
+          "DHCP protocol.";
+      }
+      enum "dhcpv6" {
+        value 73;
+        description
+          "DHCPv6 protocol.";
+      }
+      enum "dns-client" {
+        value 38;
+        description
+          "DNS client protocol.";
+      }
+      enum "dnsv6" {
+        value 43;
+        description
+          "DNSv6 protocol.";
+      }
+      enum "eapol" {
+        value 69;
+        description
+          "EAPOL protocol.";
+      }
+      enum "fib-miss" {
+        value 75;
+        description
+          "IPv4 fib miss packets.";
+      }
+      enum "fib-missv6" {
+        value 76;
+        description
+          "IPv6 fib miss packets.";
+      }
+      enum "ftp-client" {
+        value 23;
+        description
+          "FTP client protocol.";
+      }
+      enum "ftp-server" {
+        value 4;
+        description
+          "FTP server protocol.";
+      }
+      enum "ftpv6-client" {
+        value 59;
+        description
+          "FTPv6 client protocol.";
+      }
+      enum "ftpv6-server" {
+        value 60;
+        description
+          "FTPv6 server protocol.";
+      }
+      enum "hgmp" {
+        value 57;
+        description
+          "Huawei group management protocol.";
+      }
+      enum "hwtacacs" {
+        value 29;
+        description
+          "HWTACACS protocol.";
+      }
+      enum "icmp" {
+        value 1;
+        description
+          "ICMP protocol.";
+      }
+      enum "icmpv6" {
+        value 42;
+        description
+          "ICMPv6 protocol.";
+      }
+      enum "igmp" {
+        value 18;
+        description
+          "IGMP protocol.";
+      }
+      enum "ipv6" {
+        value 66;
+        description
+          "IPv6 protocol.";
+      }
+      enum "isis" {
+        value 20;
+        description
+          "ISIS protocol.";
+      }
+      enum "l2tp" {
+        value 72;
+        description
+          "L2TP protocol.";
+      }
+      enum "lacp" {
+        value 50;
+        description
+          "LACP protocol.";
+      }
+      enum "ldp" {
+        value 10;
+        description
+          "LDP protocol.";
+      }
+      enum "lspping" {
+        value 30;
+        description
+          "LSPPING protocol.";
+      }
+      enum "mld" {
+        value 19;
+        description
+          "ICMPv6 MLD protocol.";
+      }
+      enum "ipfpm" {
+        value 61;
+        description
+          "IPFPM protocol.";
+      }
+      enum "mpls-oam" {
+        value 46;
+        description
+          "MPLS-OAM protocol.";
+      }
+      enum "msdp" {
+        value 16;
+        description
+          "MSDP protocol.";
+      }
+      enum "multicast" {
+        value 63;
+        description
+          "Multicast protocol.";
+      }
+      enum "multicastv6" {
+        value 64;
+        description
+          "IPv6 multicast protocol.";
+      }
+      enum "nd" {
+        value 74;
+        description
+          "ICMPv6 ND protocol.";
+      }
+      enum "ntp" {
+        value 27;
+        description
+          "NTP protocol.";
+      }
+      enum "ospfv2" {
+        value 12;
+        description
+          "OSPFv2 protocol.";
+      }
+      enum "ospfv3" {
+        value 15;
+        description
+          "OSPFv3 protocol.";
+      }
+      enum "pim" {
+        value 17;
+        description
+          "PIM protocol.";
+      }
+      enum "pimv6" {
+        value 21;
+        description
+          "PIMv6 protocol.";
+      }
+      enum "portal" {
+        value 70;
+        description
+          "Portal protocol.";
+      }
+      enum "pppoe" {
+        value 3;
+        description
+          "PPPoE protocol.";
+      }
+      enum "radius" {
+        value 28;
+        description
+          "Radius protocol.";
+      }
+      enum "rip" {
+        value 13;
+        description
+          "RIP protocol.";
+      }
+      enum "rrpp" {
+        value 47;
+        description
+          "RRPP protocol.";
+      }
+      enum "rsvp" {
+        value 11;
+        description
+          "RSVP protocol.";
+      }
+      enum "sftp-client" {
+        value 26;
+        description
+          "SFTP client protocol.";
+      }
+      enum "sftp-server" {
+        value 22;
+        description
+          "SFTP server protocol.";
+      }
+      enum "snmp" {
+        value 6;
+        description
+          "SNMP protocol.";
+      }
+      enum "snmpv6" {
+        value 62;
+        description
+          "SNMPv6 protocol.";
+      }
+      enum "ssh-client" {
+        value 25;
+        description
+          "SSH client protocol.";
+      }
+      enum "ssh-server" {
+        value 5;
+        description
+          "SSH server protocol.";
+      }
+      enum "sshv6-server" {
+        value 44;
+        description
+          "SSHv6 server protocol.";
+      }
+      enum "tcp" {
+        value 67;
+        description
+          "TCP protocol.";
+      }
+      enum "telnet-client" {
+        value 24;
+        description
+          "TELNET client protocol.";
+      }
+      enum "telnet-server" {
+        value 7;
+        description
+          "TELNET server protocol.";
+      }
+      enum "telnetv6-client" {
+        value 40;
+        description
+          "TELNETv6 client protocol.";
+      }
+      enum "telnetv6-server" {
+        value 39;
+        description
+          "TELNETv6 server protocol.";
+      }
+      enum "tftp" {
+        value 8;
+        description
+          "TFTP protocol.";
+      }
+      enum "tftpv6-client" {
+        value 41;
+        description
+          "TFTPv6 client protocol.";
+      }
+      enum "ttl-expired" {
+        value 77;
+        description
+          "IPv4 TTL expired packets.";
+      }
+      enum "ttl-expiredv6" {
+        value 78;
+        description
+          "IPv6 hop-limit expired packets.";
+      }
+      enum "udp" {
+        value 68;
+        description
+          "UDP protocol.";
+      }
+      enum "unknown" {
+        value 54;
+        description
+          "Unknown protocol.";
+      }
+      enum "vgmp" {
+        value 31;
+        description
+          "VGMP protocol.";
+      }
+      enum "vrrp" {
+        value 32;
+        description
+          "VVRRP protocol.";
+      }
+      enum "web" {
+        value 71;
+        description
+          "Web protocol.";
+      }
+      enum "lldp" {
+        value 80;
+        description
+          "LLDP protocol.";
+      }
+      enum "bfdv6" {
+        value 81;
+        description
+          "BFDv6 protocol.";
+      }
+      enum "arpmiss" {
+        value 82;
+        description
+          "ARP miss packets.";
+      }
+      enum "pim-mc" {
+        value 83;
+        description
+          "PIM multicast packets.";
+      }
+      enum "openflow" {
+        value 84;
+        description
+          "Openflow protocol.";
+      }
+      enum "ra" {
+        value 85;
+        description
+          "ICMPv6-RA protocol.";
+      }
+      enum "rs" {
+        value 86;
+        description
+          "ICMPv6-RS protocol.";
+      }
+      enum "na" {
+        value 87;
+        description
+          "ICMPv6-NA protocol.";
+      }
+      enum "ns" {
+        value 88;
+        description
+          "ICMPv6-NS protocol.";
+      }
+      enum "web-auth-server" {
+        value 89;
+        description
+          "Web authentication server protocol.";
+      }
+      enum "diameter" {
+        value 90;
+        description
+          "Diameter protocol.";
+      }
+      enum "http-redirect-chasten" {
+        value 91;
+        description
+          "Http-redirect packet of chasten user.";
+      }
+      enum "atm-inarp" {
+        value 92;
+        description
+          "ATM inARP protocol.";
+      }
+      enum "unicast-vrrp" {
+        value 93;
+        description
+          "Unicast VRRP protocol.";
+      }
+      enum "tcp-65410" {
+        value 97;
+        description
+          "Packet with TCP port number 65410.";
+      }
+      enum "padi" {
+        value 98;
+        description
+          "PADI protocol.";
+      }
+      enum "mka" {
+        value 99;
+        description
+          "MKA protocol.";
+      }
+      enum "icmp-broadcast-address-echo" {
+        value 100;
+        description
+          "ICMP broadcast address echo-request packet.";
+      }
+      enum "dlp-rsvp" {
+        value 101;
+        description
+          "Whitelist RSVP packet.";
+      }
+      enum "dlp-isis" {
+        value 102;
+        description
+          "Whitelist ISIS packet.";
+      }
+      enum "dlp-radius" {
+        value 103;
+        description
+          "Whitelist radius packet.";
+      }
+      enum "dlp-ipv6-bgp" {
+        value 104;
+        description
+          "Whitelist BGPv6 packet.";
+      }
+      enum "dlp-ipv6-ospf" {
+        value 105;
+        description
+          "Whitelist OSPFv3 packet.";
+      }
+      enum "dcn-pkt-fin" {
+        value 106;
+        description
+          "DCN-PKT-FIN packet.";
+      }
+      enum "ripng" {
+        value 14;
+        description
+          "RIPNG packet.";
+      }
+      enum "nqa-udp-client" {
+        value 34;
+        description
+          "NQA-UDP-CLIENT packet.";
+      }
+      enum "nqa-udp-server" {
+        value 35;
+        description
+          "NQA-UDP-SERVER packet.";
+      }
+      enum "nqa-tcp-client" {
+        value 36;
+        description
+          "NQA-TCP-CLIENT packet.";
+      }
+      enum "nqa-tcp-server" {
+        value 37;
+        description
+          "NQA-TCP-SERVER packet.";
+      }
+      enum "sshv6-client" {
+        value 45;
+        description
+          "SSHV6-CLIENT packet.";
+      }
+      enum "802.3ah" {
+        value 49;
+        description
+          "802.3AH packet.";
+      }
+      enum "http-client" {
+        value 51;
+        description
+          "HTTP-CLIENT packet.";
+      }
+      enum "http-server" {
+        value 52;
+        description
+          "HTTP-SERVER packet.";
+      }
+      enum "acr" {
+        value 53;
+        description
+          "ACR packet.";
+      }
+      enum "black-list" {
+        value 56;
+        description
+          "Black-List packet.";
+      }
+      enum "ip" {
+        value 65;
+        description
+          "IP packet.";
+      }
+      enum "ospfv6" {
+        value 79;
+        description
+          "OSPFV6 packet.";
+      }
+      enum "dlp-bgp" {
+        value 94;
+        description
+          "DLP-BGP packet.";
+      }
+      enum "dlp-ldp" {
+        value 95;
+        description
+          "DLP-LDP packet.";
+      }
+      enum "dlp-ospf" {
+        value 96;
+        description
+          "DLP-OSPF packet.";
+      }
+      enum "pcep" {
+        value 107;
+        description
+          "PCEP packet.";
+      }
+      enum "vrrpv6" {
+        value 108;
+        description
+          "VRRPv6 packet.";
+      }
+      enum "radiusv6" {
+        value 109;
+        description
+          "RADIUSv6 packet.";
+      }
+      enum "hwtacacsv6" {
+        value 110;
+        description
+          "HWTACACSv6 packet.";
+      }
+      enum "lsppingv6" {
+        value 111;
+        description
+          "LSPPINGv6 packet.";
+      }
+      enum "syslogv6" {
+        value 112;
+        description
+          "SYSLOGv6 packet.";
+      }
+      enum "web-auth-serverv6" {
+        value 113;
+        description
+          "Web-auth-serverv6 packet.";
+      }
+      enum "ipv6-ndh-miss" {
+        value 115;
+        description
+          "IPv6-ndh-miss packet.";
+      }
+    }
+    description
+      "Protocol name.";
+  }
+  typedef attack-defend-protocol {
+    type enumeration {
+      enum "ftp-server" {
+        value 4;
+        description
+          "FTP client server.";
+      }
+      enum "ftp-client" {
+        value 23;
+        description
+          "FTP client protocol.";
+      }
+      enum "ssh-server" {
+        value 5;
+        description
+          "SSH server protocol.";
+      }
+      enum "ssh-client" {
+        value 25;
+        description
+          "SSH client protocol.";
+      }
+      enum "snmp" {
+        value 6;
+        description
+          "SNMP protocol.";
+      }
+      enum "telnet-server" {
+        value 7;
+        description
+          "TELNET server protocol.";
+      }
+      enum "telnet-client" {
+        value 24;
+        description
+          "TELNET client protocol.";
+      }
+      enum "tftp" {
+        value 8;
+        description
+          "TFTP protocol.";
+      }
+      enum "bgp" {
+        value 9;
+        description
+          "BGP protocol.";
+      }
+      enum "ldp" {
+        value 10;
+        description
+          "LDP protocol.";
+      }
+      enum "rsvp" {
+        value 11;
+        description
+          "RSVP protocol.";
+      }
+      enum "ospfv2" {
+        value 12;
+        description
+          "OSPFv2 protocol.";
+      }
+      enum "rip" {
+        value 13;
+        description
+          "RIP protocol.";
+      }
+      enum "ospfv3" {
+        value 15;
+        description
+          "OSPFv3 protocol.";
+      }
+      enum "msdp" {
+        value 16;
+        description
+          "MSDP protocol.";
+      }
+      enum "pim" {
+        value 17;
+        description
+          "PIM protocol.";
+      }
+      enum "igmp" {
+        value 18;
+        description
+          "IGMP protocol.";
+      }
+      enum "isis" {
+        value 20;
+        description
+          "ISIS protocol.";
+      }
+      enum "pimv6" {
+        value 21;
+        description
+          "PIMv6 protocol.";
+      }
+      enum "radius" {
+        value 28;
+        description
+          "Radius protocol.";
+      }
+      enum "hwtacacs" {
+        value 29;
+        description
+          "HWTACACS protocol.";
+      }
+      enum "lspping" {
+        value 30;
+        description
+          "LSPPING protocol.";
+      }
+      enum "icmp" {
+        value 1;
+        description
+          "ICMP protocol.";
+      }
+      enum "vrrp" {
+        value 32;
+        description
+          "VRRP protocol.";
+      }
+      enum "bfd" {
+        value 33;
+        description
+          "BFD protocol.";
+      }
+      enum "dhcp" {
+        value 2;
+        description
+          "DHCP protocol.";
+      }
+      enum "dns-client" {
+        value 38;
+        description
+          "DNS client protocol.";
+      }
+      enum "telnetv6-server" {
+        value 39;
+        description
+          "TELNETv6 server protocol.";
+      }
+      enum "telnetv6-client" {
+        value 40;
+        description
+          "TELNETv6 client protocol.";
+      }
+      enum "icmpv6" {
+        value 42;
+        description
+          "ICMPv6 protocol.";
+      }
+      enum "dnsv6" {
+        value 43;
+        description
+          "DNSv6 protocol.";
+      }
+      enum "sshv6-server" {
+        value 44;
+        description
+          "SSHv6 server protocol.";
+      }
+      enum "ftpv6-server" {
+        value 60;
+        description
+          "FTPv6 server protocol.";
+      }
+      enum "ftpv6-client" {
+        value 59;
+        description
+          "FTPv6 client protocol.";
+      }
+      enum "rrpp" {
+        value 47;
+        description
+          "RRPP protocol.";
+      }
+      enum "lacp" {
+        value 50;
+        description
+          "LACP protocol.";
+      }
+      enum "bgpv6" {
+        value 58;
+        description
+          "BGPv6 protocol.";
+      }
+    }
+    description
+      "Protocals that support attack defense.";
+  }
+  typedef interface-type {
+    type enumeration {
+      enum "main-interface" {
+        value 0;
+        description
+          "Main interface.";
+      }
+      enum "sub-interface" {
+        value 1;
+        description
+          "Sub-interface.";
+      }
+    }
+    description
+      "Interface type.";
+  }
+  ext:task-name "soc";
+  container soc {
+    description
+      "Security operation center.";
+    container security-operation-center {
+      presence "Enables SOC";
+      description
+        "Enable/disable security operation center.";
+      container attack-defend {
+        description
+          "Configure attack defense.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable the SOC's attack defense function.";
+        }
+        container user-disable-groups {
+          presence "Enables user-disable-group";
+          description
+            "List of a user-defined group for which attack defense is disabled. Enable/disable the user-defined group for which attack defense is disabled.";
+          list user-disable-group {
+            key "protocol-name";
+            description
+              "Configure a user-defined group for which attack defense is disabled.";
+            leaf protocol-name {
+              type attack-defend-protocol;
+              description
+                "Specifys specific protocol packets for the user-defined group.";
+            }
+          }
+        }
+        container user-enable-groups {
+          presence "Enables user-enable-group";
+          description
+            "List of a user-defined group for which attack defense is enabled. Enable/disable the user-defined group for which attack defense is enabled.";
+          list user-enable-group {
+            key "protocol-name";
+            description
+              "Configure a user-defined group for which attack defense is enabled.";
+            leaf protocol-name {
+              type attack-defend-protocol;
+              description
+                "Specifys specific protocol packets for the user-defined group.";
+            }
+          }
+        }
+      }
+      container attack-detect {
+        description
+          "Configure attack detection.";
+        container threshold {
+          description
+            "Configure the threshold for attack detection.";
+          container cpu-usages {
+            description
+              "Configure the CPU usage threshold for attack detection.";
+            leaf cpu-usage {
+              type uint32 {
+                range "1..99";
+              }
+              default "15";
+              description
+                "The CPU usage threshold for attack detection. The value is an integer ranging from 1 to 99, in percentage.";
+            }
+          }
+          container protocol-cars {
+            description
+              "List of set the rate threshold for sending protocol packets to the CPU and the packet loss percentage threshold for attack detection.";
+            list protocol-car {
+              ext:generated-by system;
+              ext:operation-exclude "create|delete";
+              key "protocol-name";
+              description
+                "Configure the rate threshold for sending protocol packets to the CPU and the packet loss percentage threshold for attack detection.";
+              leaf protocol-name {
+                type protocol-name;
+                description
+                  "The name of a protocol that supports CAR.";
+              }
+              leaf min-rate {
+                type uint32 {
+                  range "20..4000";
+                }
+                ext:dynamic-default {
+                  ext:default-value "300" {
+                    when "../protocol-name = 'icmp'";
+                    description "The default value is 300 when protocol-name is ICMP.";
+                  }
+                  ext:default-value "500" {
+                    description "The default value is 500 when protocol-name is others.";
+                  }
+                }
+                description
+                  "A rate threshold for CP-CAR. The value is an integer ranging from 20 to 4000, in pps.";
+              }
+              leaf drop-packet-percent {
+                type uint32 {
+                  range "0..99";
+                }
+                ext:dynamic-default {
+                  ext:default-value "20" {
+                    when "../protocol-name = 'dhcp'";
+                    description "The default value is 20 when protocol-name is DHCP.";
+                  }
+                  ext:default-value "20" {
+                    when "../protocol-name = 'pppoe'";
+                    description "The default value is 20 when protocol-name is PPPOE.";
+                  }
+                  ext:default-value "30" {
+                    description "The default value is 30 when protocol-name is others.";
+                  }
+                }
+                description
+                  "The packet loss percentage threshold for CP-CAR. The value is an integer ranging from 0 to 99, in percentage.";
+              }
+            }
+          }
+        }
+      }
+      container attack-trace {
+        description
+          "Configure attack tracing.";
+        container attack-reason {
+          description
+            "Configure the threshold for determining the cause of an attack event.";
+          leaf broadcast-flood-percent {
+            type uint8 {
+              range "30..80";
+            }
+            default "50";
+            description
+              "Specifys the threshold for the percentage of broadcast packets to the total number of sampled packets.";
+          }
+          leaf change-source-packet-percent {
+            type uint8 {
+              range "2..10";
+            }
+            default "5";
+            description
+              "Specifys the threshold for the percentage of packets with varied source addresses to the total number of sampled packets.";
+          }
+          leaf app-packet-percent {
+            type uint8 {
+              range "20..80";
+            }
+            default "30";
+            description
+              "Specifys the threshold for the percentage of the specified protocol packets to the total number of sampled packets.";
+          }
+        }
+        container attack-location-type {
+          description
+            "Configure the threshold for determining the location of an attack event.";
+          leaf interface-percent {
+            type uint8 {
+              range "15..99";
+            }
+            default "20";
+            description
+              "Specifys the threshold for the percentage of the number of packets received on a physical interface to the total number of sampled packets..";
+          }
+          leaf sub-interface-percent {
+            type uint8 {
+              range "10..99";
+            }
+            default "10";
+            description
+              "Specifys the threshold for the percentage of the number of packets received on a logical interface to the total number of sampled packets.";
+          }
+          leaf vlan-percent {
+            type uint8 {
+              range "15..50";
+            }
+            default "20";
+            description
+              "Specifys the threshold for the percentage of the number of single-tagged VLAN packets with a specified VLAN ID to the total number of sampled packets.";
+          }
+          leaf source-mac-percent {
+            type uint8 {
+              range "5..50";
+            }
+            default "10";
+            description
+              "Specifys the threshold for the percentage of the number of packets with a specified source MAC address to the total number of sampled packets.";
+          }
+          leaf source-ip-percent {
+            type uint8 {
+              range "5..50";
+            }
+            default "10";
+            description
+              "Specifys the threshold for the percentage of the number of packets with a specified source IP address to the total number of sampled packets.";
+          }
+          leaf qinq-percent {
+            type uint8 {
+              range "3..15";
+            }
+            default "10";
+            description
+              "Specifys the threshold for the percentage of the number of double-tagged VLAN packets with specified inner and outer VLAN IDs to the total number of sampled packets.";
+          }
+          leaf vni-percent {
+            type uint8 {
+              range "15..50";
+            }
+            default "20";
+            description
+              "Specifys the threshold for the percentage of the number of packets with a specified VNI to the total number of sampled packets.";
+          }
+        }
+        container attack-probabilitys {
+          description
+            "List of Configure the threshold for determining the probability of an attack event.";
+          list attack-probability {
+            ext:generated-by system;
+            ext:operation-exclude "create|delete";
+            key "determine-object";
+            description
+              "Configure the threshold for determining the probability of an attack event.";
+            leaf determine-object {
+              type determine-probability-object;
+              description
+                "Determining object of probability of attack event.";
+            }
+            leaf determined-threshold-value {
+              type uint8;
+              ext:dynamic-default {
+                ext:default-value "90" {
+                  when "../determine-object = 'broadcast-flood'";
+                  description "The default value is 90 when determine-object is broadcast-flood.";
+                }
+                ext:default-value "90" {
+                  when "../determine-object = 'app-error-percent'";
+                  description "The default value is 90 when determine-object is app-error-percent.";
+                }
+                ext:default-value "80" {
+                  description "The default value is 80 when determine-object is others.";
+                }
+              }
+              must "((../determine-object = 'top5-user' or ../determine-object = 'top5-source-mac' or ../determine-object = 'top5-source-ip') and (../determined-threshold-value>=80 and ../determined-threshold-value<=99)) or ((../determine-object = 'broadcast-flood' or ../determine-object = 'app-error-percent') and (../determined-threshold-value>=90 and ../determined-threshold-value<=99))";
+              description
+                "Specifys the threshold for the percentage of the number of packets with specified characteristics to the total number of sampled packets. BROADCAST[90,99], APP_ERR[90,99], others[80,99]. determine-object with different value have different default determined-threshold-value values.";
+            }
+            leaf suspicion-threshold-value {
+              type uint8;
+              ext:dynamic-default {
+                ext:default-value "70" {
+                  when "../determine-object = 'broadcast-flood'";
+                  description "The default value is 70 when determine-object is broadcast-flood.";
+                }
+                ext:default-value "75" {
+                  when "../determine-object = 'app-error-percent'";
+                  description "The default value is 75 when determine-object is app-error-percent.";
+                }
+                ext:default-value "60" {
+                  description "The default value is 60 when determine-object is others.";
+                }
+              }
+              must "((../determine-object = 'top5-user' or ../determine-object = 'top5-source-mac' or ../determine-object = 'top5-source-ip') and (../suspicion-threshold-value>=60 and ../suspicion-threshold-value<=80)) or (../determine-object = 'broadcast-flood' and ../suspicion-threshold-value>=70 and ../suspicion-threshold-value<=90) or (../determine-object = 'app-error-percent' and ../suspicion-threshold-value>=75 and ../suspicion-threshold-value<=90)";
+              description
+                "Specifys the suspicion threshold for the percentage of the number of packets with specified characteristics to the total number of sampled packets. BROADCAST[70,90], APP_ERR[75,90], others[60,80]. determine-object with different value have different default suspicion-threshold-value values.";
+            }
+            leaf notification-threshold-value {
+              type uint8;
+              ext:dynamic-default {
+                ext:default-value "50" {
+                  when "../determine-object = 'broadcast-flood'";
+                  description "The default value is 50 when determine-object is broadcast-flood.";
+                }
+                ext:default-value "60" {
+                  when "../determine-object = 'app-error-percent'";
+                  description "The default value is 60 when determine-object is app-error-percent.";
+                }
+                ext:default-value "40" {
+                  description "The default value is 40 when determine-object is others.";
+                }
+              }
+              must "((../determine-object = 'top5-user' or ../determine-object = 'top5-source-mac' or ../determine-object = 'top5-source-ip') and (../notification-threshold-value>=40 and ../notification-threshold-value<=60)) or (../determine-object = 'broadcast-flood' and ../notification-threshold-value>=50 and ../notification-threshold-value<=70) or (../determine-object = 'app-error-percent' and ../notification-threshold-value>=60 and ../notification-threshold-value<=75)";
+              description
+                "Specifys the notification threshold for the percentage of the number of packets with specified characteristics to the total number of sampled packets. BROADCAST[50,70], APP_ERR[60,75], others[40,60]. determine-object with different value have different default notification-threshold-value.";
+            }
+          }
+        }
+      }
+   }
+    container loop-detect {
+      description
+        "Configure loop detection.";
+      container l3-loop-detect {
+        description
+          "Configure layer 3 loop detection.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable layer 3 loop detection.";
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "Configure policies for global management and service plane protection.";
+    container soc {
+      description
+          "Configure policies for global management and service plane protection.";
+      container l2-loop-detect {
+        description
+          "Configure layer 2 loop detection.";
+        container slot-l2loopdet {
+          description
+            "Configure layer 2 loop detection.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable Layer 2 loop detection.";
+          }
+          leaf packets-drop-threshold {
+            type uint32 {
+              range "1..65535000";
+            }
+            description
+              "Detect threshold.";
+          }
+        }
+        container action {
+          description
+            "Configure the CPU in response to Layer 2 loops after the system detects an existing or a potential loop on an interface, after Layer 2 loop detection is enabled.";
+          container shutdown {
+            presence "The initial interval between when the interface shuts down and when it goes to the Up state.";
+            description
+              "Enable/disable shut down the interface after detecting an existing Layer 2 loop on the interface.";
+            leaf up-times {
+              type uint16 {
+                range "1..10";
+              }
+              default "5";
+              description
+                "The maximum number of consecutive times that the system allows the Down interface to go Up in an interval.";
+            }
+            leaf up-interval {
+              type uint16 {
+                range "1..10";
+              }
+              units "min";
+              default "5";
+              description
+                "The initial interval between when the interface shuts down and when it goes to the Up state.";
+            }
+          }
+          container trap {
+            description
+              "Configure a trap after detecting an existing or a potential Layer 2 loop.";
+            leaf enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the system from sending a trap after the system detects a Layer 2 loop.";
+            }
+          }
+        }
+        container loop-level-thresholds {
+          description
+            "List of configure the loop level threshold on a detected main interface or sub-interface.";
+          list loop-level-threshold {
+            ext:generated-by system;
+            ext:operation-exclude "create|delete";
+            key "interface-type";
+            description
+              "Configure the loop level threshold on a detected main interface or sub-interface.";
+            leaf interface-type {
+              type interface-type;
+              description
+                "Interface type, main interface or sub-interface.";
+            }
+            leaf determined {
+              type uint32 {
+                range "1..6000";
+              }
+              units "packet";
+              ext:dynamic-default {
+                ext:default-value "3000" {
+                  when "../interface-type = 'main-interface'";
+                  description "The default value is 3000 when interface-type is main-interface.";
+                }
+                ext:default-value "300" {
+                  when "../interface-type = 'sub-interface'";
+                  description "The default value is 300 when interface-type is sub-interface.";
+                }
+              }
+              must "(../determined>../suspect)";
+              description
+                "The determined loop threshold.";
+            }
+            leaf suspect {
+              type uint32 {
+                range "1..6000";
+              }
+              units "packet";
+              ext:dynamic-default {
+                ext:default-value "2000" {
+                  when "../interface-type = 'main-interface'";
+                  description "The default value is 2000 when interface-type is main-interface.";
+                }
+                ext:default-value "200" {
+                  when "../interface-type = 'sub-interface'";
+                  description "The default value is 200 when interface-type is sub-interface.";
+                }
+              }
+              must "((../determined>../suspect) and (../suspect>../notification))";
+              description
+                "The suspect loop threshold.";
+            }
+            leaf notification {
+              type uint32 {
+                range "1..6000";
+              }
+              units "packet";
+              ext:dynamic-default {
+                ext:default-value "1000" {
+                  when "../interface-type = 'main-interface'";
+                  description "The default value is 1000 when interface-type is main-interface.";
+                }
+                ext:default-value "100" {
+                  when "../interface-type = 'sub-interface'";
+                  description "The default value is 100 when interface-type is sub-interface.";
+                }
+              }
+              must "(../suspect>../notification)";
+              description
+                "The notification loop threshold.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+      "Policies for global management and service plane protection.";
+    container soc {
+      description
+        "Configure policies for global management and service plane protection.";
+      container l2-loop-detect {
+        description
+          "Configure layer 2 loop detection.";
+        container slot-l2loopdet {
+          description
+            "Configure layer 2 loop detection.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable Layer 2 loop detection.";
+          }
+          leaf packets-drop-threshold {
+            type uint32 {
+              range "1..65535000";
+            }
+            description
+              "Detect threshold.";
+          }
+        }
+        container action {
+          description
+            "Configure the CPU in response to Layer 2 loops after the system detects an existing or a potential loop on an interface, after Layer 2 loop detection is enabled.";
+          container shutdown {
+            presence "The initial interval between when the interface shuts down and when it goes to the Up state.";
+            description
+              "Enable/disable shut down the interface after detecting an existing Layer 2 loop on the interface.";
+            leaf up-times {
+              type uint16 {
+                range "1..10";
+              }
+              default "5";
+              description
+                "The maximum number of consecutive times that the system allows the Down interface to go Up in an interval.";
+            }
+            leaf up-interval {
+              type uint16 {
+                range "1..10";
+              }
+              units "min";
+              default "5";
+              description
+                "The initial interval between when the interface shuts down and when it goes to the Up state.";
+            }
+          }
+          container trap {
+            description
+              "Configure a trap after detecting an existing or a potential Layer 2 loop.";
+            leaf enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the system from sending a trap after the system detects a Layer 2 loop.";
+            }
+          }
+        }
+        container loop-level-thresholds {
+          description
+            "List of configure the loop level threshold on a detected main interface or sub-interface.";
+          list loop-level-threshold {
+            ext:generated-by system;
+            ext:operation-exclude "create|delete";
+            key "interface-type";
+            description
+              "Configure the loop level threshold on a detected main interface or sub-interface.";
+            leaf interface-type {
+              type interface-type;
+              description
+                "Interface type, main interface or sub-interface.";
+            }
+            leaf determined {
+              type uint32 {
+                range "1..6000";
+              }
+              units "packet";
+              ext:dynamic-default {
+                ext:default-value "3000" {
+                  when "../interface-type = 'main-interface'";
+                  description "The default value is 3000 when interface-type is main-interface.";
+                }
+                ext:default-value "300" {
+                  when "../interface-type = 'sub-interface'";
+                  description "The default value is 300 when interface-type is sub-interface.";
+                }
+              }
+              must "(../determined>../suspect)";
+              description
+                "The determined loop threshold.";
+            }
+            leaf suspect {
+              type uint32 {
+                range "1..6000";
+              }
+              units "packet";
+              ext:dynamic-default {
+                ext:default-value "2000" {
+                  when "../interface-type = 'main-interface'";
+                  description "The default value is 2000 when interface-type is main-interface.";
+                }
+                ext:default-value "200" {
+                  when "../interface-type = 'sub-interface'";
+                  description "The default value is 200 when interface-type is sub-interface.";
+                }
+              }
+              must "((../determined>../suspect) and (../suspect>../notification))";
+              description
+                "The suspect loop threshold.";
+            }
+            leaf notification {
+              type uint32 {
+                range "1..6000";
+              }
+              units "packet";
+              ext:dynamic-default {
+                ext:default-value "1000" {
+                  when "../interface-type = 'main-interface'";
+                  description "The default value is 1000 when interface-type is main-interface.";
+                }
+                ext:default-value "100" {
+                  when "../interface-type = 'sub-interface'";
+                  description "The default value is 100 when interface-type is sub-interface.";
+                }
+              }
+              must "(../suspect>../notification)";
+              description
+                "The notification loop threshold.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

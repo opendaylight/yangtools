@@ -1,0 +1,2566 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-routing-policy {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-routing-policy";
+  prefix rtp;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-tunnel-management {
+    prefix tnlm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  include huawei-routing-policy-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Routing policies are used to filter routes and control the receiving and advertising of routes. By changing the route attributes, such as reachability, you can change the path through which the traffic passes.";
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "route-base";
+  container routing-policy {
+    description
+      "Routing policies are used to filter routes and control the receiving and advertising of routes. By changing the route attributes, such as reachability, you can change the path through which the traffic passes.";
+    container ext-community-soo-filters {
+      description
+        "List of extended community attribute SoO filters. Routes are filtered based on the SoO extended community attributes of routes.";
+      list ext-community-soo-filter {
+        key "name";
+        max-elements 65535;
+        description
+          "Configure an SoO extended community filter, which filters routes based on the SoO extended community attribute.";
+        leaf name {
+          type string {
+            length "1..51";
+          }
+          description
+            "Name of an extended community SoO filter. The name is a string and cannot contain spaces.";
+        }
+        leaf filter-type {
+          type community-filter-type;
+          mandatory true;
+          description
+            "Type of an extended community SoO filter, which can be basic or advanced.";
+        }
+        container basic-nodes {
+          when "../filter-type='basic'";
+          description
+            "List of basic extended community SoO filter nodes. You can use the SoO extended community ID as a matching condition.";
+          list basic-node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a node for a basic SoO extended community filter, with the SoO extended community attribute specified as a matching rule.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf-list community-member {
+              type ext-community-type;
+              min-elements 1;
+              max-elements 16;
+              description
+                "Configure a value for the SoO attribute in an SoO extended community filter. The value can be in any of the following formats: 
+(1) as-number:nn (as-number is an integer ranging from 0 to 65535, and nn is an integer ranging from 0 to 4294967295) 
+(2) IPv4-address:nn 
+(3) as-number.as-number:nn 
+(4) as-number:nn (as-number is an integer ranging from 65536 to 4294967295, and nn is an integer ranging from 0 to 65535.";
+            }
+          }
+        }
+        container advanced-nodes {
+          when "../filter-type='advanced'";
+          description
+            "List of advanced extended community SoO filter nodes. You can use a regular expression as a matching condition.";
+          list advanced-node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a node in an advanced extended community SoO filter, with a regular expression specified as a matching rule.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf regular {
+              type string {
+                length "1..1024";
+              }
+              mandatory true;
+              description
+                "Regular expression that is used for matching.";
+            }
+          }
+        }
+      }
+    }
+    container community-filters {
+      description
+        "List of community attribute filters. Routes are filtered based on the community attributes of routes.";
+      list community-filter {
+        key "name";
+        max-elements 65535;
+        description
+          "Configure a community attribute filter, which filters routes based on community attributes.";
+        leaf name {
+          type community-filter-name-type;
+          description
+            "Name of a community filter, which can be a numeral or a string. The ID of a basic community attribute filter is an integer ranging from 1 to 99; the ID of an advanced community attribute filter is an integer ranging from 100 to 199. The name of a community attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+        }
+        leaf filter-type {
+          type community-filter-type;
+          mandatory true;
+          description
+            "Type of a community filter, which can be basic or advanced.";
+        }
+        container basic-nodes {
+          when "../filter-type='basic'";
+          description
+            "List of basic community filter nodes. You can use the community ID or the attribute of a known community as a matching condition.";
+          list basic-node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a node in a basic community filter, with a community number or well-known community attribute as a matching rule.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            container community-members {
+              description
+                "List of community attributes.";
+              list community-member {
+                key "value";
+                max-elements 20;
+                description
+                  "Configure a community attribute.";
+                leaf value {
+                  type community-type;
+                  description
+                    "Community attribute value.";
+                }
+                leaf internet-strict-match {
+                  when "../value='internet'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable strict matching for routes with the internet community attribute.";
+                }
+              }
+            }
+          }
+        }
+        container advanced-nodes {
+          when "../filter-type='advanced'";
+          description
+            "List of advanced community filter nodes. You can use a regular expression as a matching condition.";
+          list advanced-node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a node in an advanced community filter, with a regular expression specified as a matching rule.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf regular {
+              type string {
+                length "1..1024";
+              }
+              mandatory true;
+              description
+                "Regular expression that is used for matching.";
+            }
+          }
+        }
+      }
+    }
+    container ext-community-filters {
+      description
+        "List of extended community filters. You can use the route-target extended community as a matching condition.";
+      list ext-community-filter {
+        key "name";
+        max-elements 65535;
+        description
+          "Configure an extended community filter, with a VPN-Target extended community specified as a matching rule.";
+        leaf name {
+          type ext-community-filter-name-type;
+          description
+            "Name of an extended community filter, which can be a numeral or a string. The ID of a basic extended community attribute filter is an integer ranging from 1 to 199; the ID of an advanced extended community attribute filter is an integer ranging from 200 to 399. The name of an extended community attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+        }
+        leaf filter-type {
+          type community-filter-type;
+          mandatory true;
+          description
+            "Type of an extended community filter, which can be basic or advanced.";
+        }
+        container basic-nodes {
+          when "../filter-type='basic'";
+          description
+            "List of extended community filter nodes.";
+          list basic-node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a node for an extended community filter.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            container ext-community-members {
+              description
+                "List of nodes in an extended community filter.";
+              list ext-community-member {
+                key "value";
+                min-elements 1;
+                max-elements 16;
+                description
+                  "Configure a node for an extended community filter.";
+                leaf value {
+                  type string {
+                    length "3..21";
+                  }
+                  description
+                    "Extended community attribute value. The format are as follows:
+                    (1)as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295).
+                    (2)IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535).
+                    (3)as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).
+                    (4)as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+                }
+              }
+            }
+          }
+        }
+        container advanced-nodes {
+          when "../filter-type='advanced'";
+          description
+            "List of advanced extended community filter nodes. You can use a regular expression as a matching condition.";
+          list advanced-node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a node in an advanced extended community filter, with a regular expression specified as a matching rule.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf regular {
+              type string {
+                length "1..1024";
+              }
+              mandatory true;
+              description
+                "Regular expression that is used for matching.";
+            }
+          }
+        }
+      }
+    }
+    container ipv4-prefix-filters {
+      description
+        "List of IPv4 prefix filters.";
+      list ipv4-prefix-filter {
+        key "name";
+        max-elements 100000;
+        description
+          "Configure an IPv4 prefix list, which contains a group of route filtering rules.";
+        leaf name {
+          type string {
+            length "1..169";
+          }
+          description
+            "Name of an IPv4 prefix filter.";
+        }
+        leaf description {
+          type string {
+            length "1..80";
+          }
+          description
+            "Description of prefix filter.";
+        }
+        leaf permit-count {
+          type uint32 {
+            range "0..65535";
+          }
+          default "0";
+          config false;
+          description
+            "Number of routes that match the route-policy.";
+        }
+        leaf deny-count {
+          type uint32 {
+            range "0..65535";
+          }
+          default "0";
+          config false;
+          description
+            "Number of routes that do not match the route-policy.";
+        }
+        container nodes {
+          description
+            "List of IPv4 prefix filter nodes.";
+          list node {
+            must "(not(masklength-lower) and not(masklength-upper)) or (masklength <= masklength-lower and masklength-lower <= masklength-upper)";
+            key "sequence";
+            max-elements 100000;
+            description
+              "Configure a node in an IPv4 prefix list. You can specify a prefix range and a mask length range in the node to match the destination network segment addresses or next-hop addresses in routes. There must be at least one node in a filter, min-elements 1.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf ip-address {
+              type inet:ipv4-address-no-zone;
+              mandatory true;
+              description
+                "IPv4 address.";
+            }
+            leaf masklength {
+              type uint8 {
+                range "0..32";
+              }
+              mandatory true;
+              description
+                "Mask length.";
+            }
+            leaf match-network {
+              type boolean;
+              must "../ip-address='0.0.0.0' or ../match-network='false'";
+              default "false";
+              description
+                "Enable/disable matching of network segment routes with the IPv4 prefix being 0.0.0.0.";
+            }
+            leaf masklength-lower {
+              type uint8 {
+                range "0..32";
+              }
+              description
+                "If both the IP address and mask length match, this parameter is used to specify the range lower of IP prefixes.";
+            }
+            leaf masklength-upper {
+              type uint8 {
+                range "1..32";
+              }
+              description
+                "If both the IP address and mask length match, this parameter is used to specify the range upper of IP prefixes.";
+            }
+          }
+        }
+      }
+    }
+    container ipv6-prefix-filters {
+      description
+        "List of IPv6 prefix filters.";
+      list ipv6-prefix-filter {
+        key "name";
+        max-elements 100000;
+        description
+          "Configure an IPv6 prefix list, which contains a group of route filtering rules.";
+        leaf name {
+          type string {
+            length "1..169";
+          }
+          description
+            "Name of an IPv6 prefix filter. The name is a string and cannot contain spaces.";
+        }
+        leaf description {
+          type string {
+            length "1..80";
+          }
+          description
+            "Description of prefix filter.";
+        }
+        leaf permit-count {
+          type uint32 {
+            range "0..65535";
+          }
+          default "0";
+          config false;
+          description
+            "Number of routes that match the route-policy.";
+        }
+        leaf deny-count {
+          type uint32 {
+            range "0..65535";
+          }
+          default "0";
+          config false;
+          description
+            "Number of routes that do not match the route-policy.";
+        }
+        container nodes {
+          description
+            "List of IPv6 prefix filter nodes.";
+          list node {
+            must "(not(masklength-lower) and not(masklength-upper)) or (masklength <= masklength-lower and masklength-lower <= masklength-upper)";
+            key "sequence";
+            max-elements 100000;
+            description
+              "Configure a node in an IPv6 prefix list. You can specify a prefix range and a mask length range in the node to match the destination network segment addresses or next-hop addresses in routes. There must be at least one node in a filter, min-elements 1.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf ipv6-address {
+              type inet:ipv6-address-no-zone;
+              mandatory true;
+              description
+                "IPv6 address.";
+            }
+            leaf masklength {
+              type uint8 {
+                range "0..128";
+              }
+              mandatory true;
+              description
+                "Mask length.";
+            }
+            leaf match-network {
+              type boolean;
+              must "../match-network='false' or ../ipv6-address='::'";
+              default "false";
+              description
+                "Enable/disable matching of network segment routes with the IPv6 prefix being ::.";
+            }
+            leaf masklength-lower {
+              type uint8 {
+                range "0..128";
+              }
+              description
+                "If both the IP address and mask length match, this parameter is used to specify the range lower of IP prefixes.";
+            }
+            leaf masklength-upper {
+              type uint8 {
+                range "1..128";
+              }
+              description
+                "If both the IP address and mask length match, this parameter is used to specify the range upper of IP prefixes.";
+            }
+          }
+        }
+      }
+    }
+    container ext-community-segmented-nexthop-filters {
+      description
+        "List of segmented next-hop extended community filters, which are used to filter routes based on segmented-nh attributes.";
+      list ext-community-segmented-nexthop-filter {
+        key "name";
+        max-elements 65535;
+        description
+          "Configure a segmented next-hop extended community filter, which is used to filter routes based on the segmented-nh attribute.";
+        leaf name {
+          type string {
+            length "1..51";
+          }
+          description
+            "Name of a segmented next-hop extended community filter.";
+        }
+        leaf filter-type {
+          type community-filter-type;
+          mandatory true;
+          description
+            "Type of a segmented next-hop extended community filter, which can be basic or advanced. Regular expressions can be used to configure matching rules for advanced extended community filters, but not for basic extended community filters.";
+        }
+        container basic-nodes {
+          when "../filter-type='basic'";
+          description
+            "List of nodes in a basic segmented next-hop extended community filter, with segmented-nh attributes used as matching rules.";
+          list basic-node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a node in a basic segmented next-hop extended community filter, with a segmented-nh attribute used as a matching rule.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node in a basic segmented next-hop extended community filter.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of a node in a basic segmented next-hop extended community filter.";
+            }
+            container ext-community-segmented-nexthop-members {
+              description
+                "List of values of segmented-nh attributes.";
+              list ext-community-segmented-nexthop-member {
+                key "value";
+                min-elements 1;
+                max-elements 16;
+                description
+                  "Configure a value for a segmented next-hop extended community filter.";
+                leaf value {
+                  type ext-community-type;
+                  description
+                    "Attribute value of a segmented next-hop extended community filter, which can be in any of the following formats: 
+                    (1) as-number:nn 
+                    (2) IPv4-address: nn 
+                    (3) as-number.as-number:nn
+                    (4) as-number:nn.";
+                }
+              }
+            }
+          }
+        }
+        container advanced-nodes {
+          when "../filter-type='advanced'";
+          description
+            "List of nodes of an advanced segmented next-hop extended community filter. Regular expressions are used as matching rules.";
+          list advanced-node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a node in an advanced segmented next-hop extended community filter, with a regular expression specified as a matching rule.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node in an advanced segmented next-hop extended community filter.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of a node in an advanced segmented next-hop extended community filter.";
+            }
+            leaf regular {
+              type string {
+                length "1..1024";
+              }
+              mandatory true;
+              description
+                "Regular expression used to match the extended community attribute.";
+            }
+          }
+        }
+      }
+    }
+    container as-path-filters {
+      description
+        "List of AS_Path filters. Routes are filtered based on the AS_Path attributes of routes.";
+      list as-path-filter {
+        key "name";
+        max-elements 65535;
+        description
+          "Configure an AS_Path filter, which filters routes based on their AS_Path attributes.";
+        leaf name {
+          type as-path-filter-name-type;
+          description
+            "Name of a AS_Path filter, which can be a numeral or a string. The ID of an as-path attribute filter is an integer ranging from 1 to 256. The name of a as-path attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+        }
+        container nodes {
+          description
+            "List of AS_Path filter nodes.";
+          list node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a node in an AS_Path filter.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf regular {
+              type string {
+                length "1..1024";
+              }
+              mandatory true;
+              description
+                "Regular expression that is used for filtering.";
+            }
+          }
+        }
+      }
+    }
+    container community-lists {
+      description
+        "List of community attributes.";
+      list community-list {
+        key "name";
+        max-elements 65535;
+        description
+          "Configure a BGP community list.";
+        leaf name {
+          type string {
+            length "1..63";
+          }
+          description
+            "Community list name.";
+        }
+        leaf-list community-member {
+          type community-type;
+          max-elements 100;
+          description
+            "Configure a community attribute in a BGP community list. There must be at least one community in a list, min-elements 1.";
+        }
+      }
+    }
+    container rd-filters {
+      description
+        "List of RD filters. You can use the RD as a matching condition.";
+      list rd-filter {
+        key "name";
+        max-elements 65535;
+        description
+          "Configure a list of nodes in an RD filter.";
+        leaf name {
+          type rd-filter-name-type;
+          description
+            "Name of an RD filter.";
+        }
+        container nodes {
+          description
+            "List of RD filter nodes.";
+          list node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a node in an RD filter.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            container rd-strings {
+              description
+                "List of RD attribute values.";
+              list rd-string {
+                key "value";
+                min-elements 1;
+                max-elements 10;
+                description
+                  "Configure RD values.";
+                leaf value {
+                  type ext-community-type;
+                  description
+                    "RD attribute value, which can be in the format of IPv4-address:nn (for example, x.x.x.x:200), the format of aa:nn (for example, 100:1), the format of IPv4-address:* (for example, x.x.x.x:*), or the format of aa:* (for example, 100:*). The example 'x.x.x.x:*' indicates that all the RDs starting with x.x.x.x are matched, and the example '100:*' indicates that all the RDs starting with 100 are matched.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container vni-filters {
+      description
+        "List of VNI filters.";
+      list vni-filter {
+        key "name";
+        max-elements 100;
+        description
+          "Configure a VNI filter.";
+        leaf name {
+          type string {
+            length "1..63";
+          }
+          description
+            "Configure a VNI filter name.";
+        }
+        container vni-members {
+          description
+            "List of VNI values.";
+          list vni-member {
+            key "value";
+            max-elements 100;
+            description
+              "Configure a VNI node.";
+            leaf value {
+              type uint32 {
+                range "1..16777215";
+              }
+              description
+                "Configure a VNI value.";
+            }
+          }
+        }
+      }
+    }
+    container mac-filters {
+      description
+        "List of MAC filters.";
+      list mac-filter {
+        key "name";
+        max-elements 100;
+        description
+          "Configure a MAC filter.";
+        leaf name {
+          type string {
+            length "1..63";
+          }
+          description
+            "Configure a MAC filter name.";
+        }
+        container mac-members {
+          description
+            "List of MAC addresses.";
+          list mac-member {
+            key "value";
+            max-elements 100;
+            description
+              "Configure a MAC node.";
+            leaf value {
+              type pub-type:mac-address;
+              description
+                "Configure a MAC value in format: H-H-H.";
+            }
+          }
+        }
+      }
+    }
+    container eth-tag-filters {
+      description
+        "List of Ethernet tag ID filters.";
+      list eth-tag-filter {
+        key "name";
+        max-elements 100;
+        description
+          "Configure an Ethernet tag ID filter.";
+        leaf name {
+          type string {
+            length "1..63";
+          }
+          description
+            "Configure an Ethernet tag ID filter name.";
+        }
+        container eth-tag-members {
+          description
+            "List of Ethernet tag IDs.";
+          list eth-tag-member {
+            key "value";
+            max-elements 100;
+            description
+              "Configure an Ethernet tag ID node.";
+            leaf value {
+              type uint32;
+              description
+                "Configure an Ethernet tag ID value.";
+            }
+          }
+        }
+      }
+    }
+    container large-community-filters {
+      description
+        "List of large community attribute filters. Routes are filtered based on the large community attributes of routes.";
+      list large-community-filter {
+        key "name";
+        max-elements 100;
+        description
+          "Configure a Large-Community filter, which filters routes based on Large-Community attributes.";
+        leaf name {
+          type string {
+            length "1..51";
+            pattern '((0*[1-9][0-9]?)|(0*1[0-9][0-9])|([^?\s0-9][^?\s]{0,50})|([\d][^?\s]*[^?\s0-9][^?\s]*))';
+          }
+          description
+            "Name of a large community filter.";
+        }
+        leaf filter-type {
+          type community-filter-type;
+          mandatory true;
+          description
+            "Type of a large community attribute filter, which can be basic or advanced.";
+        }
+        container basic-nodes {
+          when "../filter-type='basic'";
+          description
+            "List of basic large community filter nodes. You can use the large community attribute as a matching condition.";
+          list basic-node {
+            key "sequence";
+            min-elements 1;
+            max-elements 100;
+            description
+              "Configure a list of nodes in a basic Large-Community filter, with Large-Community attributes specified as matching rules.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Node number of a basic large community attribute filter.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of a node in the basic large community attribute filter.";
+            }
+            container large-community-members {
+              description
+                "List of large community attribute values. A maximum of 16 values are supported.";
+              list large-community-member {
+                key "value";
+                min-elements 1;
+                max-elements 16;
+                description
+                  "Configure a value for the Large-Community attribute in a Large-Community filter.";
+                leaf value {
+                  type large-community-type;
+                  description
+                    "Large community attribute value, which can be in the following formats: NN:NN:NN. ('NN' ranges from 0 to 4294967295).";
+                }
+              }
+            }
+          }
+        }
+        container advanced-nodes {
+          when "../filter-type='advanced'";
+          description
+            "List of advanced large community filter nodes. You can use a regular expression as a matching condition.";
+          list advanced-node {
+            key "sequence";
+            min-elements 1;
+            max-elements 100;
+            description
+              "Configure a node in an advanced Large-Community filter, with a regular expression specified as a matching rule.";
+            leaf sequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Node number of an advanced large community attribute filter.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of a node in the advanced large community attribute filter.";
+            }
+            leaf regular {
+              type string {
+                length "1..1024";
+              }
+              mandatory true;
+              description
+                "Regular expression that is used for matching.";
+            }
+          }
+        }
+      }
+    }
+    container large-community-lists {
+      description
+        "List of Large-Community attributes.";
+      list large-community-list {
+        key "name";
+        max-elements 100;
+        description
+          "Configure a BGP Large-Community list.";
+        leaf name {
+          type string {
+            length "1..63";
+            pattern '([a-zA-Z].*)';
+          }
+          description
+            "Large community list name.";
+        }
+        container large-community-members {
+          description
+            "List of Large-Community values.";
+          list large-community-member {
+            key "value";
+            max-elements 100;
+            description
+              "Configure a large community node.";
+            leaf value {
+              type large-community-type;
+              description
+                "Large community Value. There must be at least one community in a list, min-elements 1.";
+            }
+          }
+        }
+      }
+    }
+    container policy-definitions {
+      description
+        "List of route-policies.";
+      list policy-definition {
+        key "name";
+        max-elements 65535;
+        description
+          "Configure a route-policy.";
+        leaf name {
+          type string {
+            length "1..200";
+          }
+          description
+            "Policy name in the format of a string.";
+        }
+        container nodes {
+          description
+            "List of routing policy nodes.";
+          list node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a node in a route-policy to filter routes.";
+            leaf sequence {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf description {
+              type string {
+                length "1..80";
+              }
+              description
+                "Description of a routing policy.";
+            }
+            leaf match-count {
+              type uint32;
+              config false;
+              description
+                "Match count of route policy node.";
+            }
+            container conditions {
+              description
+                "Configure a list of matching types for a node in a route-policy.";
+              container match-tag {
+                description
+                  "Configure a filtering rule that is based on the route tag.";
+                leaf value {
+                  type uint32;
+                  description
+                    "Route tag, which is used for route classification.";
+                }
+              }
+              container match-ext-community-soo {
+                description
+                  "Configure a filtering rule that is based on the SoO extended community filter.";
+                leaf ext-community-soo-filter-ref {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:ext-community-soo-filters/rtp:ext-community-soo-filter/rtp:name";
+                  }
+                  description
+                    "Index of an extended community SoO filter.";
+                }
+              }
+              container match-ext-community-filters {
+                description
+                  "List of VPN-Target extended community filters.";
+                list match-ext-community-filter {
+                  key "ext-community-filter-ref";
+                  max-elements 16;
+                  description
+                    "Configure a filtering rule that is based on the VPN-Target extended community filter.";
+                  leaf ext-community-filter-ref {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ext-community-filters/rtp:ext-community-filter/rtp:name";
+                    }
+                    description
+                      "Index of an extended community filter.";
+                  }
+                }
+              }
+              container match-community-filters {
+                description
+                  "List of community filters.";
+                list match-community-filter {
+                  key "community-filter-ref";
+                  max-elements 32;
+                  description
+                    "Configure a filtering rule that is based on the community filter.";
+                  leaf community-filter-ref {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:community-filters/rtp:community-filter/rtp:name";
+                    }
+                    description
+                      "Name or index of a community attribute filter. It can be a numeral or a string. The ID of a basic community attribute filter is an integer ranging from 1 to 99; the ID of an advanced community attribute filter is an integer ranging from 100 to 199. The name of a community attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+                  }
+                  choice match-type {
+                    description
+                      "Match type.";
+                    case whole-match {
+                      description
+                        "All the communities are matched. It is valid to only basic community attribute filters.";
+                      leaf whole-match {
+                        type empty;
+                        description
+                          "All the communities are matched. It is valid to only basic community attribute filters.";
+                      }
+                    }
+                    case sort-match {
+                      description
+                        "Match all community attributes in sequence. It is valid to only Advanced community attribute filters.";
+                      leaf sort-match {
+                        type empty;
+                        description
+                          "Match all community attributes in sequence. It is valid to only Advanced community attribute filters.";
+                      }
+                    }
+                  }
+                }
+              }
+              container match-as-path-filters {
+                description
+                  "List of AS_Path filters.";
+                list match-as-path-filter {
+                  key "filter-name";
+                  max-elements 32;
+                  description
+                    "Configure a list of AS_Path filters as filtering rules.";
+                  leaf filter-name {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:as-path-filters/rtp:as-path-filter/rtp:name";
+                    }
+                    description
+                      "Name or index of a AS-Path filter, which can be a numeral or a string. The ID of a as-path attribute filter is an integer ranging from 1 to 256. The name of a as-path attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+                  }
+                }
+              }
+              container match-protocols {
+                description
+                  "List of protocol types that are used as filtering rules.";
+                list match-protocol {
+                  key "protocol";
+                  max-elements 9;
+                  description
+                    "Configure a filtering rule that is based on the protocol type.";
+                  leaf protocol {
+                    type protocol-type;
+                    description
+                      "Route protocol type.";
+                  }
+                }
+              }
+              container match-cost {
+                description
+                  "Configure a filtering rule that is based on the route cost.";
+                choice cost-set {
+                  description
+                    "Match cost.";
+                  case value {
+                    description
+                      "Value.";
+                    leaf value {
+                      type uint32;
+                      description
+                        "Route cost value.";
+                    }
+                  }
+                  case range {
+                    description
+                      "Range.";
+                    leaf lower {
+                      type uint32 {
+                        range "0..4294967294";
+                      }
+                      must "../lower < ../upper";
+                      description
+                        "Lower limit of a route cost range.";
+                    }
+                    leaf upper {
+                      type uint32 {
+                        range "1..4294967295";
+                      }
+                      must "../lower < ../upper";
+                      description
+                        "Upper limit of a route cost range.";
+                    }
+                  }
+                }
+              }
+              container match-preference {
+                description
+                  "Configure a filtering rule that is based on the route priority.";
+                leaf value {
+                  type uint8;
+                  description
+                    "Priority of the matched protocol.";
+                }
+              }
+              container match-ext-community-segmented-nexthop-filter {
+                description
+                  "Configure a filtering rule that is based on the segmented-nh attribute.";
+                leaf ext-community-segmented-nexthop-filter-ref {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:ext-community-segmented-nexthop-filters/rtp:ext-community-segmented-nexthop-filter/rtp:name";
+                  }
+                  description
+                    "Name of a segmented next-hop extended community filter.";
+                }
+              }
+              container match-interfaces {
+                description
+                  "List of outbound interfaces that are used for filtering rules.";
+                list match-interface {
+                  key "interface-name";
+                  max-elements 256;
+                  description
+                    "Configure a filtering rule that is based on the outbound interface.";
+                  leaf interface-name {
+                    type leafref {
+                      path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                    }
+                    description
+                      "Outbound interface name.";
+                  }
+                }
+              }
+              container match-route-types {
+                description
+                  "List of route types that are used for filtering rules.";
+                list match-route-type {
+                  key "route-type";
+                  description
+                    "Configure a filtering rule that is based on the route type.";
+                  leaf route-type {
+                    type route-type;
+                    description
+                      "Route type.";
+                  }
+                }
+              }
+              container match-mpls-label {
+                description
+                  "Configure a filtering rule that is based on the MPLS label.";
+                leaf mpls-label {
+                  type empty;
+                  description
+                    "Enabling mode that is specified during MPLS label matching.";
+                }
+                leaf mpls-label2 {
+                  type empty;
+                  description
+                    "Match MPLS label 2.";
+                }
+              }
+              container match-rd-filter {
+                presence "Create rd filter attribute values.";
+                description
+                  "Configure a filtering rule that is based on an RD filter.";
+                leaf rd-filter-ref {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:rd-filters/rtp:rd-filter/rtp:name";
+                  }
+                  mandatory true;
+                  description
+                    "Name of an RD filter.";
+                }
+              }
+              container match-mac-filter {
+                presence "Create mac filter attribute values.";
+                description
+                  "Configure a filtering rule that is based on a MAC address list.";
+                leaf mac-filter-ref {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:mac-filters/rtp:mac-filter/rtp:name";
+                  }
+                  mandatory true;
+                  description
+                    "MAC filter Name.";
+                }
+              }
+              container match-l3vni-filter {
+                presence "Create l3vni filter attribute value.";
+                description
+                  "Configure a filtering rule that is based on a Layer 3 VNI list.";
+                leaf match-type {
+
+                  type enumeration {
+                    enum "match-special" {
+                      value 0;
+                      description
+                        "Match Specified.";
+                    }
+                    enum "match-all" {
+                      value 1;
+                      description
+                        "Match all.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Mode of matching an L3VNI filter.";
+                }
+                leaf l3vni-filter-ref {
+                  when "../match-type='match-special'";
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:vni-filters/rtp:vni-filter/rtp:name";
+                  }
+                  must "../match-type='match-special' or (../match-type='match-all' and not(../l3vni-filter-ref))";
+                  mandatory true;
+                  description
+                    "Match an L3VNI name.";
+                }
+              }
+              container match-l2vni-filter {
+                presence "Create l2vni filter attribute value.";
+                description
+                  "Configure a filtering rule that is based on a Layer 2 VNI list.";
+                leaf match-type {
+                  type enumeration {
+                    enum "match-special" {
+                      value 0;
+                      description
+                        "Match Specified.";
+                    }
+                    enum "match-all" {
+                      value 1;
+                      description
+                        "Match all.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Mode of matching an L2VNI filter.";
+                }
+                leaf l2vni-filter-ref {
+                  when "../match-type='match-special'";
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:vni-filters/rtp:vni-filter/rtp:name";
+                  }
+                  must "../match-type='match-special' or (../match-type='match-all' and not(../l2vni-filter-ref))";
+                  mandatory true;
+                  description
+                    "Match an L2VNI name.";
+                }
+              }
+              container match-eth-tag-filter {
+                presence "Create eth tag filter attribute values.";
+                description
+                  "Configure a filtering rule that is based on an Ethernet tag list.";
+                leaf eth-tag-filter-ref {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:eth-tag-filters/rtp:eth-tag-filter/rtp:name";
+                  }
+                  mandatory true;
+                  description
+                    "Match a specified Ethernet tag ID name.";
+                }
+              }
+              container match-large-community-filters {
+                description
+                  "List of Large-Community filters.";
+                list match-large-community-filter {
+                  key "community-filter-ref";
+                  max-elements 32;
+                  description
+                    "Configure a filtering rule that is based on a Large-Community filter.";
+                  leaf community-filter-ref {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:large-community-filters/rtp:large-community-filter/rtp:name";
+                    }
+                    description
+                      "Name a large community attribute filter.";
+                  }
+                  choice match-type {
+                    description
+                      "Match type.";
+                    case whole-match {
+                      description
+                        "All the communities are matched. It is valid to only basic community attribute filters.";
+                      leaf whole-match {
+                        type empty;
+                        description
+                          "All the communities are matched. It is valid to only basic community attribute filters.";
+                      }
+                    }
+                  }
+                }
+              }
+              container match-as-path-length {
+                description
+                  "Configure a filtering rule that is based on the AS_Path length.";
+                choice as-path-length-set {
+                  description
+                    "Set AS path length.";
+                  case value {
+                    description
+                      "Value.";
+                    leaf value {
+                      type uint32 {
+                        range "0..2047";
+                      }
+                      description
+                        "AS path length, which is used to control length of AS path.";
+                    }
+                  }
+                  case range {
+                    description
+                      "Range.";
+                    leaf lower {
+                      type uint32 {
+                        range "0..2046";
+                      }
+                      must "(../lower<=../upper and ../lower and ../upper) or (not(../lower) and not(../upper))";
+                      description
+                        "Lower limit of AS path length range.";
+                    }
+                    leaf upper {
+                      type uint32 {
+                        range "1..2047";
+                      }
+                      must "(../lower<=../upper and ../lower and ../upper) or (not(../lower) and not(../upper))";
+                      description
+                        "Upper limit of a AS path length range.";
+                    }
+                  }
+                }
+              }
+              choice match-ipv4-destination {
+                description
+                  "References IPv4 prefix filter or IPv4 destination addresses ACL rule.";
+                case ipv4-prefix {
+                  description
+                    "References IPv4 prefix filter.";
+                  container match-ipv4-prefix {
+                    description
+                      "Configure a filtering rule to filter routes with destination IPv4 addresses matching an IPv4 prefix list.";
+                    leaf prefix-filter-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Name of the specified prefix filter when IPv4 destination addresses are matched.";
+                    }
+                  }
+                }
+              }
+              choice match-ipv6-destination {
+                description
+                  "Match IPv6 destination addresses.";
+                case ipv6-prefix {
+                  description
+                    "References IPv6 prefix filter.";
+                  container match-ipv6-prefix {
+                    description
+                      "Configure a filtering rule to filter routes with destination IPv6 addresses matching an IPv6 prefix list.";
+                    leaf prefix-filter-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Name of the specified prefix filter when IPv6 destination addresses are matched.";
+                    }
+                  }
+                }
+              }
+              choice match-ipv4-nexthop {
+                description
+                  "Match IPv4 next hops. References IPv4 prefix filter or IPv4 destination addresses ACL rule.";
+                case ipv4-prefix {
+                  description
+                    "References IPv4 prefix filter.";
+                  container match-nexthop-ipv4-prefix {
+                    description
+                      "Configure a filtering rule to filter routes with IPv4 next hops matching an IPv4 prefix list.";
+                    leaf prefix-filter-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Name of the specified prefix filter when IPv4 next hops are matched.";
+                    }
+                  }
+                }
+              }
+              choice match-ipv6-nexthop {
+                description
+                  "Match IPv6 next hops. References IPv6 prefix filter or IPv6 destination addresses ACL rule.";
+                case ipv6-prefix {
+                  description
+                    "References IPv6 prefix filter.";
+                  container match-nexthop-ipv6-prefix {
+                    description
+                      "Configure a filtering rule that is based on the next-hop IPv6 address.";
+                    leaf prefix-filter-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Name of the specified prefix filter when IPv6 next hops are matched.";
+                    }
+                  }
+                }
+              }
+              choice match-ipv4-route-source {
+                description
+                  "Match IPv4 route sources. References IPv4 prefix filter or IPv4 destination addresses ACL rule.";
+                case ipv4-prefix {
+                  description
+                    "References IPv4 prefix filter.";
+                  container match-route-source-ipv4-prefix {
+                    description
+                      "Configure a filtering rule that is based on the IPv4 addresses of the originators that send these routes.";
+                    leaf prefix-filter-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Name of the specified prefix filter when IPv4 route sources are matched.";
+                    }
+                  }
+                }
+              }
+              choice match-ipv6-route-source {
+                description
+                  "Match IPv6 route sources. References IPv6 prefix filter or IPv6 destination addresses ACL rule.";
+                case ipv6-prefix {
+                  description
+                    "References IPv6 prefix filter.";
+                  container match-route-source-ipv6-prefix {
+                    description
+                      "Configure a filtering rule that is based on the IPv6 addresses of the originators that send these routes.";
+                    leaf prefix-filter-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Name of the specified prefix filter when IPv6 route sources are matched.";
+                    }
+                  }
+                }
+              }
+              choice match-route-originator {
+                description
+                  "Matches routes using the list of IP addresses of route senders.";
+                case ipv4-prefix {
+                  description
+                    "Set IPv4 prefix.";
+                  container match-originator-ipv4-prefix {
+                    description
+                      "Configure an NG MVPN route filtering rule that is based on the IP addresses of a multicast group.";
+                    leaf prefix-filter-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Name of the specified prefix filter when IPv4 destination addresses are matched.";
+                    }
+                  }
+                }
+              }
+              choice match-group-address {
+                description
+                  "Match IPv4 group address. References IPv4 prefix filter or IPv4 destination addresses ACL rule.";
+                case ipv4-prefix {
+                  description
+                    "Set IPv4 prefix.";
+                  container match-group-address-ipv4-prefix {
+                    description
+                      "Configure a filtering rule that is based on the multicast group address.";
+                    leaf prefix-filter-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Name of the specified prefix filter when IPv4 destination addresses are matched.";
+                    }
+                  }
+                }
+              }
+            }
+            container actions {
+              description
+                "Configure the type of a filtering rule.";
+              container apply-local-preference {
+                presence "create parameters of local priority.";
+                description
+                  "Configure a value for the local preference (Local-Pref) attribute in BGP routes.";
+                leaf operation {
+                  type enumeration {
+                    enum "replace" {
+                      value 0;
+                      description
+                        "Replace the original route local priority with the configured route local priority.";
+                    }
+                    enum "add" {
+                      value 1;
+                      description
+                        "Add the configured route local priority and the original local priority.";
+                    }
+                    enum "sub" {
+                      value 2;
+                      description
+                        "Subtract the configured route local priority from the original local priority.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Mode of setting the local priority.";
+                }
+                leaf value {
+                  type uint32;
+                  mandatory true;
+                  description
+                    "Local priority of a route.";
+                }
+              }
+              container apply-cost {
+                presence "create parameters of route cost.";
+                description
+                  "Configure an MED value for BGP routes or cost value for routes of another protocol.";
+                leaf operation {
+                  type enumeration {
+                    enum "add" {
+                      value 0;
+                      description
+                        "Add the configured route cost and the original cost.";
+                    }
+                    enum "sub" {
+                      value 1;
+                      description
+                        "Subtract the configured route cost from the original cost.";
+                    }
+                    enum "replace" {
+                      value 2;
+                      description
+                        "Replace the original route cost with the configured route cost.";
+                    }
+                    enum "none" {
+                      value 3;
+                      description
+                        "Delete the MED value of BGP routes.";
+                    }
+                    enum "inherit" {
+                      value 4;
+                      description
+                        "Inherit the original route cost.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Mode of setting the route cost.";
+                }
+                leaf value {
+                  when "../operation!='inherit' and ../operation!='none'";
+                  type uint32;
+                  mandatory true;
+                  description
+                    "Route cost, which is used to control route selection.";
+                }
+              }
+              container apply-community {
+                presence "create parameters of community attribute value.";
+                description
+                  "Configure community attributes for BGP routes.";
+                leaf operation {
+                  type enumeration {
+                    enum "delete" {
+                      value 0;
+                      description
+                        "Delete all the original attributes.";
+                    }
+                    enum "replace" {
+                      value 1;
+                      description
+                        "Replace the original attribute with the newly configured one.";
+                    }
+                    enum "add" {
+                      value 2;
+                      description
+                        "Add the newly configured attribute to the original ones.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Set the application mode of the community attribute. The available options are as follows:
+                    Append: Append the configured community attribute to the original community attribute of a route.
+                    Replace: To replace the original community attribute of a route with the configured community attribute.
+                    Delete: Delete all the original community attributes of a route.";
+                }
+                choice set-community {
+                  when "operation!='delete'";
+                  mandatory true;
+                  description
+                    "Option to set communities using an inline list or reference to an existing defined set.";
+                  case inline {
+                    description
+                      "Set the community values for the update inline with a list.";
+                    leaf-list communities { 
+                      type community-type;
+                      min-elements 1;
+                      max-elements 32;
+                      description
+                        "Configure BGP community values. The value can be in any of the following formats: 
+(1) Integer 
+(2) aa:nn 
+(3) Well-known community attribute (internet, no-export-subconfed, no-advertise, or no-export).";
+                    }
+                  }
+                  case inline-string {
+                    description
+                      "Set community values using character strings.";
+                    leaf value {
+                      type string {
+                        length "1..392";
+                        pattern '([0-9a-zA-Z\-: ]*)';
+                      }
+                      description
+                        "Community attributes. A maximum of 32 community attributes can be configured, which are separated by spaces. Each community attribute can be in any of the following formats: Integer ranging from 0 to 4294967295; x:y, in which x ranges from 0 to 65535, and y ranges from 0 to 65535; Well-known community attribute (internet, no-export-subconfed, no-advertise, or no-export).";
+                    }
+                  }
+                  case reference {
+                    description
+                      "References a defined community set by name.";
+                    leaf community-list-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:community-lists/rtp:community-list/rtp:name";
+                      }
+                      description
+                        "The communities are specified by referencing a defined community list name.";
+                    }
+                  }
+                }
+              }
+              container apply-ext-community-soo {
+                presence "create parameters of SoO extended community attribute values.";
+                description
+                  "Configure Source of Origin (SoO) extended community attributes for BGP routes.";
+                leaf operation {
+                  type enumeration {
+                    enum "add" {
+                      value 2;
+                      description
+                        "Add the newly configured attribute to the original ones.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Apply the configured SoO value to the original SoO value of a route.";
+                }
+                leaf-list communities {
+                  type ext-community-type;
+                  min-elements 1;
+                  max-elements 16;
+                  description
+                    "Configure a value for the SoO extended community attribute in routes. The value can be in any of the following formats: 
+(1) as-number:nn (as-number is an integer ranging from 0 to 65535, and nn is an integer ranging from 0 to 4294967295) 
+(2) IPv4-address:nn 
+(3) as-number.as-number:nn 
+(4) as-number:nn (as-number is an integer ranging from 65536 to 4294967295, and nn is an integer ranging from 0 to 65535.";
+                }
+              }
+              container apply-mpls-label {
+                description
+                  "Configure the allocation of MPLS labels to public network routes.";
+                leaf mpls-label {
+                  type empty;
+                  description
+                    "Enabling mode that is specified during MPLS label settings.";
+                }
+              }
+              container apply-preferred {
+                description
+                  "Configure a preferred value for BGP routes.";
+                leaf value {
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  description
+                    "Preferred value of a BGP route.";
+                }
+              }
+              container apply-aigp {
+                presence "create parameters of accumulated IGP metric.";
+                description
+                  "Configure a value for the accumulated IGP (AIGP) metric attribute in BGP routes.";
+                leaf operation {
+                  type enumeration {
+                    enum "config" {
+                      value 0;
+                      description
+                        "Mode of pecify metric value.";
+                    }
+                    enum "inherit-cost" {
+                      value 1;
+                      description
+                        "Inherit the cost of the route.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Mode of setting route accumulated IGP metric.";
+                }
+                leaf value {
+                  when "../operation!='inherit-cost'";
+                  type uint32;
+                  mandatory true;
+                  description
+                    "Specify metric value.";
+                }
+              }
+              container apply-tag {
+                description
+                  "Configure a tag for filtered routes.";
+                leaf value {
+                  type uint32;
+                  description
+                    "Tag value of a route.";
+                }
+              }
+              container apply-ipv4-nexthop {
+                description
+                  "Configure a next-hop IPv4 address for filtered routes.";
+                choice ipv4-nexthop-set {
+                  description
+                    "Nexthop set.";
+                  case nexthop {
+                    description
+                      "Nexthop.";
+                    leaf nexthop {
+                      type inet:ipv4-address-no-zone;
+                      description
+                        "Next-hop address.";
+                    }
+                  }
+                  case peer-address {
+                    description
+                      "Peer-address.";
+                    leaf peer-address {
+                      type empty;
+                      description
+                        "BGP peer address.";
+                    }
+                  }
+                  case blackhole {
+                    description
+                      "Blackhole.";
+                    leaf blackhole {
+                      type empty;
+                      description
+                        "Apply black hole.";
+                    }
+                  }
+                }
+              }
+              container apply-ipv6-nexthop {
+                description
+                  "Configure a next-hop IPv6 address for filtered routes.";
+                choice ipv6-nexthop-set {
+                  description
+                    "IPv6 nexthop set.";
+                  case ipv6-nexthop {
+                    description
+                      "IPv6-nexthop.";
+                    leaf ipv6-nexthop {
+                      type inet:ipv6-address-no-zone;
+                      description
+                        "IPv6 next-hop address.";
+                    }
+                  }
+                  case peer-address {
+                    description
+                      "Peer-address.";
+                    leaf peer-address {
+                      type empty;
+                      description
+                        "IPv6 BGP peer address.";
+                    }
+                  }
+                  case blackhole {
+                    description
+                      "Blackhole.";
+                    leaf blackhole {
+                      type empty;
+                      description
+                        "Apply IPv6 black hole.";
+                    }
+                  }
+                }
+              }
+              container apply-cost-type {
+                description
+                  "Configure a cost type for filtered routes.";
+                leaf value {
+                  type cost-type;
+                  description
+                    "Route cost type.";
+                }
+              }
+              container apply-origin {
+                presence "create parameters of routing information sources.";
+                description
+                  "Configure a value for the Origin attribute in BGP routes.";
+                leaf origin-type {
+                  type enumeration {
+                    enum "egp" {
+                      value 0;
+                      description
+                        "BGP routing information comes from the EGP route.";
+                    }
+                    enum "igp" {
+                      value 1;
+                      description
+                        "BGP routing information comes from the IGP route.";
+                    }
+                    enum "incomplete" {
+                      value 2;
+                      description
+                        "The source of BGP routing information is unknown.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Source of BGP routing information. The available options are as follows:egp: indicates that BGP routing information comes from the EGP route. The as-number parameter is required to specify the AS number of the EGP route.
+                    igp: indicates that BGP routing information comes from the IGP route.
+                    incomplete: The source of BGP routing information is unknown.";
+                }
+                leaf value {
+                  when "../origin-type='egp'";
+                  type as-number-validate;
+                  mandatory true;
+                  description
+                    "Set the AS_Path value for external routes, which can be an integer or in dotted decimal notation.";
+                }
+              }
+              container apply-preference {
+                description
+                  "Configure a priority for filtered routes.";
+                leaf value {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  description
+                    "Protocol priority.";
+                }
+              }
+              container apply-route-type {
+                description
+                  "Configure the level of routes imported to IS-IS.";
+                leaf value {
+                  type enumeration {
+                    enum "ospf-stub-area" {
+                      value 1;
+                      description
+                        "Import a route to the NSSA area of OSPF.";
+                    }
+                    enum "ospf-backbone" {
+                      value 2;
+                      description
+                        "Import a route to the backbone area of OSPF.";
+                    }
+                    enum "isis-level-1" {
+                      value 3;
+                      description
+                        "Import a route to the level-1 area of IS-IS.";
+                    }
+                    enum "isis-level-2" {
+                      value 4;
+                      description
+                        "Import a route to the level-2 area of IS-IS.";
+                    }
+                    enum "isis-level-12" {
+                      value 5;
+                      description
+                        "Import routes to the level-1 and level-2 areas of IS-IS.";
+                    }
+                  }
+                  description
+                    "Route type.";
+                }
+              }
+              container apply-traffic {
+                description
+                  "Configure a BGP traffic index for statistics collection.";
+                leaf value {
+                  type uint32 {
+                    range "1..64";
+                  }
+                  description
+                    "BGP traffic index.";
+                }
+              }
+              container apply-priority {
+                description
+                  "Configure a priority for imported routes.";
+                leaf value {
+                  type uint16 {
+                    range "1..255";
+                  }
+                  description
+                    "Import route priority.";
+                }
+              }
+              container apply-ipv4-gateway {
+                presence "create parameters of GWIPs.";
+                description
+                  "Configure a gateway IP address for routes.";
+                leaf gateway-type {
+                  type enumeration {
+                    enum "origin-nexthop" {
+                      value 0;
+                      description
+                        "Origin-nexthop.";
+                    }
+                    enum "ip-address" {
+                      value 1;
+                      description
+                        "IP-address.";
+                    }
+                    enum "none" {
+                      value 2;
+                      description
+                        "None.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Set the mode for configuring the GWIP for routes.";
+                }
+                leaf address {
+                  when "../gateway-type='ip-address'";
+                  type inet:ipv4-address-no-zone;
+                  mandatory true;
+                  description
+                    "Set a specified IP address as the GWIP.";
+                }
+              }
+              container apply-ipv6-gateway {
+                presence "create parameters of IPv6 GWIPs.";
+                description
+                  "Configure a gateway IPv6 address for routes.";
+                leaf gateway-type {
+                  type enumeration {
+                    enum "origin-nexthop" {
+                      value 0;
+                      description
+                        "Origin-nexthop.";
+                    }
+                    enum "ip-address" {
+                      value 1;
+                      description
+                        "IP-address.";
+                    }
+                    enum "none" {
+                      value 2;
+                      description
+                        "None.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Set the mode for configuring the GWIP for IPv6 routes.";
+                }
+                leaf address {
+                  when "../gateway-type='ip-address'";
+                  type inet:ipv6-address-no-zone;
+                  mandatory true;
+                  description
+                    "Set a specified IPv6 address as the GWIP.";
+                }
+              }
+              container apply-ext-community {
+                presence "create parameters of extended community attribute values.";
+                description
+                  "Configure VPN-Target extended community attributes for BGP routes.";
+                leaf operation {
+                  type enumeration {
+                    enum "add" {
+                      value 2;
+                      description
+                        "The configured extended community attribute will be appended to the original extended community attribute of a route.";
+                    }
+                    enum "replace" {
+                      value 1;
+                      description
+                        "The original extended community attribute of a route will be replaced by the configured extended community attribute.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Apply the configured rt value to the original rt value of a route.";
+                }
+                container ext-community-members {
+                  description
+                    "List of extend community attribute value.";
+                  list ext-community-member {
+                    key "value";
+                    min-elements 1;
+                    max-elements 16;
+                    description
+                      "Configure VPN-Target extended community attributes for BGP routes.";
+                    leaf value {
+                      type ext-community-type;
+                      description
+                        "Extended community attribute value. The format are as follows:
+                    (1)as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295).
+                    (2)IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535).
+                    (3)as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+                    }
+                  }
+                }
+              }
+              container apply-community-filter-delete {
+                description
+                  "Configure the deletion of BGP community attributes based on a community filter.";
+                leaf name {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:community-filters/rtp:community-filter/rtp:name";
+                  }
+                  description
+                    "Name or index of a community attribute filter. It can be a numeral or a string. The ID of a basic community attribute filter is an integer ranging from 1 to 99; the ID of an advanced community attribute filter is an integer ranging from 100 to 199. The name of a community attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+                }
+              }
+              container apply-dampening {
+                must "reuse-value<suppress-value and suppress-value<ceiling-value";
+                presence "create parameters of route penalty.";
+                description
+                  "Configure dampening parameters for EBGP routes.";
+                leaf half-life-value {
+                  type uint32 {
+                    range "1..45";
+                  }
+                  units "min";
+                  mandatory true;
+                  description
+                    "Suppression half-life during route flapping.";
+                }
+                leaf reuse-value {
+                  type uint32 {
+                    range "1..20000";
+                  }
+                  mandatory true;
+                  description
+                    "Threshold for the route to be unsuppressed. When the penalty value falls below the threshold, the route is reused.";
+                }
+                leaf suppress-value {
+                  type uint32 {
+                    range "1..20000";
+                  }
+                  mandatory true;
+                  description
+                    "Threshold for the route to be suppressed. When the penalty value of a route exceeds the suppression threshold, the route is suppressed.";
+                }
+                leaf ceiling-value {
+                  type uint32 {
+                    range "1001..20000";
+                  }
+                  mandatory true;
+                  description
+                    "Penalty ceiling of the specified route.";
+                }
+              }
+              container apply-qos-parameter {
+                description
+                  "Configure QoS parameters for routes.";
+                choice set-qos-parameter {
+                  description
+                    "Set QoS parameter.";
+                  case local-id-ip-precedence {
+                    description
+                      "Set QoS local ID or IP precedence.";
+                    leaf qos-local-id {
+                      type uint32 {
+                        range "1..4294967295";
+                      }
+                      description
+                        "QoS local ID.";
+                    }
+                    leaf ip-precedence {
+                      type uint32 {
+                        range "0..7";
+                      }
+                      description
+                        "IP precedence value.";
+                    }
+                  }
+                }
+              }
+              container apply-as-path {
+                presence "Set AS path attribute values.";
+                description
+                  "Configure the AS_Path attribute in BGP routes.";
+                leaf operation {
+                  type enumeration {
+                    enum "delete" {
+                      value 0;
+                      description
+                        "Delete all the original attributes.";
+                    }
+                    enum "replace" {
+                      value 1;
+                      description
+                        "Replace the original attribute with the newly configured one.";
+                    }
+                    enum "additive" {
+                      value 2;
+                      description
+                        "Add the newly configured attribute to the original ones.";
+                    }
+                    enum "delete-special" {
+                      value 3;
+                      description
+                        "Delete the specified attribute.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Additive: apply the configured AS value to the original AS value of a route. 
+                    Replace: replace the original AS value of a route with the configured AS value. 
+                    Delete: delete all the original AS value of a route. 
+                    Delete-special: delete the specified AS value of a route.";
+                }
+                choice as-path-string {
+                  description
+                    "AS attribute values.";
+                  case as-string {
+                    description
+                      "AS attribute values.";
+                    leaf value {
+                      when "../operation!='delete'";
+                      type string {
+                        length "1..3071";
+                        pattern '([0-9\. ]*)';
+                      }
+                      mandatory true;
+                      description
+                        "The AS number in an AS_Path can be in asplain format ranging from 1 to 4294967295 or in asdot format, X.Y for example, in which X ranges from 1 to 65535, and Y ranges from 0 to 65535.";
+                    }
+                  }
+                }
+              }
+              container apply-ext-community-redirect-ip {
+                description
+                  "Configure the application of an IP address-based redirection extended community attribute to routes matching a route-policy.";
+                leaf value {
+                  type ext-community-redirect-ip-type;
+                  description
+                    "Extended community attribute value, which can be in the format of IPv4-address : nn. ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 1).";
+                }
+              }
+              container apply-ext-community-redirect-vpn {
+                description
+                  "Configure the application of a VPN target-based redirection extended community attribute to routes matching a route-policy.";
+                leaf value {
+                  type ext-community-type;
+                  description
+                    "Extended community attribute value. The format are as follows:
+                    (1)as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295).
+                    (2)IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535).
+                    (3)as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).
+                    (4)as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+                }
+              }
+              container apply-ext-community-color {
+                presence "Create color extcommunity attribute values.";
+                description
+                  "Configure a value for the color extended community attribute in BGP routes.";
+                leaf value {
+                  type ext-community-color-type;
+                  mandatory true;
+                  description
+                    "Extcommunity attribute value, in the format of FLAG<0-0>:nn<1-4294967295>.";
+                }
+              }
+              container apply-entropy-label-none {
+                presence "Enable or disable the drop entropy label.";
+                description
+                  "Configure the discarding of the entropy label in BGP routes.";
+                leaf entropy-label-none {
+                  type boolean;
+                  mandatory true;
+                  description
+                    "Enable/disable the function of discarding entropy labels of BGP routes.";
+                }
+              }
+              container apply-peer-id {
+                presence "Create peer group IDs.";
+                description
+                  "Configure an ID for a BGP peer group.";
+                leaf value {
+                  type uint16 {
+                    range "1..255";
+                  }
+                  mandatory true;
+                  description
+                    "Set peer group ID.";
+                }
+              }
+              container apply-large-community {
+                presence "create parameters of large community attribute value.";
+                description
+                  "Configure values for the Large-Community attribute in BGP routes.";
+                leaf operation {
+                  type enumeration {
+                    enum "delete" {
+                      value 0;
+                      description
+                        "Delete all the original attributes.";
+                    }
+                    enum "replace" {
+                      value 1;
+                      description
+                        "Replace the original attribute with the newly configured one.";
+                    }
+                    enum "add" {
+                      value 2;
+                      description
+                        "Add the newly configured attribute to the original ones.";
+                    }
+                    enum "delete-special" {
+                      value 3;
+                      description
+                        "Delete the specified attribute.";
+                    }
+                  }
+                  mandatory true;
+                  description
+                    "Set the application mode of the large community attribute. The available options are as follows:
+                    (1)add: Append the configured large community attribute to the original large community attribute of a route.
+                    (2)replace: To replace the original large community attribute of a route with the configured large community attribute.
+                    (3)delete: Delete all the original large community attributes of a route.
+                    (4)delete-special: Delete the specified large community attribute of a route.";
+                }
+                choice set-large-community {
+                  when "operation!='delete'";
+                  mandatory true;
+                  description
+                    "Large community set.";
+                  case inline {
+                    description
+                      "Large community attribute value.";
+                    container large-community-members {
+                      description
+                        "List of large community attribute value.";
+                      list large-community-member {
+                        key "value";
+                        min-elements 1;
+                        max-elements 16;
+                        description
+                          "Configure a value for the Large-Community attribute in a Large-Community filter.";
+                        leaf value {
+                          type large-community-type;
+                          description
+                            "Large Community attribute value, in the format of NN:NN:NN ('NN' range from 0 to 4294967295).";
+                        }
+                      }
+                    }
+                  }
+                  case reference {
+                    description
+                      "Large community-list.";
+                    leaf large-community-list-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:large-community-lists/rtp:large-community-list/rtp:name";
+                      }
+                      description
+                        "Large community list name.";
+                    }
+                  }
+                }
+              }
+            }
+            container next-node-choice {
+              description
+                "Configure further route matching against a specified node after the routes match the current node. By default, if a route matches the current node, it matches the route-policy and is no longer matched against the other nodes.";
+              leaf is-goto-next-node {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable further route matching against a specified node after the routes match the current node.";
+              }
+              leaf next-node-sequence {
+                when "../is-goto-next-node='true'";
+                type int32 {
+                  range "1..65535";
+                }
+                description
+                  "Matching node sequence number.";
+              }
+            }
+          }
+        }
+      }
+    }
+    container tunnel-selectors {
+      description
+        "List of tunnel selectors.";
+      list tunnel-selector {
+        key "name";
+        max-elements 65535;
+        description
+          "Configure a tunnel selector, which is mainly used in BGP Option B and Option C scenarios. A tunnel policy is selected based on the matching rules set in the tunnel selector.";
+        leaf name {
+          type string {
+            length "1..40";
+          }
+          description
+            "Name of a tunnel selector. The name is a string case-sensitive characters without spaces.";
+        }
+        container nodes {
+          description
+            "List of tunnel selector nodes.";
+          list node {
+            key "sequence";
+            min-elements 1;
+            max-elements 65535;
+            description
+              "Configure a tunnel selector. You can specify rules in the tunnel selector to recurse routes to a desired tunnel.";
+            leaf sequence {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf match-mode {
+              type match-mode-type;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            container conditions {
+              description
+                "Configure a list of matching types.";
+              container match-rd-filter {
+                description
+                  "Configure a filtering rule based on RD filters.";
+                leaf rd-filter-ref {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:rd-filters/rtp:rd-filter/rtp:name";
+                  }
+                  description
+                    "Name of an RD filter.";
+                }
+              }
+              container match-community-filters {
+                description
+                  "List of community filters used to match routes.";
+                list match-community-filter {
+                  key "community-filter-ref";
+                  max-elements 32;
+                  description
+                    "Configure a matching rule that is based on a community filter.";
+                  leaf community-filter-ref {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:community-filters/rtp:community-filter/rtp:name";
+                    }
+                    description
+                      "Name or index of a community attribute filter. It can be a numeral or a string. The ID of a basic community attribute filter is an integer ranging from 1 to 99; the ID of an advanced community attribute filter is an integer ranging from 100 to 199. The name of a community attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+                  }
+                  choice match-type {
+                    description
+                      "Match type.";
+                    case whole-match {
+                      description
+                        "Whole match.";
+                      leaf whole-match {
+                        type empty;
+                        description
+                          "All the communities are matched. It is valid to only basic community attribute filters.";
+                      }
+                    }
+                    case sort-match {
+                      description
+                        "Sort match.";
+                      leaf sort-match {
+                        type empty;
+                        description
+                          "Match all community attributes in sequence. It is valid to only Advanced community attribute filters.";
+                      }
+                    }
+                  }
+                }
+              }
+              choice match-ipv4-destination {
+                description
+                  "Set IPv4 prefix.";
+                case ipv4-prefix {
+                  description
+                    "IPv4 prefix.";
+                  container match-ipv4-prefix {
+                    description
+                      "Configure a matching rule that is based on an IP prefix list.";
+                    leaf prefix-filter-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Name of the specified prefix filter when IPv4 destination addresses are matched.";
+                    }
+                  }
+                }
+              }
+              choice match-ipv4-nexthop {
+                description
+                  "Match IPv4 next hops. References IPv4 prefix filter or IPv4 destination addresses ACL rule.";
+                case ipv4-prefix {
+                  description
+                    "References IPv4 prefix filter.";
+                  container match-nexthop-ipv4-prefix {
+                    description
+                      "Configure a filtering rule that is based on an IPv4 prefix list or ACL to match next hops of IPv4 routes.";
+                    leaf prefix-filter-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Name of the specified prefix filter when IPv4 next hops are matched.";
+                    }
+                  }
+                }
+              }
+              choice match-ipv6-nexthop {
+                description
+                  "Match IPv6 next hops. The configurations of matching IPv6 next hops based on ACL rules are mutually exclusive with the configurations of matching IPv6 next hops by the prefix filter.";
+                case ipv6-prefix {
+                  description
+                    "IPv6 prefix.";
+                  container match-nexthop-ipv6-prefix {
+                    description
+                      "Configure a filtering rule that is based on an IPv6 prefix list to match next hops of IPv6 routes.";
+                    leaf prefix-filter-ref {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Name of the specified prefix filter when IPv6 next hops are matched.";
+                    }
+                  }
+                }
+              }
+            }
+            container actions {
+              description
+                "Configure a list of setting types in a tunnel selector.";
+              container apply-tunnel-policy {
+                description
+                  "Configure the application of a tunnel policy to a tunnel selector. Tunnels are selected for services based on specified tunnel policies.";
+                leaf tunnel-policy-ref {
+                  type leafref {
+                    path "/tnlm:tunnel-management/tnlm:tunnel-policys/tnlm:tunnel-policy/tnlm:name";
+                  }
+                  description
+                    "Name of a tunnel policy. The name is a string case-sensitive characters, spaces not supported.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

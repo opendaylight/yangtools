@@ -1,0 +1,113 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-masterkey {
+  namespace "urn:huawei:yang:huawei-masterkey";
+  prefix masterkey;
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  include huawei-masterkey-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Master key.";
+  revision 2019-05-22 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "system";
+  container masterkey {
+    description
+      "Master key.";
+    container current-type {
+      config false;
+      description
+        "Master key current type statistics.";
+      leaf type {
+        type mk-config-type;
+        config false;
+        description
+          "Master key current type.";
+      }
+    }
+    container modify-result {
+      config false;
+      description
+        "Master key modify statistics.";
+      leaf modify-start-time {
+        type yang:date-and-time;
+        config false;
+        description
+          "Start time.";
+      }
+      leaf modify-end-time {
+        type yang:date-and-time;
+        config false;
+        description
+          "End time.";
+      }
+      leaf modify-result {
+        type mk-modify-result;
+        config false;
+        description
+          "Modify result.";
+      }
+      leaf modify-error-reason {
+        type string {
+          length "1..128";
+        }
+        config false;
+        description
+          "Modify error reason.";
+      }
+    }
+  container auto-update {
+      description
+        "Configure master key autoupdate information.";
+      leaf interval {
+         type uint32 {
+          range "1..3650";
+        }
+        units d;
+        description
+          "Auto update interval.";
+      }
+    }
+  }
+  rpc set-masterkey {
+    description
+      "Modify master key.";
+    ext:node-ref "/masterkey";
+    input {
+      leaf new-masterkey {
+        type pub-type:password-extend;
+        mandatory true;
+        description
+          "New master key.";
+      }
+    }
+  }
+  rpc clear-masterkey {
+    description
+      "Clear master key.";
+    ext:node-ref "/masterkey";
+  }
+}

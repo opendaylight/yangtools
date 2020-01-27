@@ -1,0 +1,894 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-phy {
+  namespace "urn:huawei:yang:huawei-clocksync-phy";
+  prefix clocksync-phy;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description	
+    "Clkm data model define.";
+
+  revision 2020-03-17 {
+    description
+      "Modify the node attribute.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-14 {
+    description
+      "Modify the node description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-04 {
+    description
+      "Modify the node description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-11 {
+    description
+      "Modify node must condition.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "clksync";
+  typedef ssm-recovery-mode {
+    type enumeration {
+      enum "revertive" {
+        value 0;
+        description
+          "Set the SSM selection mode to revertive mode to allow the system to always select the best physical clock source.";
+      }
+      enum "non-revertive" {
+        value 1;
+        description
+          "Set the SSM mode of the physical clock to non-revertive mode to allow the system to select a physical clock source lower than or equal to the best one in current clock sources (QL is the highest). If there is no such source, the best clock source is selected.";
+      }
+    }
+    description
+      "Configure SSM recovery mode as revertive mode or non-revertive mode.";
+  }
+  typedef ssm-level {
+    type enumeration {
+      enum "unk" {
+        value 0;
+        description
+          "Unknown SSM level (UNK).";
+      }
+      enum "prc" {
+        value 2;
+        description
+          "SSM level of the G.811 clock (PRC).";
+      }
+      enum "ssua" {
+        value 4;
+        description
+          "G.812 transit clock (SSUA).";
+      }
+      enum "ssub" {
+        value 8;
+        description
+          "G.812 local clock (SSUB).";
+      }
+      enum "sec" {
+        value 11;
+        description
+          "SDH (sec).";
+      }
+      enum "dnu" {
+        value 15;
+        description
+          "The quality level of the clock source is unavailable (DNU).";
+      }
+      enum "none" {
+        value 16;
+        description
+          "Invalid SSM level.";
+      }
+    }
+    description
+      "SSM level type.";
+  }
+  typedef sabit-type {
+    type enumeration {
+      enum "sa4" {
+        value 4;
+        description
+          "Sa4 timeslot.";
+      }
+      enum "sa5" {
+        value 5;
+        description
+          "Sa5 timeslot.";
+      }
+      enum "sa6" {
+        value 6;
+        description
+          "Sa6 timeslot.";
+      }
+      enum "sa7" {
+        value 7;
+        description
+          "Sa7 timeslot.";
+      }
+      enum "sa8" {
+        value 8;
+        description
+          "Sa8 timeslot.";
+      }
+    }
+    description
+      "Sabit type.";
+  }
+  typedef source-state {
+    type enumeration {
+      enum "initial" {
+        value 0;
+        description
+          "The clock source is in the initialized state.";
+      }
+      enum "normal" {
+        value 1;
+        description
+          "The physical source is normal.";
+      }
+      enum "abnormal" {
+        value 2;
+        description
+          "The clock source is abnormal.";
+      }
+      enum "waitwtr" {
+        value 3;
+        description
+          "The clock source is in the state of waiting for recovery.";
+      }
+      enum "holdoff" {
+        value 4;
+        description
+          "The clock source is in the holdoff state.";
+      }
+    }
+    description
+      "Status of a physical clock source.";
+  }
+  typedef pll-type {
+    type enumeration {
+      enum "system" {
+        value 0;
+        description
+          "Select system PLL clock source.";
+      }
+      enum "sync2m-1" {
+        value 1;
+        description
+          "Select 2M-1 PLL clock source.";
+      }
+      enum "sync2m-2" {
+        value 2;
+        description
+          "Select 2M-2 PLL clock source.";
+      }
+    }
+    description
+      "PLL type.";
+  }
+  typedef source-selection-mode {
+    type enumeration {
+      enum "auto" {
+        value 0;
+        description
+          "The source selection mode is the auto mode.";
+      }
+      enum "manual" {
+        value 1;
+        description
+          "The physical source selection mode is manual selection.";
+      }
+      enum "force" {
+        value 2;
+        description
+          "The physical layer clock source selection mode is forcible selection.";
+      }
+    }
+    description
+      "Clock source selection mode: forced clock source selection, manual clock source selection, and automatic clock source selection.";
+  }
+  typedef phy-source-state {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "The physical layer interface is Up.";
+      }
+      enum "down" {
+        value 0;
+        description
+          "The physical layer interface is Down.";
+      }
+      enum "na" {
+        value 2;
+        description
+          "The interface physical status is not involved.";
+      }
+    }
+    description
+      "The physical layer interface status.";
+  }
+  typedef oam-profile-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "No OAM protocol is selected.";
+      }
+      enum "ccsa" {
+        value 1;
+        description
+          "CCSA OAM technique requirements.";
+      }
+    }
+    description
+      "Oam profile type.";
+  }
+  typedef input-ssm-level {
+    type enumeration {
+      enum "prc" {
+        value 2;
+        description
+          "G.811 clock.";
+      }
+      enum "ssua" {
+        value 4;
+        description
+          "G.812 transit clock.";
+      }
+      enum "ssub" {
+        value 8;
+        description
+          "G.812 local clock.";
+      }
+      enum "sec" {
+        value 11;
+        description
+          "SDH clock.";
+      }
+      enum "dnu" {
+        value 15;
+        description
+          "The input clock source is unavailable.";
+      }
+    }
+    description
+      "Input ssm level.";
+  }
+  typedef bits-invalid-act {
+    type enumeration {
+      enum "shutdown" {
+        value 0;
+        description
+          "When no tracing source is available for the 2M ring, the output signal action is shut down.";
+      }
+      enum "txdnu" {
+        value 1;
+        description
+          "Set 2Mbps signal LTI action as sending DNU.";
+      }
+      enum "txais" {
+        value 2;
+        description
+          "Set 2Mbps signal LTI action as sending the AIS alarm.";
+      }
+    }
+    description
+      "Handling of 2M phase-locked source failure.";
+  }
+  typedef clock-bits-type {
+    type enumeration {
+      enum "1pps" {
+	    value 3;
+        description
+          "Bits type is 1PPS.";
+      }
+      enum "2mhz" {
+	    value 1;
+        description
+          "Bits type is 2MHZ.";
+      }
+      enum "2mbps" {
+	    value 0;
+        description
+          "Bits type is 2MBPS.";
+      }
+      enum "dcls" {
+	    value 2;
+        description
+          "Bits type is DCLS.";
+      }
+      enum "none" {
+	    value 255;
+        description
+          "NONE.";
+      }
+    }
+    description
+      "BITS TYPE.";
+  }
+  typedef clock-run-mode {
+    type enumeration {
+      enum "free" {
+	    value 2;
+        description
+          "Free.";
+      }
+      enum "hold" {
+	    value 1;
+        description
+          "Hold.";
+      }
+      enum "normal" {
+	    value 0;
+        description
+          "Normal.";
+      }
+    }
+    description
+      "Clock run mode type.";
+  }
+  typedef dev-clk-level-type {
+    type enumeration {
+      enum "SEC" {
+        value 0;
+        description
+          "Level is SEC.";
+      }
+      enum "ESEC" {
+        value 1;
+        description
+          "Level is eSEC.";
+      }
+    }
+    description
+      "The Clock Level of the current device.";
+  }
+
+  container clocksync-phy {
+    description
+      "Physical layer clock synchronization management.";
+    container common {
+      description
+        "Configure global information about the physical clock.";
+      leaf system-clock-run-mode {
+        type clock-run-mode;
+        default "normal";
+        description
+          "Running mode of a system clock.";
+      }
+      leaf ssm-control-on {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the SSM level to participate in clock source selection.";
+      }
+      leaf ext-ssm-control-on {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Clock ID participates in clock source selection.";
+      }
+      leaf internal-clock-id {
+        type uint32 {
+          range "0..15";
+        }
+        default "0";
+        description
+          "Clock ID of an internal clock source used for extended SSM control.";
+      }
+      leaf internal-clock-ssm {
+        type ssm-level;
+        default "sec";
+        description
+          "Configure the SSM level of the internal clock source.";
+      }
+      leaf freq-check-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable frequency offset detection.";
+      }
+      leaf ssm-recovery-mode {
+        type ssm-recovery-mode;
+        default "revertive";
+        description
+          "Configure SSM recovery mode as revertive mode or non-revertive mode.";
+      }
+      leaf wtr-time {
+        type uint32 {
+          range "0..12";
+        }
+        default "5";
+        description
+          "WTR time for a Down interface.";
+      }
+      leaf freq-switch-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable frequency offset switchover. After switchover triggered by frequency offset is enabled, signals are switched to another slave source on the same interface board if the frequency offset is detected abnormal.";
+      }
+      leaf holdoff-time {
+        type uint32 {
+          range "300..1800";
+        }
+        default "1000";
+        description
+          "Holdoff time of the clock source after an interface changes from normal to abnormal.";
+      }
+      leaf ssm-unk-map {
+        type input-ssm-level;
+        default "dnu";
+        description
+          "Map UNK to an SSM level so that the clock source with the unknown SSM level can be selected.";
+      }
+      leaf min-out-ssm-bits {
+        type input-ssm-level;
+        default "dnu";
+        description
+          "Lowest SSM level of the clock signals output by the BITS interface.";
+      }
+      leaf max-out-ssm-system {
+        type ssm-level;
+        must "((../max-out-ssm-system='none' or ../max-out-ssm-system='prc' or ../max-out-ssm-system='ssua' or ../max-out-ssm-system='ssub' or ../max-out-ssm-system='sec') )";
+        default "none";
+        description
+          "Highest SSM level of the output system clock signals. If the SSM level of a system clock is greater than the set highest SSM level, the system clock signals are output based on the highest SSM level.";
+      }
+      leaf max-out-ssm-2m1 {
+        type ssm-level;
+        must "((../max-out-ssm-2m1='none' or ../max-out-ssm-2m1='prc' or ../max-out-ssm-2m1='ssua' or ../max-out-ssm-2m1='ssub' or ../max-out-ssm-2m1='sec') )";
+        default "none";
+        description
+          "Highest SSM level of the output 2M-1 clock signals. If the SSM level of a 2M-1 clock is greater than the set highest SSM level, the 2M-1 clock signals are output based on the highest SSM level.";
+      }
+      leaf max-out-ssm-2m2 {
+        type ssm-level;
+        must "((../max-out-ssm-2m2 ='none' or ../max-out-ssm-2m2 ='prc' or ../max-out-ssm-2m2 ='ssua' or ../max-out-ssm-2m2 ='ssub' or ../max-out-ssm-2m2 ='sec') )";
+        default "none";
+        description
+          "Highest SSM level of the output 2M-2 clock signals. If the SSM level of a 2M-2 clock is greater than the set highest SSM level, the 2M-2 clock signals are output based on the highest SSM level.";
+      }
+      leaf clock-oam-profile {
+        type oam-profile-type;
+        default "none";
+        description
+          "OAM protocol type.";
+      }
+      leaf freq-offset-alarm-threshold {
+        type uint32 {
+          range "10..92";
+        }
+        default "92";
+        description
+          "Alarm threshold for physical layer frequency offset.";
+      }
+      leaf input-ssm-alarm-threshold {
+        type input-ssm-level;
+        default "sec";
+        description
+          "Alarm threshold for input SSM.";
+      }
+      leaf device-clk-level {
+        type dev-clk-level-type;
+        default "SEC";
+        config false;
+        description
+          "The Clock Level of the current device.";
+      }
+    }
+    container selection-sources {
+      description
+        "List of configure physical layer clock source selection.";
+      list selection {
+        ext:generated-by system;
+        ext:operation-exclude create|delete;
+        key "source-type";
+        description
+          "Configure physical layer clock source selection.";
+        leaf source-type {
+          type pll-type;
+          description
+            "PLL type.";
+        }
+        leaf source-name {
+          when "not(../mode='auto')";
+          type string {
+            length "1..49";
+          }
+          must "(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/clocksync-phy:clock-port-sources/clocksync-phy:source/clocksync-phy:sync-enable='true') or (/clocksync-phy:clocksync-phy/clocksync-phy:external-clock-sources/clocksync-phy:source[clocksync-phy:name=current()]/clocksync-phy:sync-enable='true')";
+          mandatory true;
+          description
+            "Name of the selected clock source in forced clock source selection and manual clock source selection.";
+        }
+        leaf mode {
+          type source-selection-mode;
+          default "auto";
+          description
+            "Clock source selection mode: forced clock source selection, manual clock source selection, and automatic clock source selection.";
+        }
+        leaf trace-source-name {
+          type string {
+            length "1..63";
+          }
+          config false;
+          description
+            "Name of the traced clock source.";
+        }
+      }
+    }
+    container external-clock-sources {
+      description
+        "List of configure physical layer clock source.";
+      list source {
+        key "name";
+        description
+          "Configure physical clock source.";
+        leaf name {
+          type string {
+            length "1..49";
+            pattern 'bits[0-3]((/[0-9]{1,2}){1,2}){0,1}|ptp|CESACR([0-9]{1,2}/){2,3}[0-9]{1,2}';
+          }
+          description
+            "Name of the physical clock source.";
+        }
+        leaf state {
+          type source-state;
+          default "initial";
+          config false;
+          description
+            "Status of a physical clock source.";
+        }
+        leaf sync-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable clock synchronization for the physical clock source.";
+        }
+        leaf reference-enable {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Whether a clock source can serve as a reference clock source.";
+        }
+        leaf phy-state {
+          type phy-source-state;
+          default "down";
+          config false;
+          description
+            "Physical status of the clock source.";
+        }
+        leaf system-priority {
+          type int32 {
+              range "0..255";
+          }
+          default "0";
+          description
+            "Priority of the physical source. In physical clock source selection, you must configure the priority of clock sources for the system PLL. Otherwise, the clock sources cannot participate in the selection of the system PLL clock source.";
+        }
+        container ssm-class {
+          description
+            "Configure information about the SSM level, including SSM selection mode, input SSM level, and output SSM level.";
+          leaf ssm-configured {
+            type ssm-level;
+            default "none";
+            description
+              "Input SSM level of the physical clock source. If clock sources are configured with SSM levels, the configured SSM levels are used.";
+          }
+          leaf ssm-learn{
+            type ssm-level;
+            must "(((../ssm-learn='none' or ../ssm-learn='dnu' or ../ssm-learn='prc' or ../ssm-learn='sec' or ../ssm-learn='ssua' or ../ssm-learn='ssub')))";
+            default "none";
+            config false;
+            description
+              "Input SSM level of the physical clock source. If clock sources are configured with SSM levels, the configured SSM levels are used.";
+          }
+          leaf ssm-output {
+            type ssm-level;
+            config false;
+            description
+              "Output SSM level of the physical clock source.";
+          }
+        }
+        container clock-id {
+          description
+            "Configure information about the Clock ID of extended SSM control, including the clock ID selection mode, input clock ID, and output clock ID.";
+
+          leaf clock-id-configured {
+            type uint32 {
+              range "0..15";
+            }
+            default "0";
+            description
+              "Clock ID of the physical clock source in extended SSM control.";
+          }
+          leaf clock-id-learn {
+            type uint32 {
+              range "0..15";
+            }
+            default "0";
+            config false;
+            description
+              "Clock ID of the physical clock source in extended SSM control.";
+          }
+          leaf clock-id-out {
+            type uint32 {
+              range "0..15";
+            }
+            default "0";
+            config false;
+            description
+              "Output Clock ID of the physical clock source in extended SSM control.";
+          }
+        }
+        container bits-sources {
+          description
+            "Configure physical BITS clock sources.";
+          leaf sabit {
+            type sabit-type;
+            default "sa4";
+            description
+              "Sa timeslot used by the BITS interface to send or receive the SSM level.";
+          }
+          leaf signal-type {
+            type clock-bits-type;
+            must "(../signal-type='2mhz' or ../signal-type='2mbps')";
+            default "2mbps";
+            description
+              "BITS signal type.";
+          }
+          leaf invalid-act {
+            type bits-invalid-act;
+            default "shutdown";
+            description
+              "2M phase-locked source failure handling.";
+          }
+          leaf force-cutoff-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable forcible cutoff for external clock output.";
+          }
+        }
+      }
+    }
+    container detections {
+      config false;
+      description
+        "List of statistics of physical clock source detection.";
+      list detection {
+        key "source-name";
+        description
+          "Statistics of physical clock source detection.";
+        leaf source-name {
+          type string {
+            length "1..63";
+          }
+          description
+            "Physical clock source name.";
+        }
+        leaf freq-value {
+          type string {
+            length "1..50";
+          }
+          description
+            "Detected frequency offset value of the clock source.";
+        }
+      }
+    }
+  }
+  
+  rpc recover-freq-deviation {
+    description
+      "Frequency offset status of the clock source to be recovered.";
+    ext:node-ref "/clocksync-phy:clocksync-phy/clocksync-phy:detections/clocksync-phy:detection";
+    input {
+      leaf recover-src-name {
+        type pub-type:if-name;
+        description
+          "Interface name of the clock source to be recovered.";
+      }
+    }
+  }
+  
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+	   description
+        "Interface.";
+    container clock-port-sources {
+      description
+        "Configure physical layer clock source.";
+      container source {
+        description
+          "Configure physical clock source node.";
+        leaf state {
+          type source-state;
+          default "initial";
+          config false;
+          description
+            "Status of a physical clock source.";
+        }
+        leaf sync-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable clock synchronization for the physical clock source.";
+        }
+        leaf esmc-send-disable {
+          when "not((/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='E1') or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='Pos') or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='Cpos') or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='T1'))";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable ESMC packet sending on interface.";
+        }
+        leaf reference-enable {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Enable/disable a clock source can serve as a reference clock source.";
+        }
+        leaf slave-nego-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the physical layer slave negotiation mode. Only GE electrical interfaces support this configuration.";
+        }
+        leaf phy-state {
+          type phy-source-state;
+          default "down";
+          config false;
+          description
+            "Physical status of the clock source.";
+        }
+        leaf e1-sabit {
+          type sabit-type;
+          default "sa4";
+          description
+            "Sa timeslot used by the E1 port to send or receive the SSM level.";
+        }
+        leaf e1-ais-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable association of AIS signals of E1 ports with the clock source status.";
+        }
+        leaf cpos-ais-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Association of the clock source status with the MS-AIS signal alarm on the CPOS port.";
+        }
+        leaf cpos-exc-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Association of the clock source status with the B2-EXC signal alarm on the CPOS port.";
+        }
+        container priority {
+          description
+            "Configure priority of the physical source.";
+          leaf system {
+            type int32 {
+              range "0..255";
+            }
+            default "0";
+            description
+              "In physical clock source selection, you must configure the priority of clock sources for the system PLL. Otherwise, the clock sources cannot participate in the selection of the system PLL clock source.";
+          }
+          leaf sync2m1{
+            type int32 {
+              range "0..255";
+            }
+            default "0";
+            description
+              "In physical clock source selection, you must configure the priority of clock sources for the 2M-1 PLL. Otherwise, the clock sources cannot participate in the selection of the 2M-1 PLL clock source.";
+          }
+          leaf sync2m2 {
+            type int32 {
+              range "0..255";
+            }
+            default "0";
+            description
+              "In physical clock source selection, you must configure the priority of clock sources for the 2M-2 PLL. Otherwise, the clock sources cannot participate in the selection of the 2M-2 PLL clock source.";
+          }
+        }
+        container ssm-class {
+          description
+            "Configure information about the SSM level. Including SSM selection mode, input SSM level, and output SSM level.";
+          leaf ssm-configured {
+            type ssm-level;
+            default "none";
+            description
+              "Input SSM level of the physical clock source. If clock sources are configured with SSM levels, the configured SSM levels are used.";
+          }
+          leaf ssm-learn{
+            type ssm-level;
+            must "(((../ssm-learn='none' or ../ssm-learn='dnu' or ../ssm-learn='prc' or ../ssm-learn='sec' or ../ssm-learn='ssua' or ../ssm-learn='ssub')))";
+            default "none";
+            config false;
+            description
+              "Input SSM level of the physical clock source. If clock sources are configured with SSM levels, the configured SSM levels are used.";
+          }
+          leaf ssm-output {
+            type ssm-level;
+            config false;
+            description
+              "Output SSM level of the physical clock source.";
+          }
+        }
+        container clock-id {
+          description
+            "Configure information about the Clock ID of extended SSM control. Including the clock ID selection mode, input clock ID, and output clock ID.";
+
+          leaf clock-id-configured {
+            type uint32 {
+              range "0..15";
+            }
+            default "0";
+            description
+              "Clock ID of the physical clock source in extended SSM control.";
+          }
+          leaf clock-id-learn {
+            type uint32 {
+              range "0..15";
+            }
+            default "0";
+            config false;
+            description
+              "Clock ID of the physical clock source in extended SSM control.";
+          }
+          leaf clock-id-out {
+            type uint32 {
+              range "0..15";
+            }
+            default "0";
+            config false;
+            description
+              "Output Clock ID of the physical clock source in extended SSM control.";
+          }
+        }
+        leaf bundle-group {
+          type int32 {
+            range "0..64";
+          }
+          default "0";
+          description
+            "Bundling group on a port.";
+        }
+      }
+    }
+  }
+}

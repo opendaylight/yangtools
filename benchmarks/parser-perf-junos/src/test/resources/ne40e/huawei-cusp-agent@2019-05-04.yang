@@ -1,0 +1,332 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-cusp-agent {
+  namespace "urn:huawei:yang:huawei-cusp-agent";
+
+  prefix cusp-agent;
+  import huawei-keychain {
+    prefix keychain;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ssl {
+    prefix ssl;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "CUSP Agent.";
+  revision 2019-05-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "cusp-agent";
+  container cusp-agent {
+    description
+      "Specify configuration information of CUSP agent.";
+    container agents {
+      config false;
+      description
+        "List of CUSP agent statistics.";
+      list agent {
+        key "agent-name";
+        description
+          "Statistics of a CUSP agent.";
+        leaf agent-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "The name of CUSP agent.";
+        }
+        leaf transport-address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Connect address.";
+        }
+        leaf transport-vpn-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "Name of VPN instance.";
+        }
+        leaf echo-interval {
+          type uint8 {
+            range "2..60";
+          }
+          units s;
+          default "30";
+          description
+            "Configure echo interval.";
+        }
+        leaf keychain-name {
+          type leafref {
+            path "/keychain:keychain/keychain:keychains/keychain:keychain/keychain:name";
+          }
+          description
+            "The name of keychain authentication.";
+        }
+        leaf ssl-policy-name {
+          type leafref {
+            path "/ssl:ssl/ssl:ssl-policys/ssl:ssl-policy/ssl:policy-name";
+          }
+          description
+            "The name of SSL policy.";
+        }
+        leaf timeout-count {
+          type uint8 {
+            range "4..10";
+          }
+          default "5";
+          description
+            "Counts to define time out.";
+        }
+        leaf congest-duration {
+          type uint8 {
+            range "1..10";
+          }
+          units min;
+          default 5;
+          description
+            "Congest Duration time.";
+        }
+        leaf tcp-mss {
+          type uint16 {
+            range "1..8192";
+          }
+          units Byte;
+          default "1400";
+          description
+            "Tcp mss.";
+        }
+        container connections {
+          description
+            "List of the connection statistics.";
+          list connection {
+            key "controller-ip";
+            description
+              "Statistics of a connection.";
+            leaf controller-ip {
+              type inet:ipv4-address-no-zone;
+              description
+                "IP address of controller.";
+            }
+
+            container session {
+              description
+                "Statistics of the session.";
+              leaf up-time {
+                type pub-type:time-tick;
+                description
+                  "Up time.";
+              }
+              leaf state {
+                type enumeration {
+                  enum "init" {
+                    value 0;
+                    description
+                      "The Session state is INIT.";
+                  }
+                  enum "to-listen" {
+                    value 1;
+                    description
+                      "The Session state is TOLISTEN.";
+                  }
+                  enum "listen" {
+                    value 2;
+                    description
+                      "The Session state is LISTEN.";
+                  }
+                  enum "in-coming" {
+                    value 3;
+                    description
+                      "The Session state is INCOMING.";
+                  }
+                  enum "connected" {
+                    value 4;
+                    description
+                      "The Session state is CONNECTED.";
+                  }
+                  enum "to-register" {
+                    value 5;
+                    description
+                      "The Session state is TOREGISTER.";
+                  }
+                  enum "registered" {
+                    value 6;
+                    description
+                      "The Session state is REGISTERED.";
+                  }
+                  enum "to-create" {
+                    value 7;
+                    description
+                      "The Session state is TOCREATE.";
+                  }
+                }
+                description
+                  "Session state.";
+              }
+            }
+            container message-statistics {
+              description
+                "List of the message statistics.";
+              list message-statistic{
+                key "message-type";
+                description
+                  "Statistics of a message.";
+                leaf message-type {
+                  type enumeration {
+                    enum "hello" {
+                      value 0;
+                      description
+                        "The message type is HELLO.";
+                    }
+                    enum "ehco-request" {
+                      value 1;
+                      description
+                        "The message type is ECHO-REQUEST.";
+                    }
+                    enum "ehco-reply" {
+                      value 2;
+                      description
+                        "The message type is ECHO-REPLY.";
+                    }
+                    enum "experimenter" {
+                      value 3;
+                      description
+                        "The message type is EXPERIMENTER.";
+                    }
+                    enum "features-request" {
+                      value 4;
+                      description
+                        "The message type is FEATURES-REQUEST.";
+                    }
+                    enum "features-reply" {
+                      value 5;
+                      description
+                        "The message type is FEATURES-REPLY.";
+                    }
+                    enum "port-status" {
+                      value 6;
+                      description
+                        "The message type is PORT-STATUS.";
+                    }
+                    enum "flow-mod" {
+                      value 7;
+                      description
+                        "The message type is FLOW-MOD.";
+                    }
+                    enum "multipart-request" {
+                      value 8;
+                      description
+                        "The message type is MULTIPART-REQUEST.";
+                    }
+                    enum "multipart-reply" {
+                      value 9;
+                      description
+                        "The message type is MULTIPART-REPLY.";
+                    }
+                    enum "role-request" {
+                      value 10;
+                      description
+                        "The message type is ROLE-REQUEST.";
+                    }
+                    enum "role-reply" {
+                      value 11;
+                      description
+                        "The message type is ROLE-REPLY.";
+                    }
+                    enum "packet-in" {
+                      value 12;
+                      description
+                        "The message type is PACKET-IN.";
+                    }
+                    enum "packet-out" {
+                      value 13;
+                      description
+                        "The message type is PACKET-OUT.";
+                    }
+                    enum "unknow" {
+                      value 14;
+                      description
+                        "The message type is UNKNOWN.";
+                    }
+                  }
+                  description
+                    "Message Type.";
+                }
+                leaf received-count {
+                  type uint32;
+                  description
+                    "Received.";
+                }
+                leaf sent-count {
+                  type uint32;
+                  description
+                    "Sent.";
+                }
+                leaf invalid-count {
+                  type uint32;
+                  description
+                    "Invalid.";
+                }
+                leaf send-failed-count {
+                  type uint32;
+                  description
+                    "Send Failed.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  rpc reset-session {
+    description
+      "Reset session.";
+    input {
+      leaf peer-address {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "Peer address.";
+      }
+    }
+  }
+  rpc reset-statistics {
+    description
+      "Reset statistics.";
+        input {
+      leaf peer-address {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "Peer address.";
+      }
+    }
+  }
+}

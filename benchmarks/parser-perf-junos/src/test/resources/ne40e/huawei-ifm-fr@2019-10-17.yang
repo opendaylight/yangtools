@@ -1,0 +1,104 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifm-fr {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-ifm-fr";
+  prefix ifm-fr;
+  
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Frame relay protocol.";
+  revision 2019-10-17 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "fr";
+  typedef encapsulation-format {
+    type enumeration {
+      enum "ietf" {
+        value 19;
+        description
+          "IETF.";
+      }
+      enum "nonstandard" {
+        value 20;
+        description
+          "Nonstandard.";
+      }
+    }
+    description
+      "FR interface encapsulation format.";
+  }
+  typedef lmi-type {
+    type enumeration {
+      enum "ansi" {
+        value 0;
+        description
+          "LMI ANSI.";
+      }
+      enum "q933a" {
+        value 1;
+        description
+          "LMI Q933A.";
+      }
+      enum "nonstandard" {
+        value 2;
+        description
+          "LMI nonstandard.";
+      }
+    }
+    description
+      "FR interface LMI type.";
+  }
+  typedef fr-type {
+    type enumeration {
+      enum "dte" {
+        value 1;
+        description
+          "FR DTE.";
+      }
+      enum "dce" {
+        value 2;
+        description
+          "FR DCE.";
+      }
+      enum "nni" {
+        value 3;
+        description
+          "FR NNI.";
+      }
+    }
+    description
+      "FR interface type.";
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description "Configure extend attributes on the interface.";
+    container fr-encapsulation {
+      when "../ifm:class='main-interface' and ../ifm:type='Pos' and ../ifm:link-protocol='fr'"; 
+      description "Configure frame relay interface encapsulation format.";
+      leaf encapsulation {
+        type encapsulation-format;
+        default "ietf";
+        description
+          "FR interface encapsulation format.";
+      }
+    }
+  }
+}

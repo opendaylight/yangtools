@@ -1,0 +1,36 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-mpls-deviations-CH-NE-X3";
+  prefix mpls-devs-CH-NE-X3;
+
+  import huawei-mpls {
+    prefix mpls;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+
+  revision 2019-03-27 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-label-begin" {
+    deviate not-supported;
+  }
+  deviation "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-min-label" {
+    deviate not-supported;
+  }
+}

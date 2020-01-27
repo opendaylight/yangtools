@@ -1,0 +1,210 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mplstpoam {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-mplstpoam";
+  prefix mplstpoam;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Multiprotocol Label Switching-Transport Profile (MPLS-TP), operations, administration and maintenance (OAM), mainly provides functions: fault management, performance monitoring, and protection switching.";
+  revision 2019-12-27 {
+    description
+      "Solve some errors.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-18 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  /*****************************************************************
+  * type definitions
+  *****************************************************************/
+  typedef standard-type {
+    type enumeration {
+      enum "y1711" {
+        value 0;
+        description
+          "Protocol is Y.1711.";
+      }
+      enum "y1731" {
+        value 1;
+        description
+          "Protocol is Y.1731.";
+      }
+    }
+    description
+      "Standard type.";
+  }
+  typedef channel-type {
+    type enumeration {
+      enum "0x7ffa" {
+        value 0;
+        description
+          "ACH is 0x7FFA.";
+      }
+      enum "0x8902" {
+        value 1;
+        description
+          "ACH is 0x8902.";
+      }
+    }
+    description
+      "Channel type.";
+  }
+  typedef pw-mode {
+    type enumeration {
+      enum "standard" {
+        value 0;
+        description
+          "The MPLS-TP PW mode is standard.";
+      }
+      enum "private" {
+        value 1;
+        description
+          "The MPLS-TP PW mode is private.";
+      }
+    }
+    description
+      "Pw mode.";
+  }
+  typedef gal-pw {
+    type enumeration {
+      enum "label-13" {
+        value 0;
+        description
+          "The Gal is 13.";
+      }
+      enum "label-14" {
+        value 1;
+        description
+          "The Gal is 14.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "The GAL type is disable.";
+      }
+      enum "route-mode" {
+        value 3;
+        description
+          "The GAL type is route-mode.";
+      }
+      enum "ptn-mode" {
+        value 4;
+        description
+          "The GAL type is ptn-mode.";
+      }
+    }
+    description
+      "Gal pw type.";
+  }
+  typedef protocol-state-type {
+    type enumeration {
+      enum "no-config" {
+        value 0;
+        description
+          "No OAM is configured.";
+      }
+      enum "y1711" {
+        value 1;
+        description
+          "Only configure Y.1711.";
+      }
+      enum "y1731" {
+        value 2;
+        description
+          "Only configure Y.1731.";
+      }
+      enum "y1711-y1731" {
+        value 3;
+        description
+          "Mixed mode is configured.";
+      }
+    }
+    description
+      "Protocol state type.";
+  }
+  /*****************************************************************
+  * data
+  *****************************************************************/
+  ext:task-name  "tpoam";
+  container mplstpoam {
+    description
+      "MPLStpoam.";
+    container global {
+      description
+        "Configure global MPLS-TP OAM attribute.";
+      leaf oam-standard {
+        type standard-type;
+        default "y1711";
+        description
+          "Default OAM standard protocol. The default value is Y.1711.";
+      }
+      leaf icc-string {
+        type string {
+          length "1..6";
+        }
+        description
+          "MPLS-TP OAM ICC ID. The default value is empty.";
+      }
+      leaf ais-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MPLS-TP OAM AIS. By default, AIS is disabled.";
+      }
+      leaf channel-type {
+        type channel-type;
+        default "0x7ffa";
+        description
+          "0x7ffa identifies MPLS-TP OAM packets in compliance with Y.1731. 0x8902 identifies MPLS-TP OAM packets in compliance with relevant standards.";
+      }
+      leaf csf-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MPLS-TP OAM CSF. By default, CSF is enabled.";
+      }
+      leaf mpls-tp-mode {
+        type pw-mode;
+        default "standard";
+        description
+          "PW mode of MPLS-TP OAM. The default mode is standard.";
+      }
+      leaf gal-mode {
+        type gal-pw;
+        default "ptn-mode";
+        description
+          "PW GAL mode of MPLS-TP OAM. The default mode is ptn-mode.";
+      }
+      leaf protocol-status {
+        type protocol-state-type;
+        default "no-config";
+        config false;
+        description
+          "OAM status.";
+      }
+      leaf oam-num {
+        type uint32;
+        config false;
+        description
+          "Total number of OAM instances, including MPLS OAM and MPLS-TP OAM instances.";
+      }
+    }
+  }
+}

@@ -1,0 +1,78 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-devm-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-devm-deviations-CH-NE-X3";
+  prefix devm-devs-CH-NE-X3;
+
+  import huawei-devm {
+    prefix devm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global Configuration.";
+
+  revision 2019-04-03 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/devm:devm/devm:chassiss/devm:chassis/devm:current-id" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:chassiss/devm:chassis/devm:current-run-mode" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:chassiss/devm:chassis/devm:next-id" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:chassiss/devm:chassis/devm:next-run-mode" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:logic-entitys" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:logic-containers" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:logic-ports" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:inconsistent-entitys" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:containers/devm:container/devm:supported-entity-types" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:clock-8k-port" {
+    deviate not-supported;
+  }
+  deviation "/devm:cold-reset-lpu" {
+    deviate not-supported;
+  }
+  deviation "/devm:warm-reset-lpu" {
+    deviate not-supported;
+  }
+  deviation "/devm:cold-reset-mpu" {
+    deviate not-supported;
+  }
+  deviation "/devm:warm-reset-mpu" {
+    deviate not-supported;
+  }
+  deviation "/devm:reset-offline-config" {
+    deviate not-supported;
+  }
+  deviation "/devm:transfer-pnpp" {
+    deviate not-supported;
+  }
+}

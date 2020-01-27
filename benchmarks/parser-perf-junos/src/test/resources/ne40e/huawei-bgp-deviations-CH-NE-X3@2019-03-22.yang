@@ -1,0 +1,219 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-bgp-deviations-CH-NE-X3";
+  prefix bgp-devs-CH-NE-X3;
+
+  import huawei-bgp {
+    prefix bgp;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:peers/bgp:peer/bgp:afs/bgp:af/bgp:state/bgp:discard-attribute" {
+    deviate not-supported;
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:peers/bgp:peer/bgp:afs/bgp:af/bgp:state/bgp:rely-interface-capability" {
+    deviate not-supported;
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast/bgp:common/bgp:maximum-load-balancing-ibgp" {
+    deviate replace {
+      type uint16 {
+        range "1..128";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast/bgp:common/bgp:maximum-load-balancing-ebgp" {
+    deviate replace {
+      type uint16 {
+        range "1..128";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-unicast/bgp:common/bgp:maximum-load-balancing-ibgp" {
+    deviate replace {
+      type uint16 {
+        range "1..128";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-unicast/bgp:common/bgp:maximum-load-balancing-ebgp" {
+    deviate replace {
+      type uint16 {
+        range "1..128";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast/bgp:lsp-options/bgp:maximum-load-balancing-ingress" {
+    deviate replace {
+      type uint16 {
+        range "1..16";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast/bgp:lsp-options/bgp:maximum-load-balancing-transit" {
+    deviate replace {
+      type uint16 {
+        range "1..16";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-labeluni/bgp:lsp-options/bgp:maximum-load-balancing-ingress" {
+    deviate replace {
+      type uint16 {
+        range "1..16";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-labeluni/bgp:lsp-options/bgp:maximum-load-balancing-transit" {
+    deviate replace {
+      type uint16 {
+        range "1..16";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast/bgp:common/bgp:maximum-load-balancing" {
+    deviate replace {
+      type uint16 {
+        range "1..128";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-unicast/bgp:common/bgp:maximum-load-balancing" {
+    deviate replace {
+      type uint16 {
+        range "1..128";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast/bgp:common/bgp:maximum-load-balancing-eibgp" {
+    deviate replace {
+      type uint16 {
+        range "1..128";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-unicast/bgp:common/bgp:maximum-load-balancing-eibgp" {
+    deviate replace {
+      type uint16 {
+        range "1..128";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-multicast/bgp:common/bgp:maximum-load-balancing" {
+    deviate replace {
+      type uint16 {
+        range "1..128";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-multicast/bgp:common/bgp:maximum-load-balancing-ibgp" {
+    deviate replace {
+      type uint16 {
+        range "1..128";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-multicast/bgp:common/bgp:maximum-load-balancing-ebgp" {
+    deviate replace {
+      type uint16 {
+        range "1..128";
+      }
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-unicast/bgp:common/bgp:maximum-load-balancing-ibgp" {
+    deviate add {
+      must "not (../maximum-load-balancing>1 or ../maximum-load-balancing-eibgp or ../load-balancing-eibgp-enable='true') or ../maximum-load-balancing-ibgp=1";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-unicast/bgp:common/bgp:maximum-load-balancing-ebgp" {
+    deviate add {
+      must "not (../maximum-load-balancing>1 or ../maximum-load-balancing-eibgp or ../load-balancing-eibgp-enable='true') or ../maximum-load-balancing-ebgp=1";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-unicast/bgp:common/bgp:maximum-load-balancing" {
+    deviate add {
+      must 'not (../maximum-load-balancing-ibgp>1 or ../maximum-load-balancing-ebgp>1 or ../maximum-load-balancing-eibgp) or ../maximum-load-balancing=1';
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast/bgp:import-routes/bgp:import-route/bgp:process-id" {
+    deviate add {
+      must "((../protocol='ospf' or ../protocol='isis' or ../protocol='rip') and ../process-id!=0) or (../protocol!='ospf' and ../protocol!='isis' and ../protocol!='rip' and ../process-id=0)";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast/bgp:export-filter-policys/bgp:export-filter-policy/bgp:protocol" {
+    deviate add {
+      must "(../protocol ='op-route' and ../../../../type !='ipv4multi') or (../protocol !='op-route')";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast/bgp:export-filter-policys/bgp:export-filter-policy/bgp:process-id" {
+    deviate add {
+      must "((../protocol='ospf' or ../protocol='isis' or ../protocol='rip') and ../process-id!=0) or (../protocol!='ospf' and ../protocol!='isis' and ../protocol!='rip' and ../process-id=0)";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-unicast/bgp:import-routes/bgp:import-route/bgp:process-id" {
+    deviate add {
+      must "((../protocol='ospfv3' or ../protocol='isis' or ../protocol='ripng') and ../process-id!=0) or (../protocol!='ospfv3' and ../protocol!='isis' and ../protocol!='ripng' and ../process-id=0)";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-multicast/bgp:export-filter-policys/bgp:export-filter-policy/bgp:protocol" {
+    deviate add {
+      must "(../protocol ='op-route' and ../../../../type !='ipv4multi') or (../protocol !='op-route')";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-unicast/bgp:export-filter-policys/bgp:export-filter-policy/bgp:process-id" {
+    deviate add {
+      must "((../protocol='ospfv3' or ../protocol='ripng' or ../protocol='isis') and ../process-id!=0) or ((../protocol!='ospfv3' and ../protocol!='ripng' and ../protocol!='isis') and ../process-id=0)";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast/bgp:common/bgp:bestroute-igp-metric-ignore" {
+    deviate add {
+      must "not(../bestroute-igp-metric-ignore='true' and ../bestroute-med-plus-igp='true')";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-unicast/bgp:common/bgp:bestroute-igp-metric-ignore" {
+    deviate add {
+      must "not(../bestroute-igp-metric-ignore='true' and ../bestroute-med-plus-igp='true')";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-vpn/bgp:bestroute-igp-metric-ignore" {
+    deviate add {
+      must "not(../bestroute-igp-metric-ignore='true' and ../bestroute-med-plus-igp='true')";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv6-vpn/bgp:bestroute-igp-metric-ignore" {
+    deviate add {
+      must "not(../bestroute-igp-metric-ignore='true' and ../bestroute-med-plus-igp='true')";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-labeluni/bgp:common/bgp:bestroute-igp-metric-ignore" {
+    deviate add {
+      must "not(../bestroute-igp-metric-ignore='true' and ../bestroute-med-plus-igp='true')";
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-multicast/bgp:common/bgp:bestroute-igp-metric-ignore" {
+    deviate add {
+      must "not(../bestroute-igp-metric-ignore='true' and ../bestroute-med-plus-igp='true')";
+    }
+  }
+}

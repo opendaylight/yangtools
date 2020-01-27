@@ -1,0 +1,62 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-qos-evpl {
+  namespace "urn:huawei:yang:huawei-qos-evpl";
+  prefix qos-evpl;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-evpl {
+    prefix evpl;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Quality of service for EVPL management.";
+  revision 2020-02-27 {
+    description
+      "Add new nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-20 {
+    description
+      "Add new nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-02 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "qos";
+  augment "/evpl:evpl/evpl:instances/evpl:instance" {
+    description
+      "Adds QoS configuration to the EVPL.";
+    container vxlan-mode-phb {
+      when "../evpl:mode='vxlan-mode'";
+      description
+        "Configure QoS PHB VXLAN mode.";
+      leaf diffserv-domain-name {
+        type leafref {
+          path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+        }
+        description
+          "Name of a diffserv-domain.";
+      }
+    }
+  }//augment evpl:instance
+}

@@ -1,0 +1,259 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-rip-type {
+  belongs-to huawei-rip {
+    prefix rip;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "RIP type defined file.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef rip-def-route {
+    type enumeration {
+      enum "match-default" {
+        value 1;
+        description
+          "Specify that the default route will be originated only if there is a default route learned from another process or protocol in the RM module.";
+      }
+      enum "always" {
+        value 2;
+        description
+          "Specify that the default route is originated always without any condition.";
+      }
+      enum "route-policy" {
+        value 3;
+        description
+          "Specify that the default route will be originated only if a route matching the route-policy exists in the RM module.";
+      }
+      enum "route-filter" {
+        value 5;
+        description
+          "Specify that the default route will be originated only if a route matching the route-filter exists in the RM module.";
+      }
+    }
+    description
+      "RIP default route.";
+  }
+  typedef rip-bfd-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "This flag indicates that the BFD type on the interface is None.";
+      }
+      enum "dynamic" {
+        value 1;
+        description
+          "This flag indicates that the BFD type on the interface is Dynamic.";
+      }
+      enum "static" {
+        value 2;
+        description
+          "This flag indicates that the BFD type on the interface is Static.";
+      }
+      enum "block" {
+        value 3;
+        description
+          "This flag indicates that the BFD type on the interface is Block.";
+      }
+    }
+    description
+      "RIP bfd type.";
+  }
+  typedef rip-enable-flag {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "This is used for disabling RIP configurations.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "This is used for enabling RIP configurations.";
+      }
+    }
+    description
+      "RIP enable flag.";
+  }
+  typedef rip-summ-enable-flag {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "This flag indicates that the summary configuration is disabled.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "This flag indicates that the summary configuration is enabled.";
+      }
+      enum "enable-always" {
+        value 2;
+        description
+          "This flag indicates that the summary configuration is enabled always.";
+      }
+    }
+    description
+      "RIP summary enable flag.";
+  }
+  typedef rip-version-type {
+    type enumeration {
+      enum "rip-version-1" {
+        value 1;
+        description
+          "Version configuration can be done on an interface to receive and advertise RIPv1 and RIPv2 packets. If the user wants to receive both RIPv1 and RIPv2 packets, then RIPv2 broadcast version should be configured, but only RIPv2 broadcast packets will be sent. Configure a version based on the version of the neighbors on that interface.";
+      }
+      enum "rip-version-2" {
+        value 2;
+        description
+          "Version configuration can be done on an interface to receive and advertise RIPv1 and RIPv2 packets. If the user wants to receive both RIPv1 and RIPv2 packets, then RIPv2 broadcast version should be configured, but only RIPv2 broadcast packets will be sent. Configure a version based on the version of the neighbors on that interface.";
+      }
+      enum "rip-version-2-comp" {
+        value 3;
+        description
+          "Version configuration can be done on an interface to receive and advertise RIPv1 and RIPv2 packets. If the user wants to receive both RIPv1 and RIPv2 packets, then RIPv2 broadcast version should be configured, but only RIPv2 broadcast packets will be sent. Configure a version based on the version of the neighbors on that interface.";
+      }
+      enum "rip-version-default" {
+        value 5;
+        description
+          "Version configuration can be done on an interface to receive and advertise RIPv1 and RIPv2 packets. If the user wants to receive both RIPv1 and RIPv2 packets, then RIPv2 broadcast version should be configured, but only RIPv2 broadcast packets will be sent. Configure a version based on the version of the neighbors on that interface.";
+      }
+    }
+    description
+      "RIP version type.";
+  }
+  typedef rip-auth {
+    type enumeration {
+      enum "none" {
+        value 1;
+        description
+          "Specify none authentication.";
+      }
+      enum "simple" {
+        value 2;
+        description
+          "Specify simple authentication.";
+      }
+      enum "usual" {
+        value 3;
+        description
+          "Specify huawei as the authentication password.";
+      }
+      enum "md5-keyid" {
+        value 5;
+        description
+          "Specify key ID authentication.";
+      }
+      enum "hmac-sha256" {
+        value 6;
+        description
+          "Specify encrypted authentication.";
+      }
+    }
+    description
+      "RIP authentication.";
+  }
+  typedef rip-proto-type {
+    type enumeration {
+      enum "direct" {
+        value 1;
+        description
+          "Import direct routes.";
+      }
+      enum "ospfv2" {
+        value 2;
+        description
+          "Import OSPFv2 routes.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "Import ISIS routes.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Import static routes.";
+      }
+      enum "rip" {
+        value 5;
+        description
+          "Import RIP routes.";
+      }
+      enum "bgp" {
+        value 6;
+        description
+          "Import BGP routes.";
+      }
+      enum "none" {
+        value 9;
+        description
+          "No protocol type is specified.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "Import UNR routes.";
+      }
+    }
+    description
+      "RIP protocol type.";
+  } 
+  typedef rip-imp-prototype {
+    type enumeration {
+      enum "direct" {
+        value 1;
+        description
+          "Import direct routes.";
+      }
+      enum "ospfv2" {
+        value 2;
+        description
+          "Import OSPFv2 routes.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "Import ISIS routes.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Import static routes.";
+      }
+      enum "rip" {
+        value 5;
+        description
+          "Import RIP routes.";
+      }
+      enum "bgp" {
+        value 6;
+        description
+          "Import BGP routes.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "Import UNR routes.";
+      }
+    }
+    description
+      "RIP import protocol type.";
+  } 
+}

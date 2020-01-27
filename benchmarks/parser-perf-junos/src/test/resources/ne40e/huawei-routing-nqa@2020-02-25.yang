@@ -1,0 +1,68 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-routing-nqa {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-routing-nqa";
+  prefix rt-nqa;
+  
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-routing
+  {
+    prefix rt;
+  }
+  import huawei-nqa {
+    prefix nqa;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "The file defines the static route track NQA.";
+  revision 2020-02-25 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "route-base";
+
+  augment /ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/rt:routing/rt:static-routing/rt:unicast-routes/rt:unicast-route/rt:track-setting {
+    description
+      "Static route track NQA.";
+    case nqa {
+      description
+        "Track NQA.";
+      leaf admin-name {
+        type leafref {
+          path "/nqa:nqa/nqa:instances/nqa:instance/nqa:admin-name";
+        }
+        must "../rt:bfd-enable='false' and ../rt:inherit-cost='false' and ../rt:permanent='false' and ../rt:topology-name='base'";
+        description
+          "Name of an NQA administer instance.";
+      }
+      leaf test-name {
+        type leafref {
+          path "/nqa:nqa/nqa:instances/nqa:instance/nqa:test-name";
+        }
+        must "../rt:bfd-enable='false' and ../rt:inherit-cost='false' and ../rt:permanent='false' and ../rt:topology-name='base'";
+        description
+          "Name of an NQA test instance.";
+      }
+    }
+  }
+}

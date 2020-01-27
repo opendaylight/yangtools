@@ -1,0 +1,2956 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-qos-type {
+  belongs-to huawei-qos {
+    prefix qos;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "The type definition of quality of service.";
+  revision 2020-04-01 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-11 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-03 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-20 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-02 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  typedef qos-ba-type {
+    type enumeration {
+      enum "8021p" {
+        value 0; 
+        description
+          "802.1p priority.";
+      }
+      enum "ip-dscp" {
+        value 1; 
+        description
+          "DSCP priority.";
+      }
+      enum "mpls-exp" {
+        value 2; 
+        description
+          "MPLS-EXP priority.";
+      }
+      enum "user-priority" {
+        value 3; 
+        description
+          "User priority.";
+      }
+      enum "ip-precedence" {
+        value 11; 
+        description
+          "IP-Precedence priority.";
+      }
+    }
+    description
+      "Behavior aggregations type.";
+  }
+  
+  typedef qos-phb-type {
+    type enumeration {
+      enum "8021p" {
+        value 0; 
+        description
+          "802.1p priority.";
+      }
+      enum "ip-dscp" {
+        value 1; 
+        description
+          "DSCP priority.";
+      }
+      enum "mpls-exp" {
+        value 2; 
+        description
+          "MPLS-EXP priority.";
+      }
+      enum "ip-precedence" {
+        value 11; 
+        description
+          "IP Precedence priority.";
+      }
+    }
+    description
+      "Priority type.";
+  }
+  
+  typedef qos-service-class {
+    type enumeration {
+      enum "be" {
+        value 0; 
+        description
+          "BE service class.";
+      }
+      enum "af1" {
+        value 1; 
+        description
+          "AF1 service-class.";
+      }
+      enum "af2" {
+        value 2; 
+        description
+          "AF2 service-class.";
+      }
+      enum "af3" {
+        value 3; 
+        description
+          "AF3 service-class.";
+      }
+      enum "af4" {
+        value 4; 
+        description
+          "AF4 service-class.";
+      }
+      enum "ef" {
+        value 5; 
+        description
+          "EF service-class.";
+      }
+      enum "cs6" {
+        value 6; 
+        description
+          "CS6 service-class.";
+      }
+      enum "cs7" {
+        value 7; 
+        description
+          "CS7 service-class.";
+      }
+    }
+    description
+      "QoS service class.";
+  }
+  typedef qos-service-class-total {
+    type enumeration {
+      enum "be" {
+        value 0; 
+        description
+          "BE service class.";
+      }
+      enum "af1" {
+        value 1; 
+        description
+          "AF1 service class.";
+      }
+      enum "af2" {
+        value 2; 
+        description
+          "AF2 service class.";
+      }
+      enum "af3" {
+        value 3; 
+        description
+          "AF3 service class.";
+      }
+      enum "af4" {
+        value 4; 
+        description
+          "AF4 service class.";
+      }
+      enum "ef" {
+        value 5; 
+        description
+          "EF service class.";
+      }
+      enum "cs6" {
+        value 6; 
+        description
+          "CS6 service class.";
+      }
+      enum "cs7" {
+        value 7; 
+        description
+          "CS7 service class.";
+      }
+      enum "total" {
+        value 8; 
+        description
+          "Total service class.";
+      }
+    }
+    description
+      "QoS service class.";
+  }
+  typedef qos-color {
+    type enumeration {
+      enum "green" {
+        value 0; 
+        description
+          "Green.";
+      }
+      enum "yellow" {
+        value 1; 
+        description
+          "Yellow.";
+      }
+      enum "red" {
+        value 2; 
+        description
+          "Red.";
+      }
+    }
+    description
+      "Color type.";
+  }
+  typedef qos-direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 0; 
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        value 1; 
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "Direction type.";
+  }
+  typedef qos-traffic-type {
+    type enumeration {
+      enum "ucl" {
+        value 0; 
+        description
+          "Ucl.";
+      }
+      enum "acl" {
+        value 1; 
+        description
+          "Acl.";
+      }
+    }
+    description
+      "Traffic policy type.";
+  }
+  typedef qos-acl-log-type {
+    type enumeration {
+      enum "acl-log" {
+        value 1; 
+        description
+          "Log first-packet parameter.";
+      }
+    }
+    description
+      "Acl log.";
+  }
+  typedef template-name {
+    type string {
+      length "1..31";
+    }
+    description
+      "Template name is like string.";
+  }
+  typedef qos-profile-template-name {
+    type string {
+      length "1..63";
+    }
+    description
+      "Qos profile template name is like string.";
+  }  
+  typedef queue-schedule-mode {
+    type enumeration {
+      enum "pq" {
+        value 0; 
+        description
+          "Priority queue.";
+      }
+      enum "wfq" {
+        value 1; 
+        description
+          "Weighted fair queuing.";
+      }
+      enum "lpq" {
+        value 2; 
+        description
+          "Low priority queuing.";
+      }
+    }
+    description
+      "Queue schedule mode.";
+  }
+  typedef queue-low-latency {
+    type enumeration {
+      enum "enable" {
+        value 1; 
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable low latency.";
+  }
+  typedef queue-low-jitter {
+    type enumeration {
+      enum "enable" {
+        value 1; 
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable low jitter.";
+  }
+  typedef queue-cir-schedule-mode {
+    type enumeration {
+      enum "pq" {
+        value 0; 
+        description
+          "PQ.";
+      }
+    }
+    description
+      "Scheduling strategy of cir.";
+  }
+  typedef flow-queue-template-type {
+    type enumeration {
+      enum "normal" {
+        value 0; 
+        description
+          "Normal mode.";
+      }
+      enum "priority" {
+        value 1; 
+        description
+          "Priority mode.";
+      }
+      enum "4cos" {
+        value 2; 
+        description
+          "Four cos mode.";
+      }
+    }
+    description
+      "Flow queue template mode type.";
+  }
+  typedef profile-template-type {
+    type enumeration {
+      enum "normal" {
+        value 0; 
+        description
+          "Normal.";
+      }
+      enum "time-range" {
+        value 1; 
+        description
+          "Time range.";
+      }
+    }
+    description
+      "Profile template mode type.";
+  }
+  typedef all-direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 0; 
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        value 1; 
+        description
+          "Outbound.";
+      }
+      enum "all" {
+        value 2; 
+        description
+          "All.";
+      }
+    }
+    description
+      "Direction type include all.";
+  }
+  typedef priority-level-type {
+    type enumeration {
+      enum "low" {
+        value 255; 
+        description
+          "Low.";
+      }
+      enum "high" {
+        value 1; 
+        description
+          "High.";
+      }
+    }
+    description
+      "Priority level type.";
+  }
+  typedef adjust-on-card-type {
+    type enumeration {
+      enum "disable" {
+        value 0; 
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1; 
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Adjust on card flag.";
+  }
+  typedef gq-template-type {
+    type enumeration {
+      enum "normal" {
+        value 0; 
+        description
+          "Normal mode.";
+      }
+      enum "priority" {
+        value 1; 
+        description
+          "Priority mode.";
+      }
+    }
+    description
+      "User group queue mode.";
+  }
+  typedef class-operator {
+    type enumeration {
+      enum "or" {
+        value 0; 
+        description
+          "Or.";
+      }
+      enum "and" {
+        value 1; 
+        description
+          "And.";
+      }
+    }
+    description
+      "Logical operator of a rule.";
+  }
+  typedef ip-family {
+    type enumeration {
+      enum "ipv4" {
+        value 1;
+        description
+          "IPv4.";
+      }
+      enum "ipv6" {
+        value 2;
+        description
+          "IPv6.";
+      }
+    }
+    description
+      "Ip family type.";
+  }
+  typedef priority-type {
+    type enumeration {
+      enum "8021p" {
+        value 0;
+        description
+          "802.1p priority.";
+      }
+      enum "ip-precedence" {
+        value 1;
+        description
+          "IP precedence.";
+      }
+      enum "dscp" {
+        value 2;
+        description
+          "DSCP priority.";
+      }
+      enum "mpls-exp" {
+        value 4;
+        description
+          "MPLS-EXP priority.";
+      }
+      enum "ipv6-dscp" {
+        value 5;
+        description
+          "IPv6 DSCP priority.";
+      }
+      enum "ipv6-ip-precedence" {
+        value 6;
+        description
+          "IPv6 IP precedence.";
+      }
+    }
+    description
+      "Priority type.";
+  }
+  typedef action-car {
+    type enumeration {
+      enum "car" {
+        value 0;
+        description
+          "CAR action.";
+      }
+    }
+    description
+      "Type of a car action.";
+  }
+  typedef color-action-type {
+    type enumeration {
+      enum "pass" {
+        value 0;
+        description
+          "Pass.";
+      }
+      enum "discard" {
+        value 2;
+        description
+          "Discard.";
+      }
+    }
+    description
+      "Color action type.";
+  }
+  typedef service-class-notconfig {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "BE service class.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "AF1 service class.";
+      }
+      enum "af2" {
+        value 2;
+        description
+          "AF2 service class.";
+      }
+      enum "af3" {
+        value 3;
+        description
+          "AF3 service class.";
+      }
+      enum "af4" {
+        value 4;
+        description
+          "AF4 service class.";
+      }
+      enum "ef" {
+        value 5;
+        description
+          "EF service class.";
+      }
+      enum "cs6" {
+        value 6;
+        description
+          "CS6 service class.";
+      }
+      enum "cs7" {
+        value 7;
+        description
+          "CS7 service class.";
+      }
+      enum "not-config" {
+        value 8;
+        description
+          "Not config service class.";
+      }
+    }
+    description
+      "Service class type.";
+  }
+  typedef color-aware-type {
+    type enumeration {
+      enum "enable" {
+        value 1; 
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable color aware.";
+  }
+  typedef car-limit-type {
+    type enumeration {
+      enum "pps" {
+        value 1;
+        description
+          "Car limit type pps.";
+      }
+    }
+    description
+      "Car limit type.";
+  }
+  typedef filter-flag {
+    type enumeration {
+      enum "permit" {
+        value 0;
+        description
+          "Permit.";
+      }
+      enum "deny" {
+        value 1;
+        description
+          "Deny.";
+      }
+    }
+    description
+      "Filter type.";
+  }
+  typedef action-remark {
+    type enumeration {
+      enum "8021p" {
+        value 12;
+        description
+          "Remark 802.1p priority action.";
+      }
+      enum "ipv4-dscp" {
+        value 13;
+        description
+          "Remark DSCP action.";
+      }
+      enum "tos" {
+        value 19;
+        description
+          "Remark tos priority action.";
+      }
+      enum "ipv6-dscp" {
+        value 14;
+        description
+          "Remark IPv6 DSCP action.";
+      }
+      enum "ip-precedence" {
+        value 15;
+        description
+          "Remark IP precedence action.";
+      }
+      enum "mpls-exp" { 
+        value 16;
+        description
+          "Remark MPLS-EXP action.";
+      }
+      enum "ip-df" {
+        value 21;
+        description
+          "Remark IP-DF action.";
+      }
+      enum "ttl" {
+        value 26;
+        description
+          "Remark TTL action.";
+      }
+      enum "inner-8021p" {
+        value 34;
+        description
+          "Remark inner 802.1p priority action.";
+      }
+      enum "outer-8021p" {
+        value 35;
+        description
+          "Remark outer 802.1p priority action.";
+      }
+    }
+    description
+      "Action remark type.";
+  }
+  typedef service-class-action {
+    type enumeration {
+      enum "service-class" {
+        value 0;
+        description
+          "Service class.";
+      }
+      enum "service-class-master-bfd" {
+        value 1;
+        description
+          "Service class link master BFD.";
+      }
+      enum "service-class-slave-bfd" {
+        value 2;
+        description
+          "Service class link slave BFD.";
+      }
+    }
+    description
+      "Type of a service class action.";
+  }
+  typedef remark-type {
+    type enumeration {
+      enum "enable" {
+        value 0;
+        description
+          "Remark enable.";
+      }
+      enum "disable" {
+        value 1;
+        description
+          "Remark disable.";
+      }
+    }
+    description
+      "Remark type.";
+  }
+  typedef trust-type {
+    type enumeration {
+      enum "ip-dscp" {
+        value 0;
+        description
+          "Trust ip-dscp.";
+      }
+      enum "8021p" {
+        value 1;
+        description
+          "Trust 8021p.";
+      }
+      enum "inner-8021p" {
+        value 3;
+        description
+          "Trust inner-8021p.";
+      }
+      enum "outer-8021p" {
+        value 2;
+        description
+          "Trust outer-8021p.";
+      }
+    }
+    description
+      "Trust type.";
+  }
+  typedef trust-direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 1;
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        value 2;
+        description
+          "Outbound.";
+      }
+      enum "in-outbound" {
+        value 0;
+        description
+          "Not config.";
+      }
+    }
+    description
+      "Trust direction type.";
+  }
+  typedef trust-remote-direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 1;
+        description
+          "Inbound.";
+      }
+    }
+    description
+      "Trust remote direction type.";
+  }
+  typedef identifier-type {
+    type enumeration {
+      enum "no" {
+        value 0;
+        description
+          "Not config.";
+      }
+      enum "none" {
+        value 1;
+        description
+          "Not config VLAN.";
+      }
+      enum "vid" {
+        value 2;
+        description
+          "Vid.";
+      }
+      enum "ce-vid" {
+        value 3;
+        description
+          "CE VLAN ID.";
+      }
+      enum "vid-ce-vid" {
+        value 4;
+        description
+          "Vid CE vid.";
+      }
+    }
+    description
+      "Identifier type.";
+  }
+  typedef link-adjustment-type {
+    type enumeration {
+      enum "cell" {
+        value 1;
+        description
+          "Cell.";
+      }
+    }
+    description
+      "Link adjustment type.";
+  }
+  typedef policy-apply-layer-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Default classification.";
+      }
+      enum "link" {
+        value 1;
+        description
+          "Classification based on Layer 2 information.";
+      }
+      enum "mpls" {
+        value 3;
+        description
+          "Classification based on MPLS information.";
+      }
+      enum "all" {
+        value 2;
+        description
+          "Classification based on ALL information.";
+      }
+      enum "vxlan" {
+        value 4;
+        description
+          "Classification based on VXLAN information.";
+      }
+    }
+    description
+      "Policy layer type.";
+  }
+  typedef policy-apply-vxlan-layer-type {
+    type enumeration {
+      enum "link" {
+        value 1;
+        description
+          "Classification based on Layer 2 information.";
+      }
+    }
+    description
+      "Policy layer type.";
+  }
+  typedef profile-apply-type {
+    type enumeration {
+      enum "interface" {
+        value 0;
+        description
+          "Interface.";
+      }
+      enum "vlan" {
+        value 1;
+        description
+          "VLAN.";
+      }
+      enum "pe" {
+        value 2;
+        description
+          "Pe.";
+      }
+    }
+    description
+      "Profile apply type.";
+  }
+  typedef linkage-bandwidth-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Linkage bandwidth type.";
+  }
+  typedef identify-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "vlan" {
+        value 1;
+        description
+          "VLAN.";
+      }
+      enum "pe-vid" {
+        value 2;
+        description
+          "Pe VLAN Id.";
+      }
+      enum "ce-vid" {
+        value 3;
+        description
+          "Ce VLAN Id.";
+      }
+      enum "pe-ce-vid" {
+        value 4;
+        description
+          "Pe-Ce VLAN Id.";
+      }
+      enum "vid" {
+        value 5;
+        description
+          "Vid.";
+      }
+      enum "evc-ce-vid" {
+        value 6;
+        description
+          "Ce-vid.";
+      }
+      enum "vid-ce-vid" {
+        value 7;
+        description
+          "Vid-ce-vid.";
+      }
+    }
+    description
+      "Identify type.";
+  }
+  typedef hqos-service-class {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "BE service class.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "AF1 service class.";
+      }
+      enum "af2" {
+        value 2;
+        description
+          "AF2 service class.";
+      }
+      enum "af3" {
+        value 3;
+        description
+          "AF3 service class.";
+      }
+      enum "af4" {
+        value 4;
+        description
+          "AF4 service class.";
+      }
+      enum "ef" {
+        value 5;
+        description
+          "EF service class.";
+      }
+      enum "cs6" {
+        value 6;
+        description
+          "CS6 service class.";
+      }
+      enum "cs7" {
+        value 7;
+        description
+          "CS7 service class.";
+      }
+      enum "total" {
+        value 8;
+        description
+          "Total.";
+      }
+      enum "cos0" {
+        value 9;
+        description
+          "Cos0 service class.";
+      }
+      enum "cos1" {
+        value 10;
+        description
+          "Cos1 service class.";
+      }
+      enum "cos2" {
+        value 11;
+        description
+          "Cos2 service class.";
+      }
+      enum "cos3" {
+        value 12;
+        description
+          "Cos3 service class.";
+      }
+    }
+    description
+      "Service class type.";
+  }
+  typedef qos-res-type {
+    type enumeration {
+      enum "null" {
+        value 0;
+        description
+          "Null.";
+      }
+      enum "sq" {
+        value 1;
+        description
+          "SQ.";
+      }
+      enum "car" {
+        value 2;
+        description
+          "CAR.";
+      }
+      enum "sq-car" {
+        value 3;
+        description
+          "SQCAR.";
+      }
+      enum "l2-car" {
+        value 4;
+        description
+          "L2CAR.";
+      }
+      enum "l2-l3-car" {
+        value 5;
+        description
+          "L2L3CAR.";
+      }
+      enum "l3-car" {
+        value 6;
+        description
+          "L3CAR.";
+      }
+    }
+    description
+      "Resource type.";
+  }
+  typedef switch-flag {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Switch flag.";
+  }
+  typedef mode-template-status {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable.";
+  }
+  typedef statistics-switch-status {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Statistics switch type.";
+  }
+  typedef low-latency {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Enable or disable low latency.";
+  }
+  typedef share-shape-mode {
+    type enumeration {
+      enum "pq" {
+        value 0;
+        description
+          "Priority queue.";
+      }
+      enum "wfq" {
+        value 1;
+        description
+          "Weighted fair queuing.";
+      }
+      enum "lpq" {
+        value 2; 
+        description
+          "Low priority queuing.";
+      }
+      enum "not-config" {
+        value 3; 
+        description
+          "Not config.";
+      }
+    }
+    description
+      "Share shape mode.";
+  }
+  typedef be-type {
+    type enumeration {
+      enum "true" {
+        value 0; 
+        description
+          "True.";
+      }
+      enum "false" {
+        value 8; 
+        description
+          "False.";
+      }
+    }
+    description
+      "BE type.";
+  }
+  typedef af1-type {
+    type enumeration {
+      enum "true" {
+        value 1; 
+        description
+          "True.";
+      }
+      enum "false" {
+        value 8; 
+        description
+          "False.";
+      }
+    }
+    description
+      "AF1 type.";
+  }
+  typedef af2-type {
+    type enumeration {
+      enum "true" {
+        value 2; 
+        description
+          "True.";
+      }
+      enum "false" {
+        value 8; 
+        description
+          "False.";
+      }
+    }
+    description
+      "AF2 type.";
+  }
+  typedef af3-type {
+    type enumeration {
+      enum "true" {
+        value 3; 
+        description
+          "True.";
+      }
+      enum "false" {
+        value 8; 
+        description
+          "False.";
+      }
+    }
+    description
+      "AF3 type.";
+  }
+  typedef af4-type {
+    type enumeration {
+      enum "true" {
+        value 4; 
+        description
+          "True.";
+      }
+      enum "false" {
+        value 8; 
+        description
+          "False.";
+      }
+    }
+    description
+      "AF4 type.";
+  }
+  typedef ef-type {
+    type enumeration {
+      enum "true" {
+        value 5; 
+        description
+          "True.";
+      }
+      enum "false" {
+        value 8; 
+        description
+          "False.";
+      }
+    }
+    description
+      "EF type.";
+  }
+  typedef cs6-type {
+    type enumeration {
+      enum "true" {
+        value 6; 
+        description
+          "True.";
+      }
+      enum "false" {
+        value 8; 
+        description
+          "False.";
+      }
+    }
+    description
+      "CS6 type.";
+  }
+  typedef cs7-type {
+    type enumeration {
+      enum "true" {
+        value 7; 
+        description
+          "True.";
+      }
+      enum "false" {
+        value 8; 
+        description
+          "False.";
+      }
+    }
+    description
+      "CS7 type.";
+  }
+  typedef policy-match-type {
+    type enumeration {
+      enum "ip-layer-push" {
+        value 0;
+        description
+          "MF traffic classification based only on IP Layer (Layer 3) information for incoming traffic on the public network.";
+      }
+      enum "ip-layer-pop" {
+        value 7;
+        description
+          "MF traffic classification based only on IP Layer (Layer 3) information for outgoing traffic on the public network.";
+      }
+      enum "mpls-layer-push" {
+        value 3;
+        description
+          "MF classification based on both IP and MPLS information for incoming traffic on the public network.";
+      }
+      enum "mpls-layer-pop" {
+        value 6;
+        description
+          "MF classification based on both IP and MPLS information for outgoing traffic on the public network.";
+      }
+      enum "mpls-layer-l2-inbound" {
+        value 4;
+        description
+          "MF traffic classification based on MPLS information for outgoing traffic on the public network in Layer 2 forwarding scenarios.";
+      }
+      enum "protocol-mc-reserved" {
+        value 2;
+        description
+          "Match Layer 3 protocol packets with reserved multicast addresses against ACLs.";
+      }
+      enum "rule-packet" {
+        value 5;
+        description
+          "Enable packet type-based filtering for MF classification.";
+      }
+    }
+    description
+      "Traffic policy match type.";
+  } 
+  typedef out-direction-type {
+    type enumeration {
+      enum "outbound" {
+        value 1; 
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "Outbound direction.";
+  }
+  typedef priority-shaping-type {
+    type enumeration {
+      enum "priority0" {
+        value 0;
+        description
+          "Priority mode 0.";
+      }
+      enum "priority1" {
+        value 1;
+        description
+          "Priority mode 1.";
+      }
+      enum "priority2" {
+        value 2;
+        description
+          "Priority mode 2.";
+      }
+      enum "nopriority" {
+        value 255;
+        description
+          "No priority.";
+      }
+    }
+    description
+      "Priority shaping type.";
+  }
+typedef slot-id {
+    type string {
+      length "1..32";
+      pattern '(c[cl]c\d+/)?\d+';
+    }
+    description
+      "Slot id is like 3, clc1/3 or ccc1/3.";
+  }
+  typedef group-name {
+    type string {
+      length "1..32";
+    }
+    description
+      "Group name is like string.";
+  }
+  typedef qos-service-class-filter {
+    type enumeration {
+      enum "be" {
+        value 0; 
+        description
+          "BE service class.";
+      }
+      enum "af1" {
+        value 1; 
+        description
+          "AF1 service class.";
+      }
+      enum "af2" {
+        value 2; 
+        description
+          "AF2 service class.";
+      }
+      enum "af3" {
+        value 3; 
+        description
+          "AF3 service class.";
+      }
+      enum "af4" {
+        value 4; 
+        description
+          "AF4 service class.";
+      }
+      enum "ef" {
+        value 5; 
+        description
+          "Ef service class.";
+      }
+      enum "cs6" {
+        value 6; 
+        description
+          "CS6 service class.";
+      }
+      enum "cs7" {
+        value 7; 
+        description
+          "CS7 service class.";
+      }
+      enum "total" {
+        value 8; 
+        description
+          "Total.";
+      }
+    }
+    description
+      "Service class.";
+  }  
+  typedef switch-type {
+    type enumeration {
+      enum "enable" {
+        value 1; 
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable.";
+  }
+  typedef speed-type {
+    type enumeration {
+      enum "both-speed" {
+        value 0;
+        description
+          "High speed and low speed.";
+      }
+      enum "low-speed" {
+        value 1;
+        description
+          "Low speed.";
+      }
+      enum "high-speed" {
+        value 2;
+        description
+          "High speed.";
+      }
+    }
+    description
+      "Speed type.";
+  }
+  typedef qos-rule-service-type {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal interface.";
+      }
+      enum "vbd-if" {
+        value 1;
+        description
+          "Vbd interface.";
+      }
+      enum "multi-type" {
+        value 2;
+        description
+          "Multi type interface.";
+      }
+      enum "vlan-if" {
+        value 3;
+        description
+          "VLAN interface.";
+      }
+    }
+    description
+      "Rule service type.";
+  }
+  typedef acl-log-action-type {
+    type enumeration {
+      enum "first-packet" {
+        value 39; 
+        description
+          "Log first packet action.";
+      }
+    }
+    description
+      "Type of the log action.";
+  }
+  typedef qos-cos-value {
+    type enumeration {
+      enum "cos0" {
+        value 0;
+        description
+          "Cos0.";
+      }
+      enum "cos1" {
+        value 1;
+        description
+          "Cos1.";
+      }
+      enum "cos2" {
+        value 2;
+        description
+          "Cos2.";
+      }
+      enum "cos3" {
+        value 3;
+        description
+          "Cos3.";
+      }
+    }
+    description
+      "Cos value.";
+  }
+  typedef shap-id-type{
+    type enumeration {
+      enum "1" {
+        value 1;
+        description
+          "Shap-id 1.";
+      }
+      enum "not-config" {
+        value 2;
+        description
+          "Not config.";
+      }
+    }
+    description
+      "Shap id type.";
+  }
+  typedef queue-select-be-type {
+    type enumeration {
+      enum "true" {
+        value 0;
+        description
+          "True.";
+      }
+    }
+    description
+      "Queue BE.";
+  }
+  typedef queue-select-af1-type {
+    type enumeration {
+      enum "true" {
+        value 1;
+        description
+          "True.";
+      }
+    }
+    description
+      "Queue AF1.";
+  }
+  typedef queue-select-af2-type {
+    type enumeration {
+      enum "true" {
+        value 2;
+        description
+          "True.";
+      }
+    }
+    description
+      "Queue AF2.";
+  }
+  typedef queue-select-af3-type {
+    type enumeration {
+      enum "true" {
+        value 3;
+        description
+          "True.";
+      }
+    }
+    description
+      "Queue AF3.";
+  }
+  typedef queue-select-af4-type {
+    type enumeration {
+      enum "true" {
+        value 4;
+        description
+          "True.";
+      }
+    }
+    description
+      "Queue AF4.";
+  }
+  typedef queue-select-ef-type {
+    type enumeration {
+      enum "true" {
+        value 5;
+        description
+          "True.";
+      }
+    }
+    description
+      "Queue EF.";
+  }
+  typedef queue-select-cs6-type {
+    type enumeration {
+      enum "true" {
+        value 6;
+        description
+          "True.";
+      }
+    }
+    description
+      "Queue CS6.";
+  }
+  typedef queue-select-cs7-type {
+    type enumeration {
+      enum "true" {
+        value 7;
+        description
+          "True.";
+      }
+    }
+    description
+      "Queue CS7.";
+  }
+  typedef priority-flow-queue-schedule-mode {
+    type enumeration {
+      enum "pq" {
+        value 0;
+        description
+          "Priority queue.";
+      }
+      enum "wfq" {
+        value 1;
+        description
+          "Weighted fair queue.";
+      }
+    }
+    description
+      "Priority mode.";
+  }
+  typedef qos-car-type {
+    type enumeration {
+      enum "car" {
+        value 1;
+        description
+          "CAR action.";
+      }
+    }
+    description
+      "CAR.";
+  }
+  typedef car-direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 0; 
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        value 1; 
+        description
+          "Outbound.";
+      }
+      enum "all" {
+        value 2; 
+        description
+          "All.";
+      }
+    }
+    description
+      "Direction type.";
+  }
+  typedef profile-car-type {
+    type enumeration {
+      enum "car" {
+        value 1;
+        description
+          "CAR action.";
+      }
+    }
+    description
+      "CAR.";
+  }
+  typedef profile-car-direction-type {
+    type enumeration {
+      enum "all" {
+        value 2; 
+        description
+          "All.";
+      }
+    }
+    description
+      "All.";
+  }
+  typedef qos-suppression-type {
+    type enumeration {
+      enum "broadcast" {
+        value 2;
+        description
+          "Broadcast suppression.";
+      }
+      enum "multicast" {
+        value 3;
+        description
+          "Multicast suppression.";
+      }
+      enum "unknow-unicast" {
+        value 4;
+        description
+          "Unknown unicast suppression.";
+      }
+      enum "bum" {
+        value 7;
+        description
+          "BUM suppression.";
+      }
+      enum "bu" {
+        value 8;
+        description
+          "BU suppression.";
+      }
+      enum "unknow-multicast" {
+        value 9;
+        description
+          "Unknown multicast suppression.";
+      }
+    }
+    description
+      "Suppression type.";
+  }
+  typedef suppression-direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 0; 
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        value 1; 
+        description
+          "Outbound.";
+      }
+      enum "all" {
+        value 2; 
+        description
+          "All.";
+      }
+    }
+    description
+      "Suppression direction type.";
+  }
+  typedef priority-aware-type {
+    type enumeration {
+      enum "enable" {
+        value 1; 
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable priority aware.";
+  }
+  
+  typedef interval-value {
+    type enumeration {
+      enum "5s" {
+        value 5;
+        description
+          "5s.";
+      }
+      enum "30s" {
+        value 30;
+        description
+          "30s.";
+      }
+      enum "300s" {
+        value 300;
+        description
+          "300s.";
+      }
+    }
+    description
+      "Interval value.";
+  }
+  typedef buffer-mode-type {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal.";
+      }
+      enum "large" {
+        value 1;
+        description
+          "Large.";
+      }
+    }
+    description
+      "Buffer mode type.";
+  }
+  typedef qos-address-type {
+    type enumeration {
+      enum "source" {
+        value 0;
+        description
+          "Source address.";
+      }
+      enum "destination" {
+        value 1;
+        description
+          "Destination address.";
+      }
+    }
+    description
+      "Source or destination address.";
+  }
+  typedef qos-mac-type {
+    type enumeration {
+      enum "source" {
+        value 0;
+        description
+          "Source MAC address.";
+      }
+      enum "destination" {
+        value 1;
+        description
+          "Destination MAC address.";
+      }
+    }
+    description
+      "Source or destination address.";
+  }
+  typedef qos-ipv6-family {
+    type enumeration {
+      enum "ipv6" {
+        value 2;
+        description
+          "IPv6 protocol family.";
+      }
+    }
+    description
+      "IPv6 protocol family.";
+  }
+  typedef qos-tcp-bit-match {
+    type enumeration {
+      enum "not-config" {
+        value 0;
+        description
+          "Not config.";
+      }
+      enum "established" {
+        value 1;
+        description
+          "Established.";
+      }
+      enum "fin" {
+        value 2;
+        description
+          "Fin.";
+      }
+      enum "syn" {
+        value 3;
+        description
+          "Syn.";
+      }
+      enum "rst" {
+        value 4;
+        description
+          "Rst.";
+      }
+      enum "psh" {
+        value 5;
+        description
+          "Psh.";
+      }
+      enum "ack" {
+        value 6;
+        description
+          "Ack.";
+      }
+      enum "urg" {
+        value 7;
+        description
+          "Urg.";
+      }
+      enum "ece" {
+        value 8;
+        description
+          "Ece.";
+      }
+      enum "cwr" {
+        value 9;
+        description
+          "Cwr.";
+      }
+      enum "ns" {
+        value 10;
+        description
+          "Ns.";
+      }
+    }
+    description
+      "TCP bit match type.";
+  }
+  typedef qos-tcp-bit-match-ipv6 {
+    type enumeration {
+      enum "not-config" {
+        value 0;
+        description
+          "NotConfig.";
+      }
+      enum "established" {
+        value 1;
+        description
+          "Established.";
+      }
+      enum "fin" {
+        value 2;
+        description
+          "Fin.";
+      }
+      enum "syn" {
+        value 3;
+        description
+          "Syn.";
+      }
+      enum "rst" {
+        value 4;
+        description
+          "Rst.";
+      }
+      enum "psh" {
+        value 5;
+        description
+          "Psh.";
+      }
+      enum "ack" {
+        value 6;
+        description
+          "Ack.";
+      }
+      enum "urg" {
+        value 7;
+        description
+          "Urg.";
+      }
+    }
+    description
+      "IPv6 TCP bit match type.";
+  }
+  typedef low-latency-enable-type {
+    type enumeration {
+      enum "flow-queue" {
+        value 1;
+        description
+          "Flow queue.";
+      }
+    }
+    description
+      "Business type of low latency.";
+  }
+  typedef low-latency-enable-value {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable.";
+  }
+  typedef shaping-value-type {
+    type enumeration {
+      enum "256K" {
+        value 0;
+        description
+          "256K.";
+      }
+      enum "512K" {
+        value 1;
+        description
+          "512K.";
+      }
+    }
+    description
+      "Shaping value type.";
+  }
+  typedef port-shaping-weight-mode-type {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Weight mode enable.";
+      }
+    }
+    description
+      "Weight mode enable.";
+  }
+  typedef scheduling-mode-type {
+    type enumeration {
+      enum "mode2" {
+        value 0;
+        description
+          "Mode 2.";
+      }
+      enum "mode3" {
+        value 1;
+        description
+          "Mode 3.";
+      }
+    }
+    description
+      "Scheduling mode type.";
+  }
+  typedef stream-direction-type {
+    type enumeration {
+      enum "source" {
+        value 1; 
+        description
+          "Source.";
+      }
+      enum "destination" {
+        value 2; 
+        description
+          "Destination.";
+      }
+    }
+    description
+      "Stream direction type.";
+  }
+  typedef group-type {
+    type enumeration {
+      enum "service-group" {
+        value 1; 
+        description
+          "Service group.";
+      }
+      enum "user-group" {
+        value 2; 
+        description
+          "User group.";
+      }
+    }
+    description
+      "Group type.";
+  }
+   typedef shapid-upritype {
+    type enumeration {
+      enum "1" {
+        value 1;
+        description
+          "1.";
+      }
+    }
+    description
+      "Shap Id.";
+  }
+  typedef map-type {
+    type enumeration {
+      enum "none" {
+        value 1;
+        description
+          "Notconfig map type.";
+      }
+      enum "inner-8021p" {
+        value 2;
+        description
+          "Inner 802.1p priority.";
+      }
+      enum "outer-8021p" {
+        value 4;
+        description
+          "Outer 802.1p priority.";
+      }
+      enum "dscp" {
+        value 8;
+        description
+          "Dscp type.";
+      }
+      enum "mpls-exp" {
+        value 16;
+        description
+          "MPLS-EXP type.";
+      }
+    }
+    description
+      "Map type for phb.";
+  }
+  typedef convergence-schedule-mode {
+    type enumeration {
+      enum "disable" {
+        value 4;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Disable.";
+  }
+  typedef port-convergence-schedule-mode {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable.";
+  }
+  typedef traffic-policy-untag-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Disable.";
+  }
+  typedef qos-direction-inbound {
+    type enumeration {
+      enum "inbound" {
+        value 0; 
+        description
+          "Inbound.";
+      }
+    }
+    description
+      "Direction.";
+  }
+  typedef in-direction-type {
+    type enumeration {
+      enum "inbound" {
+        value 0; 
+        description
+          "Inbound.";
+      }
+    }
+    description
+      "Inbound.";
+  }
+  typedef discard-type {
+    type enumeration {
+      enum "discard-packet" {
+        value 1;
+        description
+          "Discard Packets.";
+      }
+      enum "discard-byte" {
+        value 2;
+        description
+          "Discard Bytes.";
+      }
+      enum "discard-packet-ratio" {
+        value 3;
+        description
+          "Discard Ratio.";
+      }
+    }
+    description
+      "Discard mode type.";
+  }
+  typedef lcs-active-status-type {
+    type enumeration {
+      enum "allocated" {
+        value 1;
+        description
+          "Allocated.";
+      }
+      enum "activated" {
+        value 2;
+        description
+          "Activated.";
+      }
+    }
+    description
+      "Liscense active status type.";
+  }
+  typedef statistics-car-type {
+    type enumeration {
+      enum "car" {
+        value 1;
+        description
+          "CAR action.";
+      }
+      enum "broadcast" {
+        value 2;
+        description
+          "Broadcast suppression.";
+      }
+      enum "multicast" {
+        value 3;
+        description
+          "Multicast suppression.";
+      }
+      enum "unknow-unicast" {
+        value 4;
+        description
+          "Unknown unicast suppression.";
+      }
+      enum "l2-forward" {
+        value 5;
+        description
+          "CAR L2 forward parameter.";
+      }
+      enum "l3-forward" {
+        value 6;
+        description
+          "CAR L3 forward parameter.";
+      }
+      enum "bum" {
+        value 7;
+        description
+          "BUM suppression.";
+      }
+      enum "bu" {
+        value 8;
+        description
+          "BU suppression.";
+      }
+      enum "unknow-multicast" {
+        value 9;
+        description
+          "Unknown multicast suppression.";
+      }
+    }
+    description
+      "Car statistics type.";
+  }
+  typedef qos-priority-num-type {
+    type enumeration {
+      enum "p0" {
+        value 0; 
+        description
+          "P0.";
+      }
+      enum "p1" {
+        value 1; 
+        description
+          "P1.";
+      }
+      enum "p2" {
+        value 2; 
+        description
+          "P2.";
+      }
+      enum "p3" {
+        value 3; 
+        description
+          "P3.";
+      }
+      enum "p4" {
+        value 4; 
+        description
+          "P4.";
+      }
+      enum "p5" {
+        value 5; 
+        description
+          "P5.";
+      }
+      enum "p6" {
+        value 6; 
+        description
+          "P6.";
+      }
+      enum "p7" {
+        value 7; 
+        description
+          "P7.";
+      }
+      enum "total" {
+        value 8; 
+        description
+          "Total.";
+      }
+    }
+    description
+      "The priority num.";
+  }  
+  typedef qos-flow-type {
+    type enumeration {
+      enum "source-ip" {
+        value 1; 
+        description
+          "Source address.";
+      }
+      enum "destination-ip" {
+        value 2; 
+        description
+          "Destination address.";
+      }
+    }
+    description
+      "Flow CAR IP type.";
+  }
+  typedef increase-priority {
+    type enumeration {
+      enum "increase-priority" {
+        value 1; 
+        description
+          "Increase priority.";
+      }
+    }
+    description
+      "Increase priority.";
+  }
+  typedef forward-type {
+    type enumeration {
+      enum "vll" {
+        value 1; 
+        description
+          "VLL forward type.";
+      }
+    }
+    description
+      "VLL forward type.";
+  }
+  typedef ability-type {
+    type enumeration {
+      enum "S" {
+        value 1; 
+        description
+          "The port support share-mode hard pipe.";
+      }
+      enum "N" {
+        value 2; 
+        description
+          "None hard-pipe ability.";
+      }
+      enum "U" {
+        value 3; 
+        description
+          "Unknown hard-pipe ability.";
+      }
+      enum "M" {
+        value 4; 
+        description
+          "The port need split member interface.";
+      }
+      enum "E" {
+        value 5; 
+        description
+          "The port support exclusive-mode hard pipe.";
+      }
+    }
+    description
+      "Ability type.";
+  }
+  typedef qos-policy-layer {
+    type enumeration {
+      enum "ip-layer" {
+        value 1;
+        description
+          "IP layer.";
+      }
+    }
+    description
+      "IP layer.";
+  }
+  typedef enable-type {
+    type enumeration {
+      enum "enable" {
+        value 1; 
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable.";
+  }
+  typedef priority-convergent-type {
+    type enumeration {
+      enum "high" {
+        value 1; 
+        description
+          "High.";
+      }
+    }
+    description
+      "High priority.";
+  }
+  typedef untag-enable-type {
+    type enumeration {
+      enum "enable" {
+        value 2; 
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Untag enable type.";
+  }
+  typedef suppress-type {
+    type enumeration {
+      enum "unknown-unicast-suppression" {
+        value 2;
+        description
+          "Unknown unicast suppression.";
+      }
+      enum "multicast-suppression" {
+        value 3;
+        description
+          "Multicast suppression.";
+      }
+      enum "broadcast-suppression" {
+        value 4;
+        description
+          "Broadcast suppression.";
+      }
+    }
+    description
+      "Suppression type.";
+  }
+  typedef action-load-balance {
+    type enumeration {
+      enum "load-balance" {
+        value 4;
+        description
+          "Load balancing action.";
+      }
+    }
+    description
+      "Load balancing.";
+  }
+  typedef load-balance-type {
+    type enumeration {
+      enum "flow" {
+        value 0;
+        description
+          "Flow by flow.";
+      }
+      enum "packet" {
+        value 1;
+        description
+          "Packet by packet.";
+      }
+      enum "flow-l2" {
+        value 2;
+        description
+          "Flow by flow with L2.";
+      }
+      enum "flow-l3" {
+        value 3;
+        description
+          "Flow by flow with L3.";
+      }
+    }
+    description
+      "Load balance type.";
+  }
+  typedef sample-type {
+    type enumeration {
+      enum "fix-packets" {
+        value 0;
+        description
+          "Sampling based on the fixed number of packets.";
+      }
+      enum "fix-time" {
+        value 1;
+        description
+          "Fixed sampling interval.";
+      }
+      enum "random-packets" {
+        value 2;
+        description
+          "Sampling based on the random number of packets.";
+      }
+    }
+    description
+      "Sampling type.";
+  }
+  typedef action-urpf {
+    type enumeration {
+      enum "urpf" {
+        value 3;
+        description
+          "URPF action.";
+      }
+    }
+    description
+      "URPF action.";
+  }
+  typedef check-type {
+    type enumeration {
+      enum "strict" {
+        value 0;
+        description
+          "Strict.";
+      }
+      enum "loose" {
+        value 1;
+        description
+          "Loose.";
+      }
+    }
+    description
+      "Type of the URPF check.";
+  }
+  typedef statistics-type {
+    type enumeration {
+      enum "BPS" {
+        value 1;
+        description
+          "Byte/s.";
+      }
+      enum "PPS" {
+        value 2;
+        description
+          "Packet/s.";
+      }
+    }
+    description
+      "Statistics type.";
+  }
+  typedef ip-type {
+    type enumeration {
+      enum "ipv4" {
+        value 0;
+        description
+          "IPv4.";
+      }
+      enum "ipv6" {
+        value 1;
+        description
+          "IPv6.";
+      }
+    }
+    description
+      "Type of an address.";
+  }
+  typedef pool-type {
+    type enumeration {
+      enum "pool-0" {
+        value 0;
+        description
+          "Pool 0.";
+      }
+      enum "pool-1" {
+        value 1;
+        description
+          "Pool 0.";
+      }
+    }
+    description
+      "Pool ID.";
+  }
+  typedef member-link-scheduler-type {
+    type enumeration {
+      enum "traffic-car" {
+        value 1;
+        description
+          "Traffic CAR.";
+      }
+      enum "qos-car" {
+        value 2;
+        description
+          "QoS CAR.";
+      }
+      enum "port-shaping" {
+        value 3;
+        description
+          "Port shaping.";
+      }
+      enum "hard-pipe" {
+        value 4;
+        description
+          "Hard pipe.";
+      }
+      enum "user-queue" {
+        value 5;
+        description
+          "User queue.";
+      }
+      enum "profile-car" {
+        value 7;
+        description
+          "Profile CAR.";
+      }
+      enum "hqos-outbound" {
+        value 8;
+        description
+          "HQoS outbound.";
+      }
+      enum "mpls-te" {
+        value 9;
+        description
+          "MPLS TE.";
+      }
+    }
+    description
+      "Business type.";
+  }
+  typedef traffic-type {
+    type enumeration {
+      enum "ldp-traffic" {
+        value 1;
+        description
+          "LDP traffic.";
+      }
+    }
+    description
+      "LDP traffic.";
+  }
+  typedef any-other-type {
+    type enumeration {
+      enum "not-config" {
+        value 0;
+        description
+          "Not config.";
+      }
+      enum "user-vlan" {
+        value 1;
+        description
+          "User VLAN.";
+      }
+      enum "qinq" {
+        value 2;
+        description
+          "QinQ.";
+      }
+    }
+    description
+      "BAS QoS profile apply type.";
+  }
+  typedef bas-profile-identifier-type {
+    type enumeration {
+      enum "pe-vid" {
+        value 1;
+        description
+          "PE VLAN ID.";
+      }
+      enum "ce-vid" {
+        value 2;
+        description
+          "CE VLAN ID.";
+      }
+      enum "pe-ce-vid" {
+        value 3;
+        description
+          "PE CE VLAN ID.";
+      }
+      enum "vlan-id" {
+        value 4;
+        description
+          "VLAN ID.";
+      }
+      enum "none" {
+        value 5;
+        description
+          "None.";
+      }
+      enum "option82" {
+        value 7;
+        description
+          "Option82.";
+      }
+      enum "access-line-id" {
+        value 11;
+        description
+          "Access line ID.";
+      }
+    }
+    description
+      "BAS QoS profile apply identifier type.";
+  }
+  typedef vlan-user-group-queue-identifier-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "vlan-id" {
+        value 1;
+        description
+          "VLAN ID.";
+      }
+      enum "pe-vid" {
+        value 2;
+        description
+          "PE VLAN ID.";
+      }
+      enum "ce-vid" {
+        value 3;
+        description
+          "CE VLAN ID.";
+      }
+      enum "pe-ce-vid" {
+        value 4;
+        description
+          "PE CE VLAN ID.";
+      }
+    }
+    description
+      "VLAN user group queue apply identifier type.";
+  } 
+  typedef user-type {
+    type enumeration {
+      enum "lac" {
+        value 1; 
+        description
+          "Specifie the user type as lac.";
+      }
+      enum "lns" {
+        value 2; 
+        description
+          "Specifie the user type as lns.";
+      }
+      enum "lac-and-lns" {
+        value 3; 
+        description
+          "Specifie the user type as lac and lns.";
+      }
+    }
+    description
+      "User type.";
+  }
+  typedef access-type {
+    type enumeration {
+      enum "leased-line-access" {
+        value 1; 
+        description
+          "Leased line access.";
+      }
+      enum "none" {
+        value 0; 
+        description
+          "Not config.";
+      }
+    }
+    description
+      "User access type.";
+  }
+  typedef l2tp-user {
+    type enumeration {
+      enum "l2tp-user" {
+        value 12; 
+        description
+          "L2TP user.";
+      }
+    }
+    description
+      "L2TP user.";
+  }
+  typedef user-access-type {
+    type enumeration {
+      enum "leased-line-access" {
+        value 10; 
+        description
+          "Leased line access.";
+      }
+      enum "subscriber-access" {
+        value 13; 
+        description
+          "Subscriber access.";
+      }
+    }
+    description
+      "User access type.";
+  }
+  typedef hard-pipe-mode {
+    type enumeration {
+      enum "share-mode" {
+        value 0; 
+        description
+          "Share mode.";
+      }
+      enum "exclusive-mode" {
+        value 1; 
+        description
+          "Exclusive mode.";
+      }
+    }
+    description
+      "Hard pipe mode.";
+  }
+  typedef cos-value-type {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "Specifies the service class to be BE.";
+      }
+      enum "af1-af2" {
+        value 1;
+        description
+          "Specifies the service class to be AF1 and AF2.";
+      }
+      enum "af3-af4" {
+        value 2;
+        description
+          "Specifies the service class to be Af3 and af4.";
+      }
+      enum "ef-cs6-cs7" {
+        value 3;
+        description
+          "Specifies the service class to be EF and CS6 and CS7.";
+      }
+    }
+    description
+      "Service class type.";
+  }  
+  typedef rule-type {
+    type enumeration {
+      enum "aclv4" {
+        value 1;
+        description
+          "Aclv4.";
+      }
+      enum "aclv6" {
+        value 2;
+        description
+          "Aclv6.";
+      }
+      enum "l2acl" {
+        value 3;
+        description
+          "L2acl.";
+      }
+      enum "mpls" {
+        value 4;
+        description
+          "MPLS.";
+      }
+      enum "uclv4" {
+        value 5;
+        description
+          "Uclv4.";
+      }
+      enum "uclv6" {
+        value 6;
+        description
+          "Uclv6.";
+      }
+    }
+    description
+      "Qos resource rule type.";
+  }
+  typedef yes-or-no {
+    type enumeration {
+      enum "no" {
+        value 0; 
+        description
+          "No.";
+      }
+      enum "yes" {
+        value 1; 
+        description
+          "Yes.";
+      }
+    }
+    description
+      "Choose yes or no.";
+  }  
+  typedef ac-mode-layer-type {
+    type enumeration {
+      enum "link-layer" {
+        value 1;
+        description
+          "Link layer:";
+      }
+      enum "all-layer" {
+        value 2;
+        description
+          "All layer:";
+      }
+    }
+    description
+      "Layer type.";
+  }
+  typedef vxlan-trust-type {
+    type enumeration {
+      enum "8021p" {
+        value 1;
+        description
+          "Trust 8021p.";
+      }
+      enum "upstream" {
+        value 0;
+        description
+          "Trust upstream.";
+      }
+    }
+    description
+      "VXLAN trust type.";
+  }
+  typedef remote-trust-type {
+    type enumeration {
+      enum "ip-dscp" {
+        value 0;
+        description
+          "Trust ip-dscp.";
+      }
+      enum "8021p" {
+        value 1;
+        description
+          "Trust 8021p.";
+      }
+    }
+    description
+      "Trust type.";
+  }
+  typedef type-8021p {
+    type enumeration {
+      enum "8021p" {
+        value 1;
+        description
+          "Trust 8021p.";
+      }
+      enum "inner-8021p" {
+        value 3;
+        description
+          "Trust inner 8021p.";
+      }
+      enum "outer-8021p" {
+        value 2;
+        description
+          "Trust outer 8021p.";
+      }
+    }
+    description
+      "Trust 8021p type.";
+  }
+  typedef exclude-type {
+    type enumeration {
+      enum "no-exclude" {
+        value 0; 
+        description
+          "Non-exclude mode.";
+      }
+      enum "exclude" {
+        value 1; 
+        description
+          "Exclude mode.";
+      }
+    }
+    description
+      "Exclude type.";
+  }
+  typedef deficit-unit-type {
+    type enumeration {
+      enum "1K" {
+        value 4;
+        description
+          "1K (byte).";
+      }
+      enum "2K" {
+        value 5;
+        description
+          "2K (byte).";
+      }
+    }
+    description
+      "Deficit unit type.";
+  }  
+}

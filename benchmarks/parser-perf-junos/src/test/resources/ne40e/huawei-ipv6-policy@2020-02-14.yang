@@ -1,0 +1,104 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ipv6-policy {
+  namespace "urn:huawei:yang:huawei-ipv6-policy";
+  prefix ipv6-policy;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This module contains a collection of YANG definitions for
+     configuring IP implementations.
+     Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.";
+  revision 2020-02-14 {
+    description
+      "Modify the description of nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-15 {
+    description
+      "Reinitialize revision.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-10 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "interface-mgr";
+
+  augment "/ni:network-instance/ni:instances/ni:instance" {
+    when "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";
+    description
+      "Policies for selecting source and destination IPv6 addresses and parameters for configuring IP on interfaces.";
+    container ipv6-policys {
+      description
+        "List of policies for selecting source and destination IPv6 addresses.";
+      list ipv6-policy {
+        key "ipv6-prefix ipv6-prefix-length";
+        max-elements 50;
+        description
+          "Configure policy for selecting source and destination IPv6 addresses.";
+        leaf ipv6-prefix {
+          type inet:ipv6-address-no-zone;
+          description
+            "Specifies the prefix of an IPv6 address.";
+        }
+        leaf ipv6-prefix-length {
+          type uint32 {
+            range "0..128";
+          }
+          description
+            "Specifies the prefix length of an IPv6 address.";
+        }
+        leaf prefix-precedence {
+          type uint32 {
+            range "0..4294967295";
+          }
+          mandatory true;
+          description
+            "Specifies the priority of an IPv6 address when the address is the destination address.";
+        }
+        leaf prefix-label {
+          type uint32 {
+            range "0..4294967295";
+          }
+          mandatory true;
+          description
+            "Specifies the priority of an IPv6 address when the address is the source address.";
+        }
+        leaf default-flag {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Specifies whether the configuration is an default configuration.";
+        }
+      }
+    }
+  }
+}

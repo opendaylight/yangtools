@@ -1,0 +1,55 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp-vpnv4mcast {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bgp-vpnv4mcast";
+  prefix bgp-vpnv4mcast;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-bgp {
+    prefix bgp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bgp";
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af" {
+    description
+      "BGP IPv4 vpnv4-multicast address family configuration.";
+    container ipv4-vpn-multicast {
+      when "../bgp:type='ipv4vpnmcast'";
+      description
+        "Configure IPv4 vpnv4-multicast address family.";
+      container common {
+        description
+          "Configure BGP IPv4 vpnv4-multicast common options.";
+        uses bgp:vpn-target-type;
+      }
+      uses bgp:slow-peer-type;
+    }
+  }
+}

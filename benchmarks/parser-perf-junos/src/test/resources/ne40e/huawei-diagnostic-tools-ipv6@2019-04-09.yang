@@ -1,0 +1,407 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-diagnostic-tools-ipv6 {
+  yang-version 1;
+  belongs-to huawei-diagnostic-tools {
+    prefix diagnostic-tools;
+  }
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-diagnostic-tools-common;
+  include huawei-diagnostic-tools-type;
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "IPv6 diagnosis tool.";
+
+  revision 2019-04-09 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  grouping ip6-ping-trace-result-type {
+    description
+      "IPv6 ping trace test result.";
+    container ping-results {
+      config false;
+      description
+        "List of test result.";
+      list ping-result {
+        key "test-name";
+        config false;
+        description
+          "Statistics of test result of a certain hop in the test path. For a ping-type test, there is only one test result.";
+        leaf test-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Test name.";
+        }
+        leaf packet-recv {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Total number of received packets.";
+        }
+        leaf packet-send {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Total number of sent packets.";
+        }
+        leaf loss-ratio {
+          type pub-type:percent {
+            range "0..100";
+          }
+          config false;
+          description
+            "Packet loss ratio of a test.";
+        }
+        leaf rtt-min {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "ms";
+          config false;
+          description
+            "Minimum RTT of all test packets.";
+        }
+        leaf rtt-max {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "ms";
+          config false;
+          description
+            "Maximum RTT of all test packets.";
+        }
+        leaf average-rtt {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units "ms";
+          config false;
+          description
+            "Average RTT of all test packets.";
+        }
+        leaf status {
+          type dgntl-test-status-type;
+          config false;
+          description
+            "Test status.";
+        }
+        leaf error-type {
+          type dgntl-error-type;
+          config false;
+          description
+            "Test operation status.";
+        }
+        container ping-result-details {
+          config false;
+          description
+            "List of ping results of all packets in a test.";
+          list ping-result-detail {
+            key "index";
+            config false;
+            description
+              "Statistics of probe result.";
+            leaf index {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Serial number of a test packet received by a certain hop.";
+            }
+            leaf dest-ip-addr {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "Destination address of the related hop in a test.";
+            }
+            leaf packet-size {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Number of bytes in a received response packet.";
+            }
+            leaf ttl {
+              type uint8 {
+                range "1..255";
+              }
+              config false;
+              description
+                "Hop limit of received response packets.";
+            }
+            leaf rtt {
+              type uint32 {
+                range "0..4294967295";
+              }
+              units "ms";
+              config false;
+              description
+                "RTT of test packets.";
+            }
+            leaf result-type {
+              type detail-result-type;
+              config false;
+              description
+                "Result of packet sending, which is either success or timeout.";
+            }
+            leaf is-delete {
+              type boolean;
+              config false;
+              description
+                "Deletion flag indicating whether to delete test results.";
+            }
+          }
+        }
+      }
+    }
+    container trace-results {
+      config false;
+      description
+        "List of test result.";
+      list trace-result {
+        key "test-name";
+        config false;
+        description
+          "Statistics of trace test result.";
+        leaf test-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Test name.";
+        }
+        leaf status {
+          type dgntl-test-status-type;
+          config false;
+          description
+            "Test status.";
+        }
+        leaf error-type {
+          type dgntl-error-type;
+          config false;
+          description
+            "Test operation status.";
+        }
+        container trace-result-details {
+          config false;
+          description
+            "List of ping results of all packets in a test.";
+          list trace-result-detail {
+            key "index";
+            config false;
+            description
+              "Statistics of ping result of a single packet in a test.";
+            leaf index {
+              type uint32;
+              config false;
+              description
+                "Serial number of a hop in the test path. For a ping-type test such as the ping test or LSP ping test, there is only one hop in the test path, so the value is 1. For a trace-type test such as the trace test or LSP trace test, the value indicates the exact serial number of a hop in the test path.";
+            }
+            leaf ttl {
+              type uint8 {
+                range "1..255";
+              }
+              config false;
+              description
+                "TTL of received response packets.";
+            }
+            leaf rtt {
+              type uint32;
+              config false;
+              description
+                "RTT of test packets.";
+            }
+            leaf dest-ip-addr {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "Destination address of the related hop in a test.";
+            }
+            leaf is-delete {
+              type boolean;
+              config false;
+              description
+                "Deletion flag indicating whether to delete test results.";
+            }
+          }
+        }
+      }
+    }
+  }
+
+  rpc ipv6-start-ping {
+    description
+      "Start IPv6 ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv6/diagnostic-tools:ping-results";
+    input {
+      leaf test-name {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+      leaf dest-addr {
+        type pub-type:host-name;
+        mandatory true;
+        description
+          "Destination address of the string type. You can click this node to set different types of addresses and deploy the configurations together with the configuration of the destination address type node. If the destination address type is set to IPv4, this parameter is set to IPv4. If the destination address type is set to IPv6, this parameter is set to IPv6.";
+      }
+      leaf vrf-name {
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        description
+          "Name of a VPN instance.";
+      }
+      leaf packet-count {
+        type uint32 {
+          range "1..4294967295";
+        }
+        default "5";
+        description
+          "Number of sent test packets.";
+      }
+    }
+  }
+
+  rpc ipv6-stop-ping {
+    description
+      "Stop IPv6 ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv6/diagnostic-tools:ping-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv6/diagnostic-tools:ping-results/diagnostic-tools:ping-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc ipv6-delete-ping {
+    description
+      "Delete IPv6 ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv6/diagnostic-tools:ping-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv6/diagnostic-tools:ping-results/diagnostic-tools:ping-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc ipv6-start-trace {
+    description
+      "Start IPv6 trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv6/diagnostic-tools:trace-results";
+    input {
+      leaf test-name {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+      leaf dest-addr {
+        type pub-type:host-name;
+        mandatory true;
+        description
+          "Destination address of the string type. You can click this node to set different types of addresses and deploy the configurations together with the configuration of the destination address type node. If the destination address type is set to IPv4, this parameter is set to IPv4. If the destination address type is set to IPv6, this parameter is set to IPv6.";
+      }
+      leaf vrf-name {
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        description
+          "Name of a VPN instance.";
+      }
+    }
+  }
+
+  rpc ipv6-stop-trace {
+    description
+      "Stop IPv6 trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv6/diagnostic-tools:trace-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv6/diagnostic-tools:trace-results/diagnostic-tools:trace-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc ipv6-delete-trace {
+    description
+      "Delete IPv6 trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv6/diagnostic-tools:trace-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv6/diagnostic-tools:trace-results/diagnostic-tools:trace-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  augment "/diagnostic-tools:diagnostic-tools" {
+    description
+      "List of IPv6 tests.";
+    container ipv6 {
+      config false;
+      description
+        "Statistics of IPv6 tests.";
+      uses ip6-ping-trace-result-type;
+    }
+  }
+}

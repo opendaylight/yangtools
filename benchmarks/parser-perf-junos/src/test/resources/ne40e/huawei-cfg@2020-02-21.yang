@@ -1,0 +1,1058 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-cfg {
+  yang-version 1.1;
+  namespace "urn:huawei:yang:huawei-cfg";
+  prefix cfg;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Configuration management module.";
+  revision 2020-02-21 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "config";
+  typedef config-checkpoint-client {
+    type enumeration {
+      enum "cli" {
+        value 0;
+        description
+          "The client that creates a configuration checkpoint is CLI.";
+      }
+      enum "netconf" {
+        value 1;
+        description
+          "The client that generates a configuration checkpoint is NETCONF.";
+      }
+      enum "snmp" {
+        value 2;
+        description
+          "The client that creates a configuration checkpoint is SNMP.";
+      }
+      enum "rollback" {
+        value 3;
+        description
+          "The client that generates a configuration checkpoint is rollback. A configuration checkpoint is generated because a rollback command is run.";
+      }
+      enum "y2" {
+        value 4;
+        description
+          "The client that generates a configuration checkpoint is y2. A configuration checkpoint is generated because the startup configuration of the system is different from the latest configuration checkpoint.";
+      }
+      enum "restore" {
+        value 5;
+        description
+          "The client that generates a configuration checkpoint is restore. A configuration checkpoint is generated because the startup configuration of the system is different from the latest configuration checkpoint.";
+      }
+      enum "system" {
+        value 6;
+        description
+          "The client that generates a configuration checkpoint is system. A configuration checkpoint is generated because the current user information cannot be obtained.";
+      }
+      enum "mml" {
+        value 7;
+        description
+          "The client that generates a configuration checkpoint is mml. A configuration checkpoint is generated because the startup configuration of the system is different from the latest configuration checkpoint.";
+      }
+      enum "inner" {
+        value 8;
+        description
+          "The client that generates a configuration checkpoint is inner. A configuration checkpoint is generated because the startup configuration of the system is different from the latest configuration checkpoint.";
+      }
+    }
+    description
+      "Client type.";
+  }
+  typedef cfg-server-type {
+    type enumeration {
+      enum "ftp" {
+        value 1;
+        description
+          "FTP protocol.";
+      }
+      enum "tftp" {
+        value 2;
+        description
+          "TFTP protocol.";
+      }
+      enum "sftp" {
+        value 3;
+        description
+          "SFTP protocol.";
+      }
+    }
+    description
+      "Server type.";
+  }
+  typedef cfg-operation-type {
+    type enumeration {
+      enum "running2net" {
+        value 1;
+        description
+          "Back up the device configuration to a server.";
+      }
+      enum "net2startup" {
+        value 2;
+        description
+          "Configure the configuration file on the server as the next startup configuration file.";
+      }
+    }
+    description
+      "Operation type.";
+  }
+  typedef cfg-operation-state {
+    type enumeration {
+      enum "running" {
+        value 1;
+        description
+          "The operation is being processed.";
+      }
+      enum "success" {
+        value 2;
+        description
+          "The operation is successful.";
+      }
+      enum "invalid-operation" {
+        value 3;
+        description
+          "Invalid operation.";
+      }
+      enum "invalid-server-address" {
+        value 4;
+        description
+          "Invalid server IP address.";
+      }
+      enum "invalid-source-name" {
+        value 5;
+        description
+          "Invalid source file name.";
+      }
+      enum "invalid-dest-name" {
+        value 6;
+        description
+          "Invalid destination file name.";
+      }
+      enum "device-busy" {
+        value 7;
+        description
+          "The device is busy.";
+      }
+      enum "device-full" {
+        value 8;
+        description
+          "The disk space of the device is full.";
+      }
+      enum "file-open-error" {
+        value 9;
+        description
+          "The file fails to be opened.";
+      }
+      enum "file-transfer-error" {
+        value 10;
+        description
+          "The file fails to be transferred.";
+      }
+      enum "auth-fail" {
+        value 11;
+        description
+          "The server authentication fails.";
+      }
+      enum "timeout" {
+        value 12;
+        description
+          "File transfer timeout.";
+      }
+      enum "unknown-failure" {
+        value 13;
+        description
+          "Unknown error.";
+      }
+    }
+    description
+      "Operation state.";
+  }
+  typedef command-result {
+    type enumeration {
+      enum "unknown-command" {
+        value 0;
+        description
+          "The failed reason of a configuration command is unknown command.";
+      }
+      enum "execute-failed" {
+        value 1;
+        description
+          "The failed reason of a configuration command is executed failed.";
+      }
+      enum "execute-timeout" {
+        value 2;
+        description
+          "The failed reason of a configuration command is executed timeout.";
+      }
+    }
+    description
+      "Command result.";
+  }
+  typedef cfg-hwcm-operation-type {
+    type enumeration {
+      enum "running2startup" {
+        value 1;
+        description
+          "Save the running configuration to the next startup configuration file.";
+      }
+      enum "startup2running" {
+        value 2;
+        description
+          "Load the next startup configuration file to the device.";
+      }
+      enum "running2net" {
+        value 3;
+        description
+          "Back up the device configuration to a server.";
+      }
+      enum "net2running" {
+        value 4;
+        description
+          "Download the configuration file from the server to the device and run it.";
+      }	  
+      enum "net2startup" {
+        value 5;
+        description
+          "Configure the configuration file on the server as the next startup configuration file.";
+      }
+      enum "startup2net" {
+        value 6;
+        description
+          "Back up the next startup configuration file to a server.";
+      }
+      enum "delstartup" {
+        value 7;
+        description
+          "Delete the next startup configuration file.";
+      }
+    }
+    description
+      "HWCM operation type.";
+  }
+  
+typedef cfg-service-type {
+    type enumeration {
+      enum "common" {
+        value 0;
+        description
+          "Common service type.";
+      }
+      enum "cfg" {
+        value 4;
+        description
+          "CFG service type.";
+      }
+	}
+    description
+      "File service type.";
+  }  
+  container cfg {
+    description
+      "Configuration management module.";
+     container autosave {
+      presence "Enable autosave";
+      description
+        "Configure used for automatically saving configurations.";
+      leaf interval-time {
+        type uint32 {
+          range "30..43200";
+        }
+        units min;
+        must "../interval-time > ../delay-time" {
+           error-app-tag "The interval time must be more than the delay time.";
+        }
+        default "30";
+        description
+          "The system automatically saves configurations every a specified interval.";
+      }
+      leaf delay-time {
+        type uint32 {
+          range "1..60";
+        }
+        units min;
+        must "../interval-time > ../delay-time" {
+           error-app-tag "The interval time must be more than the delay time.";
+        }
+        default "5";
+        description
+          "When the system configuration changes, the system automatically saves the configuration after a specified delay.";
+      }
+      leaf cpu-limit {
+        type uint32 {
+          range "1..100";
+        }
+        default "50";
+        description
+          "Upper limit of the CPU usage for automatically saving configurations.";
+      }
+    }
+    container checkpoints {
+      config false;
+      description
+        "List of all configuration checkpoints in the system.";
+      list checkpoint {
+        key "commit-id";
+        config false;
+        max-elements 100;
+        description
+          "Operational state of configuration checkpoints in the system.";
+        leaf commit-id {
+          type string {
+            length "1..20";
+          }
+          config false;
+          description
+            "Uniquely identify a configuration checkpoint.";
+        }
+        leaf user-label {
+          type string {
+            length "1..256";
+          }
+          config false;
+          description
+            "Label for identifying a configuration checkpoint, which is a character string that does not start with a digit.";
+        }
+        leaf username {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Name of the user who committed a configuration to trigger the generation of a configuration checkpoint.";
+        }
+        leaf line {
+          type string {
+            length "1..85";
+          }
+          config false;
+          description
+            "Instance of the terminal accessed by the user who committed a configuration to trigger the generation of a configuration checkpoint.";
+        }
+        leaf client {
+          type config-checkpoint-client;
+          config false;
+          description
+            "Type of the tool agent accessed by the user who committed a configuration to trigger the generation of a configuration checkpoint.";
+        }
+        leaf timestamp {
+          type yang:date-and-time;
+          config false;
+          description
+            "Time when a configuration checkpoint was created.";
+        }
+        leaf description {
+          type string {
+            length "1..60";
+          }
+          config false;
+          description
+            "Description of a configuration checkpoint. A user can set a description for a configuration checkpoint to be generated when committing a configuration.";
+        }
+        container current-point-changes {
+          config false;
+          description
+            "List of configuration change information recorded in all configuration checkpoints. List of the configuration change information recorded in each configuration checkpoint is separately displayed.";
+          list current-point-change {
+            key "index";
+            config false;
+            description
+              "Operational state of configuration change between a specified configuration checkpoint and the previous configuration checkpoint.";
+            leaf index {
+              type uint32;
+              config false;
+              description
+                "Index of a configuration change. A configuration checkpoint records a configuration change after a configuration is committed. Each configuration change is identified by an index.";
+            }
+            leaf config-change {
+              type string {
+                length "1..2080";
+              }
+              config false;
+              description
+                "Configuration change command.";
+            }
+          }
+        }
+        container since-point-changes {
+          config false;
+          description
+            "List of configuration changes between a specified configuration checkpoint and the current configuration.";
+          list since-point-change {
+            key "index";
+            config false;
+            description
+              "Operational state of configuration change between a specified configuration checkpoint and the current configuration.";
+            leaf index {
+              type uint32;
+              config false;
+              description
+                "Index of a configuration change. A configuration checkpoint records a configuration change after a configuration is committed. Each configuration change is identified by an index.";
+            }
+            leaf config-change {
+              type string {
+                length "1..2080";
+              }
+              config false;
+              description
+                "Configuration change command.";
+            }
+          }
+        }
+      }
+    }
+    container global-switch {
+      description
+        "Configure the globally configuration management feature.";
+      leaf configuration-slave-detect-switch {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable function to automatically verify the configurations of the master and slave main control boards.";
+      }
+      leaf appdata-detect-switch {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable function to automatically verify application data.";
+      }
+      leaf checkpoint-switch {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable switch of saving check ponit.";
+      }
+    }
+    container backup-and-recovery-states{
+      config false;
+      description
+        "List of operation states delivered by the NMS.";
+      list backup-and-recovery-state {
+        key "index";
+        config false;
+        max-elements 5;
+        description
+          "Operational state of a configuration file.";
+        leaf index {
+          type uint32 {
+            range "1..2147483647";
+          }
+          config false;
+          description
+            "Operation ID.";
+        }
+        leaf operation-type {
+          type cfg-hwcm-operation-type;
+          config false;
+          description
+            "Operation type delivered by the NMS.";
+        }
+        leaf state {
+          type cfg-operation-state;
+          config false;
+          description
+            "Operation result.";
+        }
+        leaf operate-progress {
+          type uint32 {
+            range "0..100";
+          }
+          config false;
+          description
+            "Operation progress.";
+        }
+        leaf start-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Operation start time.";
+        }
+        leaf last-time {
+          type pub-type:time-tick;
+          config false;
+          description
+            "Operation end time.";
+        }
+        leaf filename {
+          type string {
+            length "5..64";
+          }
+          config false;
+          description
+            "Name of a configuration file.";
+        }
+       leaf service-type {
+          type cfg-service-type;
+          config false;
+          description
+            "File service type.";
+        }
+      }
+    }
+    container autosave-checkpoint {
+      description
+        "Configure start-time for automatically saving checkpoint.";
+      leaf start-time {
+        type pub-type:time-hhmm {
+          length "5";
+          pattern '(([0-1][0-9])|(2[0-3])):[0-5][0-9]';
+        }
+        units min;
+        default "02:00";
+        description
+          "The system automatically save checkpoint at a specified time of the day.";
+      }
+    }
+    container configuration-operation-cpu-limit {
+      description
+        "Configure the CPU supress on configuration operation.";
+      leaf snmp-cpu-limit {
+        when "../snmp-switch = 'true'";
+        type uint32 {
+          range "30..100";
+        }
+        default "100";
+        description
+          "CPU usage threshold that triggers rate limiting on users that access through SNMP.";
+      }
+      leaf snmp-switch {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable function of CPU usage-based rate limiting for users that access through SNMP.";
+      }
+      leaf netconf-cpu-limit {
+        when "../netconf-switch = 'true'";
+        type uint32 {
+          range "30..100";
+        }
+        default "100";
+        description
+          "CPU usage threshold that triggers rate limiting on users that access through NETCONF.";
+      }
+      leaf netconf-switch {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable function of CPU usage-based rate limiting for users that access through NETCONF.";
+      }
+    }
+    container backup-servers {
+      description
+        "List of backup servers. A maximum of five backup servers can be configured.";
+      list backup-server {
+        key "server-ip vpn-instance";
+        max-elements 5;
+        description
+          "Configure backup server used for automatically saving uploaded files.";
+        leaf server-ip {
+          type inet:ip-address-no-zone;
+          description
+            "IP address of the backup server.";
+        }
+        leaf vpn-instance {
+          type string {
+            length "1..31";
+          }
+          description
+            "Name of a VPN instance.";
+        }
+        leaf transport-type {
+          type cfg-server-type;
+          mandatory true;
+          description
+            "Type of the protocol for transporting the backup file.";
+        }
+        leaf username {
+          when "not(../transport-type='tftp')";
+          type string {
+            length "1..64";
+          }
+          mandatory true;
+          description
+            "User name for connecting the backup server.";
+        }
+        leaf password {
+          when "not(../transport-type='tftp')";
+          type pub-type:password-extend {
+            length "1..432";
+          }
+          mandatory true;
+          description
+            "Password for connecting the backup server.";
+        }
+        leaf path {
+          type string {
+            length "1..64";
+          }
+          description
+            "Path for backing up the configuration file.";
+        }
+        leaf port {
+          when "not(../transport-type='tftp')";
+          type uint16 {
+            range "1..65535";
+          }
+          description
+            "Port of a backup server.";
+        }
+      }
+    }
+    container startup-infos {
+      config false;
+      description
+        "List of information about system startup.";
+      list startup-info {
+        key "position";
+        config false;
+        description
+          "Operational state of information about a system startup.";
+        leaf position {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "Position of the device.";
+        }
+        leaf configed-system-software {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "File name of the system software that is set by users for the current startup.";
+        }
+        leaf current-system-software {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "File name of the system software that is applied for the current startup.";
+        }
+        leaf next-system-software {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "File name of the system software that is applied for the next startup.";
+        }
+        leaf current-cfg-file {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "Name of the configuration file that is applied for the current startup.";
+        }
+        leaf next-cfg-file {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "Name of the configuration file that is applied for the next startup.";
+        }
+        leaf current-patch-file {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "Name of the patch file that is applied for the current startup.";
+        }
+        leaf next-patch-file {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "Name of the patch file that is applied for the next startup.";
+        }
+      }
+    }
+    container cfg-files {
+      config false;
+      description
+        "List of configuration files.";
+      list cfg-file {
+        key "filename";
+        config false;
+        description
+          "Operational state of the specified configuration file that a user can set for the next startup or the information about the difference to current configuration.";
+        leaf filename {
+          type string {
+            length "5..64";
+            pattern '.+\.(zip|cfg|dat)';
+          }
+          config false;
+          description
+            "Name of a configuration file.";
+        }
+        leaf size {
+          type uint32;
+          units "Byte";
+          config false;
+          description
+            "Size of a configuration file.";
+        }
+        leaf create-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Time when a configuration file was created, for example, 2010-11-04 20:01:38 +08:00.";
+        }
+        container file-current-changes {
+          config false;
+          description
+            "List of differences between a specified configuration file and the current configuration.";
+          list file-current-change {
+            key "index";
+            config false;
+            description
+              "Operational state of a specified configuration file different with the current configuration.";
+            leaf index {
+              type uint32;
+              config false;
+              description
+                "Index of the configuration difference. Each configuration difference has an index.";
+            }
+            leaf config-change {
+              type string {
+                length "1..2080";
+              }
+              config false;
+              description
+                "Configuration difference command.";
+            }
+          }
+        }
+      }
+    }
+    container config-rollback-result {
+      config false;
+      description
+        "Operational state of rollbacking configuration result.";
+      anydata result {
+        description
+          "The result of rollbacking configuration.";
+      }
+    }
+    container config-recover-results {
+      config false;
+      description
+        "List of all configuration restoration results in the system.";
+      list config-recover-result {
+        key "index";
+        config false;
+        description
+          "Operational state of configuration restoration result in the system.";
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "Index of a configuration command. Each failure command is identified by an index.";
+        }
+        leaf command {
+          type string {
+            length "1..2047";
+          }
+          config false;
+          description
+            "Configure the command that fails to be restored.";
+        }
+        leaf view {
+          type string {
+            length "1..80";
+          }
+          config false;
+          description
+            "View of a command that fails to be restored.";
+        }
+        leaf line {
+          type uint32;
+          config false;
+          description
+            "Row number of a command that fails to be restored in a file.";
+        }
+        leaf reason {
+          type command-result;
+          config false;
+          description
+            "Cause of the configuration restoration failure command.";
+        }
+        leaf time {
+          type yang:date-and-time;
+          config false;
+          description
+            "The command failed to be executed during configuration restoration.";
+        }
+      }
+    }
+  }  
+  rpc save {
+    description
+      "Save the current configuration to file.";
+    input {
+      leaf filename {
+        type string {
+          length "5..64";
+        }
+       mandatory true;
+       description
+         "Name of a configuration file.";
+      }
+    }
+  }
+  rpc cfg-file-backup-and-recovery {
+    description
+      "Back up the device configuration to a server or restore the configuration from a server to the next startup configuration file of the device.";
+    input  {
+      leaf index {
+        type uint32 {
+          range "1..2147483647";
+        }
+        mandatory true;
+        description
+          "Operation ID.";
+      }
+      leaf operation-type {
+        type cfg-operation-type;
+        mandatory true;
+        description
+          "Back up the running configuration of the device to a specified server or restore the configuration from a specified server to the next startup file of the device.";
+      }
+      leaf filename {
+        type string {
+          length "5..128";
+        }
+        description
+          "Name of a configuration file.";
+      }
+      leaf transport-type {
+        type cfg-server-type;
+        mandatory true;
+        description
+          "Type of the protocol for transporting the backup file.";
+      }
+      leaf server-ip {
+        type inet:ip-address-no-zone;
+        mandatory true;
+        description
+          "Server IP address for backing up the configuration file.";
+      }
+      leaf username {
+        when "not(../transport-type='tftp')";
+        type string {
+          length "1..85";
+        }
+        description
+          "User name for connecting a server, for example, an FTP server.";
+      }
+      leaf password {
+        when "not(../transport-type='tftp')";
+        type pub-type:password;
+        description
+          "Password for connecting a server, for example, an FTP server.";
+      }
+      leaf vpn-instance {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a VPN instance.";
+      }
+      leaf use-net-manager-vpn {
+        type boolean;
+        default "false";
+        description
+          "Whether a global VPN is used.";
+      }
+    }
+  }
+  rpc clear-startup {
+    description
+      "Cancel the startup file settings. The current and next startup file settings will be empty.";
+    ext:node-ref "/cfg/cfg-files/cfg-file";
+  }
+  rpc clear-interface-config {
+    description
+      "Clear configurations on the interface.";
+    input  {
+      leaf interface-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+		    description
+          "Interface name.";
+      }
+    }
+  }
+  rpc delete-checkpoint-by-oldest-num {
+    description
+      "Delete the oldest checkpoints.";
+    ext:node-ref "/cfg/checkpoints/checkpoint";
+    input  {
+      leaf checkpoint-num {
+        type uint8 {
+          range "1..80";
+        }
+        description
+          "Number of configuration checkpoints that are deleted.";
+      }
+    }
+  }
+  rpc rollback-by-commit-id {
+    description
+      "Roll back the system configuration to a specified checkpoint.";
+    ext:node-ref "/cfg/checkpoints/checkpoint";
+    input  {
+      leaf commit-id {
+        type leafref {
+          path "/cfg:cfg/cfg:checkpoints/cfg:checkpoint/cfg:commit-id";
+        }
+        description
+          "ID of a configuration checkpoint.";
+      }
+    }
+  }
+  rpc rollback-by-user-label {
+    description
+      "Roll back the system configuration to a specified checkpoint by user label.";
+    ext:node-ref "/cfg/checkpoints/checkpoint";
+    input  {
+      leaf commit-id {
+        type leafref {
+          path "/cfg:cfg/cfg:checkpoints/cfg:checkpoint/cfg:commit-id";
+        }
+        description
+          "ID of a configuration checkpoint.";
+      }
+      leaf user-label {
+        type leafref {
+          path "/cfg:cfg/cfg:checkpoints/cfg:checkpoint/cfg:user-label";
+        }
+        description
+          "Label of a configuration checkpoint.";
+      }
+    }
+  }
+  rpc rollback-by-last-num {
+    description
+      "Roll back the configurations of several checkpoints.";
+    ext:node-ref "/cfg/checkpoints/checkpoint";
+    input  {
+      leaf checkpoint-num {
+        type uint8 {
+          range "1..80";
+        }
+        description
+          "Number of configuration checkpoints that are rolled back.";
+      }
+    }
+  }
+  rpc rollback-by-file {
+    description
+      "Replace the configuration with a specified configuration file.";
+    ext:node-ref "/cfg/cfg-files/cfg-file";
+    input  {
+      leaf filename {
+        type leafref {
+          path "/cfg:cfg/cfg:cfg-files/cfg:cfg-file/cfg:filename";
+        }
+        mandatory true;
+        description
+          "Name of a configuration file.";
+      }
+    }
+  }
+  rpc save-all-virtual-systems {
+    description
+      "Saving all virtual-systems to the next startup file.";
+  }
+  rpc set-startup {
+    description
+      "Configure an existing configuration file as the startup file.";
+    ext:node-ref "/cfg/cfg-files/cfg-file";
+    input  {
+      leaf filename {
+        type leafref {
+          path "/cfg:cfg/cfg:cfg-files/cfg:cfg-file/cfg:filename";
+        }
+        mandatory true;
+        description
+          "Name of a configuration file.";
+      }
+    }
+  }
+  rpc set-user-label-by-commit-id {
+    description
+      "Set the user label of a specified configuration checkpoint.";
+    ext:node-ref "/cfg/checkpoints/checkpoint";
+    input  {
+      leaf commit-id {
+        type leafref {
+          path "/cfg:cfg/cfg:checkpoints/cfg:checkpoint/cfg:commit-id";
+        }
+        mandatory true;
+        description
+          "ID of a configuration checkpoint.";
+      }
+      leaf user-label {
+        type string {
+          length "1..256";
+          pattern '.*[^\s]+.*';
+        }
+        mandatory true;
+        description
+          "Label of a configuration checkpoint.";
+      }
+    }
+  }
+  rpc delete-user-label-checkpoint {
+    description
+      "Delete the checkpoint of a specified label.";
+    ext:node-ref "/cfg/checkpoints/checkpoint";
+    input  {
+      leaf commit-id {
+        type leafref {
+          path "/cfg:cfg/cfg:checkpoints/cfg:checkpoint/cfg:commit-id";
+        }
+        description
+          "ID of a configuration checkpoint.";
+      }
+    }
+  }
+}

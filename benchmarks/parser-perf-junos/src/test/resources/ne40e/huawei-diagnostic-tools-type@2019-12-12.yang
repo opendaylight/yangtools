@@ -1,0 +1,289 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-diagnostic-tools-type {
+  yang-version 1;
+  belongs-to huawei-diagnostic-tools {
+    prefix diagnostic-tools;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+description
+     "Diagnosis tool types.";
+
+  revision 2019-12-12 {
+    description
+      "Add detail-result-type sr-version sr-be-version.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-09 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef dgntl-test-status-type {
+    type enumeration {
+      enum "processing" {
+        value 0;
+        description
+          "The test is in progress.";
+      }
+      enum "finished" {
+        value 1;
+        description
+          "The test is finished.";
+      }
+    }
+    description
+      "Description of dgntl-test-status-type.";
+  }
+  typedef dgntl-error-type {
+    type enumeration {
+      enum "success" {
+        value 0;
+        description
+          "The test succeeded.";
+      }
+      enum "failed" {
+        value 1;
+        description
+          "The test failed.";
+      }
+    }
+    description
+      "Description of dgntl-error-type.";
+  }
+
+typedef detail-result-type {
+    type enumeration {
+      enum "success" {
+        value 0;
+        description
+          "The test succeeded.";
+      }
+      enum "timeout" {
+        value 1;
+        description
+          "Timeout.";
+      }
+      enum "failed" {
+        value 2;
+        description
+          "The test failed.";
+      }
+    }
+    description
+      "Description of detail-result-type.";
+  }
+  
+  typedef sr-version {
+    type enumeration {
+      enum "RFC4379" {
+        value 0;
+        description
+          "Rfc4379 version.";
+      }
+      enum "DRAFT2" {
+        value 2;
+        description
+          "Draft2 version.";
+      }
+    }
+    description
+      "Description of sr-version.";
+  }
+  typedef sr-be-version {
+    type enumeration {
+      enum "DRAFT2" {
+        value 2;
+        description
+          "Draft2 version.";
+      }
+    }
+    description
+      "Description of sr-be-version.";
+  }
+
+  typedef transmit-type {
+    type enumeration {
+      enum "ingress" {
+        value 1;
+        description
+          "Ingress.";
+      }
+      enum "transit" {
+        value 2;
+        description
+          "Transit node.";
+      }
+      enum "egress" {
+        value 3;
+        description
+          "Egress.";
+      }
+    }
+    description
+      "Description of transmit-type.";
+  }
+  typedef probe-result-type {
+    type enumeration {
+      enum "success" {
+        value 0;
+        description
+          "The test succeeded.";
+      }
+      enum "timeout" {
+        value 1;
+        description
+          "Timeout.";
+      }
+      enum "failed" {
+        value 2;
+        description
+          "The test failed.";
+      }
+    }
+    description
+      "Description of probe-result-type.";
+  }
+  typedef lsp-type {
+    type enumeration {
+      enum "te" {
+        value 1;
+        description
+          "TE.";
+      }
+      enum "srte" {
+        value 8;
+        description
+          "SR-TE.";
+      }
+      enum "srbe" {
+        value 9;
+        description
+          "SR-BE.";
+      }
+    }
+    description
+      "Description of lsp-type.";
+  }
+  typedef dgntl-lsp-path-type {
+    type enumeration {
+      enum "working" {
+        value 0;
+        description
+          "Working.";
+      }
+      enum "hotstandby" {
+        value 1;
+        description
+          "HotStandby.";
+      }
+      enum "primary" {
+        value 2;
+        description
+          "Primary.";
+      }
+    }
+    description
+      "Description of dgntl-lsp-path-type.";
+  }
+  typedef dgntl-lsp-protocol-origin {
+    type enumeration {
+      enum "pecp" {
+        value 10;
+        description
+          "Pecp.";
+      }
+      enum "bgp" {
+        value 20;
+        description
+          "Bgp.";
+      }
+      enum "local" {
+        value 30;
+        description
+          "Primary.";
+      }
+      enum "unknown" {
+        value 255;
+        description
+          "Unknown.";
+      }
+    }
+    description
+      "Description of dgntl-lsp-protocol-origin.";
+  }
+  typedef reply-mode-evpn {
+    type enumeration {
+      enum "no-reply" {
+        value 1;
+        description
+          "No reply.";
+      }
+      enum "udp" {
+        value 2;
+        description
+          "UDP.";
+      }
+      enum "router-alert" {
+        value 3;
+        description
+          "Router-Alert.";
+      }
+      enum "level-control-channel" {
+        value 4;
+        description
+          "Level-Control-Channel.";
+      }
+    }
+    description
+      "Description of reply-mode-evpn.";
+  }
+  typedef ttl-mode {
+    type enumeration {
+      enum "uniform" {
+        value 1;
+        description
+          "Uniform.";
+      }
+      enum "pipe" {
+        value 2;
+        description
+          "Pipe.";
+      }
+    }
+    description
+      "Description of ttl-mode.";
+  }
+  typedef dgntl-sr-policy-path-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }
+      enum "primary" {
+        value 1;
+        description
+          "Primary.";
+      }
+      enum "backup" {
+        value 2;
+        description
+          "Backup.";
+      }
+    }
+    description
+      "Description of dgntl-sr-policy-path-type.";
+  }
+}

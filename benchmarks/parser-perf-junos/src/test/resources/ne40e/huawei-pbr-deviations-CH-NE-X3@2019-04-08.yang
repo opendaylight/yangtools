@@ -1,0 +1,36 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-pbr-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-pbr-deviations-CH-NE-X3";
+  prefix "pbr-devs-CH-NE-X3";
+
+  import huawei-pbr {
+    prefix "pbr";
+  }
+  import huawei-devm {
+    prefix "devm";
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Pbr.";
+  revision 2019-04-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+
+  deviation /devm:devm/devm:mpu-boards/devm:mpu-board/pbr:pbr {
+    deviate not-supported;
+  }
+  
+}

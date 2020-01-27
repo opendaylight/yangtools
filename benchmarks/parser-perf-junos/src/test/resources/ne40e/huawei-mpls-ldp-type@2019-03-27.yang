@@ -1,0 +1,954 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-mpls-ldp-type {
+  belongs-to huawei-mpls-ldp {
+    prefix mpls-ldp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+  revision 2019-03-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  /*
+   * typedef-stmt
+   */
+  typedef ldp-trigger-type {
+    type enumeration {
+      enum "all" {
+        value 0;
+        description
+          "All policies.";
+      }
+      enum "host" {
+        value 1;
+        description
+          "Host IP address policy.";
+      }
+      enum "none" {
+        value 2;
+        description
+          "No policy is enabled.";
+      }
+      enum "ip-prefix" {
+        value 3;
+        description
+          "IP prefix policy.";
+      }
+    }
+    description
+      "LDP Trigger Type.";
+  }
+  typedef ldp-auth-mode-type-none-peer {
+    type enumeration {
+      enum "mode-none" {
+        value 0;
+        description
+          "Does not configure authentication.";
+      }
+      enum "mode-enable" {
+        value 1;
+        description
+          "Enable authentication.";
+      }
+    }
+    description
+      "LDP Authentication Mode Type-None_Peer.";
+  }
+  typedef ldp-auth-type-all {
+    type enumeration {
+      enum "md5" {
+        value 1;
+        description
+          "Set a cipher or plain MD5 password.";
+      }
+      enum "keychain" {
+        value 2;
+        description
+          "Set a keychain password.";
+      }
+    }
+    description
+      "Global LDP authentication type.";
+  }
+  typedef ldp-auth-type-all-group {
+    type enumeration {
+      enum "md5-ciper" {
+        value 1;
+        description
+          "Set a cipher MD5 password.";
+      }
+      enum "md5-plain" {
+        value 3;
+        description
+          "Set a simple MD5 password.";
+      }
+    }
+    description
+      "Global LDP authentication type.";
+  }
+  typedef ldp-label-ctrl-mode-type {
+    type enumeration {
+      enum "ordered" {
+        value 0;
+        description
+          "Ordered Label Distribution Control.";
+      }
+      enum "independent" {
+        value 1;
+        description
+          "Independent Label Distribution Control.";
+      }
+    }
+    description
+      "LDP Label Control Mode Type.";
+  }
+  typedef ldp-traffic-statistic-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "No policy is enabled.";
+      }
+      enum "host" {
+        value 1;
+        description
+          "Host IP address policy.";
+      }
+      enum "host-ip-prefix" {
+        value 2;
+        description
+          "IP prefix policy.";
+      }
+    }
+    description
+      "LDP Traffic Statistics Type.";
+  }
+  typedef ldp-label-distribute-mode-cfg {
+    type enumeration {
+      enum "DU" {
+        value 0;
+        description
+          "The downstream unsolicitedly distributes labels to the upstream.";
+      }
+      enum "DOD" {
+        value 1;
+        description
+          "The upstream requests labels from the downstream according to demands.";
+      }
+    }
+    description
+      "LDP Label Distribute Mode-Config.";
+  }
+  typedef ldp-label-distribute-mode {
+    type enumeration {
+      enum "DU" {
+        value 0;
+        description
+          "The downstream unsolicitedly distributes labels to the upstream.";
+      }
+      enum "DOD" {
+        value 1;
+        description
+          "The upstream requests labels from the downstream according to demands.";
+      }
+      enum "UNAVAILABLE" {
+        value 2;
+        description
+          "No label distribution mode is specified.";
+      }
+    }
+    description
+      "LDP Label Distribute Mode.";
+  }
+  typedef ldp-if-auto-config-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Auto configuration is disabled by default.";
+      }
+      enum "isis" {
+        value 1;
+        description
+          "IS-IS triggers auto configuration.";
+      }
+      enum "ospf" {
+        value 2;
+        description
+          "OSPF triggers auto configuration.";
+      }
+      enum "isis-ospf" {
+        value 3;
+        description
+          "IS-IS and OSPFF trigger auto configuration.";
+      }
+    }
+    description
+      "LDP IF Auto Config Type.";
+  }
+  typedef auto-dod-request-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "AutoDod Use Global Config.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable AutoDod.";
+      }
+      enum "block" {
+        value 2;
+        description
+          "Disable AutoDod.";
+      }
+    }
+    description
+      "Auto DOD Request Type.";
+  }
+  typedef remote-peer-auto-config-l2 {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Not Auto Config.";
+      }
+      enum "l2vpn" {
+        value 1;
+        description
+          "L2VPN Auto Config.";
+      }
+    }
+    description
+      "Remote Peer Auto Config-Triggered by L2VPN.";
+  }
+  typedef remote-peer-auto-config-session-protection {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Not Auto Config.";
+      }
+      enum "session-protect" {
+        value 1;
+        description
+          "Session-protect Auto Config.";
+      }
+    }
+    description
+      "Remote Peer Auto Config-Triggered by Seesion_Protect.";
+  }
+  typedef remote-peer-auto-config-rlfa {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Not Auto Config.";
+      }
+      enum "rlfa" {
+        value 1;
+        description
+          "RLFA auto config.";
+      }
+    }
+    description
+      "Remote Peer Auto Config-Triggered by RLFA.";
+  }
+  typedef remote-peer-auto-config-accept-function {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Not Auto Config.";
+      }
+      enum "auto-accept" {
+        value 1;
+        description
+          "Auto accept auto config.";
+      }
+    }
+    description
+      "Remote Peer Auto Config-Triggered by Auto Accept.";
+  }
+  typedef ldp-auth-mode-type-peer {
+    type enumeration {
+      enum "mode-none" {
+        value 0;
+        description
+          "Does not configure authentication.";
+      }
+      enum "mode-enable" {
+        value 1;
+        description
+          "Enable authentication.";
+      }
+      enum "mode-exclude" {
+        value 2;
+        description
+          "No authentication is performed when LDP sessions are established.";
+      }
+    }
+    description
+      "LDP Authentication Mode Type-Peer.";
+  }
+  typedef ldp-auth-type {
+    type enumeration {
+      enum "md5-ciper" {
+        value 1;
+        description
+          "Set a cipher MD5 password.";
+      }
+      enum "md5-plain" {
+        value 3;
+        description
+          "Set a simple MD5 password.";
+      }
+    }
+    description
+      "LDP Authentication Type.";
+  }
+  typedef ldp-peer-auth-mode {
+    type enumeration {
+      enum "md5" {
+        value 1;
+        description
+          "Specifies mode for cipher or plain MD5 password.";
+      }
+      enum "keychain" {
+        value 2;
+        description
+          "Specifies mode for keychain password.";
+      }
+    }
+    description
+      "LDP Peer Authentication Type.";
+  }
+  typedef ldp-state {
+    type enumeration {
+      enum "active" {
+        value 0;
+        description
+          "Active.";
+      }
+      enum "inactive" {
+        value 1;
+        description
+          "Inactive.";
+      }
+    }
+    description
+      "LDP State.";
+  }
+  typedef ldp-peer-no-mapping-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Use global label distribution configuration.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Explicitly disables a device from distributing a label to a specified remote peer.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "Explicitly enables a device to distribute a label to a specified remote peer.";
+      }
+    }
+    description
+      "Remote Peer No Mapping Type.";
+  }
+  typedef sr-lsp-trigger-type {
+    type enumeration {
+      enum "host" {
+        value 1;
+        description
+          "Host IP address policy.";
+      }
+      enum "none" {
+        value 0;
+        description
+          "No policy is enabled.";
+      }
+    }
+    description
+      "SR LDP Trigger Type.";
+  }
+  typedef ldp-bfd-trigger-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None type LDP BFD trigger.";
+      }
+      enum "host" {
+        value 1;
+        description
+          "Host type LDP BFD trigger.";
+      }
+      enum "fec-list" {
+        value 2;
+        description
+          "Fec list type LDP BFD trigger.";
+      }
+    }
+    description
+      "LDP BFD Trigger Type.";
+  }
+  typedef ldp-bfd-trigger-tnnl-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None type LDP BFD trigger.";
+      }
+      enum "host" {
+        value 1;
+        description
+          "Host type LDP BFD trigger.";
+      }
+      enum "fec-list" {
+        value 2;
+        description
+          "Fec list type LDP BFD trigger.";
+      }
+      enum "ip-prefix" {
+        value 3;
+        description
+          "Ip prefix type LDP BFD trigger.";
+      }
+    }
+    description
+      "LDP BFD Trigger TNNL Type.";
+  }
+  typedef mldp-bfd-trigger-tunnel-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None type MLDP BFD trigger.";
+      }
+      enum "all" {
+        value 1;
+        description
+          "ALL MLDP BFD trigger.";
+      }
+    }
+    description
+      "MLDP BFD Trigger TNNL Type.";
+  }
+  typedef session-protection-mode {
+    type enumeration {
+      enum "all" {
+        value 0;
+        description
+          "All.";
+      }
+      enum "peer-group" {
+        value 1;
+        description
+          "Peer group.";
+      }
+    }
+    description
+      "LDP session protection mode.";
+  }
+  typedef protection-duration-type {
+    type enumeration {
+      enum "fixed-duration" {
+        value 0;
+        description
+          "Fixed duration time.";
+      }
+      enum "forever" {
+        value 1;
+        description
+          "Forever.";
+      }
+    }
+    description
+      "LDP session protection duration type.";
+  }
+  typedef accept-target-hello-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Disables a device from establishing LDP sessions after receiving target Hello packets.";
+      }
+      enum "all" {
+        value 1;
+        description
+          "Enables a device to establish LDP sessions using all IP addresses carried in received target Hello packets.";
+      }
+      enum "peer-group" {
+        value 2;
+        description
+          "Enables a device to establish LDP sessions using a specified IP address carried in received target Hello packets.";
+      }
+    }
+    description
+      "LDP Accept Target Hello Type.";
+  }
+  typedef fec-ip-prefix-group-type {
+    type enumeration {
+      enum "none" {
+        value 2;
+        description
+          "Outbound of none.";
+      }
+      enum "host" {
+        value 1;
+        description
+          "Outbound of host.";
+      }
+      enum "ip-prefix" {
+        value 3;
+        description
+          "Outbound of ipprefix.";
+      }
+    }
+    description
+      "FEC IP Prefix Group Type.";
+  }
+  typedef bgp-ip-prefix-group-type {
+    type enumeration {
+      enum "none" {
+        value 2;
+        description
+          "Outbound of none.";
+      }
+      enum "ip-prefix" {
+        value 3;
+        description
+          "IP prefix policy.";
+      }
+    }
+    description
+      "BGP IP Prefix Group Type.";
+  }
+  typedef auto-frr-ldp-trigger-type {
+    type enumeration {
+      enum "all" {
+        value 0;
+        description
+          "All.";
+      }
+      enum "host" {
+        value 1;
+        description
+          "Host.";
+      }
+      enum "none" {
+        value 2;
+        description
+          "Not enable.";
+      }
+      enum "ip-prefix" {
+        value 3;
+        description
+          "IP Prefix.";
+      }
+    }
+    description
+      "Auto FRR LDP Trigger Type.";
+  }
+  typedef fec-ip-prefix-type {
+    type enumeration {
+      enum "none" {
+        value 2;
+        description
+          "Outbound of none.";
+      }
+      enum "host" {
+        value 1;
+        description
+          "Outbound of host.";
+      }
+      enum "ip-prefix" {
+        value 3;
+        description
+          "Outbound of ipprefix.";
+      }
+    }
+    description
+      "FEC IP Prefix Type.";
+  }
+  typedef bgp-ip-prefix-type {
+    type enumeration {
+      enum "none" {
+        value 2;
+        description
+          "Outbound of none.";
+      }
+      enum "ip-prefix" {
+        value 3;
+        description
+          "IP Prefix.";
+      }
+    }
+    description
+      "BGP IP Prefix Type.";
+  }
+  typedef ldp-session-state {
+    type enumeration {
+      enum "non-existent" {
+        value 0;
+        description
+          "A neighbor is just discovered.";
+      }
+      enum "initialized" {
+        value 1;
+        description
+          "The TCP connection to a neighbor is to be established.";
+      }
+      enum "openrec" {
+        value 2;
+        description
+          "The router is waiting for receiving the Init packet from the neighbor.";
+      }
+      enum "opensent" {
+        value 3;
+        description
+          "The router is waiting for sending the Init packet to the neighbor.";
+      }
+      enum "operational" {
+        value 4;
+        description
+          "The session is successfully established.";
+      }
+    }
+    description
+      "LDP Session State.";
+  }
+  typedef ldp-session-role {
+    type enumeration {
+      enum "active" {
+        value 0;
+        description
+          "The role that uses TCP during session establishment is the active end.";
+      }
+      enum "passive" {
+        value 1;
+        description
+          "The role that uses TCP during session establishment is the passive end.";
+      }
+    }
+    description
+      "LDP Session Role.";
+  }
+  typedef ldp-session-type {
+    type enumeration {
+      enum "local" {
+        value 1;
+        description
+          "The session is established and maintained by the local neighbor.";
+      }
+      enum "remote" {
+        value 2;
+        description
+          "The session is established and maintained by the remote neighbor.";
+      }
+      enum "local-remote" {
+        value 3;
+        description
+          "The session is established and maintained by the local and remote neighbors.";
+      }
+    }
+    description
+      "LDP Session Type.";
+  }
+  typedef ldp-peer-label-state{
+    type enumeration {
+      enum "available" {
+        value 0;
+        description
+          "The neighbor can normally distribute labels.";
+      }
+      enum "unavailable" {
+        value 1;
+        description
+          "The neighbor cannot normally distribute labels.";
+      }
+    }
+    description
+      "LDP Peer Label State.";
+  }
+  typedef ldp-ingress-elc-state {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "LDP entropy label capability is delivered.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "LDP entropy label capability is not delivered.";
+      }
+    }
+    description
+      "LDP Ingress Entropy Label Capability.";
+  }
+  typedef ldp-lsp-type {
+    type enumeration {
+      enum "ingress" {
+        value 0;
+        description
+          "Ingress of the LDP LSP.";
+      }
+      enum "transit" {
+        value 1;
+        description
+          "Transit node of the LDP LSP.";
+      }
+      enum "egress" {
+        value 2;
+        description
+          "Egress of the LDP LSP.";
+      }
+      enum "ingress-transit" {
+        value 3;
+        description
+          "Ingress-Transit of the LDP LSP.";
+      }
+      enum "bud" {
+        value 4;
+        description
+          "Bud node of an LDP LSP.";
+      }
+    }
+    description
+      "LDP LSP Type.";
+  }
+  typedef ldp-route-type {
+    type enumeration {
+      enum "igp" {
+        value 1;
+        description
+          "IP route.";
+      }
+      enum "egp" {
+        value 2;
+        description
+          "EGP route.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Static route.";
+      }
+      enum "direct" {
+        value 8;
+        description
+          "Direct route.";
+      }
+      enum "rlfa" {
+        value 5;
+        description
+          "RLFA route.";
+      }
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown route type.";
+      }
+    }
+    description
+      "LDP Route Type.";
+  }
+  typedef ldp-fec-state {
+    type enumeration {
+      enum "idle" {
+        value 0;
+        description
+          "FEC idle.";
+      }
+      enum "setting-up" {
+        value 1;
+        description
+          "FEC setting up.";
+      }
+      enum "up" {
+        value 2;
+        description
+          "FEC up.";
+      }
+    }
+    description
+      "LDP FEC State.";
+  }
+  typedef ldp-label-dist-mode-all {
+    type enumeration {
+      enum "DUDOD" {
+        value 0;
+        description
+          "All the label distribute mode.";
+      }
+      enum "DU" {
+        value 1;
+        description
+          "The downstream unsolicitedly distributes labels to the upstream.";
+      }
+    }
+    description
+      "LDP Label Distribute Mode-All.";
+  }
+  typedef ldp-label-ret-mode-all {
+    type enumeration {
+      enum "liberal-conservative" {
+        value 0;
+        description
+          "All the label retention mode.";
+      }
+      enum "liberal" {
+        value 1;
+        description
+          "The received mappings without routes are reserved.";
+      }
+    }
+    description
+      "LDP Label Retention Mode-All.";
+  }
+  typedef mldp-p2mp-lsp-trigger-type {
+    type enumeration {
+      enum "vpls" {
+        value 1;
+        description
+          "The VPLS service triggers mLDP P2MP LSP establishment.";
+      }
+      enum "static" {
+        value 3;
+        description
+          "MLDP P2MP trigger type is static.";
+      }
+      enum "ng-mvpn" {
+        value 2;
+        description
+          "MLDP P2MP trigger type is NG-mVPN.";
+      }
+      enum "evpn" {
+        value 4;
+        description
+          "MLDP P2MP trigger type is EVPN.";
+      }
+      enum "none" {
+        value 5;
+        description
+          "None service is used to trigger mLDP P2MP LSP establishment.";
+      }
+    }
+    description
+      "MLDP P2MP LSP Trigger Type.";
+  }
+  typedef mldp-frr-lsp-type {
+    type enumeration {
+      enum "non-frr-lsp" {
+        value 0;
+        description
+          "Non-FRR LSP.";
+      }
+      enum "link-lfa-frr-lsp" {
+        value 1;
+        description
+          "Link Protection LFA FRR LSP.";
+      }
+      enum "link-rlfa-interated-lsp" {
+        value 2;
+        description
+          "Link Protection RLFA Iterated LSP.";
+      }
+      enum "link-rlfa-frr-lsp" {
+        value 3;
+        description
+          "Link Protection RLFA FRR LSP.";
+      }
+    }
+    description
+      "MLDP FRR LSP Type.";
+  }
+  typedef mtu-signaling-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "No MTU Signaling.";
+      }
+      enum "mtu-signaling" {
+        value 1;
+        description
+          "Private MTU Signaling.";
+      }
+      enum "apply-tlv" {
+        value 2;
+        description
+          "Standard MTU Signaling.";
+      }
+    }
+    description
+      "MTU Signaling Type.";
+  }
+  typedef ldp-bfd-session-state {
+    type enumeration {
+      enum "admin-down" {
+        value 0;
+        description
+          "LDP BFD session admin down state.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "LDP BFD session down state.";
+      }
+      enum "init" {
+        value 2;
+        description
+          "LDP BFD session initial state.";
+      }
+      enum "up" {
+        value 3;
+        description
+          "LDP BFD session up state.";
+      }
+    }
+    description
+      "LDP BFD Session State.";
+  }
+  typedef ldp-session-statist-type {
+    type enumeration {
+      enum "non-operational" {
+        value 1;
+        description
+          "Non-operational state.";
+      }
+      enum "operational" {
+        value 2;
+        description
+          "Operational state.";
+      }
+      enum "session-statistics" {
+        value 3;
+        description
+          "Session statistics.";
+      }
+    }
+    description
+      "LDP Session Type.";
+  }
+}

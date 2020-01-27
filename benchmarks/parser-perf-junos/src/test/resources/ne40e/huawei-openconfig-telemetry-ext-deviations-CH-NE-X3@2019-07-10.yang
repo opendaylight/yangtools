@@ -1,0 +1,40 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-openconfig-telemetry-ext-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-openconfig-telemetry-ext-deviations-CH-NE-X3";
+  prefix hw-telemetry-ext-devs-CH-NE-X3;
+
+  import openconfig-telemetry {
+    prefix ot;
+  }
+  import huawei-openconfig-telemetry-ext {
+    prefix hw-telemetry-ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com
+    ";
+  description
+    "Data model which creates the condition for the telemetry.";
+
+  revision 2019-07-10 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/ot:telemetry-system/hw-telemetry-ext:global/hw-telemetry-ext:config/hw-telemetry-ext:json-only-content" {
+    deviate not-supported;
+  }
+  deviation "/ot:telemetry-system/hw-telemetry-ext:global/hw-telemetry-ext:state/hw-telemetry-ext:json-only-content" {
+    deviate not-supported;
+  }
+}

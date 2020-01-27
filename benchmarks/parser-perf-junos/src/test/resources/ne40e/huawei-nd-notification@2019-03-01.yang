@@ -1,0 +1,55 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-nd-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-nd-notification";
+  prefix nd-notification;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of IPv6-nd-notification.";
+  revision 2019-03-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "nd";
+  notification dad-not-finished {
+    description
+      "DAD is not finished.";
+    leaf if-name {
+	  type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf dad-addr {
+      type inet:ipv6-address-no-zone;
+      description
+        "DAD address.";
+    }
+    leaf dad-timeout {
+      type uint32;
+      units "s";
+      description
+        "Dad timeout.";
+    }
+  }
+}

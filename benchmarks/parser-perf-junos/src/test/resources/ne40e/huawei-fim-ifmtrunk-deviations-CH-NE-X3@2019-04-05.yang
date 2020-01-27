@@ -1,0 +1,38 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-fim-ifmtrunk-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-fim-ifmtrunk-deviations-CH-NE-X3";
+  prefix fim-ifmtrunk-devs-CH-NE-X3;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ifm-trunk {
+    prefix ifm-trunk;
+  }
+  import huawei-fim-ifmtrunk {
+    prefix fim-ifmtrunk;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Common interface management, which includes the public configuration of interfaces.";
+  revision 2019-04-05 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk/fim-ifmtrunk:fim-ifmtrunk/fim-ifmtrunk:trunk-hash-type" {
+    deviate not-supported;
+  }
+}

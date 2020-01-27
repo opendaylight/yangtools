@@ -1,0 +1,79 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-loadbalance-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-loadbalance-notification";
+  prefix loadbalance-notification;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of loadbalance-notification.";
+  revision 2020-02-28 {
+    description
+      "Update the type of the nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-07-08 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forwarding";
+  notification hash-key-ip-alarm {
+    description
+      "The board did not support ECMP based on a specified source or destination IP address.";
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+  }
+  notification hash-key-ip-alarm-resume {
+    description
+      "A clear alarm was generated because ECMP based on a specified source or destination IP address was disabled or the board was replaced by a board that supports this function.";
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+  }
+  notification l2vxlan-deep-hash-alarm {
+    description
+      "The board did not support L2vxlan deep hash function.";
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+  }
+  notification l2vxlan-deep-hash-alarm-resume {
+    description
+      "A clear alarm was generated because L2vxlan deep hash was disabled or the board was replaced by a board that supports this function.";
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+  }
+}

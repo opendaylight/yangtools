@@ -1,0 +1,40 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ietf-hardware-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-ietf-hardware-deviations-CH-NE-X3";
+  prefix hardware-devs-CH-NE-X3;
+
+  import ietf-hardware {
+    prefix hw;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Ietf-hardware deviation file.";
+
+  revision 2020-04-13 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/hw:hardware/hw:component" {
+    deviate replace {
+      config false;
+    }
+  }
+  deviation "/hw:hardware/hw:component/hw:name" {
+    deviate replace {
+      config false;
+    }
+  }
+}

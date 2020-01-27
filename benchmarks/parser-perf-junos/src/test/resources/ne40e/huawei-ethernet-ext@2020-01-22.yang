@@ -1,0 +1,71 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ethernet-ext {
+  namespace "urn:huawei:yang:huawei-ethernet-ext";
+  prefix ethernet-ext;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Ethernet Interface.";
+  revision 2020-01-22 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-23 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forwarding";
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:flow-type/ethernet:dot1q-termination/ethernet:dot1q-termination" {
+    description "L3 dot1q-termination sub interface attribute.";
+    container termination-mode-enable {
+      description
+        "Configure the dot1q-termination sub interface as single-mode after binding a vsi service in qualify mode.";
+      leaf single-mode-enable {
+        type boolean;
+        must "../single-mode-enable='false' or (/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls[l2vpn:mac-learn-style='qualify']/l2vpn:acs/l2vpn:ac[l2vpn:interface-name=current()/../../../../../ifm:name])";
+        default "false";
+        description
+          "Enable/disable single-mode configuration.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:flow-type/ethernet:qinq-stacking/ethernet:qinq-stacking" {
+    description "L3 qinq-stacking sub interface attribute.";
+    container stacking-mode-enable {
+      description
+        "Configure the qinq-stacking sub interface as single-mode when binding VSI service.";
+      leaf single-mode-enable {
+        type boolean;
+        must "../single-mode-enable='false' or ../../ethernet:stacking-vid";
+        default "false";
+        description
+          "Enable/disable single-mode configuration.";
+      }
+    }
+  }
+}

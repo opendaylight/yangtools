@@ -1,0 +1,184 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mvpn-forward {
+  namespace urn:huawei:yang:huawei-mvpn-forward;
+  prefix mvpn-forward;
+  
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-mvpn {
+    prefix mvpn;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Multicast virtual private network.";
+  revision 2019-03-26 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mvpn";
+  typedef service-class {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "Service type of BE.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "Service type of AF1.";
+      }
+      enum "af2" {
+        value 2;	  
+        description
+          "Service type of AF2.";
+      }
+      enum "af3" {
+        value 3;	  
+        description
+          "Service type of AF3.";
+      }
+      enum "af4" {
+        value 4;	  
+        description
+          "Service type of AF4.";
+      }
+      enum "ef" {
+        value 5;	  
+        description
+          "Service type of EF.";
+      }
+      enum "cs6" {
+        value 6;	  
+        description
+          "Service type of CS6.";
+      }
+      enum "cs7" {
+        value 7;	  
+        description
+          "Service type of CS7.";
+      }
+    }
+    description
+      "Service type.";
+  }
+  typedef color {
+    type enumeration {
+      enum "green" {
+        value 0;	  
+        description
+          "Green.";
+      }
+      enum "yellow" {
+        value 1;	  
+        description
+          "Yellow.";
+      }
+      enum "red" {
+        value 2;	  
+        description
+          "Red.";
+      }	
+    }
+    description
+      "Color type.";
+  }
+  typedef enableflag {
+    type enumeration {
+      enum "true" {
+        value 1;
+        description
+          "Multicast-vpn TTL propagate is enabled.";
+      }
+      enum "false" {
+        value 0;
+        description
+          "Multicast-vpn TTL propagate is disabled.";
+      }
+    }
+    description
+      "Enable flag type.";
+  }  
+  container mvpn-forward {
+    description
+      "Multicast forwarding table.";  
+    container global {
+      description
+        "Configure MVPN global configuration.";
+      container ttl-propagate {
+        description
+          "Configure MVPN TTL value.";
+        leaf enable {
+          type enableflag;
+          default "false";
+          description
+            "Propagate the TTL value used by the private network to the public network.";
+        }
+      }
+      container multicast-vpn-slots {
+        description
+          "List of MVPN integrated boards.";
+        list multicast-vpn-slot {
+          key "slot";
+          description
+            "Configure MVPN integrated board.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number of the board on which MVPN is to be enabled.";
+          }
+        }
+      }	
+      container ng-mvpn-forward-mode {
+        description
+          "Configure NGMVPN mode configuration.";
+        leaf propagate-enable {
+          type enableflag;
+          default "false";
+          description
+            "Config loopback mode.";
+        }
+      }
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/mvpn:mvpn/mvpn:mvpn-type/mvpn:ng-mvpn/mvpn:ng" {
+    description
+      "Configure WTR attribute on MVPN template.";
+    container multicast-wtr {
+      when "../../../l3vpn:type='ipv4-unicast' and ../mvpn:is-c-multicast-frr='true'";
+      description
+        "Configure wait time restore.";
+      leaf wtr {
+        type uint16 {
+          range "60..1800";
+        }
+        units s;
+        default "600";			
+        description
+          "Wait time restore.";
+      }
+    }
+  }
+}

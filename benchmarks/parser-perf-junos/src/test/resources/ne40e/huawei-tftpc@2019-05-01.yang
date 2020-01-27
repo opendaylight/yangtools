@@ -1,0 +1,56 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-tftpc {
+  namespace "urn:huawei:yang:huawei-tftpc";
+  prefix tftpc;
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Trivial File Transfer Protocol (TFTP) client.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "tftp-client";
+
+  container tftpc {
+    description
+      "Trivial File Transfer Protocol (TFTP) client.";
+    container client {
+      description
+        "Configure TFTP client configuration table.";
+      leaf src-ipv4-addr {
+        when "not(../src-interface)";
+        type inet:ipv4-address-no-zone;
+        description
+          "Specify the source IPv4 address.";
+      }
+      leaf src-interface {
+        type pub-type:if-name;
+        description
+          "Specify the source interface name. The specified source interface must exist and an IP address must be configured on the interface.";
+      }
+    }
+  }
+}

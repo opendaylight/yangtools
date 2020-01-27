@@ -1,0 +1,443 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-nqa {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-nqa";
+  prefix nqa;
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  include huawei-nqa-global;
+  include huawei-nqa-server;
+  include huawei-nqa-instance;
+  include huawei-nqa-reflector;
+  include huawei-nqa-record;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+
+  description
+    "Network quality analysis.";
+
+  revision 2020-01-13 {
+    description
+      "Add rpc for nqa execution policy.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-25 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "sla";
+
+  container nqa {
+    description
+      "Network quality analysis (NQA) service.";
+    container global {
+      description
+        "Configure NQA global configuration.";
+      uses nqa:global-type;
+    }
+    
+    container server {
+      description
+        "Configure NQA server list.";
+      uses nqa:server-type;
+    }
+    container reflectors {
+      description
+        "Configure reflector list.";
+      uses nqa:reflectors-type;
+    }
+    container instances {
+      description
+        "Configure NQA test instance list.";
+      uses nqa:instances-type;
+    }
+    container record {
+      config false;
+      description
+        "Operational state of NQA test instance test record table.";
+      uses nqa:record-type;
+    }
+  }
+  rpc test-instance-execution {
+    description
+      "The test intance execution.";
+    ext:node-ref "/nqa:nqa/nqa:instances/nqa:instance";
+    input {
+      leaf admin-name {
+        type leafref {
+          path "/nqa/instances/instance/admin-name";
+        }
+        mandatory true;
+        description
+          "Administrator name.";
+      }
+      leaf test-name {
+        type leafref {
+          path "/nqa/instances/instance/test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+      choice execution-policy {
+        description
+          "The test intance start policy.";
+        case start {
+          description
+            "Start the test.";
+          choice start-type {
+            description
+              "The test intance start type.";
+            case start-now {
+              description
+                "Start the test now.";
+              leaf start-now {
+                type empty;
+                mandatory true;
+                description
+                  "Receive the command then start the test.";
+              }
+              choice start-now-end-type {
+                description
+                  "Test intance end type.";
+                case at {
+                  description
+                    "Stop the test at the specified time.";
+                  leaf start-now-end-time {
+                    type pub-type:time;
+                    mandatory true;
+                    description
+                      "The test intance end time.";
+                  }
+                  leaf start-now-end-date {
+                    type pub-type:date;
+                    description
+                      "The test intance end date.";
+                  }
+                }
+                case delay {
+                  description
+                    "Stop the test after the specified delay time.";
+                  choice start-now-end-delay-type {
+                    mandatory true;
+                    description
+                      "The test intance end delay type.";
+                    case end-delay-time {
+                      description
+                        "The test intance end delay time.";
+                      leaf start-now-end-delay-time {
+                        type pub-type:time;
+                        description
+                          "The test intance end delay time.";
+                      }
+                    }
+                    case end-delay-seconds {
+                      description
+                        "The test intance end delay seconds.";
+                      leaf start-now-end-delay-seconds {
+                        type uint32 {
+                          range "6..86399";
+                        }
+                        description
+                          "The test intance end delay seconds.";
+                      }
+                    }
+                  }
+                }
+                case lifetime {
+                  description
+                    "Stop the test after the specified life time.";
+                  choice start-now-end-lifetime-type {
+                    mandatory true;
+                    description
+                      "The test intance end lifetime type.";
+                    case lifetime-time {
+                      description
+                        "The test intance end lifetime time.";
+                      leaf start-now-end-lifetime-time {
+                        type pub-type:time;
+                        description
+                          "The test intance end lifetime time.";
+                      }
+                    }
+                    case lifetime-seconds {
+                      description
+                        "The test intance end lifetime seconds.";
+                      leaf start-now-end-lifetime-seconds {
+                        type uint32 {
+                          range "6..86399";
+                        }
+                        description
+                          "The test intance end lifetime seconds.";
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            case start-at {
+              description
+                "Execute at the specified time.";
+              leaf start-time {
+                type pub-type:time;
+                mandatory true;
+                description
+                  "The test intance start time.";
+              }
+              leaf start-date {
+                type pub-type:date;
+                description
+                  "The test intance start date.";
+              }
+              choice start-at-end-type {
+                description
+                  "Test intance end type.";
+                case at {
+                  description
+                    "Stop the test at the specified time.";
+                  leaf start-at-end-time {
+                    type pub-type:time;
+                    mandatory true;
+                    description
+                      "The test intance end time.";
+                  }
+                  leaf start-at-end-date {
+                    type pub-type:date;
+                    description
+                      "The test intance end date.";
+                  }
+                }
+                case delay {
+                  description
+                    "Stop the test after the specified delay time.";
+                  choice start-at-end-delay-type {
+                    mandatory true;
+                    description
+                      "The test intance end delay type.";
+                    case end-delay-time {
+                      description
+                        "The test intance end delay time.";
+                      leaf start-at-end-delay-time {
+                        type pub-type:time;
+                        description
+                          "The test intance end delay time.";
+                      }
+                    }
+                    case end-delay-seconds {
+                      description
+                        "The test intance end delay seconds.";
+                      leaf start-at-end-delay-seconds {
+                        type uint32 {
+                          range "6..86399";
+                        }
+                        description
+                          "The test intance end delay seconds.";
+                      }
+                    }
+                  }
+                }
+                case lifetime {
+                  description
+                    "Stop the test after the specified life time.";
+                  choice start-at-end-lifetime-type {
+                    mandatory true;
+                    description
+                      "The test intance end lifetime type.";
+                    case lifetime-time {
+                      description
+                        "The test intance end lifetime time.";
+                      leaf start-at-end-lifetime-time {
+                        type pub-type:time;
+                        description
+                          "The test intance end lifetime time.";
+                      }
+                    }
+                    case lifetime-seconds {
+                      description
+                        "The test intance end lifetime seconds.";
+                      leaf start-at-end-lifetime-seconds {
+                        type uint32 {
+                          range "6..86399";
+                        }
+                        description
+                          "The test intance end lifetime seconds.";
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            case start-delay {
+              description
+                "Delay some time then execute testcase.";
+              choice start-delay-type {
+                mandatory true;
+                description
+                  "The test intance start delay time.";
+                case start-delay-time {
+                  description
+                    "Execute at the specified time.";
+                  leaf start-delay-time {
+                    type pub-type:time;
+                    description
+                      "The test intance start delay time.";
+                  }
+                }
+                case start-delay-seconds {
+                  description
+                    "The test intance start delay seconds.";
+                  leaf start-delay-seconds {
+                    type uint32 {
+                      range "1..86399";
+                    }
+                    description
+                      "The test intance start delay seconds.";
+                  }
+                }
+              }
+              choice start-delay-end-type {
+                description
+                  "Test intance end type.";
+                case at {
+                  description
+                    "Stop the test at the specified time.";
+                  leaf start-delay-end-time {
+                    type pub-type:time;
+                    mandatory true;
+                    description
+                      "The test intance end time.";
+                  }
+                  leaf start-delay-end-date {
+                    type pub-type:date;
+                    description
+                      "The test intance end date.";
+                  }
+                }
+                case delay {
+                  description
+                    "Stop the test after the specified delay time.";
+                  choice start-delay-end-delay-type {
+                    mandatory true;
+                    description
+                      "The test intance end delay type.";
+                    case end-delay-time {
+                      description
+                        "The test intance end delay time.";
+                      leaf start-delay-end-delay-time {
+                        type pub-type:time;
+                        description
+                          "The test intance end delay time.";
+                      }
+                    }
+                    case end-delay-seconds {
+                      description
+                        "The test intance end delay seconds.";
+                      leaf start-delay-end-delay-seconds {
+                        type uint32 {
+                          range "6..86399";
+                        }
+                        description
+                          "The test intance end delay seconds.";
+                      }
+                    }
+                  }
+                }
+                case lifetime {
+                  description
+                    "Stop the test after the specified life time.";
+                  choice start-delay-end-lifetime-type {
+                    mandatory true;
+                    description
+                      "The test intance end lifetime type.";
+                    case lifetime-time {
+                      description
+                        "The test intance end lifetime time.";
+                      leaf start-delay-end-lifetime-time {
+                        type pub-type:time;
+                        description
+                          "The test intance end lifetime time.";
+                      }
+                    }
+                    case lifetime-seconds {
+                      description
+                        "The test intance end lifetime seconds.";
+                      leaf start-delay-end-lifetime-seconds {
+                        type uint32 {
+                          range "6..86399";
+                        }
+                        description
+                          "The test intance end lifetime seconds.";
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            case start-daily {
+              description
+                "Execute the test intance daily.";
+              leaf daily-start-time {
+                type pub-type:time;
+                mandatory true;
+                description
+                  "Start time of daily execution.";
+              }
+              leaf daily-start-date {
+                type pub-type:date;
+                description
+                  "Start date of daily execution.";
+              }
+              leaf daily-end-time {
+                type pub-type:time;
+                mandatory true;
+                description
+                  "End time of daily execution.";
+              }
+              leaf daily-end-date {
+                type pub-type:date;
+                description
+                  "End date of daily execution.";
+              }
+            }
+          }
+        }
+        case stop{
+          description
+            "Stop the test.";
+          leaf stop {
+            type empty;
+            description
+              "Stop the test.";
+          }
+        }
+        case restart{
+          description
+            "Restart the test.";
+          leaf restart {
+            type empty;
+            description
+              "Restart the test.";
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,450 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-qos-nvo3 {
+  namespace "urn:huawei:yang:huawei-qos-nvo3";
+  prefix qos-nvo3;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-nvo3 {
+    prefix nvo3;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Quality of service for NVO3 management.";
+  revision 2020-02-20 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "qos";
+  container qos-nvo3 {
+    config false;
+    description
+      "Quality of service.";
+    container vni-profile-statistics {
+      description
+        "Statistics of profile vni.";
+      container user-queues {
+        description
+          "List of statistics of user queue on vni.";
+        list user-queue {
+          key "vni direction service-class";
+          description
+            "Statistics of user queue on vni.";
+          leaf vni {
+            type leafref {
+              path "/nvo3:nvo3/nvo3:vni-labels/nvo3:vni-label/nvo3:vni";
+            }
+            description
+              "VXLAN network identifier.";
+          }
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction of profile.";
+          }
+          leaf service-class {
+            type qos:qos-service-class-filter;
+            description
+              "Class of service.";
+          }
+          leaf pass-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of passed packets.";
+          }
+          leaf pass-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of passed bytes.";
+          }
+          leaf pass-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets passed during the latest 30 seconds.";
+          }
+          leaf pass-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes passed during the latest 30 seconds.";
+          }
+          leaf drop-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of dropped packets.";
+          }
+          leaf drop-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of dropped bytes.";
+          }
+          leaf drop-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets dropped during the latest 30 seconds.";
+          }
+          leaf drop-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes dropped during the latest 30 seconds.";
+          }
+        }
+      }
+      container cars {
+        description
+          "List of statistics of profile car on vni.";
+        list car {
+          key "vni direction car-type";
+          description
+            "Statistics of profile car on vni.";
+          leaf vni {
+            type leafref {
+              path "/nvo3:nvo3/nvo3:vni-labels/nvo3:vni-label/nvo3:vni";
+            }
+            description
+              "VXLAN network identifier.";
+          }
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction of profile.";
+          }
+          leaf car-type {
+            type qos:qos-car-type;
+            description
+              "Car type.";
+          }
+          leaf pass-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of passed packets.";
+          }
+          leaf pass-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of passed bytes.";
+          }
+          leaf pass-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets passed during the latest 30 seconds.";
+          }
+          leaf pass-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes passed during the latest 30 seconds.";
+          }
+          leaf drop-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of dropped packets.";
+          }
+          leaf drop-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of dropped bytes.";
+          }
+          leaf drop-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets dropped during the latest 30 seconds.";
+          }
+          leaf drop-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes dropped during the latest 30 seconds.";
+          }
+        }
+      }
+    }
+    container qos-profile-peer-statistics {
+      description
+        "Statistics of QoS profile on the NVE interfaces.";
+      container user-queue-statisticss {
+        description
+          "List of statistics of user queues bound to the QoS profile on the NVE interfaces.";
+        list user-queue-statistics {
+          key "direction vni source-ip peer-ip service-class";
+          description
+            "Statistics of user queues bound to the QoS profile on the NVE interfaces.";
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+          leaf vni {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "Vni ID.";
+          }
+          leaf source-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Source IP.";
+          }
+          leaf peer-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Peer IP.";
+          }
+          leaf service-class {
+            type qos:hqos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf pass-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of passed packets.";
+          }
+          leaf pass-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of passed bytes.";
+          }
+          leaf pass-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets passed during the latest 30 seconds.";
+          }
+          leaf pass-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes passed during the latest 30 seconds.";
+          }
+          leaf drop-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of dropped packets.";
+          }
+          leaf drop-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of dropped bytes.";
+          }
+          leaf drop-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Number of dropped bytes.";
+          }
+          leaf drop-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes dropped during the latest 30 seconds.";
+          }
+        }
+      }
+      container car-statisticss {
+        description
+          "List of statistics of CAR bound to the QoS profile on the NVE interfaces.";
+        list car-statistics {
+          key "direction vni source-ip peer-ip car-type";
+          description
+            "Statistics of CAR bound to the QoS profile on the NVE interfaces.";
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+          leaf vni {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+              "Vni ID.";
+          }
+          leaf source-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Source IP.";
+          }
+          leaf peer-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Peer IP.";
+          }
+          leaf car-type {
+            type qos:statistics-car-type;
+            description
+              "Car type.";
+          }
+          leaf pass-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of passed packets.";
+          }
+          leaf pass-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of passed bytes.";
+          }
+          leaf pass-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of the packets passed during the latest 30 seconds.";
+          }
+          leaf pass-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes passed during the latest 30 seconds.";
+          }
+          leaf drop-packets {
+            type uint64;
+            units "packet";
+            description
+              "Number of dropped packets.";
+          }
+          leaf drop-bytes {
+            type uint64;
+            units "Byte";
+            description
+              "Number of dropped bytes.";
+          }
+          leaf drop-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Number of dropped bytes.";
+          }
+          leaf drop-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate of the bytes dropped during the latest 30 seconds.";
+          }
+        }
+      }
+    }
+  }
+  rpc reset-vni-profile-statistics {
+    description
+      "To clear statistics for vni profile.";
+    ext:node-ref "/qos:qos/qos:global-query/qos:vni-profile-statistics";
+    input {
+      leaf vni {
+        type leafref {
+          path "/nvo3:nvo3/nvo3:vni-labels/nvo3:vni-label/nvo3:vni";
+        }
+        mandatory true;
+        description
+          "VXLAN network identifier.";
+      }
+      leaf direction {
+        type qos:qos-direction-type;
+        mandatory true;
+        description
+          "Direction of profile.";
+      }
+    }
+  }// reset-vni-profile-statistics
+  rpc reset-qos-profile-peer-statistics {
+    description
+      "To clear statistics for vni peer profile.";
+    ext:node-ref "/qos-nvo3:qos-nvo3/qos-nvo3:qos-profile-peer-statistics";
+    input {
+      leaf direction {
+        type qos:qos-direction-type;
+        mandatory true;
+        description
+          "Direction.";
+      }
+      leaf vni {
+        type uint32 {
+          range "1..16777215";
+        }
+        mandatory true;
+        description
+          "Vni ID.";
+      }
+      leaf source-ip {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "Source IP.";
+      }
+      leaf peer-ip {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "Peer IP.";
+      }
+    }
+  }//reset-vni-profile-statistics
+  augment /nvo3:nvo3/nvo3:vni-labels/nvo3:vni-label {
+    description
+      "Adds QoS configuration to nvo3 model.";
+    container qos-profile-applys {
+      description
+        "List of configure QoS profile application.";
+      list qos-profile-apply {
+        key "direction";
+        description
+          "Configure QoS profile application.";
+        leaf direction {
+          type qos:qos-direction-type;
+          description
+            "Direction.";
+        }
+        leaf name {
+          type leafref {
+            path "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile/qos:name";
+          }
+          must "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile[qos:name=current()]/qos:mode='normal'";
+          mandatory true;
+          description
+            "QoS profile name.";
+          ext:operation-exclude update {
+            description "After the configuration is created, the node cannot be modified.";
+          }
+        }
+      }
+    }
+  }// augment /nvo3:nvo3/nvo3:vni-labels/nvo3:vni-label
+}

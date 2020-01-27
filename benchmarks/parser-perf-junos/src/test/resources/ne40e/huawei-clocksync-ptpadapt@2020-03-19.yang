@@ -1,0 +1,1038 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-ptpadapt {
+  namespace "urn:huawei:yang:huawei-clocksync-ptpadapt";
+  prefix clocksync-ptpadapt;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Ptp-adaptive data model define.";
+
+  revision 2020-03-19 {
+    description
+      "Optimize the must condition of nego-mode and hop-by-hop-mode node.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-14 {
+    description
+      "Fixed a problem.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-04 {
+    description
+      "Modify the node description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-25 {
+    description
+      "Add reset-ptpa-server-pkt, reset-ptpa-server-pkt action node.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-06 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  ext:task-name  "clksync";
+  
+  typedef server-index {
+    type enumeration {
+      enum "server1" {
+        value 1;
+        description
+          "Server1.";
+      }
+      enum "server2" {
+        value 2;
+        description
+          "Server2.";
+      }
+    }
+    description
+      "Server index.";
+  }
+  typedef ptpa-nego-mode {
+    type enumeration {
+      enum "one-way" {
+        value 1;
+        description
+          "Negotiation mode is one-way.";
+      }
+      enum "two-way" {
+        value 2;
+        description
+          "Negotiation mode is two-way.";
+      }
+      enum "acr" {
+        value 3;
+        description
+          "Negotiation mode acr.";
+      }
+      enum "atr" {
+        value 4;
+        description
+          "Negotiation mode is atr.";
+      }
+      enum "none" {
+        value 99;
+        description
+          "Negotiation mode is none.";
+      }
+    }
+    description
+      "Negotiation mode type.";
+  }
+  typedef ptpa-device-type {
+    type enumeration {
+      enum "none" {
+        value 99;
+        description
+          "Device type is none.";
+      }
+      enum "client" {
+        value 2;
+        description
+          "Device type is client.";
+      }
+      enum "server" {
+        value 3;
+        description
+          "Device type is server.";
+      }
+    }
+    description
+      "Device type.";
+  }
+  typedef ptpa-freq-profile {
+    type enumeration {
+      enum "part" {
+        value 0;
+        description
+          "Freqprofile is part.";
+      }
+      enum "all" {
+        value 1;
+        description
+          "Freqprofile is all.";
+      }
+      enum "timeprofile" {
+        value 2;
+        description
+          "Freqprofile is timeprofile.";
+      }
+    }
+    description
+      "Freqprofile type.";
+  }
+  typedef ptpa-nego-state {
+    type enumeration {
+      enum "init" {
+        value 0;
+        description
+          "Negotiation state is init.";
+      }
+      enum "success" {
+        value 1;
+        description
+          "Negotiation state is success.";
+      }
+      enum "error" {
+        value 2;
+        description
+          "Negotiation state is error.";
+      }
+      enum "none" {
+        value 3;
+        description
+          "Negotiation state is none.";
+      }
+    }
+    description
+      "Negotiation state type.";
+  }
+  typedef ptpa-nego-error-reason {
+    type enumeration {
+      enum "delete-link" {
+        value 2;
+        description
+          "Delete-link.";
+      }
+      enum "announce-timeout" {
+        value 3;
+        description
+          "Announce-timeout.";
+      }
+      enum "announce-nego-timeout" {
+        value 4;
+        description
+          "Announce-nego-timeout.";
+      }
+      enum "announce-nego-deny" {
+        value 5;
+        description
+          "Announce-nego-deny.";
+      }
+      enum "sync-nego-failed" {
+        value 6;
+        description
+          "Sync-nego-failed.";
+      }
+      enum "sync-nego-deny" {
+        value 7;
+        description
+          "Sync-nego-deny.";
+      }
+      enum "delay-resp-nego-timeout" {
+        value 8;
+        description
+          "Delayr-esp-nego-timeout.";
+      }
+      enum "delay-resp-nego-deny" {
+        value 9;
+        description
+          "Delay-resp-nego-deny.";
+      }
+      enum "if-cannot-support-ptp" {
+        value 10;
+        description
+          "If-cannot-support-ptp.";
+      }
+      enum "service-mode-notsupport-ptp" {
+        value 11;
+        description
+          "Service-mode-notsupport-ptp.";
+      }
+      enum "route-unreach" {
+        value 12;
+        description
+          "Route-unreach.";
+      }
+      enum "bmc-failed" {
+        value 13;
+        description
+          "Bmc-failed.";
+      }
+      enum "master-synchronization-fault" {
+        value 14;
+        description
+          "Master-synchronization-fault.";
+      }
+      enum "none" {
+        value 15;
+        description
+          "None.";
+      }
+    }
+    description
+      "Negotiation error reason.";
+  }
+  typedef ptpa-server-ptsf-state {
+    type enumeration {
+      enum "normal" {
+        value 1;
+        description
+          "PTSF state is normal.";
+      }
+      enum "abnormal" {
+        value 0;
+        description
+          "PTSF state is abnormal.";
+      }
+    }
+    description
+      "PTSF state type.";
+  }
+  typedef phy-ssm-level {
+    type enumeration {
+      enum "none" {
+        value 16;
+        description
+          "NONE.";
+      }
+      enum "prc" {
+        value 2;
+        description
+          "PRC.";
+      }
+      enum "ssua" {
+        value 4;
+        description
+          "SSUA.";
+      }
+      enum "ssub" {
+        value 8;
+        description
+          "SSUB.";
+      }
+      enum "sec" {
+        value 11;
+        description
+          "SEC.";
+      }
+      enum "dnu" {
+        value 15;
+        description
+          "DNU.";
+      }
+      enum "unk" {
+        value 0;
+        description
+          "UNK.";
+      }
+    }
+    description
+      "Ssm level.";
+  }
+  
+  typedef ptp-time-source {
+    type enumeration {
+      enum "atomicclock" {
+        value 16;
+        description
+          "Atomicclock.";
+      }
+      enum "gps" {
+        value 32;      
+        description
+          "Gps.";          
+      }
+      enum "terrestrialradio" {
+        value 48;         
+        description
+          "Terrestrialradio.";         
+      }
+      enum "ptp" {
+        value 64;      
+        description
+          "Ptp.";          
+      }
+      enum "ntp" {
+        value 80; 
+        description
+          "Ntp.";         
+      }
+      enum "handset" {
+        value 96;       
+        description
+          "Handset.";        
+      }
+      enum "other" {
+        value 144;      
+        description
+          "Other.";          
+      }
+      enum "internaloscillator" {
+        value 160;       
+        description
+          "Internaloscillator.";         
+      }
+    }
+    description
+      "Type of ptp time source.";
+  }
+
+  typedef ptp-sign-flag {
+    type enumeration {
+      enum "negative" {
+        value 0;       
+        description
+          "Negative.";          
+      }
+      enum "positive" {
+        value 1;        
+        description
+          "Positive.";         
+      }
+    }
+    description
+      "Flag of ptp sign.";
+  }
+  typedef ptpa-trace-source {
+    type enumeration {
+      enum "local" {
+        value 0;
+        description
+          "Local.";
+      }
+      enum "server1" {
+        value 1;
+        description
+          "Server1.";
+      }
+      enum "server2" {
+        value 2;
+        description
+          "Server2.";
+      }
+    }
+    description
+      "Ptpa trace source type.";
+  }
+  
+  container clocksync-ptpadapt{
+    description
+      "Module of adaptive clock.";
+    container ptpa-common {
+      description
+        "Configure basic information of adaptive clock.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable adaptive clock. When the master does not support PTP, the router that enables adaptive clock can retrieve clock information from the server's PTP packets.";
+      }
+      leaf device-type {
+        when "(../enable='true')";
+        type ptpa-device-type;
+        default "none";
+        description
+          "Configure the router to work in client or server mode.";
+      }
+      leaf nego-mode { 
+        when "(../enable='true')";	  
+        type ptpa-nego-mode;
+        must "../enable='true' and ((../device-type='server' and ((../nego-mode='acr' and ../freq-profile!='timeprofile') or (../nego-mode='atr' and ../freq-profile='timeprofile') or ../nego-mode='none') and ../local-ip!='0.0.0.0') or (../device-type='client' and (((../nego-mode='one-way' or ../nego-mode='two-way') and ../freq-profile!='timeprofile') or ../nego-mode='none') and ../local-ip!='0.0.0.0') or (../device-type='none' and ../nego-mode='none'))";
+        default "none";
+        description
+          "Enable or disable PTP adaptive ACR/ATR unicast negotiation.";
+      }
+      leaf dscp {
+        when "(../enable='true')";	
+        type int32 {
+          range "0..63";
+        }
+        default "56";
+        description
+          "Configure QoS priority of ptp-adaptive packet.";
+      }
+      leaf domain {
+        when "(../enable='true')";	
+        type uint32 {
+          range "0..255";
+        }
+        default "0";
+        description
+          "Configure ptp-adaptive device domain. While profile is configured as 'Support Partly', the default domain value is 0 and domain range is <0-255>. While profile is configured as 'Partly', the default domain value is 4 and domain range is <4-43>.While profile is configured as 'Time Synchronization Protocol', the default domain value is 44 and domain range is <44-63>.";
+      }
+      leaf local-ip {
+        when "(../enable='true')";	
+        type inet:ipv4-address-no-zone;
+        default "0.0.0.0";
+        description
+          "Local IP address that the client uses for Layer 3 unicast negotiation.";
+      }
+      leaf req-ann-interval {
+        when "(../device-type='none' or ../device-type='client' and ../enable='true')";
+        type int32 {
+          range "7..14";
+        }
+        default "11";
+        description
+          "Interval at which Announce packets are sent by the client to the server. The calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+      }
+      leaf req-sync-interval {
+        when "(../device-type='none' or ../device-type='client' and ../enable='true')";
+        type int32 {
+          range "3..14";
+        }
+        default "3";
+        description
+          "Interval at which Sync packets are sent by the client to the server. The calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+      }
+      leaf req-dly-resp-interval {
+        when "(../device-type='none' or ../device-type='client' and ../enable='true')";		
+        type int32 {
+          range "3..14";
+        }
+        default "3";
+        description
+          "Interval at which DelayResp packets are sent by the client to the server. The calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+      }
+      leaf ann-recv-timeout {
+        when "(../device-type='none' or ../device-type='client' and ../enable='true')";
+        type int32 {
+          range "2..255";
+        }
+        default "3";
+        description
+          "Number of times Announce packet receiving times out on the client.";
+      }
+      leaf ann-duration {
+        when "(../device-type='none' or ../device-type='client' and ../enable='true')";
+        type int32 {
+          range "60..1000";
+        }
+        units "s";
+        default "300";
+        description
+          "Duration for continuously sending Announce packets.";
+      }
+      leaf sync-duration {
+        when "(../device-type='none' or ../device-type='client' and ../enable='true')";
+        type int32 {
+          range "60..1000";
+        }
+        units "s";
+        default "300";
+        description
+          "Duration in which Sync packets are continuously sent.";
+      }
+      leaf dly-resp-duration {
+        when "(../device-type='none' or ../device-type='client' and ../enable='true')";
+        type int32 {
+          range "60..1000";
+        }
+        units "s";
+        default "300";
+        description
+          "Duration in which Delay-Resp packets are continuously sent.";
+      }
+      leaf trace-source {
+        type ptpa-trace-source;
+        config false;
+        description
+          "Current tracing source of the client.";
+      }
+      leaf freq-profile {
+        when "(../enable='true')";	
+        type ptpa-freq-profile;
+        default "part";
+        description
+          "By default, ITU-T G.8265.1 is partially supported. You can configure total support for G.8265.1 or G.8275.2.";
+      }
+      leaf vpn-instance {
+        when "(../enable='true')";	
+        type leafref {      
+        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+        description
+          "Configure or cancel the VPN instance name bound to the Loopback interface.";
+      }
+      leaf hop-by-hop-mode {
+        when "((../device-type='none' or ../device-type='client') and ../enable='true')";
+        type boolean;
+        must "../enable='true' and ((../hop-by-hop-mode='true' and (((../nego-mode='atr' or ../nego-mode='none') and ../device-type='client') or (../nego-mode='none' and ../device-type='none')) and ../freq-profile='timeprofile') or ((../device-type='none' or ../device-type='client') and ../hop-by-hop-mode='false'))";
+        default "false";
+        description
+          "Enable/disable 1588 ATR clock hop-by-hop mode.";
+      }
+    }
+    container ptpa-servers {
+      when "(../ptpa-common/device-type='client' and ../ptpa-common/enable='true')";
+      description
+        "List of configure information about the remote server on which negotiation with the client is established.";
+      list ptpa-server {
+        key "server-index";
+        unique "server-ip";
+        description
+          "Configure information about the remote server on which negotiation with the client is established.";
+        leaf server-index {
+          type server-index;
+          description
+            "Index of the server, which is used to identify a server.";
+        }
+        leaf server-ip {
+          type inet:ipv4-address-no-zone;
+          mandatory true;
+          description
+            "IP address of the server.";
+         //ext:allowDelete "true";
+        }
+        leaf is-cur-trace-source {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Current tracing source of the client.";
+        }
+        leaf clock-id {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "ID of the clock source on the server side.";
+        }
+        leaf nego-state {
+          type ptpa-nego-state;
+          config false;
+          description
+            "State negotiated with server.";
+        }
+        leaf error-reason {
+          type ptpa-nego-error-reason;
+          config false;
+          description
+            "Cause of the clock negotiation failure.";
+        }
+        container bmc-attr {
+          config false;
+          description
+            "Statistics of PTP adaptive clock attributes when the PTP frequency profile is not configured.";
+          leaf priority1 {
+            type uint32;
+            default "128";
+            config false;
+            description
+              "Priority1 of the adaptive clock server.";
+          }
+          leaf priority2 {
+            type uint32;
+            default "128";
+            config false;
+            description
+              "Priority2 of the adaptive clock server.";
+          }
+          leaf clock-class {
+            type uint32;
+            default "187";
+            config false;
+            description
+              "Quality level of the server clock.";
+          }
+          leaf clock-accuracy {
+            type uint32;
+            default "49";
+            config false;
+            description
+              "Accuracy of the clock server.";
+          }
+          leaf time-source {
+            type ptp-time-source;
+            default "internaloscillator";
+            config false;
+            description
+              "Clock source type of the adaptive clock server.";
+          }
+          leaf ptp-sync-uncertain {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "Synchronization uncertain status of the adaptive clock source.";
+          }
+        }
+        container bmca-attr {
+          config false;
+          description
+            "Statistics of PTP adaptive attributes when we configure ptp frequency profile.";
+          leaf server-ssm {
+            type phy-ssm-level;
+            default "unk";
+            config false;
+            description
+              "SSM level converted from the accuracy of clock signals received by the server.";
+          }
+          leaf server-priority {
+            type uint32;
+            default "1";
+            config false;
+            description
+              "Priority of a server. Server1's priority is 1, and Server2's priority is 2.";
+          }
+          leaf server-ptsf {
+            type ptpa-server-ptsf-state;
+            default "abnormal";
+            config false;
+            description
+              "Packet timing signals fail.";
+          }
+        }
+        leaf parent-clockid {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Clock ID of the clock server.";
+        }
+        leaf parent-port-num {
+          type uint32;
+          config false;
+          description
+            "Port number of the clock server.";
+        }
+        leaf two-step-flag {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Two-step flag of clock source Sync packets.";
+        }
+        leaf steps-removed {
+          type uint32;
+          config false;
+          description
+            "Number of hops to the clock source.";
+        }
+        leaf time-scale {
+          type uint32;
+          config false;
+          description
+            "Time scale of the clock source.";
+        }
+        leaf offset-scaled {
+          type uint32;
+          config false;
+          description
+            "Stability of the clock source.";
+        }
+        leaf time-traceable {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Time tracing status at the server side.";
+        }
+        leaf frequency-traceable {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Frequency tracing status at the server side.";
+        }
+        leaf loss-announce {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Announce packet loss status at the server side.";
+        }
+        leaf loss-sync {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Sync packet loss status at the server side.";
+        }
+        leaf loss-followup {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Follow_Up packet loss status at the server side.";
+        }
+        leaf loss-resp {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Resp packet loss status at the server side.";
+        }
+        container server-pkt-statistics {
+          config false;
+          description
+            "Client-side packet statistics.";
+          leaf rev-signal {
+            type uint32;
+            config false;
+            description
+              "Number of received signaling packets.";
+          }
+          leaf rev-announce {
+            type uint32;
+            config false;
+            description
+              "Number of received Announce packets.";
+          }
+          leaf rev-sync {
+            type uint32;
+            config false;
+            description
+              "Number of received Sync packets.";
+          }
+          leaf rev-delay-resp {
+            type uint32;
+            config false;
+            description
+              "Number of received Delay_Resp packets.";
+          }
+          leaf rev-followup {
+            type uint32;
+            config false;
+            description
+              "Number of received Follow_Up packets.";
+          }
+          leaf send-signal {
+            type uint32;
+            config false;
+            description
+              "Number of sent signaling packets.";
+          }
+          leaf send-delay-req {
+            type uint32;
+            config false;
+            description
+              "Number of sent Delay_Req packets.";
+          }
+          leaf discard-signal {
+            type uint32;
+            config false;
+            description
+              "Number of dropped signaling packets.";
+          }
+          leaf discard-announce {
+            type uint32;
+            config false;
+            description
+              "Number of dropped Announce packets.";
+          }
+          leaf discard-sync {
+            type uint32;
+            config false;
+            description
+              "Number of dropped Sync packets.";
+          }
+          leaf discard-delay-resp {
+            type uint32;
+            config false;
+            description
+              "Number of dropped Delay_Resp packets.";
+          }
+          leaf discard-followup {
+            type uint32;
+            config false;
+            description
+              "Number of dropped Follow_Up packets.";
+          }
+        }
+        container asym-correction{
+          description
+            "Configure information about asymmetric delay correction.";
+          leaf asym-corr-flag {
+            type ptp-sign-flag;
+            default "negative";
+            description
+              "Asymmetric delay correction mode, including positive correction and negative correction.";
+          }
+          leaf asym-corr-value {
+            type uint32 {
+              range "0..2000000";
+            }
+            description
+              "Asymmetric delay correction value. (The invalid value 2147483647 is displayed when the configuration is not performed.)";
+          }
+          leaf correction {
+            type int32;
+            default "0";
+            config false;
+            description
+              "Automatically measured asymmetric delay correction value. This is a 1588 ATR feature. When link asymmetry exists, the asymmetric delay correction value needs to be measured manually.";
+          }
+        }
+      }
+    }
+    container ptpa-clients {
+      config false;
+      description
+        "List of statistics of adaptive clock client information.";
+      list ptpa-client {
+        key "client-id";
+        config false;
+        description
+          "Statistics of adaptive clock client information.";
+        leaf client-id {
+          type uint32;
+          config false;
+          description
+            "Index of a client, which is used to identify the client.";
+        }
+        leaf client-ip {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Client IP address.";
+        }
+        leaf clockid {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "ID of the clock source on the client side.";
+        }
+        leaf nego-mode {
+          type ptpa-nego-mode;
+          config false;
+          description
+            "Negotiation mode between server and client.";
+        }
+        leaf ann-interval {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Interval at which the server sends Announce packets to the client.";
+        }
+        leaf sync-interval {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Interval at which Sync packets are sent by the server to the client.";
+        }
+        leaf dly-resp-interval {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Interval at which Delay-Resp packets are sent from the server to the client.";
+        }
+        leaf ann-duration {
+          type int32 {
+            range "60..1000";
+          }
+          default "300";
+          config false;
+          description
+            "Duration in which the server continuously sends Announce packets to the client.";
+        }
+        leaf sync-duration {
+          type int32 {
+            range "60..1000";
+          }
+          default "300";
+          config false;
+          description
+            "Duration in which Sync packets are continuously sent by the server to the client.";
+        }
+        leaf dly-resp-duration {
+          type int32 {
+            range "60..1000";
+          }
+          default "300";
+          config false;
+          description
+            "Duration in which Delay-Resp packets are continuously sent by the server to the client.";
+        }
+        container client-pkt-statistics {
+          config false;
+          description
+            "Statistics of various packets sent from the server.";
+          leaf rev-signal {
+            type uint32;
+            config false;
+            description
+              "Statistics about the Signaling packets received by the server.";
+          }
+          leaf rev-delay-req {
+            type uint32;
+            config false;
+            description
+              "Statistics about the Delay_Resp packets received by the server.";
+          }
+          leaf send-signal {
+            type uint32;
+            config false;
+            description
+              "Statistics about the Signaling packets sent by the server.";
+          }
+          leaf send-announce {
+            type uint32;
+            config false;
+            description
+              "Statistics about the Announce packets sent by the server.";
+          }
+          leaf send-sync {
+            type uint32;
+            config false;
+            description
+              "Statistics about the Sync packets sent by the server.";
+          }
+          leaf send-delay-resp {
+            type uint32;
+            config false;
+            description
+              "Statistics about the Delay_Resp packets sent by the server.";
+          }
+          leaf discard-signal {
+            type uint32;
+            config false;
+            description
+              "Number of signaling packets dropped on the server.";
+          }
+          leaf discard-delay-req {
+            type uint32;
+            config false;
+            description
+              "Number of Delay_Req packets dropped on the server.";
+          }
+        }
+      }
+    }
+  }
+  rpc reset-ptpa-server-pkt {
+    description
+      "Clear statistics, including packet and timestamp statistics.";
+    ext:node-ref "/clocksync-ptpadapt:clocksync-ptpadapt/clocksync-ptpadapt:ptpa-servers/clocksync-ptpadapt:ptpa-server";
+    input {
+      leaf server-index {
+        type server-index;
+        description
+          "Clear statistics, including packet and timestamp statistics.";
+      }
+    }
+  }
+  rpc reset-ptpa-client-pkt {
+    description
+      "Clear packet statistics.";
+    ext:node-ref "/clocksync-ptpadapt:clocksync-ptpadapt/clocksync-ptpadapt:ptpa-clients/clocksync-ptpadapt:ptpa-client";
+    input {
+      leaf client-id {
+        type uint32;
+        description
+          "Clear packet statistics.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    when "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='Ethernet' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='GigabitEthernet' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='100GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='40GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='10GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='XGigabitEthernet' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='50GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='50|100GE' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name='/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name']/ifm:type='25GE'";
+    description
+      "Adaptive clock synchronization ports.";
+    container ptpa-ports {
+      description
+        "Configure adaptive clock synchronization ports information.";
+        container ptpa-port {
+          description
+            "Configure adaptive synchronization port information.";
+          leaf ptp-atr-en {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable ATR for a port.";
+          }
+       }
+    }
+  }
+}

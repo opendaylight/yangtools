@@ -1,0 +1,166 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bgp-notification";
+  prefix bgp-notification;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of bgp-notification.";
+  revision 2019-03-22 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "bgp";
+  notification established {
+    description
+      "The BGP FSM enters the Established state.";
+    leaf peer-ipv4-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "Peer address.";
+    }
+    leaf peer-last-error {
+      type string {
+        length "0..100";
+      }
+      description
+        "Value of the Error Code field in the Notification packet generated when the peer relationship is interrupted last time. The value is expressed in the format of [ErrorCode][ErrorSubCode]. [ErrorCode] refers to the error code and [ErrorSubCode] refers to the error subcode. Take the integer 35 as an example, figure 3 is the error code and figure 5 is the error subcode. For detailed information about the error code, refer to BGP Error Code. If the value is 0, it indicates that no error occurs.";
+    }
+    leaf peer-state {
+      type uint32;
+      description
+        "Status of the BGP peer relationship.";
+    }
+    leaf instance-id {
+      type string {
+        length "1..31";
+      }
+      description
+        "Instance ID.";
+    }
+    leaf addr-family-afi {
+      type uint32;
+      description
+        "Address family.";
+    }
+    leaf addr-family-safi {
+      type uint32;
+      description
+        "Sub address family.";
+    }
+    leaf peer-addr-type {
+      type uint32;
+      description
+        "Peer address type.";
+    }
+    leaf peer-ipv4-ipv6-addr {
+      type inet:ip-address-no-zone;
+      description
+        "Peer address.";
+    }
+    leaf reason {
+      type string {
+        length "0..100";
+      }
+      description
+        "Reason why the peer relationship is interrupted. - Configuration lead peer down: The configuration causes the peer disconnection. - Receive notification: Notification packets are received. - Receive error packet: Error packets are received. - Hold timer expire: The Hold timer expires. - Remote peer not reachable: The remote peer is unreachable. - Direct connect-interface down: The directly connected interface is Down. - Route limit: The number of routes exceeds the upper limit.";
+    }
+    leaf local-if-index {
+      type uint32;
+      description
+        "Local interface index.";
+    }
+    leaf local-if-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Local interface name.";
+    }
+  }
+  notification backward {
+    description
+      "The BGP FSM moves from a higher numbered state to a lower numbered state.";
+    leaf peer-ipv4-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "Peer address.";
+    }
+    leaf peer-last-error {
+      type string {
+        length "0..100";
+      }
+      description
+        "Value of the Error Code field in the Notification packet generated when the peer relationship is interrupted last time. The value is expressed in the format of [ErrorCode][ErrorSubCode]. [ErrorCode] refers to the error code and [ErrorSubCode] refers to the error subcode. Take the integer 35 as an example, figure 3 is the error code and figure 5 is the error subcode. For detailed information about the error code, refer to BGP Error Code. If the value is 0, it indicates that no error occurs.";
+    }
+    leaf peer-state {
+      type uint32;
+      description
+        "Status of the BGP peer relationship.";
+    }
+    leaf instance-id {
+      type string {
+        length "1..31";
+      }
+      description
+        "Instance ID.";
+    }
+    leaf addr-family-afi {
+      type uint32;
+      description
+        "Address family.";
+    }
+    leaf addr-family-safi {
+      type uint32;
+      description
+        "Sub address family.";
+    }
+    leaf peer-addr-type {
+      type uint32;
+      description
+        "Peer address type.";
+    }
+    leaf peer-ipv4-ipv6-addr {
+      type inet:ip-address-no-zone;
+      description
+        "Peer address.";
+    }
+    leaf reason {
+      type string {
+        length "0..100";
+      }
+      description
+        "Reason why the peer relationship is interrupted. - Configuration lead peer down: The configuration causes the peer disconnection. - Receive notification: Notification packets are received. - Receive error packet: Error packets are received. - Hold timer expire: The Hold timer expires. - Remote peer not reachable: The remote peer is unreachable. - Direct connect-interface down: The directly connected interface is Down. - Route limit: The number of routes exceeds the upper limit.";
+    }
+    leaf local-if-index {
+      type uint32;
+      description
+        "Local interface index.";
+    }
+    leaf local-if-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Local interface name.";
+    }
+  }
+}

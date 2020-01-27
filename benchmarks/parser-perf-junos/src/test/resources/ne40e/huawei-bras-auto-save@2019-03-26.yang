@@ -1,0 +1,106 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-auto-save {
+  namespace urn:huawei:yang:huawei-bras-auto-save;
+  prefix bras-auto-save;
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras auto save.";
+  revision 2019-03-26 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+  
+  container bras-auto-save {
+    description
+      "Bras auto save.";
+    container auto-save-max-user {
+      description
+        "Configure auto save max user number.";
+      leaf number {
+        type uint32 {
+          range "4000..1024000";
+        }
+        description
+          "Specifies the maximum number of the DHCPv4 users whose information is automatically backed up.";
+      }
+    }
+    container auto-recover {
+      description
+        "Configure automatic DHCPv4 user login.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable automatic DHCPv4 user login.";
+      }
+      leaf speed {
+        type enumeration {
+          enum "slow" {
+            value 1;
+            description
+              "Indicates that the maximum rate at which DHCPv4 users automatically go online after the router recovers from a fault is 100/s.";
+          }
+          enum "normal" {
+            value 2;
+            description
+              "Indicates that the maximum rate at which DHCPv4 users automatically go online after the router recovers from a fault is 300/s.";
+          }
+          enum "fast" {
+            value 3;
+            description
+              "Indicates that the maximum rate at which DHCPv4 users automatically go online after the router recovers from a fault is 500/s.";
+          }
+        }
+        default "normal";
+        description
+          "Configures the rate at which DHCPv4 users automatically go online after the router recovers from a fault.";
+      }
+      leaf no-send-packet {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable no send packet to DHCP server.";
+      }
+    }
+  }
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "Bras domain configuration.";
+    container bras-auto-save {
+      description
+        "Configure a domain and enters the domain; alternatively, you can enter the existing domain. Exceptionally, the node in this module cannot be deleted or removed to delete its child nodes.";
+      container dhcp-auto-save {
+        description
+          "Configure automatic backup of DHCPv4 user information in a domain.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable automatic backup of DHCPv4 user information.";
+        }
+      }
+    }
+  }
+}

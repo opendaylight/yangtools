@@ -1,0 +1,70 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp-srv6 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bgp-srv6";
+  prefix bgp-srv6;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-bgp {
+    prefix bgp;
+  }
+  import huawei-srv6 {
+    prefix srv6;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "BGP SRv6 configuration.";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bgp";
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af/bgp:ipv4-unicast" {
+    description
+      "BGP SRv6 configuration.";
+    container locators {
+      when "../../../../../../ni:name!='_public_'";
+      description
+        "List of locators used by segment-routing IPv6 for BGP.";
+      list locator {
+        key "name";
+        description
+          "Configure SRv6 locator.";
+        leaf name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/srv6:srv6/srv6:locators/srv6:locator/srv6:name";
+          }
+          description
+            "Locator name.";
+        }
+        leaf auto-sid {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable SID automatic allocation ability.";
+        }
+      }
+    }
+  }
+}

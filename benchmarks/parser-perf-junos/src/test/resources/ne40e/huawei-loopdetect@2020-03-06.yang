@@ -1,0 +1,166 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-loopdetect {
+  namespace "urn:huawei:yang:huawei-loopdetect";
+  prefix loopdetect;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Loopdetect.";
+  revision 2020-03-06 {
+    description
+      "Change description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-08 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  } 
+  ext:task-name "vlan";
+  container loopdetect {
+    description
+      "Loop detection.";
+    
+    container ldetect-global {
+      presence "Enable global loop-detect.";
+      description
+        "Enable/disable global loop-detect.";
+      leaf loose-identifier {
+        type string {
+          length "1..16";
+        }
+        description
+          "Global loop-detect loose identifier.";
+      }
+    }
+    container trigger-detect {
+      description
+        "Configure trigger detect.";
+      container global {
+        description
+          "Configure global auto loop detection.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable global auto loop detection.";
+        }
+        leaf min-slot-up-time {
+          type uint32 {
+            range "1..100";
+          }
+          units min;
+          default "30";
+          description
+            "Min slot up time.";
+        }
+        leaf min-port-up-time {
+          type uint32 {
+            range "1..600";
+          }
+          units min;
+          default "10";
+          description
+            "Min port up time.";
+        }
+      }
+    }
+  } 
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Interface.";
+    container loopdetect {
+      description
+        "Configure loop detection.";
+      container mac-withdraw {
+        presence "create loopdetect-mac-withdraw";
+        description
+        "Enable/disable loop-detect MAC-withdraw.";
+      }   
+      container loopback-detect {
+        presence "create  loopback-detect";
+        description
+          "Enable/disable loopback detect.";
+        leaf block-time {
+          type uint32 {
+            range "5..1000";
+          }
+          units s;
+          default "10";
+          description
+            "Loopback detect block time.";
+        }
+      }
+      container loop-detect {
+        when "/loopdetect:loopdetect/loopdetect:ldetect-global";
+        presence "create loop-detect";
+        description
+        "Enable/disable loop detect instance.";
+        leaf block-time-type {
+          type enumeration {
+              enum "perp-block-time" {
+                value 1;
+                description
+                  "Perpetual block time.";
+              }
+              enum "norm-block-time" {
+                value 2;
+                description
+                  "Normal block time.";
+              }
+          }
+          description
+            "Loop detect block time tpye.";
+        }
+        leaf block-time-value {
+          when "../block-time-type='norm-block-time'";
+          type uint16 {
+            range "1..255";
+          }
+          units s;
+          mandatory true;
+          description
+            "Block time.";          
+        }
+        leaf trigger-down {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable loop detect triggerdown.";
+        }
+        leaf packet-priority {
+          type uint32 {
+            range "0..7";
+          }
+          default "6";
+          description
+            "Loop-detect protocol packet priority.";
+        }
+        leaf only-alarm {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable only send alarm with the interface block.";
+        }
+      }
+    } 
+  }
+}

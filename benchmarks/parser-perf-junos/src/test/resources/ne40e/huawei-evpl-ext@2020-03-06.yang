@@ -1,0 +1,222 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-evpl-ext {
+  namespace "urn:huawei:yang:huawei-evpl-ext";
+  prefix evpl-ext;
+  import huawei-evpl {
+    prefix evpl;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Evpl ext.";
+  revision 2020-03-06 {
+    description
+      "Add pipe type.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-23 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  typedef evpl-pipe-mode {
+    type enumeration {
+      enum "pipe" {
+        value 1;
+        description
+          "Evpl pipe mode.";
+      }
+      enum "shortpipe" {
+        value 2;
+        description
+          "Evpl short pipe mode.";
+      }
+      enum "uniform" {
+        value 3;
+        description
+          "Evpl uniform mode.";
+      }
+    }
+    description
+      "Evpl pipe mode.";
+  }
+  typedef evpl-service-class {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "Specify the CoS as BE.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "Specify the CoS as AF1.";
+      }
+      enum "af2" {
+        value 2;
+        description
+          "Specify the CoS as AF2.";
+      }
+      enum "af3" {
+        value 3;
+        description
+          "Specify the CoS as AF3.";
+      }
+      enum "af4" {
+        value 4;
+        description
+          "Specify the CoS as AF4.";
+      }
+      enum "ef" {
+        value 5;
+        description
+          "Specify the CoS as EF.";
+      }
+      enum "cs6" {
+        value 6;
+        description
+          "Specify the CoS as CS6.";
+      }
+      enum "cs7" {
+        value 7;
+        description
+          "Specify the CoS as CS7.";
+      }
+    }
+    description
+      "Description of CoS.";
+  }
+  typedef evpl-color {
+    type enumeration {
+      enum "green" {
+        value 0;
+        description
+          "Specify the packet color as green.";
+      }
+      enum "yellow" {
+        value 1;
+        description
+          "Specify the packet color as yellow.";
+      }
+      enum "red" {
+        value 2;
+        description
+          "Specify the packet color as red.";
+      }
+    }
+    description
+      "Description of packet color.";
+  }
+  typedef evpl-trust-type {
+    type enumeration {
+      enum "outpri" {
+        value 0;
+        description
+          "Specify the trust type as OUTTER-VLAN-8021P.";
+      }
+      enum "inpri" {
+        value 1;
+        description
+          "Specify the trust type as INNER-VLAN-8021P.";
+      }
+      enum "ipdscp" {
+        value 2;
+        description
+          "Specify the trust type as IP-DSCP.";
+      }
+    }
+    description
+      "Description of trust type.";
+  }
+  ext:task-name "forwarding";
+  augment "/evpl:evpl/evpl:instances/evpl:instance" {
+    description "Evpl configuration.";
+    container pipe {
+      when "(../evpl:mode != 'vxlan-mode')";
+      description
+        "Configure the diffserv mode of evpl.";
+      leaf split-mode {
+        type boolean;
+        must "((../split-mode='false' and not(../ingress-pipe-mode) and not(../egress-pipe-mode) and ../pipe-mode) or (../split-mode='true' and not(../pipe-mode) and ../ingress-pipe-mode and ../egress-pipe-mode and not(../ingress-pipe-mode='uniform' and ../egress-pipe-mode='uniform')))";
+        default "false";
+        description
+          "Enable/disable split mode.";
+      }
+      leaf pipe-mode {
+        when "../split-mode='false'";
+        type evpl-pipe-mode;
+        must "(../split-mode='false') and ((../pipe-mode='pipe' and (../service-class) and (../color)) or (../pipe-mode='shortpipe' and (../service-class) and (../color) and (../domain-name)) or (../pipe-mode='uniform'))";
+        default "uniform";
+        description
+          "Pipe mode.";
+      }
+      leaf ingress-pipe-mode {
+        when "../split-mode='true'";
+        type evpl-pipe-mode;
+        must "((../split-mode='true') and (((../service-class) and (../color) and (../ingress-pipe-mode='shortpipe' or ../ingress-pipe-mode='pipe')) or (../ingress-pipe-mode='uniform' and ../egress-pipe-mode!='uniform')))";
+        default "uniform";
+        description
+          "Ingress pipe mode.";
+      }
+      leaf egress-pipe-mode {
+        when "../split-mode='true'";
+        type evpl-pipe-mode;
+        must "((../split-mode='true') and (((../domain-name) and (../trust-type) and (../egress-pipe-mode='shortpipe')) or (../egress-pipe-mode='pipe') or (../egress-pipe-mode='uniform' and ../ingress-pipe-mode!='uniform')))";
+        default "uniform";
+        description
+          "Egress pipe mode.";
+      }
+      leaf service-class {
+        when "(../pipe-mode='pipe' or ../pipe-mode='shortpipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortpipe')";
+        type evpl-service-class;
+        must "(../pipe-mode='pipe' or ../pipe-mode='shortpipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortpipe')";
+        default "be";
+        description
+          "Service class.";
+      }
+      leaf color {
+        when "(../pipe-mode='pipe' or ../pipe-mode='shortpipe'  or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortpipe')";
+        type evpl-color;
+        must "(../pipe-mode='pipe' or ../pipe-mode='shortpipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortpipe')";
+        default "green";
+        description
+          "Color.";
+      }
+      leaf domain-name  {
+        when "(../pipe-mode='shortpipe'  or ../egress-pipe-mode='shortpipe')";
+        type leafref {
+          path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+        }
+        must "(../pipe-mode='shortpipe' or ../egress-pipe-mode='shortpipe')";
+        default "default";
+        description
+          "Domain name.";
+      }
+      leaf trust-type {
+        when "../egress-pipe-mode='shortpipe'";
+        type evpl-trust-type;
+        must "../egress-pipe-mode='shortpipe'";
+        default "outpri";
+        description
+          "Trust type.";
+      }
+    }
+  }
+}

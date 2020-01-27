@@ -1,0 +1,345 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-twamp-controller {
+  namespace "urn:huawei:yang:huawei-twamp-controller";
+  prefix twamp-controller;
+
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "TWAMP Controller.";
+
+  revision 2019-12-27 {
+    description
+      "Solve some errors.";
+    reference
+      "Huawei private.";
+  }
+
+  revision 2019-05-05 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+
+  ext:task-name  "twampclient";
+
+  typedef period-type {
+    type enumeration {
+      enum "10ms" {
+        value 1;
+        description
+          "The period of sending packets is 10ms.";
+      }
+      enum "100ms" {
+        value 2;
+        description
+          "The period of sending packets is 100ms.";
+      }
+      enum "1000ms" {
+        value 3;
+        description
+          "The period of sending packets is 1000ms.";
+      }
+      enum "30000ms" {
+        value 4;
+        description
+          "The period of sending packets is 30000ms.";
+      }
+    }
+    description
+      "The period of sending packets.";
+  }
+
+  typedef padding-info {
+    type enumeration {
+      enum "00" {
+        value 0;
+        description
+          "Padding information is 00.";
+      }
+      enum "aa" {
+        value 170;
+        description
+          "Padding information is aa.";
+      }
+      enum "55" {
+        value 85;
+        description
+          "Padding information is 55.";
+      }
+      enum "ff" {
+        value 255;
+        description
+          "Padding information is ff.";
+      }
+    }
+    description
+      "Padding information.";
+  }
+  container twamp-controller {
+    description
+      "TWAMP Controller.";
+    container client {
+      presence "Enable client of TWAMP.";
+      description
+        "Configure the client of TWAMP light.";
+      container sessions {
+        description
+          "List of configuration session.";
+        list session {
+          key "id";
+          unique "send-ip-addr ref-ip-addr send-port ref-port vrf-name";
+          description
+            "Configure the object of session.";
+          leaf id {
+            type uint32 {
+              range "1..65535";
+            }
+            description
+              "The session ID of configuration session.";
+          }
+          leaf send-ip-addr {
+            type inet:ip-address-no-zone;
+            must "((../send-ip-addr) != (../ref-ip-addr))";
+            mandatory true;
+            description
+              "The sender IP address of configuration session.";
+          }
+          leaf ref-ip-addr {
+            type inet:ip-address-no-zone;
+            must "((../send-ip-addr) != (../ref-ip-addr))";
+            mandatory true;
+            description
+              "The reflector IP address of configuration session.";
+          }
+          leaf send-port {
+            type uint16 {
+              range "862..863|1025..65535";
+            }
+            mandatory true;
+            description
+              "The sender port of configuration session.";
+          }
+          leaf ref-port {
+            type uint16 {
+              range "862..863|1025..65535";
+            }
+            mandatory true;
+            description
+              "The reflector port of configuration session.";
+          }
+          leaf vrf-name {
+            type leafref {
+              path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+            }
+            must "(contains(../send-ip-addr,':') and /ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']) or (not(contains(../send-ip-addr,':'))and /ni:network-instance/ni:instances/ni:instance[ni:name = current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast'])";
+            description
+              "The VRF name of configuration session.";
+          }
+          leaf dscp-value {
+            type uint32 {
+              range "0..63";
+            }
+            default "0";
+            description
+              "The DSCP value of configuration session.";
+          }
+          leaf padding-length {
+            type uint32 {
+              range "32..1454";
+            }
+            default "128";
+            description
+              "The padding length of configuration session. The value range is 32-1454 and 32-1434 in V4 and V6, respectively.";
+          }
+          leaf padding-type {
+            type padding-info;
+            default "00";
+            description
+              "Padding type.";
+          }
+          leaf description {
+            type string {
+              length "3..32";
+            }
+            description
+              "Session description.";
+          }
+          container twoway-loss-threshold {
+            description
+              "Configure the twoway loss threshold of session.";
+            leaf up-limit {
+              type string {
+                length "1..7";
+                pattern '[0-1]{0,1}[0-9]{0,1}[0-9]{0,1}(\.[0-9]{1,4})?';
+              }
+              units "%";
+              default "0.1";
+              description
+                "Twoway loss threshold upper limit.";
+            }
+            leaf low-limit {
+              type string {
+                length "1..7";
+                pattern '[0-1]{0,1}[0-9]{0,1}[0-9]{0,1}(\.[0-9]{1,4})?';
+              }
+              units "%";
+              default "0.05";
+              description
+                "Twoway loss threshold lower limit.";
+            }
+          }
+          container twoway-delay-threshold {
+            description
+              "Configure the twoway delay threshold of session.";
+            leaf up-limit {
+              type uint32 {
+                range "2..1000";
+              }
+              units "ms";
+              must "../low-limit < ../up-limit";
+              default "100";
+              description
+                "Twoway delay threshold upper limit.";
+            }
+            leaf low-limit {
+              type uint32 {
+                range "1..999";
+              }
+              units "ms";
+              must "../low-limit < ../up-limit";
+              default "80";
+              description
+                "Twoway delay threshold lower limit.";
+            }
+          }
+          container twoway-jitter-threshold {
+            description
+              "Configure the twoway jitter threshold of session.";
+            leaf up-limit {
+              type uint32 {
+                range "2..1000";
+              }
+              units "ms";
+              must "../low-limit < ../up-limit";
+              default "10";
+              description
+                "Twoway jitter threshold upper limit.";
+            }
+            leaf low-limit {
+              type uint32 {
+                range "1..999";
+              }
+              units "ms";
+              must "../low-limit < ../up-limit";
+              default "8";
+              description
+                "Twoway jitter threshold lower limit.";
+            }
+          }
+        }
+      }
+    }
+    container sender {
+      presence "Enable sender of TWAMP";
+      description
+        "Configure the sender of TWAMP light.";
+      container sessions {
+        description
+          "List of sender session.";
+        list session {
+          key "id";
+          description
+            "Configure the object of sender session.";
+          leaf id {
+            type leafref {
+              path "/twamp-controller:twamp-controller/twamp-controller:client/twamp-controller:sessions/twamp-controller:session/twamp-controller:id";
+            }
+            description
+              "Configure the session ID of sender session.";
+          }
+          leaf period {
+            type period-type;
+            units "ms";
+            default "100ms";
+            description
+              "The period of sender session.";
+          }
+          leaf timeout {
+            type uint16 {
+              range "1..10";
+            }
+            units "s";
+            default "5";
+            description
+              "The timeout of sender session.";
+          }
+        }
+      }
+      container regular-sessions {
+        description
+          "List of sender regular session.";
+        list regular-session {
+          key "id";
+          description
+            "Configure the object of sender regular session.";
+          leaf id {
+            type leafref {
+              path "/twamp-controller:twamp-controller/twamp-controller:client/twamp-controller:sessions/twamp-controller:session/twamp-controller:id";
+            }
+            description
+              "The session ID of regular sender session.";
+          }
+          leaf regular-time {
+            type uint16 {
+              range "10..60";
+            }
+            units "s";
+            default "30";
+            description
+              "The regular time of sender regular session.";
+          }
+          leaf packet-count {
+            type uint32 {
+              range "10..1000";
+            }
+            default "100";
+            description
+              "The packet count of sender regular session.";
+          }
+          leaf timeout {
+            type uint8 {
+              range "1..10";
+            }
+            units "s";
+            default "5";
+            description
+              "The timeout of sender regular session.";
+          }
+        }
+      }
+    }
+  }
+}

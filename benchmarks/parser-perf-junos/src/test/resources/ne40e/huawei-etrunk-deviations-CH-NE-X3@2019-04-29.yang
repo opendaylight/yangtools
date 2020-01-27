@@ -1,0 +1,33 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-etrunk-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-etrunk-deviations-CH-NE-X3";
+  prefix etrunk-devs-CH-NE-X3;
+  import huawei-etrunk {
+    prefix etrunk;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Enhanced Trunk (E-Trunk) is a mechanism that controls and implements link aggregation among multiple devices. E-Trunk implements device-level not board-level link reliability.";
+  revision 2019-04-29 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  deviation "/etrunk:etrunk/etrunk:instances/etrunk:instance/etrunk:security-key" {
+    deviate add {
+      default "00E0FC0000000000";
+    }
+  }
+}

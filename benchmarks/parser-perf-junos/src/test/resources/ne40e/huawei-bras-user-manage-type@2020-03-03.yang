@@ -1,0 +1,1673 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-bras-user-manage-type {
+  belongs-to huawei-bras-user-manage {
+    prefix bras-user-manage;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras user manage.";
+  revision 2020-03-03 {
+    description
+      "Modify Description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-04 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  typedef bras-user-manage-service-identify-type {
+    type enumeration {
+      enum "inner-vlan" {
+        value 1;
+        description
+          "Indicates that services are identified based on the inner VLAN ID.";
+      }
+      enum "outer-vlan" {
+        value 2;
+        description
+          "Indicates that services are identified based on the outer VLAN ID.";
+      }
+      enum "dscp" {
+        value 3;
+        description
+          "Indicates that services are identified based on the DSCP value.";
+      }
+      enum "dhcp-option60" {
+        value 4;
+        description
+          "Indicates that services are identified based on the VENDOR-CLASS (DHCPv4 OPTION60/DHCPv6 OPTION16).";
+      }
+      enum "vendor-class" {
+        value 5;
+        description
+          "Indicates that services are identified based on the VENDOR-CLASS (DHCPv4 OPTION60/DHCPv6 OPTION16).";
+      }
+      enum "service8021p-innervlan" {
+        value 6;
+        description
+          "Indicates that services are identified based on the 802.1p field in the inner VLAN tag.";
+      }
+      enum "service8021p-outervlan" {
+        value 7;
+        description
+          "Indicates that services are identified based on the 802.1p field in the outer VLAN tag.";
+      }
+    }
+    description
+      "Configures the service identification mode.";
+  }
+  typedef bras-user-manage-all-user-type {
+    type enumeration {
+      enum "telnet" {
+        value 2;
+        description
+          "Allow an user to log in to a device using Telnet.";
+      }
+      enum "terminal" {
+        value 1;
+        description
+          "Allow an user to log in to a device through a serial port.";
+      }
+      enum "ssh" {
+        value 5;
+        description
+          "Allow an user to log in to a device using SSH.";
+      }
+      enum "ftp" {
+        value 3;
+        description
+          "Allow an user to log in to a device using FTP.";
+      }
+      enum "ppp" {
+        value 4;
+        description
+          "Allow an user to log in to a device using Telnet.";
+      }
+      enum "vlan-eap" {
+        value 10;
+        description
+          "Allow an user to log in to a device using VLAN-EAP.";
+      }
+      enum "SNMP" {
+        value 7;
+        description
+          "Allow an user to log in to a device using SNMP.";
+      }
+      enum "HTTP" {
+        value 8;
+        description
+          "Allow an user to log in to a device using HTTP.";
+      }
+      enum "qx" {
+        value 6;
+        description
+          "Allow an user to log in to a device using QX.";
+      }
+      enum "mml" {
+        value 9;
+        description
+          "Allow an user to log in to a device using MML.";
+      }
+      enum "bind" {
+        value 11;
+        description
+          "Allow an user to log in to a device using bind.";
+      }
+      enum "none" {
+        value 0;
+        description
+          "Allow an user to log in to a device using none.";
+      }
+    }
+    description
+      "Type of user to log in to a device.";
+  }
+  typedef bras-user-manage-user-access-type {
+    type enumeration {
+      enum "telnet" {
+        value 1;
+        description
+          "Telnet users.";
+      }
+      enum "terminal" {
+        value 2;
+        description
+          "Terminal users.";
+      }
+      enum "SSH" {
+        value 3;
+        description
+          "SSH users.";
+      }
+      enum "ftp" {
+        value 4;
+        description
+          "FTP users.";
+      }
+      enum "x25-pad" {
+        value 5;
+        description
+          "X25-pad users.";
+      }
+      enum "PPP" {
+        value 6;
+        description
+          "PPP users.";
+      }
+      enum "PPPoE" {
+        value 7;
+        description
+          "PPPoE users.";
+      }
+      enum "PPPoA" {
+        value 8;
+        description
+          "PPPoA users.";
+      }
+      enum "PPPoLNS" {
+        value 9;
+        description
+          "PPPoLNS users.";
+      }
+      enum "IPoE" {
+        value 10;
+        description
+          "IPoE users.";
+      }
+      enum "VLAN-EAP" {
+        value 11;
+        description
+          "VLAN-EAP users.";
+      }
+      enum "VLAN-IP" {
+        value 12;
+        description
+          "VLAN-IP users.";
+      }
+      enum "Vlan-Static" {
+        value 13;
+        description
+          "VLAN-Static users.";
+      }
+      enum "QX" {
+        value 14;
+        description
+          "QX users.";
+      }
+      enum "MML" {
+        value 15;
+        description
+          "MML users.";
+      }
+      enum "session-group" {
+        value 16;
+        description
+          "Session-Group users.";
+      }
+      enum "lease-l2" {
+        value 17;
+        description
+          "Layer 2 leased line users.";
+      }
+      enum "l2vpn-lease-line" {
+        value 18;
+        description
+          "L2vpn lease line users.";
+      }
+      enum "lease-l3" {
+        value 19;
+        description
+          "Layer 3 leased line users.";
+      }
+      enum "lease-l2-user" {
+        value 20;
+        description
+          "Layer 2 leased line users' sub-users.";
+      }
+      enum "lac-tunnel" {
+        value 21;
+        description
+          "L2TP tunnel's LAC users.";
+      }
+      enum "lns-tunnel" {
+        value 22;
+        description
+          "L2TP tunnel's LNS users.";
+      }
+      enum "SNMP" {
+        value 23;
+        description
+          "SNMP users.";
+      }
+      enum "HTTP" {
+        value 24;
+        description
+          "HTTP users.";
+      }
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+    }
+    description
+      "User Access Type.";
+  }
+  typedef bras-user-manage-stack-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "ipv4" {
+        value 1;
+        description
+          "IPv4.";
+      }
+      enum "ipv6NA" {
+        value 2;
+        description
+          "IPv6 (NA).";
+      }
+      enum "ipv6NAPD" {
+        value 3;
+        description
+          "IPv6 (NA+PD).";
+      }
+      enum "ipv6ND" {
+        value 4;
+        description
+          "IPv6 (ND).";
+      }
+      enum "ipv6NDPD" {
+        value 5;
+        description
+          "IPv6 (ND+PD).";
+      }
+      enum "ipv6PD" {
+        value 6;
+        description
+          "IPv6 (PD).";
+      }
+    }
+    description
+      "Stack Type.";
+  }
+  typedef bras-user-manage-authen-state {
+    type enumeration {
+      enum "auth-idle" {
+        value 0;
+        description
+          "The user is not authenticated.";
+      }
+      enum "auth-wait" {
+        value 1;
+        description
+          "Wait authen ACK of a user.";
+      }
+      enum "authenticated" {
+        value 2;
+        description
+          "Success of a user.";
+      }
+      enum "unknown" {
+        value 255;
+        description
+          "Unknown.";
+      }
+      enum "failed" {
+        value 3;
+        description
+          "The administrator fails to be authenticated.";
+      }
+    }
+    description
+      "The user authentication state.";
+  }
+  typedef bras-user-manage-account-state {
+    type enumeration {
+      enum "account-idle" {
+        value 3;
+        description
+          "State Idle accounting state of a user.";
+      }
+      enum "account-ready" {
+        value 4;
+        description
+          "Ready accounting state of a user.";
+      }
+      enum "account-start-wait" {
+        value 5;
+        description
+          "State in which a user is waiting for the system to start accounting.";
+      }
+      enum "accounting" {
+        value 6;
+        description
+          "State in which accounting is being performed for a user.";
+      }
+      enum "account-leaving-flow-query" {
+        value 7;
+        description
+          "State in which an online user's offline traffic is being queried during the logout process.";
+      }
+      enum "account-stop-wait" {
+        value 8;
+        description
+          "State in which an online user is waiting for the system to stop accounting.";
+      }
+      enum "unknown" {
+        value 255;
+        description
+          "Unknown.";
+      }
+      enum "start-accounting-failed" {
+        value 13;
+        description
+          "Accounting fails to be started for the administrator.";
+      }
+      enum "stop-accounting-idle" {
+        value 14;
+        description
+          "The administrator is in the idle state.";
+      }
+      enum "accounting-finished" {
+        value 16;
+        description
+          "Accounting is complete for the administrator.";
+      }
+      enum "stop-accounting-failed" {
+        value 17;
+        description
+          "Accounting fails to be stopped for the administrator.";
+      }
+    }
+    description
+      "The user accounting state.";
+  }
+  typedef bras-user-manage-author-state {
+    type enumeration {
+      enum "author-idle" {
+        value 9;
+        description
+          "The user is not authorized.";
+      }
+      enum "author-user-ack-wait" {
+        value 10;
+        description
+          "Wait author ACK of a user.";
+      }
+      enum "author-server-ack-wait" {
+        value 11;
+        description
+          "Wait author ACK of a user.";
+      }
+      enum "unknown" {
+        value 255;
+        description
+          "Unknown.";
+      }
+      enum "success" {
+        value 2;
+        description
+          "The administrator is successfully authenticated.";
+      }
+      enum "failed" {
+        value 3;
+        description
+          "The administrator fails to be authenticated.";
+      }
+    }
+    description
+      "The user authorizatoin state.";
+  }
+  typedef bras-user-manage-server-type {
+    type enumeration {
+      enum "NA" {
+        value 0;
+        description
+          "NA.";
+      }
+      enum "radius" {
+        value 1;
+        description
+          "RADIUS server.";
+      }
+      enum "dhcp" {
+        value 2;
+        description
+          "DHCP server.";
+      }
+    }
+    description
+      "Server group type.";
+  }
+  typedef bras-user-manage-user-online-type {
+    type enumeration {
+      enum "ipv4" {
+        value 0;
+        description
+          "Number of online IPv4 users.";
+      }
+      enum "ipv6" {
+        value 1;
+        description
+          "Number of online IPv6 users.";
+      }
+      enum "dual" {
+        value 2;
+        description
+          "Number of dual-stack online users.";
+      }
+      enum "all" {
+        value 3;
+        description
+          "Number of all online users.";
+      }
+    }
+    description
+      "Number of online IPv4, IPv6 or dual-stack online users.";
+  }
+  typedef bras-user-manage-access-type {
+    type enumeration {
+      enum "ppp" {
+        value 0;
+        description
+          "Number of online users that get online based on PPP.";
+      }
+      enum "l2tp" {
+        value 1;
+        description
+          "Number of online users that get online based on L2TP.";
+      }
+      enum "ip" {
+        value 2;
+        description
+          "Number of online users that get online based on IPoE.";
+      }
+      enum "none" {
+        value 3;
+        description
+          "None.";
+      }
+    }
+    description
+      "Number of online users of a specified access type.";
+  }
+  typedef bras-user-manage-ipv6-address-protocol {
+    type enumeration {
+      enum "nd" {
+        value 0;
+        description
+          "Number of online users who obtain IPv6 addresses using an ND protocol.";
+      }
+      enum "dhcpv6" {
+        value 1;
+        description
+          "Number of online users who obtain IPv6 addresses using an DHCPv6 protocol.";
+      }
+      enum "none" {
+        value 2;
+        description
+          "None.";
+      }
+    }
+    description
+      "Number of online users who obtain IPv6 addresses using a specified protocol.";
+  }
+  typedef bras-user-manage-ipv6-cpe-mode {
+    type enumeration {
+      enum "ipv6" {
+        value 0;
+        description
+          "The number of online users when the CPE works in briding mode.";
+      }
+      enum "ipv6-pd" {
+        value 1;
+        description
+          "The number of online users when the CPE works in unnumbered routing mode.";
+      }
+      enum "both" {
+        value 2;
+        description
+          "The number of online users when the CPE works in numbered routing mode.";
+      }
+      enum "none" {
+        value 3;
+        description
+          "None.";
+      }
+    }
+    description
+      "Number of online users of a specified CPE mode.";
+  }
+  typedef bras-user-manage-online-type {
+    type enumeration {
+      enum "offline" {
+        value 0;
+        description
+          "Forces the users failing authentication to go offline.";
+      }
+      enum "online" {
+        value 1;
+        description
+          "Allows users failing authentication to remain online.";
+      }
+    }
+    description
+      "User online type after user authentication fails.";
+  }
+  typedef bras-user-manage-authen-method {
+    type enumeration {
+      enum "local" {
+        value 1;
+        description
+          "Authenticates users locally.";
+      }
+      enum "noauth" {
+        value 2;
+        description
+          "Allows users' access without authentication.";
+      }
+      enum "radius" {
+        value 3;
+        description
+          "Authenticates users through a RADIUS server.";
+      }
+      enum "local-radius" {
+        value 4;
+        description
+          "First Authenticates through a RADIUS server and then locally.";
+      }
+      enum "radius-local" {
+        value 5;
+        description
+          "First Authenticates locally and then through a RADIUS server.";
+      }
+      enum "radius-noauth" {
+        value 6;
+        description
+          "First Authenticates through a RADIUS server and then without authentication.";
+      }
+      enum "tacacs" {
+        value 7;
+        description
+          "Authenticates users through an TACACS server.";
+      }
+      enum "local-tacacs" {
+        value 8;
+        description
+          "First Authenticates locally and then through an TACACS server.";
+      }
+      enum "tacacs-local" {
+        value 9;
+        description
+          "First Authenticates through an TACACS server and then locally.";
+      }
+      enum "tacacs-none" {
+        value 10;
+        description
+          "First Authenticates through an TACACS server and then without authentication.";
+      }
+    }
+    description
+      "Authentication method.";
+  }
+  typedef bras-user-manage-account-method {
+    type enumeration {
+      enum "local" {
+        value 1;
+        description
+          "Indicates that accounting locally.";
+      }
+      enum "radius" {
+        value 2;
+        description
+          "Indicates Remote Authentication Dial in User Service (RADIUS) accounting.";
+      }
+      enum "noacct" {
+        value 3;
+        description
+          "Indicates that accounting is not performed.";
+      }
+      enum "localradiusboth" {
+        value 4;
+        description
+          "Indicates Remote Authentication Dial both in User Service (RADIUS) accounting and locally.";
+      }
+      enum "hwtacacs" {
+        value 5;
+        description
+          "Indicates Huawei Terminal Access Controller Access Control System (HWTACACS) accounting.";
+      }
+      enum "localhwtacacsboth" {
+        value 6;
+        description
+          "Indicates Huawei Terminal Access Controller Access Control System (HWTACACS) accounting and locally.";
+      }
+      enum "cops" {
+        value 7;
+        description
+          "Indicates that accounting through a cops server.";
+      }
+      enum "diameter" {
+        value 8;
+        description
+          "Indicates that accounting through a diameter server.";
+      }
+      enum "invalid" {
+        value 255;
+        description
+          "Invalid accounting method.";
+      }
+    }
+    description
+      "Account method.";
+  }
+  typedef bras-user-manage-ipv6-addr-method {
+    type enumeration {
+      enum "ndra" {
+        value 1;
+        description
+          "Indicates that NDRA is used to perform other configurations.";
+      }
+      enum "dhcpv6" {
+        value 2;
+        description
+          "Indicates that DHCPv6 is used to perform other configurations.";
+      }
+      enum "invalid" {
+        value 255;
+        description
+          "Invalid method.";
+      }
+    }
+    description
+      "The address configuration method for PPP and L2TP user.";
+  }
+  typedef bras-user-manage-ipv6-config-method {
+    type enumeration {
+      enum "ndra" {
+        value 1;
+        description
+          "Indicates that NDRA is used to perform other configurations.";
+      }
+      enum "dhcpv6" {
+        value 2;
+        description
+          "Indicates that DHCPv6 is used to perform other configurations.";
+      }
+      enum "invalid" {
+        value 255;
+        description
+          "Invalid method.";
+      }
+    }
+    description
+      "The method PPP and L2TP user get configuration parameters.";
+  }
+  typedef bras-user-manage-access-action-flag {
+    type enumeration {
+      enum "idle" {
+        value 0;
+        description
+          "Idle.";
+      }
+      enum "newuserauth" {
+        value 1;
+        description
+          "New_user authen.";
+      }
+      enum "reauth" {
+        value 2;
+        description
+          "User reauthen.";
+      }
+      enum "logout" {
+        value 3;
+        description
+          "Logout.";
+      }
+      enum "leaving" {
+        value 4;
+        description
+          "Leaving.";
+      }
+      enum "authmodify" {
+        value 5;
+        description
+          "Author modify.";
+      }
+      enum "connectup" {
+        value 6;
+        description
+          "User up.";
+      }
+    }
+    description
+      "Action flag.";
+  }
+  typedef bras-user-manage-user-acct-state {
+    type enumeration {
+      enum "acct-idle" {
+        value 3;
+        description
+          "Idle.";
+      }
+      enum "acct-ready" {
+        value 4;
+        description
+          "Ready.";
+      }
+      enum "acct-start-wait" {
+        value 5;
+        description
+          "Wait acct start.";
+      }
+      enum "acct-accting" {
+        value 6;
+        description
+          "Accounting.";
+      }
+      enum "acct-leaving-flow-query" {
+        value 7;
+        description
+          "Leaving flow query.";
+      }
+      enum "acct-stop-wait" {
+        value 8;
+        description
+          "Wait acct stop.";
+      }
+      enum "acct-send-force-stop-wait" {
+        value 12;
+        description
+          "Wait force sent acct stop.";
+      }
+      enum "unknown" {
+        value 255;
+        description
+          "Unknown.";
+      }
+    }
+    description
+      "The user accounting state.";
+  }
+  typedef bras-user-manage-user-author-state {
+    type enumeration {
+      enum "author-idle" {
+        value 9;
+        description
+          "Idle.";
+      }
+      enum "author-user-ack-wait" {
+        value 10;
+        description
+          "Wait client-authorack.";
+      }
+      enum "author-server-ack-wait" {
+        value 11;
+        description
+          "Wait server-authorack.";
+      }
+      enum "unknown" {
+        value 255;
+        description
+          "Unknown.";
+      }
+    }
+    description
+      "The user authorizatoin state.";
+  }
+  typedef bras-user-manage-user-authenstate {
+    type enumeration {
+      enum "auth-idle" {
+        value 0;
+        description
+          "Idle.";
+      }
+      enum "authed" {
+        value 1;
+        description
+          "Authed.";
+      }
+      enum "auth-wait" {
+        value 2;
+        description
+          "Wait authorizatoin.";
+      }
+      enum "unknown" {
+        value 255;
+        description
+          "Unknown.";
+      }
+    }
+    description
+      "The user authentication state.";
+  }
+  typedef bras-user-manage-port-type {
+    type enumeration {
+      enum "all" {
+        value 1;
+        description
+          "All.";
+      }
+      enum "ppp" {
+        value 2;
+        description
+          "PPP.";
+      }
+      enum "vlan" {
+        value 3;
+        description
+          "VLAN.";
+      }
+      enum "vlanweb" {
+        value 4;
+        description
+          "WEB of VLAN.";
+      }
+      enum "vlanportal" {
+        value 5;
+        description
+          "Portal of VLAN.";
+      }
+      enum "vlan8021x" {
+        value 6;
+        description
+          "802.1X.";
+      }
+      enum "telnet" {
+        value 7;
+        description
+          "Telnet.";
+      }
+      enum "ftp" {
+        value 8;
+        description
+          "FTP.";
+      }
+      enum "ssh" {
+        value 9;
+        description
+          "SSH.";
+      }
+      enum "igmp" {
+        value 10;
+        description
+          "IGMP.";
+      }
+    }
+    description
+      "Access port type.";
+  }
+  typedef bras-user-manage-truth-value {
+    type enumeration {
+      enum "true" {
+        value 1;
+        description
+          "Flag of true.";
+      }
+      enum "false" {
+        value 2;
+        description
+          "Flag of false.";
+      }
+    }
+    description
+      "The flag of true or false.";
+  }
+  typedef bras-user-manage-direction-type {
+    type enumeration {
+      enum "both" {
+        value 1;
+        description
+          "Both direction.";
+      }
+      enum "inbound" {
+        value 2;
+        description
+          "Inbound direction.";
+      }
+      enum "outbound" {
+        value 3;
+        description
+          "Outbound direction.";
+      }
+      enum "none" {
+        value 4;
+        description
+          "None direction.";
+      }
+    }
+    description
+      "Rate limit direction type.";
+  }
+  typedef bras-user-manage-used-type {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Invalid used type.";
+      }
+      enum "active" {
+        value 1;
+        description
+          "Active.";
+      }
+      enum "standby" {
+        value 2;
+        description
+          "Standby.";
+      }
+    }
+    description
+      "Used type.";
+  }
+  typedef bras-user-manage-backup-state {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "local" {
+        value 1;
+        description
+          "RUI local users.";
+      }
+      enum "remote" {
+        value 2;
+        description
+          "RUI remote users.";
+      }
+    }
+    description
+      "User backup state.";
+  }
+  typedef bras-user-manage-rbp-state {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "master" {
+        value 1;
+        description
+          "User backup interface (master).";
+      }
+      enum "slave" {
+        value 2;
+        description
+          "User backup interface (slave).";
+      }
+    }
+    description
+      "RUI backup state.";
+  }
+  typedef bras-user-manage-common-enable-type {
+    type enumeration {
+      enum "no" {
+        value 0;
+        description
+          "Common enable type of no.";
+      }
+      enum "yes" {
+        value 1;
+        description
+          "Common enable type of yes.";
+      }
+    }
+    description
+      "Common enable type.";
+  }
+  typedef bras-user-manage-line-id-type {
+    type enumeration {
+      enum "session-group" {
+        value 1;
+        description
+          "Session group.";
+      }
+      enum "pppoe-plus" {
+        value 2;
+        description
+          "PPPOE+.";
+      }
+      enum "dhcpv6" {
+        value 3;
+        description
+          "DHCPv6.";
+      }
+      enum "dhcpv4-option82" {
+        value 4;
+        description
+          "DHCPv4 option82.";
+      }
+    }
+    description
+      "Line id type.";
+  }
+  typedef bras-user-manage-v6ad-assign-mode-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "option18" {
+        value 1;
+        description
+          "Option18.";
+      }
+      enum "option37" {
+        value 2;
+        description
+          "Option37.";
+      }
+      enum "option18-and-option37" {
+        value 3;
+        description
+          "Both Option18 and Option37.";
+      }
+    }
+    description
+      "DHCPv6 assign mode type.";
+  }
+  typedef bras-user-manage-result-type {
+    type enumeration {
+      enum "failure" {
+        value 0;
+        description
+          "Failure.";
+      }
+      enum "success" {
+        value 1;
+        description
+          "Success.";
+      }
+    }
+    description
+      "Result type.";
+  }
+  typedef bras-user-manage-author-method {
+    type enumeration {
+      enum "idle" {
+        value 0;
+        description
+          "Idle.";
+      }
+      enum "no-authorization" {
+        value 1;
+        description
+          "No authorization.";
+      }
+      enum "local-authorization" {
+        value 2;
+        description
+          "Local authentication.";
+      }
+      enum "if-authenticated-authorization" {
+        value 3;
+        description
+          "If-authenticated authorization.";
+      }
+      enum "soap-authorization" {
+        value 4;
+        description
+          "SOAP authentication.";
+      }
+    }
+    description
+      "Author method.";
+  }
+  typedef bras-user-manage-author-result-type {
+    type enumeration {
+      enum "failure" {
+        value 0;
+        description
+          "Failure.";
+      }
+      enum "success" {
+        value 1;
+        description
+          "Success.";
+      }
+      enum "idle" {
+        value 2;
+        description
+          "Idle.";
+      }
+    }
+    description
+      "Author result type.";
+  }
+  typedef bras-user-manage-quota-action-type {
+    type enumeration {
+      enum "offline" {
+        value 0;
+        description
+          "Forces the users to go offline.";
+      }
+      enum "online" {
+        value 1;
+        description
+          "Forces the users to go online.";
+      }
+      enum "send-realtime-accounting" {
+        value 2;
+        description
+          "Indicates that a user sends real-time accounting packets after the quota of the user is used up.";
+      }
+    }
+    description
+      "Quota action type.";
+  }
+  typedef bras-user-manage-byte-type {
+    type enumeration {
+      enum "kbyte-min" {
+        value 0;
+        description
+          "Kbyte/min.";
+      }
+      enum "byte-min" {
+        value 1;
+        description
+          "Byte/min.";
+      }
+      enum "kbyte-s" {
+        value 2;
+        description
+          "Kbyte/s.";
+      }
+    }
+    description
+      "Byte type.";
+  }
+  typedef bras-user-manage-l2tp-peer-type {
+    type enumeration {
+      enum "l2tp-peer-lac" {
+        value 0;
+        description
+          "L2TP peer lac.";
+      }
+      enum "l2tp-peer-lns" {
+        value 1;
+        description
+          "L2TP peer lns.";
+      }
+      enum "l2tp-peer-lts" {
+        value 2;
+        description
+          "L2TP peer lts.";
+      }
+    }
+    description
+      "L2tp peer type.";
+  }
+  typedef bras-user-manage-priority-type {
+    type enumeration {
+      enum "0" {
+        value 0;
+        description
+          "Specifies the priority 0 of user traffic.";
+      }
+      enum "1" {
+        value 1;
+        description
+          "Specifies the priority 1 of user traffic.";
+      }
+      enum "2" {
+        value 2;
+        description
+          "Specifies the priority 2 of user traffic.";
+      }
+      enum "3" {
+        value 3;
+        description
+          "Specifies the priority 3 of user traffic.";
+      }
+      enum "4" {
+        value 4;
+        description
+          "Specifies the priority 4 of user traffic.";
+      }
+      enum "5" {
+        value 5;
+        description
+          "Specifies the priority 5 of user traffic.";
+      }
+      enum "6" {
+        value 6;
+        description
+          "Specifies the priority 6 of user traffic.";
+      }
+      enum "7" {
+        value 7;
+        description
+          "Specifies the priority 7 of user traffic.";
+      }
+      enum "trust-dscp-outer" {
+        value 8;
+        description
+          "Indicates that the user priority is the DSCP value of the outer tags carried in IP packets.";
+      }
+      enum "trust-8021p-inner" {
+        value 9;
+        description
+          "Indicates that the user priority is the 8021p value of the inner tags carried in Layer 2 user packets.";
+      }
+      enum "trust-8021p-outer" {
+        value 10;
+        description
+          "Indicates that the user priority is the 8021p value of the outer tags carried in Layer 2 user packets.";
+      }
+      enum "trust-exp-inner" {
+        value 11;
+        description
+          "Indicates that the user priority is the EXP value of the inner tags carried in MPLS packets.";
+      }
+      enum "trust-exp-outer" {
+        value 12;
+        description
+          "Indicates that the user priority is the EXP value of the outer tags carried in MPLS packets.";
+      }
+      enum "unchangeable" {
+        value 13;
+        description
+          "Indicates that the user priority is not changed.";
+      }
+      enum "trust-dscp-inner" {
+        value 14;
+        description
+          "Indicates that the user priority is the DSCP value of the inner tags carried in IP packets.";
+      }
+    }
+    description
+      "Configures the priority of user traffic in a domain.";
+  }
+  typedef bras-user-manage-rui-type-value {
+    type enumeration {
+      enum "not-rui" {
+        value 1;
+        description
+          "Not RUI.";
+      }
+      enum "rui-local" {
+        value 2;
+        description
+          "RUI local users.";
+      }
+      enum "rui-remote" {
+        value 3;
+        description
+          "RUI remote users.";
+      }
+    }
+    description
+      "RuiTypeValue.";
+  }
+  typedef bras-user-manage-qos-config-type {
+    type enumeration {
+      enum "local" {
+        value 0;
+        description
+          "Local.";
+      }
+      enum "radius" {
+        value 1;
+        description
+          "Radius.";
+      }
+    }
+    description
+      "QOS configuration type.";
+  }
+  typedef bras-user-manage-qos-effective-type {
+    type enumeration {
+      enum "user-queue" {
+        value 1;
+        description
+          "User-queue.";
+      }
+      enum "user-car" {
+        value 2;
+        description
+          "User-CAR.";
+      }
+      enum "user-queue-car" {
+        value 3;
+        description
+          "User-queue and user-CAR.";
+      }
+      enum "l2-user-car" {
+        value 4;
+        description
+          "Layer 2 user-CAR.";
+      }
+    }
+    description
+      "QOS effective type.";
+  }
+  typedef bras-user-manage-acct-unit {
+    type enumeration {
+      enum "minute" {
+        value 0;
+        description
+          "Specifies the unit of accounting interval is minute.";
+      }
+      enum "second" {
+        value 1;
+        description
+          "Specifies the unit of accounting interval is second.";
+      }
+    }
+    description
+      "Specifies the unit of accounting interval.";
+  }
+  typedef bras-user-manage-access-auth-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Non-authentication.";
+      }
+      enum "ppp" {
+        value 1;
+        description
+          "PPP authentication.";
+      }
+      enum "dot1x" {
+        value 2;
+        description
+          "Dot1x authentication.";
+      }
+      enum "web" {
+        value 3;
+        description
+          "Web authentication.";
+      }
+      enum "bind" {
+        value 4;
+        description
+          "Binding authentication.";
+      }
+      enum "fast" {
+        value 5;
+        description
+          "Fast authentication.";
+      }
+      enum "wlan" {
+        value 6;
+        description
+          "WLAN authentication.";
+      }
+      enum "admin" {
+        value 7;
+        description
+          "Management user authentication.";
+      }
+      enum "tunnel" {
+        value 8;
+        description
+          "Tunnel authentication.";
+      }
+    }
+    description
+      "Indicates the user authentication type.";
+  }
+  typedef bras-user-manage-extend-access-type {
+    type enumeration {
+      enum "telnet" {
+        value 1;
+        description
+          "Telnet users.";
+      }
+      enum "terminal" {
+        value 2;
+        description
+          "Terminal users.";
+      }
+      enum "ssh" {
+        value 3;
+        description
+          "SSH users.";
+      }
+      enum "ftp" {
+        value 4;
+        description
+          "FTP users.";
+      }
+      enum "x25pad" {
+        value 5;
+        description
+          "X25-pad users.";
+      }
+      enum "ppp" {
+        value 6;
+        description
+          "PPP users.";
+      }
+      enum "pppoe" {
+        value 7;
+        description
+          "PPPOE users.";
+      }
+      enum "pppoeovlan" {
+        value 8;
+        description
+          "PPPoEoVLAN users.";
+      }
+      enum "pppoa" {
+        value 9;
+        description
+          "PPPoA users.";
+      }
+      enum "pppoeoa" {
+        value 10;
+        description
+          "PPPOEoA users.";
+      }
+      enum "pppolns" {
+        value 11;
+        description
+          "PPPoLNS users.";
+      }
+      enum "ordinary-vlan" {
+        value 12;
+        description
+          "Ordinary VLAN users.";
+      }
+      enum "eap" {
+        value 13;
+        description
+          "EAP users.";
+      }
+      enum "pnp" {
+        value 14;
+        description
+          "PNP users.";
+      }
+      enum "ip" {
+        value 15;
+        description
+          "IP users.";
+      }
+      enum "static-vlan" {
+        value 16;
+        description
+          "Static VLAN users.";
+      }
+      enum "layer2-leased-line" {
+        value 17;
+        description
+          "Layer 2 leased line users.";
+      }
+      enum "layer2-leased-line-user" {
+        value 18;
+        description
+          "Layer 2 leased line users' sub-users.";
+      }
+      enum "layer3-leased-line" {
+        value 19;
+        description
+          "Layer 3 leased line users.";
+      }
+      enum "pppoe-leased-line" {
+        value 20;
+        description
+          "PPPoE leased line users.";
+      }
+      enum "nms-leased-line" {
+        value 21;
+        description
+          "NMS leased line users.";
+      }
+      enum "proxy-leased-line" {
+        value 22;
+        description
+          "Proxy leased line users.";
+      }
+      enum "relay-leased-line" {
+        value 23;
+        description
+          "Relay leased line users.";
+      }
+      enum "e1pos" {
+        value 24;
+        description
+          "E1-POS users.";
+      }
+      enum "lac-tunnel" {
+        value 25;
+        description
+          "L2TP tunnel's LAC users.";
+      }
+      enum "lns-tunnel" {
+        value 26;
+        description
+          "L2TP tunnel's LNS users.";
+      }
+      enum "mip" {
+        value 27;
+        description
+          "MIP users.";
+      }
+      enum "device-user" {
+        value 28;
+        description
+          "Device users.";
+      }
+      enum "pppoe-or" {
+        value 29;
+        description
+          "PPPOEor users.";
+      }
+      enum "pppoeovlanor" {
+        value 30;
+        description
+          "PPPOEoVLANOR users.";
+      }
+      enum "ordinary-vlanor" {
+        value 31;
+        description
+          "Ordinary VLANOR users.";
+      }
+      enum "http" {
+        value 38;
+        description
+          "HTTP users.";
+      }
+    }
+    description
+      "The access type.";
+  }
+  typedef bras-user-manage-warning-type {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "Upper alarm threshold for the IPv6 address or prefix usage in the domain.";
+      }
+      enum "lower" {
+        value 2;
+        description
+          "Lower alarm threshold for the IPv6 address or prefix usage in the domain.";
+      }
+      enum "normal" {
+        value 0;
+        description
+          "Alarm threshold for the IP address usage in the domain.";
+      }
+    }
+    description
+      "The address pool overflow flag.";
+  }
+  typedef bras-user-manage-user-type {
+    type enumeration {
+      enum "pppoe" {
+        value 1;
+        description
+          "PPPOE access users.";
+      }
+      enum "pppoa" {
+        value 2;
+        description
+          "PPPoA access users.";
+      }
+      enum "ipoe" {
+        value 3;
+        description
+          "IPOE access users.";
+      }
+      enum "lns" {
+        value 4;
+        description
+          "Lns access users.";
+      }
+      enum "lac" {
+        value 5;
+        description
+          "Lac access users.";
+      }
+      enum "ipv4" {
+        value 6;
+        description
+          "IPv4 access users.";
+      }
+      enum "ipv6" {
+        value 7;
+        description
+          "IPv6 access users.";
+      }
+      enum "dual-stack" {
+        value 8;
+        description
+          "Dual-stack access users.";
+      }
+      enum "all" {
+        value 9;
+        description
+          "All type access users.";
+      }
+    }
+    description
+      "User type.";
+  }
+}

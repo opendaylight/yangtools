@@ -1,0 +1,599 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls {
+  namespace "urn:huawei:yang:huawei-mpls";
+  prefix mpls;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  include huawei-mpls-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+  revision 2019-03-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mpls-base";
+  /*
+   * data-def-stmt
+   */
+  container mpls {
+    description
+      "Specifies the multi-protocol label switching protocol.";
+    container common {
+      description
+        "Configure basic MPLS.";
+      container global {
+        description
+          "Configure the multi-protocol label switching protocol global attributes.";
+        leaf mpls-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable MPLS.";
+        }
+        leaf lsr-id {
+          type inet:ipv4-address-no-zone;
+          description
+            "MPLS LSR ID. If the MPLS LSR ID uses the primary IP address of the loopback interface, the loopback interface cannot be deleted.";
+        }
+        leaf null-lable-type {
+          when "../mpls-enable='true'";
+          type label-advertise;
+          default "implicit-null";
+          description
+            "Specifies a null label type. 1. Implicit null label: This type of labels can be popped by using the Penultimate Hop Popping (PHP) feature. The end node assigns an implicit null label 3 to the penultimate node. 2. Explicit null label: This type of labels cannot be popped by using the PHP feature. The end node assigns the explicit null label 0 to the penultimate node. 3. Null label unsupported: The PHP feature cannot be used to pop a label. The end node assigns a non-null label whose value is equal to or larger than 16 to the penultimate node.";
+        }
+        leaf diff-serv-mode {
+          when "../mpls-enable='true'";
+          type diff-serv-mode-type;
+          default "uniform";
+          description
+            "Specifies the diffserv mode for MPLS.";
+        }
+        leaf te-ttl-mode {
+          when "../mpls-enable='true'";
+          type mpls-ttl-mode-type;
+          default "uniform";
+          description
+            "Specifies the TTL mode for RSVP TE.";
+        }
+        leaf ldp-ttl-mode {
+          when "../mpls-enable='true'";
+          type mpls-ttl-mode-type;
+          default "uniform";
+          description
+            "Specifies the TTL mode for LDP.";
+        }
+        leaf sr-ttl-mode {
+          when "../mpls-enable='true'";
+          type mpls-ttl-mode-type;
+          default "uniform";
+          description
+            "SR TTL mode.";
+        }
+        leaf mpls-min-label {
+          when "../mpls-enable='true'";
+          type mpls-min-label-type;
+          default "0";
+          description
+            "Specifies the minimum start label.";
+        }
+        leaf mpls-label-begin {
+          when "../mpls-enable='true'";
+          type uint32 {
+            range "0..1048575";
+          }
+          default "0";
+          description
+            "Specifies the label begin.";
+        }
+        leaf ftn-delay-time {
+          when "../mpls-enable='true'";
+          type uint32 {
+            range "0..120";
+          }
+          units s;
+          default "0";
+          description
+            "Specifies the FEC to NHLFE tunnel delay time.";
+        }
+        leaf mpls-mtu-independent {
+          when "../mpls-enable='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable of MTU independent.";
+        }
+        leaf entropy-label-capability {
+          when "../mpls-enable='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable of entropy label capability.";
+        }
+        leaf mpls-label-space {
+          type uint32;
+          config false;
+          description
+            "Specifies the label space.";
+        }
+      }
+      container threshold-alarm {
+        when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true'";
+        description
+          "Configure threshold alarm.";
+        container autobypass-tunnel-number {
+          must "upper-value>lower-value";
+          description
+            "Configure TE bypass tunnel.";
+          leaf upper-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "80";
+            description
+              "Upper value of the threshold.";
+          }
+          leaf lower-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "75";
+            description
+              "Lower value of the threshold.";
+          }
+        }
+        container autoprimary-tunnel-number {
+          must "upper-value>lower-value";
+          description
+            "Configure TE primary tunnel.";
+          leaf upper-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "80";
+            description
+              "Upper value of the threshold.";
+          }
+          leaf lower-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "75";
+            description
+              "Lower value of the threshold.";
+          }
+        }
+        container ldp-lsp-number {
+          must "upper-value>lower-value";
+          description
+            "Configure LDP LSP.";
+          leaf upper-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "80";
+            description
+              "Upper value of the threshold.";
+          }
+          leaf lower-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "75";
+            description
+              "Lower value of the threshold.";
+          }
+        }
+        container outsegment-number {
+          must "upper-value>lower-value";
+          description
+            "Configure LDP outsegment.";
+          leaf upper-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "80";
+            description
+              "Upper value of the threshold.";
+          }
+          leaf lower-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "75";
+            description
+              "Lower value of the threshold.";
+          }
+        }
+        container remote-adjacency-number {
+          must "upper-value>lower-value";
+          description
+            "Configure LDP remote adjancency.";
+          leaf upper-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "80";
+            description
+              "Upper value of the threshold.";
+          }
+          leaf lower-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "75";
+            description
+              "Lower value of the threshold.";
+          }
+        }
+        container mldp-tree-number{
+          must "upper-value>lower-value";
+          description
+            "Configure MLDP P2MP tree.";
+          leaf upper-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "80";
+            description
+              "Upper value of the threshold.";
+          }
+          leaf lower-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "75";
+            description
+              "Lower value of the threshold.";
+          }
+        }
+        container mldp-branch-number {
+          must "upper-value>lower-value";
+          description
+            "Configure MLDP P2MP Branch.";
+          leaf upper-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "80";
+            description
+              "Upper value of the threshold.";
+          }
+          leaf lower-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "75";
+            description
+              "Lower value of the threshold.";
+          }
+        }
+        container rsvp-lsp-number {
+          must "upper-value>lower-value";
+          description
+            "Configure RSVP LSP.";
+          leaf upper-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "80";
+            description
+              "Upper value of the threshold.";
+          }
+          leaf lower-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "75";
+            description
+              "Lower value of the threshold.";
+          }
+        }
+        container dynamic-label-number {
+          must "upper-value>lower-value";
+          description
+            "Configure Dynamic label.";
+          leaf upper-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "80";
+            description
+              "Upper value of the threshold.";
+          }
+          leaf lower-value {
+            type uint32 {
+              range "1..100";
+            }
+            default "70";
+            description
+              "Lower value of the threshold.";
+          }
+        }
+      }
+      container bit-err-levels {
+        description
+          "List of the config for bit error level information.";
+        list bit-err-level {
+          key "level-number";
+          max-elements  "3";
+          description
+            "Configure bit error level information.";
+          leaf level-number {
+            type uint8 {
+              range "1..3";
+            }
+            description
+              "Specifies level number.";
+          }
+          leaf switch-coe {
+            type uint8 {
+              range "1..9";
+            }
+            must "../switch-pow!=../resume-pow or ../switch-coe>=../resume-coe";
+            mandatory true;
+            description
+              "Coefficient of switch threshold.";
+          }
+          leaf switch-pow {
+            type uint8 {
+              range "1..7";
+            }
+            mandatory true;
+            description
+              "Power of switch threshold.";
+          }
+          leaf resume-coe {
+            type uint8 {
+              range "1..9";
+            }
+            mandatory true;
+            description
+              "Coefficient of resume threshold.";
+          }
+          leaf resume-pow {
+            type uint8 {
+              range "1..7";
+            }
+            must "../resume-pow>=../switch-pow";
+            mandatory true;
+            description
+              "Power of resume threshold.";
+          }
+        }
+      }
+      container cross-connects {
+        config false;
+        description
+          "List of cross connections.";
+        list cross-connect {
+          key "xc-index outsegment-index insegment-index";
+          description
+            "Operational data of a cross connection.";
+          leaf xc-index {
+            type uint32;
+            description
+              "Specifies a cross connection index.";
+          }
+          leaf outsegment-index {
+            type uint32;
+            description
+              "Outsegment index.";
+          }
+          leaf insegment-index {
+            type uint32;
+            description
+              "Insegment index.";
+          }
+          leaf xc-out-interface-name {
+            type pub-type:if-name;
+            description
+              "Out-going interface.";
+          }
+          leaf xc-out-label {
+            type uint32;
+            description
+              "Out-going label.";
+          }
+          leaf xc-next-hop {
+            type inet:ipv4-address-no-zone;
+            description
+              "Next hop.";
+          }
+          leaf xc-in-interface-name {
+            type pub-type:if-name;
+            description
+              "In-coming interface.";
+          }
+          leaf xc-in-label {
+            type uint32;
+            description
+              "In-coming label.";
+          }
+          leaf xc-outgoing-tunnel-id {
+            type uint32;
+            description
+              "Stick Tunnel ID.";
+          }
+	  	leaf xc-outgoing-tunnel-type {
+            type outgoing-tunnel-type;
+            description
+              "Stick Tunnel Type.";
+          }
+        }
+      }
+      container ilm-label-stacks {
+        config false;
+        description
+          "List of incoming label map (ILM) label stacks.";
+        list ilm-label-stack {
+          key "in-label label-stack level";
+          config false;
+          description
+            "Operational data of incoming label map (ILM) label stack.";
+          leaf in-label {
+            type uint32;
+            description
+              "Incoming label.";
+          }
+          leaf label-stack {
+            type uint32;
+            description
+              "ILM label stack number.";
+          }
+          leaf level {
+            type uint32;
+            description
+              "ILM label stack level.";
+          }
+          leaf type {
+            type string {
+              length "1..50";
+            }
+            description
+              "LSP type.";
+          }
+          leaf out-label {
+            type uint32;
+            description
+              "Outgoing label. The name is case-insensitive.";
+          }
+          leaf out-interface-name {
+            type pub-type:if-name;
+            description
+              "Outbound interface name.";
+          }
+        }
+      }
+      container lsp-statistics {
+        config false;
+        description
+          "List of MPLS LSP statistics.";
+        list lsp-statistic {
+          key "lsp-type";
+          config false;
+          description
+            "Specifies MPLS LSP statistics.";
+          leaf lsp-type {
+            type mpls-lsp-type;
+            config false;
+            description
+              "Specifies an LSP type.";
+          }
+          leaf ingress-lsp {
+            type uint32;
+            config false;
+            description
+              "Specifies the number of LSPs whose ingresses are the local node.";
+          }
+          leaf egress-lsp {
+            type uint32;
+            config false;
+            description
+              "Specifies the number of LSPs whose egresses are the local node.";
+          }
+          leaf transit-lsp {
+            type uint32;
+            config false;
+            description
+              "Specifies the number of LSPs whose transit nodes are the local node.";
+          }
+          leaf total-lsp {
+            type uint32;
+            config false;
+            description
+              "Specifies the total number of LSPs.";
+          }
+        }
+      }
+    }
+  }
+  /*
+   * augment-stmt
+   */
+  augment /ni:network-instance/ni:instances/ni:instance {
+    when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true'";
+    description
+      "MPLS Configuration information augment to network instance.";
+    container mpls {
+      description
+        "Configure MPLS.";
+      container common {
+        description
+          "Configure common MPLS.";
+        container mpls-interfaces {
+          description
+            "List of interfaces on which MPLS is enabled.";
+          list mpls-interface {
+            key "name";
+            description
+              "Configure MPLS on an interface. Query, modify, create, or delete the MPLS capability on an interface.";
+            leaf name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name=../../../../../ni:name";
+              description
+                "Specifies an l3vpn vrf name.";
+            }
+            leaf mtu-value {
+              type uint32 {
+                range "0..64000";
+              }
+              units s;
+              description
+                "MTU of an MPLS interface. Note: An MTU is the maximum size of a packet that can be sent without being fragmented. The value range of MTU is controlled by the PAF.";
+            }
+            leaf ldp-enable {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "Enables LDP on interfaces.";
+            }
+            leaf te-enable {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "MPLS TE capability on an interface.";
+            }
+            leaf rsvp-te-enable {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "MPLS RSVP TE capability on an interface.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

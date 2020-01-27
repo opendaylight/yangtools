@@ -1,0 +1,409 @@
+/*****************************************************************************
+*Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*Module description & tree structure
+*tree:
+******************************************************************************/
+module huawei-esqm {
+  yang-version 1;
+  namespace urn:huawei:yang:huawei-esqm;
+  prefix esqm;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Enhanced stream quality monitor.";
+  reference
+    "Huawei private.";
+  revision 2020-03-27 {
+    description "Initial revision.";
+   reference
+    "Huawei private."; 
+  }
+  ext:task-name "esqm";
+  container esqm {
+    config false;
+    description
+      "Enhanced stream quality monitor.";
+    container tcp-datas {
+      description
+        "List of collect TCP/SCTP information.";
+      list tcp-data {
+        key "src-ip-addr dst-ip-addr src-port dst-port protocol";
+        description "Statistics of TCP/SCTP information. This node is used to telemetry and return null for YANG.";
+        leaf src-ip-addr {
+          type inet:ipv4-address-no-zone;
+          description
+            "Source IP address.";
+        }
+        leaf dst-ip-addr {
+          type inet:ipv4-address-no-zone;
+          description
+            "Destination IP address.";
+        }
+        leaf src-port {
+          type uint16;
+          description
+            "Source IP port.";
+        }
+        leaf dst-port {
+          type uint16;
+          description
+            "Destination IP port.";
+        }
+        leaf protocol {
+          type uint8{
+          range "0..255";
+          }
+          description
+            "Protocol, TCP(6), SCTP(132).";
+        }
+        leaf age-type {
+          type enumeration {
+            enum SCTP-ABORT {
+              value 6;
+              description
+                "SCTP, abort packet type.";
+            }
+            enum SCTP-SHUTDOWN-ACK {
+              value 5;
+              description
+                "SCTP, shutdown ACK packet type.";
+            }
+            enum SCTP-SHUTDOWN {
+              value 4;
+              description
+                "SCTP, shutdown packet type.";
+            }
+            enum TCP-RST {
+              value 3;
+              description
+                "TCP, TCP reset packet type.";
+            }
+            enum TCP-FIN {
+              value 2;
+              description
+                "TCP, FIN packet type.";
+            }
+            enum AGING-TIME {
+              value 1;
+              description
+                "All, aging type.";
+            }
+          }
+          description
+            "Flow aging type.";
+        }
+        leaf flow-type {
+          type enumeration {
+            enum SCTP-INIT-ACK {
+              value 5;
+              description
+                "Packet of the SCTP INIT ACK type.";
+            }
+            enum SCTP-INIT {
+              value 4;
+              description
+                "Packet of the SCTP INIT type.";
+            }
+            enum SCTP-SACK {
+              value 3;
+              description
+                "Packet of the SCTP SACK type.";
+            }
+            enum TCP-SYN {
+              value 1;
+              description
+                "Packet of the TCP SYNC type.";
+            }
+            enum TCP-SYN-ACK {
+              value 2;
+              description
+                "Packet of the TCP SYNC ACK type.";
+            }
+          }
+          description
+            "Flow type.";
+        }
+        leaf flow-direction {
+          type enumeration {
+            enum INGRESS {
+              value 0;
+              description
+                "Incoming direction.";
+            }
+            enum EGRESS {
+              value 1;
+              description
+                "Outgoing direction.";
+            }
+          }
+          description
+            "Flow direction on a device.";
+        }
+        leaf port-if-index {
+          type uint32;
+          description
+            "Index of a port or an interface.";
+        }
+        leaf route-if-index {
+          type uint32;
+          description
+            "Index of a route.";
+        }
+        leaf next-hop {
+          type inet:ip-address-no-zone;
+          description
+            "Next hop of a route.";
+        }
+        leaf label {
+          type uint32;
+          description
+            "Inner or outer label.";
+        }
+        leaf vpn-name {
+          type pub-type:vrf-name;
+          description
+            "VPN instance name.";
+        }
+        leaf created-timestamp-sec {
+          type uint32;
+          units s;
+          description
+            "Number of seconds since 1970.";
+        }
+        leaf created-timestamp-nano-sec {
+          type uint32;
+          units ns;
+          description
+            "Number of nanoseconds.";
+        }
+        leaf packet-num {
+          type uint64;
+          description
+            "Number of received packets.";
+        }
+        leaf retrans-num {
+          type uint64;
+          description
+            "Number of retransmitted packets.";
+        }
+        leaf retrans-radio {
+          type uint64;
+          description
+            "Number of Retransmitted packets * 10 million/Total number of packets.";
+        }
+        leaf address-family {
+          type enumeration {
+            enum IPV4 {
+              value 0;
+              description
+                "IPv4 type.";
+            }
+          }
+          description
+            "Address family.";
+        }
+        leaf outer-vlan {
+          type uint16{
+          range "0..4095";
+          }
+          description
+            "Outer VLAN.";
+        }
+        leaf inner-vlan {
+          type uint16{
+          range "0..4095";
+          }
+          description
+            "Inner VLAN.";
+        }
+      }
+    }
+    container gtp-datas {
+      description
+        "List of collect GTP information.";
+      list gtp-data {
+        key "src-ip-addr dst-ip-addr src-port dst-port protocol";
+        description "Statistics of GTP information. This node is used to telemetry and return null for YANG.";
+        leaf src-ip-addr {
+          type inet:ipv4-address-no-zone;
+          description
+            "Source IP address.";
+        }
+        leaf dst-ip-addr {
+          type inet:ipv4-address-no-zone;
+          description
+            "Destination IP address.";
+        }
+        leaf src-port {
+          type uint16;
+          description
+            "Source IP port.";
+        }
+        leaf dst-port {
+          type uint16;
+          description
+            "Destination port of GTP is 2152.";
+        }
+        leaf protocol {
+          type uint8{
+          range "0..255";
+          }
+          description
+            "Protocol number of GTP is 17.";
+        }
+        leaf age-type {
+          type enumeration {
+            enum AGING-TIME {
+              value 1;
+              description
+                "All, aging type.";
+            }
+          }
+          description
+            "Flow aging type.";
+        }
+        leaf flow-type {
+          type enumeration {
+            enum GTP {
+              value 6;
+              description
+                "Packet of the GTP type.";
+            }
+          }
+          description
+            "Flow type.";
+        }
+        leaf flow-direction {
+          type enumeration {
+            enum INGRESS {
+              value 0;
+              description
+                "Incoming direction.";
+            }
+            enum EGRESS {
+              value 1;
+              description
+                "Outgoing direction.";
+            }
+          }
+          description
+            "Flow direction on a device.";
+        }
+        leaf port-if-index {
+          type uint32;
+          description
+            "Index of a port or an interface.";
+        }
+        leaf route-if-index {
+          type uint32;
+          description
+            "Index of a route.";
+        }
+        leaf next-hop {
+          type inet:ip-address-no-zone;
+          description
+            "Next hop of a route.";
+        }
+        leaf label {
+          type uint32;
+          description
+            "Inner or outer label.";
+        }
+        leaf vpn-name {
+          type pub-type:vrf-name;
+          description
+            "VPN instance name.";
+        }
+        leaf heartbeat-time-sec {
+          type uint32;
+          units s;
+          description
+            "Number of seconds since 1970.";
+        }
+        leaf heartbeat-time-nano-sec {
+          type uint32;
+          units ns;
+          description
+            "Number of nanoseconds.";
+        }
+        leaf packet-num {
+          type uint64;
+          description
+            "Number of received packets.";
+        }
+        leaf packet-bytes {
+          type uint64;
+          description
+            "Bytes number of received packets.";
+        }
+        leaf packet-type {
+          type enumeration {
+            enum HEARTBEAT-RSQ {
+              value 1;
+              description
+                "Packet of the GTP heartbeat response type.";
+            }
+            enum HEARTBEAT-REQ {
+              value 0;
+              description
+                "Packet of the GTP heartbeat request type.";
+            }
+          }
+          description
+            "Packet type.";
+        }
+        leaf address-family {
+          type enumeration {
+            enum IPV4 {
+              value 0;
+              description
+                "IPv4 type.";
+            }
+          }
+          description
+            "Address family.";
+        }
+        leaf last-ip-id {
+          type uint16;
+          description
+            "Last identification number of the IP address.";
+        }
+        leaf curr-ip-id {
+          type uint16;
+          description
+            "Current identification number of the IP address.";
+        }
+        leaf outer-vlan {
+          type uint16{
+          range "0..4095";
+          }
+          description
+            "Outer VLAN.";
+        }
+        leaf inner-vlan {
+          type uint16{
+          range "0..4095";
+          }
+          description
+            "Inner VLAN.";
+        }
+      }
+    }
+  }
+}

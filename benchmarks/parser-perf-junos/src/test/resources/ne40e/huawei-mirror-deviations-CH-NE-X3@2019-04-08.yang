@@ -1,0 +1,46 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mirror-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-mirror-deviations-CH-NE-X3";
+  prefix "mirror-devs-CH-NE-X3";
+
+  import huawei-mirror {
+    prefix "mirror";
+  }
+  import huawei-qos {
+    prefix "qos";
+  }
+  import huawei-devm {
+    prefix "devm";
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Mirror.";
+  revision 2019-04-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  deviation /qos:qos/qos:global-config/mirror:mirror {
+    deviate not-supported;
+  }
+            
+
+  deviation /devm:devm/devm:mpu-boards/devm:mpu-board/mirror:mirror {
+    deviate not-supported;
+  }
+            
+
+			
+}

@@ -1,0 +1,48 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-igmp-mld-snooping-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-igmp-mld-snooping-deviations-CH-NE-X3";
+  prefix igmp-mld-snooping-devs-CH-NE-X3;
+
+  import huawei-igmp-mld-snooping {
+    prefix ims;
+  }
+  import huawei-bd {
+    prefix bd;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "IGMP snooping.";
+
+  revision 2019-03-30 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/bd:bd/bd:instances/bd:instance/ims:igmp-snooping/ims:global/ims:query-suppress-time" {
+    deviate not-supported;
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ims:igmp-snooping" {
+    deviate add {
+      must 'not(ims:learning-disable-vlans or ims:static-router-port-vlans or ims:limit-max-entry or ims:except-acl) or ../ethernet:ethernet/ethernet:main-interface/ethernet:l2-attribute';
+    }
+  }
+}

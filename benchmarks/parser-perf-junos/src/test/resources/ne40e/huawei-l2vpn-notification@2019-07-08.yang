@@ -1,0 +1,4224 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2vpn-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-l2vpn-notification";
+  prefix l2vpn-notification;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of L2VPN.";
+  revision 2019-07-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef l2vpn-alarm-service-type {
+    type enumeration {
+      enum "vll" {
+        value 0;
+        description
+          "The alarm service type is VLL.";
+      }
+      enum "vpls" {
+        value 1;
+        description
+          "The alarm service type is VPLS.";
+      }
+    }
+    description
+      "L2VPN alarm service type.";
+  }
+  typedef l2vpn-alarm-protocol-type {
+    type enumeration {
+      enum "svc" {
+        value 0;
+        description
+          "The alarm protocol type is SVC.";
+      }
+      enum "ldp" {
+        value 1;
+        description
+          "The alarm protocol type is LDP.";
+      }
+      enum "bgp" {
+        value 2;
+        description
+          "The alarm protocol type is BGP.";
+      }
+      enum "max" {
+        value 3;
+        description
+          "The alarm protocol type is MAX.";
+      }
+    }
+    description
+      "L2VPN alarm protocol type.";
+  }
+  typedef encapsulation-type {
+    type enumeration {
+      enum "fr" {
+        value 1;
+        description
+          "The encapsulation type is FR.";
+      }
+      enum "atm-aal5-sdu" {
+        value 2;
+        description
+          "The encapsulation type is ATM-AAL5-SDU.";
+      }
+      enum "atm-trans-cell" {
+        value 3;
+        description
+          "The encapsulation type is ATM-TRANS-CELL.";
+      }
+      enum "vlan" {
+        value 4;
+        description
+          "The encapsulation type is VLAN.";
+      }
+      enum "ethernet" {
+        value 5;
+        description
+          "The encapsulation type is ETHERNET.";
+      }
+      enum "hdlc" {
+        value 6;
+        description
+          "The encapsulation type is HDLC.";
+      }
+      enum "ppp" {
+        value 7;
+        description
+          "The encapsulation type is PPP.";
+      }
+      enum "cem" {
+        value 8;
+        description
+          "The encapsulation type is CEM.";
+      }
+      enum "atm-nto1-vcc" {
+        value 9;
+        description
+          "The encapsulation type is ATM-Nto1-VCC.";
+      }
+      enum "atm-nto1-vpc" {
+        value 10;
+        description
+          "The encapsulation type is ATM-Nto1-VPC.";
+      }
+      enum "ip-layer2" {
+        value 11;
+        description
+          "The encapsulation type is IP-Layer2.";
+      }
+      enum "atm-1to1-vcc" {
+        value 12;
+        description
+          "The encapsulation type is ATM-1to1-VCC.";
+      }
+      enum "atm-1to1-vpc" {
+        value 13;
+        description
+          "The encapsulation type is ATM-1to1-VPC.";
+      }
+      enum "atm-aal5-pdu" {
+        value 14;
+        description
+          "The encapsulation type is ATM-AAL5-PDU.";
+      }
+      enum "fr-port-mode" {
+        value 15;
+        description
+          "The encapsulation type is FR-PORT-MODE.";
+      }
+      enum "cep" {
+        value 16;
+        description
+          "The encapsulation type is CEP.";
+      }
+      enum "satop-e1" {
+        value 17;
+        description
+          "The encapsulation type is SAToP-E1.";
+      }
+      enum "satop-t1" {
+        value 18;
+        description
+          "The encapsulation type is SAToP-T1.";
+      }
+      enum "satop-e3" {
+        value 19;
+        description
+          "The encapsulation type is SAToP-E3.";
+      }
+      enum "satop-t3" {
+        value 20;
+        description
+          "The encapsulation type is SAToP-T3.";
+      }
+      enum "cesopsn-basic" {
+        value 21;
+        description
+          "The encapsulation type is CESoPSN-BASIC.";
+      }
+      enum "tdmoip-aal1" {
+        value 22;
+        description
+          "The encapsulation type is TDMoIP-AAL1.";
+      }
+      enum "cesopsn-tdm" {
+        value 23;
+        description
+          "The encapsulation type is CESoPSN-TDM.";
+      }
+      enum "tdmoip-aal2" {
+        value 24;
+        description
+          "The encapsulation type is TDMoIP-AAL2.";
+      }
+      enum "fr-dlci" {
+        value 25;
+        description
+          "The encapsulation type is FR-DLCI.";
+      }
+      enum "ip-interworking" {
+        value 64;
+        description
+          "The encapsulation type is IP interworking.";
+      }
+      enum "unsupport" {
+        value 255;
+        description
+          "This encapsulation type is used when the encapsulation types of AC interfaces at the two ends of a local CCC are different, or the ATM bundle interfaces do not have any member, or the VPLS LDP PW on a router inherits the encapsulation type of a VSI.";
+      }
+    }
+    description
+      "L2VPN encapsulate type.";
+  }
+  typedef l2vpn-alarm-pw-role-type {
+    type enumeration {
+      enum "primary" {
+        value 1;
+        description
+          "The alarm PW role type is primary.";
+      }
+      enum "secondary" {
+        value 2;
+        description
+          "The alarm PW type role is secondary.";
+      }
+    }
+    description
+      "L2VPN alarm PW role type.";
+  }
+  notification vpls-block-label-not-enough {
+    description
+      "The block labels of VPLS are not enough.";
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification vpls-block-label-not-enough-clear {
+    description
+      "The block labels of VPLS are enough.";
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification vpls-pw-redundancy-degraded {
+    description
+      "VPLS PW redundancy reported a protect degraded alarm.";
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+    leaf protect-group-name {
+      type string {
+        length "1..15";
+      }
+      description
+        "Name of a VPLS PW protection group.";
+    }
+    leaf protect-group-mode {
+      type uint32;
+      description
+        "PW redundancy mode of a VPLS PW protection group: - 2: FRR. - 3: Master. - 4: Independent.";
+    }
+  }
+  notification vpls-pw-redundancy-degraded-clear {
+    description
+      "VPLS PW redundancy reported the clearing of the protect degraded alarm.";
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+    leaf protect-group-name {
+      type string {
+        length "1..15";
+      }
+      description
+        "Name of a VPLS PW protection group.";
+    }
+    leaf protect-group-mode {
+      type uint32;
+      description
+        "PW redundancy mode of a VPLS PW protection group.";
+    }
+  }
+  notification vpls-pw-number-max-exceed {
+    description
+      "The number of VPLS VCs reaches the maximum limit.";
+    leaf limit-class {
+      type uint32;
+      description
+        "Limit type. The value L2VPN_VC_LIMIT_CLASS_VPLS indicates the VPLS VC limit.";
+    }
+    leaf max-pw-number {
+      type uint32;
+      description
+        "Maximum number of VPLS VCs allowed.";
+    }
+  }
+  notification vpls-pw-number-max-clear {
+    description
+      "The number of VPLS VCs is less than 95 percent of the maximum limit.";
+    leaf limit-class {
+      type uint32;
+      description
+        "Limit type. The value L2VPN_VC_LIMIT_CLASS_VPLS indicates the VPLS VC limit.";
+    }
+    leaf max-pw-number {
+      type uint32;
+      description
+        "Maximum number of VPLS VCs allowed.";
+    }
+  }
+  notification vpls-instance-down {
+    description
+      "The status of the VPLS VSI turned down.";
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the name of a VSI.";
+    }
+    leaf vsi-id {
+      type uint32;
+      description
+        "Indicates the ID of a VSI.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Indicates the cause of the VSI status change.";
+    }
+    leaf vsi-status {
+      type uint32;
+      description
+        "Indicates the status of the VSI: - 1: VSI up - 2: VSI down - 3: VSI admin down.";
+    }
+    leaf interface-index {
+      type uint32;
+      description
+        "Indicates the interface index.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "Indicates the interface name.";
+    }
+  }
+  notification vpls-instance-up {
+    description
+      "The status of the VPLS VSI turned up.";
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the name of a VSI.";
+    }
+    leaf vsi-id {
+      type uint32;
+      description
+        "Indicates the ID of a VSI.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Indicates the cause of the VSI status change.";
+    }
+    leaf vsi-status {
+      type uint32;
+      description
+        "Indicates the status of the VSI: - 1: VSI up - 2: VSI down - 3: VSI admin down.";
+    }
+    leaf interface-index {
+      type uint32;
+      description
+        "Indicates the interface index.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "Indicates the interface name.";
+    }
+  }
+  notification vpws-ccc-down {
+    description
+      "The status of the CCC VC turned down.";
+    leaf ccc-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the name of the CCC connection.";
+    }
+    leaf interface-index {
+      type uint32;
+      description
+        "Indicates the index of the AC interface that connects to the first CE.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Indicates the cause of the VC status change.";
+    }
+    leaf interface-index2 {
+      type uint32;
+      description
+        "Indicates the index of the AC interface that connects to the second CE.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "Indicates the AC interface name.";
+    }
+  }
+  notification vpws-ccc-up {
+    description
+      "The status of the CCC VC turned up.";
+    leaf ccc-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the name of the CCC connection.";
+    }
+    leaf interface-index {
+      type uint32;
+      description
+        "Indicates the index of the AC interface that connects to the first CE.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Indicates the cause of the VC status change.";
+    }
+    leaf interface-index2 {
+      type uint32;
+      description
+        "Indicates the index of the AC interface that connects to the second CE.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "Indicates the AC interface name.";
+    }
+  }
+  notification vpws-single-ccc-pw-down {
+    description
+      "The status of the single CCC VC turned down.";
+    leaf in-interface-index {
+      type uint32;
+      description
+        "Index of the traffic incoming-AC interface connected to a CE.";
+    }
+    leaf out-interface-index {
+      type uint32;
+      description
+        "Index of the traffic outgoing-AC interface connected to a CE.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Cause for the CCC VC status change.";
+    }
+    leaf in-interface-name {
+      type pub-type:if-name;
+      description
+        "Name of the traffic incoming-AC interface connected to a CE.";
+    }
+    leaf out-interface-name {
+      type pub-type:if-name;
+      description
+        "Name of the traffic outgoing-AC interface connected to a CE.";
+    }
+  }
+  notification vpws-single-ccc-pw-up {
+    description
+      "The status of the single CCC VC turned up.";
+    leaf in-interface-index {
+      type uint32;
+      description
+        "Index of the traffic incoming-AC interface connected to a CE.";
+    }
+    leaf out-interface-index {
+      type uint32;
+      description
+        "Index of the traffic outgoing-AC interface connected to a CE.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Cause for the CCC VC status change.";
+    }
+    leaf in-interface-name {
+      type pub-type:if-name;
+      description
+        "Name of the traffic incoming-AC interface connected to a CE.";
+    }
+    leaf out-interface-name {
+      type pub-type:if-name;
+      description
+        "Name of the traffic outgoing-AC interface connected to a CE.";
+    }
+  }
+  notification vpws-ldp-pw-down {
+    description
+      "The status of the PWE3 VC turned down.";
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type uint32;
+      description
+        "VC type.";
+    }
+    leaf peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of a peer.";
+    }
+    leaf interface-index {
+      type uint32;
+      description
+        "AC interface index.";
+    }
+    leaf vc-inbound-label {
+      type uint32;
+      description
+        "Incoming label of a VC.";
+    }
+    leaf vc-outbound-label {
+      type uint32;
+      description
+        "Outgoing label of a VC.";
+    }
+    leaf secondary-pw {
+      type uint32;
+      description
+        "Secondary PW.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Cause of the VC status change.";
+    }
+    leaf sys-up-time {
+      type yang:timeticks;
+      description
+        "System startup time.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "AC interface name.";
+    }
+    leaf switch-vc-id {
+      type uint32;
+      description
+        "Switch VC ID.";
+    }
+    leaf tunnel-policy-name {
+      type string {
+        length "1..39";
+      }
+      description
+        "Name of a tunnel policy.";
+    }
+  }
+  notification vpws-ldp-pw-up {
+    description
+      "The status of the PWE3 VC turned up.";
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type uint32;
+      description
+        "VC type.";
+    }
+    leaf peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of a peer.";
+    }
+    leaf interface-index {
+      type uint32;
+      description
+        "AC interface index.";
+    }
+    leaf vc-inbound-label {
+      type uint32;
+      description
+        "Incoming label of a VC.";
+    }
+    leaf vc-outbound-label {
+      type uint32;
+      description
+        "Outgoing label of a VC.";
+    }
+    leaf secondary-pw {
+      type uint32;
+      description
+        "Secondary PW.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Cause of the VC status change.";
+    }
+    leaf sys-up-time {
+      type yang:timeticks;
+      description
+        "System startup time.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "AC interface name.";
+    }
+    leaf switch-vc-id {
+      type uint32;
+      description
+        "Switch VC ID.";
+    }
+    leaf tunnel-policy-name {
+      type string {
+        length "1..39";
+      }
+      description
+        "Name of a tunnel policy.";
+    }
+  }
+  notification vpws-svc-pw-down {
+    description
+      "The status of the SVC VC turned down.";
+    leaf interface-index {
+      type uint32;
+      description
+        "AC interface index.";
+    }
+    leaf svc-id {
+      type uint32;
+      description
+        "SVC PW ID.";
+    }
+    leaf svc-type {
+      type uint32;
+      description
+        "SVC type.";
+    }
+    leaf peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Peer address.";
+    }
+    leaf svc-inbound-label {
+      type uint32;
+      description
+        "Incoming label of an SVC PW.";
+    }
+    leaf svc-outbound-label {
+      type uint32;
+      description
+        "Outgoing label of an SVC PW.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Cause of the VC status change.";
+    }
+    leaf interface-index2 {
+      type uint32;
+      description
+        "AC interface index.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "AC interface name.";
+    }
+    leaf tunnel-policy-name {
+      type string {
+        length "1..39";
+      }
+      description
+        "Name of the referenced tunnel policy.";
+    }
+  }
+  notification vpws-svc-pw-up {
+    description
+      "The status of the SVC VC turned up.";
+    leaf interface-index {
+      type uint32;
+      description
+        "AC interface index.";
+    }
+    leaf svc-id {
+      type uint32;
+      description
+        "SVC PW ID.";
+    }
+    leaf svc-type {
+      type uint32;
+      description
+        "SVC type.";
+    }
+    leaf peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Peer address.";
+    }
+    leaf svc-inbound-label {
+      type uint32;
+      description
+        "Incoming label of an SVC PW.";
+    }
+    leaf svc-outbound-label {
+      type uint32;
+      description
+        "Outgoing label of an SVC PW.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Cause of the VC status change.";
+    }
+    leaf interface-index2 {
+      type uint32;
+      description
+        "AC interface index.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "AC interface name.";
+    }
+    leaf tunnel-policy-name {
+      type string {
+        length "1..39";
+      }
+      description
+        "Name of the referenced tunnel policy.";
+    }
+  }
+  notification pw-oam-ais {
+    description
+      "OAM reported an AIS alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-ais-clear {
+    description
+      "OAM reported the clearing of the AIS alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-client-signal-failue {
+    description
+      "OAM reported an alarm about a client signal failure.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-client-signal-failue-clear {
+    description
+      "OAM reported an alarm about the removal of the client signal failure.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-dbdi {
+    description
+      "OAM reported a BDI alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-dbdi-clear {
+    description
+      "OAM reported the clearing of the BDI alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-dloc {
+    description
+      "OAM reported an alarm about PW disconnection.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-dloc-clear {
+    description
+      "OAM reported the clearing of the dLOC alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-excess {
+    description
+      "OAM reported an Excess alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-excess-clear {
+    description
+      "OAM reported the clearing of the Excess alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-fail {
+    description
+      "OAM reported a Fail alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-fail-clear {
+    description
+      "OAM reported the clearing of the Fail alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-fdi {
+    description
+      "OAM reported an FDI alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-fdi-clear {
+    description
+      "OAM reported the clearing of the FDI alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-lock {
+    description
+      "OAM reported a LCK alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-lock-clear {
+    description
+      "OAM reported the clearing of the LCK alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-local-lock {
+    description
+      "OAM reported a Lock alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-local-lock-clear {
+    description
+      "OAM reported the clearing of the Lock alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-unexpected-meg {
+    description
+      "OAM reported an unexpected MEG alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-unexpected-meg-clear {
+    description
+      "Reported the clearing of the unexpected MEG alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-unexpected-mep {
+    description
+      "OAM reported an unexpected MEP alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-unexpected-mep-clear {
+    description
+      "OAM reported an alarm about the clearing of the unexpected MEP alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-mismatch {
+    description
+      "OAM reported a Mismatch alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-mismatch-clear {
+    description
+      "OAM reported the clearing of the Mismatch alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-mismerge {
+    description
+      "OAM reported a Mismerge alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-mismerge-clear {
+    description
+      "OAM reported the clearing of the Mismerge alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-unexpected-period {
+    description
+      "OAM reported an alarm about an unexpected CV packet period.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-unexpected-period-clear {
+    description
+      "OAM reported an alarm about the rectification of the unexpected CV packet period.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-rdi {
+    description
+      "OAM reported an alarm about a remote defect.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-rdi-clear {
+    description
+      "OAM reported an alarm about the removal of the remote defect.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-sd1-far {
+    description
+      "The OAM module reported an alarm, indicating that the far-end packet loss ratio exceeded the sd1 threshold.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-sd1-far-clear {
+    description
+      "The OAM module reported an alarm, indicating that the far-end packet loss ratio dropped below the sd1 threshold.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-sd2-far {
+    description
+      "The OAM module reported an alarm, indicating that the far-end packet loss ratio exceeded the sd2 threshold.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-sd2-far-clear {
+    description
+      "The OAM module reported an alarm, indicating that the far-end packet loss ratio dropped below the sd2 threshold.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-sd2-near {
+    description
+      "The OAM module reported an alarm, indicating that the near-end packet loss ratio exceeded the sd2 threshold.";
+    leaf service-type {
+      type uint32;
+      description
+        "Type of the service: - 0: VLL - 1: VPLS.";
+    }
+    leaf protocol-type {
+      type uint32;
+      description
+        "Type of the protocol: - 0: SVC - 1: LDP - 2: BGP (not supported for the time being).";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type uint32;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type uint32;
+      description
+        "PW identifier: - 1: primary PW - 2: secondary PW.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-sd2-near-clear {
+    description
+      "The OAM module reported an alarm, indicating that the near-end packet loss ratio dropped below the sd2 threshold.";
+    leaf service-type {
+      type uint32;
+      description
+        "Type of the service: - 0: VLL - 1: VPLS.";
+    }
+    leaf protocol-type {
+      type uint32;
+      description
+        "Type of the protocol: - 0: SVC - 1: LDP - 2: BGP (not supported for the time being).";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type uint32;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type uint32;
+      description
+        "PW identifier: - 1: primary PW - 2: secondary PW.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-unknown {
+    description
+      "OAM reported an Unknown alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-oam-unknown-clear {
+    description
+      "OAM reported the clearing of the Unknown alarm.";
+    leaf service-type {
+      type l2vpn-alarm-service-type;
+      description
+        "Type of the service.";
+    }
+    leaf protocol-type {
+      type l2vpn-alarm-protocol-type;
+      description
+        "Type of the protocol.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type encapsulation-type;
+      description
+        "VC type.";
+    }
+    leaf peer-addr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the peer.";
+    }
+    leaf if-index {
+      type uint32;
+      description
+        "Interface index.";
+    }
+    leaf pw-master {
+      type l2vpn-alarm-pw-role-type;
+      description
+        "PW identifier.";
+    }
+    leaf rmt-site-id {
+      type uint32;
+      description
+        "Remote site ID.";
+    }
+    leaf in-label {
+      type uint32;
+      description
+        "VC in-label.";
+    }
+    leaf out-label {
+      type uint32;
+      description
+        "VC out-label.";
+    }
+    leaf if-name {
+      type pub-type:if-name;
+      description
+        "Interface name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+  }
+  notification pw-aps-bypass-pw-mismatch {
+    description
+      "APS reported a bypass mismatch alarm.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-bypass-pw-mismatch-clear {
+    description
+      "APS reported the clearing of the bypass mismatch alarm.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-degraded {
+    description
+      "APS reported a PW degraded alarm.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-degraded-clear {
+    description
+      "APS reported the clearing of the PW degraded alarm.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-id-mismatch {
+    description
+      "APS reported an ID mismatch alarm.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-id-mismatch-clear {
+    description
+      "APS reported the clearing of the ID mismatch alarm.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-lost {
+    description
+      "APS reported a packet lost alarm.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-lost-clear {
+    description
+      "APS reported the clearing of the packet loss alarm.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-out-age {
+    description
+      "APS reported a PW outage alarm.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-out-age-clear {
+    description
+      "APS reported the clearing of the PW outage alarm.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-patch-mismatch {
+    description
+      "APS reported an alarm about the mismatch of the working and protection paths.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-patch-mismatch-clear {
+    description
+      "APS reported an alarm about the rectification of the mismatch of the working and protection paths.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-switch-fail {
+    description
+      "APS reported an alarm about the inconsistent switching results on the local and remote ends.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-switch-fail-clear {
+    description
+      "APS reported an alarm about the rectification of the inconsistency in switching results on the local and remote ends.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-type-mismatch {
+    description
+      "APS reported an alarm about the mismatch of the protection type.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification pw-aps-type-mismatch-clear {
+    description
+      "APS reported an alarm about the rectification of the mismatch of the protection type.";
+    leaf pw-aps-id {
+      type uint32;
+      description
+        "ID of the PW APS instance.";
+    }
+    leaf pwid {
+      type uint32;
+      description
+        "ID of the PW.";
+    }
+    leaf pwtype {
+      type encapsulation-type;
+      description
+        "PW encapsulation type.";
+    }
+    leaf pw-peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination address of the PW.";
+    }
+    leaf pw-index {
+      type uint32;
+      description
+        "Interface index of the PW.";
+    }
+  }
+  notification vpws-pw-redundancy-degraded {
+    description
+      "VPWS PW redundancy reported a protect degraded alarm.";
+    leaf interface-index {
+      type uint32;
+      description
+        "Index of an AC interface.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "Name of an AC interface.";
+    }
+    leaf primary-pw-id {
+      type uint32;
+      description
+        "Primary PW ID.";
+    }
+    leaf primary-pw-type {
+      type uint32;
+      description
+        "Primary PW type.";
+    }
+    leaf primary-peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Peer IP address of the primary PW.";
+    }
+  }
+  notification vpws-pw-redundancy-degraded-clear {
+    description
+      "VPWS PW redundancy reported the clearing of the protect degraded alarm.";
+    leaf interface-index {
+      type uint32;
+      description
+        "Index of an AC interface.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "Name of an AC interface.";
+    }
+    leaf primary-pw-id {
+      type uint32;
+      description
+        "Primary PW ID.";
+    }
+    leaf primary-pw-type {
+      type uint32;
+      description
+        "Primary PW type.";
+    }
+    leaf primary-peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Peer IP address of the primary PW.";
+    }
+  }
+  notification vpws-bgp-pw-down {
+    description
+      "The status of the kompella VC turned down.";
+    leaf vc-vpn-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "MPLS L2VPN instance name.";
+    }
+    leaf ce-id {
+      type uint32;
+      description
+        "ID of the local CE.";
+    }
+    leaf interface-index {
+      type uint64;
+      description
+        "Index of an AC interface.";
+    }
+    leaf remote-ce-id {
+      type uint32;
+      description
+        "ID of the remote CE.";
+    }
+    leaf secondary-vc {
+      type uint32;
+      description
+        "Secondary VC.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Reason of the VC status change.";
+    }
+    leaf peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Peer IP address of the PW.";
+    }
+    leaf tunnel-policy-index {
+      type string {
+        length "1..39";
+      }
+      description
+        "Name of the tunnel policy used by the PW.";
+    }
+    leaf active-state {
+      type uint32;
+      description
+        "PW forwarding status.";
+    }
+  }
+  notification vpws-bgp-pw-up {
+    description
+      "The status of the kompella VC turned up.";
+    leaf vc-vpn-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "MPLS L2VPN instance name.";
+    }
+    leaf ce-id {
+      type uint32;
+      description
+        "ID of the local CE.";
+    }
+    leaf interface-index {
+      type uint64;
+      description
+        "Index of an AC interface.";
+    }
+    leaf remote-ce-id {
+      type uint32;
+      description
+        "ID of the remote CE.";
+    }
+    leaf secondary-vc {
+      type uint32;
+      description
+        "Secondary VC.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Reason of the VC status change.";
+    }
+    leaf peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Peer IP address of the PW.";
+    }
+    leaf tunnel-policy-index {
+      type string {
+        length "1..39";
+      }
+      description
+        "Name of the tunnel policy used by the PW.";
+    }
+    leaf active-state {
+      type uint32;
+      description
+        "PW forwarding status.";
+    }
+  }
+  notification vpws-block-label-not-enough {
+    description
+      "The block labels of VPWS are not enough.";
+    leaf vpn-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "MPLS L2VPN instance name.";
+    }
+    leaf ce-id {
+      type uint32;
+      description
+        "CE ID.";
+    }
+  }
+  notification vpws-block-label-not-enough-clear {
+    description
+      "The block labels of VPWS are enough.";
+    leaf vpn-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "MPLS L2VPN instance name.";
+    }
+    leaf ce-id {
+      type uint32;
+      description
+        "CE ID.";
+    }
+  }
+  notification vpls-pw-down {
+    description
+      "The status of the VPLS VC turned down.";
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the name of a VSI.";
+    }
+    leaf pw-id {
+      type uint32;
+      description
+        "Indicates the ID of a PW.";
+    }
+    leaf remote-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Indicates the IP address of the remote peer.";
+    }
+    leaf pw-type {
+      type uint32;
+      description
+        "Indicates the type of a PW: - 1: normal - 2: other.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Indicates the cause of the VC status change.";
+    }
+    leaf sys-up-time {
+      type yang:timeticks;
+      description
+        "Indicates the time for system startup.";
+    }
+    leaf tunnel-policy-name {
+      type string {
+        length "1..39";
+      }
+      description
+        "Indicates the name of a tunnel policy.";
+    }
+  }
+  notification vpls-pw-up {
+    description
+      "The status of the VPLS VC turned up.";
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the name of a VSI.";
+    }
+    leaf pw-id {
+      type uint32;
+      description
+        "Indicates the ID of a PW.";
+    }
+    leaf remote-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Indicates the IP address of the remote peer.";
+    }
+    leaf pw-type {
+      type uint32;
+      description
+        "Indicates the type of a PW: - 1: normal - 2: other.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Indicates the cause of the VC status change.";
+    }
+    leaf sys-up-time {
+      type yang:timeticks;
+      description
+        "Indicates the time for system startup.";
+    }
+    leaf tunnel-policy-name {
+      type string {
+        length "1..39";
+      }
+      description
+        "Indicates the name of a tunnel policy.";
+    }
+  }
+  notification vpws-bgp-pw-switch-protecting-to-working {
+    description
+      "A Kompella VC switched from the protecting state to the working state.";
+    leaf vc-vpn-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VPWS Kompella VPN instance name.";
+    }
+    leaf ce-id {
+      type uint32;
+      description
+        "CE ID.";
+    }
+    leaf interface-index {
+      type uint32;
+      description
+        "Indicates the interface index.";
+    }
+    leaf remote-ce-id {
+      type uint32;
+      description
+        "Remote CE ID.";
+    }
+    leaf ctrl-word {
+      type uint32;
+      description
+        "L2VPN control word.";
+    }
+    leaf secondary-pw-remote-ce-id {
+      type uint32;
+      description
+        "Remote CE ID of secondary PW.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Cause of the VC status change.";
+    }
+  }
+  notification vpws-bgp-pw-switch-working-to-protecting {
+    description
+      "A kompella VC switched from the working state to the protecting state.";
+    leaf vc-vpn-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VPWS kompella VPN instance name.";
+    }
+    leaf ce-id {
+      type uint32;
+      description
+        "CE ID.";
+    }
+    leaf interface-index {
+      type uint32;
+      description
+        "Indicates the interface index.";
+    }
+    leaf remote-ce-id {
+      type uint32;
+      description
+        "Remote CE ID.";
+    }
+    leaf ctrl-word {
+      type uint32;
+      description
+        "L2VPN control word.";
+    }
+    leaf secondary-vc-remote-ce-id {
+      type uint32;
+      description
+        "Indicates the time for system startup.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Cause of the VC status change.";
+    }
+  }
+  notification vpws-ldp-pw-switch-protecting-to-working {
+    description
+      "The PWE3 VC status changed from protection to working.";
+    leaf vc-id {
+      type uint64;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type uint64;
+      description
+        "VC type.";
+    }
+    leaf peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of a peer.";
+    }
+    leaf ctrl-word {
+      type uint64;
+      description
+        "L2VPN control word.";
+    }
+    leaf primary-pw-id {
+      type uint64;
+      description
+        "Indicates the ID of a primary PW.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint64;
+      description
+        "Cause of the VC status change.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "Indicates the interface name.";
+    }
+  }
+  notification vpws-ldp-pw-switch-working-to-protecting {
+    description
+      "The PWE3 VC status changed from working to protection.";
+    leaf vc-id {
+      type uint64;
+      description
+        "VC ID.";
+    }
+    leaf vc-type {
+      type uint64;
+      description
+        "VC type.";
+    }
+    leaf peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of a peer.";
+    }
+    leaf ctrl-word {
+      type uint64;
+      description
+        "L2VPN control word.";
+    }
+    leaf secondary-pw-id {
+      type uint64;
+      description
+        "Indicates the ID of a secondary PW.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint64;
+      description
+        "Cause of the VC status change.";
+    }
+    leaf interface-name {
+      type pub-type:if-name;
+      description
+        "Indicates the interface name.";
+    }
+  }
+  notification vpls-pw-status-change {
+    description
+      "The VPLS VC status changed.";
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+    leaf pw-id {
+      type uint32;
+      description
+        "Indicates the ID of a PW.";
+    }
+    leaf remote-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Indicates the IP address of the remote peer.";
+    }
+    leaf l2vpn-state-change-reason {
+      type uint32;
+      description
+        "Cause of the VC status change.";
+    }
+    leaf pw-state {
+      type uint32;
+      description
+        "PW state.";
+    }
+    leaf pw-working-state {
+      type uint32;
+      description
+        "PW working state.";
+    }
+    leaf sys-up-time {
+      type yang:timeticks;
+      description
+        "System startup time.";
+    }
+  }
+  ext:task-name "l2vpn";
+}

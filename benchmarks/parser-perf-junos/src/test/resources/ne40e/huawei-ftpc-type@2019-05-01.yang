@@ -1,0 +1,43 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ftpc-type {
+  belongs-to huawei-ftpc {
+    prefix ftpc;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Description of ftp client type submodule.";
+
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef transcmdtype {
+    type enumeration {
+      enum "put" {
+        value 25;	  
+        description
+          "Upload local files to the remote server.";
+      }
+      enum "get" {
+        value 26;	  
+        description
+          "Download files from the remote server to the client.";
+      }
+    }
+    description
+      "FTP client transfer command type.";
+  }
+}

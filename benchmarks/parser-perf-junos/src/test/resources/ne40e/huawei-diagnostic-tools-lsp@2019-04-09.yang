@@ -1,0 +1,531 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-diagnostic-tools-lsp {
+  yang-version 1;
+  belongs-to huawei-diagnostic-tools {
+    prefix diagnostic-tools;
+  }
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-diagnostic-tools-common;
+  include huawei-diagnostic-tools-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+
+description
+     "Lsp diagnosis tool.";
+  revision 2019-04-09 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  grouping lsp-ping-trace-result-type {
+    description
+      "Lsp ping trace test result.";
+    container ping-results {
+      config false;
+      description
+        "List of ping test results.";
+      list ping-result {
+        key "test-name";
+        config false;
+        description
+          "Statistics of ping test result.";
+        leaf test-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Test name.";
+        }
+        leaf tunnel-name {
+          type string {
+            length "1..33";
+          }
+          config false;
+          description
+            "Name of the TE tunnel created by RSVP signaling. This option is available when LSP Type is set to TE Tunnel.";
+        }
+        leaf packet-send {
+          type uint32;
+          config false;
+          description
+            "Total number of sent packets.";
+        }
+        leaf packet-recv {
+          type uint32;
+          config false;
+          description
+            "Total number of received packets.";
+        }
+        leaf loss-ratio {
+          type pub-type:percent;
+          config false;
+          description
+            "Packet loss ratio of a test.";
+        }
+        leaf rtt-min {
+          type uint32;
+          units "ms";
+          config false;
+          description
+            "Minimum RTT of all test packets.";
+        }
+        leaf rtt-max {
+          type uint32;
+          units "ms";
+          config false;
+          description
+            "Maximum RTT of all test packets.";
+        }
+        leaf rtt-average {
+          type uint32;
+          units "ms";
+          config false;
+          description
+            "Average RTT of all test packets.";
+        }
+        leaf status {
+          type dgntl-test-status-type;
+          config false;
+          description
+            "Test status.";
+        }
+        leaf error-type {
+          type dgntl-error-type;
+          config false;
+          description
+            "Test operation status.";
+        }
+        container ping-result-details {
+          config false;
+          description
+            "List of ping results of all packets in a test.";
+          list ping-result-detail {
+            key "index";
+            config false;
+            description
+              "Statistics of ping result of a single packet in a test.";
+            leaf index {
+              type uint32;
+              config false;
+              description
+                "Serial number of a test packet received by a certain hop.";
+            }
+            leaf dest-ip-addr {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Destination address of the related hop in a test.";
+            }
+            leaf packet-size {
+              type uint32;
+              config false;
+              description
+                "Number of bytes in a received response packet.";
+            }
+            leaf rtt {
+              type uint32;
+              units "ms";
+              config false;
+              description
+                "RTT of test packets.";
+            }
+            leaf ttl {
+              type uint8 {
+                range "1..255";
+              }
+              config false;
+              description
+                "TTL of received response packets.";
+            }
+            leaf ret-code {
+              type uint32;
+              config false;
+              description
+                "Return code.";
+            }
+            leaf sub-code {
+              type uint32;
+              config false;
+              description
+                "Return sub-code.";
+            }
+            leaf result-type {
+              type detail-result-type;
+              config false;
+              description
+                "Result of packet sending, which is either success or timeout.";
+            }
+            leaf is-delete {
+              type boolean;
+              config false;
+              description
+                "Deletion flag indicating whether to delete test results.";
+            }
+          }
+        }
+      }
+    }
+    container trace-results {
+      config false;
+      description
+        "List of test results.";
+      list trace-result {
+        key "test-name";
+        config false;
+        description
+          "Statistics of trace test result.";
+        leaf test-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Test name.";
+        }
+        leaf tunnel-name {
+          type string {
+            length "1..33";
+          }
+          config false;
+          description
+            "Name of the TE tunnel created by RSVP signaling. This parameter is available when LSP Type is set to TE Tunnel.";
+        }
+        leaf status {
+          type dgntl-test-status-type;
+          config false;
+          description
+            "Tunnel status.";
+        }
+        leaf error-type {
+          type dgntl-error-type;
+          config false;
+          description
+            "Test operation status.";
+        }
+        container trace-result-details {
+          config false;
+          description
+            "List of ping results of all packets in a test.";
+          list trace-result-detail {
+            key "hop-index";
+            config false;
+            description
+              "Statistics of ping result of a single packet in a test.";
+            leaf hop-index {
+              type uint32;
+              config false;
+              description
+                "Serial number of a hop in the test path. For a ping-type test such as the ping test or LSP ping test, there is only one hop in the test path, so the value is 1. For a trace-type test such as the trace test or LSP trace test, the value indicates the exact serial number of a hop in the test path.";
+            }
+            leaf ds-ip-addr {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Destination address of the related hop in a test.";
+            }
+            leaf down-stream-ip-addr {
+              type inet:ipv4-address-no-zone;
+              config false;
+              description
+                "Downstream address of the related hop in a test.";
+            }
+            leaf rtt {
+              type uint32;
+              config false;
+              description
+                "RTT of test packets.";
+            }
+            leaf type {
+              type transmit-type;
+              config false;
+              description
+                "Node type.";
+            }
+            leaf ttl {
+              type uint8 {
+                range "1..255";
+              }
+              config false;
+              description
+                "TTL of received response packets.";
+            }
+            leaf ds-label {
+              type uint32;
+              config false;
+              description
+                "Downstream label.";
+            }
+            leaf ret-code {
+              type uint32;
+              config false;
+              description
+                "Return code.";
+            }
+            container downstreams {
+              config false;
+              description
+                "List of downstream informations.";
+              list downstream {
+                key "ds-label";
+                config false;
+                description
+                  "Statistics of downstream information.";
+                leaf ds-label {
+                  type uint32;
+                  config false;
+                  description
+                    "Downstream labels.";
+                }
+              }
+            }
+            leaf is-delete {
+              type boolean;
+              config false;
+              description
+                "Deletion flag indicating whether to delete test results.";
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  rpc lsp-start-ping {
+    description
+      "Start lsp ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv4/diagnostic-tools:ping-results";
+    input {
+      choice lsp-protocol {
+        description
+          "Lsp protocol.";
+        case srte {
+          description
+            "Lsp protocol srte.";
+          container srte-test {
+            description
+              "Lsp protocol srte.";
+            leaf test-name {
+              type string {
+                length "1..32";
+              }
+              mandatory true;
+              description
+              "Test name.";
+            }
+            leaf tunnel-name {
+              type string {
+                length "1..33";
+              }
+              mandatory true;
+              description
+                "Tunnel name.";
+            }
+          }
+        }
+        case srbe {
+          description
+            "Lsp protocol srbe.";
+          container srbe-test {
+            description
+              "Lsp protocol srbe.";
+            leaf test-name {
+              type string {
+                length "1..32";
+              }
+              mandatory true;
+              description
+              "Test name.";
+            }
+            leaf dest-ip-addr {
+              type pub-type:host-name;
+              mandatory true;
+              description
+                "Destination address of the string type. You can click this node to set different types of addresses and deploy the configurations together with the configuration of the destination address type node. If the destination address type is set to IPv4, this parameter is set to IPv4. If the destination address type is set to IPv6, this parameter is set to IPv6.";
+            }
+            leaf mask-len {
+              type uint8 {
+                range "0..32";
+              }
+              mandatory true;
+              description
+                "Mask length.";
+            }
+            leaf version {
+              type sr-be-version;
+              mandatory true;
+              description
+                "SR-TE Version: 'DRAFT' indicates the RSVP IPv4 Fec in SRTE packet.";
+            }
+          }
+        }             
+      }
+    }
+  }
+  rpc lsp-stop-ping {
+    description
+      "Stop lsp ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv4/diagnostic-tools:ping-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:lsp/diagnostic-tools:ping-results/diagnostic-tools:ping-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc lsp-delete-ping {
+    description
+      "Delete lsp ping.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:ipv4/diagnostic-tools:ping-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:lsp/diagnostic-tools:ping-results/diagnostic-tools:ping-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc lsp-start-trace {
+    description
+      "Start lsp trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:lsp/diagnostic-tools:trace-results";
+    input {
+      choice lsp-protocol {
+        description
+          "Lsp protocol.";
+        case srte {
+          description
+            "Lsp protocol srte.";
+          container srte-test {
+            description
+              "Lsp protocol srte.";
+            leaf test-name {
+              type string {
+                length "1..255";
+              }
+              mandatory true;
+              description
+                "Test name.";
+            }
+            leaf tunnel-name {
+              type string {
+                length "1..33";
+              }
+              mandatory true;
+              description
+                "Tunnel name.";
+            }
+          }
+        }
+        case srbe {
+          description
+            "Lsp protocol srbe.";
+          container srbe-test {
+            description
+              "Lsp protocol srbe.";
+            leaf test-name {
+              type string {
+                length "1..255";
+              }
+              mandatory true;
+              description
+                "Test name.";
+            }
+            leaf dest-ip-addr {
+              type pub-type:host-name;
+              mandatory true;
+              description
+                "Destination address of the string type. You can click this node to set different types of addresses and deploy the configurations together with the configuration of the destination address type node. If the destination address type is set to IPv4, this parameter is set to IPv4. If the destination address type is set to IPv6, this parameter is set to IPv6.";
+            }
+            leaf mask-len {
+              type uint8 {
+                range "0..32";
+              }
+              mandatory true;
+              description
+                "Mask length.";
+            }
+            leaf version {
+              type sr-be-version;
+              mandatory true;
+              description
+                "SR-TE Version: 'DRAFT' indicates the RSVP IPv4 Fec in SRTE packet.";
+            }
+          }
+        }
+      }
+    }
+  }
+
+  rpc lsp-stop-trace {
+    description
+      "Stop lsp trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:lsp/diagnostic-tools:trace-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:lsp/diagnostic-tools:trace-results/diagnostic-tools:trace-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  rpc lsp-delete-trace {
+    description
+      "Delete lsp trace.";
+    ext:node-ref "/diagnostic-tools:diagnostic-tools/diagnostic-tools:lsp/diagnostic-tools:trace-results";
+    input {
+      leaf test-name {
+        type leafref {
+          path "/diagnostic-tools:diagnostic-tools/diagnostic-tools:lsp/diagnostic-tools:trace-results/diagnostic-tools:trace-result/diagnostic-tools:test-name";
+        }
+        mandatory true;
+        description
+          "Test name.";
+      }
+    }
+  }
+
+  augment "/diagnostic-tools:diagnostic-tools" {
+    description
+      "List of LSP ping and trace tests.";
+    container lsp {
+      config false;
+      description
+        "Statistics of LSP ping and trace tests.";
+      uses diagnostic-tools:lsp-ping-trace-result-type;
+    }
+  }
+}

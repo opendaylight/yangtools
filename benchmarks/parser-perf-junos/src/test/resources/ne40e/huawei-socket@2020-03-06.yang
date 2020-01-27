@@ -1,0 +1,137 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-socket {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-socket";
+  prefix socket;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Socket.";
+  revision 2020-03-06 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ip-stack";
+  container socket {
+    description
+      "Socket.";
+    container tcp-global {
+      description
+        "Configure global tcp attribute configuration.";
+      leaf tcp-fin-timeout {
+        type uint32 {
+          range "76..3600";
+        }
+        units "s";
+        default "675";
+        description
+          "TCP IPv4 fin timer.";
+      }
+      leaf tcp-syn-timeout {
+        type uint32 {
+          range "2..600";
+        }
+        units "s";
+        default "75";
+        description
+          "TCP IPv4 synchronised timer.";
+      }
+      leaf tcp-window {
+        type uint32 {
+          range "1..32";
+        }
+        units "kB";
+        default "8";
+        description
+          "TCP IPv4 window.";
+      }
+      leaf tcp6-fin-timeout {
+        type uint32 {
+          range "76..3600";
+        }
+        units "s";
+        default "675";
+        description
+          "TCP IPv6 fin timer.";
+      }
+      leaf tcp6-syn-timeout {
+        type uint32 {
+          range "2..600";
+        }
+        units "s";
+        default "75";
+        description
+          "TCP IPv6 synchronised timer.";
+      }
+      leaf tcp6-window {
+        type uint32 {
+          range "1..32";
+        }
+        units "kB";
+        default "8";
+        description
+          "TCP IPv6 window.";
+      }
+      leaf tcp-pathmtu-timeout {
+        type uint32 {
+          range "10..100";
+        }
+        units "min";
+        description
+          "TCP IPv4 path mtu timer.";
+      }
+      leaf tcp-max-mss {
+        type uint32 {
+          range "32..9600";
+        }
+        units "Octet";
+        must "../tcp-min-mss<=../tcp-max-mss";
+        description
+          "IPv4 TCP max mss.";
+      }
+      leaf tcp6-max-mss {
+        type uint32 {
+          range "32..9600";
+        }
+        units "Octet";
+        must "../tcp6-min-mss<=../tcp6-max-mss";
+        description
+          "IPv6 TCP max mss.";
+      }
+      leaf tcp-min-mss {
+        type uint32 {
+          range "32..9600";
+        }
+        units "Octet";
+        must "(../tcp-min-mss<=../tcp-max-mss) or not(../tcp-max-mss)";
+        default "216";
+        description
+          "IPv4 TCP min mss.";
+      }
+      leaf tcp6-min-mss {
+        type uint32 {
+          range "32..9600";
+        }
+        units "Octet";
+        must "(../tcp6-min-mss<=../tcp6-max-mss) or not(../tcp6-max-mss)";
+        default "216";
+        description
+          "IPv6 TCP min mss.";
+      }
+    }
+  }
+}

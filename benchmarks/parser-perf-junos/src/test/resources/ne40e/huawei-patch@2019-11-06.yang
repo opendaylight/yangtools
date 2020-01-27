@@ -1,0 +1,341 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-patch {
+  namespace "urn:huawei:yang:huawei-patch";
+  prefix patch;
+
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Manage patches.";
+
+  revision 2019-11-06 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "patch";
+  
+  typedef operation-type { 
+    type enumeration {
+      enum "load-patch" {
+        value 0;
+        description
+          "The operation type of patch operation is load-patch.";
+      }
+      enum "delete-patch" {
+        value 1;
+        description
+          "The operation type of patch operation is uninstall-patch.";
+      }
+      enum "startup-next-patch" {
+        value 2;
+        description
+          "The operation type of patch operation is startup-next-patch.";
+      }
+      enum "reset-startup-patch" {
+        value 3;
+        description
+          "The operation type of patch operation is reset-startup-patch.";
+      }
+    }
+    description
+      "Specify patch operation type.";
+  }
+  typedef operation-status { 
+    type enumeration {
+      enum "not-started" {
+        value 0;
+        description
+          "The current status of patch operation is not started.";
+      }
+      enum "operating" {
+        value 1;
+        description
+          "The current status of patch operation is operating.";
+      }
+      enum "successful" {
+        value 2;
+        description
+          "The current status of patch operation is successful.";
+      }
+      enum "failed" {
+        value 3;
+        description
+          "The current status of patch operation is failed.";
+      }
+    }
+    description
+      "Specify patch operation status.";
+  }
+  typedef patch-state {
+    type enumeration {
+      enum "not-exist" {
+        value 0;
+        description
+          "The status of the current patch package is not exist.";
+      }
+      enum "running" {
+        value 3;
+        description
+          "The status of the current patch package is running.";
+      }
+    }
+    description
+      "Status of the current patch package.";
+  }
+  typedef upgrade-mode {
+    type enumeration {
+      enum "reset-process" {
+        value 0;
+        description
+          "Reset process to make the cold patch take effect.";
+      }
+      enum "reset-system" {
+        value 1;
+        description
+          "Reset system to make the cold patch take effect.";
+      }
+      enum "reset-board" {
+        value 2;
+        description
+          "Reset board to make the cold patch take effect.";
+      }
+      enum "reset-chassis" {
+        value 3;
+        description
+          "Reset chassis to make the cold patch take effect.";
+      }
+    }
+    description
+      "Specify the operation method to make the cold patch take effect.";
+  }
+  typedef load-type {
+    type enumeration {
+      enum "run" {
+        value 1;
+        description
+          "Run a patch package.";
+      }
+    }
+    description
+      "Specify the load type of a patch package.";
+  }
+  typedef delete-type {
+    type enumeration {
+      enum "all" {
+        value 0;
+        description
+          "The action of deleting patch package is all.";
+      }
+    }
+    description
+      "Specify the action of deleting patch package.";
+  }
+
+  container patch {
+    config false;
+    description
+      "Manage patches.";
+
+    container patch-infos {
+      description
+        "List of operational data of a patch packet information.";
+      list patch-info {
+        key "name";
+        description
+          "Operational data of a patch packet information.";
+        leaf name {
+          type string {
+            length "5..63";
+          }
+          description
+            "Name of the current patch package.";
+        }
+        leaf version {
+          type string {
+            length "1..63";
+          }
+          description
+            "Version of the current patch package.";
+        }
+        leaf state {
+          type patch-state;
+          description
+            "Status of the current patch package.";
+        }
+        leaf runtime {
+          type yang:date-and-time;
+          description
+            "Run time of the current patch package.";
+        }
+        leaf path {
+          type string {
+            length "1..127";
+          }
+          description
+            "Path of the current patch package.";
+        }
+        container operations {
+          description
+            "List of operational state of making the cold patch take effect.";
+          list operation {
+            key "position";
+            description
+              "Operational state of making the cold patch take effect.";
+            leaf position {
+              type string {
+                length "1..50";
+              }
+              description
+                "Object to make the cold patch take effect.";
+            }
+            leaf position-type {
+              type string {
+                length "1..50";
+              }
+              description
+                "Object type to make the cold patch take effect.";
+            }
+            leaf upgrade-mode {
+              type upgrade-mode;
+              description
+                "Operating method to make the cold patch take effect.";
+            }
+          }
+        }
+      }
+    }
+    container operation-schedules {
+      description
+        "List of operational state of patch.";       
+      list operation-schedule {          
+        key "phase";
+        description       
+          "Operational state of patch.";
+        leaf phase {
+          type operation-type;
+          description
+            "Patch operation type.";
+        }
+        leaf name {
+          type string {
+            length "5..63";
+          }
+          description
+            "Name of a patch package.";
+        }
+        leaf status {
+          type operation-status;
+          description
+            "Patch operation status.";
+        }
+        leaf schedule {
+          type pub-type:percent;
+          description
+            "Value of the patch operation process.";
+        }
+      }
+    }
+  }
+
+  rpc load-patch {
+    description
+      "Load a patch package.";
+    ext:node-ref "/file-operation/dirs/dir";
+    input {
+      leaf name {
+        type string {
+          length "5..127";
+        }
+        mandatory true;
+        description
+          "Specify the full path name of a patch package.";
+      }
+      leaf load-type {
+        type load-type;
+        mandatory true;
+        description
+          "Specify the load type of a patch package.";
+      }
+    }
+  }
+  rpc startup-next-patch {
+    description
+      "Startup a patch package that will be used at the next startup.";
+    ext:node-ref "/file-operation/dirs/dir";
+    input {
+      leaf name {
+        type string {
+          length "5..127";
+        }
+        mandatory true;
+        description
+          "Specify the full path name of a patch package that will be used at the next startup.";
+      }
+    }
+  }
+  rpc delete-patch {
+    description
+      "Delete patch package.";
+    ext:node-ref "/patch/patch-infos/patch-info";
+    input {
+      leaf delete-type {
+        type delete-type;
+        default "all";
+        description
+          "Specify the action of deleting patch package.";
+      }
+      leaf name {
+        when "../delete-type != 'all'";
+        type string {
+          length "5..127";
+        }
+        mandatory true;
+        description
+          "Specify full path name of a patch package.";
+      }
+    }
+  }
+  rpc reset-startup-patch {
+    description
+      "Delete a patch packet that will be used at the next startup.";
+    ext:node-ref "/patch/next-startup-patchs/next-startup-patch";
+    input {
+      leaf delete-type {
+        type delete-type;
+        default "all";
+        description
+          "Specify the action of reset patch package.";
+      }
+      leaf name {
+        when "../delete-type != 'all'";
+        type string {
+          length "5..127";
+        }
+        mandatory true;
+        description
+          "Specify the full path name of a patch package that will be used at the next startup.";
+      }
+    }
+  }
+}

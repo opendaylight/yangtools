@@ -1,0 +1,864 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bfd-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bfd-notification";
+  prefix bfd-notification;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of bfd-notification.";
+  revision 2019-07-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bfd";
+  
+  notification bfd-pw-sess-down {
+    description
+      "The BFD for PW session enters the down state and the corresponding link fails.";
+    leaf sess-index {
+      type uint32;
+      description
+        "SessionIndex.";
+    }
+    leaf session-name {
+      type string {
+        length "1..64";
+      }
+      description
+        "SessionName.";
+    }
+    leaf local-discriminator {
+      type uint32;
+      description
+        "LocalDiscriminator.";
+    }
+    leaf diagnosis {
+      type uint32;
+      description
+        "Diagnosis.";
+    }
+    leaf bind-type {
+      type string {
+        length "1..31";
+      }
+      description
+        "BindType.";
+    }
+    leaf pw-secondary {
+      type uint32;
+      description
+        "PwSecondary.";
+    }
+    leaf pw-id {
+      type uint32;
+      description
+        "PwId.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VsiName.";
+    }
+    leaf vsi-peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "VsiPeerAddress.";
+    }
+  }
+  notification bfd-pw-sess-up {
+    description
+      "The BFD for PW session enters the up state and the detection on the corresponding link is normal.";
+    leaf sess-index {
+      type uint32;
+      description
+        "SessionIndex.";
+    }
+    leaf session-name {
+      type string {
+        length "1..64";
+      }
+      description
+        "SessionName.";
+    }
+    leaf local-discriminator {
+      type uint32;
+      description
+        "LocalDiscriminator.";
+    }
+    leaf diagnosis {
+      type uint32;
+      description
+        "Diagnosis.";
+    }
+    leaf bind-type {
+      type string {
+        length "1..31";
+      }
+      description
+        "BindType.";
+    }
+    leaf pw-secondary {
+      type uint32;
+      description
+        "PwSecondary.";
+    }
+    leaf pw-id {
+      type uint32;
+      description
+        "PwId.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VsiName.";
+    }
+    leaf vsi-peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "VsiPeerAddress.";
+    }
+  }
+  notification bfd-sess-down-trap {
+    description
+      "The BFD session enters the down state and the corresponding link fails.";
+    leaf session-index {
+      type uint32;
+      description
+        "SessionIndex.";
+    }
+    leaf local-discriminator {
+      type uint32;
+      description
+        "LocalDiscriminator.";
+    }
+    leaf vlan-id {
+      type int32;
+      description
+        "VLANID.";
+    }
+    leaf source-ip-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "SourceIPAddress.";
+    }
+    leaf next-hop-ip-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "NextHopIPAddress.";
+    }
+    leaf peer-ip-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "PeerIPAddress.";
+    }
+    leaf bind-type {
+      type string {
+        length "1..31";
+      }
+      description
+        "BindType.";
+    }
+    leaf vrf-index {
+      type uint32;
+      description
+        "VRFIndex.";
+    }
+  }
+  notification bfd-sess-fault-down {
+    description
+      "The BFD session went Down.";
+    leaf index {
+      type uint32;
+      description
+        "Index.";
+    }
+    leaf configuration-name {
+      type string {
+        length "1..64";
+      }
+      description
+        "Configuration Name.";
+    }
+    leaf local-discriminator {
+      type uint32;
+      description
+        "Local Discriminator.";
+    }
+    leaf diagnosis {
+      type uint32;
+      description
+        "Diagnosis.";
+    }
+    leaf bind-if-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Interface Name.";
+    }
+  }
+  notification bfd-sess-resume {
+    description
+      "The BFD session Down alarm was cleared.";
+    leaf index {
+      type uint32;
+      description
+        "Index.";
+    }
+    leaf configuration-name {
+      type string {
+        length "1..64";
+      }
+      description
+        "Configuration Name.";
+    }
+    leaf local-discriminator {
+      type uint32;
+      description
+        "Local Discriminator.";
+    }
+    leaf diagnosis {
+      type uint32;
+      description
+        "Diagnosis.";
+    }
+    leaf bind-if-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Interface Name.";
+    }
+  }
+  notification bfd-sess-up-trap {
+    description
+      "The BFD session enters the up state and the detection on the corresponding link is normal.";
+    leaf session-index {
+      type uint32;
+      description
+        "SessionIndex.";
+    }
+    leaf local-discriminator {
+      type uint32;
+      description
+        "LocalDiscriminator.";
+    }
+    leaf vlan-id {
+      type int32;
+      description
+        "VLANID.";
+    }
+    leaf source-ip-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "SourceIPAddress.";
+    }
+    leaf next-hop-ip-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "NextHopIPAddress.";
+    }
+    leaf peer-ip-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "PeerIPAddress.";
+    }
+    leaf bind-type {
+      type string {
+        length "1..31";
+      }
+      description
+        "BindType.";
+    }
+    leaf vrf-index {
+      type uint32;
+      description
+        "VRFIndex.";
+    }
+  }
+  notification bfd-v6-multi-hop-sess-down-trap {
+    description
+      "The BFD for IPv6 MultiHop session enters the down state and the corresponding link fails.";
+    leaf session-index {
+      type uint32;
+      description
+        "SessionIndex.";
+    }
+    leaf vrf-index {
+      type uint32;
+      description
+        "VRFIndex.";
+    }
+    leaf source-ipv6-address {
+      type inet:ipv6-address-no-zone;
+      description
+        "SourceIPv6Address.";
+    }
+    leaf peer-ipv6-address {
+      type inet:ipv6-address-no-zone;
+      description
+        "PeerIPv6Address.";
+    }
+  }
+  notification bfd-v6-multi-hop-sess-up-trap {
+    description
+      "The BFD for IPv6 MultiHop session enters the up state and the link detection is normal.";
+    leaf session-index {
+      type uint32;
+      description
+        "SessionIndex.";
+    }
+    leaf vrf-index {
+      type uint32;
+      description
+        "VRFIndex.";
+    }
+    leaf source-ipv6-address {
+      type inet:ipv6-address-no-zone;
+      description
+        "SourceIPv6Address.";
+    }
+    leaf peer-ipv6-address {
+      type inet:ipv6-address-no-zone;
+      description
+        "PeerIPv6Address.";
+    }
+  }
+  notification bfd-v6-single-hop-sess-down-trap {
+    description
+      "The BFD for IPv6 SingleHop session enters the down state and the corresponding link fails.";
+    leaf session-index {
+      type uint32;
+      description
+        "SessionIndex.";
+    }
+    leaf vlan-id {
+      type int32;
+      description
+        "VLANID.";
+    }
+    leaf source-ipv6-address {
+      type inet:ipv6-address-no-zone;
+      description
+        "SourceIPv6Address.";
+    }
+    leaf peer-ipv6-address {
+      type inet:ipv6-address-no-zone;
+      description
+        "PeerIPv6Address.";
+    }
+  }
+  notification bfd-v6-single-hop-sess-up-trap {
+    description
+      "The BFD for IPv6 SingleHop session enters the up state and the detection on the corresponding link is normal.";
+    leaf session-index {
+      type uint32;
+      description
+        "SessionIndex.";
+    }
+    leaf vlan-id {
+      type int32;
+      description
+        "VLANID.";
+    }
+    leaf source-ipv6-address {
+      type inet:ipv6-address-no-zone;
+      description
+        "SourceIPv6Address.";
+    }
+    leaf peer-ipv6-address {
+      type inet:ipv6-address-no-zone;
+      description
+        "PeerIPv6Address.";
+    }
+  }
+  notification bfd-bit-err-det-sess-reach-limit {
+    description
+      "The number of all the BFD bit-error-detection sessions set up on interface boards reached the PAF upper limit and no more bit-error-detection session can be set up.";
+    leaf total-bit-error-detect-session-limit {
+      type uint32;
+      description
+        "Indicates the upper limit of global BFD bit-error-detection sessions.";
+    }
+  }
+  notification bfd-sess-reach-limit {
+    description
+      "The number of all the BFD sessions set up on interface boards reached the PAF upper limit and no more session can be set up.";
+    leaf total-session-limit {
+      type uint32;
+      description
+        "Indicates the upper limit of global BFD sessions.";
+    }
+  }
+  notification bfd-sess-reach-limit-bind-if {
+    description
+      "The trap was generated when the number of BFD sessions bound to the interface on the interface board reached the PAF upper limit and no more BFD session bound to the interface can be set up.";
+    leaf configuration-name {
+      type string {
+        length "1..64";
+      }
+      description
+        "Indicates the configuration name.";
+    }
+    leaf interface-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Indicates the interface name.";
+    }
+    leaf session-limit-per-board {
+      type uint32;
+      description
+        "Indicates the allowable maximum number of BFD sessions on each board.";
+    }
+  }
+  notification bfd-ipv6-sess-down {
+    description
+      "The BFD IPv6 session state changed to Down.";
+    leaf index {
+      type uint32;
+      description
+        "BFD session ID.";
+    }
+    leaf configuration-name {
+      type string {
+        length "1..64";
+      }
+      description
+        "BFD session name.";
+    }
+    leaf bind-if-index {
+      type uint32;
+      description
+        "Binding interface index.";
+    }
+    leaf bind-if-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Binding interface name.";
+    }
+    leaf diagnosis {
+      type uint32;
+      description
+        "Indicates information about session diagnostic characters. - 0: No diagnostic word - 1: Detection time Down - 2: Echo detection Down - 3: Neighbor advertisement Down - 4: Forwarding plane reset - 5: Path Down - 6: Cascading path Down - 7: Administratively Down - 8: Reverse cascading path Down - 9: Peer administratively Down - 25: IP error code stop - 26: IP error code start - 27: Section error code stop - 28: Section error code start - 29: LSP error code stop - 30: LSP ingress error code start - 31: LSP transit error code start.";
+    }
+    leaf bind-vrf-index {
+      type uint32;
+      description
+        "Binding VPN index.";
+    }
+    leaf bind-vpn-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Binding VPN name.";
+    }
+    leaf session-type {
+      type uint32;
+      description
+        "Section type: - 1: Static: indicates the statically configured BFD session. - 2: Dynamic: indicates the dynamically established BFD session. - 3: Entire_Dynamic: indicates that the establishment of a BFD session is triggered entirely dynamically. This type of BFD sessions are created only after the function of passively creating BFD sessions is enabled on the egress router of the LSP. - 4: Static_Auto: indicates the static BFD session that is established with automatically negotiated discriminators.";
+    }
+    leaf bind-type {
+      type uint32;
+      description
+        "Binding type: - 2 or 3: Peer Ip Address: detects the multi-hop IP link. - 1 or 4: Interface: detects the single-hop IP link. - 9: LDP_LSP: detects the LDP LSP. - 11: TE_LSP: detects the LSP bound to the TE tunnel. - 12: TE_TUNNEL: detects the TE tunnel. - 13: PW: detects the PW. - 15: VSI_PW: detects the VSI PW.";
+    }
+    leaf static-lsp-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Static LSP name NOTE: The value is constantly -.";
+    }
+    leaf pw-secondary {
+      type uint32;
+      description
+        "Secondary PW identifier.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+    leaf vsi-peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "VSI peer address.";
+    }
+    leaf discr-auto {
+      type uint32;
+      description
+        "Static auto-negotiation discriminator.";
+    }
+    leaf peer-ipv6 {
+      type inet:ipv6-address-no-zone;
+      description
+        "Binding peer IPv6 address.";
+    }
+    leaf ipv6-next-hop {
+      type inet:ipv6-address-no-zone;
+      description
+        "Next hop IPv6 address.";
+    }
+  }
+  notification bfd-ipv6-sess-up {
+    description
+      "The BFD IPv6 session state changed to Up.";
+    leaf index {
+      type uint32;
+      description
+        "BFD session ID.";
+    }
+    leaf configuration-name {
+      type string {
+        length "1..64";
+      }
+      description
+        "BFD session name.";
+    }
+    leaf bind-if-index {
+      type uint32;
+      description
+        "Binding interface index.";
+    }
+    leaf bind-if-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Binding interface name.";
+    }
+    leaf diagnosis {
+      type uint32;
+      description
+        "Indicates information about session diagnostic characters. - 0: No diagnostic word - 1: Detection time Down - 2: Echo detection Down - 3: Neighbor advertisement Down - 4: Forwarding plane reset - 5: Path Down - 6: Cascading path Down - 7: Administratively Down - 8: Reverse cascading path Down - 9: Peer administratively Down - 25: IP error code stop - 26: IP error code start - 27: Section error code stop - 28: Section error code start - 29: LSP error code stop - 30: LSP ingress error code start - 31: LSP transit error code start.";
+    }
+    leaf bind-vrf-index {
+      type uint32;
+      description
+        "Binding VPN index.";
+    }
+    leaf bind-vpn-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Binding VPN name.";
+    }
+    leaf session-type {
+      type uint32;
+      description
+        "Section type: - 1: Static: indicates the statically configured BFD session. - 2: Dynamic: indicates the dynamically established BFD session. - 3: Entire_Dynamic: indicates that the establishment of a BFD session is triggered entirely dynamically. This type of BFD sessions are created only after the function of passively creating BFD sessions is enabled on the egress router of the LSP. - 4: Static_Auto: indicates the static BFD session that is established with automatically negotiated discriminators.";
+    }
+    leaf bind-type {
+      type uint32;
+      description
+        "Binding type: - 2 or 3: Peer Ip Address: detects the multi-hop IP link. - 1 or 4: Interface: detects the single-hop IP link. - 9: LDP_LSP: detects the LDP LSP. - 11: TE_LSP: detects the LSP bound to the TE tunnel. - 12: TE_TUNNEL: detects the TE tunnel. - 13: PW: detects the PW. - 15: VSI_PW: detects the VSI PW.";
+    }
+    leaf static-lsp-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Static LSP name NOTE: The value is constantly -.";
+    }
+    leaf pw-secondary {
+      type uint32;
+      description
+        "Secondary PW identifier NextHop: Next hop address.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "VC ID.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "VSI name.";
+    }
+    leaf vsi-peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "VSI peer address.";
+    }
+    leaf discr-auto {
+      type uint32;
+      description
+        "Static auto-negotiation discriminator.";
+    }
+    leaf peer-ipv6 {
+      type inet:ipv6-address-no-zone;
+      description
+        "Binding peer IPv6 address.";
+    }
+    leaf ipv6-next-hop {
+      type inet:ipv6-address-no-zone;
+      description
+        "Next hop IPv6 address.";
+    }
+  }
+  notification bfd-sess-down {
+    description
+      "The BFD session changed from another state to the Down state.";
+    leaf index {
+      type uint32;
+      description
+        "Indicates the index of the BFD session.";
+    }
+    leaf configuration-name {
+      type string {
+        length "1..64";
+      }
+      description
+        "Indicates the configuration name of the BFD session.";
+    }
+    leaf peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Indicates the bound destination IP address.";
+    }
+    leaf bind-if-index {
+      type uint32;
+      description
+        "Indicates the index of the bound interface.";
+    }
+    leaf bind-if-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Indicates the name of the bound interface.";
+    }
+    leaf diagnosis {
+      type uint32;
+      description
+        "Indicates information about session diagnostic characters. - 0: No diagnostic word - 1: Detection time Down - 2: Echo detection Down - 3: Neighbor advertisement Down - 4: Forwarding plane reset - 5: Path Down - 6: Cascading path Down - 7: Administratively Down - 8: Reverse cascading path Down - 9: Peer administratively Down - 25: IP error code stop - 26: IP error code start - 27: Section error code stop - 28: Section error code start - 29: LSP error code stop - 30: LSP ingress error code start - 31: LSP transit error code start.";
+    }
+    leaf bind-vrf-index {
+      type uint32;
+      description
+        "Indicates the index of the bound VPN.";
+    }
+    leaf bind-vpn-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the name of the bound VPN.";
+    }
+    leaf session-type {
+      type uint32;
+      description
+        "- 1: Static, indicates the statically configured BFD session. - 2: Dynamic, indicates the dynamically established BFD session. - 3: Entire_Dynamic, indicates that the establishment of a BFD session is triggered entirely dynamically. This type of BFD session is created only after the function of passively creating BFD sessions is enabled on the egress router of the LSP. - 4: Static_Auto, indicates the static BFD session that is established with automatically negotiated discriminators.";
+    }
+    leaf default-ip {
+      type uint32;
+      description
+        "Indicates the default multicast IP address.";
+    }
+    leaf bind-type {
+      type uint32;
+      description
+        "- 2 or 3: Peer Ip Address, detects the multi-hop IP link. - 1 or 4: Interface, detects the single-hop IP link. - 9: LDP_LSP, detects the LDP LSP. - 11: TE_LSP, detects the LSP bound to the TE tunnel. - 12: TE_TUNNEL, detects the TE tunnel. - 13: PW, detects the PW. - 15: VSI_PW, detects the VSI PW.";
+    }
+    leaf static-lsp-name {
+      type string {
+        length "1..31";
+      }
+      description
+        'Indicates the name of the static LSP. NOTE: This parameter is always displayed as "-".';
+    }
+    leaf pw-secondary {
+      type uint32;
+      description
+        "Indicates the ID of the secondary PW.";
+    }
+    leaf next-hop {
+      type inet:ipv4-address-no-zone;
+      description
+        "Indicates the IP address of the next hop.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "Indicates the ID of the VC.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the name of the VSI.";
+    }
+    leaf vsi-peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Indicates the destination address of the VSI.";
+    }
+    leaf discr-auto {
+      type uint32;
+      description
+        "Indicates the static auto-negotiation identifier.";
+    }
+    leaf peer-ipv6 {
+      type inet:ipv6-address-no-zone;
+      description
+        "Indicates the bound destination IPv6 address.";
+    }
+    leaf ipv6-next-hop {
+      type inet:ipv6-address-no-zone;
+      description
+        "Indicates the next-hop IPv6 address.";
+    }
+  }
+  notification bfd-sess-up {
+    description
+      "The BFD session changed from another state to the Up state.";
+    leaf index {
+      type uint32;
+      description
+        "Indicates the index of the BFD session.";
+    }
+    leaf configuration-name {
+      type string {
+        length "1..64";
+      }
+      description
+        "Indicates the configuration name of the BFD session.";
+    }
+    leaf peer-ip {
+      type inet:ipv4-address-no-zone;
+      description
+        "Indicates the bound destination IP address.";
+    }
+    leaf bind-if-index {
+      type uint32;
+      description
+        "Indicates the index of the bound interface.";
+    }
+    leaf bind-if-name {
+      type string {
+        length "1..63";
+      }
+      description
+        "Indicates the name of the bound interface.";
+    }
+    leaf diagnosis {
+      type uint32;
+      description
+        "Indicates information about session diagnostic characters. - 0: No diagnostic word - 1: Detection time Down - 2: Echo detection Down - 3: Neighbor advertisement Down - 4: Forwarding plane reset - 5: Path Down - 6: Cascading path Down - 7: Administratively Down - 8: Reverse cascading path Down - 9: Peer administratively Down - 25: IP error code stop - 26: IP error code start - 27: Section error code stop - 28: Section error code start - 29: LSP error code stop - 30: LSP ingress error code start - 31: LSP transit error code start.";
+    }
+    leaf bind-vrf-index {
+      type uint32;
+      description
+        "Indicates the index of the bound VPN.";
+    }
+    leaf bind-vpn-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the name of the bound VPN.";
+    }
+    leaf session-type {
+      type uint32;
+      description
+        "- 1: Static, indicates the statically configured BFD session. - 2: Dynamic, indicates the dynamically established BFD session. - 3: Entire_Dynamic, indicates that the establishment of a BFD session is triggered entirely dynamically. This type of BFD session is created only after the function of passively creating BFD sessions is enabled on the egress router of the LSP. - 4: Static_Auto, indicates the static BFD session that is established with automatically negotiated discriminators.";
+    }
+    leaf default-ip {
+      type uint32;
+      description
+        "Indicates the default multicast IP address.";
+    }
+    leaf bind-type {
+      type uint32;
+      description
+        "- 2 or 3: Peer Ip Address, detects the multi-hop IP link. - 1 or 4: Interface, detects the single-hop IP link. - 9: LDP_LSP, detects the LDP LSP. - 11: TE_LSP, detects the LSP bound to the TE tunnel. - 12: TE_TUNNEL, detects the TE tunnel. - 13: PW, detects the PW. - 15: VSI_PW, detects the VSI PW.";
+    }
+    leaf static-lsp-name {
+      type string {
+        length "1..31";
+      }
+      description
+        'Indicates the name of the static LSP. NOTE: This parameter is always displayed as "-".';
+    }
+    leaf pw-secondary {
+      type uint32;
+      description
+        "Indicates the ID of the secondary PW.";
+    }
+    leaf next-hop {
+      type inet:ipv4-address-no-zone;
+      description
+        "Indicates the IP address of the next hop.";
+    }
+    leaf vc-id {
+      type uint32;
+      description
+        "Indicates the ID of the VC.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Indicates the name of the VSI.";
+    }
+    leaf vsi-peer-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Indicates the destination address of the VSI.";
+    }
+    leaf discr-auto {
+      type uint32;
+      description
+        "Indicates the static auto-negotiation identifier.";
+    }
+    leaf peer-ipv6 {
+      type inet:ipv6-address-no-zone;
+      description
+        "Indicates the bound destination IPv6 address.";
+    }
+    leaf ipv6-next-hop {
+      type inet:ipv6-address-no-zone;
+      description
+        "Indicates the next-hop IPv6 address.";
+    }
+  }
+}

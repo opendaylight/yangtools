@@ -1,0 +1,548 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-aaa-lam {
+  belongs-to huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  include huawei-aaa-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+    
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+     
+  description
+    "Description of lam submodule.";
+    
+  revision 2020-01-09 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  grouping aaa-lam-type {
+    description
+      "Local management.";
+    container login-failed-limit {
+      description
+        "Configure login failed times limit in special period.";
+      leaf failed-times {
+        type uint32 {
+          range "0..10";
+        }
+        default "5";
+        description
+          "Indicates the consecutive failure times. 0 indicates that the number of times for a user to fail the authentification continuously is not restricted.";
+      }
+      leaf period {
+        type uint32 {
+          range "1..120";
+        }
+        units "min";
+        default "5";
+        description
+          "Specifies a period for consecutive authentication failures.";
+      }
+      leaf reactive-time {
+        type uint32 {
+          range "0..1000";
+        }
+        units "min";
+        default "5";
+        description
+          "Specifies an automatic activation time for a locked account. 0 indicates that the locked account will not be unlocked automatically.";
+      }
+    }
+    container user-security-policy {
+      description
+        "Configure local user security policy.";
+      leaf security-policy {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the local user security policy function.";
+      }
+      leaf user-aging-period {
+        type uint32 {
+          range "1..365";
+        }
+        description
+          "The period of user age.";
+      }
+      leaf user-name-min-len {
+        type uint32 {
+          range "0..253";
+        }
+        default "0";
+        description
+          "The minumum length of username, 0 indicates that the length is not limited.";
+      }
+    }
+    container password-policy {
+      description
+        "Configure local-user password policy.";
+      leaf expire-days {
+        type uint16 {
+          range "0..365";
+        }
+        units "d";
+        must "../prompt-days<=../expire-days";
+        default "0";
+        description
+          "Password expire days, 0 indicates that password is useful forever.";
+      }
+      leaf prompt-days {
+        type uint16 {
+          range "0..180";
+        }
+        units "d";
+        must "../prompt-days<=../expire-days";
+        default "0";
+        description
+          "Password promptdays.";
+      }
+      leaf change-check {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function to prompt a user to change the password upon first-time use.";
+      }
+      leaf complexity-check {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable password complexity check.";
+      }
+      leaf pwd-min-length {
+        type uint32 {
+          range "3..128";
+        }
+        description
+          "Specifies a minimum password length for local users.";
+      }
+      leaf expired-pwd-reuse-num {
+        type uint32;
+        config false;
+        description
+          "Max. Number of times to reuse expired password.";
+      }
+      leaf history-pwd-num {
+        type uint32;
+        config false;
+        description
+          "History password number.";
+      }
+      leaf pwd-expire-days {
+        type uint32;
+        units "d";
+        config false;
+        description
+          "The passowrd will expire in the special days.";
+      }
+    }
+    container forbidden-word-rules {
+      description
+        "List of password black.";
+      list forbidden-word-rule {
+        key "forbidden-word";
+        description
+          "Configure password forbidden rule.";
+        leaf forbidden-word {
+          type string {
+            length "1..255";
+          }
+          description
+            "Forbidden word.";
+        }
+      }
+    }
+    container users {
+      description
+        "List of local user.";
+      list user {
+        key "name";
+        description
+          "Configure local user.";
+        leaf name {
+          type string {
+            length "1..253";
+            pattern "[^A-Z]+";
+          }
+          description
+            "Name of a local user. The minimum length of a username is determined by user-name-min-len and security-policy. If security-policy is set to false and user-name-min-len is configured, the configuration takes effect. When security-policy is set to true, the minimum length of the username must be at least 6 characters. If user-name-min-len is configured and the user-name-min-len value is greater than 6 characters, the minimum length of the username is equal to the user-name-min-len value. If security-policy is set to false and user-name-min-len is not configured, the minimum length of the username is 1. If the username contains more than 32 characters, service-snmp cannot be set to true.";
+        }
+        leaf end-life-date {
+          type pub-type:date;
+          description
+            "The end date of local user's life.";
+        }
+        leaf is-login-anytime {
+          type boolean;
+          must "(not(../begin-login-day='sun' and ../end-login-day='sat' and ../begin-login-time='00:00:00' and ../end-login-time='23:59:59') and ../is-login-anytime='false') or (../begin-login-day='sun' and ../end-login-day='sat' and ../begin-login-time='00:00:00' and ../end-login-time='23:59:59' and ../is-login-anytime='true')";
+          default "true";
+          description
+            "Enable/disable the flag of login anytime.";
+        }
+        leaf begin-login-day {
+          type lam-weekday-type;
+          must "not(../is-login-anytime='true') or (../is-login-anytime='true' and ../begin-login-day='sun')";
+          default "sun";
+          description
+            "The begin day of week for login.";
+        }
+        leaf end-login-day {
+          type lam-weekday-type;
+          must "not(../is-login-anytime='true') or (../is-login-anytime='true' and ../end-login-day='sat')";
+          default "sat";
+          description
+            "The end day of week for login.";
+        }
+        leaf begin-login-time {
+          type pub-type:time;
+          must "not(../is-login-anytime='true') or (../is-login-anytime='true' and ../begin-login-time='00:00:00')";
+          default "00:00:00";
+          description
+            "The begin time of every login day. The begin-login-time must be five or more minutes earlier than the end-login-time.";
+        }
+        leaf end-login-time {
+          type pub-type:time;
+          must "not(../is-login-anytime='true') or (../is-login-anytime='true' and ../end-login-time='23:59:59')";
+          default "23:59:59";
+          description
+            "The end time of every login day. The end-login-time must be five or more minutes later than the begin-login-time.";
+        }
+        leaf aging-in-days {
+          type uint32 {
+            range "0..365";
+          }
+          units "d";
+          description
+            "The user will age if not online in the special days.";
+        }
+        leaf password-expire-in-days {
+          type uint32 {
+            range "0..999";
+          }
+          units "d";
+          description
+            "The passowrd will expire in the special days.";
+        }
+        leaf group-name {
+          type string {
+            length "1..32";
+          }
+          description
+            "Name of the user group where the user belongs, it must be an existing user group. The user inherits all the rights of the user group.";
+        }
+        leaf state {
+          type user-state-type;
+          default "active";
+          description
+            "Activated state of a user.";
+        }
+        leaf failed-times {
+          when "../state='active'";
+          type uint32 {
+            range "0..10";
+          }
+          must "(../interval!=0) or (../failed-times=0 and ../interval=0)";
+          default "0";
+          description
+            "When user continuous authen failed times reach the limit, the user is locked.";
+        }
+        leaf interval {
+          when "../state='active'";
+          type uint32 {
+            range "0..65535";
+          }
+          units "min";
+          must "(../failed-times!=0) or (../failed-times=0 and ../interval=0)";
+          default "0";
+          description
+            "Set a user lockout period (in minutes). If a user is locked due to consecutive authentication failures, the user is automatically unlocked after the set period expires. 0 indicats that the locked user is not automatically unlocked.";
+        }
+        leaf password-type {
+          type aaa-pwd-mode-type;
+          must "../password";
+          default "irreversible-cipher";
+          description
+            "Set a password type, which can be cipher or irreversible-cipher. Cipher passwords are encrypted and generated using the reversible algorithm, while irreversible-cipher passwords are encrypted and generated using the irreversible algorithm.";
+        }
+        leaf password {
+          type pub-type:password-extend {
+            length "1..268";
+          }
+          mandatory true;
+          description
+            "Login password of a user, which is a string ranging from 1 to 128 characters for a unencrypted password and 32 to 268 characters for a encrypted password. The password can contain letters, numbers, and special characters. Chinese characters are not supported. The minimum length and complexity of a user password are restricted by pwd-min-length, security-policy, complexity-check, and forbidden-word. When security-policy is set to true, the minimum length of a password is 8 characters. In addition, complexity verification is enabled. The complexity requirements are as follows: (1) A password must contain digits, uppercase letters, lowercase letters, and special characters. Spaces and question marks are not supported. If the password is enclosed in quotation marks, spaces are allowed in the password. (2) The password cannot contain an account or the reverse string of an account. (3) The new password cannot be the same as any of the previous 10 passwords. (If the new password is the same as the current password, the new password is also considered as a history password. That is, the current password is included in the 10 history passwords.) This parameter takes effect when the password complexity check is enabled (complexity-check is set to true). If forbidden-word is configured, the password cannot contain forbidden words. If only the pwd-min-length value is set, the pwd-min-length setting takes effect. If the minimum length of a user password is set and the user security policy is enabled, the minimum length of a password cannot be less than 8 characters. If the minimum length of a password is set and the pwd-min-length value is greater than 8 characters, the minimum length of a password is determined by the pwd-min-length value.";
+        }
+        leaf level {
+          type uint32 {
+            range "0..15";
+          }
+          description
+            "Login level of a local user. If the command level adjustment function is disabled, the value of userLevel ranges from 0 to 3. If the command level adjustment function is enabled, the value of userLevel ranges from 0 to 15.";
+        }
+        leaf ftp-dir {
+          type string {
+            length "1..255";
+          }
+          description
+            "FTP user directory.";
+        }
+        leaf service-terminal {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable login through a terminal.";
+        }
+        leaf service-telnet {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable login through Telnet.";
+        }
+        leaf service-ftp {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable login through FTP.";
+        }
+        leaf service-ppp {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable login through PPP.";
+        }
+        leaf service-ssh {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable login through SSH.";
+        }
+        leaf service-qx {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable login through QX.";
+        }
+        leaf service-snmp {
+          type boolean;
+          must "(../service-snmp='false') or (../service-snmp='true' and string-length(current()/../name)<32)";
+          default "false";
+          description
+            "Enable/disable login through SNMP.";
+        }
+        leaf service-mml {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable login through MML.";
+        }
+        leaf service-http {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable login through HTTP.";
+        }
+        leaf max-access-num {
+          type int32 {
+            range "1..2147483647";
+          }
+          description
+            "The local user max access number.";
+        }
+        leaf idle-cut-enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable configures the idle cut function for a local user.";
+        }
+        leaf begin-life-date {
+          type pub-type:date;
+          config false;
+          description
+            "The begin date of local user's life.";
+        }
+        leaf last-login-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "The last login time.";
+        }
+        leaf is-aged {
+          type aaa-bool-type;
+          config false;
+          description
+            "Whether the user is aged now.";
+        }
+        leaf is-locked {
+          type aaa-bool-type;
+          config false;
+          description
+            "Whether the user is locked now.";
+        }
+        leaf left-lock-time {
+          type uint32 {
+            range "1..4294967295";
+          }
+          units "s";
+          config false;
+          description
+            "Left lock time of locked user.";
+        }
+        leaf is-terminal-locked {
+          type aaa-bool-type;
+          config false;
+          description
+            "Whether the user is terminal locked now.";
+        }
+        leaf terminal-left-lock-time {
+          type uint32 {
+            range "1..4294967295";
+          }
+          units "s";
+          config false;
+          description
+            "Left lock time of terminal locked user.";
+        }
+        leaf pass-modify-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Password modify time.";
+        }
+        leaf is-pass-expired {
+          type is-pass-expired-type;
+          config false;
+          description
+            "Whether the password of this user name expires.";
+        }
+        leaf is-pass-changed {
+          type boolean;
+          config false;
+          description
+            "Whether the password of this user name is changed by the user.";
+        }
+        leaf alive-num {
+          type int32 {
+            range "0..2147483647";
+          }
+          config false;
+          description
+            "Online number of the local user.";
+        }
+      }
+    }
+  }
+  grouping aaa-local-server-type {
+    description
+      "Local aaa server.";
+    container login-failed-limit {
+      description
+        "Configure the maximum number of login attempts allowed in the specified period.";
+      leaf failed-times {
+        type uint32 {
+          range "0..10";
+        }
+        default "5";
+        description
+          "Indicates the consecutive failure times. 0 indicates that the number of times that a user fails authentication continuously is not restricted.";
+      }
+      leaf period {
+        type uint32 {
+          range "1..120";
+        }
+        units "min";
+        default "5";
+        description
+          "Specifies a period for consecutive authentication failures.";
+      }
+      leaf reactive-time {
+        type uint32 {
+          range "0..1000";
+        }
+        units "min";
+        default "5";
+        description
+          "Specifies an automatic activation time for a locked account. 0 indicates that the locked account will not be unlocked automatically.";
+      }
+    }
+    container user-security-policy {
+      description
+        "Configure a local user security policy.";
+      leaf user-aging-period {
+        type uint32 {
+          range "1..365";
+        }
+        description
+          "Specifies an aging period for an administrator.";
+      }
+      leaf user-name-min-len {
+        type uint32 {
+          range "0..253";
+        }
+        default "0";
+        description
+          "Specifies the minimum length for user names. 0 indicates that the length is not limited.";
+      }
+    }
+    container password-policy {
+      description
+        "Configure a local user password policy.";
+      leaf expire-days {
+        type uint16 {
+          range "0..365";
+        }
+        units "d";
+        must "../prompt-days<=../expire-days";
+        default "0";
+        description
+          "Specifies an expiration period for a password. 0 indicates that a password is permanently valid.";
+      }
+      leaf prompt-days {
+        type uint16 {
+          range "0..180";
+        }
+        units "d";
+        must "../prompt-days<=../expire-days";
+        default "0";
+        description
+          "Specifies a remaining validity period for a password.";
+      }
+      leaf change-check {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable mandatory password change when a password is used for the first time.";
+      }
+      leaf complexity-check {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable password complexity enhancement.";
+      }
+      leaf pwd-min-length {
+        type uint32 {
+          range "3..128";
+        }
+        description
+          "Specifies the minimum length for passwords configured for local users.";
+      }
+    }
+  }
+}

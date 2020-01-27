@@ -1,0 +1,2408 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifm {
+  namespace "urn:huawei:yang:huawei-ifm";
+  prefix ifm;
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Common interface management, which includes the public configuration of interfaces.";
+  revision 2020-02-14 {
+    description
+      "Add must condition and revise description. Add leaf bandwidth-kbps.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-20 {
+    description
+      "Add must condition and revise description. Be compatible with code.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-15 {
+    description
+      "Delete redundant damping container.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-10 {
+    description
+      "Add the default case for the damping container.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-09-29 {
+    description
+      "Modify the damping container.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-08-22 {
+    description
+      "Add leaf pass-through-if, discontinuity-time and receive-unknown-protos-packet.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-15 {
+    description
+      "Reinitialize revision.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-10 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "interface-mgr";
+
+  typedef port-type {
+    type enumeration {
+      enum Ethernet {
+        value 0;
+        description
+          "Ethernet interface.";
+      }
+      enum GigabitEthernet {
+        value 2;
+        description
+          "GigabitEthernet interface.";
+      }
+      enum Eth-Trunk {
+        value 4;
+        description
+          "Eth-Trunk interface.";
+      }
+      enum Ip-Trunk {
+        value 5;
+        description
+          "IP-Trunk interface.";
+      }
+      enum Pos {
+        value 9;
+        description
+          "POS interface.";
+      }
+      enum Tunnel {
+        value 14;
+        description
+          "Tunnel interface.";
+      }
+      enum NULL {
+        value 18;
+        description
+          "Null interface.";
+      }
+      enum LoopBack {
+        value 19;
+        description
+          "Loopback interface.";
+      }
+      enum Vlanif {
+        value 15;
+        description
+          "VLANIF interface.";
+      }
+      enum 100GE {
+        value 20;
+        description
+          "100 GigabitEthernet interface.";
+      }
+      enum 200GE {
+        value 92;
+        description
+          "200 GigabitEthernet interface.";
+      }
+      enum 40GE {
+        value 23;
+        description
+          "40 GigabitEthernet interface.";
+      }
+      enum MTunnel {
+        value 22;
+        description
+          "MTunnel interface.";
+      }
+      enum 10GE {
+        value 24;
+        description
+          "10 GigabitEthernet interface.";
+      }
+      enum GEBrief {
+        value 25;
+        description
+          "GigabitEthernet interface.";
+      }
+      enum MEth {
+        value 26;
+        description
+          "Management Ethernet interface.";
+      }
+      enum IMEth {
+        value 79;
+        description
+          "Inner Management Ethernet interface.";
+      }
+      enum Stack-Port {
+        value 27;
+        description
+          "Stack-port interface.";
+      }
+      enum Sip {
+        value 28;
+        description
+          "System interconnect port.";
+      }
+      enum Cpos {
+        value 10;
+        description
+          "CPOS controller.";
+      }
+      enum E1 {
+        value 30;
+        description
+          "E1 controller.";
+      }
+      enum Serial {
+        value 8;
+        description
+          "Serial interface.";
+      }
+      enum Mp-group {
+        value 31;
+        description
+          "MP-group interface.";
+      }
+      enum Virtual-Ethernet {
+        value 6;
+        description
+          "Virtual-Ethernet interface.";
+      }
+      enum VMEth {
+        value 33;
+        description
+          "Virtual management Ethernet interface.";
+      }
+      enum Ima-group {
+        value 32;
+        description
+          "IMA-group interface.";
+      }
+      enum Remote-Ap {
+        value 35;
+        description
+          "Virtual cluster access remote access point interface.";
+      }
+      enum VBridge {
+        value 36;
+        description
+          "Virtual cluster access bridge interface.";
+      }
+      enum Atm-Bundle {
+        value 37;
+        description
+          "ATM-Bundle interface.";
+      }
+      enum Fiber-Channel {
+        value 38;
+        description
+          "Fiber-Channel interface.";
+      }
+      enum Infiniband {
+        value 39;
+        description
+          "Infiniband interface.";
+      }
+      enum Lmpif {
+        value 21;
+        description
+          "Lmpif interface.";
+      }
+      enum T1 {
+        value 41;
+        description
+          "T1 controller.";
+      }
+      enum T3 {
+        value 42;
+        description
+          "T3 controller.";
+      }
+      enum Global-VE {
+        value 45;
+        description
+          "Global-VE interface.";
+      }
+      enum VC4 {
+        value 43;
+        description
+          "VC4 interface.";
+      }
+      enum VC12 {
+        value 44;
+        description
+          "VC12 interface.";
+      }
+      enum Vbdif {
+        value 40;
+        description
+          "VBDIF interface.";
+      }
+      enum Fabric-Port {
+        value 46;
+        description
+          "Fabric-Port interface.";
+      }
+      enum E3 {
+        value 48;
+        description
+          "E3 controller.";
+      }
+      enum Otn {
+        value 55;
+        description
+          "OTN controller.";
+      }
+      enum Vp {
+        value 49;
+        description
+          "VP interface.";
+      }
+      enum DcnInterface {
+        value 50;
+        description
+          "DCN interface.";
+      }
+      enum Cpos-Trunk {
+        value 51;
+        description
+          "Cpos-Trunk interface.";
+      }
+      enum Pos-Trunk {
+        value 59;
+        description
+          "Pos-Trunk interface.";
+      }
+      enum Trunk-Serial {
+        value 52;
+        description
+          "Trunk-Serial interface.";
+      }
+      enum Global-Ima-Group {
+        value 57;
+        description
+          "Global-Ima-Group interface.";
+      }
+      enum Global-Mp-Group {
+        value 53;
+        description
+          "Global-Mp-Group interface.";
+      }
+      enum Gmpls-Uni {
+        value 63;
+        description
+          "GMPLS uni interface.";
+      }
+      enum Wdm {
+        value 64;
+        description
+          "Wdm controller.";
+      }
+      enum Nve {
+        value 65;
+        description
+          "NVE interface.";
+      }
+      enum FCoE-Port {
+        value 67;
+        description
+          "FCoE-Port Interface.";
+      }
+      enum Virtual-Template {
+        value 68;
+        description
+          "Virtual-Template Interface.";
+      }
+      enum FC {
+        value 70;
+        description
+          "FC Interface.";
+      }
+      enum 4x10GE {
+        value 71;
+        description
+          "4x10 GigabitEthernet interface.";
+      }
+      enum 10x10GE {
+        value 72;
+        description
+          "10x10 GigabitEthernet interface.";
+      }
+      enum 3x40GE {
+        value 73;
+        description
+          "3x40 GigabitEthernet interface.";
+      }
+      enum 4x25GE {
+        value 74;
+        description
+          "4x25 GigabitEthernet interface.";
+      }
+      enum 25GE {
+        value 75;
+        description
+          "25 GigabitEthernet interface.";
+      }
+      enum ATM {
+        value 11;
+        description
+          "Atm interface.";
+      }
+      enum XGigabitEthernet {
+        value 91;
+        description
+          "XGigabitEthernet interface.";
+      }
+      enum ServiceIf {
+        value 90;
+        description
+          "ServiceIf interface.";
+      }
+      enum Virtual-ODUk {
+        value 94;
+        description
+          "Virtual-ODUk interface.";
+      }
+      enum FlexE {
+        value 95;
+        description
+          "FlexE interface.";
+      }
+      enum FlexE-200GE {
+        value 96;
+        description
+          "FlexE-200GE interface.";
+      }
+      enum 50|100GE {
+        value 101;
+        description
+          "50|100 GigabitEthernet interface.";
+      }
+      enum 50GE {
+        value 102;
+        description
+          "50 GigabitEthernet interface.";
+      }
+      enum FlexE-50G {
+        value 103;
+        description
+          "FlexE-50G interface.";
+      }
+      enum FlexE-100G {
+        value 104;
+        description
+          "FlexE-100G interface.";
+      }
+      enum FlexE-50|100G {
+        value 105;
+        description
+          "FlexE-50|100G interface.";
+      }
+      enum PW-VE {
+        value 88;
+        description
+          "PW-VE interface.";
+      }
+      enum Virtual-Serial {
+        value 107;
+        description
+          "Virtual-Serial interface.";
+      }
+      enum 400GE {
+        value 108;
+        description
+          "400GE interface.";
+      }
+      enum VX-Tunnel {
+        value 89;
+        description
+          "VX-Tunnel interface.";
+      }
+      enum HPGE {
+	value 114;
+        description
+          "HPGE interface.";
+      }
+      enum Virtual-if {
+	value 116;
+        description
+          "Virtual-if interface.";
+      }
+    }
+    description
+      "Interface physical type.";
+  }
+
+  typedef router-type {
+    type enumeration {
+      enum PtoP {
+        value 0;
+        description
+          "Point to point.";
+      }
+      enum PtoMP {
+        value 1;
+        description
+          "Point to multi-point.";
+      }
+      enum broadcast {
+        value 2;
+        description
+          "Broadcast.";
+      }
+      enum NBMA {
+        value 3;
+        description
+          "Non-broadcast multi-access.";
+      }
+      enum invalid {
+        value 255;
+        description
+          "None.";
+      }
+    }
+    description
+      "Interface router type.";
+  }
+
+  typedef network-layer-state {
+    type enumeration {
+      enum ipv4-ipv6-up {
+        value 0;
+        description
+          "Administratively Up of IPv4 and IPv6 state.";
+      }
+      enum ipv4-ipv6-down {
+        value 196608;
+        description
+          "Administratively Down of IPv4 and IPv6 state.";
+      }
+    }
+    description
+      "Interface network layer state type.";
+  }
+
+  typedef link-protocol {
+    type enumeration {
+      enum ethernet {
+        value 0;
+        description
+          "The link protocol of the interface is Ethernet.";
+      }
+      enum ppp {
+        value 1;
+        description
+          "The link protocol of the interface is PPP.";
+      }
+      enum hdlc {
+        value 2;
+        description
+          "The link protocol of the interface is HDLC.";
+      }
+      enum fr {
+        value 3;
+        description
+          "The link protocol of the interface is FR.";
+      }
+      enum atm {
+        value 6;
+        description
+          "The link protocol of the interface is ATM.";
+      }
+      enum tdm {
+        value 7;
+        description
+          "The link protocol of the interface is TDM.";
+      }
+    }
+    description
+      "Interface link portocol type.";
+  }
+
+  typedef port-status {
+    type enumeration {
+      enum down {
+        value 0;
+        description
+          "The interface is in Down state.";
+      }
+      enum up {
+        value 1;
+        description
+          "The interface is in Up state.";
+      }
+    }
+    description
+      "Interface status type.";
+  }
+
+  typedef service-type {
+    type enumeration {
+      enum none {
+        value 0;
+        description
+          "None.";
+      }
+      enum trunk-member {
+        value 2;
+        description
+          "Trunk member.";
+      }
+      enum stack-member {
+        value 6;
+        description
+          "Stack member.";
+      }
+      enum mp-member {
+        value 7;
+        description
+          "MP-Group member.";
+      }
+      enum vbridge-member {
+        value 8;
+        description
+          "VBridge member.";
+      }
+      enum ima-member {
+        value 9;
+        description
+          "IMA member.";
+      }
+      enum bundle-member {
+        value 10;
+        description
+          "Bundle member.";
+      }
+      enum fabric-member {
+        value 11;
+        description
+          "Fabric member.";
+      }
+      enum lag-master-member {
+        value 12;
+        description
+          "Master member in a LAG.";
+      }
+      enum lag-slave-member {
+        value 13;
+        description
+          "Slave member in a LAG.";
+      }
+      enum cpos-trunk-member {
+        value 15;
+        description
+          "Cpos-Trunk member.";
+      }
+      enum pos-trunk-member {
+        value 16;
+        description
+          "Pos-Trunk member.";
+      }
+      enum global-mp-member {
+        value 17;
+        description
+          "Global-Mp-group member.";
+      }
+      enum global-ima-member {
+        value 18;
+        description
+          "Global-Ima-group member.";
+      }
+    }
+    description
+      "Interface service type.";
+  }
+
+  typedef error-down-type {
+    type enumeration {
+      enum bpdu-protection {
+        value 0;
+        description
+          "BPDU protection.";
+      }
+      enum auto-defend {
+        value 1;
+        description
+          "Attack source tracing.";
+      }
+      enum monitor-link {
+        value 2;
+        description
+          "The uplink of monitor-link group is down.";
+      }
+      enum portsec-reached-limit {
+        value 65;
+        description
+          "Secure mac addresses have reached the upper limit.";
+      }
+      enum storm-control {
+        value 66;
+        description
+          "Storm-control.";
+      }
+      enum loopback-detect {
+        value 67;
+        description
+          "Loopback detect.";
+      }
+      enum dual-active {
+        value 68;
+        description
+          "Dual-active.";
+      }
+      enum mac-address-flapping {
+        value 69;
+        description
+          "Mac address flapping.";
+      }
+      enum no-stack-link {
+        value 70;
+        description
+          "No-stack-link.";
+      }
+      enum crc-statistics {
+        value 71;
+        description
+          "CRC statistics.";
+      }
+      enum transceiver-power-low {
+        value 72;
+        description
+          "The transceiver power is low.";
+      }
+      enum link-flap {
+        value 73;
+        description
+          "Link flapping.";
+      }
+      enum l2-loop-occured {
+        value 74;
+        description
+          "L2 loop.";
+      }
+      enum stack-member-exceed-limit {
+        value 75;
+        description
+          "The number of stack members exceeds the limit.";
+      }
+      enum spine-member-exceed-limit {
+        value 76;
+        description
+          "The number of spine members exceeds the limit.";
+      }
+      enum resource-mismatch {
+        value 77;
+        description
+          "Resource mismatch.";
+      }
+      enum leaf-mstp {
+        value 78;
+        description
+          "Leaf port mstp disable.";
+      }
+      enum m-lag {
+        value 79;
+        description
+          "M-LAG peer detect error.";
+      }
+      enum fabric-uplink-threshold {
+        value 80;
+        description
+          "Fabric uplink less then threshold.";
+      }
+      enum stack-config-conflict {
+        value 81;
+        description
+          "Stack config conflict.";
+      }
+      enum spine-type-unsupported {
+        value 82;
+        description
+          "Spine type unsupported.";
+      }
+      enum stack-packet-defensive {
+        value 83;
+        description
+          "Stack packet defensive.";
+      }
+      enum forward-engine-buffer-failed {
+        value 85;
+        description
+          "Forward engine buffer failed.";
+      }
+      enum forward-engine-interface-failed {
+        value 86;
+        description
+          "Forward engine interface failed.";
+      }
+      enum fabric-link-failure {
+        value 87;
+        description
+          "Fabric link failure.";
+      }
+      enum m-lag-consistency-check {
+        value 88;
+        description
+          "M-Lag consistency check failed.";
+      }
+    }
+    description
+      "Interface error down type.";
+  }
+
+  typedef class-type {
+    type enumeration {
+      enum main-interface {
+        value 0;
+        description
+          "Main interface.";
+      }
+      enum sub-interface {
+        value 1;
+        description
+          "Subinterface.";
+      }
+    }
+    description
+      "Interface class type.";
+  }
+
+  typedef encapsulation-type {
+    type enumeration {
+      enum vlan-type {
+        value 0;
+        description
+          "VLAN type.";
+      }
+      enum dot1q {
+        value 1;
+        description
+          "Dot1q.";
+      }
+      enum qinq {
+        value 2;
+        description
+          "QinQ.";
+      }
+      enum p2p {
+        value 3;
+        description
+          "P2P.";
+      }
+      enum p2mp {
+        value 4;
+        description
+          "P2MP.";
+      }
+      enum l2ve {
+        value 5;
+        description
+          "L2VE.";
+      }
+      enum l3ve {
+        value 6;
+        description
+          "L3VE.";
+      }
+      enum vlan-type-policy {
+        value 7;
+        description
+          "VLAN type policy.";
+      }
+      enum dot1q-policy {
+        value 8;
+        description
+          "Dot1q policy.";
+      }
+      enum stacking-policy {
+        value 9;
+        description
+          "Stacking policy.";
+      }
+      enum untag-policy {
+        value 10;
+        description
+          "Untag policy.";
+      }
+      enum qinq-mapping {
+        value 11;
+        description
+          "QinQ mapping.";
+      }
+      enum l2vc {
+        value 12;
+        description
+          "L2VC.";
+      }
+      enum l3vc {
+        value 13;
+        description
+          "L3VC.";
+      }
+      enum evc-untag {
+        value 14;
+        description
+          "EvcUntag.";
+      }
+      enum evc-dot1q {
+        value 15;
+        description
+          "EvcDot1q.";
+      }
+      enum evc-qinq {
+        value 16;
+        description
+          "EvcQinq.";
+      }
+      enum evc-default {
+        value 17;
+        description
+          "EvcDefault.";
+      }
+      enum evc-dot1q-policy {
+        value 18;
+        description
+          "EvcDot1qPolicy.";
+      }
+      enum ietf {
+        value 19;
+        description
+          "IETF.";
+      }
+      enum nonstandard {
+        value 20;
+        description
+          "Nonstandard.";
+      }
+      enum user-vlan {
+        value 21;
+        description
+          "User VLAN.";
+      }
+      enum user-vlan-anyother {
+        value 22;
+        description
+          "User VLAN anyother.";
+      }
+      enum qin-link {
+        value 23;
+        description
+          "Qinq link.";
+      }
+      enum soft-gre-ve {
+        value 24;
+        description
+          "Soft gre ve.";
+      }
+      enum l3ve-ter {
+        value 25;
+        description
+          "L3 ve terminal.";
+      }
+      enum l3ve-acc {
+        value 26;
+        description
+          "L3 ve access.";
+      }
+      enum invalid {
+        value 255;
+        description
+          "Invalid.";
+      }
+    }
+    description
+      "Encapsulated type.";
+  }
+
+  typedef statistic-mode {
+    type enumeration {
+      enum interface-based {
+        value 1;
+        description
+          "Statistics are collected based on interfaces.";
+      }
+      enum vlan-group-based {
+        value 2;
+        description
+          "Statistics are collected based on VLAN.";
+      }
+    }
+    description
+      "Interface statistic mode.";
+  }
+
+  typedef damp-level-type {
+    type enumeration {
+      enum light {
+        value 0;
+        description
+          "Light weight.";
+      }
+      enum middle {
+        value 1;
+        description
+          "Middle weight.";
+      }
+      enum heavy {
+        value 2;
+        description
+          "Heavy weight.";
+      }
+    }
+    description
+      "Damp level type.";
+  }
+
+  typedef damp-status-type {
+    type enumeration {
+      enum suppressed {
+        value 0;
+        description
+          "Dampening suppressed.";
+      }
+      enum unsuppressed {
+        value 1;
+        description
+          "Dampening unsuppressed.";
+      }
+    }
+    description
+      "Damp status type.";
+  }
+
+  typedef link-quality-grade-type {
+    type enumeration {
+      enum good {
+        value 0;
+        description
+          "The link quality is good with no bit-error.";
+      }
+      enum high {
+        value 1;
+        description
+          "The link quality is high.";
+      }
+      enum middle {
+        value 2;
+        description
+          "The link quality is middle.";
+      }
+      enum low {
+        value 4;
+        description
+          "The link quality is low.";
+      }
+    }
+    description
+      "Link quality grade type.";
+  }
+
+  container ifm {
+    description
+      "Common interface management. It includes the public configuration of interfaces.";
+    container global {
+      description
+        "Configure globally configured attributes.";
+      leaf statistic-interval {
+        type uint32 {
+          range "10..600";
+        }
+        units s;
+        must "(../statistic-interval) mod 10 = 0";
+        default "300";
+        description
+          "Set the interval at which global flow statistics are collected.";
+      }
+      leaf ipv4-ignore-primary-sub {
+        type boolean;
+        default "false";
+        description
+        "Enable/disable the function of ignoring primary/secondary of IPv4 address type. All secondary addresses must be deleted before this function is enabled.";
+      }
+      container ipv4-conflict-enable {
+        must "../ipv4-ignore-primary-sub='false'";
+        presence "Enable/disable IPv4 conflict function.";
+        description
+          "Enable/disable ip conflict function.";
+        leaf preempt-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable IPv4 address conflict preemption.";
+        }
+      }
+      container ipv6-conflict-enable {
+        presence "Enable/disable IPv6 conflict function.";
+        description
+          "Enable/disable IPv6 conflict function.";
+        leaf preempt-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable IPv6 address conflict preemption.";
+        }
+      }
+    }
+    container damp {
+      presence "Enable/disable suppression on interfaces' physical status flappings.";
+      description
+        "Enable/disable suppression on interfaces' physical status flappings.";
+      leaf tx-off {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable interfaces from sending signals if the interfaces' physical status flappings are suppressed.";
+      }
+      choice level {
+         default auto;
+         description
+           "Interface physical status damping level.";
+         case auto {
+            description
+              "Auto damping level.";
+            container auto {
+                description
+                  "Configure an auto suppression level.";
+                leaf level {
+                  type damp-level-type;
+                  default "light";
+                  description
+                    "Auto damping level.";
+                }
+            }
+         }
+         case manual {
+              description
+                 "Manual damping level.";
+              container manual {
+                  description
+                     "Configure a manual suppression level.";
+                  leaf suppress {
+                    type uint32 {
+                      range "1..20000";
+                    }
+                    must "(../suppress>../reuse)";
+                    mandatory true;
+                    description
+                      "1000 times of suppress threshold.";
+                  }
+                  leaf reuse {
+                    type uint32 {
+                      range "1..20000";
+                    }
+                    must "(../reuse<../suppress)";
+                    mandatory true;
+                    description
+                      "1000 times of reuse threshold.";
+                  }
+                  leaf max-suppress-time {
+                    type uint16 {
+                      range "1..255";
+                    }
+                    units s;
+                    mandatory true;
+                    description
+                      "Max suppress time.";
+                  }
+                  leaf half-life-period {
+                    type uint16 {
+                      range "1..60";
+                    }
+                    units s;
+                    mandatory true;
+                    description
+                      "Half life time.";
+                  }
+              }
+         }
+      }
+    }
+    container auto-recovery-times {
+      description
+        "List of automatic recovery time configuration.";
+      list auto-recovery-time {
+        key "error-down-type";
+        description
+        "Configure automatic recovery time.";
+        leaf error-down-type {
+          type error-down-type;
+          description
+            "Cause of the error-down event.";
+        }
+        leaf time-value {
+          type uint32 {
+            range "30..86400";
+          }
+          units "s";
+          mandatory true;
+          description
+            "Delay for the status transition from down to up.";
+        }
+      }
+    }
+    container interfaces {
+      description
+        "List of configuring information on an interface.";
+      list interface {
+        key "name";
+        description
+          "Configure information on an interface. Physical, NULL, Virtual-if, and Virtual-Template0 interfaces cannot be created or deleted.";
+        leaf name {
+          type pub-type:if-name;
+          description
+            "The textual name of the interface. It should be the name of the interface as assigned by the local device. It should be suitable for use in commands which entered at the device's 'console'. This might be a text name, such as 'NULL0', depending on the interface naming syntax of the device.";
+        }
+        leaf class {
+          ext:operation-exclude update;
+          type class-type;
+          ext:dynamic-default;
+          description
+            "Identify a main interface or a sub-interface.";
+          ext:support-filter "true";
+        }
+        leaf type {
+          ext:operation-exclude update;
+          type port-type;
+          ext:dynamic-default;
+          description
+            "Type of an interface. Port types include physical ports and logical ports.";
+          ext:support-filter "true";
+        }
+        leaf parent-name {
+          ext:operation-exclude update;
+          when "../class='sub-interface'";
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          ext:dynamic-default;
+          description
+            "Name of the main interface. For example, Ethernet0/1/0.";
+        }
+        leaf number {
+          ext:operation-exclude update;
+          type string {
+            length "1..63";
+            pattern '(\d+/\d+/\d+/\d+)|(\d+/\d+/\d+)|(\d+/\d+)|(\d+)|(\d+/\d+/\d+[:]\d+)|(\d+/\d+/\d+[:]\d+[:]\d+[:]\d+)|(\d+/\d+/\d+/\d+[:]\d+)|(\d+/\d+/\d+/\d+[:]\d+[:]\d+[:]\d+)|(\d+/\d+/\d+/\d+/\d+[:]\d+)|(\d+/\d+[:]\d+)';
+          }
+          ext:dynamic-default;
+          description
+            "Number of an interface. For example,1, 0/1/0, or 2:1.";
+        }
+        leaf description {
+          type string {
+            length "1..242";
+          }
+          description
+            "Description of an interface.";
+        }
+        leaf admin-status {
+          type port-status;
+          ext:dynamic-default;
+          description
+            "Administrative status of an interface. Capabilities supported by this node vary according to interface types.";
+        }
+        leaf link-protocol {
+          type link-protocol;
+          ext:dynamic-default;
+          description
+            "Link protocol. Capabilities supported by this node vary according to interface types.";
+        }
+        leaf router-type {
+          ext:operation-exclude update;
+          type router-type;
+          ext:dynamic-default;
+          description
+            "Route attribute of an interface. Capabilities supported by this node vary according to interface types.";
+        }
+        leaf clear-ip-df {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to forcibly fragment IP packets on an outbound interface. Capabilities supported by this node vary according to interface types.";
+        }
+        leaf link-up-down-trap-enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable the trap function on an interface. Capabilities supported by this node vary according to interface types.";
+        }
+        leaf statistic-enable {
+          type boolean;
+          ext:dynamic-default;
+          description
+            "Enable/disable the statistics function on an interface. The default value of this node varies according to different interface types. Capabilities supported by this node vary according to interface types.";
+        }
+        leaf statistic-mode {
+          type statistic-mode;
+          must "../statistic-mode = 'interface-based' or (../l2-mode-enable = 'true' and ../statistic-enable = 'true')";
+          default "interface-based";
+          description
+            "Mode of statistics collection. Capabilities supported by this node vary according to interface types.";
+        }
+        choice bandwidth-type {
+            description
+              "Configure the bandwidth of an interface.";
+            case bandwidth-mbps {
+              description
+                "Configure the bandwidth of an interface.";
+                leaf bandwidth {
+                  type uint32 {
+                    range "1..1000000";
+                  }
+                  units "Mbit/s";
+                  description
+                    "Configure the bandwidth of an interface. Capabilities supported by this node vary according to interface types.";
+                }
+            }
+            case bandwidth-kbps {
+              description
+                "Configure the bandwidth of an interface.";
+                leaf bandwidth-kbps {
+                  type uint32 {
+                    range "1..1000000";
+                  }
+                  units "kbit/s";
+                  description
+                    "Configure the bandwidth of an interface. Capabilities supported by this node vary according to interface types.";
+                }
+            }
+        }
+        leaf mtu {
+          type uint32 {
+            range "0..64000";
+          }
+          ext:dynamic-default;
+          description
+            "Maximum transmission unit of an interface.
+             Special explanation:
+             Range: The server may restrict the allowed values for this leaf, depending on the interface types.
+             Capabilities supported by this node vary according to interface types.";
+        }
+        leaf spread-mtu-flag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of spreading the MTU value of main interface to subinterface. Capabilities supported by this node vary according to interface types.";
+        }
+        leaf statistic-interval {
+          type uint32 {
+            range "10..600";
+          }
+          units s;
+          must "(../statistic-interval) mod 10 = 0";
+          description
+            "Interval at which flow statistics are collected on an interface. Capabilities supported by this node vary according to interface types.";
+        }
+        leaf vrf-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          default "_public_";
+          description
+            "Name of a VPN instance. It uniquely identifies a VPN instance. The VRF name of the DCN interface cannot be created, modified, or deleted.";
+        }
+        leaf l2-mode-enable {
+          ext:operation-exclude update;
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of creating an L2 Sub-interface. Capabilities supported by this node vary according to interface types.";
+        }
+        leaf down-delay-time {
+          when "../type='Eth-Trunk' and ../class='main-interface'";
+          type uint32 {
+            range "0..1000";
+          }
+          units "ms";
+          must "(../down-delay-time) mod 100 = 0";
+          default "0";
+          description
+            "Specify down-delay-time value in milliseconds.";
+        }
+        leaf mac-address {
+          type pub-type:mac-address {
+            length "0..255";
+          }
+          description
+            "Config MAC Address. Constraints on MAC address configuration varies according to interfaces. Capabilities supported by this node vary according to interface types.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "Index of an interface.";
+        }
+        leaf position {
+          type string {
+            length "1..256";
+          }
+          config false;
+          description
+            "Position of an interface. For example, 0/1/0. Data can be queried only on physical interfaces.";
+        }
+        leaf aggregation-name {
+          type pub-type:if-name;
+          config false;
+          description
+            "Name of an aggregation interface.";
+        }
+        leaf is-l2-switch {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "To identify a layer2 switch port.";
+        }
+        leaf vs-name {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Name of a VS to which an interface belongs.";
+        }
+        leaf l2-switch-port-index {
+          type uint32;
+          config false;
+          description
+            "L2 switch port index of an interface.";
+        }
+        leaf service-type {
+          type service-type;
+          config false;
+          description
+            "Type of a member interface.";
+        }
+        leaf encapsulation-type {
+          type encapsulation-type;
+          config false;
+          description
+            "Effective encapsulation type.";
+        }
+        container control-flap {
+          presence "Enable/disable flapping control on an interface.";
+          description
+            "Enable/disable flapping control on an interface.";
+          leaf suppress {
+            type uint32 {
+              range "1..20000";
+            }
+            must "(../suppress>../reuse) and ((../suppress<../ceiling))";
+            default "2000";
+            description
+              "Suppression threshold on an interface. The value must be greater than the reusing threshold and smaller than the suppression upper limit.";
+          }
+          leaf reuse {
+            type uint32 {
+              range "1..20000";
+            }
+            must "(../reuse<../suppress)";
+            default "750";
+            description
+              "Reusing threshold of an interface. The value must be smaller than the suppression threshold.";
+          }
+          leaf ceiling {
+            type uint32 {
+              range "1001..20000";
+            }
+            must "(../ceiling>../suppress)";
+            default "6000";
+            description
+              "Maximum suppression value on an interface. The value should be greater than the damping suppression threshold.";
+          }
+          leaf decay-ok {
+            type uint32 {
+              range "1..900";
+            }
+            units s;
+            default "54";
+            description
+              "The penalty value of an Up interface attenuates to 1/2.";
+          }
+          leaf decay-ng {
+            type uint32 {
+              range "1..900";
+            }
+            units s;
+            default "54";
+            description
+              "The penalty value of a Down interface attenuates to 1/2.";
+          }
+          leaf control-flap-count {
+            type uint32;
+            config false;
+            description
+              "Status suppression count of an interface.";
+          }
+        }
+        container trap-threshold {
+          description
+            "Configure the trap threshold.";
+          leaf input-rising-rate {
+            type uint32 {
+              range "1..100";
+            }
+            units %;
+            must "not (../input-rising-rate and ../input-resume-rate and ../input-rising-rate<../input-resume-rate)";
+            default "100";
+            description
+              "Input bandwidth usage trap threshold.";
+          }
+          leaf input-resume-rate {
+            type uint32 {
+              range "1..100";
+            }
+            units %;
+            must "not (../input-rising-rate and ../input-resume-rate and ../input-rising-rate<../input-resume-rate)";
+            default "100";
+            description
+              "Input bandwidth usage resume threshold.";
+          }
+          leaf output-rising-rate {
+            type uint32 {
+              range "1..100";
+            }
+            units %;
+            must "not (../output-rising-rate and ../output-resume-rate and ../output-rising-rate<../output-resume-rate)";
+            default "100";
+            description
+              "Output bandwidth usage trap threshold.";
+          }
+          leaf output-resume-rate {
+            type uint32 {
+              range "1..100";
+            }
+            units %;
+            must "not (../output-rising-rate and ../output-resume-rate and ../output-rising-rate<../output-resume-rate)";
+            default "100";
+            description
+              "Output bandwidth usage resume threshold.";
+          }
+        }
+        choice damping {
+          default ignore-damp;
+          description
+            "Damp function for single interface.";
+          case ignore-damp {
+              description
+                "Ignore global damp function.";
+            container ignore-damp {
+              description
+                "Configure an interface to ignore the global damp-interface function.";
+              leaf ignore-global-damp {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable an interface to ignore the global damp-interface function.";
+              }
+            }
+          }
+          case damp {
+              description
+                "Single interface status suppression.";
+              container damp {
+                  presence "Enable/disable suppression on an interface's physical status flappings.";
+                  description
+                    "Enable/disable suppression on an interface's physical status flappings.";
+                  leaf tx-off {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable an interface suppressed due to status flapping from sending signals.";
+                  }
+                  choice level {
+                    default auto;
+                    description
+                      "Interface physical status damping level.";
+                    case auto {
+                        description
+                         "Auto damping level.";
+                        container auto {
+                            description
+                              "Configure an auto suppression level.";
+                            leaf level {
+                              type damp-level-type;
+                              default "light";
+                              description
+                                "Auto damping level.";
+                            }
+                        }
+                    }
+                    case manual {
+                       description
+                         "Manual damping level.";
+                      container manual {
+                        description
+                          "Configure a manual suppression level.";
+                        leaf suppress {
+                          type uint32 {
+                            range "1..20000";
+                          }
+                          must "(../suppress>../reuse)";
+                          mandatory true;
+                          description
+                            "1000 times of suppress threshold.";
+                        }
+                        leaf reuse {
+                          type uint32 {
+                            range "1..20000";
+                          }
+                          must "(../reuse<../suppress)";
+                          mandatory true;
+                          description
+                          "1000 times of reuse threshold.";
+                        }
+                        leaf max-suppress-time {
+                          type uint16 {
+                            range "1..255";
+                          }
+                          units s;
+                          mandatory true;
+                          description
+                          "Max suppress time.";
+                        }
+                        leaf half-life-period {
+                          type uint16 {
+                            range "1..60";
+                          }
+                          units s;
+                          mandatory true;
+                          description
+                          "Half life time.";
+                        }
+                      }
+                    }
+                  }
+              }
+            }
+        }
+        container damp-state {
+          config false;
+          description
+            "Operational state of interface suppression information.";
+          leaf suppress-status {
+            type damp-status-type;
+            description
+              "Interface status suppression state.";
+          }
+          leaf suppress {
+            type uint32 {
+              range "1..20000";
+            }
+            description
+              "1000 times of suppress threshold.";
+          }
+          leaf reuse {
+            type uint32 {
+              range "1..20000";
+            }
+            description
+              "1000 times of reuse threshold.";
+          }
+          leaf max-suppress-time {
+            type uint16 {
+              range "1..255";
+            }
+            units "s";
+            description
+              "Max suppress time.";
+          }
+          leaf half-life-period {
+            type uint16 {
+              range "1..60";
+            }
+            units "s";
+            description
+              "Half life time.";
+          }
+          leaf damp-reuse-time {
+            type uint16{
+              range "0..255";
+            }
+            units "s";
+            description
+              "Damping reuse time.";
+          }
+          leaf current-penalty {
+            type uint32;
+            description
+              "1000 times of current penalty.";
+          }
+          leaf max-penalty {
+            type uint32;
+            description
+              "1000 times of max penalty.";
+          }
+        }
+        container dynamic {
+          config false;
+          description
+            "Operational state of interfaces.";
+          leaf oper-status {
+            type port-status;
+            description
+              "Running status of an interface.";
+          }
+          leaf physical-status {
+            type port-status;
+            description
+              "Physical status of an interface.";
+          }
+          leaf link-status {
+            type port-status;
+            description
+              "Link status of an interface.";
+          }
+          leaf mtu {
+            type uint32;
+            description
+              "Dynamic MTU of an interface.";
+          }
+          leaf bandwidth {
+            type pub-type:band-width;
+            description
+              "Bandwidth of an interface.";
+          }
+          leaf ipv4-status {
+            type port-status;
+            description
+              "IPv4 Protocol status of an interface.";
+          }
+          leaf ipv6-status {
+            type port-status;
+            description
+              "IPv6 protocol status of an interface.";
+          }
+          leaf is-control-flap-damp {
+            type boolean;
+            description
+              "Status suppression of an interface.";
+          }
+          leaf mac-address {
+            type pub-type:mac-address {
+              length "1..14";
+            }
+            description
+              "MAC address of an interface.";
+          }
+          leaf line-protocol-up-time {
+            type yang:date-and-time;
+            description
+              "Last line protocol up time.";
+          }
+          leaf is-offline {
+            type boolean;
+            description
+              "Whether an interface is offline.";
+          }
+          leaf link-quality-grade {
+            type link-quality-grade-type;
+            description
+              "Interface link quality grade.";
+          }
+          leaf sub-if-counts {
+            type uint32;
+            description
+              "Number of sub-interfaces on this interface.";
+          }
+        }
+        container mib-statistics {
+          config false;
+          description
+            "Interface statistics.";
+          leaf receive-byte {
+            type uint64;
+            units "Byte";
+            description
+              "Number of bytes received on an interface.";
+          }
+          leaf send-byte {
+            type uint64;
+            units "Byte";
+            description
+              "Number of bytes sent on an interface.";
+          }
+          leaf receive-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of packets received on an interface.";
+          }
+          leaf send-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of packets sent on an interface.";
+          }
+          leaf receive-unicast-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of unicast packets received on an interface.";
+          }
+          leaf receive-multicast-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of multicast packets received on an interface.";
+          }
+          leaf receive-broad-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of broadcast packets received on an interface.";
+          }
+          leaf send-unicast-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of unicast packets sent on an interface.";
+          }
+          leaf send-multicast-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of multicast packets sent on an interface.";
+          }
+          leaf send-broad-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of broadcast packets sent on an interface.";
+          }
+          leaf receive-error-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of error packets received on an interface.";
+          }
+          leaf receive-drop-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of received packets discarded on an interface.";
+          }
+          leaf send-error-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of error packets sent on an interface.";
+          }
+          leaf send-drop-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of sent packets discarded on an interface.";
+          }
+        }
+        container common-statistics {
+          config false;
+          description
+            "Interface statistics.";
+          leaf stati-interval {
+            type uint32 {
+              range "10..600";
+            }
+            units "s";
+            default "300";
+            description
+              "Current interval at which interface flow statistics are collected.";
+          }
+          leaf in-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate at which bytes are received within the interval.";
+          }
+          leaf in-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Rate at which bits are received within the interval.";
+          }
+          leaf in-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate at which packets are received within the interval.";
+          }
+          leaf in-use-rate {
+            type string {
+              length "1..50";
+            }
+            description
+              "Input bandwidth usage within the interval.";
+          }
+          leaf out-byte-rate {
+            type uint64;
+            units "Byte/s";
+            description
+              "Rate at which bytes are sent within the interval.";
+          }
+          leaf out-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Rate at which bits are sent within the interval.";
+          }
+          leaf out-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate at which packets are sent within the interval.";
+          }
+          leaf out-use-rate {
+            type string {
+              length "1..50";
+            }
+            description
+              "Output bandwidth usage within the interval.";
+          }
+          leaf receive-byte {
+            type uint64;
+            units "Byte";
+            description
+              "Number of received bytes, which can be cleared.";
+          }
+          leaf send-byte {
+            type uint64;
+            units "Byte";
+            description
+              "Number of sent bytes, which can be cleared.";
+          }
+          leaf receive-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of received packets, which can be cleared.";
+          }
+          leaf send-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of sent packets, which can be cleared.";
+          }
+          leaf receive-unicast-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of received unicast packets, which can be cleared.";
+          }
+          leaf receive-multicast-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of received multicast packets, which can be cleared.";
+          }
+          leaf receive-broad-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of received broadcast packets, which can be cleared.";
+          }
+          leaf send-unicast-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of sent unicast packets, which can be cleared.";
+          }
+          leaf send-multicast-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of sent multicast packets, which can be cleared.";
+          }
+          leaf send-broad-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of sent broadcast packets, which can be cleared.";
+          }
+          leaf receive-error-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of received error packets, which can be cleared.";
+          }
+          leaf receive-drop-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of received discarded packets, which can be cleared.";
+          }
+          leaf send-error-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of sent error packets, which can be cleared.";
+          }
+          leaf send-drop-packet {
+            type uint64;
+            units "packet";
+            description
+              "Number of sent discarded packets, which can be cleared.";
+          }
+          leaf send-unicast-bit {
+            type uint64;
+            units "bit";
+            description
+              "Number of unicast bits sent on an interface.";
+          }
+          leaf receive-unicast-bit {
+            type uint64;
+            units "bit";
+            description
+              "Number of unicast bits received on an interface.";
+          }
+          leaf send-multicast-bit {
+            type uint64;
+            units "bit";
+            description
+              "Number of multicast bits sent on an interface.";
+          }
+          leaf receive-multicast-bit {
+            type uint64;
+            units "bit";
+            description
+              "Number of multicast bits received on an interface.";
+          }
+          leaf send-broad-bit {
+            type uint64;
+            units "bit";
+            description
+              "Number of broadcast bits sent on an interface.";
+          }
+          leaf receive-broad-bit {
+            type uint64;
+            units "bit";
+            description
+              "Number of broadcast bits received on an interface.";
+          }
+          leaf send-unicast-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Rate of unicast bits sent on an interface.";
+          }
+          leaf receive-unicast-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Rate of unicast bits received on an interface.";
+          }
+          leaf send-multicast-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Rate of multicast bits sent on an interface.";
+          }
+          leaf receive-multicast-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Rate of multicast bits received on an interface.";
+          }
+          leaf send-broad-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Rate of broadcast bits sent on an interface.";
+          }
+          leaf receive-broad-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Rate of broadcast bits received on an interface.";
+          }
+          leaf send-unicast-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of unicast packets sent on an interface.";
+          }
+          leaf receive-unicast-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of unicast packets received on an interface.";
+          }
+          leaf send-multicast-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of multicast packets sent on an interface.";
+          }
+          leaf receive-multicast-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of multicast packets received on an interface.";
+          }
+          leaf send-broadcast-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of broadcast packets sent on an interface.";
+          }
+          leaf receive-broadcast-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate of broadcast packets received on an interface.";
+          }
+        }
+	container error-down {
+          config false;
+          description
+            "Information about the interface in the error-down state, including the interface name, cause of the error-down event, delay for the transition from down to up, and remaining time for the up state.";
+          leaf cause {
+            type error-down-type;
+            description
+              "Cause of the error-down event.";
+          }
+          leaf recovery-time {
+            type uint32 {
+              range "0..86400";
+            }
+            units "s";
+            description
+              "Delay for the transition from down to up.";
+          }
+          leaf remainder-time {
+            type uint32 {
+              range "0..86400";
+            }
+            units "s";
+            description
+              "The remaining time for the up event.";
+          }
+        }
+      }
+    }
+    container static-dimension-ranges {
+      config false;
+      description
+        "List of interface dimensionality.";
+      list static-dimension-range {
+        key "type";
+        description
+          "Statistics of Interface dimensionality.";
+        leaf type {
+          type port-type;
+		  must "../type='Tunnel'";
+          description
+            "Interface type.";
+        }
+        leaf chassis-range {
+          type string {
+            length "0..63";
+          }
+          description
+            "The range of chassis.";
+        }
+        leaf slot-range {
+          type string {
+            length "0..63";
+          }
+          description
+            "The range of slot.";
+        }
+        leaf card-range {
+          type string {
+            length "0..63";
+          }
+          description
+            "The range of card.";
+        }
+        leaf port-range {
+          type string {
+            length "0..63";
+          }
+          description
+            "The range of port.";
+        }
+      }
+    }
+    container ipv4-interface-count {
+      config false;
+      description
+        "Statistics of interfaces supporting IPv4 address configuration.";
+      leaf physical-up-count {
+        type uint32;
+        description
+          "Number of IPv4 interfaces that are in the physical up state.";
+      }
+      leaf physical-down-count {
+        type uint32;
+        description
+          "Number of IPv4 interfaces that are in the physical down state.";
+      }
+      leaf protocol-up-count {
+        type uint32;
+        description
+          "Number of IPv4 interfaces that are in the protocol up state.";
+      }
+      leaf protocol-down-count {
+        type uint32;
+        description
+          "Number of IPv4 interfaces that are in the protocol down state.";
+      }
+    }
+    container remote-interfaces {
+      config false;
+      description
+        "List of statistics of remote interfaces.";
+      list remote-interface {
+        key "name";
+        description
+          "Statistics of remote interfaces.";
+        leaf name {
+          type pub-type:if-name;
+          description
+            "Name of a remote interface.";
+        }
+        leaf index {
+          type uint32;
+          description
+            "Index of a remote interface.";
+        }
+        container remote-statistics-state {
+          config false;
+          description
+            "Statistics of remote interfaces.";
+          leaf last-cleared-time {
+            type pub-type:time;
+            description
+              "Last time when statistics about remote interfaces were cleared.";
+          }
+          leaf in-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Rate at which bits are received.";
+          }
+          leaf in-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate at which packets are received.";
+          }
+          leaf in-peak-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Peak rate at which bits are received.";
+          }
+          leaf in-peak-bit-rate-record-time {
+            type pub-type:time;
+            description
+              "Time when the peak bit receive rate is reached.";
+          }
+          leaf out-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Rate at which bits are sent.";
+          }
+          leaf out-packet-rate {
+            type uint64;
+            units "pps";
+            description
+              "Rate at which packets are sent.";
+          }
+          leaf out-peak-bit-rate {
+            type uint64;
+            units "bit/s";
+            description
+              "Peak rate at which bits are sent.";
+          }
+          leaf out-peak-bit-rate-record-time {
+            type pub-type:time;
+            description
+              "Time when the peak bit send rate is reached.";
+          }
+          leaf in-use-rate {
+            type string {
+              length "1..50";
+            }
+            description
+              "Received bandwidth usage.";
+          }
+          leaf out-use-rate {
+            type string {
+              length "1..50";
+            }
+            description
+              "Sent bandwidth usage.";
+          }
+        }
+      }
+    }
+  }
+  rpc reset-if-counters-by-name {
+    description
+      "Clear statistics of interfaces.";
+    input {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Clear statistics based on the interface name. For example, Ethernet0/1/0.";
+      }
+    }
+  }
+
+  rpc reset-if-counters-by-type {
+    description
+      "Clear statistics of interfaces.";
+    input {
+      leaf if-type {
+        type port-type;
+        mandatory true;
+        description
+          "To clear the statistics by the type of interface.";
+      }
+    }
+  }
+  rpc reset-if-counters-all {
+    description
+      "Clear statistics of interfaces.";
+    input {
+      leaf all-if {
+        type boolean;
+        mandatory true;
+        description
+          "Enable/disable the function of clearing interfaces' statistics.";
+      }
+    }
+  }
+  rpc reset-if-mib-counters-by-name {
+    description
+      "Clear statistics of interfaces.";
+    input {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Clear statistics based on the interface name. For example, Ethernet0/1/0.";
+      }
+    }
+  }
+  rpc reset-if-mib-counters-by-type {
+    description
+      "Clear statistics of interfaces.";
+    input {
+      leaf if-type {
+        type port-type;
+        mandatory true;
+        description
+          "To clear the statistics by the type of interface.";
+      }
+    }
+  }
+  rpc reset-if-mib-counters-all {
+    description
+      "Clear statistics of interfaces.";
+    input {
+      leaf all-if {
+        type boolean;
+        mandatory true;
+        description
+          "Enable/disable the function of clearing interfaces' statistics.";
+      }
+    }
+  }
+  rpc reset-if-control-flap-penalty {
+    description
+      "Clear the penalty value of an interface and remove the suppression on the interface.";
+    input {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Name of the interface. For example, Ethernet0/1/0.";
+      }
+    }
+  }
+  rpc reset-if-control-flap-counts {
+    description
+      "Clear the number of flapping control times.";
+    input {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Name of the interface. For example, Ethernet0/1/0.";
+      }
+    }
+  }
+  rpc reset-remote-if-counters {
+    description
+      "Clear remote interface statistics.";
+    input {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Interface name of clear remote interface statistics.";
+      }
+    }
+  }
+  rpc restart-if {
+    description
+      "Restart interface.";
+    input {
+      leaf if-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Interface name of the restart interface.";
+      }
+    }
+  }
+}

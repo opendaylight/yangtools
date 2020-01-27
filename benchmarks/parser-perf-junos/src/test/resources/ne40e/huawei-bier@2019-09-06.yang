@@ -1,0 +1,799 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bier {
+  namespace "urn:huawei:yang:huawei-bier";
+  prefix bier;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Model for Bit Index Explicit Replication (BIER).";
+
+  revision 2019-09-06 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bier";
+  
+  typedef underlay-protocol-type {
+    type enumeration {
+      enum "ospf" {
+        value 1;
+        description
+          "OSPF.";
+      }
+      enum "isis" {
+        value 2;
+        description
+          "IS-IS.";
+      }
+    }
+    description
+      "BIER underlay protocol type.";
+  }
+  
+  typedef bit-string-length {
+    type enumeration {
+      enum "64-bit" {
+        value 1;
+        description
+          "64-bit BitString.";
+      }
+      enum "128-bit" {
+        value 2;
+        description
+          "128-bit BitString.";
+      }
+      enum "256-bit" {
+        value 3;
+        description
+          "256-bit BitString.";
+      }
+    }
+    description
+      "Enumerated values of the BitString length.";
+  }
+  
+  typedef igp-algorithm-type {
+    type enumeration {
+      enum "SPF" {
+        value 0;
+        description
+          "Shortest Path First (SPF) algorithm based on link metric.";
+      }
+      enum "SSPF" {
+        value 1;
+        description
+          "Strict Shortest Path First (SPF) algorithm based on link metric.";
+      }
+    }
+    description
+      "IGP algorithm type.";
+  }
+
+  typedef bier-algorithm-type {
+    type enumeration {
+      enum "no-specific" {
+        value 0;
+        description
+          "No BIER-specific algorithm is used.";
+      }
+    }
+    description
+      "BIER algorithm type.";
+  }
+
+  typedef bier-encapsulation-type {
+    type enumeration {
+      enum "mpls" {
+        value 1;
+        description
+          "MPLS encapsulation for BIER.";
+      }
+    }
+    description
+      "Encapsulation types for BIER.";
+  }
+  
+  typedef address-family-type {
+    type enumeration {
+      enum "ipv4-unicast" {
+        value 1;
+        description
+          "IPv4 address family.";
+      }
+    }
+    description
+      "Address family.";
+  }
+
+  typedef birt-nexthop-invalid-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "Valid nexthop.";
+      }
+      enum "missing-neighbor" {
+        value 1;
+        description
+          "Invalid sub-domain configuration.";
+      }
+      enum "lack-label" {
+        value 2;
+        description
+          "Invalid BSL configuration.";
+      }
+      enum "exceed-load-balance-number" {
+        value 3;
+        description
+          "The value is larger than the maximum number of load balancing paths.";
+      }
+    }
+    description
+      "Reason for the invalid nexthop.";
+  }
+  
+  container bier {
+    presence "BIER enable.";
+    description
+      "BIER configuration.";
+    container sub-domains {
+      description
+        "List of BIER sub-domain.";
+      list sub-domain {
+        must "not(./bfr-id) or (not(./encapsulations/encapsulation[bsl='64-bit'][encapsulation-type='mpls']/max-si) or (./bfr-id <= (./encapsulations/encapsulation[bsl='64-bit'][encapsulation-type='mpls']/max-si + 1) * 64))";
+        must "not(./bfr-id) or (not(./encapsulations/encapsulation[bsl='128-bit'][encapsulation-type='mpls']/max-si) or (./bfr-id <= (./encapsulations/encapsulation[bsl='128-bit'][encapsulation-type='mpls']/max-si + 1) * 128))";
+        must "not(./bfr-id) or (not(./encapsulations/encapsulation[bsl='256-bit'][encapsulation-type='mpls']/max-si) or (./bfr-id <= (./encapsulations/encapsulation[bsl='256-bit'][encapsulation-type='mpls']/max-si + 1) * 256))";
+        key "address-family sub-domain-id";
+        description
+          "Configure BIER sub-domain.";
+        leaf address-family {
+          type address-family-type;
+          description
+            "IPv4 or IPv6 address family.";
+        }
+        leaf sub-domain-id {
+          type uint16 {
+            range "0..255";
+          }
+          description
+            "BIER sub-domain ID.";
+        }
+        leaf bfr-prefix-interface {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='LoopBack' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_'";
+          description
+            "BFR prefix interface.";
+        }
+        leaf underlay-protocol {
+          type underlay-protocol-type;
+          description
+            "BIER underlay protocol.";
+        }
+        leaf bfr-id {
+          type uint16 {
+            range "1..65535";
+          }
+          description
+            "BFR-ID.";
+        }
+        leaf load-balance-num {
+          type uint8 {
+            range "1..16";
+          }
+          default "1";
+          description
+            "Maximum number of paths for multicast load balancing.";
+        }
+        leaf mt-id {
+          type uint16;
+          config false;		  
+          description
+            "Multi-topology type identifier.";
+        }
+        leaf igp-algorithm {
+          type igp-algorithm-type;
+          config false;		  
+            description
+              "IGP algorithm type.";
+        }
+        leaf bier-algorithm {
+          type bier-algorithm-type;
+          config false;		  
+            description
+              "BIER algorithm type.";
+        }		
+        container encapsulations {
+          description
+            "List of BIER encapsulation.";
+          list encapsulation {
+            key "bsl encapsulation-type";
+            description
+              "Configure BIER encapsulation.";
+            leaf bsl {
+              type bit-string-length;
+              description
+                "BIER BitString length, which is 64/128/256 bits. Multiple devices in a subdomain must have the same BSL.";
+            }
+            leaf encapsulation-type {
+              type bier-encapsulation-type;
+              description
+                "BIER encapsulation type configuration.";
+            }
+            leaf max-si {
+              type uint16 {
+                range "0..255";
+              }
+              mandatory true;
+              description
+                "Maximum set identifier.";
+            }
+            leaf bift-id {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "BIFT ID base.";
+            }
+          }
+        }
+        container local-infos {
+          config false;
+          description
+            "BIER sub-domain state.";
+          leaf igp-process-id {
+            type uint32;
+            description
+              "Process ID of the underlay routing protocol.";
+          }
+          leaf igp-sub-process-id {
+            type uint32;
+            description
+              "Sub-process ID of the underlay routing protocol.";
+          }
+          leaf bfr-prefix {
+            type inet:ip-address-no-zone;
+            description
+              "BFR prefix address.";
+          }
+          leaf bfr-prefix-mask-len {
+            type uint8 {
+              range "0..128";
+            }
+            description
+              "BFR prefix address mask length.";
+          }
+        }
+        container routings {
+          config false;
+          description
+            "List of BIER routing state.";
+          list routing {
+            key "bsl destination-prefix";
+            description
+              "BIER routing state.";
+            leaf bsl {
+              type bit-string-length;
+              description
+                "BIER BitString length, which is 64/128/256 bits.";
+            }
+            leaf destination-prefix {
+              type inet:ip-address-no-zone;
+              description
+                "Destination prefix.";
+            }
+            leaf underlay-protocol {
+              type underlay-protocol-type;
+              description
+                "Underlay IGP used by BIER.";
+            }
+            choice prefix-igp-attribute {
+              description
+                "IGP attributes.";
+              case ospf-protocol {
+                description
+                  "OSPF.";
+                leaf router-id {
+                  type inet:ip-address-no-zone;
+                  description
+                    "OSPF router ID.";
+                }
+              }
+              case isis-protocol {
+                description
+                  "IS-IS.";
+                leaf system-id {
+                  type string {
+                    length "1..16";
+                  }
+                  description
+                    "IS-IS system ID.";
+                }
+              }
+              case local-system {
+                description
+                  "Local system.";
+                leaf is-local-system {
+                  type boolean;
+                  description
+                    "Prefix is advertised by local system.";
+                }
+              }
+            }
+            leaf bfr-id {
+              type uint16 {
+                range "1..65535";
+              }
+              description
+                "BFR-ID.";
+            }
+            leaf up-time {
+              type pub-type:time-tick;
+              description
+                "Prefix survival time.";
+            }
+            container nexthops {
+              description
+                "List of Next-hop state.";
+              list nexthop {
+                key "next-hop-addr next-hop-outbound-if";
+                description
+                  "Next-hop state.";
+                leaf next-hop-addr {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Next-hop prefix address.";
+                }
+                leaf next-hop-outbound-if {
+                  type pub-type:if-name;
+                  description
+                    "Next-hop outbound interface.";
+                }
+                leaf bfr-neighbor {
+                  type inet:ip-address-no-zone;
+                  description
+                    "BIER neighbor.";
+                }
+                leaf underlay-protocol {
+                  type underlay-protocol-type;
+                  description
+                    "Underlay IGP used by BIER.";
+                }
+                choice igp-attribute {
+                  description
+                    "IGP attributes.";
+                  case ospf-protocol {
+                    description
+                      "OSPF.";
+                    leaf router-id {
+                      type inet:ip-address-no-zone;
+                      description
+                        "OSPF router ID.";
+                    }
+                  }
+                  case isis-protocol {
+                    description
+                      "IS-IS.";
+                    leaf system-id {
+                      type string {
+                        length "1..16";
+                      }
+                      description
+                        "IS-IS system ID.";
+                    }
+                  }
+                  case local-system {
+                    description
+                      "Local system.";
+                    leaf is-local-system {
+                      type boolean;
+                      description
+                        "Prefix is advertised by local system.";
+                    }
+                  }
+                }
+                leaf up-time {
+                  type pub-type:time-tick;
+                  description
+                    "Neighbor relationship establishment time.";
+                }
+                leaf bift-id {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  description
+                    "The BIFT-ID assigned by this nexthop node.";
+                }
+              }
+            }
+            container invalid-nexthops {
+              description
+                "List of Next-hop state.";
+              list invalid-nexthop {
+                key "next-hop-addr next-hop-outbound-if";
+                description
+                  "Next-hop state.";
+                leaf next-hop-addr {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Next-hop prefix address.";
+                }
+                leaf next-hop-outbound-if {
+                  type pub-type:if-name;
+                  description
+                    "Next-hop outbound interface.";
+                }
+                leaf bfr-neighbor {
+                  type inet:ip-address-no-zone;
+                  description
+                    "BIER neighbor.";
+                }					
+                leaf underlay-protocol {
+                  type underlay-protocol-type;
+                  description
+                    "Underlay IGP used by BIER.";
+                }			
+                choice igp-attribute {
+                  description
+                    "IGP attributes.";
+                  case ospf-protocol {
+                    description
+                      "OSPF.";
+                    leaf router-id {
+                      type inet:ip-address-no-zone;
+                      description
+                        "OSPF router ID.";
+                    }
+                  }
+                  case isis-protocol {
+                    description
+                      "IS-IS.";
+                    leaf system-id {
+                      type string {
+                        length "1..16";
+                      }
+                      description
+                        "IS-IS system ID.";
+                    }
+                  }
+                  case local-system {
+                    description
+                      "Local system.";
+                    leaf is-local-system {
+                      type boolean;
+                      description
+                        "Prefix is advertised by local system.";
+                    }
+                  }
+                }
+                leaf up-time {
+                  type pub-type:time-tick;
+                  description
+                    "Neighbor relationship establishment time.";
+                }
+                leaf bift-id {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  description
+                    "The BIFT-ID assigned by this nexthop node.";
+                }
+                leaf invalid-reason {
+                  type birt-nexthop-invalid-type;
+                  description
+                    "Invalid nexthop reason.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container prefixs {
+      config false;
+      description
+        "List of BIER prefix state.";
+      list prefix {
+        key "address-family sub-domain-id bfr-prefix bfr-prefix-mask-len underlay-protocol";
+        description
+          "BIER prefix state.";
+        leaf address-family {
+          type address-family-type;
+          description
+            "IPv4 or IPv6 address family.";
+        }
+        leaf sub-domain-id {
+          type uint16 {
+            range "0..255";
+          }
+          description
+            "BIER sub-domain ID.";
+        }		  
+        leaf bfr-prefix {
+          type inet:ip-address-no-zone;
+          description
+            "BFR prefix address.";
+        }
+        leaf bfr-prefix-mask-len {
+          type uint8 {
+            range "0..128";
+          }
+          description
+            "BFR prefix address mask length.";
+        }
+        leaf underlay-protocol {
+          type underlay-protocol-type;
+          description
+            "Underlay IGP used by BIER.";
+        }
+        leaf bfr-id {
+          type uint16 {
+            range "1..65535";
+          }
+          ext:support-filter "true";
+          description
+            "BFR-ID.";
+        }
+        leaf igp-process-id {
+          type uint32;
+          description
+            "Process ID of the underlay IGP.";
+        }
+        leaf mt-id {
+          type uint32;
+          description
+            "Multi-topology ID of the underlay IGP.";
+        }
+        leaf igp-sub-process-id {
+          type uint32;
+          description
+            "Sub-process ID of the underlay IGP.";
+        }
+        choice igp-attribute {
+          description
+            "IGP attributes.";
+          case ospf-protocol {
+            description
+              "OSPF.";
+            leaf router-id {
+              type inet:ip-address-no-zone;
+              ext:support-filter "true";
+              description
+                "OSPF router ID.";
+            }
+          }
+          case isis-protocol {
+            description
+              "IS-IS.";
+            leaf system-id {
+              type string {
+                length "1..16";
+              }
+              ext:support-filter "true";
+              description
+                "IS-IS system ID.";
+            }
+          }
+          case local-system {
+            description
+              "Local system.";
+            leaf is-local-system {
+              type boolean;
+              description
+                "Prefix is advertised by local system.";
+            }
+          }
+        }
+        leaf prefix-igp-flags {
+          type bits {
+            bit local {
+              description
+                "Local prefix.";
+            }
+            bit intra {
+              description
+                "Intra-domain prefix.";
+            }
+            bit invalid {
+              description
+                "Invalid prefix.";
+            }
+            bit duplicate {
+              description
+                "Duplicate prefix.";
+            }
+            bit best {
+              description
+                "Best prefix.";
+            }
+          }
+          description
+            "BIER prefix IGP state.";
+        }
+        leaf prefix-sd-flags {
+          type bits {
+            bit duplicate-sd {
+              description
+                "Duplicate sub-domain ID.";
+            }
+            bit invalid-igp-cfg {
+              description
+                "Invalid IGP configuration.";
+            }
+            bit invalid-bar {
+              description
+                "Invalid BIER algorithm.";
+            }
+            bit invalid-ipa {
+              description
+                "Invalid IGP algorithm.";
+            }
+            bit duplicate-bfr-id {
+              description
+                "Duplicate BFR-ID.";
+            }
+            bit invalid-mt {
+              description
+                "Invalid multi-topology.";
+            }
+            bit supress-bfr-id-adv {
+              description
+                "BFR-ID advertisement suppression.";
+            }
+          }
+          description
+            "BIER prefix sub-domain state.";
+        }
+        leaf igp-algorithm {
+          type igp-algorithm-type;
+            description
+              "IGP algorithm type.";
+        }
+        leaf bier-algorithm {
+          type bier-algorithm-type;
+            description
+              "BIER algorithm type.";
+        }			
+        container encapsulation-infos {
+          description
+            "BIER prefix encapsulation state.";
+          container encapsulations {
+            description
+              "List of BIER prefix encapsulation state.";
+            list encapsulation {
+              key "bsl encapsulation-type";
+              description
+                "BIER prefix encapsulation state.";
+              leaf bsl {
+                type bit-string-length;
+                description
+                  "BIER BitString length, which is 64/128/256 bits.";
+              }
+              leaf encapsulation-type {
+                type bier-encapsulation-type;
+                description
+                  "BIER encapsulation type.";
+              }
+              leaf max-si {
+                type uint16 {
+                  range "0..255";
+                }
+                description
+                  "Maximum set identifier.";
+              }
+              leaf up-time {
+                type pub-type:time-tick;
+                description
+                  "Prefix survival time.";
+              }
+              leaf bift-id-base {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Start BIFT-ID in the BIER encapsulation information.";
+              }
+            }
+          }
+          container invalid-encapsulations {
+            description
+              "List of BIER prefix encapsulation state.";
+            list invalid-encapsulation {
+              key "bsl encapsulation-type";
+              description
+                "BIER prefix encapsulation state.";
+              leaf bsl {
+                type bit-string-length;
+                description
+                  "BIER BitString length, which is 64/128/256 bits.";
+              }
+              leaf encapsulation-type {
+                type bier-encapsulation-type;
+                description
+                  "BIER encapsulation type.";
+              }
+              leaf max-si {
+                type uint16 {
+                  range "0..255";
+                }
+                description
+                  "Maximum set identifier.";
+              }
+              leaf up-time {
+                type pub-type:time-tick;
+                description
+                  "Prefix survival time.";
+              }
+              leaf bift-id-base {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                description
+                  "Start BIFT-ID in the BIER encapsulation information.";
+              }
+              leaf invalid-reason {
+                type bits {
+                  bit unknown-sd {
+                    description
+                      "Unknown sub-domain ID.";
+                  }
+                  bit duplicate-bsl {
+                    description
+                      "Duplicate BitString length.";
+                  }
+                  bit invalid-bsl {
+                    description
+                      "Invalid BitString length.";
+                  }
+                  bit unsupport-bsl {
+                    description
+                      "Unsupported BitString length.";
+                  }
+                  bit invalid-label {
+                    description
+                      "Invalid MPLS label.";
+                  }
+                  bit invalid-label-range {
+                    description
+                      "Invalid range of MPLS labels.";
+                  }
+                  bit overlap-label-range {
+                    description
+                      "Overlap range of MPLS labels.";
+                  }
+                }
+                description
+                  "Invalid BSL reason.";
+              }
+            }
+          }
+        }
+      }
+    }	
+  }
+}

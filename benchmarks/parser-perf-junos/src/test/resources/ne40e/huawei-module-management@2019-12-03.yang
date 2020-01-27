@@ -1,0 +1,302 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-module-management {
+  namespace "urn:huawei:yang:huawei-module-management";
+  prefix module-management;
+  
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Module package management.";
+  revision 2019-12-03 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+
+  ext:task-name "patch";
+
+  typedef operation-type { 
+    type enumeration {
+      enum "install-module" {
+        value 0;
+        description
+          "The operation type of module operation is install-module.";
+      }
+      enum "uninstall-module" {
+        value 1;
+        description
+          "The operation type of module operation is uninstall-module.";
+      }
+      enum "startup-module" {
+        value 2;
+        description
+          "The operation type of module operation is startup-module.";
+      }
+      enum "reset-startup-module" {
+        value 3;
+        description
+          "The operation type of module operation is reset-startup-module.";
+      }
+    }
+    description
+      "Specify module operation type.";
+  }
+  typedef module-state {
+    type enumeration {
+      enum "not-exist" {
+        value 0;
+        description
+          "The status of the current module package is not-exist.";
+      }
+      enum "running" {
+        value 3;
+        description
+          "The status of the current module package is running.";
+      }
+    }
+    description
+      "Status of the current module package.";
+  }
+  typedef operation-status { 
+    type enumeration {
+      enum "not-started" {
+        value 0;
+        description
+          "The current status of module operation is not started.";
+      }
+      enum "operating" {
+        value 1;
+        description
+          "The current status of module operation is operating.";
+      }
+      enum "successful" {
+        value 2;
+        description
+          "The current status of module operation is successful.";
+      }
+      enum "failed" {
+        value 3;
+        description
+          "The current status of module operation is failed.";
+      }
+    }
+    description
+      "Specify module operation status.";
+  }
+  typedef action-type {
+    type enumeration {
+      enum "all" {
+        value 0;
+        description
+          "The action of deleting module package is all.";
+      }
+      enum "single" {
+        value 1;
+        description
+          "The action of deleting module package is single.";
+      }
+    }
+    description
+      "Specify the action of deleting module package.";
+  }
+
+  container module-management {
+    config false;
+    description
+      "Module package management.";
+    
+    container module-infos {
+      description
+        "List of module packet informations.";
+      list module-info {
+        key "package-name";
+        description
+          "Operational data of a module packet information.";
+        leaf package-name {
+          type string {
+            length "5..63";
+          }
+          description
+            "Name of the current module package.";
+        }
+        leaf version {
+          type string {
+            length "1..63";
+          }
+          description
+            "Version of the current module package.";
+        }
+        leaf module-name {
+          type string {
+            length "1..63";
+          }
+          description
+            "Name of the current module.";
+        }
+
+        leaf state {
+          type module-state;
+          description
+            "Status of the current module package.";
+        }
+        leaf runtime {
+          type yang:date-and-time;
+          description
+            "Run time of the current module package.";
+        }
+        leaf path {
+          type string {
+            length "1..127";
+          }
+          description
+            "Path of the current module package.";
+        }
+      }
+    }
+    container next-startup-modules {
+      description
+        "List of next startup module packet informations.";
+      list next-startup-module {
+        key "name";
+        description
+          "Operational data of a module startup packet information.";
+        leaf name {
+          type string {
+            length "5..63";
+          }
+          description
+            "Name of a next startup module package.";
+        }
+        leaf path {
+          type string {
+            length "1..127";
+          }
+          description
+            "Path of a next startup module package.";
+        }
+      }
+    }
+    container operation-schedules {
+      description
+        "List of module operation process.";
+      list operation-schedule {
+        key "phase";
+        description
+          "Operational data of module operation process.";
+        leaf phase {
+          type operation-type;
+          description
+            "Module operation type.";
+        }
+        leaf name {
+          type string {
+            length "5..63";
+          }
+          description
+            "Name of a module package.";
+        }
+        leaf status {
+          type operation-status;
+          description
+            "Module operation status.";
+        }
+        leaf schedule {
+          type pub-type:percent;
+          description
+            "Value of the module operation process.";
+        }
+      }
+    }
+  }
+
+  rpc install-module {
+    ext:node-ref "/file-operation/dirs/dir";
+    description
+      "Load a module package.";
+    input {
+      leaf name {
+        type string {
+          length "5..63";
+        }
+        mandatory true;
+        description
+          "Name of a module package.";
+      }
+    }
+  }
+  rpc uninstall-module {
+    description
+      "Delete a module package.";
+    input {
+      leaf action-type {
+        type action-type;
+        default "single";
+        description
+          "Specify the action of uninstall module package.";
+      }
+      leaf name {
+        when "../action-type != 'all'";
+        type string {
+          length "5..63";
+        }
+        description
+          "Name of a module package.";
+      }
+    }
+  }
+  rpc startup-module {
+    ext:node-ref "/file-operation/dirs/dir";
+    description
+      "Specify the module package that will be used at the next startup.";
+    input {
+      leaf name {
+        type string {
+          length "5..63";
+        }
+        mandatory true;
+        description
+          "Specify the name of a module package that will be used at the next startup.";
+      }
+    }
+  }
+  rpc reset-startup-module {
+    description
+      "Delete a module packet that will be used at the next startup.";
+    input {
+      leaf action-type {
+        type action-type;
+        default "single";
+        description
+          "Specify the action of reset startup module package.";
+      }
+      leaf name {
+        when "../action-type != 'all'";
+        type string {
+          length "5..63";
+        }
+        description
+          "Specify the name of a module package that used at the next startup.";
+      }
+    }
+  }
+}

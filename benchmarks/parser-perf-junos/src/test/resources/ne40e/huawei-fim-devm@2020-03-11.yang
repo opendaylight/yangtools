@@ -1,0 +1,269 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-fim-devm {
+  namespace "urn:huawei:yang:huawei-fim-devm";
+  prefix fim-devm;
+  
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-fim-ifm {
+    prefix fim-ifm;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global configuration.";
+  revision 2020-03-11 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forwarding";
+  typedef enable-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable type.";
+  }
+  typedef forward-mode-type {
+    type enumeration {
+      enum "loopback" {
+        value 0;
+        description
+          "Loopback forward type.";
+      }
+      enum "through" {
+        value 1;
+        description
+          "Through forward type.";
+      }
+    }
+    description
+      "Slot forward mode.";
+  }  
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "FIM configuration to the devm lpu-board module.";
+    container fim {
+      description
+        "Configure the forward configuration to the devm lpu-board module.";
+      leaf forward-mode {
+        type forward-mode-type;
+        default "loopback";
+        description
+          "Forward mode.";
+      }
+      leaf vlan-miss-enable {
+        type enable-type;
+        default "disable";
+        description
+          "VLAN-miss to-cpu enable.";
+      }
+      leaf scan-period {
+        when "/ifm:ifm/ifm:global/fim-ifm:fim-ifm-global/fim-ifm:trunk-adjust-enable='enable'";
+        type uint32 {
+          range "2..720";
+        }
+        units "min";
+        default "60";
+        description
+          "Scan period.";
+      }
+      leaf cpu-threshold {
+        when "/ifm:ifm/ifm:global/fim-ifm:fim-ifm-global/fim-ifm:trunk-adjust-enable='enable'";
+        type uint32 {
+          range "10..100";
+        }
+        units %;
+        default "60";
+        description
+          "CPU usage threshold.";
+      }
+      leaf cpu-detect {
+        when "/ifm:ifm/ifm:global/fim-ifm:fim-ifm-global/fim-ifm:trunk-adjust-enable='enable'";
+        type uint32 {
+          range "1..10";
+        }
+        units "min";
+        default "10";
+        description
+          "CPU usage detection period.";
+      }
+      leaf cpu-restore {
+        when "/ifm:ifm/ifm:global/fim-ifm:fim-ifm-global/fim-ifm:trunk-adjust-enable='enable'";
+        type uint32 {
+          range "10..100";
+        }
+        default "55";
+        description
+          "Restore dynamically adjusted CPU usage threshold.";
+      }
+    }
+    container macmtu-discard-statistics {
+      config false;	
+      description
+        "MAC&MTU error statistics.";
+      leaf mtu-ipv4 {
+        type uint64;
+        description
+          "IPv4 MTU error statistics.";
+      }
+      leaf mtu-ipv6 {
+        type uint64;
+        description
+          "IPv6 MTU error statistics.";
+      }
+      leaf mac-ipv4 {
+        type uint64;
+        description
+          "IPv4 MAC error statistics.";
+      }
+      leaf mac-ipv6 {
+        type uint64;
+        description
+          "IPv6 MAC error statistics.";
+      }
+    }
+    container ve-mac-address {
+      description
+        "Configure the VE MAC address.";
+      leaf l2-ve-mac {
+        type pub-type:mac-address;
+        description
+          "L2 VE MAC address.";
+      }
+      leaf access-ve-mac {
+        type pub-type:mac-address;
+        description
+          "Access VE MAC address.";
+      }
+    }
+  }
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+      "FIM configuration to the devm mpu-board module.";
+    container fim {
+      description
+        "Configure the forward configuration to the devm mpu-board module.";
+      leaf forward-mode {
+        type forward-mode-type;
+        default "loopback";
+        description
+          "Forward mode.";
+      }
+      leaf vlan-miss-enable {
+        type enable-type;
+        default "disable";
+        description
+          "VLAN-miss to-cpu enable.";
+      }
+      leaf scan-period {
+        when "/ifm:ifm/ifm:global/fim-ifm:fim-ifm-global/fim-ifm:trunk-adjust-enable='enable'";
+        type uint32 {
+          range "2..720";
+        }
+        units "min";
+        default "60";
+        description
+          "Scan period.";
+      }
+      leaf cpu-threshold {
+        when "/ifm:ifm/ifm:global/fim-ifm:fim-ifm-global/fim-ifm:trunk-adjust-enable='enable'";
+        type uint32 {
+          range "10..100";
+        }
+        units %;
+        default "60";
+        description
+          "CPU usage threshold.";
+      }
+      leaf cpu-detect {
+        when "/ifm:ifm/ifm:global/fim-ifm:fim-ifm-global/fim-ifm:trunk-adjust-enable='enable'";
+        type uint32 {
+          range "1..10";
+        }
+        units "min";
+        default "10";
+        description
+          "CPU usage detection period.";
+      }
+      leaf cpu-restore {
+        when "/ifm:ifm/ifm:global/fim-ifm:fim-ifm-global/fim-ifm:trunk-adjust-enable='enable'";
+        type uint32 {
+          range "10..100";
+        }
+        default "55";
+        description
+          "Restore dynamically adjusted CPU usage threshold.";
+      }
+    }
+    container macmtu-discard-statistics {
+      config false;	
+      description
+        "MAC&MTU error statistics.";
+      leaf mtu-ipv4 {
+        type uint64;
+        description
+          "IPv4 MTU error statistics.";
+      }
+      leaf mtu-ipv6 {
+        type uint64;
+        description
+          "IPv6 MTU error statistics.";
+      }
+      leaf mac-ipv4 {
+        type uint64;
+        description
+          "IPv4 MAC error statistics.";
+      }
+      leaf mac-ipv6 {
+        type uint64;
+        description
+          "IPv6 MAC error statistics.";
+      }
+    }
+    container ve-mac-address {
+      description
+        "Configure the VE MAC address.";
+      leaf l2-ve-mac {
+        type pub-type:mac-address;
+        description
+          "L2 VE MAC address.";
+      }
+      leaf access-ve-mac {
+        type pub-type:mac-address;
+        description
+          "Access VE MAC address.";
+      }
+    }
+  }
+}

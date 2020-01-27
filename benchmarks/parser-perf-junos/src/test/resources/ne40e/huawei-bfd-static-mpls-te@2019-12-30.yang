@@ -1,0 +1,391 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bfd-static-mpls-te {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bfd-static-mpls-te";
+  prefix bfd-static-mpls-te;
+  import huawei-bfd {
+    prefix bfd;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-tunnel-management {
+    prefix tnlm;
+  }
+  import huawei-mpls-te {
+    prefix mpls-te;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bidirectional Forwarding Detection (BFD) is a detection mechanism used uniformly on the entire network. BFD is used to rapidly detect and monitor the connectivity of links or IP routes on a network.";
+
+  revision 2019-12-30 {
+    description
+      "Units correct.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-25 {
+    description
+      "Add sr-bit-err-det-static-te-lsp.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-06-25 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  /*****************************************************************
+  * type definitions
+  *****************************************************************/
+  
+  /*****************************************************************
+  * data
+  *****************************************************************/
+  ext:task-name "bfd";
+  augment "/bfd:bfd/bfd:sessions/bfd:session/bfd:session-type/bfd:static/bfd:static-session-link-type" {
+    description
+      "Configure bfd for MPLS te.";
+    case te-lsp {
+      description
+        "List of BFD static session configurations for te-lsp.";
+      leaf min-tx-interval-static-te-lsp {
+        when "../one-arm-echo-static-te-lsp='false'";
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between sending packets.";
+      }
+      leaf min-rx-interval-static-te-lsp {
+        when "../one-arm-echo-static-te-lsp='false'";
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between receiving packets.";
+      }
+      leaf min-echo-rx-interval-static-te-lsp {
+        when "../one-arm-echo-static-te-lsp='true'";
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between receiving one-arm echo session packets.";
+      }
+      leaf local-discriminator-static-te-lsp {
+        when "not(../is-group-static-te-lsp='true')";
+        type uint32 {
+          range "1..16384";
+        }
+        description
+          "Local discriminator of a BFD session. Note that the local discriminator must correspond to the remote discriminator on the peer of the BFD session.";
+      }
+      leaf remote-discriminator-static-te-lsp {
+        when "not(../is-group-static-te-lsp='true' or ../one-arm-echo-static-te-lsp='true')";
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote discriminator of a BFD session. Note that the remote discriminator must correspond to the local discriminator on the peer of the BFD session.";
+      }
+      leaf tunnel-name-static-te-lsp {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()]/tnlm:tunnel-protocol/mpls-te:te-tunnel";
+        mandatory true;
+        description
+          "Name of a rsvp te tunnel.";
+      }
+      leaf te-backup-lsp-static-te-lsp {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the LSP to be the primary LSP in a tunnel. By default, the LSP is the primary LSP.";
+      }
+      leaf one-arm-echo-static-te-lsp {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable echo session in one-arm mode, one-arm-echo must be configured for one-arm session type.";
+      }
+      leaf is-group-static-te-lsp {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Session Group.";
+      }
+      leaf process-pst-static-te-lsp {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable update the PST when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+      }
+      leaf sr-bit-err-det-static-te-lsp {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable bit error dectection only used for SR-TE LSP.";
+      }
+    }
+    case te-tunnel {
+      description
+        "List of BFD static session configurations for te-tunnel.";
+      leaf min-tx-interval-static-te-tunnel {
+        when "../one-arm-echo-static-te-tunnel='false'";
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between sending packets, which is set for a BFD session.";
+      }
+      leaf min-rx-interval-static-te-tunnel {
+        when "../one-arm-echo-static-te-tunnel='false'";
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between receiving packets, which is set for a BFD session.";
+      }
+      leaf min-echo-rx-interval-static-te-tunnel {
+        when "../one-arm-echo-static-te-tunnel='true'";
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between receiving one-arm echo session packets.";
+      }
+      leaf local-discriminator-static-te-tunnel {
+        when "not(../is-group-static-te-tunnel='true')";
+        type uint32 {
+          range "1..16384";
+        }
+        description
+          "Local discriminator of a BFD session. Note that the local discriminator must correspond to the remote discriminator on the peer of the BFD session.";
+      }
+      leaf remote-discriminator-static-te-tunnel {
+        when "not(../is-group-static-te-tunnel='true' or ../one-arm-echo-static-te-tunnel='true')";
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote discriminator of a BFD session. Note that the remote discriminator must correspond to the local discriminator on the peer of the BFD session.";
+      }
+      leaf tunnel-name-static-te-tunnel {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()]/tnlm:tunnel-protocol/mpls-te:te-tunnel";
+        mandatory true;
+        description
+          "Name of a te tunnel.";
+      }
+      leaf one-arm-echo-static-te-tunnel {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable echo session in one-arm mode, one-arm-echo must be configured for one-arm session type.";
+      }
+      leaf select-board-slot-static-te-tunnel {
+        type string {
+          length "1..31";
+        }
+        description
+          "ID of the slot for forcible board selection.";
+      }
+      leaf is-group-static-te-tunnel {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Session Group.";
+      }
+      leaf process-pst-static-te-tunnel {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable update the PST when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+      }
+    }
+  }
+  augment "/bfd:bfd/bfd:sessions/bfd:session/bfd:session-type/bfd:auto/bfd:auto-session-link-type" {
+    description
+      "Configure bfd for MPLS te.";
+    case te-lsp {
+      description
+        "List of BFD auto session configurations for te-lsp.";
+      leaf min-tx-interval-auto-te-lsp {
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between sending packets, which is set for a BFD session.";
+      }
+      leaf min-rx-interval-auto-te-lsp {
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between receiving packets, which is set for a BFD session.";
+      }
+      leaf tunnel-name-auto-te-lsp {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()]/tnlm:tunnel-protocol/mpls-te:te-tunnel";
+        mandatory true;
+        description
+          "Name of a rsvp te tunnel.";
+      }
+      leaf te-backup-lsp-auto-te-lsp {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the LSP to be the primary LSP in a tunnel. By default, the LSP is the primary LSP. This parameter is available when the type of the detected link is TE LSP.";
+      }
+      leaf reverse-lsr-id-auto-te-lsp {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "Reverse LSR ID.";
+      }
+      leaf reverse-tunnel-id-auto-te-lsp {
+        type uint32 {
+          range "0..4294967295";
+        }
+        mandatory true;
+        description
+          "Reverse tunnel ID.";
+      }
+      leaf process-pst-auto-te-lsp {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable update the PST when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+      }
+    }
+    case te-tunnel {
+      description
+        "List of BFD auto session configurations for te-tunnel.";
+      leaf min-tx-interval-auto-te-tunnel {
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between sending packets, which is set for a BFD session.";
+      }
+      leaf min-rx-interval-auto-te-tunnel {
+        type uint32 {
+          range "3..20000";
+        }
+        units ms;
+        default "10";
+        description
+          "Minimum interval between receiving packets, which is set for a BFD session.";
+      }
+      leaf tunnel-name-auto-te-tunnel {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name = current()]/tnlm:tunnel-protocol/mpls-te:te-tunnel";
+        mandatory true;
+        description
+          "Name of a rsvp te tunnel.";
+      }
+      leaf reverse-lsr-id-auto-te-tunnel {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "Reverse LSR ID.";
+      }
+      leaf reverse-tunnel-id-auto-te-tunnel {
+        type uint32 {
+          range "0..4294967295";
+        }
+        mandatory true;
+        description
+          "Reverse tunnel ID.";
+      }
+      leaf process-pst-auto-te-tunnel {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable update the PST when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+      }
+    }
+  }
+  augment "/bfd:bfd/bfd:sessions/bfd:session" {
+    description
+      "Configure bfd group for MPLS te.";
+    container mpls-te-groups {
+      when "../is-group-static-te-lsp='true' or ../is-group-static-te-tunnel='true'";
+      description
+        "List of BFD sub-session.";
+      list mpls-te-group {
+        key "sub-local-discriminator";
+        description
+          "Configure BFD sub-session.";
+        leaf sub-local-discriminator {
+          type uint32 {
+            range "1..16384";
+          }
+          description
+            "Local discriminator of a BFD session. When the BFD session is created in static auto-negotiation mode, you do not need to set this parameter. Note that the local discriminator must correspond to the remote discriminator on the peer of the BFD session. That is, the value of the local discriminator must be the same as the value of the remote discriminator.";
+        }
+        leaf sub-remote-discriminator {
+          type uint32 {
+            range "1..4294967295";
+          }
+          mandatory true;
+          description
+            "Remote discriminator of a BFD session. When the BFD session is created in static auto-negotiation mode, you do not need to set this parameter. Note that the remote discriminator must correspond to the local discriminator on the peer of the BFD session. That is, the value of the remote discriminator must be the same as the value of the local discriminator.";
+        }
+        leaf sub-select-slot-id {
+          type string {
+            length "1..19";
+          }
+          mandatory true;
+          description
+            "ID of the slot for forcible board selection.";
+        }
+      }
+    }
+  }
+}

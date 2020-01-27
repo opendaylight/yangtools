@@ -1,0 +1,90 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-port-group {
+  namespace "urn:huawei:yang:huawei-port-group";
+  prefix port-group;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Display permanent port group information.";
+  revision 2019-04-17 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "interface-mgr";
+  container port-group {
+    description
+      "Display permanent port group information.";
+    container groups {
+      description
+        "List of permanent port groups.";
+      list group {
+        key "name";
+        description
+          "Configure a permanent port group.";
+        leaf name {
+          type string {
+            length "1..32";
+          }
+          ext:case-sensitivity "lower-or-upper";
+          description
+            "Specify the name of a permanent port group.";
+        }
+        container members {
+          description
+            "List of permanent port group member interfaces.";
+          list member {
+            key "if-name";
+            description
+              "Configure permanent port group member interfaces.";
+            leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Configure the name of a permanent port group member interface.";
+            }
+          }
+        }
+      }
+    }
+  }
+
+  rpc port-group-shutdown {
+    description
+      "Configure the administrative status of permanent port group member interfaces.";
+    input {
+      leaf name {
+        type leafref {
+          path "/port-group:port-group/port-group:groups/port-group:group/port-group:name";
+        }
+        mandatory true;
+        description
+          "Specify the name of a permanent port group.";
+      }
+      leaf shutdown {
+        type boolean;
+        default "false";
+        description
+          "Shutdown member interfaces of the permanent port group.";
+      }
+    }
+  }
+}

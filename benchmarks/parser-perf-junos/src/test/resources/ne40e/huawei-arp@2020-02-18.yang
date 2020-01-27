@@ -1,0 +1,706 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-arp {
+  namespace "urn:huawei:yang:huawei-arp";
+  prefix arp;
+  import huawei-bd {
+    prefix bd;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }  
+  import huawei-ip {
+    prefix ip;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-ifm-trunk {
+    prefix ifm-trunk;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Address resolution protocol (ARP) management, which includes static ARP configuration, dynamic ARP learning, ARP security configuration, ARP entry query, and packet statistics collection.";
+  revision 2020-02-18 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "arp";
+  typedef arpstrict-learn {
+    type enumeration {
+      enum "force-disable" {
+        value 1;
+        description
+          "Disable strict ARP learning on an interface.";
+      }
+      enum "force-enable" {
+        value 2;
+        description
+          "Enable strict ARP learning on an interface.";
+      }
+      enum "trust" {
+        value 3;
+        description
+          "Enable an interface to use global strict ARP learning policies if strict ARP learning is not enabled on the interface.";
+      }
+    }
+    description
+      "Whether to enable strict ARP learning.";
+  }
+  typedef arpgratuitous-send {
+    type enumeration {
+      enum "enable" {
+        value 2;
+        description
+          "Enable gratuitous ARP on interface.";
+      }
+      enum "disable" {
+        value 3;
+        description
+          "Disable gratuitous ARP on interface.";
+      }
+    }
+    description
+      "Whether to enable gratuitous ARP.";
+  }
+  typedef suppress-type {
+    type enumeration {
+      enum "arp" {
+        value 1;
+        description
+          "Timestamp suppression performed on an interface board for ARP packets.";
+      }
+      enum "arp-miss" {
+        value 2;
+        description
+          "Timestamp suppression performed on an interface board for ARP miss packets.";
+      }
+    }
+    description
+      "ARP suppression based on ARP message type.";
+  }
+  typedef suppress-ip-type {
+    type enumeration {
+      enum "dest-ip" {
+        value 1;
+        description
+          "Based on destination IP timestamp suppression.";
+      }
+      enum "src-ip" {
+        value 2;
+        description
+          "Based on source IP timestamp suppression.";
+      }
+    }
+    description
+      "ARP suppression based on IP address type.";
+  }
+  typedef arpstyle-type {
+    type enumeration {
+      enum "static-arp" {
+        value 1;
+        description
+          "Static ARP entry.";
+      }
+      enum "dynamic-arp" {
+        value 2;
+        description
+          "Dynamic ARP entry.";
+      }
+      enum "backup-arp" {
+        value 3;
+        description
+          "Remote backup ARP entry.";
+      }
+      enum "interface-arp" {
+        value 4;
+        description
+          "Interface ARP entry.";
+      }
+      enum "openflow-arp" {
+        value 5;
+        description
+          "ARP entry generated based on the openflow table.";
+      }
+      enum "redirect-arp" {
+        value 6;
+        description
+          "Redirect ARP.";
+      }
+    }
+    description
+      "Type of an ARP entry.";
+  }
+  typedef detect-mode {
+    type enumeration {
+      enum "loose" {
+        value 0;
+        description
+          "In loose mode, an interface sends ARP probe messages only when both the physical status and protocol status are up.";
+      }
+      enum "strict" {
+        value 1;
+        description
+          "In strict mode, an interface sends ARP probe messages when the physical status is up.";
+      }
+    }
+    description
+      "The detect mode of an interface sending ARP probe messages.";
+  }
+  container arp {
+    description
+      "Address resolution protocol (ARP) management, which includes static ARP configuration, dynamic ARP learning, ARP security configuration, ARP entry query, and packet statistics collection.";
+    container global {
+      description
+        "Configure ARP system information.";
+      leaf strict-learn-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable strict ARP learning so that a device learns only address information carried in the ARP reply messages in response to the ARP Request messages sent by itself.";
+      }
+      leaf l2topo-detect-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable L2 topology probe. After a L2 interface goes up, the device updates all ARP entries corresponding to the VLAN to which the L2 interface belongs.";
+      }
+      leaf rate-trap-interval {
+        type uint32 {
+          range "0..1200";
+        }
+        units s;
+        default "0";
+        description
+          "Interval at which ARP logs and traps are recorded. If the value is 0, logs and traps are not recorded.";
+      }
+      leaf passive-learn-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable passive ARP learning. After the backup device in a VRRP backup group receives an ARP request message destined for the virtual IP address, the backup device learns the ARP entry of the requester.";
+      }
+      leaf topo-detect-disable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable topology change disable.";
+      }
+      leaf con-send-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable ARP packet sending at a limited rate.";
+      }
+      leaf con-send-maxnum {
+        when "../con-send-enable='true'";
+        type uint16 {
+          range "1..10";
+        }
+        default "5";
+        description
+          "Maximum packet sending rate, expressed in the number of packets send every 10 ms.";
+      }
+      leaf gratuitous-drop {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function to discard gratuitous ARP packets.";
+      }
+      leaf vlanif-expiretime {
+        type uint32 {
+          range "60..86400";
+        }
+        units s;
+        default "1200";
+        description
+          "Aging time of a dynamic ARP entry of VLAN interface.";
+      }
+      leaf host-conflict-period {
+        type uint16 {
+          range "2..36000";
+        }
+        units s;
+        default "180";
+        description
+          "Period configurations for the host conflict.";
+      }
+      leaf host-conflict-threshold {
+        type uint16 {
+          range "1..1000";
+        }
+        default "5";
+        description
+          "Retry times configurations for the host conflict.";
+      }
+      leaf broadcast-max-num {
+        type uint16 {
+          range "0..3000";
+        }
+        default "500";
+        description
+          "Broadcast send max number.";
+      }
+    }
+    container speed-limits {
+      description
+        "List of timestamp suppression rate at which an interface board suppresses ARP messages.";
+      list speed-limit {
+        key "slot-id suppress-type ip-type";
+        description
+          "Configure timestamp suppression rate at which an interface board suppresses ARP messages.";
+        leaf slot-id {
+          type string {
+            length "1..24";
+          }
+          description
+            "Slot ID, which refers to the position of logical MPU board and physical LPU boards. When Slot ID refering MPU board, the value of slot-id is 0.";
+        }
+        leaf suppress-type {
+          type suppress-type;
+          must "(../suppress-type='arp' and (../ip-type='dest-ip' or ../ip-type='src-ip')) or (../suppress-type='arp-miss' and ../ip-type='src-ip')";
+          description
+            "Suppression type. The available options are ARP and ARP miss.";
+        }
+        leaf ip-type {
+          type suppress-ip-type;
+          must "(../suppress-type='arp' and (../ip-type='dest-ip' or ../ip-type='src-ip')) or (../suppress-type='arp-miss' and ../ip-type='src-ip')";
+          description
+            "Suppression type based on IP addresses. The available options are destination IP suppression and source IP suppression. Destination IP suppression maps to ARP suppression. Source IP suppression maps to ARP miss suppression.";
+        }
+        leaf suppress-value {
+          type uint32 {
+            range "0..65536";
+          }
+          mandatory true;
+          description
+            "Number of ARP messages or ARP miss messages that an interface can process in a specified period.";
+        }
+      }
+    }
+    container static-arps {
+      description
+        "List of short static ARP configurations, not depend on the interface.";
+      list static-arp {
+        must "not(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:vrf-name=current()/ni-name]/ip:ipv4/arp:static-arps/arp:static-arp[arp:ip-addr=current()/ip-addr])";
+        key "ip-addr ni-name";
+        description
+          "Configure static ARP table. By default, the system ARP table is empty, and address mappings are obtained using dynamic ARP.";
+        leaf ip-addr {
+          type inet:ipv4-address-no-zone;
+          description
+            "IP address, in dotted decimal notation.";
+        }
+        leaf ni-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+          description
+            "Name of the VPN instance to which an ARP entry belongs, which refers to network instance name.";
+        }
+        leaf mac-addr {
+          type pub-type:mac-address;
+          mandatory true;
+          description
+            "MAC address in the format of H-H-H, in which H is a hexadecimal number of 1 to 4 bits.";
+        }
+        leaf vlan-id {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "VLAN ID. If this parameter is not set, the VLAN ID is considered to be 0. If this parameter is set, the ARP entry is in the specified VLAN.";
+        }
+      }
+    }
+    container query-entries {
+      config false;
+      description
+        "List of ARP entries that can be queried.";
+      list query-entry {
+        key "ni-name ip-addr";
+        config false;
+        description
+          "Statistics of query ARP entries, including static, dynamic, and interface-based ARP entries.";
+        leaf ni-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "Name of the VPN instance to which an ARP entry belongs, which refers to network instance name.";
+        }
+        leaf ip-addr {
+          type inet:ipv4-address-no-zone;
+          description
+            "IP address, in dotted decimal notation.";
+        }
+        leaf mac-addr {
+          type pub-type:mac-address;
+          description
+            "MAC address.";
+        }
+        leaf expire-time {
+          type uint32 {
+            range "1..1440";
+          }
+          description
+            "Aging time of a dynamic ARP entry.";
+        }
+        leaf style-type {
+          type arpstyle-type;
+          default "static-arp";
+          description
+            "Type of ARP entries. An ARP entry can be a static, dynamic, remote backup, or interface based ARP entry and so on.";
+        }
+        leaf if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Type and number of the interface that has learned ARP entries.";
+        }
+        leaf slot-id {
+          type string {
+            length "1..24";
+          }
+          description
+            "Slot ID, which indicates the position of logical MPU and LPU boards. When Slot ID refering MPU board, the value of slot-id is 0.";
+        }
+        leaf pe-vlan {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "ID of the outer VLAN to which an ARP entry belongs.";
+        }
+        leaf ce-vlan {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "ID of the inner VLAN to which an ARP entry belongs.";
+        }
+        leaf pvc {
+          type uint32;
+          description
+            "Interface where a PVC resides and VPI/VCI.";
+        }
+      }
+    }
+    container current-speed-limits {
+      config false;
+      description
+        "List of current timestamp suppression rate at which an interface board suppresses ARP messages.";
+      list current-speed-limit {
+        key "slot-id suppress-type ip-type";
+        description
+          "Statistics of current timestamp suppression rate at which an interface board suppresses ARP messages.";
+        leaf slot-id {
+          type string {
+            length "1..24";
+          }
+          description
+            "Slot ID, which refers to the position of logical MPU and LPU boards.";
+        }
+        leaf suppress-type {
+          type suppress-type;
+          description
+            "Suppression type. The available options are ARP and ARP miss.";
+        }
+        leaf ip-type {
+          type suppress-ip-type;
+          description
+            "Suppression type based on IP addresses. The available options are destination IP suppression and source IP suppression. Destination IP suppression maps to ARP suppression. Source IP suppression maps to ARP miss suppression.";
+        }
+        leaf suppress-value {
+          type uint32 {
+            range "0..65536";
+          }
+          description
+            "Number of ARP messages or ARP miss messages that an interface can process in a specified period.";
+        }
+      }
+    }
+  }	
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ip:ipv4" {
+    description
+      "List of ARP configurations under interface.";
+    container static-arps {
+      description
+        "List of static ARP static entry configurations.";
+      list static-arp {
+        key "ip-addr";
+        description
+          "Configure static ARP table. By default, the system ARP table is empty, and address mappings are obtained using dynamic ARP.";
+        leaf ip-addr {
+          type inet:ipv4-address-no-zone;
+          description
+            "IP address specified in this command and the IP address of the outbound interface specified by interface must be on the same network segment.";
+        }
+        leaf mac-addr {
+          type pub-type:mac-address;
+          mandatory true;
+          description
+            "MAC address specified in this command and can not be a broadcast address.";
+        }
+        leaf pevid {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "Outer VLAN ID. If this parameter is not set, the VLAN ID is considered to be 0. If this parameter is set, the ARP entry is in the specified VLAN. Please be consistent with the VLAN configuration on the interface.";
+        }
+        leaf cevid {
+          when "../pevid";
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "Inner VLAN ID. If this parameter is not set, the VLAN ID is considered to be 0. If this parameter is set, the ARP entry is in the specified VLAN. Please be consistent with the VLAN configuration on the interface.";
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "List of ARP configurations under ifm interface.";
+    container arp-entry {
+      when "not(/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk/ifm-trunk:members/ifm-trunk:member[ifm-trunk:name=current()/../ifm:name])";
+      description
+        "Configure ARP interface, including the aging time, probe interval, number of aging probe attempts, dynamic ARP learning status, strict ARP learning status, and routed proxy.";
+      leaf expire-time {
+        type uint32 {
+          range "60..86400";
+        }
+        default "1200";
+        description
+          "Aging time of a dynamic ARP entry.";
+      }
+      leaf probe-interval {
+        type uint32 {
+          range "1..5";
+        }
+        units s;
+        default "5";
+        description
+          "Interval for detecting dynamic ARP entries.";
+      }
+      leaf probe-times {
+        type uint32 {
+          range "0..10";
+        }
+        default "3";
+        description
+          "Number of aging probe attempts for a dynamic ARP entry. If a device does not receive an ARP reply message after the number of aging probe attempts reaches a specified number, the dynamic ARP entry is deleted.";
+      }
+      leaf arp-learn-disable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable dynamic ARP learning. If the value is true, dynamic ARP learning is disabled. If the value is false, dynamic ARP learning is enabled.";
+      }
+      leaf arp-learn-strict {
+        type arpstrict-learn;
+        default "trust";
+        description
+          "Enable strict ARP learning. After strict ARP learning is enabled, a device only learns address information of only the ARP reply message in response to the ARP request sent by itself. Strict ARP learning employs the longest match rule. 1)If strict ARP learning is configured both globally and in the interface, the strict ARP learning configuration in the interface is used. 2)If strict ARP learning is not configured in the interface, the global strict ARP learning configuration is used.";
+      }
+      leaf route-proxy-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable routed proxy ARP. When two hosts reside on different network segments and do not have default gateways configured, IP address resolution between the two hosts can be implemented using routed proxy ARP.";
+      }
+      leaf inner-proxy-enable {
+        when "../../ifm:type!='Vbdif'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable intra-VLAN proxy ARP. Some switches isolate hosts in the same VLAN. To allow hosts in the same VLAN to communicate, enable inner VLAN proxy ARP. Only sub interface, VLANif, vbridge and remote ap interfaces are supported.";
+      }
+      leaf inter-proxy-enable {
+        when "../../ifm:type!='Vbdif'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable inter VLAN proxy ARP. If hosts in different VLANs need to communicate at L2, enable inter VLAN proxy ARP on an interface. Hosts between sub VLANs in a super VLAN cannot communicate by default. To allow these hosts to communicate, enable inter VLAN proxy ARP on the VLAN interface of the super VLAN. Only sub interface, VLANif, vbridge and remote ap interfaces are supported.";
+      }
+      leaf local-proxy-enable {
+        when "../../ifm:type='Vbdif'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable local proxy ARP. To allow isolated hosts in a bridge domain (BD) to communicate with each other, enable local proxy ARP. Only VBD interfaces are supported.";
+      }
+      leaf fake-expire-time {
+        type uint32 {
+          range "1..36000";
+        }
+        units s;
+        default "5";
+        description
+          "Aging time of a fake ARP entry.";
+      }
+      leaf probe-unicast {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable send unicast ARP aging probe messages for a dynamic ARP entry.";
+      }
+      leaf dest-mac-check {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable check destination MAC addresses in ARP messages.";
+      }
+      leaf src-mac-check {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable check source MAC addresses in ARP messages.";
+      }
+      leaf distribute-enable {
+        when "../../ifm:type='Vbdif'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable distribute gateway. Only VBD interfaces are supported.";
+      }
+      leaf gratuitous-send {
+        type arpgratuitous-send;
+        default "enable";
+        description
+          "Enable or disable sending gratuitous ARP packet on interface.";
+      }
+      leaf host-collect-enable {
+        when "../../ifm:type='Vbdif'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the host information collection function. Only VBD interfaces are supported.";
+      }
+      leaf generate-rdtbl-enable {
+        when "../../ifm:type='Vbdif'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the configuration of generate rd table. Only VBD interfaces are supported.";
+      }
+      leaf broadcast-detect-interval {
+        when "../../ifm:type='Vbdif'";
+        type uint32 {
+          range "1..5";
+        }
+        units s;
+        default "5";
+        description
+          "Configure the broadcast detect interval. Only VBD interfaces are supported.";
+      }
+      leaf broadcast-detect-times {
+        when "../../ifm:type='Vbdif'";
+        type uint32 {
+          range "1..10";
+        }
+        default "3";
+        description
+          "Configure the broadcast detect times. Only VBD interfaces are supported.";
+      }
+      leaf broadcast-detect-enable {
+        when "../../ifm:type='Vbdif'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the configuration of broadcast detect. Only VBD interfaces are supported.";
+      }
+      leaf fake-penalty-time {
+        type uint32 {
+          range "1..180";
+        }
+        units s;
+        default "5";
+        description
+          "Aging penalty time of a fake ARP entry.";
+      }
+      leaf gratuitous-arp-drop {
+        when "../../ifm:type!='Vbdif'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable an interface to discard gratuitous ARP packets.";
+      }
+    }
+    container arp-status-detect {
+      description
+        "Configure ARP entry status detect.";
+      leaf ip-addr {
+        type inet:ipv4-address-no-zone;
+        description
+          "Detect IP.";
+      }
+      leaf mode {
+        when "../ip-addr";
+        type detect-mode;
+        default "strict";
+        description
+          "Detect mode.";
+      }
+      leaf times {
+        when "../ip-addr";
+        type uint8 {
+          range "1..10";
+        }
+        default "3";
+        description
+          "Detect times.";
+      }
+      leaf interval {
+        when "../ip-addr";        
+        type uint32 {
+          range "200..10000";
+        }
+        units "ms";
+        default "1000";
+        description
+          "Detect interval.";
+      }
+    }
+  }
+  augment "/bd:bd/bd:instances/bd:instance" {
+    description
+      "List of ARP configurations under bridge-domain interface.";
+      container arp-list {
+        description
+          "Configure ARP Bridge-domain.";
+        leaf l2proxy-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable L2 proxy.";
+        }
+      }
+    }
+}

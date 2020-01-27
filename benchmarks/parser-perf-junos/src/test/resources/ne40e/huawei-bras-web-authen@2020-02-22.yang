@@ -1,0 +1,334 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-web-authen {
+  namespace "urn:huawei:yang:huawei-bras-web-authen";
+  prefix bras-web-authen;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras-web-authen.";
+  revision 2020-02-22 {
+    description
+      "Description modification.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-16 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+
+/*****************************************************************
+* type definitions
+*****************************************************************/
+  typedef server-password-type {
+    type enumeration {
+      enum "simple" {
+        value 1;
+        description
+          "Specifies the shared key of the web authentication server in simple text.";
+      }
+      enum "cipher" {
+        value 2;
+        description
+          "Specifies the shared key of the web authentication server in cipher text.";
+      }
+    }
+    description
+      "Description of the password type.";
+  }
+  typedef server-state-type {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "Up.";
+      }
+      enum "down" {
+        value 2;
+        description
+          "Down.";
+      }
+    }
+    description
+      "Status of Web authentication server.";
+  }
+  typedef query-sequence-type {
+    type enumeration {
+      enum "first" {
+        value 1;
+        description
+          "Indicates the priority of information is first.";
+      }
+      enum "second" {
+        value 2;
+        description
+          "Indicates the priority of information is second.";
+      }
+      enum "third" {
+        value 3;
+        description
+          "Indicates the priority of information is third.";
+      }
+      enum "fourth" {
+        value 4;
+        description
+          "Indicates the priority of information is fourth.";
+      }
+    }
+    description
+      "The priority of the configures.";
+  }
+/*****************************************************************
+* data
+*****************************************************************/
+  container bras-web-authen {
+    description
+      "Bras-web-authen.";
+    container global {
+      description
+        "Configure global bras-web-authen.";
+      container web-authen-server {
+        description
+          "Configure web authen server.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable web authentication.";
+        }
+        leaf listening-port {
+          type uint16 {
+            range "1024..55535";
+          }
+          default "2000";
+          description
+            "Specifies the number of the port through which the device receives packets from the web authentication server.";
+        }
+        leaf reply-message {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable the device to transmit the response messages from the RADIUS server to the web authentication server transparently. By default, the response messages are transparently transmitted.";
+        }
+        leaf version {
+          type enumeration {
+            enum "version1" {
+              value 0;
+              description
+                "Support V1.0 and V2.0 and V3.0.";
+            }
+            enum "version2" {
+              value 1;
+              description
+                "Only support V2.0 and V3.0.";
+            }
+            enum "version3" {
+              value 2;
+              description
+                "Only support V3.0.";
+            }
+          }
+          default "version1";
+          description
+            "Configures portal V1.0 and V2.0 and V3.0.";
+        }
+        leaf interface-name {
+          type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Interface name.";
+        }
+      }
+      container response-code {
+        description
+          "Configure the host to send an authentication packet with error code to the web server.";
+        leaf error-code-enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable the host to send an authentication packet with error code to the web server.";
+        }
+      }
+      container response-error-id {
+        description
+          "Configure the router to send an access-reject packet with an error code to the portal server.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the router to send an access-reject packet with an error code to the portal server.";
+        }
+      }
+      container dns-redirect-response {
+        description
+          "Configure the time when the DNS redirection returns to the live network.";
+        leaf ttl {
+          type uint32 {
+            range "0..3600";
+          }
+          units s;
+          default "60";
+          description
+            "Time to live.";
+        }
+      }
+      /*AAA view*/
+      container logout-account-stopping {
+        description
+          "Configure stop accounting before logout and then perform the authentication operation.";
+        leaf enable  {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to perform authentication for users in pre-authentication domain and then send stop accounting messages in the authentication domain for the users during a logout process.";
+        }
+      }
+      container query-sequence {
+        must "not(user-mac = user-ip or user-mac = user-name or user-mac = user-account-id or user-ip = user-name or user-ip = user-account-id or user-name = user-account-id)";
+        description
+          "Configure the priority of information that the web server uses the query interface to query.";
+        leaf user-mac {
+          type query-sequence-type;
+          default "first";
+          description
+            "Specifies a user MAC address.";
+        }
+        leaf user-ip{
+          type query-sequence-type;
+          default "second";
+          description
+            "Specifies a user IP address.";
+        }
+        leaf user-name{
+          type query-sequence-type;
+          default "third";
+          description
+            "Specifies a user name.";
+        }
+        leaf user-account-id{
+          type query-sequence-type;
+          default "fourth";
+          description
+            "Specifies user account sessionID.";
+        }
+      }
+    }
+    container ip-servers {
+      description
+        "List of configured web authentication servers, that is, the external web server.";
+      list ip-server {
+        key "ip vpn-name";
+        description
+          "Configure the web authentication server, that is, the external web server.";
+        leaf ip {
+          type inet:ip-address-no-zone;
+          description
+            "Specifies the IP address of the web authentication server.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "Specifies the VPN instance name. Public network vpn-name value is '_public_'. If IP is configured as the IPv4 address, IPv4-family must be enabled for the VPN. If IP is configured as an IPv6 address, IPv6-family must be enabled for the VPN.";
+        }
+        leaf password-type {
+          type server-password-type;
+          must "(../password-type and ../password) or (not(../password-type) and not(../password))";
+          description
+            "Specifies the shared key of the web authentication server in simple or cipher text.";
+        }
+        leaf password {
+          type pub-type:password-extend {
+            length "1..128";
+          }
+          must "(../password-type and ../password) or (not(../password-type) and not(../password))";
+          description
+            "Specifies the password of the web authentication server, the value is a string of 1 to 16 characters in simple text and a string of 1 to 128 characters in cipher text.";
+        }
+        leaf nas-ip {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the IP address of the device is reported. By default, the IP address of the device is not reported.";
+        }
+        leaf port-number {
+          type uint16 {
+            range "1..65535";
+          }
+          default "50100";
+          description
+            "Specifies the port number of the web authentication server.";
+        }
+        leaf detect-time {
+          type uint16 {
+            range "1..65535";
+          }
+          description
+            "Specifies the detect time of the web authentication server.";
+        }
+        leaf server-state {
+          type server-state-type;
+          config false;
+          description
+            "Status of Web authentication server.";
+        }
+      }
+    }
+  }
+/*****************************************************************
+* augment extension 
+*****************************************************************/
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "Creates a domain and enters the domain scenario; alternatively, you can enter the scenario of an existing domain. Exceptionally, in this module it cannot be deleted or removed to delete its child.";
+    container web-authen {
+      description
+        "Configure web authen.";
+      container reallocate-ip-address {
+        description
+          "Configure IP address reallocation during post domain authentication.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable IP address reallocation during post domain authentication.";
+           }
+        }
+      }
+    }
+}

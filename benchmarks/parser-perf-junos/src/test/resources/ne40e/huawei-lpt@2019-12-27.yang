@@ -1,0 +1,160 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-lpt {
+  namespace "urn:huawei:yang:huawei-lpt";
+  prefix lpt;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Link state pass through configuration.";
+
+  revision 2019-12-27 {
+    description
+      "Solve some errors.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-13 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "lpt";
+  typedef port-state {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "Port state is open.";
+      }
+      enum "down" {
+        value 0;
+        description
+          "Port state is closed.";
+      }
+    }
+    description
+      "Port state.";
+  }
+  typedef fsm-state {
+    type enumeration {
+      enum "init" {
+        value 0;
+        description
+          "Fsm state is init.";
+      }
+      enum "normal" {
+        value 3;
+        description
+          "Fsm state is Normal.";
+      }
+      enum "network-fault" {
+        value 2;
+        description
+          "Fsm state is network fault.";
+      }
+      enum "user-fault" {
+        value 1;
+        description
+          "Fsm state is user fault.";
+      }
+      enum "resume-wait" {
+        value 4;
+        description
+          "Fsm state is wait resume.";
+      }
+      enum "user-resume" {
+        value 5;
+        description
+          "Fsm state is user resume.";
+      }
+    }
+    description
+      "Lpt Fsm State.";
+  }
+  typedef vc-type {
+    type enumeration {
+      enum "ethernet" {
+        value 5;
+        description
+          "The vc type is ETHERNET.";
+      }
+      enum "vlan" {
+        value 4;
+        description
+          "The vc type is VLAN.";
+      }
+    }
+    description
+      "Vc type.";
+  }
+  
+  grouping ptp-instance-paras{
+    description
+      "LPT p2p instance configuration.";
+    leaf enable {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable LPT state.";
+    }
+    leaf recover-time {
+      type uint32 {
+        range "1..600";
+      }
+      units s;
+      default "1";
+      description
+        "Recovery time value.";
+    }
+    leaf hold-off-time {
+      type uint32 {
+        range "0..10000";
+      }
+      units ms;
+      must "(../hold-off-time mod 100)=0";
+      default "1000";
+      description
+        "Holdoff time value.";
+    }
+    leaf oam-period {
+      type uint32 {
+        range "10..100";
+      }
+      units "100 ms";
+      default "10";
+        description
+          "OAM period value.";
+    }
+  }
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-ldp/l2vpn:acs/l2vpn:ac" {
+    description
+      "LPT in a AC interface.";
+    container lpt {
+      description
+        "Configure LPT in a AC interface.";
+      container ptp-instance {
+        presence "Create a ptp instance.";
+        description
+          "Configure point to point instance of LPT.";
+        uses ptp-instance-paras;
+      }
+    }
+  }
+}

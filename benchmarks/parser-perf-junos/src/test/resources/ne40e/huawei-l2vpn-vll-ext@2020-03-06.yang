@@ -1,0 +1,254 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2vpn-vll-ext {
+  namespace "urn:huawei:yang:huawei-l2vpn-vll-ext";
+  prefix l2vpn-vll-ext;
+  
+  import huawei-qos {
+    prefix qos;
+  }
+
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "L2VPN vll ext.";
+  revision 2020-03-06 {
+    description
+      "Add pipe type.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-21 {
+    description
+      "Add vll-pw-loop-check.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-17 {
+    description
+      "Modify typedef defination.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-23 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  typedef l2vpn-pipe-mode {
+    type enumeration {
+      enum "pipe" {
+        value 1;
+        description
+          "Specify the L2VPN pipe mode as pipe.";
+      }
+      enum "shortPipe" {
+        value 2;
+        description
+          "Specify the L2VPN pipe mode as short pipe.";
+      }
+      enum "uniform" {
+        value 3;
+        description
+          "Specify the L2VPN pipe mode as uniform.";
+      }
+    }
+    description
+      "L2vpn pipe mode.";
+  }
+
+  typedef l2vpn-service-class {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "Specify the L2VPN CoS as BE.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "Specify the L2VPN CoS as AF1.";
+      }
+      enum "af2" {
+        value 2;
+        description
+          "Specify the L2VPN CoS as AF2.";
+      }
+      enum "af3" {
+        value 3;
+        description
+          "Specify the L2VPN CoS as AF3.";
+      }
+      enum "af4" {
+        value 4;
+        description
+          "Specify the L2VPN CoS as AF4.";
+      }
+      enum "ef" {
+        value 5;
+        description
+          "Specify the L2VPN CoS as EF.";
+      }
+      enum "cs6" {
+        value 6;
+        description
+          "Specify the L2VPN CoS as CS6.";
+      }
+      enum "cs7" {
+        value 7;
+        description
+          "Specify the L2VPN CoS as CS7.";
+      }
+    }
+    description
+      "Description of CoS.";
+  }
+  typedef l2vpn-color {
+    type enumeration {
+      enum "green" {
+        value 0;
+        description
+          "Specify the packet color as green.";
+      }
+      enum "yellow" {
+        value 1;
+        description
+          "Specify the packet color as yellow.";
+      }
+      enum "red" {
+        value 2;
+        description
+          "Specify the packet color as red.";
+      }
+    }
+    description
+      "Description of packet color.";
+  }
+  typedef l2vpn-trust-type {
+    type enumeration {
+      enum "outpri" {
+        value 0;
+        description
+          "Specify the trust type as OUTTER-VLAN-8021P.";
+      }
+      enum "inpri" {
+        value 1;
+        description
+          "Specify the trust type as INNER-VLAN-8021P.";
+      }
+      enum "ipdscp" {
+        value 2;
+        description
+          "Specify the trust type as IP-DSCP.";
+      }
+    }
+    description
+      "Description of trust type.";
+  }
+  ext:task-name "forwarding";  
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/qos:qos" {
+    description "Interface QOS.";
+    container qos-vll-pipe{
+      description
+        "Configure the diffserv mode for L2VPN.";
+      leaf split-mode {
+        type boolean;
+        must "((../split-mode='false' and not(../ingress-pipe-mode) and not(../egress-pipe-mode) and ../pipe-mode) or (../split-mode='true' and not(../pipe-mode) and ../ingress-pipe-mode and ../egress-pipe-mode and not(../ingress-pipe-mode='uniform' and ../egress-pipe-mode='uniform')))";
+        default "false";
+        description
+          "Enable/disable split mode.";
+      }
+      leaf pipe-mode {
+        when "../split-mode='false'";
+        type l2vpn-pipe-mode;
+        must "(../split-mode='false') and ((../pipe-mode='pipe' and (../service-class) and (../color)) or (../pipe-mode='shortPipe' and (../service-class) and (../color) and (../domain-name)) or (../pipe-mode='uniform'))";
+        default "uniform";
+        description
+          "Specify the pipe mode.";
+      }
+      leaf ingress-pipe-mode {
+        when "../split-mode='true'";
+        type l2vpn-pipe-mode;
+        must "((../split-mode='true') and (((../service-class) and (../color) and (../ingress-pipe-mode='shortPipe' or ../ingress-pipe-mode='pipe')) or (../ingress-pipe-mode='uniform' and ../egress-pipe-mode!='uniform')))";
+        default "uniform";
+        description
+          "Specify the ingress pipe mode.";
+      }
+      leaf egress-pipe-mode {
+        when "../split-mode='true'";
+        type l2vpn-pipe-mode;
+        must "((../split-mode='true') and (((../domain-name) and (../trust-type) and (../egress-pipe-mode='shortPipe')) or (../egress-pipe-mode='pipe') or (../egress-pipe-mode='uniform' and ../ingress-pipe-mode!='uniform')))";
+        default "uniform";
+        description
+          "Specify the egress pipe mode.";
+      }
+      leaf service-class {
+        when "(../pipe-mode='pipe' or ../pipe-mode='shortPipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortPipe')";
+        type l2vpn-service-class;
+        must "(../pipe-mode='pipe' or ../pipe-mode='shortPipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortPipe')";
+        default "be";
+        description
+          "Specify the CoS.";
+      }
+      leaf color {
+        when "(../pipe-mode='pipe' or ../pipe-mode='shortPipe'  or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortPipe')";
+        type l2vpn-color;
+        must "(../pipe-mode='pipe' or ../pipe-mode='shortPipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortPipe')";
+        default "green";
+        description
+          "Specify the color of packets.";
+      }
+      leaf domain-name {
+        when "(../pipe-mode='shortPipe'  or ../egress-pipe-mode='shortPipe')";
+        type leafref {
+          path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+        }
+        must "(../pipe-mode='shortPipe' or ../egress-pipe-mode='shortPipe')";
+        default "default";
+        description
+          "DS domain name.";
+      }
+      leaf trust-type {
+        when "../egress-pipe-mode='shortPipe'";
+        type l2vpn-trust-type;
+        must "../egress-pipe-mode='shortPipe'";
+        default "outpri";
+        description
+          "Specify the trust type.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "PW loop check.";
+    container vll-pw-loop-check {
+      when "../ifm:type='Ethernet' or ../ifm:type='GigabitEthernet' or ../ifm:type='Eth-Trunk' or ../ifm:type='400GE' or ../ifm:type='100GE' or ../ifm:type='50GE' or ../ifm:type='40GE' or ../ifm:type='25GE' or ../ifm:type='10GE' or ../ifm:type='XGigabitEthernet' or ../ifm:type='GEBrief'";
+      presence "Enable PW loop check.";
+      description
+        "Enable/disable PW loop check.";      
+      leaf time {
+        type uint32 {
+          range "1..65535";
+        }
+        default "300";
+        description
+          "PW loop check time.";
+      }
+    }
+  }
+}

@@ -1,0 +1,3207 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-vas {
+  namespace urn:huawei:yang:huawei-bras-vas;
+  prefix bras-vas;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-radius {
+    prefix radius;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras-vas.";
+  revision 2020-03-12 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-15 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "vas";
+  
+  typedef bras-vas-flow-queue-type {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "Service type BE.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "Service type AF1.";
+      }
+      enum "af2" {
+        value 2;
+        description
+          "Service type AF2.";
+      }
+      enum "af3" {
+        value 3;
+        description
+          "Service type AF3.";
+      }
+      enum "af4" {
+        value 4;
+        description
+          "Service type AF4.";
+      }
+      enum "ef" {
+        value 5;
+        description
+          "Service type EF.";
+      }
+      enum "cs6" {
+        value 6;
+        description
+          "Service type CS6.";
+      }
+      enum "cs7" {
+        value 7;
+        description
+          "Service type CS7.";
+      }
+    }
+    description
+      "Type of flow queue.";
+  }
+  typedef bras-vas-service-source {
+    type enumeration {
+      enum "authentication-ack" {
+        value 1;
+        description
+          "Authentication ack.";
+      }
+      enum "radius" {
+        value 2;
+        description
+          "Radius.";
+      }
+      enum "diameter" {
+        value 3;
+        description
+          "Diameter.";
+      }
+      enum "rui" {
+        value 4;
+        description
+          "Rui.";
+      }
+    }
+    description
+      "Status of the EDSG accounting copy function.";
+  }
+  typedef bras-vas-method-type {
+    type enumeration {
+      enum "local" {
+        value 1;
+        description
+          "Local.";
+      }
+      enum "none" {
+        value 2;
+        description
+          "None.";
+      }
+      enum "radius" {
+        value 3;
+        description
+          "Radius.";
+      }
+      enum "cops" {
+        value 4;
+        description
+          "Cops.";
+      }
+      enum "diameter" {
+        value 5;
+        description
+          "Diameter.";
+      }
+    }
+    description
+      "Method type.";
+  }
+  typedef bras-vas-service-substate {
+    type enumeration {
+      enum "policy-downloading" {
+        value 0;
+        description
+          "Policy downloading.";
+      }
+      enum "authenticating" {
+        value 1;
+        description
+          "Authenticating.";
+      }
+      enum "prepaid-initializing" {
+        value 2;
+        description
+          "Prepaid initializing.";
+      }
+      enum "start-accounting" {
+        value 3;
+        description
+          "Start accounting.";
+      }
+      enum "accounting" {
+        value 4;
+        description
+          "Accounting.";
+      }
+      enum "ready" {
+        value 5;
+        description
+          "Ready.";
+      }
+      enum "flow-query" {
+        value 6;
+        description
+          "Flow query.";
+      }
+      enum "policy-unloading" {
+        value 7;
+        description
+          "Policy unloading.";
+      }
+      enum "stop-accounting" {
+        value 8;
+        description
+          "Stop accounting.";
+      }
+    }
+    description
+      "Service traffic statistics type. The default value is IPv4. This parameter can be set to IPv6.";
+  }
+  typedef bras-vas-rate-limit-mode {
+    type enumeration {
+      enum "user-queue" {
+        value 0;
+        description
+          "The rate limit mode is user queue.";
+      }
+      enum "car" {
+        value 1;
+        description
+          "The rate limit mode is CAR.";
+      }
+    }
+    description
+      "Sets a rate limit mode for EDSG service traffic.";
+  }
+  typedef bras-vas-out-rate-limit-mode {
+    type enumeration {
+      enum "user-queue" {
+        value 1;
+        description
+          "The rate limit mode is user queue.";
+      }
+      enum "car" {
+        value 0;
+        description
+          "The rate limit mode is CAR.";
+      }
+    }
+    description
+      "Sets a rate limit mode for EDSG service traffic.";
+  }
+  typedef bras-vas-service-ip-type {
+    type enumeration {
+      enum "ipv4" {
+        value 0;
+        description
+          "IPv4.";
+      }
+      enum "ipv6" {
+        value 1;
+        description
+          "IPv6.";
+      }
+    }
+    description
+      "Service ip type.";
+  }
+  typedef bras-vas-policy-type {
+    type enumeration {
+      enum "daa" {
+        value 1;
+        description
+          "Daa policy.";
+      }
+      enum "bod" {
+        value 2;
+        description
+          "Bod policy.";
+      }
+    }
+    description
+      "Vas policy type.";
+  }
+  typedef bras-vas-online-offline-type {
+    type enumeration {
+      enum "offline" {
+        value 0;
+        description
+          "Type of offline.";
+      }
+      enum "online" {
+        value 1;
+        description
+          "Type of online.";
+      }
+    }
+    description
+      "Online or offline.";
+  }
+  typedef bras-vas-quota-out-online-offline-type {
+    type enumeration {
+      enum "offline" {
+        value 1;
+        description
+          "Type of offline.";
+      }
+      enum "online" {
+        value 0;
+        description
+          "Type of online.";
+      }
+    }
+    description
+      "Online or offline.";
+  }
+  grouping rate-limit-type {
+    description
+      "Configures the inbound and outbound rate for the service policy template.";
+    leaf cir {
+      type uint32 {
+        range "0..4294967294";
+      }
+      mandatory true;
+      description
+        "Specifies committed information rate.";
+    }
+    leaf pir {
+      type uint32 {
+        range "0..4294967294";
+      }
+      must "not(../pir) or (../pir and ../pir >=../cir)";
+      description
+        "Specifies the peak information rate.";
+    }
+    leaf cbs {
+      type uint32 {
+        range "0..4294967294";
+      }
+      description
+        "Specifies the committed burst size.";
+    }
+    leaf pbs {
+      type uint32 {
+        range "0..4294967294";
+      }
+      must "not(../pbs) or (../cbs and ../pbs and ../pbs >=../cbs)";
+      description
+        "Specifies the peak burst size.";
+    }
+    leaf flow-queue-pbs {
+      when "../cbs";
+      type uint32 {
+        range "1..4194304";
+      }
+      units Byte;
+      must "../flow-queue-pbs>=../cbs";
+      description
+        "Specifies the peak burst size of flow queue.";
+    }
+  }
+  grouping bras-vas-user-traffic-type {
+    description
+      "Configures the inbound and outbound rate for the service policy template.";
+    leaf cs7 {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable a service class is CS7.";
+    }
+    leaf cs6 {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable a service class is CS6.";
+    }
+    leaf ef {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable a service class is EF.";
+    }
+    leaf af4 {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable a service class is AF4.";
+    }
+    leaf af3 {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable a service class is AF3.";
+    }
+    leaf af2 {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable a service class is AF2.";
+    }
+    leaf af1 {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable a service class is AF1.";
+    }
+    leaf be {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable a service class is BE.";
+    }
+  }
+  grouping remote-policy-cache-type {
+    description
+      "Display information about a specified EDSG service cache policy in CU.";
+    leaf service-policy-index {
+      type uint32;
+      description
+        "The service policy index.";
+    }
+    leaf reference-count {
+      type uint32;
+      description
+        "The reference count.";
+    }
+  }
+  grouping edsg-time-range-info-type {
+    description
+      "Display edsg time-range information.";
+    leaf updated-success-users {
+      type uint32;
+      description
+        "Number Of Users That Success To Be Updated.";
+    }
+    leaf updated-failed-users {
+      type uint32;
+      description
+        "Number Of Users That Fail To Be Updated.";
+    }
+    leaf to-be-update-users {
+      type uint32;
+      description
+        "Number Of Users To Be Updated.";
+    }
+    leaf total-updated-users {
+      type uint32;
+      description
+        "Total Number Of Updated Users.";
+    }
+  }
+  grouping updated-fail-statistic-type {
+    description
+      "Failed to update statistic resource for the service.";
+    leaf sq-resource-fail-num {
+      type uint32;
+      description
+        "Failed to Apply SQ Resource For The Service.";
+    }
+    leaf car-res-fail-num {
+      type uint32;
+      description
+        "Failed to Apply CAR Resource For The Service.";
+    }
+    leaf stat-res-fail-num {
+      type uint32;
+      description
+        "Failed to Apply Statistic Resource For The Service.";
+    }
+  }
+  grouping user-id-bod-or-daa-statistic-type {
+    description
+      "Display BOD or DAA type information about value-added services based on a specified user ID.";
+        leaf service-name {
+          type string {
+            length "1..200";
+          }
+          description
+            "Name of a service.";
+        }
+        leaf service-ip-type {
+          type bras-vas-service-ip-type;
+          description
+            "Service traffic statistics type. The default value is IPv4. This parameter can be set to IPv6.";
+        }
+        leaf account-method {
+          type bras-vas-method-type;
+          description
+            "Accounting method.";
+        }
+        leaf normal-server-group {
+          type string {
+            length "1..34";
+          }
+          description
+            "Name of the policy server that delivers a service policy.";
+        }
+        leaf up-committed-rate {
+          type string {
+            length "1..19";
+          }
+          description
+            "Upstream committed information rate.";
+        }
+        leaf up-peak-rate {
+          type string {
+            length "1..19";
+          }
+          description
+            "Upstream peak information rate.";
+        }
+        leaf up-committed-burst-size {
+          type string {
+            length "1..19";
+          }
+          description
+            "Upstream committed burst size.";
+        }
+        leaf up-peak-burst-size {
+          type string {
+            length "1..19";
+          }
+          description
+            "Upstream peak burst size.";
+        }
+        leaf down-committed-rate {
+          type string {
+            length "1..19";
+          }
+          description
+            "Downstream CIR.";
+        }
+        leaf down-peak-rate {
+          type string {
+            length "1..19";
+          }
+          description
+            "Downstream PIR.";
+        }
+        leaf down-committed-burst-rate {
+          type string {
+            length "1..19";
+          }
+          description
+            "Downstream CBS.";
+        }
+        leaf down-peak-burst-size {
+          type string {
+            length "1..19";
+          }
+          description
+            "Downstream PBS.";
+        }
+        leaf service-source-ip {
+          type uint32;
+          description
+            "Source IP of a service.";
+        }
+        leaf service-type {
+          type string {
+            length "1..40";
+          }
+          description
+            "Type of a service.";
+        }
+        leaf account-start-time {
+          type string {
+            length "1..31";
+          }
+          description
+            "Time when the accounting starts.";
+        }
+        leaf two-level-acct-server-group {
+          type string {
+            length "1..34";
+          }
+          description
+            "Radius server group of two level accounting.";
+        }
+        leaf physical-acct-server-group {
+          type string {
+            length "1..34";
+          }
+          description
+            "Radius server group of physical account.";
+        }
+        leaf up-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of upstream accounting high packets.";
+        }
+        leaf up-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of upstream accounting low packets.";
+        }
+        leaf up-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of upstream accounting high bytes.";
+        }
+        leaf up-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of upstream accounting low bytes.";
+        }
+        leaf down-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of downstream accounting high packets.";
+        }
+        leaf down-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of downstream accounting low packets.";
+        }
+        leaf down-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of downstream accounting high bytes.";
+        }
+        leaf down-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of downstream accounting low bytes.";
+        }
+        leaf ipv6-up-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of upstream IPv6 accounting high packets.";
+        }
+        leaf ipv6-up-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of upstream IPv6 accounting low packets.";
+        }
+        leaf ipv6-up-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of upstream IPv6 accounting high bytes.";
+        }
+        leaf ipv6-up-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of upstream IPv6 accounting low bytes.";
+        }
+        leaf ipv6-down-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of downstream IPv6 accounting high packets.";
+        }
+        leaf ipv6-down-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of downstream IPv6 accounting low packets.";
+        }
+        leaf ipv6-down-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of downstream IPv6 accounting high bytes.";
+        }
+        leaf ipv6-down-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of downstream IPv6 accounting low bytes.";
+        }
+        leaf local-up-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of upstream accounting high packets.";
+        }
+        leaf local-up-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of upstream accounting low packets.";
+        }
+        leaf local-up-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of upstream accounting high bytes.";
+        }
+        leaf local-up-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of upstream accounting low bytes.";
+        }
+        leaf local-down-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of downstream accounting high packets.";
+        }
+        leaf local-down-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of downstream accounting low packets.";
+        }
+        leaf local-down-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of downstream accounting high bytes.";
+        }
+        leaf local-down-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of downstream accounting low bytes.";
+        }
+        leaf remote-up-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of RUI-backed up upstream accounting high packets.";
+        }
+        leaf remote-up-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of RUI-backed up upstream accounting low packets.";
+        }
+        leaf remote-up-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of RUI-backed up downstream accounting high bytes.";
+        }
+        leaf remote-up-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of RUI-backed up downstream accounting low bytes.";
+        }
+        leaf remote-down-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of RUI-backed up downstream accounting high packets.";
+        }
+        leaf remote-down-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of RUI-backed up downstream accounting low packets.";
+        }
+        leaf remote-down-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of RUI-backed up downstream accounting high bytes.";
+        }
+        leaf remote-down-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of RUI-backed up downstream accounting low bytes.";
+        }
+        leaf local-v6-up-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of IPv6 upstream accounting high packets.";
+        }
+        leaf local-v6-up-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of IPv6 upstream accounting low packets.";
+        }
+        leaf local-v6-up-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of IPv6 upstream accounting high bytes.";
+        }
+        leaf local-v6-up-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of IPv6 upstream accounting low bytes.";
+        }
+        leaf local-v6-down-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of IPv6 downstream accounting high packets.";
+        }
+        leaf local-v6-down-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of IPv6 downstream accounting low packets.";
+        }
+        leaf local-v6-down-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of IPv6 downstream accounting high bytes.";
+        }
+        leaf local-v6-down-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of IPv6 downstream accounting low bytes.";
+        }
+        leaf remote-v6-up-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of RUI-backed IPv6 upstream accounting high packets.";
+        }
+        leaf remote-v6-up-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of RUI-backed IPv6 upstream accounting low packets.";
+        }
+        leaf remote-v6-up-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of RUI-backed IPv6 upstream accounting high bytes.";
+        }
+        leaf remote-v6-up-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of RUI-backed IPv6 upstream accounting low bytes.";
+        }
+        leaf remote-v6-down-flow-packets-high {
+          type uint32;
+          units packet;
+          description
+            "Number of RUI-backed IPv6 downstream accounting high packets.";
+        }
+        leaf remote-v6-down-flow-packets-low {
+          type uint32;
+          units packet;
+          description
+            "Number of RUI-backed IPv6 downstream accounting low packets.";
+        }
+        leaf remote-v6-down-flow-bytes-high {
+          type uint32;
+          units Byte;
+          description
+            "Number of RUI-backed IPv6 downstream accounting high bytes.";
+        }
+        leaf remote-v6-down-flow-bytes-low {
+          type uint32;
+          units Byte;
+          description
+            "Number of RUI-backed IPv6 downstream accounting low bytes.";
+        }
+        leaf multicast-down-packets {
+          type uint64;
+          units packet;
+          description
+            "Number of multicast downstream accounting packets.";
+        }
+        leaf multicast-down-bytes {
+          type uint64;
+          units Byte;
+          description
+            "Number of multicast downstream accounting bytes.";
+        }
+        leaf time-remind {
+          type uint32;
+          units s;
+          description
+            "Time remind.";
+        }
+        leaf flow-remained-high {
+          type uint32;
+          units Byte;
+          description
+            "Flow remained high byte.";
+        }
+        leaf flow-remained-low {
+          type uint32;
+          units Byte;
+          description
+            "Flow remained low byte.";
+        }
+        leaf idle-cut-time {
+          type uint32;
+          description
+            "Idle-cut time. The device checks whether a user is in idle state every 120s.";
+        }
+        leaf idle-cut-rate {
+          type uint32;
+          description
+            "Idle-cut rate. The device checks whether a user is in idle state every 120s.";
+        }
+        leaf idle-cut-minute {
+          type uint32;
+          units min;
+          description
+            "Idle-cut minute. The device checks whether a user is in idle state every 120s.";
+        }
+        leaf idle-cut-second {
+          type uint32;
+          units s;
+          description
+            "Idle-cut second. The device checks whether a user is in idle state every 120s.";
+        }
+  } 
+  
+  container bras-vas {
+    description
+      "Bras value-added services.";
+    container global {
+      description
+        "Configure value-added-service.";
+      container value-added-service {
+        description
+          "Configure value-added-service enable list.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable value-added-service.";
+        }
+      }
+      container account-individual {
+        description
+          "Configure account individual.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable account individual.";
+        }
+      }
+      container policy-name-case-sensitive {
+        description
+          "Configure service policy name case sensitive.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable service policy name case sensitive.";
+        }
+      }
+      container quota-out {
+        description
+          "Configure the Quota type.";
+        leaf quota-type {
+          type bras-vas-quota-out-online-offline-type;
+          default "online";
+          description
+            "Quota type.";
+        }
+        leaf diameter-link-down {
+          type bras-vas-quota-out-online-offline-type;
+          default "online";
+          description
+            "Quota type of diameter link down.";
+        }
+      }
+      container daa-resource-insufficient {
+        description
+          "Configure Resource Application Failures Policy.";
+        leaf type {
+          type enumeration {
+            enum "online" {
+              value 0;
+              description
+                "By default, DAA users remain online after they fail to apply for resources.";
+            }
+            enum "inbound-offline" {
+              value 1;
+              description
+                "Log out DAA users who fail to apply for upstream resources.";
+            }
+            enum "outbound-offline" {
+              value 2;
+              description
+                "Log out DAA users who fail to apply for downstream resources.";
+            }
+            enum "inbound-or-outbound-offline" {
+              value 3;
+              description
+                "Log out DAA users who fail to apply for upstream or downstream resources.";
+            }
+            enum "both-offline" {
+              value 4;
+              description
+                "Log out DAA users who fail to apply for both upstream and downstream resources.";
+            }
+          }
+          default "online";
+          description
+            "Policy Upon Resource Application Failures.";
+        }
+      }
+      container edsg-queue {
+        description
+          "Configure delayed EDSG user activation.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to adjust the access rate of users who go online by configuring the edsg service to enter the activation queue and suspend the activation.";
+        }
+      }
+      container edsg-run-info {
+        config false;
+        description
+          "Statistics of the global service policy configuration.";
+        leaf edsg-run-service-number {
+          type uint32;
+          config false;
+          description
+            "Number of EDSG resources that are in use, this item is displayed only if the EDSG function license is deactivated.";
+        }
+      }
+      container edsg-centralized-ds-lite {
+        description
+          "Configure value-added services on the centralized DS-Lite device.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function of matching EDSG services based on inner IPv4 packets.";
+        }
+      }
+    }
+    container vas-policys {
+      description
+        "List of the vas Policy.";
+      list vas-policy {
+        key "name";
+        description
+          "Configure a vas policy.";
+        leaf name {
+          type string {
+            length "1..63";
+            pattern "[!-~]{1,63}";
+            pattern "([^\"%'*/:<>\\?@|]{1,63})";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Vas policy name.";
+          ext:case-sensitivity upper2lower;
+        }
+        leaf type {
+          ext:operation-exclude update;
+          type bras-vas-policy-type;
+          mandatory true;
+          description
+            "Vas policy type.";
+        }
+        container qos-profile {
+          when "../type='bod'";
+          description
+            "Configure qos profile.";
+          leaf name {
+            type leafref {
+              path "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile/qos:name";
+            }
+            must "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile[qos:name=current()]/qos:mode='normal'";
+            description
+              "Name of qos profile.";
+          }
+        }
+        container accounting-scheme {
+          description
+            "Configure accounting scheme.";
+          leaf name {
+            type leafref {
+              path "/aaa:aaa/aaa:accounting-schemes/aaa:accounting-scheme/aaa:acct-scheme-name";
+            }
+            default "default1";
+            description
+              "Name of accounting scheme.";
+          }
+        }
+        container daa-service-enable {
+          when "not(../type='bod')";
+          description
+            "Configure daa service.";
+          leaf user-accounting-together {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the DAA service traffic counts into user traffic.";
+          }
+          leaf traffic-separate {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the DAA service separate function.";
+          }
+          leaf tariff-queue-mapping {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable priority scheduling based on tariff levels.";
+          }
+          leaf accounting-together {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable uniform accounting for DAA services.";
+          }
+        }
+        container bind-user-group {
+          description
+            "Configure an ACL user group to a value-added service policy.";
+          leaf name {
+            type leafref {
+              path "/bras-basic-access:bras-basic-access/bras-basic-access:user-groups/bras-basic-access:user-group/bras-basic-access:name";
+            }
+            description
+              "Specifies the name of a user group, and the user group must not be added to a user group list or a domain without binding nat instance.";
+          }
+        }
+        container bind-tariff-levels {
+          when "../type='daa'";
+          description
+            "List of the tariff level for DAA accounting.";
+          list bind-tariff-level {
+            key "tariff-level";
+            description
+              "Configure a tariff level for DAA accounting.";
+            leaf tariff-level {
+              type uint8 {
+                range "1..8";
+              }
+              description
+                "Tariff level for DAA accounting.";
+            }
+            leaf qos-profile-name {
+              type leafref {
+                path "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile/qos:name";
+              }
+              must "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile[qos:name=current()]/qos:mode='normal'";
+              mandatory true;
+              description
+                "Specifies the name of a bound QoS profile.";
+            }
+          }
+        }
+        container tariff-level-accountings {
+          when "../type='daa'";
+          description
+            "List of the accounting status or IP type for a DAA tariff level.";
+          list tariff-level-accounting {
+            must "./accounting-off = 'true' or ./ip-type-ipv6 = 'true'";
+            key "level";
+            description
+              "Configure the accounting status or IP type for a DAA tariff level.";
+            leaf level {
+              type uint8 {
+                range "1..8";
+              }
+              description
+                "Specifies a DAA tariff level.";
+            }
+            leaf accounting-off {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the accounting status of a DAA tariff level as disabled.";
+            }
+            leaf ip-type-ipv6 {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable an IP type for a DAA tariff level as IPv6.";
+            }
+          }
+        }
+        container user-traffic-statistic {
+          when "../type='daa'";
+          description
+            "Configure the statistics mode for user traffic. After CAR is performed on a DAA service flow, packets in the DAA service flow are re-marked with different priorities and are scheduled into SQs. In SQ-based traffic statistics, however, DAA traffic and non-DAA traffic are not differentiated. Specify the FQs of which traffic statistics are collected as user traffic statistics.";
+          container inbound {
+            description
+              "Configure the statistics mode for user traffic when SQ scheduling is applied to DAA services.";
+            uses bras-vas-user-traffic-type;
+          }
+          container outbound {
+            description
+              "Configure the statistics mode for user traffic when SQ scheduling is applied to DAA services.";
+            uses bras-vas-user-traffic-type;
+          }
+        }
+        container accounting-service-policy {
+          when "../type='daa'";
+          description
+            "Configure user traffic from to match a DAA service policy.";
+          leaf inbound {
+            type enumeration {
+              enum "disable" {
+                value 0;
+                description
+                  "Disables user traffic from matching a DAA service policy.";
+              }
+              enum "enable" {
+                value 1;
+                description
+                  "Enables user traffic from to match a DAA service policy.";
+              }
+              enum "auto" {
+                value 2;
+                description
+                  "Automatically matches user traffic with a DAA service policy.";
+              }
+            }
+            default "enable";
+            description
+              "Upstream user traffic.";
+          }
+          leaf outbound {
+            type enumeration {
+              enum "disable" {
+                value 0;
+                description
+                  "Disables user traffic from matching a DAA service policy.";
+              }
+              enum "enable" {
+                value 1;
+                description
+                  "Enables user traffic from to match a DAA service policy.";
+              }
+              enum "auto" {
+                value 2;
+                description
+                  "Automatically matches user traffic with a DAA service policy.";
+              }
+            }
+            default "enable";
+            description
+              "Downstream user traffic.";
+          }
+        }
+        container rate-limit-mode {
+          when "../type='daa'";
+          description
+            "Configure a QoS rate limit mode for downstream DAA services on a board with the eTM subcard installed.";
+          leaf outbond {
+            type bras-vas-out-rate-limit-mode;
+            description
+              "QoS Rate Limit Mode.";
+          }
+        }
+        container policy-info {
+          config false;
+          description
+            "Statistics of a specified DAA or BOD value-added service policy.";
+          leaf used-number {
+            type uint32 {
+              range "0..4294967295";
+            }
+            config false;
+            description
+              "Number of services that reference a value-added service policy.";
+          }
+          leaf user-number {
+            type uint32 {
+              range "0..4294967295";
+            }
+            config false;
+            description
+              "Number of users for whom a value-added service policy is used.";
+          }
+        }
+      }
+    }
+    container hw-policy-name-attribute {
+      description
+        "Configure the HW-Policy-Name attribute to carry the EDSG service policy name.";
+      leaf support-edsg {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the HW-Policy-Name attribute to carry the EDSG service policy name.";
+      }
+    }
+    container accounting-merge-cache {
+      description
+        "Configure a post-merging accounting packet that fails to be sent for value-added services to enter the accounting packet cache. By default, a post-merging accounting packet that fails to be sent for value-added services is disabled from entering the accounting packet cache.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a post-merging accounting packet that fails to be sent for value-added services to enter the accounting packet cache.";
+      }
+    }
+    container bod-portal-reserved {
+      description
+        "Configure portal reserved when the type of value added service is bod.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable portal reserved when the type of value added service is bod.";
+      }
+    }
+    container service-policy-download {
+      presence "service-policy-download.";
+      description
+        "Configure a mode in which an EDSG service policy is obtained.";
+      leaf download-type {
+        type enumeration {
+          enum "local" {
+            value 0;
+            description
+              "Local configuration.";
+          }
+          enum "radius" {
+            value 1;
+            description
+              "Download from an RADIUS server.";
+          }
+          enum "local-radius" {
+            value 2;
+            description
+              "First from the local configuration and then from an RADIUS server.";
+          }
+          enum "radius-local" {
+            value 3;
+            description
+              "First from an RADIUS server and then from the local configuration.";
+          }
+        }
+        default local;
+        description
+          "Sets a mode in which an EDSG service policy is obtained.";
+      }
+      leaf radius-server-group-name {
+        when "../download-type ='radius' or ../download-type ='local-radius' or ../download-type ='radius-local'";
+        type leafref {
+          path "/radius:radius/radius:radius-server-groups/radius:radius-server-group/radius:name";
+        }
+        mandatory true;
+        description
+          "Specifies the name of a RADIUS server group.";
+      }
+      leaf password {
+        when "../download-type ='radius' or ../download-type ='local-radius' or ../download-type ='radius-local'";
+        type pub-type:password-extend {
+          length "1..128";
+        }
+        mandatory true;
+        description
+          "Specifies an unencrypted/encrypted password.";
+      }
+    }
+    container service-groups {
+      description
+        "List of the service group.";
+      list service-group {
+        key "name";
+        max-elements "4096";
+        description
+          "Configure a service group.";
+        leaf name {
+          type string {
+            length "1..31";
+          }
+          must "../name!='a' and ../name!='an' and ../name!='any'";
+          description
+            "Service group name.";
+        }
+        container service-group-status {
+          config false;
+          description
+            "Operational state of service-group.";
+          leaf is-used {
+            type enumeration {
+              enum "no" {
+                value 0;
+                description
+                  "The service-group is unused.";
+              }
+              enum "yes" {
+                value 1;
+                description
+                  "The service-group is used.";
+              }
+            }
+            config false;
+            description
+              "Whether the service-group is used or not.";
+          }
+          leaf group-type {
+            type string {
+              length "1..19";
+            }
+            config false;
+            description
+              "The type of service-group.";
+          }
+        }
+      }
+    }
+    container coa-hw-policy-name {
+      description
+        "Configure DAA or EDSG service templates delivered by the RADIUS server through Huawei proprietary attributes in COA messages.";
+      leaf daa-same-policy-reply-ack {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a device to reply with an ACK message when the RADIUS server uses a COA message's HW-Policy-Name (26-95) attribute to deliver the same DAA service policy as that configured on the device in uniform accounting scenarios.";
+      }
+      leaf daa-coexist-with-user {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the user attributes also to take effect if ehty are delivered with a DAA template in the HW-Policy-Name (26-95) attribute through the same COA message which may also carry other DAA service attributes.";
+      }
+    }
+    container prepaid-profiles {
+      description
+        "List of the prepaid service templates.";
+      list prepaid-profile {
+        key "name";
+        max-elements "1024";
+        description
+          "Configure a prepaid service template.";
+        leaf name {
+          type string {
+            length "1..31";
+            pattern "[a-zA-Z0-9._-]{1,31}";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Specifies the name of a prepaid service template.";
+          ext:case-sensitivity upper2lower;
+        }
+        container accounting-scheme {
+          description
+            "Configure the accounting scheme for the current pre-paid profile. The scheme must be a configured accounting scheme.";
+          leaf name {
+            type leafref {
+              path "/aaa:aaa/aaa:accounting-schemes/aaa:accounting-scheme/aaa:acct-scheme-name";
+            }
+            default "default1";
+            description
+              "Specifies the name of the accounting scheme adopted by the pre-paid profile.";
+          }
+        }
+        container authen-scheme {
+          description
+            "Configure the authentication scheme for the current pre-paid profile. The scheme must be a configured authentication scheme.";
+          leaf name {
+            type leafref {
+              path "/aaa:aaa/aaa:authentication-schemes/aaa:authentication-scheme/aaa:authen-scheme-name";
+            }
+            default "default1";
+            description
+              "Specifies the name of the authentication scheme.";
+          }
+        }
+        container password {
+          description
+            "Configure the password used for the quotas application sent to the server by the prepaid services.";
+          leaf password {
+            type pub-type:password-extend {
+              length "1..128";
+            }
+            description
+              "The password is a string ranging from 1 to 16 characters for a simple password and 1 to 128 characters for a ciphertext password.";
+          }
+        }
+        container threshold {
+          description
+            "Configure the threshold that determines when the pre-paid service sends the application for quotas.";
+          leaf time-value {
+            type uint32;
+            units s;
+            default "0";
+            description
+              "Uses a certain period of time as the threshold.";
+          }
+          leaf volume-value {
+            type uint32;
+            default "0";
+            description
+              "Uses a certain quantity of volume as the threshold.";
+          }
+          leaf volume-unit {
+            type enumeration {
+              enum "bytes" {
+                value 1;
+                description
+                  "The unit is bytes.";
+              }
+              enum "kbytes" {
+                value 2;
+                description
+                  "The unit is kbytes.";
+              }
+              enum "mbytes" {
+                value 3;
+                description
+                  "The unit is mbytes.";
+              }
+            }
+            default "bytes";
+            description
+              "Unit of the volume.";
+          }
+        }
+        container service-volume-quota-apply {
+          description
+            "Configure the traffic direction to which the EDSG service quota applies.";
+          leaf direction {
+            type enumeration {
+              enum "both" {
+                value 0;
+                description
+                  "The direction is both inbound and outbound.";
+              }
+              enum "inbound" {
+                value 1;
+                description
+                  "The direction is inbound.";
+              }
+              enum "outbound" {
+                value 2;
+                description
+                  "The direction is outbound.";
+              }
+            }
+            default "both";
+            description
+              "The direction of volume Apply.";
+          }
+        }
+        container profile-info {
+          config false;
+          description
+            "Operational state of prepaid profile.";
+          leaf reference-count {
+            type uint32;
+            config false;
+            description
+              "Number of times that a prepaid profile is referenced by service instances.";
+          }
+        }
+      }
+    }
+    container edsg-accounting-interim {
+      description
+        "Configure a device to send a real-time accounting packet carrying the HW-Acct-Update-Address (26-159) attribute with a value of 1 for EDSG services when the user address changes. By default, when the user address changes, a device does not send a real-time accounting packet carrying the HW-Acct-Update-Address (26-159) attribute with a value of 1 for EDSG services.";
+      leaf send-update-user-ip-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a device to send a real-time accounting packet carrying the HW-Acct-Update-Address (26-159) attribute with a value of 1 for EDSG services when the user address changes.";
+      }
+    }
+    container edsg-coexist-attribute {
+      description
+        "Configure a specified attribute to take effect upon delivery in EDSG service scenarios.";
+      leaf filter-id {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the attribute of filter-id.";
+      }
+      leaf traffic-policy {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the attribute of traffic-Policy.";
+      }
+      leaf hw-data-filter {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the attribute of HW-Data-Filter.";
+      }
+      leaf class {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the attribute of class.";
+      }
+    }
+    container service-record {
+      description
+        "Configure the service activation failure or deactivation record.";
+      leaf active-fail {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the service activation failure record function.";
+      }
+      leaf deactive {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the service deactivation record function.";
+      }
+    }
+    container traffic-policy {
+      description
+        "Configure a DAA traffic policy globally.";
+      leaf name {
+        type leafref {
+          path "/qos:qos/qos:classifier-template/qos:traffic-policys/qos:traffic-policy/qos:name";
+        }
+        description
+          "Specifies the name of a DAA traffic policy.";
+      }
+    }
+    container policy-cache-update-interval {
+      description
+        "Configure an interval at which the downloaded EDSG service policy template is updated.";
+      leaf interval {
+        type uint16 {
+          range "5..65535";
+        }
+        units min;
+        description
+          "Specifies the interval at which the downloaded EDSG service policy template is updated.";
+      }
+    }
+    container service-no-server-policy {
+      description
+        "Configure an activation policy for RADIUS servers when an EDSG service policy is not bound to any RADIUS server group.";
+      leaf server-activation-mode {
+        type bras-vas-online-offline-type;
+        default "offline";
+        description
+          "Configures an activation policy for RADIUS servers when an EDSG service policy is not bound to any RADIUS server group.";
+      }
+    }
+    container tariff-queue-mapping {
+      presence "Tariff queue mapping.";
+      description
+        "Configure the queue scheduling can be performed on different value-added services to ensure that services with higher priorities are forwarded first. It is used to configure the mapping relationship between tariff levels of DAA and flow queues.";
+      leaf-list tariff-level {
+        ext:generated-by system;
+        ext:operation-exclude create|delete;
+        type bras-vas-flow-queue-type;
+        min-elements "8";
+        max-elements "8";
+        ordered-by user;
+        description
+          "Configure a packet type.";
+      }
+    }
+    container service-policys {
+      description
+        "List of the value-added service policy templates.";
+      list service-policy {
+        key "name";
+        max-elements "4096";
+        description
+          "Configure a value-added service policy template.";
+        leaf name {
+          type string {
+            length "1..64";
+            pattern "[a-zA-Z0-9._-]{1,64}";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Specifies the name of a value-added service policy. When the node policy-name-case-sensitive is enabled, the service policy name is case-sensitive.";
+          ext:case-sensitivity upper2lower;
+        }
+        leaf mode {
+          ext:operation-exclude update;
+          type enumeration {
+            enum "edsg" {
+              value 0;
+              description
+                "Indicates an enhanced dynamic service gateway (EDSG) service policy.";
+            }
+            enum "portal" {
+              value 1;
+              description
+                "Indicates a portal service policy.";
+            }
+            enum "mirror" {
+              value 4;
+              description
+                "Indicates a mirror service policy.";
+            }
+          }
+          mandatory true;
+          description
+            "Indicates a service policy. This leaf cannot be modified. If you need to modify it, delete the policy and then create a new type of policy.";
+        }
+        container service-group {
+          presence "Service-group.";
+          description
+            "Configure a service group for a service policy.";
+          leaf group-name {
+            type leafref {
+              path "../../../../service-groups/service-group/name";
+            }
+            mandatory true;
+            description
+              "Specifies the name of a service group.";
+          }
+          leaf direction {
+            when "../../mode='edsg'";
+            type enumeration {
+              enum "inbound" {
+                value 1;
+                description
+                  "Inbound.";
+              }
+              enum "outbound" {
+                value 2;
+                description
+                  "Outbound.";
+              }
+              enum "both" {
+                value 3;
+                description
+                  "Both.";
+              }
+            }
+            default "both";
+            description
+              "Indicates the direction for a service group.";
+          }
+          leaf priority {
+            when "../../mode='edsg'";
+            type uint32 {
+              range "0..1000";
+            }
+            default "0";
+            description
+              "Specifies a priority value that a service matches.";
+          }
+        }
+        container accounting-scheme {
+          when "../mode='edsg'";
+          description
+            "Configure the accounting scheme for the current service policy. The scheme must be a configured accounting scheme.";
+          leaf name {
+            type leafref {
+              path "/aaa:aaa/aaa:accounting-schemes/aaa:accounting-scheme/aaa:acct-scheme-name";
+            }
+            default "default1";
+            description
+              "Specifies the name of the accounting scheme adopted by the pre-paid profile.";
+          }
+        }
+        container radius-server-group {
+          when "../mode='edsg'";
+          description
+            "Configure the RADIUS server group for service policy. The server group must be a configured server group.";
+          leaf name {
+            type leafref {
+              path "/radius:radius/radius:radius-server-groups/radius:radius-server-group/radius:name";
+            }
+            description
+              "Specifies the name of the RADIUS server group.";
+          }
+        }
+        container traffic-match {
+          when "../mode='edsg'";
+          description
+            "Configure EDSG service traffic to match a user group.";
+          leaf direction {
+            type enumeration {
+              enum "none" {
+                value 0;
+                description
+                  "None.";
+              }
+              enum "inbound" {
+                value 1;
+                description
+                  "Specifies inbound direction of reporting dropped SQ traffic.";
+              }
+              enum "outbound" {
+                value 2;
+                description
+                  "Specifies outbound direction of reporting dropped SQ traffic.";
+              }
+              enum "both" {
+                value 3;
+                description
+                  "Specifies inbound and outbound direction of reporting dropped SQ traffic.";
+              }
+            }
+            default "none";
+            description
+              "Indicates stream direction of EDSG service traffic.";
+          }
+        }
+        container statistic-ip-type {
+          when "../mode='edsg'";
+          description
+            "Configure a statistic IP type for EDSG services. The default statistic type is IPv4 for EDSG services.";
+          leaf type {
+            type bras-vas-service-ip-type;
+            default "ipv4";
+            description
+              "Statistic IP type for EDSG services.";
+          }
+        }
+        container service-class {
+          when "../mode='edsg'";
+          description
+            "Configure upstream or downstream service classes.";
+          leaf inbound-class {
+            type bras-vas-flow-queue-type;
+            description
+              "Specifies a service class of inbound direction.";
+          }
+          leaf outbound-class {
+            type bras-vas-flow-queue-type;
+            description
+              "Specifies a service class of outbound direction.";
+          }
+        }
+        container authentication-scheme {
+          when "../mode='edsg'";
+          description
+            "Configure an authentication scheme for the current service policy. The scheme must be a configured authentication scheme.";
+          leaf name {
+            type leafref {
+              path "/aaa:aaa/aaa:authentication-schemes/aaa:authentication-scheme/aaa:authen-scheme-name";
+            }
+            description
+              "Specifies the name of the authentication scheme.";
+          }
+        }
+        container rate-limit {
+          when "../mode='edsg'";
+          description
+            "Configure the inbound and outbound rate for the service policy template.";
+          container inbound {
+            presence "Create inbound rate-limit.";
+            description
+              "Configure the inbound rate for the service policy template.";
+            uses rate-limit-type;
+          }
+          container outbound {
+            presence "Create outbound rate-limit.";
+            description
+              "Configure the outbound rate for the service policy template.";
+            uses rate-limit-type;
+          }
+        }
+        container diameter-monitor-key {
+          when "../mode='edsg'";
+          description
+            "Configure the Characters monitoring key values for the policy business.";
+          leaf key {
+            type uint32 {
+              range "1..4294967294";
+            }
+            description
+              "Monitoring key values for the policy business.";
+          }
+        }
+        container policy-info {
+          config false;
+          description
+            "Statistics of the value-added-service policy.";
+          leaf reference-count {
+            type uint32 {
+              range "0..4294967295";
+            }
+            config false;
+            description
+              "Number of services that reference a service policy.";
+          }
+        }
+      }
+    }
+    container mirror-service-policy-rules {
+      description
+        "List of the mapping relation between service policy and option82.";
+      list mirror-service-policy-rule {
+        key "number";
+        description
+          "Configure the mapping relation between service policy and option82.";
+        leaf number {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "The number of the rule.";
+        }
+        leaf service-policy-name {
+          type leafref {
+            path "../../../service-policys/service-policy/name";
+          }
+          must "../../../service-policys/service-policy[name=current()]/mode='mirror'";
+          must "../../../service-policys/service-policy[name=current()]/service-group/group-name";
+          mandatory true;
+          description
+            "The name of a service policy.";
+        }
+        leaf option82-type {
+          type enumeration {
+            enum "circuit-id" {
+              value 1;
+              description
+                "Circuit id.";
+            }
+            enum "remote-id" {
+              value 2;
+              description
+                "Remote id.";
+            }
+          }
+          mandatory true;
+          description
+            "The type of option82 attribute.";
+        }
+        leaf option82-value {
+          type string {
+            length "1..198";
+          }
+          mandatory true;
+          description
+            "The information of option82.";
+        }
+        leaf part-match {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable supporting the part matching.";
+        }
+      }
+    }
+    container vas-user-id-states {
+      config false;
+      description
+        "List of the value-added service user IDs.";
+      list vas-user-id-state {
+        key "service-type user-id";
+        config false;
+        description
+          "Statistics of the value-added service user IDs.";
+        leaf service-type {
+          type enumeration {
+            enum "bod" {
+              value 0;
+              description
+                "BOD service type.";
+            }
+            enum "daa" {
+              value 1;
+              description
+                "DAA service type.";
+            }
+            enum "service" {
+              value 2;
+              description
+                "Display entries of users for whom value-added services are configured.";
+            }
+            enum "without-service" {
+              value 3;
+              description
+                "Display entries of users for whom no value-added services are configured.";
+            }
+            enum "edsg" {
+              value 4;
+              description
+                "Display EDSG user entries.";
+            }
+            enum "edsg-radius" {
+              value 5;
+              description
+                "Delivered by the RADIUS server.";
+            }
+            enum "edsg-diameter" {
+              value 6;
+              description
+                "Delivered by the Diameter server.";
+            }
+            enum "daa-inbound" {
+              value 7;
+              description
+                "Inbound direction.";
+            }
+            enum "daa-outbound" {
+              value 8;
+              description
+                "Outbound direction.";
+            }
+          }
+          config false;
+          description
+            "User table type.";
+        }
+        leaf user-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "ID of a user.";
+        }
+        leaf service-policy-name {
+          when "../service-type='daa'";
+          type string {
+            length "1..63";
+          }
+          config false;
+          description
+            "Name of a DAA service policy.";
+          ext:support-filter "true";
+        }
+      }
+    }
+    container edsg-user-infos {
+      config false;
+      description
+        "List of the VAS user IDs of a specified EDSG service.";
+      list edsg-user-info {
+        key "user-id service-index";
+        description
+          "Statistics of the VAS user IDs of a specified EDSG service.";
+        leaf user-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "User access ID.";
+        }
+        leaf service-index {
+          type uint32 {
+            range "0..4095";
+          }
+          config false;
+          description
+            "Index of a service.";
+        }
+        leaf service-name {
+          type string {
+            length "1..200";
+          }
+          config false;
+          description
+            "Name of a service.";
+        }
+        leaf service-ip-type {
+          type enumeration {
+            enum "ipv4" {
+              value 0;
+              description
+                "IPv4.";
+            }
+            enum "ipv6" {
+              value 1;
+              description
+                "IPv6.";
+            }
+          }
+          config false;
+          description
+            "Service traffic statistics type.";
+        }
+        leaf service-state {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Service status.";
+        }
+        leaf service-sub-state {
+          type bras-vas-service-substate;
+          config false;
+          description
+            "Service sub-state.";
+        }
+        leaf reserve-policy-name {
+          type string {
+            length "1..200";
+          }
+          config false;
+          description
+            "Name of the service policy that has been replaced with the service policy delivered using a CoA message.";
+        }
+        leaf service-group {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Service group.";
+        }
+        leaf service-group-index {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Index of a service group.";
+        }
+        leaf service-group-priority {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Priority of a service group.";
+        }
+        leaf inbound-service-class {
+          type string {
+            length "1..3";
+          }
+          config false;
+          description
+            "Inbound service class.";
+        }
+        leaf outbound-service-class {
+          type string {
+            length "1..3";
+          }
+          config false;
+          description
+            "Outbound service class.";
+        }
+        leaf authen-method {
+          type bras-vas-method-type;
+          config false;
+          description
+            "Authentication method.";
+        }
+        leaf account-method {
+          type bras-vas-method-type;
+          config false;
+          description
+            "Accounting method.";
+        }
+        leaf radius-server-group {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "RADIUS server group.";
+        }
+        leaf account-copy-state {
+          type enumeration {
+            enum "service" {
+              value 0;
+              description
+                "Service.";
+            }
+            enum "prepaid" {
+              value 1;
+              description
+                "Prepaid.";
+            }
+            enum "close" {
+              value 2;
+              description
+                "Close.";
+            }
+          }
+          config false;
+          description
+            "Status of the EDSG accounting copy function.";
+        }
+        leaf account-copy-group {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "RADIUS server group to which EDSG accounting packets are copied.";
+        }
+        leaf account-session-id {
+          type string {
+            length "1..44";
+          }
+          config false;
+          description
+            "Accounting session ID.";
+        }
+        leaf service-online-time {
+          type string {
+            length "1..8";
+          }
+          config false;
+          description
+            "Service online duration.";
+        }
+        leaf real-time-accout-interval {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units s;
+          config false;
+          description
+            "Real time accounting interval.";
+        }
+        leaf up-committed-rate {
+          type string {
+            length "1..19";
+          }
+          config false;
+          description
+            "Upstream committed information rate.";
+        }
+        leaf up-peak-rate {
+          type string {
+            length "1..19";
+          }
+          config false;
+          description
+            "Upstream peak information rate.";
+        }
+        leaf up-committed-burst-size {
+          type string {
+            length "1..19";
+          }
+          config false;
+          description
+            "Upstream committed burst size.";
+        }
+        leaf up-peak-burst-size {
+          type string {
+            length "1..19";
+          }
+          config false;
+          description
+            "Upstream peak burst size.";
+        }
+        leaf down-committed-rate {
+          type string {
+            length "1..19";
+          }
+          config false;
+          description
+            "Downstream CIR.";
+        }
+        leaf down-peak-rate {
+          type string {
+            length "1..19";
+          }
+          config false;
+          description
+            "Downstream PIR.";
+        }
+        leaf down-committed-burst-rate {
+          type string {
+            length "1..19";
+          }
+          config false;
+          description
+            "Downstream CBS.";
+        }
+        leaf down-peak-burst-size {
+          type string {
+            length "1..19";
+          }
+          config false;
+          description
+            "Downstream PBS.";
+        }
+        leaf up-flow-packets-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of upstream accounting high packets.";
+        }
+        leaf up-flow-packets-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of upstream accounting low packets.";
+        }
+        leaf up-flow-bytes-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of upstream accounting high bytes.";
+        }
+        leaf up-flow-bytes-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of upstream accounting low bytes.";
+        }
+        leaf down-flow-packets-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of downstream accounting high packets.";
+        }
+        leaf down-flow-packets-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of downstream accounting low packets.";
+        }
+        leaf down-flow-bytes-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of downstream accounting high bytes.";
+        }
+        leaf down-flow-bytes-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of downstream accounting low bytes.";
+        }
+        leaf local-up-flow-packets-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of upstream accounting high packets.";
+        }
+        leaf local-up-flow-packets-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of upstream accounting low packets.";
+        }
+        leaf local-up-flow-bytes-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of upstream accounting high bytes.";
+        }
+        leaf local-up-flow-bytes-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of upstream accounting low bytes.";
+        }
+        leaf local-down-flow-packets-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of downstream accounting high packets.";
+        }
+        leaf local-down-flow-packets-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of downstream accounting low packets.";
+        }
+        leaf local-down-flow-bytes-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of downstream accounting high bytes.";
+        }
+        leaf local-down-flow-bytes-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of downstream accounting low bytes.";
+        }
+        leaf remote-up-flow-packets-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of RUI-backed up upstream accounting high packets.";
+        }
+        leaf remote-up-flow-packets-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of RUI-backed up upstream accounting low packets.";
+        }
+        leaf remote-up-flow-bytes-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of RUI-backed up downstream accounting high packets.";
+        }
+        leaf remote-up-flow-bytes-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of RUI-backed up downstream accounting low packets.";
+        }
+        leaf remote-down-flow-packets-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of RUI-backed up downstream accounting high packets.";
+        }
+        leaf remote-down-flow-packets-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units packet;
+          config false;
+          description
+            "Number of RUI-backed up downstream accounting low packets.";
+        }
+        leaf remote-down-flow-bytes-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of RUI-backed up downstream accounting high bytes.";
+        }
+        leaf remote-down-flow-bytes-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte;
+          config false;
+          description
+            "Number of RUI-backed up downstream accounting low bytes.";
+        }
+        leaf prepaid-state {
+          type string {
+            length "1..11";
+          }
+          config false;
+          description
+            "Prepaid status.";
+        }
+        leaf prepaid-account-method {
+          type bras-vas-method-type;
+          config false;
+          description
+            "Prepaid accounting method.";
+        }
+        leaf volume-quota-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte/s;
+          config false;
+          description
+            "Traffic volume quota high.";
+        }
+        leaf volume-quota-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte/s;
+          config false;
+          description
+            "Traffic volume quota low.";
+        }
+        leaf volume-threshold-high {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte/s;
+          config false;
+          description
+            "Traffic volume threshold high.";
+        }
+        leaf volume-threshold-low {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units Byte/s;
+          config false;
+          description
+            "Traffic volume threshold low.";
+        }
+        leaf time-quota {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units s;
+          config false;
+          description
+            "Traffic volume quota.";
+        }
+        leaf time-threshold {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units s;
+          config false;
+          description
+            "Traffic volume threshold.";
+        }
+        leaf idle-time-out {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units s;
+          config false;
+          description
+            "Idle timeout.";
+        }
+        leaf http-redirect-profile {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Name of the redirection profile configured for EDSG services.";
+        }
+        leaf http-redirect-enable {
+          type boolean;
+          config false;
+          description
+            "Whether captive portal is enabled for EDSG services.";
+        }
+        leaf http-redirect-profile-portal {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Name of the redirection profile configured for captive portal for EDSG services.";
+        }
+        leaf http-service-index {
+          type uint8 {
+            range "0..255";
+          }
+          config false;
+          description
+            "Index of an EDSG service for which captive portal is enabled.";
+        }
+        leaf service-source {
+          type bras-vas-service-source;
+          config false;
+          description
+            "Service source.";
+        }
+        leaf diameter-monitor-key {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Diameter monitoring key in the service policy.";
+        }
+        leaf inbound-match-user-group {
+          type boolean;
+          config false;
+          description
+            "Whether upstream EDSG service traffic matches a user group.";
+        }
+        leaf outbound-match-user-group {
+          type boolean;
+          config false;
+          description
+            "Whether downstream EDSG service traffic matches a user group.";
+        }
+        leaf time-range-template {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Name of the time range template that takes effect.";
+        }
+        leaf rui-state {
+          type enumeration {
+            enum "master" {
+              value 1;
+              description
+                "Master.";
+            }
+            enum "slave" {
+              value 2;
+              description
+                "Slave.";
+            }
+            enum "none" {
+              value 3;
+              description
+                "None.";
+            }
+          }
+          config false;
+          description
+            "RUI status of the EDSG service.";
+        }
+        leaf rui-backup-online-time {
+          type uint32 {
+            range "0..4294967295";
+          }
+          units s;
+          config false;
+          description
+            "Online duration of the EDSG service when the slave RUI device activates the EDSG service.";
+        }
+      }
+    }
+    container user-id-daa-states {
+      config false;
+      description
+        "List of DAA type information about value-added services based on a specified user ID.";
+      list user-id-daa-state {
+        key "user-id tariff-level";
+        description
+          "Statistics of DAA type information about value-added services based on a specified user ID.";
+        leaf user-id {
+          type uint32;
+          description
+            "User access ID.";
+        }
+        leaf tariff-level {
+          type uint32 {
+            range "1..8";
+          }
+          description
+            "Tariff level.";
+        }
+        uses user-id-bod-or-daa-statistic-type;
+      }
+    }
+    container user-id-bod-states {
+      config false;
+      description
+        "List of BOD type information about value-added services based on a specified user ID.";
+      list user-id-bod-state {
+        key "user-id";
+        description
+          "Statistics of BOD type information about value-added services based on a specified user ID.";
+        leaf user-id {
+          type uint32;
+          description
+            "User access ID.";
+        }
+        uses user-id-bod-or-daa-statistic-type;
+      }
+    }
+    container vas-edsg-user-id-informations {
+      config false;
+      description
+        "List of the VAS EDSG service of a specified user ID.";
+      list vas-edsg-user-id-information {
+        key "user-access-index";
+        config false;
+        description
+          "Statistics of the VAS EDSG service of a specified user ID.";
+        leaf user-access-index {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Index of an access user.";
+        }
+        leaf user-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Name of a user.";
+        }
+        leaf traffic-rate-mode {
+          type enumeration {
+            enum "together" {
+              value 0;
+              description
+                "Together.";
+            }
+            enum "separate" {
+              value 1;
+              description
+                "Separate.";
+            }
+          }
+          config false;
+          description
+            "Rate limit mode.";
+        }
+        leaf traffic-statistic-mode {
+          type enumeration {
+            enum "together" {
+              value 0;
+              description
+                "Together.";
+            }
+            enum "separate" {
+              value 1;
+              description
+                "Separate.";
+            }
+          }
+          config false;
+          description
+            "Statistics mode.";
+        }
+        leaf inbound-rate-limit-mode {
+          type bras-vas-rate-limit-mode;
+          config false;
+          description
+            "Inbound rate limit mode.";
+        }
+        leaf outbound-rate-limit-mode {
+          type bras-vas-rate-limit-mode;
+          config false;
+          description
+            "Outbound rate limit mode.";
+        }
+        leaf service-change-mode {
+          type enumeration {
+            enum "stop-start" {
+              value 0;
+              description
+                "Stop-start.";
+            }
+            enum "update" {
+              value 1;
+              description
+                "Update.";
+            }
+          }
+          config false;
+          description
+            "Service change mode.";
+        }
+        leaf stop-accounting-merge {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Stop accounting merge.";
+        }
+        leaf interim-accounting-merge {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Interim accounting merge.";
+        }
+        leaf interim-interval {
+          type uint16 {
+            range "0..65535";
+          }
+          units min;
+          config false;
+          description
+            "Merged interim accounting interval.";
+        }
+        leaf interim-hash {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Merged interim accounting hash.";
+        }
+        leaf inbound-family-schedule {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Whether EDSG unified scheduling is enabled for upstream family users.";
+        }
+        leaf outbound-family-schedule {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Whether EDSG unified scheduling is enabled for downstream family users.";
+        }
+        container user-id-edsg-service-briefs {
+          config false;
+          description
+            "List of the VAS EDSG service of a specified user ID.";
+          list user-id-edsg-service-brief {
+            key "service-index";
+            config false;
+            description
+              "Statistics of the VAS EDSG service of a specified user ID.";
+            leaf service-index {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Index of a service.";
+            }
+            leaf service-name {
+              type string {
+                length "1..200";
+              }
+              config false;
+              description
+                "Name of a service.";
+            }
+            leaf service-state {
+              type string {
+                length "1..31";
+              }
+              config false;
+              description
+                "State of a service.";
+            }
+          }
+        }
+      }
+    }
+    container edsg-time-range-state {
+      config false;
+      description
+        "Statistics of the edsg time-range.";
+      uses edsg-time-range-info-type;
+    }
+    container updated-fail-statistic {
+      config false;
+      description
+        "Statistics of update fail record.";
+      uses updated-fail-statistic-type;
+    }
+    container remote-policy-caches {
+      config false;
+      description
+        "List of the specified EDSG service cache policy.";
+      list remote-policy-cache {
+        key "service-policy-name";
+        max-elements 4096;
+        description
+          "Statistics of a specified EDSG service cache policy.";
+        leaf service-policy-name {
+          type string {
+            length "1..200";
+          }
+          description
+            "Specify the name of a remote policy cache.";
+        }
+        uses remote-policy-cache-type;
+      }
+    }
+  }
+  augment "/qos:qos/qos:classifier-template/qos:traffic-behaviors/qos:traffic-behavior" {
+    description
+      "Adds vas configuration to qos traffic-behavior model.";
+    container bas {
+      description
+        "Configure traffic behavior.";
+      container vas {
+        must "not(./service-class-edsg/keep-queue-level = 'true' and (./daa-accounting/tariff-level or ./daa-accounting/tariff-statistic-enable = 'true' or ./car-for-daa/enable = 'true'))";
+        description
+          "Configure vas in qos traffic-behavior model.";
+        container daa-accounting {
+          description
+            "Configure a tariff level for DAA accounting.";
+          leaf tariff-level {
+            type uint8 {
+              range "1..8";
+            }
+            description
+              "Configures a tariff level for DAA accounting.";
+          }
+          leaf tariff-statistic-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable Traffic Statistics Collection.";
+          }
+        }
+        container service-class-edsg {
+          description
+            "Configure the service queue level is not used in the traffic behavior to overwrite the original queue level.";
+          leaf keep-queue-level {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the service class for Enhanced dynamic service gateway.";
+          }
+        }
+        container car-for-daa {
+          description
+            "Configure CAR for DAA service traffic.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable CAR for DAA service traffic.";
+          }
+        }
+      }
+    }
+  }
+  augment "/radius:radius/radius:radius-server-groups/radius:radius-server-group" {
+    description
+      "Adds vas configuration to radius group model.";
+    container bras-vas {
+      description
+        "Configure value-added service attributes to be sent to the RADIUS server.";
+        container attribute-vas {
+          description
+            "Configure value-added service attributes to be sent to the RADIUS server.";
+          leaf agent-circuit-id {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the DSL FORUM No. 1 attribute, which represents the agent circuit ID.";
+          }
+          leaf agent-remote-id {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the DSL FORUM No. 2 attribute, which represents the agent remote circuit ID.";
+          }
+        }
+        container policy-no-exist {
+          description
+            "Configure a policy for access users if the policy name carried in the HUAWEI-95 attribute delivered by the RADIUS server does not exist.";
+          leaf action {
+            type bras-vas-online-offline-type;
+            default "offline";
+            description
+              "Configures a policy for access users if the policy name carried in the HUAWEI-95 attribute delivered by the RADIUS server does not exist.";
+          }
+        }
+    }
+  }
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "Adds vas configuration to aaa domain model.";
+    container vas {
+      description
+        "Configure vas in aaa domain model.";
+      container service-rate-limit-mode {
+        description
+          "Configure a rate limit mode for EDSG service traffic.";
+        leaf inbound {
+          type bras-vas-rate-limit-mode;
+          default "car";
+          description
+            "Configuring the upstream rate limit mode.";
+        }
+        leaf outbound {
+          type bras-vas-rate-limit-mode;
+          default "car";
+          description
+            "Configuring the downstream rate limit mode.";
+        }
+      }
+      container edsg-traffic-mode {
+        description
+          "Configure EDSG service rate limiting and traffic statistics policies. By default, the rate of service traffic is separately limited and is not affected by user bandwidth. Only user traffic is counted as user traffic.";
+        leaf rate-limit-and-traffic-static {
+          type enumeration {
+            enum "default-mode" {
+              value 0;
+              description
+                "By default, the rate of service traffic is separately limited and is not affected by user bandwidth. Only user traffic is counted as user traffic.";
+            }
+            enum "separate" {
+              value 1;
+              description
+                "Performs separate rate limiting on service traffic.";
+            }
+            enum "together" {
+              value 2;
+              description
+                "Performs rate limiting on service traffic and then user traffic.";
+            }
+          }
+          default "default-mode";
+          description
+            "Configures EDSG service rate limiting mode.";
+        }
+      }
+      container billing-server-type {
+        description
+          "Configure the accounting server type. By default, Router considers all accounting servers supporting the dynamic policy.";
+        leaf type {
+          type enumeration {
+            enum "dynamic" {
+              value 1;
+              description
+                "Specifies the dynamic policy switch mode.";
+            }
+            enum "normal" {
+              value 2;
+              description
+                "Specifies the normal policy switch mode.";
+            }
+          }
+          default "dynamic";
+          description
+            "Configures the accounting server type.";
+        }
+      }
+      container daa-coexist-qos-profile {
+        description
+          "Configure the QoS profile attribute to take effect when DAA services are dynamically modified.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the QoS profile attribute to take effect when DAA services are dynamically modified.";
+        }
+      }
+      container daa-match-direction {
+        description
+          "Configure the upstream or downstream traffic of users that go online through an AAA domain against DAA services.";
+        leaf inbound {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the DAA service matching function of upstream traffic of users that go online through domain.";
+        }
+        leaf outbound {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the DAA service matching function of downstream traffic of users that go online through domain.";
+        }
+      }
+      container family-schedule {
+        description
+          "Configure EDSG services to support HQoS scheduling for home users.";
+        leaf inbound {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable upstream traffic for home users.";
+        }
+        leaf outbound {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable downstream traffic for home users.";
+        }
+      }
+      container traffic-match-user-group {
+        description
+          "Configure EDSG service traffic to match a user group.";
+        leaf direction {
+          type enumeration {
+            enum "both" {
+              value 0;
+              description
+                "Indicates both upstream and downstream EDSG service traffic.";
+            }
+            enum "inbound" {
+              value 1;
+              description
+                "Indicates upstream EDSG service traffic.";
+            }
+            enum "outbound" {
+              value 2;
+              description
+                "Indicates downstream EDSG service traffic.";
+            }
+          }
+          description
+            "Indicates upstream or downstream EDSG service traffic.";
+        }
+      }
+      container account-type {
+        must "../account-type/radius-server-group-name or not(../account-type/type='radius')";
+        description
+          "Configure a value-added service accounting mode. default accounting, none accounting, and RADIUS accounting can be adopted for the value-added services. If no accounting mode is specified, the default accounting mode is adopted.";
+        leaf type {
+          type enumeration {
+            enum "default" {
+              value 1;
+              description
+                "Default accounting.";
+            }
+            enum "none" {
+              value 2;
+              description
+                "None accounting.";
+            }
+            enum "radius" {
+              value 3;
+              description
+                "RADIUS accounting.";
+            }
+          }
+          default "default";
+          description
+            "Configures a value-added service accounting mode. default accounting, none accounting, and RADIUS accounting can be adopted for the value-added services.";
+        }
+        leaf radius-server-group-name {
+          when "../type='radius'";
+          type leafref {
+            path "/radius:radius/radius:radius-server-groups/radius:radius-server-group/radius:name";
+          }
+          description
+            "Specifies the name of the RADIUS server group. The server group must be a configured RADIUS server group.";
+        }
+      }
+      container vas-policy {
+        description
+          "Configure the value-added service policy used by the domain.";
+        leaf name {
+          type leafref {
+            path "/bras-vas:bras-vas/bras-vas:vas-policys/bras-vas:vas-policy/bras-vas:name";
+          }
+          must "/bras-vas:bras-vas/bras-vas:vas-policys/bras-vas:vas-policy[bras-vas:name=current()]/bras-vas:type='daa'";
+          description
+            "Specifies the name of the service policy used by the domain. The policy must be a configured service policy.";
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board/bras-basic-access:bras" {
+    description
+      "Bras devm configuration.";
+    container vas {
+      description
+        "Configure vas devm.";	
+      container statistic-frequency {
+        description
+          "Configure a board to read EDSG service traffic statistics at a configured rate.";
+        leaf flow-read-speed {
+          type uint32 {
+            range "52..500";
+          }
+          default "52";
+          description
+            "Sets the number of EDSG services for which traffic statistics are collected every 200 ms.";
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board/bras-basic-access:bras" {
+    description
+      "Bras devm configuration.";  
+    container vas {
+      description
+        "Configure vas devm.";
+      container statistic-frequency {
+        description
+          "Configure a board to read EDSG service traffic statistics at a configured rate."; 
+        leaf flow-read-speed {
+          type uint32 {
+            range "52..500";
+          }
+          default "52";
+          description
+            "Sets the number of EDSG services for which traffic statistics are collected every 200 ms.";
+        }
+      }
+    }
+  }
+}

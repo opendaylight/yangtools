@@ -1,0 +1,39 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-multicast-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-bras-multicast-deviations-CH-NE-X3";
+  prefix bras-multicast-devs-CH-NE-X3;
+
+  import huawei-bras-multicast {
+    prefix bras-multicast;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global Configuration.";
+
+  revision 2019-09-25 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/devm:devm/devm:mpu-boards/devm:mpu-board/bras-basic-access:bras/bras-multicast:multicast" {
+    deviate not-supported;
+  }
+}

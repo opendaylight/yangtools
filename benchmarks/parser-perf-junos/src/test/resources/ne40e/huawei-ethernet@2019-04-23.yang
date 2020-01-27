@@ -1,0 +1,1063 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ethernet {
+  namespace "urn:huawei:yang:huawei-ethernet";
+  prefix ethernet;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-vlan {
+    prefix vlan;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "VLAN member interfaces and QinQ.";
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+
+  ext:task-name  "ethernet";
+  typedef link-type {
+    type enumeration {
+      enum "access" {
+        value 1;
+        description
+          "Access port that accepts packets without VLAN tags.";
+      }
+      enum "trunk" {
+        value 2;
+        description
+          "Trunk port that accepts packets with VLAN tags.";
+      }
+      enum "hybrid" {
+        value 3;
+        description
+          "Hybrid port that accepts packets with or without VLAN tags.";
+      }
+      enum "dot1qtunnel" {
+        value 4;
+        description
+          "Dot1q tunnel port that accepts packets with double tags.";
+      }
+    }
+    description
+      "Ethernet link type.";
+  }
+
+  typedef enable-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable type.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable type.";
+      }
+    }
+    description
+      "Ethernet enable type definition.";
+  }
+  typedef tag-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None type.";
+      }
+      enum "local-switch" {
+        value 1;
+        description
+          "Enable local switching on a sub-interface for QinQ VLAN tag termination.";
+      }
+      enum "rt-protocol" {
+        value 2;
+        description
+          "Enable the termination sub-interface to support routing protocols.";
+      }
+    }
+    description
+      "Tag type.";
+  }
+  typedef group-mode-type {
+    type enumeration {
+      enum "multiple" {
+        value 1;
+        description
+          "Users of a VLAN group are considered as multiple users.";
+      }
+      enum "single" {
+        value 2;
+        description
+          "Users of a VLAN group are considered one user.";
+      }
+    }
+    description
+      "The type of group mode.";
+  }
+  typedef remark-type {
+    type enumeration {
+      enum "precedence" {
+        value 0;
+        description
+          "The remark type is the user-defined precedence.";
+      }
+      enum "trust-ce-8021p" {
+        value 1;
+        description
+          "Trust the 802.1p in the inner VLAN tag.";
+      }
+      enum "trust-pe-8021p" {
+        value 2;
+        description
+          "Trust the 802.1p in the outer VLAN tag.";
+      }
+    }
+    description
+      "Remark type.";
+  }    
+  typedef symmetry-type {
+    type enumeration {
+      enum "asymmetry" {
+        value 0;
+        description
+          "Asymmetry type.";
+      }
+      enum "symmetry" {
+        value 1;
+        description
+          "Symmetry type.";
+      }
+      enum "transparent" {
+        value 2;
+        description
+          "Transparent type.";
+      }
+    }
+    description
+      "Symmetry Type.";
+  }
+typedef action-type {
+    type enumeration {
+      enum "pop-outer" {
+        value 0;
+        description
+          "Pop the outer VLAN tag.";
+      }
+      enum "push1-layer" {
+        value 1;
+        description
+          "Push one VLAN tag.";
+      }
+      enum "swap" {
+        value 2;
+        description
+          "Swap the inner and outer VLAN tags.";
+      }
+      enum "map-offset-increase" {
+        value 3;
+        description
+          "Offset increasing.";
+      }
+      enum "map-1-to-1" {
+        value 4;
+        description
+          "Map one VLAN tag to a specified VLAN tag.";
+      }
+      enum "map-2-to-1" {
+        value 5;
+        description
+          "Map two VLAN tags to a specified VLAN tag.";
+      }
+      enum "map-1-to-2" {
+        value 6;
+        description
+          "Map one VLAN tag to two VLAN tags.";
+      }
+      enum "map-2-to-2" {
+        value 7;
+        description
+          "Map two VLAN tags to two VLAN tags.";
+      }
+      enum "pop-double" {
+        value 8;
+        description
+          "Pop double VLAN tags.";
+      }
+      enum "push2-layer" {
+        value 9;
+        description
+          "Push two VLAN tags.";
+      }
+      enum "map-offset-decrease" {
+        value 10;
+        description
+          "Offset decreasing.";
+      }
+    }
+    description
+      "Traffic action type.";
+  }
+  grouping group-l3-dot1q-vrrp {
+    description
+      "Configuration of dot1q vrrp.";
+    list vrrp {
+      key "vlan-id";
+      max-elements 1;
+      description
+        "Configure dot1q VRRP entry.";
+      leaf vlan-id {
+        type uint32 {
+          range "1..4094";
+        }
+        description
+          "Specified VLAN ID.";
+      }
+    }
+  }
+  rpc create-qinq-termination {
+    description
+      "Enable QinQ VLAN tag termination on a sub-interface.";
+    ext:node-ref "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:flow-type/ethernet:qinq-termination/ethernet:qinq-termination";
+    input {
+      leaf interface-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Name of a sub-interface. For example, Ethernet 0/1/0.1.";
+      }
+      leaf pe-vlan-begin {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start outer VLAN ID.";
+      }
+      leaf pe-vlan-end {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End outer VLAN ID.";
+      }
+      leaf ce-vlan-begin {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start inner VLAN ID.";
+      }
+      leaf ce-vlan-end {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End inner VLAN ID.";
+      }
+      leaf group-id {
+        type uint8 {
+          range "1..16";
+        }
+        description
+          "Specified VLAN group ID.";
+      }
+    }
+  }
+  rpc delete-qinq-termination {
+    description
+      "Disable QinQ VLAN tag termination on a sub-interface.";
+    ext:node-ref "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:flow-type/ethernet:qinq-termination/ethernet:qinq-termination";
+    input {
+      leaf interface-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Name of a sub-interface. For example, Ethernet 0/1/0.1.";
+      }
+      leaf pe-vlan-begin {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start outer VLAN ID.";
+      }
+      leaf pe-vlan-end {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End outer VLAN ID.";
+      }
+      leaf ce-vlan-begin {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start inner VLAN ID.";
+      }
+      leaf ce-vlan-end {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End inner VLAN ID.";
+      }
+      leaf group-id {
+        type uint8 {
+          range "1..16";
+        }
+        description
+          "Specified VLAN group ID.";
+      }
+    }
+  }
+  rpc create-user-vlan-qinq {
+    description
+      "Create User-VLAN QinQ.";
+    ext:node-ref "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:flow-type/ethernet:user-vlan-comm/ethernet:user-vlan-common/ethernet:user-vlan-qinqs/ethernet:user-vlan-qinq";
+    input {
+      leaf interface-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Name of a sub-interface. For example, Ethernet 0/1/0.1.";
+      }
+      leaf pe-vlan-begin {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start outer VLAN ID.";
+      }
+      leaf pe-vlan-end {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End outer VLAN ID.";
+      }
+      leaf ce-vlan-begin {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start inner VLAN ID.";
+      }
+      leaf ce-vlan-end {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End inner VLAN ID.";
+      }
+    }
+  }
+  rpc delete-user-vlan-qinq {
+    description
+      "Delete User-VLAN QinQ.";
+    ext:node-ref "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:flow-type/ethernet:user-vlan-comm/ethernet:user-vlan-common/ethernet:user-vlan-qinqs/ethernet:user-vlan-qinq";
+    input {
+      leaf interface-name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        mandatory true;
+        description
+          "Name of a sub-interface. For example, Ethernet 0/1/0.1.";
+      }
+      leaf pe-vlan-begin {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start outer VLAN ID.";
+      }
+      leaf pe-vlan-end {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End outer VLAN ID.";
+      }
+      leaf ce-vlan-begin {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start inner VLAN ID.";
+      }
+      leaf ce-vlan-end {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End inner VLAN ID.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description "Ethernet interface configuration.";
+    container ethernet {
+      description
+        "Configure ethernet Interface.";
+      container main-interface {
+        when "../../ifm:class='main-interface'";
+        description
+          "Configure main-interface attribute.";
+        leaf vlan-swap {
+          type enable-type;
+          default "disable";
+          description
+            "Enable or disable VLAN tag swapping.";
+        }
+        leaf qinq-protocol {
+          type pub-type:hex-binary {
+            length "1..6";
+            pattern '(0x)[6-9a-f][0-9a-f]{2,3}';
+          }
+          default "0x8100";
+          description
+            "Ethernet type.";
+        }		  
+        container l2-attribute {
+          presence "Enables portswitch";
+          description
+            "Configure interface Layer 2 attribute.";
+          leaf link-type {
+            type link-type;
+            default "hybrid";
+            description
+              "Link type.";
+          }
+          leaf pvid {
+            when "../link-type!='trunk'";
+            type leafref {
+              path "/vlan:vlan/vlan:vlans/vlan:vlan/vlan:id";
+            }
+            must "/vlan:vlan/vlan:vlans/vlan:vlan[vlan:id=current()]/vlan:type!='super'";
+            description
+              "Default VLAN ID.";
+          }
+          leaf trunk-vlans {
+            when "../link-type!='access' and ../link-type!='dot1qtunnel'";
+            type pub-type:vlan-range;
+            description
+              "List of VLANs that are allowed to pass.";
+          }
+          leaf untag-discarding {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable discard untagged packets.";
+          }
+          container vlan-stackings {
+            when "../link-type='trunk' or ../link-type='hybrid'";
+            description
+              "List of VLAN stacking interface.";
+            list vlan-stacking {
+			  must "ce-default or trans-vlans";
+              key "stacking-vlan";
+              unique "ce-default";
+              description
+                "Configure VLAN stacking interface.";
+              leaf stacking-vlan {
+                type leafref {
+                  path "/vlan:vlan/vlan:vlans/vlan:vlan/vlan:id";
+                }
+                must "/vlan:vlan/vlan:vlans/vlan:vlan[vlan:id=current()]/vlan:type!='super'";
+                description
+                  "VLAN ID in the outer VLAN tag after VLAN stacking is performed.";
+              }
+              leaf ce-default {
+                type empty;
+                must "not(../../../pvid)";	
+                description
+                  "Add a VLAN tag to received untagged packets.";
+              }
+              leaf trans-vlans {
+                type pub-type:vlan-range;
+                description
+                  "List of VLAN IDs of received packets. VLANs are used to control traffic access. Only one VLAN can be configured on an interface and all its sub-interfaces.";
+              }
+            }
+          }
+          container statistics-enable-vlans {
+            description
+              "Configure VLAN statistics collection enable.";
+            leaf vlans {
+              type pub-type:vlan-range;
+              description
+                "VLAN list. The specified VLAN must have been added to an interface.";
+            }
+          }		  
+        }
+      }
+      container l3-sub-interface {
+        when "../../ifm:class='sub-interface'";
+        description
+          "Configure l3 sub-interface attribute.";
+        container vlan-groups {
+          description
+            "List of sub-interface VLAN group.";
+          list vlan-group {
+            key "id";
+            description
+              "Configure sub-interface VLAN group.";
+            leaf id {
+              type uint8 {
+                range "1..16";
+              }
+              description
+                "Specified VLAN group ID.";
+            }
+            leaf mode {
+              type group-mode-type;
+              default "single";
+              description
+                "Include single and multiple modes. The mode cannot be modified after being referenced.";
+            }
+            leaf statistic-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable VLAN group-based QinQ packet statistics.";
+            }
+            leaf description {
+              type string {
+                length "1..31";
+              }
+              description
+                "VLAN group description.";
+            }
+          }
+        }
+        choice flow-type {
+          description
+            "Specify an encapsulation type. After an encapsulation type is specified, it cannot be changed to another encapsulation type. In addition, it can not be deleted if a service has been configured in the same interface. If an encapsulation type fails to be specified, see the error message to determine the failure cause.";
+          case vlan-type {
+            description
+              "Configuration of VLAN-type dot1q.";
+            container vlan-type-dot1q {
+              presence "Vlan type dot1q.";
+              description
+                "Configure VLAN-type dot1q.";
+                leaf vlan-type-vid {
+                  type uint16 {
+                    range "1..4094";
+                  }
+                  mandatory true;
+                  description
+                    "VLAN ID of the VLAN sub-interface;";
+                }
+            }
+          }
+          case dot1q-termination {
+            description
+              "Configuration of dot1q termination.";
+            container dot1q-termination {
+              presence "Dot1q termination.";
+              description
+                "Configure dot1q termination.";
+              leaf tag {
+                type tag-type;
+                must "(../tag='none' or ../tag='rt-protocol')";
+                ext:operation-exclude update;
+                mandatory true;
+                description
+                  "Tag type.";
+              }
+              leaf arp-broadcast-enable {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable ARP broadcast.";
+              }
+              container dot1q-vlans {
+                description
+                  "List of dot1q termination configuration. When tag-type is rt-protocol, this node can only configure one VLAN.";
+                list dot1q-vlans-group {
+                  key "group-id";
+                  description
+                    "Configure dot1q termination.";
+                  leaf group-id {
+                    type leafref {
+                      path "../../../../vlan-groups/vlan-group/id";
+                    }
+                    description
+                      "Specified VLAN group ID.";
+                  }
+                  leaf vlan-list {
+                    type pub-type:vlan-range;
+                    mandatory true;
+                    description
+                      "Dot1q termination VLAN ID list.";
+                  }
+                }
+                container dot1q-vlans {
+                  presence "dot1q vlans.";
+                  description
+                    "Configure dot1q termination.";
+                    leaf vlan-list {
+                    type pub-type:vlan-range;
+                    mandatory true;
+                    description
+                      "Dot1q termination VLAN ID list. The VLAN in VLAN-list can not exist in../../dot1q-VLANs-group/VLAN-list.";
+                  }
+                }
+              }
+              container vrrps {
+                description
+                  "Configure dot1q VRRP list. VLAN-id must existed in '../../dot1q-VLANs/dot1q-VLANs-group/VLAN-list' or '../../dot1q-VLANs/dot1q-VLANs-no-group/VLAN-list'.";
+                uses group-l3-dot1q-vrrp;
+              }
+            }
+          }
+          case qinq-termination {
+            description
+              "Configuration of QinQ termination.";
+            container qinq-termination {
+              presence "QinQ termination.";
+              description
+                "Configure QinQ termination.";
+              leaf tag {
+                type tag-type;
+                ext:operation-exclude update;
+                mandatory true;
+                description
+                  "Tag type, include local switching, rt-protocol and none type, this value can not be merged.";
+              }
+              leaf arp-broadcast-enable {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable ARP broadcast.";
+              }
+              container remark-8021p {	
+                when "../qinq-vids";
+                must "(remark-type='precedence' and precedence-value) or (remark-type!='precedence') or not(remark-type)";
+                description
+                  "Configure 802.1p mapping.";
+                leaf remark-type {
+                  type remark-type;				  
+                  default "trust-pe-8021p";			  
+                  description
+                    "Trust the 802.1p in the outer VLAN tag, inner VLAN tag, or user-defined precedence.";
+                }
+                leaf precedence-value {
+                  when "../remark-type='precedence'";
+                  type uint8 {
+                    range "0..7";
+                  }
+                  description
+                    "User-defined 802.1p value.";
+                }				
+              }			  
+              container symmetry-mode {
+                description
+                  "Configure symmetry mode.";
+                leaf symmetry-type {
+                  ext:operation-exclude update {
+                    when "../../qinq-vids/qinq-vid";
+                    description
+                      "Symmetry-type cannot be updated when qinq-vids is configured.";				  
+                  }				
+                  type symmetry-type;
+                  must "../../tag='none' or ../symmetry-type='asymmetry' or ../symmetry-type='symmetry'";				  
+                  default "asymmetry";
+                  description
+                    "Symmetry type.";
+                }
+                leaf user-mode {
+                  when "../symmetry-type='symmetry'";
+                  type enable-type;
+                  default disable;
+                  description
+                    "Enable or disable the user mode.";
+                }
+              }
+              container qinq-vids {
+                must "(../tag!='rt-protocol' or (count(../qinq-vids/qinq-vid)<=1))";
+                description
+                  "List of QinQ termination configuration.";
+                list qinq-vid {
+                  must "(ce-vlan-end>=ce-vlan-begin) and (pe-vlan-end>=pe-vlan-begin)";
+                  must "((../../tag!='rt-protocol') or ((ce-vlan-end=ce-vlan-begin and pe-vlan-end=pe-vlan-begin)))";
+                  key "pe-vlan-begin pe-vlan-end ce-vlan-begin ce-vlan-end";
+                  description
+                    "Configure QinQ termination.";
+                  leaf pe-vlan-begin {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "Start outer VLAN ID.";
+                  }
+                  leaf pe-vlan-end {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "End outer VLAN ID.";
+                  }
+                  leaf ce-vlan-begin {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "Start inner VLAN ID.";
+                  }
+                  leaf ce-vlan-end {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "End inner VLAN ID.";
+                  }
+                  leaf group-id {
+                    type leafref {
+                      path "../../../../vlan-groups/vlan-group/id";
+                    }
+                    description
+                      "Specified VLAN group ID. The group-id cannot be modified after the qinq-vid is created.";
+                  }
+                }
+              }
+            }
+          }
+          case qinq-stacking {
+            description
+              "Configuration of QinQ stacking.";
+            container qinq-stacking {
+              presence "qinq-stacking type";
+              description
+                "Enable/disable QinQ stacking configuration list.";
+              leaf pe-vid {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                "Outer VLAN ID.";
+              }
+              list stacking-vid {
+                must "(vlan-id-end>=vlan-id-begin)";
+                key "vlan-id-begin vlan-id-end";
+                description
+                  "Apply QinQ stacking configuration policy.";
+                leaf vlan-id-begin {
+                  type uint16 {
+                    range "1..4094";
+                  }
+                  description
+                    "QinQ stacking outside VLAN.";
+                }
+                leaf vlan-id-end {
+                  type uint16 {
+                    range "1..4094";
+                  }
+                  description
+                    "QINQ stacking inside VLAN.";
+                }
+              }
+            }
+          }
+          case user-vlan-comm {
+            description
+              "User VLAN common configuration.";
+            container user-vlan-common {
+              description
+                "Configure user VLAN QinQ.";
+              container user-vlan-qinqs {
+                description
+                  "List of user VLAN QinQ configuration.";
+                list user-vlan-qinq {
+                  must "((pe-vlan-end>=pe-vlan-begin) and (ce-vlan-end>=ce-vlan-begin))";
+                  key "pe-vlan-begin pe-vlan-end ce-vlan-begin ce-vlan-end";
+                  description
+                    "Configure user VLAN QinQ.";
+                  leaf pe-vlan-begin {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "Start outer VLAN ID.";
+                  }
+                  leaf pe-vlan-end {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "End outer VLAN ID.";
+                  }
+                  leaf ce-vlan-begin {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "Start inner VLAN ID.";
+                  }
+                  leaf ce-vlan-end {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "End inner VLAN ID.";
+                  }
+                }
+              }
+              container user-vlan-dot1q {
+                presence "User VLAN dot1q type";
+                description
+                  "Configure user VLAN dot1q.";
+                leaf vlan-list {
+                  type pub-type:vlan-range;
+                  mandatory true;
+                  description
+                    "User VLAN dot1q VLAN ID list.";
+                }
+              }
+            }
+          }
+          case user-vlan-any {
+            description
+              "User VLAN any configuration.";
+            container user-vlan-any {
+              presence "User VLAN any configuration";
+              description
+                "Enable/disable user VLAN any configuration.";
+            }
+          }
+        }
+      }
+      container l2-sub-interface {
+        when "../../ifm:l2-mode-enable='true'";
+        description
+          "Configure l2 sub interface attribute.";
+        leaf local-switch {
+          type enable-type;
+          default "disable";
+          description
+            "Enable local switching on a sub-interface for QinQ VLAN tag termination.";
+        }
+        choice flow-type {
+          description
+            "Encapsulation type.";
+          case default {
+            description
+              "Default encapsulation.";
+            container default {
+              presence "flow type is default.";
+              description
+                "Configure default encapsulation.";
+            }
+          }
+          case untag {
+            description
+              "Untag encapsulation.";
+            container untag {
+              must "not(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../../../ifm:parent-name]/ethernet:ethernet/ethernet:main-interface/ethernet:l2-attribute/ethernet:vlan-stackings/ethernet:vlan-stacking/ethernet:ce-default)";			
+              presence "flow type is untag.";
+              description
+                "Configure untag encapsulation.";
+            }
+          }
+          case dot1q {
+            description
+              "Dot1q encapsulation.";
+            container dot1q {
+              presence "flow type is flowDot1q.";
+              description
+                "Configure dot1q encapsulation list.";
+                choice policy {
+                  description
+                    "Dot1q encapsulation.";
+                  case no-policy {
+                    description
+                      "Dot1q encapsulation without policy.";
+                    container vlans {
+                      description
+                        "Configure VLAN encapsulation list.";
+                      leaf vlan-list {
+                        type pub-type:vlan-range;
+                        description
+                          "VLAN list.";
+                      }
+                    }
+                  }
+                  case policy {
+                    description
+                      "Dot1q encapsulation with policy.";
+                    container policy-vlans {
+                      description
+                        "List of VLAN policy encapsulation.";
+                      list policy-vlan {
+                        must "vlan-id-end>=vlan-id-begin";
+                        key "vlan-id-begin vlan-id-end";
+                        description
+                          "Apply VLAN encapsulation policy.";
+                        leaf vlan-id-begin {
+                          type uint16 {
+                            range "1..4094";
+                          }
+                          description
+                            "Start VLAN ID in the user packet.";
+                        }
+                        leaf vlan-id-end {
+                          type uint16 {
+                            range "1..4094";
+                          }
+                          description
+                            "End VLAN ID in the user packet.";
+                        }
+                        leaf dot1q-8021p {
+                          type pub-type:id-range {
+                            ext:value-range '0..7';
+                            length "1..31";
+                            pattern "(([0-7])?(-([0-7]))?(,(([0-7])(-([0-7]))?))*)|((([\\+|\\-]([0-7]))|([\\+|\\-]\\(([0-7])-([0-7])\\)))?(,(([\\+|\\-]([0-7]))|([\\+|\\-]\\(([0-7])-([0-7])\\))))*)";
+                          }
+                          mandatory true;
+                          description
+                            "User-defined 802.1p priority value.";
+                        }
+                      }
+                    }
+                  }
+                }
+            }
+          }
+          case qinq {
+            description
+              "Qinq encapsulation.";
+            container qinqs {
+              presence "flow type is flowQinq.";
+              description
+                "Configure QinQ encapsulation list.";
+              container qinq-vids {
+                must "not(../qinq-vid-ce-default)";
+                description
+                  "List of QinQ encapsulation.";
+                list qinq-vid {
+                  key "pe-vlan-id";
+                  description
+                    "Configure QinQ encapsulation.";
+                  leaf pe-vlan-id {
+                    type uint16 {
+                      range "1..4094";
+                    }
+                    description
+                      "Outer VLAN ID.";
+                  }
+                  leaf ce-vlan-list {
+                    type pub-type:vlan-range;
+                    mandatory true;
+                    description
+                      "CE VLAN ID list.";
+                  }
+                }
+              }
+              container qinq-vid-ce-default {
+                must "not(../qinq-vids)";
+                description
+                  "Configure QinQ encapsulation. The CE VLAN ID is not specified.";
+                  leaf pe-vlan-list {
+                  type pub-type:vlan-range;
+                  description
+                    "PE VLAN ID list.";
+                }
+              }
+            }
+          }
+        }
+        container flow-action {
+          presence "flow action";
+          description
+            "Configure packet rewriting information. If the interface is bound to a BD, this node cannot be modified.";
+          leaf action-type {
+            type action-type;
+            must "(../action-type='push1-layer' ) or (../../dot1q and (../action-type='pop-outer' or ../action-type='map-offset-increase' or ../action-type='map-1-to-1' or ../action-type='map-1-to-2' or ../action-type='push2-layer' or ../action-type='map-offset-decrease') ) or (../../qinqs and not(../../qinqs/qinq-vid-ce-default/pe-vlan-list) and ../action-type!='push2-layer') or (../../qinqs/qinq-vid-ce-default/pe-vlan-list and ../action-type!='pop-double' and ../action-type!='map-2-to-1' and ../action-type!='map-2-to-2' and ../action-type!='push2-layer') or (../../untag and (../action-type='push2-layer')) or not(../../default or ../../dot1q or ../../qinqs or ../../untag)";
+            mandatory true;
+            description
+              "Specify a traffic action type.";
+          }
+          leaf out-vlan-id {
+            when "../action-type='map-1-to-1' or ../action-type='map-1-to-2' or ../action-type='map-2-to-1' or ../action-type='map-2-to-2' or ../action-type='push1-layer' or ../action-type='push2-layer'";
+            type uint32 {
+              range "1..4094";
+            }
+            mandatory true;
+            description
+              "Modified outer VLAN ID.";
+          }
+          leaf inner-vlan-id {
+            when "../action-type='map-1-to-2' or ../action-type='map-2-to-2' or ../action-type='push2-layer'";
+            type uint32 {
+              range "1..4094";
+            }
+            mandatory true;
+            description
+              "Modified inner VLAN ID.";
+          }
+          leaf outer-8021p {
+            when "../action-type='map-1-to-1' or ../action-type='map-1-to-2' or ../action-type='map-2-to-1' or ../action-type='map-2-to-2' or ../action-type='push1-layer' or ../action-type='push2-layer'";
+            type uint8 {
+              range "0..7";
+            }
+            description
+              "Modified outer 802.1p.";
+          }
+          leaf inner-8021p {
+            when "../action-type='map-1-to-2' or ../action-type='map-2-to-2' or ../action-type='push2-layer'";
+            type uint8 {
+              range "0..7";
+            }
+            description
+              "Modified inner 802.1p.";
+          }
+          leaf offset-value {
+            when "../action-type='map-offset-decrease' or ../action-type='map-offset-increase'";
+            type uint16 {
+              range "1..4093";
+            }
+            mandatory true;
+            description
+              "Offset value of the modified VLAN.";
+          }
+        }
+      }
+    }
+  }
+}

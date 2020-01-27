@@ -1,0 +1,1558 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-qos-board {
+  namespace "urn:huawei:yang:huawei-qos-board";
+  prefix qos-board;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-devm-vnf {
+    prefix devm-vnf;
+  }
+  import huawei-license {
+    prefix lcs;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Quality of service for board.";
+  revision 2020-02-28 {
+    description
+      "Modify descriptions and add new nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-05 {
+    description
+      "Add pq-schedule-prioritys, pq-schedule-priority-on-cards and multicast-port-queues.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-09-20 {
+    description
+      "Add new nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-06 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "qos";
+  typedef policy-match-type {
+    type enumeration {
+      enum "ip-layer-push" {
+        value 0;
+        description
+          "MF traffic classification based only on IP Layer (Layer 3) information for incoming traffic on the public network.";
+      }
+      enum "ip-layer-pop" {
+        value 7;
+        description
+          "MF traffic classification based only on IP Layer (Layer 3) information for outgoing traffic on the public network.";
+      }
+      enum "mpls-layer-push" {
+        value 3;
+        description
+          "MF classification based on both IP and MPLS information for incoming traffic on the public network.";
+      }
+      enum "mpls-layer-pop" {
+        value 6;
+        description
+          "MF classification based on both IP and MPLS information for outgoing traffic on the public network.";
+      }
+      enum "mpls-layer-l2-inbound" {
+        value 4;
+        description
+          "MF traffic classification based on MPLS information for outgoing traffic on the public network in Layer 2 forwarding scenarios.";
+      }
+      enum "ipv6-address-rule-mask" {
+        value 1;
+        description
+          "MF traffic classification based on the mask of IPv6 address.";
+      }
+      enum "protocol-mc-reserved" {
+        value 2;
+        description
+          "Match Layer 3 protocol packets with reserved multicast addresses against ACLs.";
+      }
+      enum "rule-packet" {
+        value 5;
+        description
+          "Enable packet type-based filtering for MF classification.";
+      }
+    }
+    description
+      "Policy math type.";
+  }
+  typedef pq-schedule-priority-type {
+    type enumeration {
+      enum "high" {
+        value 0;
+        description
+          "High.";
+      }
+      enum "low" {
+        value 1;
+        description
+          "Low.";
+      }
+    }
+    description
+      "PQ schedule priority mode.";
+  }
+  typedef channel-alarm-type {
+    type enumeration {
+      enum "bandwidth" {
+        value 1;
+        description
+          "Bandwidth.";
+      }
+      enum "quantity" {
+        value 0;
+        description
+          "Quantity.";
+      }
+    }
+    description
+      "Channel alarm type.";
+  }
+  typedef channel-alarm-pool-type {
+    type enumeration {
+      enum "pool-0" {
+        value 1;
+        description
+          "Pool 0.";
+      }
+      enum "pool-1" {
+        value 2;
+        description
+          "Pool 1.";
+      }
+    }
+    description
+      "Pool ID.";
+  }
+  typedef channel-profile-precision-type {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "Up.";
+      }
+      enum "down" {
+        value 2;
+        description
+          "Down.";
+      }
+    }
+    description
+      "Precision type.";
+  }
+  typedef multicast-priority-type {
+    type enumeration {
+      enum "both" {
+        value 2;
+        description
+          "Both.";
+      }
+      enum "high" {
+        value 1;
+        description
+          "High.";
+      }
+      enum "low" {
+        value 0;
+        description
+          "Low.";
+      }
+    }
+    description
+      "Multicast priority type.";
+  }
+  typedef match-type {
+    type enumeration {
+      enum "destination-user" {
+        value 1;
+        description
+          "Destination user.";
+      }
+      enum "interface-acl" {
+        value 2;
+        description
+          "Interface ACL.";
+      }
+    }
+    description
+      "Match type.";
+  }
+  typedef limit-type {
+    type enumeration {
+      enum "unlimited" {
+        value 1;
+        description
+          "Unlimited bandwidth.";
+      }
+      enum "limited" {
+        value 0;
+        description
+          "Limited bandwidth.";
+      }
+    }
+    description
+      "Is bandwidth limited.";
+  }
+  augment "/devm-vnf:devm-vnf/devm-vnf:vnf-boards/devm-vnf:vnf-board" {
+    description
+      "Adds QoS configuration to the vnf board.";
+    container qos {
+      description
+        "Configure QoS application.";
+      container traffic-policy-matchs {
+        description
+          "List of traffic policy match.";
+        list traffic-policy-match {
+          key "type";
+          max-elements "3";
+          description
+            "Configure traffic policy match. Some boards do not support this object.";
+          leaf type {
+            type policy-match-type;
+            description
+              "Traffic policy match type.";
+          }
+        }
+      }
+    }//augment devm-vnf:vnf-board/devm-vnf:qos
+  }//augment devm-vnf:vnf-board
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+      "Adds QoS configuration to the board.";
+    container qos {
+      description
+        "Configure QoS application.";
+      container traffic-policy-matchs {
+        description
+          "List of traffic policy match.";
+        list traffic-policy-match {
+          must "(((type='ip-layer-push' or type='ip-layer-pop' or type='rule-packet') and not(../traffic-policy-match[type='mpls-layer-push']) and not(../traffic-policy-match[type='mpls-layer-pop'])) or ((type='mpls-layer-push' or type='mpls-layer-pop') and not(../traffic-policy-match[type='ip-layer-push']) and not(../traffic-policy-match[type='ip-layer-pop']) and not(../traffic-policy-match[type='rule-packet'])) or (type='mpls-layer-l2-inbound' or type='protocol-mc-reserved'))";
+          key "type";
+          max-elements  "5";
+          description
+            "Configure traffic policy match. Some boards do not support this object.";
+          leaf type {
+            type policy-match-type;
+            description
+              "Traffic policy match type.";
+          }
+        }
+      }
+      container pq-schedule-prioritys {
+        description
+          "List of PQ schedule priority.";
+        list pq-schedule-priority {
+          key "direction";
+          max-elements "2";
+          description
+            "Configure PQ schedule priority.";
+          ext:generated-by system {
+            description "The all instances are generated automatically.";
+          }
+          ext:operation-exclude create|delete {
+            description "The all instances cannot be created or deleted.";
+          }
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+          leaf mode {
+            type pq-schedule-priority-type;
+            mandatory true;
+            description
+              "PQ schedule mode.";
+          }
+        }
+      }
+      container pq-schedule-priority-on-cards {
+        description
+          "List of PQ schedule priority.";
+        list pq-schedule-priority-on-card {
+          key "card-id";
+          description
+            "Configure PQ schedule priority. This configuration takes effect only on eTM subcards.";
+          leaf card-id {
+            type string {
+              length "1..31";
+            }
+            description
+              "Card ID.";
+          }
+          leaf mode {
+            type pq-schedule-priority-type;
+            mandatory true;
+            description
+              "PQ schedule priority mode.";
+          }
+        }
+      }
+      container multicast-port-queues {
+        description
+          "List of port queue schedule in outbound direction on the MTunnel interface of the distributed multicast VPN.";
+        list multicast-port-queue {
+          key "service-class";
+          max-elements "8";
+          description
+            "Configure port queue schedule in outbound direction on the MTunnel interface of the distributed multicast VPN.";
+          ext:generated-by system {
+            description "The all instances are generated automatically.";
+          }
+          ext:operation-exclude create|delete {
+            description "The all instances cannot be created or deleted.";
+          }
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf queue-schedule-mode {
+            type qos:queue-schedule-mode;
+            mandatory true;
+            description
+              "Schedule Mode.";
+          }
+          leaf weight {
+            when "../queue-schedule-mode='wfq'";
+            type uint8 {
+              range "1..100";
+            }
+            mandatory true;
+            description
+              "Weight of wfq scheduling strategy.";
+          }
+          choice shaping-parameters {
+            description
+              "Specify shaping parameters.";
+            case shaping {
+              description
+                "Specify shaping parameters choice case as shaping value.";
+              leaf shaping-value {
+                type uint32 {
+                  range "0..4294967294";
+                }
+                units "Mbit/s";
+                description
+                  "Shaping value.";
+              }
+            }
+            case shaping-percent {
+              description
+                "Specify shaping parameters choice case as shaping percentage value.";
+              leaf shaping-percentage {
+                type uint8 {
+                  range "0..100";
+                }
+                units "%";
+                description
+                  "Shaping percentage.";
+              }
+            }
+          }
+          leaf port-wred-name {
+            type leafref {
+              path "/qos:qos/qos:wred-template/qos:port-wreds/qos:port-wred/qos:name";
+            }
+            description
+              "Port wred name.";
+          }
+        }
+      }
+      container multicast-port-shaping {
+        description
+          "Configure a peak rate at which the MTunnel interface in the distributed multicast VPN can send data.";
+        choice shaping-parameters {
+          description
+            "Specify shaping parameters.";
+          case shaping-type-mode {
+            description
+              "Specify shaping parameters choice case as shaping type.";
+            leaf shaping-type {
+              type qos:shaping-value-type;
+              description
+                "Shaping value type.";
+            }
+          }
+          case shaping-value-mode {
+            description
+              "Specify shaping parameters choice case as shaping value.";
+            leaf shaping-value {
+              type uint32 {
+                range "1..4294967294";
+              }
+              units "Mbit/s";
+              description
+                "Shaping value.";
+            }
+          }
+        }
+      }
+      container user-queue-pir-precision {
+        presence "create user-queue-pir-precision";
+        description
+          "Enable/disable user queue pir precision.";
+        ext:generated-by system;
+        ext:operation-exclude create|delete;
+        leaf precision {
+          type uint8 {
+            range "1..100";
+          }
+          units "%";
+          default "1";
+          description
+            "Precision.";
+        }
+      }
+      container exp-phb-disable {
+        description
+          "Configure disable the private network tag priority in a DS domain from being marked for the downstream traffic on the PW interface in the VLL networking.";
+        leaf forward-type {
+          type qos:forward-type;
+          description
+            "Forward type.";
+        }
+      }
+      container packet-block-thresholds {
+        description
+          "List of the packet block threshold size.";
+        list packet-block-threshold {
+          key "service-class";
+          description
+            "Configure the packet block threshold size.";
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf size {
+            type uint8 {
+              range "0..5";
+            }
+            units "kB";
+            mandatory true;
+            description
+              "The packet block threshold size.";
+          }
+        }
+      }
+      container packet-block-threshold-all {
+        description
+          "Configure the packet block threshold size for all queues.";
+        leaf size {
+          type uint8 {
+            range "0..5";
+          }
+          units "kB";
+          description
+            "The packet block threshold size.";
+        }
+      }
+      container channel-alarms {
+        description
+          "List of channel alarm.";
+        list channel-alarm {
+          key "alarm-type pool";
+          description
+            "Configure channel alarm.";
+          leaf alarm-type {
+            type channel-alarm-type;
+            description
+              "Alarm type.";
+          }
+          leaf pool {
+            type channel-alarm-pool-type;
+            description
+              "Pool.";
+          }
+          leaf threshold {
+            type uint8 {
+              range "1..100";
+            }
+            units "%";
+            mandatory true;
+            description
+              "Threshold value.";
+          }
+        }
+      }
+      container channel-profile-precision {
+        description
+          "Configure the bandwidth allocation mode.";
+        leaf type {
+          type channel-profile-precision-type;
+          description
+            "Precision type.";
+        }
+      }
+      container channel-profile-apply {
+        description
+          "Configure a channel profile to a board. Apply channel profile template may affect scheduling. The configuration will work after the board restart.";
+        leaf name {
+          type leafref {
+            path "/qos:qos/qos:queue-scheduler-template/qos:channel-profiles/qos:channel-profile/qos:name";
+          }
+          description
+            "Channel profile name.";
+        }
+      }
+      container multicast-shaping {
+        description
+          "Configure an upper rate limit for multicast traffic on a specified board.";
+        leaf shaping-value {
+          type uint32 {
+            range "1..1000000";
+          }
+          units "pps";
+          description
+            "Shaping value.";
+        }
+      }
+      container port-queue-alarms {
+        description
+          "List of port queue buffer alarm.";
+        list port-queue-alarm {
+          key "service-class";
+          max-elements "8";
+          description
+            "Configure port queue buffer alarm.";
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf buffer-percentage {
+            type uint8 {
+              range "0..100";
+            }
+            units "%";
+            mandatory true;
+            description
+              "Buffer percentage.";
+          }
+        }
+      }
+      container user-queue-recovery-disable {
+        presence "create user-queue-recovery-disable";
+        description
+          "Enable/disable automatic switchback from CAR to user queue.";
+      }
+      container access-user-board-schedule-enable {
+        presence "create access-user-board-schedule-enable";
+        description
+          "Enable/disable downstream HQoS scheduling.";
+      }
+      container convergent-precedence-highs {
+        description
+          "List of configuration specific low-priority queues on a board as high-priority queues.";
+        list convergent-precedence-high {
+          key "service-class-value";
+          max-elements "5";
+          description
+            "Configure specific low-priority queues on a board as high-priority queues.";
+          leaf service-class-value {
+            type uint8 {
+              range "0..4";
+            }
+            description
+              "The value of service class.";
+          }
+        }
+      }
+      container queue-discard-alarms {
+        description "List of queue discard alarm.";
+        list queue-discard-alarm {
+          key "service-class";
+          max-elements "8";
+          description
+            "Configure queue discard alarm.";
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          choice discard-type {
+            mandatory true;
+            description
+               "Specify discard type.";
+            case bytes {
+              description
+                "Specify discard type choice case as discard-byte.";
+              leaf bytes {
+                type uint32 {
+                  range "1..4294967295";
+                }
+                units "Byte";
+                mandatory true;
+                description
+                  "The discarded bytes.";
+              }
+            }
+            case packets {
+              description
+                "Specify discard type choice case as discard packet.";
+              leaf packets {
+                type uint32 {
+                  range "1..4294967295";
+                }
+                units "packet";
+                mandatory true;
+                description
+                  "The discarded packets.";
+              }
+            }
+            case packet-ratio {
+              description
+                "Specify discard type choice case as discard packet ratio.";
+              leaf packet-coefficient {
+                type uint8 {
+                  range "1..9";
+                }
+                mandatory true;
+                description
+                  "Ratio coefficient of the discard packets.";
+              }
+              leaf packet-exponent {
+                type uint8 {
+                  range "1..5";
+                }
+                mandatory true;
+                description
+                  "Ratio exponent of the discard packets.";
+              }
+            }
+          }
+          leaf interval-time {
+            type uint16 {
+              range "15..3600";
+            }
+            units "s";
+            default "30";
+            description
+              "Monitoring time of the queue discard alarm.";
+          }
+        }
+      }
+      container user-queue-burst {
+        presence "create user-queue-burst";
+        description
+          "Enable/disable the minimum default burst size and time on a board.";
+        leaf minimum-burst-size {
+          type uint32 {
+            range "1000..1000000";
+          }
+          units "Byte";
+          mandatory true;
+          description
+            "Specifies a minimum default burst size.";
+        }
+        leaf time {
+          type uint32 {
+            range "100..100000";
+          }
+          units "us";
+          mandatory true;
+          description
+            "Specifies a burst time.";
+        }
+      }
+      container burst-sizes {
+        description
+          "List of the burst size.";
+        list burst-size {
+          key "service-class";
+          max-elements  "8";
+          description
+            "Configure the burst size of a chip.";
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf value {
+            type uint8 {
+              range "0..64";
+            }
+            mandatory true;
+            description
+              "Burst size.";
+          }
+        }
+      }
+      container global-buffer-share-thresholds {
+        description
+          "List of the global shared threshold of buffer resources.";
+        list global-buffer-share-threshold {
+          key "direction";
+          description
+            "Configure the global shared threshold of buffer resources.";
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+          leaf threshold {
+            type uint16 {
+              range "1..500";
+            }
+            mandatory true;
+            description
+              "Specifies the shared threshold value.";
+          }
+        }
+      }
+      container global-buffer-share-queues {
+        description
+          "List of the shared threshold of buffer resources for specific queues.";
+        list global-buffer-share-queue {
+          key "service-class direction";
+          description
+            "Configure the shared threshold of buffer resources for specific queues.";
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+        }
+      }
+      container flow-queue-backpressure-off {
+        presence "create flow-queue-backpressure-off";
+        description
+          "Enable/disable the PIR backpressure function. When the configuration exists, the function is disable.";
+      }
+      container traffic-policy-match-type {
+        description
+          "Configure policy UCL rule match.";
+        container destination-user {
+          presence "create destination-user";
+          description
+            "Enable/disable traffic policy match type destination user.";
+        }
+        container interface-acl {
+          presence "create interface-acl";
+          description
+            "Enable/disable traffic policy match type interfacec acl.";
+        }
+      }
+      container user-queue-resource-4cos {
+        description
+          "Configure 4queue CoS size.";
+        leaf cos-value {
+          type uint32 {
+            range "4..64000";
+          }
+          must "../cos-value mod 4 = 0";
+          description
+            "Cos value.";
+        }
+      }
+    }//augment devm:mpu-board/devm:qos
+  }//augment devm:mpu-board
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "Adds QoS configuration to the board.";
+    container qos {
+      description
+        "Configure QoS application.";
+      container traffic-policy-matchs {
+        description
+          "List of traffic policy match.";
+        list traffic-policy-match {
+          key "type";
+          max-elements  "6";
+          description
+            "Configure traffic policy match. Some boards do not support this object.";
+          leaf type {
+            type policy-match-type;
+            description
+              "Traffic policy match type.";
+          }
+        }
+      }
+      container pq-schedule-prioritys {
+        description
+          "List of PQ schedule priority.";
+        list pq-schedule-priority {
+          key "direction";
+          max-elements "2";
+          description
+            "Configure PQ schedule priority.";
+          ext:generated-by system {
+            description "The all instances are generated automatically.";
+          }
+          ext:operation-exclude create|delete {
+            description "The all instances cannot be created or deleted.";
+          }
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+          leaf mode {
+            type pq-schedule-priority-type;
+            mandatory true;
+            description
+              "PQ schedule mode.";
+          }
+        }
+      }
+      container pq-schedule-priority-on-cards {
+        description
+          "List of PQ schedule priority.";
+        list pq-schedule-priority-on-card {
+          key "card-id";
+          description
+            "Configure PQ schedule priority. This configuration takes effect only on eTM subcards.";
+          leaf card-id {
+            type string {
+              length "1..31";
+            }
+            description
+              "Card ID.";
+          }
+          leaf mode {
+            type pq-schedule-priority-type;
+            mandatory true;
+            description
+              "PQ schedule priority mode.";
+          }
+        }
+      }
+      container multicast-port-queues {
+        description
+          "List of port queue schedule in outbound direction on the MTunnel interface of the distributed multicast VPN.";
+        list multicast-port-queue {
+          key "service-class";
+          max-elements "8";
+          description
+            "Configure port queue schedule in outbound direction on the MTunnel interface of the distributed multicast VPN.";
+          ext:generated-by system {
+            description "The all instances are generated automatically.";
+          }
+          ext:operation-exclude create|delete {
+            description "The all instances cannot be created or deleted.";
+          }
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf queue-schedule-mode {
+            type qos:queue-schedule-mode;
+            mandatory true;
+            description
+              "Schedule Mode.";
+          }
+          leaf weight {
+            when "../queue-schedule-mode='wfq'";
+            type uint8 {
+              range "1..100";
+            }
+            mandatory true;
+            description
+              "Weight of wfq scheduling strategy.";
+          }
+          choice shaping-parameters {
+            description
+              "Specify shaping parameters.";
+            case shaping {
+              description
+                "Specify shaping parameters choice case as shaping value.";
+              leaf shaping-value {
+                type uint32 {
+                  range "0..4294967294";
+                }
+                units "Mbit/s";
+                description
+                  "Shaping value.";
+              }
+            }
+            case shaping-percent {
+              description
+                "Specify shaping parameters choice case as shaping percentage value.";
+              leaf shaping-percentage {
+                type uint8 {
+                  range "0..100";
+                }
+                units "%";
+                description
+                  "Shaping percentage.";
+              }
+            }
+          }
+          leaf port-wred-name {
+            type leafref {
+              path "/qos:qos/qos:wred-template/qos:port-wreds/qos:port-wred/qos:name";
+            }
+            description
+              "Port wred name.";
+          }
+        }
+      }
+      container multicast-port-shaping {
+        description
+          "Configure a peak rate at which the MTunnel interface in the distributed multicast VPN can send data.";
+        choice shaping-parameters {
+          description
+            "Specify shaping parameters.";
+          case shaping-type-mode {
+            description
+              "Specify shaping parameters choice case as shaping type.";
+            leaf shaping-type {
+              type qos:shaping-value-type;
+              description
+                "Shaping value type.";
+            }
+          }
+          case shaping-value-mode {
+            description
+              "Specify shaping parameters choice case as shaping value.";
+            leaf shaping-value {
+              type uint32 {
+                range "1..4294967294";
+              }
+              units "Mbit/s";
+              description
+                "Shaping value.";
+            }
+          }
+        }
+      }
+      container user-queue-pir-precision {
+        presence "create user-queue-pir-precision";
+        description
+          "Enable/disable user queue pir precision.";
+        ext:generated-by system;
+        ext:operation-exclude create|delete;
+        leaf precision {
+          type uint8 {
+            range "1..100";
+          }
+          units "%";
+          default "1";
+          description
+            "Precision.";
+        }
+      }
+      container exp-phb-disable {
+        description
+          "Configure disable the private network tag priority in a DS domain from being marked for the downstream traffic on the PW interface in the VLL networking.";
+        leaf forward-type {
+          type qos:forward-type;
+          description
+            "Forward type.";
+        }
+      }
+      container packet-block-thresholds {
+        description
+          "List of the packet block threshold size.";
+        list packet-block-threshold {
+          key "service-class";
+          description
+            "Configure the packet block threshold size.";
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf size {
+            type uint8 {
+              range "0..5";
+            }
+            units "kB";
+            mandatory true;
+            description
+              "The packet block threshold size.";
+          }
+        }
+      }
+      container packet-block-threshold-all {
+        description
+          "Configure the packet block threshold size for all queues.";
+        leaf size {
+          type uint8 {
+            range "0..5";
+          }
+          units "kB";
+          description
+            "The packet block threshold size.";
+        }
+      }
+      container channel-alarms {
+        description
+          "List of channel alarm.";
+        list channel-alarm {
+          key "alarm-type pool";
+          description
+            "Configure channel alarm.";
+          leaf alarm-type {
+            type channel-alarm-type;
+            description
+              "Alarm type.";
+          }
+          leaf pool {
+            type channel-alarm-pool-type;
+            description
+              "Pool.";
+          }
+          leaf threshold {
+            type uint8 {
+              range "1..100";
+            }
+            units "%";
+            mandatory true;
+            description
+              "Threshold value.";
+          }
+        }
+      }
+      container channel-profile-precision {
+        description
+          "Configure the bandwidth allocation mode.";
+        leaf type {
+          type channel-profile-precision-type;
+          description
+            "Precision type.";
+        }
+      }
+      container channel-profile-apply {
+        description
+          "Configure a channel profile to a board. Apply channel profile template may affect scheduling. The configuration will work after the board restart.";
+        leaf name {
+          type leafref {
+            path "/qos:qos/qos:queue-scheduler-template/qos:channel-profiles/qos:channel-profile/qos:name";
+          }
+          description
+            "Channel profile name.";
+        }
+      }
+      container fabric-queue-statistic-enable {
+        description
+          "Configure enable the statistics function for Virtual Output Queues.";
+        leaf enable {
+          type empty;
+          description
+            "Enable.";
+        }
+      }
+      container over-ride-adjust-number {
+        description
+          "Configure over ride adjust number.";
+        leaf adjust-number {
+          type uint16 {
+            range "1..1000";
+          }
+          default "50";
+          description
+            "Adjust number value.";
+        }        
+      }
+      container over-ride-degrade-cycle {
+        description
+          "Configure over ride degrade cycle.";
+        leaf degrade-cycle {
+          type uint8 {
+            range "1..255";
+          }
+          default "64";
+          description
+            "Cycle number.";
+        }        
+      }
+      container over-ride-upgrade-cycle {
+        description
+          "Configure over ride upgrade cycle.";
+        leaf upgrade-cycle {
+          type uint8 {
+            range "1..255";
+          }
+          default "1";
+          description
+            "Cycle number.";
+        }        
+      }      
+      container over-ride-switch {
+        must "./enable-percent>=./disable-percent";
+        description
+          "Configure over ride switch.";
+        leaf disable-percent {
+          type uint8 {
+            range "0..100";
+          }
+          default "50";
+          description
+            "Disable percent value.";
+        }
+        leaf enable-percent {
+          type uint8 {
+            range "0..100";
+          }
+          default "80";
+          description
+            "Enable percent value.";
+        }
+      }
+      container over-ride-inbound-threshold-adjust {
+        must "./upgrade-threshold>./degrade-threshold";
+        description
+          "Configure over ride inbound threshold adjust.";
+        leaf upgrade-threshold {
+          type uint8 {
+            range "1..99";
+          }
+          default "90";
+          description
+            "Inbound upgrade threshold.";
+        }
+        leaf degrade-threshold {
+          type uint8 {
+            range "1..99";
+          }
+          default "60";
+          description
+            "Inbound degrade threshold.";
+        }
+      }
+      container over-ride-outbound-threshold-adjust {
+        must "./upgrade-threshold>./degrade-threshold";
+        description
+          "Configure over ride outbound threshold adjust.";
+        leaf upgrade-threshold {
+          type uint8 {
+            range "1..99";
+          }
+          default "80";
+          description
+            "Outbound upgrade threshold.";
+        }
+        leaf degrade-threshold {
+          type uint8 {
+            range "1..99";
+          }
+          default "60";
+          description
+            "Outbound degrade threshold.";
+        }
+      }
+      container over-ride-monitor-number {
+        description
+          "Configure over ride monitor.";
+        leaf monitor-number {
+          type uint8 {
+            range "1..64";
+          }
+          default "32";
+          description
+            "Monitor number.";
+        }
+      }   
+      container multicast-shaping {
+        description
+          "Configure an upper rate limit for multicast traffic on a specified board.";
+        leaf shaping-value {
+          type uint32 {
+            range "1..1000000";
+          }
+          units "pps";
+          description
+            "Shaping value.";
+        }
+      }
+      container multicast-shaping-service-template {
+        must "(all-service-class/service-template-name and (count(specific-service-classs/specific-service-class)=0)) or not(all-service-class/service-template-name)";
+        description
+          "Configure multicast packet compensation.";
+        container all-service-class {
+          description
+            "Configure multicast packet compensation for all service class.";
+          leaf service-template-name {
+            type leafref {
+              path "/qos:qos/qos:queue-scheduler-template/qos:service-templates/qos:service-template/qos:name";
+            }
+            description
+              "Service template name.";
+          }
+        }
+        container specific-service-classs {
+          description
+            "List of multicast packet compensation for specific service class.";
+          list specific-service-class {
+            key "service-class";
+            description
+              "Configure multicast packet compensation for specific service class.";
+            leaf service-class {
+              type qos:qos-service-class;
+              description
+                "Class of service.";
+            }
+            leaf service-template-name {
+              type leafref {
+                path "/qos:qos/qos:queue-scheduler-template/qos:service-templates/qos:service-template/qos:name";
+              }
+              mandatory true;
+              description
+                "Service template name.";
+            }
+          }
+        }
+      }
+      container port-queue-alarms {
+        description
+          "List of port queue buffer alarm.";
+        list port-queue-alarm {
+          key "service-class";
+          max-elements "8";
+          description
+            "Configure port queue buffer alarm.";
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf buffer-percentage {
+            type uint8 {
+              range "0..100";
+            }
+            units "%";
+            mandatory true;
+            description
+              "Buffer percentage.";
+          }
+        }
+      }
+      container user-queue-recovery-disable {
+        presence "create user-queue-recovery-disable";
+        description
+          "Enable/disable automatic switchback from CAR to user queue.";
+      }
+      container multicast-shapers {
+        description
+          "List of multicast traffic shaping.";
+        list multicast-shaper {
+          must "(priority='both' and not(../multicast-shaper[priority='high']) and not(../multicast-shaper[priority='low'])) or ((priority='high' or priority='low') and not(../multicast-shaper[priority='both']))";
+          key "priority";
+          description
+            "Configure multicast traffic shaping.";
+          leaf priority {
+            type multicast-priority-type;
+            description
+              "Priority type.";
+          }
+          leaf shaping-value {
+            type uint16 {
+              range "1..40000";
+            }
+            units "Mbit/s";
+            mandatory true;
+            description
+              "Shaping value.";
+          }
+        }
+      }
+      container access-user-board-schedule-enable {
+        presence "create access-user-board-schedule-enable";
+        description
+          "Enable/disable downstream HQoS scheduling.";
+      }
+      container convergent-precedence-highs {
+        description
+          "List of configuration specific low-priority queues on a board as high-priority queues.";
+        list convergent-precedence-high {
+          key "service-class-value";
+          max-elements "5";
+          description
+            "Configure specific low-priority queues on a board as high-priority queues.";
+          leaf service-class-value {
+            type uint8 {
+              range "0..4";
+            }
+            description
+              "The value of service class.";
+          }
+        }
+      }
+      container queue-discard-alarms {
+        description "List of queue discard alarm.";
+        list queue-discard-alarm {
+          key "service-class";
+          max-elements "8";
+          description
+            "Configure queue discard alarm.";
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          choice discard-type {
+            mandatory true;
+            description
+               "Specify discard type.";
+            case bytes {
+              description
+                "Specify discard type choice case as discard-byte.";
+              leaf bytes {
+                type uint32 {
+                  range "1..4294967295";
+                }
+                units "Byte";
+                mandatory true;
+                description
+                  "The discarded bytes.";
+              }
+            }
+            case packets {
+              description
+                "Specify discard type choice case as discard packet.";
+              leaf packets {
+                type uint32 {
+                  range "1..4294967295";
+                }
+                units "packet";
+                mandatory true;
+                description
+                  "The discarded packets.";
+              }
+            }
+            case packet-ratio {
+              description
+                "Specify discard type choice case as discard packet ratio.";
+              leaf packet-coefficient {
+                type uint8 {
+                  range "1..9";
+                }
+                mandatory true;
+                description
+                  "Ratio coefficient of the discard packets.";
+              }
+              leaf packet-exponent {
+                type uint8 {
+                  range "1..5";
+                }
+                mandatory true;
+                description
+                  "Ratio exponent of the discard packets.";
+              }
+            }
+          }
+          leaf interval-time {
+            type uint16 {
+              range "15..3600";
+            }
+            units "s";
+            default "30";
+            description
+              "Monitoring time of the queue discard alarm.";
+          }
+        }
+      }
+      container user-queue-burst {
+        presence "create user-queue-burst";
+        description
+          "Enable/disable the minimum default burst size and time on a board.";
+        leaf minimum-burst-size {
+          type uint32 {
+            range "1000..1000000";
+          }
+          units "Byte";
+          mandatory true;
+          description
+            "Specifies a minimum default burst size.";
+        }
+        leaf time {
+          type uint32 {
+            range "100..100000";
+          }
+          units "us";
+          mandatory true;
+          description
+            "Specifies a burst time.";
+        }
+      }
+      container burst-sizes {
+        description
+          "List of the burst size.";
+        list burst-size {
+          key "service-class";
+          max-elements  "8";
+          description
+            "Configure the burst size of a chip.";
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf value {
+            type uint8 {
+              range "0..64";
+            }
+            mandatory true;
+            description
+              "Burst size.";
+          }
+        }
+      }
+      container global-buffer-share-thresholds {
+        description
+          "List of the global shared threshold of buffer resources.";
+        list global-buffer-share-threshold {
+          key "direction";
+          description
+            "Configure the global shared threshold of buffer resources.";
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+          leaf threshold {
+            type uint16 {
+              range "1..500";
+            }
+            mandatory true;
+            description
+              "Specifies the shared threshold value.";
+          }
+        }
+      }
+      container global-buffer-share-queues {
+        description
+          "List of the shared threshold of buffer resources for specific queues.";
+        list global-buffer-share-queue {
+          key "service-class direction";
+          description
+            "Configure the shared threshold of buffer resources for specific queues.";
+          leaf service-class {
+            type qos:qos-service-class;
+            description
+              "Class of service.";
+          }
+          leaf direction {
+            type qos:qos-direction-type;
+            description
+              "Direction.";
+          }
+        }
+      }
+      container flow-queue-backpressure-off {
+        presence "create flow-queue-backpressure-off";
+        description
+          "Enable/disable the PIR backpressure function. When the configuration exists, the function is disable.";
+      }
+      container traffic-policy-match-type {
+        description
+          "Configure policy UCL rule match.";
+        container destination-user {
+          presence "create destination-user";
+          description
+            "Enable/disable traffic policy match type destination user.";
+        }
+        container interface-acl {
+          presence "create interface-acl";
+          description
+            "Enable/disable traffic policy match type interfacec acl.";
+        }
+      }
+      container user-queue-resource-4cos {
+        description
+          "Configure 4queue CoS size.";
+        leaf cos-value {
+          type uint32 {
+            range "4..64000";
+          }
+          must "../cos-value mod 4 = 0";
+          description
+            "Cos value.";
+        }
+      }
+    }//augment devm:lpu-board/devm:qos
+  }//augment devm:lpu-board
+  augment /lcs:license {
+    description
+      "Adds vm bandwidth configuration to license model.";
+    container vm-bandwidths {
+      description
+        "List of configuration to set the bandwidth or set no rate limit for a VM.";
+      list vm-bandwidth {
+        key "vnfc-name slot-id";
+        description
+          "Configure the bandwidth or configure no rate limit for a VM.";
+        ext:generated-by system {
+          description "The all instances are generated automatically.";
+        }
+        ext:operation-exclude create|delete {
+          description "The all instances cannot be created or deleted.";
+        }
+        ext:operation-exclude update {
+          when "not(../lcs:license-items/lcs:license-item[lcs:name='VR9K00BW0'])";
+          description "The all instances cannot be updated when license-item 'VR9K00BW0' does not exist.";
+        }
+        leaf vnfc-name {
+          type leafref {
+            path "/devm-vnf:devm-vnf/devm-vnf:vnf-boards/devm-vnf:vnf-board/devm-vnf:vnfc-name";
+          }
+          must "../vnfc-name = 'brasnls'";
+          description
+            "Virtualized network function component (VNFC) name.";
+        }
+        leaf slot-id {
+          type leafref {
+            path "/devm-vnf:devm-vnf/devm-vnf:vnf-boards/devm-vnf:vnf-board[devm-vnf:vnfc-name=current()/../vnfc-name]/devm-vnf:id";
+          }
+          description
+            "Slot ID.";
+        }
+        leaf is-bandwidth-limited {
+          type limit-type;
+          default "limited";
+          description
+            "Is bandwidth limited.";
+        }
+        leaf bandwidth {
+          when "../is-bandwidth-limited='limited'";
+          type uint32 {
+            range "0..1000000";
+          }
+          units "Mbit/s";
+          default "1";
+          description
+            "Bandwidth.";
+        }
+        leaf current-bandwidth {
+          type uint32;
+          units "Mbit/s";
+          config false;
+          description
+            "Current Bandwidth.";
+        }
+      }
+    }
+  }//augment /lcs:license
+}

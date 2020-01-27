@@ -1,0 +1,4191 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-l2tp-access {
+  namespace "urn:huawei:yang:huawei-bras-l2tp-access";
+  prefix bras-l2tp-access;
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ip {
+    prefix ip;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-radius {
+    prefix radius;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-bras-cu-controller {
+    prefix bras-cu-controller;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "L2TP access.";
+  revision 2019-04-18 {
+    description
+      "Huawei private YANG file.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "l2tp";
+
+  typedef session-status-type {
+    type enumeration {
+      enum "establishing" {
+        value 0;
+        description
+          "Session is establishing.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "Session establishment up status.";
+      }
+      enum "down" {
+        value 2;
+        description
+          "Session establishment down status.";
+      }
+    }
+    description
+      "Session establishment status.";
+  }
+  grouping slot-config {
+    description
+      "Set slot config.";
+    container icrq-limit {
+      description
+        "Configure icrq limit.";
+      leaf set-value {
+        type uint32 {
+          range "1..60000";
+        }
+        description
+          "Limit value.";
+      }
+    }
+    container forward-mode {
+      description
+        "Configure L2tp forward mode.";
+      leaf mode-value {
+        type enumeration {
+          enum "loopback" {
+            value 0;
+            description
+              "The software LoopBack enable.";
+          }
+          enum "through" {
+            value 1;
+            description
+              "The hardware LoopBack enable.";
+          }
+        }
+        default "through";
+        description
+          "Forward mode.";
+      }
+    }
+  }
+  grouping l2tp-group {
+    description
+      "L2tp-group info.";
+    leaf used-tunnel-number {
+      type uint32;
+      config false;
+      description
+        "Number of used tunnels.";
+    }
+    leaf used-number {
+      type uint16;
+      config false;
+      description
+        "Number of times that L2TP tunnels are established for an L2TP group on the backup device.";
+    }
+    container lns-ip-addresss {
+      config false;
+      description
+        "List of informations about LNS IP address. When load balancing based on the master/backup status is configured, only LNS IP addresses are displayed. When weight-based load-balancing is configured, LNS IP addresses and weights are displayed. When priority-based load balancing is configured, LNS IP addresses and priorities are displayed.";
+      list lns-ip-address {
+        key "lns-index";
+        config false;
+        description
+          "Statistics of information about LNS IP address. When load balancing based on the master/backup status is configured, only LNS IP addresses are displayed. When weight-based load-balancing is configured, LNS IP addresses and weights are displayed. When priority-based load balancing is configured, LNS IP addresses and priorities are displayed.";
+        leaf lns-index {
+          type uint32;
+          config false;
+          description
+            "The index of LNS IP address.";
+        }
+        leaf ip-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "LNS IP address.";
+        }
+        leaf tunnel-id {
+          type uint32 {
+          range "1..65535";
+        }
+          config false;
+          description
+            "The Tunnel ID of LNS IP address.";
+        }
+        leaf expire {
+          type uint32;
+          config false;
+          description
+            "The expire of LNS IP address.";
+        }
+        leaf state {
+          type enumeration {
+            enum "unused" {
+              value 0;
+              description
+                "LNS IP address be unused.";
+            }
+            enum "used" {
+              value 1;
+              description
+                "LNS IP address be used.";
+            }
+          }
+          config false;
+          description
+            "The used state of LNS IP address.";
+        }
+      }
+    }
+  }
+  grouping lns-group-bind-slots {
+    description
+      "Lns-group bind slots.";
+    container bind-slots {
+    description
+      "List of LNS group bind the LPU slot.";
+      list bind-slot {
+        key "slot-id";
+        description
+          "Configure LNS group bind the LPU slot.";
+        leaf slot-id {
+          type string {
+            length "1..15";
+            pattern '([^A-Z]{1,32})';
+          }
+          description
+            "The LPU slot.";
+        }
+        container tunnel-session {
+          config false;
+          description
+            "Statistics of the Tunnel and Session Information on the board in the LNS group.";
+          leaf tunnel-number {
+            type uint32{
+              range "0..65535";
+            }
+            config false;
+            description
+              "The number of tunnels.";
+          }
+          leaf session-number {
+            type uint32 {
+              range "0..65535";
+            }
+            config false;
+            description
+              "The number of sessions.";
+          }
+        }
+      }
+    }
+  }
+  grouping lns-group-common {
+    description
+      "Lns-group common.";
+    container group-description {
+      description
+        "Configure a LNS Group.";
+      leaf description-value {
+        type string {
+          length "1..80";
+        }
+        description
+          "Description of a LNS Group.";
+      }
+    }
+    container load-balance {
+      description
+        "Configure tunnel load balance type.";
+      leaf mode {
+        type enumeration {
+          enum "by-tunnel" {
+            value 1;
+            description
+              "By tunnel.";
+          }
+          enum "by-session" {
+            value 2;
+            description
+              "By session.";
+          }
+        }
+        description
+          "Load balance type.";
+      }
+    }
+    container master-slot {
+      config false;
+      description
+        "Statistics of information about the slot number of the main tunnel board in the LNS group.";
+      leaf slot-id {
+        type string {
+          length "1..15";
+          pattern '([^A-Z]{1,32})';
+        }
+        config false;
+        description
+          "The Master Slot ID.";
+      }
+    }
+  }
+  grouping lns-statistics-number {
+    description
+      "Lns statistics number.";
+    leaf current-up-tunnel-num {
+      type uint32;
+      config false;
+      description
+        "Displays l2tp statistics lns used tunnel number.";
+    }
+    leaf current-up-session-num {
+      type uint32;
+      default "0";
+      config false;
+      description
+        "Displays l2tp statistics lns used session number.";
+    }
+    leaf total-established-tunnel-num {
+      type uint64;
+      default "0";
+      config false;
+      description
+        "Displays l2tp statistics lns established tunnel number.";
+    }
+    leaf total-established-session-num {
+      type uint64;
+      default "0";
+      config false;
+      description
+        "Displays l2tp statistics lns established session mumber.";
+    }
+    leaf total-down-tunnel-num {
+      type uint64;
+      default "0";
+      config false;
+      description
+        "Displays l2tp statistics lns down tunnel mumber.";
+    }
+    leaf total-down-session-num {
+      type uint64;
+      default "0";
+      config false;
+      description
+        "Displays l2tp statistics lns down session mumber.";
+    }
+  }
+
+  grouping tunnel-statistics-basic {
+    description
+      "Tunnel statistics basic info.";
+    leaf local-id {
+      type uint32 {
+        range "1..65535";
+      }
+      config false;
+      description
+        "Tunnel local id.";
+    }		
+    leaf l2tp-group-name {
+      type string {
+        length "1..32";
+      }
+      config false;
+      description
+        "L2TP group name.";
+    }
+    leaf local-name {
+      type string {
+        length "1..253";
+      }
+      config false;
+      description
+        "Tunnel local name.";
+    }
+    leaf local-ip-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Source IP address.";
+    }
+    leaf remote-ip-address {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination IP address.";
+    }
+  }
+
+  grouping tunnel-statistics-packet {
+    description
+      "Tunnel statistics packet info.";
+    leaf rx-packets {
+      type uint64;
+      config false;
+      description
+        "Receive packets.";
+    }
+    leaf rx-packets-rate {
+      type uint32;
+      config false;
+      description
+        "Receive packets rate.";
+    }		
+    leaf rx-octets {
+      type uint64;
+      config false;
+      description
+        "Receive octets.";
+    }
+    leaf rx-octets-rate {
+      type uint32;
+      config false;
+      description
+        "Receive octets rate.";
+    }		
+    leaf tx-packets {
+      type uint64;
+      config false;
+      description
+        "Transmit packets.";
+    }
+    leaf tx-packets-rate {
+      type uint32;
+      config false;
+      description
+        "Transmit packets rate.";
+    }		
+    leaf tx-octets {
+      type uint64;
+      config false;
+      description
+        "Transmit octets.";
+    }
+    leaf tx-octets-rate {
+      type uint32;
+      config false;
+      description
+        "Transmit octets rate.";
+    }
+  }
+
+  grouping user-urpf-ipv4-ipv6 {
+    description
+      "User urpf IPv4 and IPv6 info.";
+    leaf high {
+      type uint32;
+      config false;
+      description
+        "High 32-bit count of discard packet.";
+    }
+    leaf low {
+      type uint32;
+      config false;
+      description
+        "Low 32-bit count of discard packet.";
+    }
+  }
+  grouping session-number {
+    description
+      "Session number info.";
+    leaf source-address {
+      type inet:ipv4-address-no-zone;
+      config false;
+      description
+        "Source IP address.";
+    }
+    leaf vpn-name {
+      type string {
+        length "1..31";
+      }
+      config false;
+      description
+        "Vpn instance name.";
+    }
+    leaf number {
+      type uint32 {
+        range "0..4294967295";
+      }
+      config false;
+      description
+        "Session number.";
+    }
+  }
+  grouping l2tp-group-brief {
+    description
+      "L2tp-group brief info.";
+    leaf group-description {
+      type string {
+        length "1..80";
+      }
+      config false;
+      description
+        "Group-description.";
+    }
+    leaf group-type {
+      type enumeration {
+        enum "none" {
+          value 0;
+          description
+            "None.";
+        }
+        enum "accept-dialin-l2tp" {
+          value 1;
+          description
+            "Accept dialin.";
+        }
+        enum "request-dialin-l2tp" {
+          value 2;
+          description
+            "Request dialin.";
+        }
+      }
+      default "none";
+      config false;
+      description
+        "Group type.";
+    }
+  }
+  grouping l2tp-group-source {
+    description
+      "L2tp-group source info.";
+    leaf interface-name {
+      type string {
+        length "1..49";
+      }
+      config false;
+      description
+        "Source interface name.";
+    }
+    leaf ip-address {
+      type inet:ipv4-address-no-zone;
+      config false;
+      description
+        "Source IP.";
+    }
+    leaf vpn-route-forward-id {
+      type uint32;
+      config false;
+      description
+        "VPN Route Forward Id.";
+    }
+  }
+  grouping tunnel-statistics-backup {
+    description
+      "Tunnel statistics backup info.";
+    container tunnel {
+      config false;
+      description
+        "L2tp tunnel backup statistics.";
+      leaf establish-receive {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of tunnel establish Receive.";
+      }
+      leaf teardown-receive {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of teardown receive.";
+      }
+      leaf establish-send {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of tunnel establish send.";
+      }
+      leaf teardown-send {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of tunnel teardown send.";
+      }
+      leaf hello-packet-send {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of hello packet send.";
+      }
+      leaf zlb-packet-send {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of ZLB packet send.";
+      }
+      leaf hello-packet-receive {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of hello packet receive.";
+      }
+      leaf zlb-packet-receive {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of ZLB packet receive.";
+      }
+      leaf peer-hello {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of peer Hello.";
+      }
+      leaf peer-zlb {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of peer ZLB.";
+      }
+    }
+  }
+  grouping session-statistics-backup {
+    description
+      "Session statistics backup info.";
+    container session {
+      config false;
+      description
+        "L2tp Session backup statistics.";
+      leaf establish-receive {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of session establish receive.";
+      }
+      leaf teardown-receive {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of session teardown receive.";
+      }
+      leaf establish-send {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of session establish send.";
+      }
+      leaf teardown-send {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of session teardown send.";
+      }
+    }
+  }
+  grouping lastest-received-message-backup {
+    description
+      "Lastest received message backup info.";
+    container lastest-received-message {
+      config false;
+      description
+        "Statistics of backup.";
+      leaf tunnel-drop {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of last tunnel drop message.";
+      }
+      leaf tunnel-update {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of last tunnel update message.";
+      }
+      leaf tunnel-create {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of last tunnel create message.";
+      }
+      leaf tunnel-teardown {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of last tunnel teardown message.";
+      }
+      leaf hello-or-zlb {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of last Hello or ZLB message.";
+      }
+      leaf session-drop {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of last session drop message.";
+      }
+      leaf session-update {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of last session update message.";
+      }
+      leaf session-create {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of last session create message.";
+      }
+      leaf session-teardown {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "The number of last session teardown message.";
+      }
+    }
+  }
+  grouping lastest-tunnel-record-backup {
+    description
+      "Lastest tunnel record backup info.";
+    container lastest-tunnel-records {
+      config false;
+      description
+        "List of l2tp tunnel backup statistics in detail.";
+      list lastest-tunnel-record {
+        key "index";
+        config false;
+        description
+          "Statistics of l2tp tunnel backup statistics in detail.";
+        leaf index {
+          type uint32 {
+            range "1..100";
+          }
+          config false;
+          description
+            "Index.";
+        }
+        leaf local-id {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Local tunnel ID.";
+        }
+        leaf remote-id {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Remote tunnel ID.";
+        }
+        leaf type {
+          type enumeration {
+            enum "last-tunnel-drop" {
+              value 0;
+              description
+                "Last tunnel drop.";
+            }
+            enum "last-tunnel-update" {
+              value 1;
+              description
+                "Last tunnel update.";
+            }
+            enum "last-tunnel-create" {
+              value 2;
+              description
+                "Last tunnel create.";
+            }
+            enum "last-tunnel-teardown" {
+              value 3;
+              description
+                "Last tunnel teardown.";
+            }
+            enum "last-hello-or-zlb" {
+              value 4;
+              description
+                "Last Hello or ZLB.";
+            }
+          }
+          config false;
+          description
+            "Type.";
+        }
+        leaf date {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Date.";
+        }
+        leaf time {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Time.";
+        }
+        leaf peer-ip-address {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Peer IP.";
+        }
+        leaf source-ip-address {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Source IP.";
+        }
+        leaf l2tp-group-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "L2TP group name.";
+        }
+        leaf old-life {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Old timestamp of tunnel.";
+        }
+        leaf new-life {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "New timestamp of tunnel.";
+        }
+      }
+    }
+  }
+  grouping lastest-session-record-backup {
+    description
+      "Lastest session record backup info.";
+    container lastest-session-records {
+      config false;
+      description
+        "List of l2tp Session backup statistics in detail.";
+      list lastest-session-record {
+        key "index";
+        config false;
+        description
+          "Statistics of l2tp Session backup statistics in detail.";
+        leaf index {
+          type uint32 {
+            range "1..100";
+          }
+          config false;
+          description
+            "Index.";
+        }
+        leaf local-session-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Local session ID.";
+        }
+        leaf remote-session-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Remote session ID.";
+        }
+        leaf local-tunnel-id {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Local tunnel ID.";
+        }
+        leaf remote-tunnel-id {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Remote tunnel ID.";
+        }
+        leaf type {
+          type enumeration {
+            enum "last-session-drop" {
+              value 5;
+              description
+                "Last session drop.";
+            }
+            enum "last-session-update" {
+              value 6;
+              description
+                "Last session update.";
+            }
+            enum "last-session-create" {
+              value 7;
+              description
+                "Last session create.";
+            }
+            enum "last-session-teardown" {
+              value 8;
+              description
+                "Last session teardown.";
+            }
+          }
+          config false;
+          description
+            "Type.";
+        }
+        leaf date {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Date.";
+        }
+        leaf time {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Time.";
+        }
+        leaf peer-ip-address {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Peer IP.";
+        }
+        leaf source-ip-address {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Source IP.";
+        }
+        leaf l2tp-group-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "L2TP group name.";
+        }
+        leaf pppoe-session-mac {
+          type string {
+            length "1..30";
+          }
+          config false;
+          description
+            "MAC address of a PPPoE user.";
+        }
+        leaf pppoe-session-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Session ID of a PPPoE user.";
+        }
+      }
+    }
+  }
+  container bras-l2tp-access {
+    description
+      "L2TP access.";
+    container l2tp-global {
+      description
+        "Configure L2TP global function.";
+      leaf l2tp-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable L2TP.";
+      }
+      leaf auto-reset-enable {
+        type empty;
+        description
+          "Enable automatic tunnel is deleted and re-established.";
+      }
+    }
+
+    container lac-global {
+      description
+        "Configure LAC global function.";
+      leaf session-limit-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable specifies the maximum number of the sessions.";
+      }
+      leaf tunnel-base-id {
+        type uint32 {
+          range "0 | 16384 | 32768 | 49152";
+        }
+        default "0";
+        description
+          "L2TP tunnel ID allocation base value configuration.";
+      }
+      leaf aging-time {
+        type uint32 {
+          range "1..3600";
+        }
+        default "300";
+        description
+          "L2tp aging time.";
+      }
+      leaf calling-number-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable l2tp Calling-number enable.";
+      }
+      leaf calling-vlan-invalid {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable l2tp calling-station-id VLAN invalid.";
+      }
+    }
+
+    container lns-global {
+      description
+        "Configure LNS global function.";
+      container tunnel-limit {
+        description
+          "Configure l2tp tunnel number.";
+        container limit {
+          description
+            "Configure l2tp tunnel number.";
+          leaf set-value {
+            type uint32 {
+              range "0..49152"; /* replace: M2(8192), X1X2(16384), Other(49152) */
+            }
+            default "49152";
+            description
+              "Limit l2tp tunnel number.";
+          }
+        }
+        container used-ids {
+          config false;
+          description
+            "Statistics of the information of used L2TP tunnel ID.";
+          leaf number {
+            type uint32;
+            config false;
+            description
+              "The number of used tunnel IDs.";
+          }
+        }
+      }
+      container lns-fast-replys {
+        description
+          "List of lns fast reply.";
+          list lns-fast-reply {
+            key "slot-id";
+            description
+              "Configure lns fast reply.";
+            leaf slot-id {
+              type string {
+                length "1..15";
+                pattern '([^A-Z]{1,32})';
+              }
+              description
+                "Enable lns-fast-replay of the specified slot.";
+            }
+        }
+      }
+      container slot-block {
+        description
+          "Configure l2tp slot blocks.";
+        leaf-list slot-id {
+          type string {
+            length "1..15";
+            pattern '([^A-Z]{1,32})';
+          }
+          description
+            "Configure slot ID.";
+        }
+      }
+      container l2tp-aaa { /* aaa-view */
+        description
+          "Configure l2tp to aaa model.";
+        container lns-user-limit {
+          description
+            "Configure the maximum number of users that are allowed to access the LNS.";
+          leaf limit-value {
+            type uint32 {
+              range "0..262144"; /* need replace */
+            }
+            description
+              "Specifies the maximum number of access users.";
+          }
+        }
+        container bgp-over-lns {
+          description
+            "Configure BGP route forwarding between CPE and BRAS.";
+          leaf lns-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable BGP route forwarding between CPE and BRAS.";
+          }
+        }
+      }
+      container other-function {
+        description
+          "Configure LNS other function.";
+        leaf protocol-packet-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the l2tp lns protocol-packet soft-transmit command enables an LNS to transmit L2TP packets to an LAC by software.";
+        }
+        leaf accm-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable lns accm.";
+        }
+      }
+    }
+    container l2tp-groups {
+      description
+        "List of L2TP groups.";
+      list l2tp-group {
+        key "name";
+        max-elements "1000";
+        description
+          "Configure L2TP group.";
+        ext:generated-by system {
+          ext:filter "name='default-lac' or name='default-lns'";
+          description "The instances whose name is 'default-lac' or 'default-lns' are generated by system automatically.";
+        }
+        ext:operation-exclude create|delete {
+          ext:filter "name='default-lac' or name='default-lns'";
+          description "The instances whose name is 'default-lac' or 'default-lns' cannot be created or deleted.";
+        }
+        leaf name {
+          type string {
+            length "1..32";
+            pattern "[!-~]{1,32}";
+            pattern "[^\"%'*/:<>\\?@|]{1,32}";
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "L2TP group name.";
+          ext:case-sensitivity upper2lower;
+        }
+        container l2tp-tunnel {
+          description
+            "Configure tunnel basic.";
+          container authentication {
+            description
+              "Configure authentication.";
+            leaf authen-enable {
+              type enumeration {
+                enum "enable" {
+                  value 0;
+                  description
+                    "Enable.";
+                }
+                enum "strict-enable" {
+                  value 1;
+                  description
+                    "Strict enable.";
+                }
+                enum "disable" {
+                  value 2;
+                  description
+                    "Disable.";
+                }
+              }
+              default "enable";
+              description
+                "Tunnel authentication enable.";
+            }
+            leaf password {
+              type pub-type:password-extend {
+                length "1..408";
+              }
+              description
+                "The password is a string ranging from 1 to 255 characters for a plaintext password and 48 to 408 characters for a ciphertext password.";
+            }
+            leaf aaa-auth-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable aaa authentication.";
+            }
+            leaf radius-force-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable radius force.";
+            }
+          }
+          container other-parameter-sets {
+            description
+              "Configure other parameter. Default value is device's name.";
+            leaf tunnel-name {
+              type string {
+                length "1..253";
+              }
+              ext:dynamic-default {
+                ext:default-value "/system:system/system:system-info/system:sys-name" {
+                  description "The default tunnel name is the device name and the default device name is 'HUAWEI'.";
+                }
+              }
+              description
+                "Tunnel name.";
+            }
+            leaf description {
+              type string {
+                length "1..80";
+              }
+              description
+                "Description.";
+            }
+            leaf idle-cut {
+              type uint32 {
+                range "0..100000";
+              }
+              default "60";
+              description
+                "Idle cut.";
+            }
+            leaf time-out {
+              type uint32 {
+                range "1..10";
+              }
+              default "2";
+              description
+                "Time out.";
+            }
+            leaf hello-time {
+              type uint32 {
+                range "0..100000";
+              }
+              default "60";
+              description
+                "Hello time.";
+            }
+            leaf retransmit-time {
+              type uint32 {
+                range "1..10";
+              }
+              default "5";
+              description
+                "Retransmit time.";
+            }
+            leaf recive-window-size {
+              type uint32 {
+                range "0..5000";
+              }
+              default "0";
+              description
+                "Recive window size.";
+            }
+            leaf retrans-queue-length {
+              type uint32 {
+                range "1..1024";
+              }
+              default "1024";
+              description
+                "Queue len.";
+            }
+            leaf inbound-name {
+              type leafref {
+                path "/qos:qos/qos:queue-scheduler-template/qos:user-group-queues/qos:user-group-queue/qos:name";
+              }
+              must "/qos:qos/qos:queue-scheduler-template/qos:user-group-queues/qos:user-group-queue[qos:name=current()]/qos:mode='normal'";
+              description
+                "User-group-queue name for inbound.";
+            }
+            leaf outbound-name {
+              type leafref {
+                path "/qos:qos/qos:queue-scheduler-template/qos:user-group-queues/qos:user-group-queue/qos:name";
+              }
+              must "/qos:qos/qos:queue-scheduler-template/qos:user-group-queues/qos:user-group-queue[qos:name=current()]/qos:mode='normal'";
+              description
+                "User-group-queue name for outbound.";
+            }
+          }
+          container other-function-sets {
+            description
+              "Configure other function.";
+            leaf alarm-enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable tunnel alarm.";
+            }
+            leaf avp-nas-port-enable {
+              type empty;
+              description
+                "Enable the L2TP attribute AVP100.";
+            }
+            leaf avp46-enable {
+              type empty;
+              description
+                "Avp46 enable.";
+            }
+            leaf avp-cncrypte-enable {
+              type empty;
+              description
+                "Whether AVP data is transmitted in encrypted text.";
+            }
+            leaf peer-hello-check-enable {
+              type empty;
+              description
+                "Peer hello check.";
+            }
+          }
+        }
+        container l2tp-lac {
+          description
+            "Configure LAC service.";
+          container tunnel-mode {
+            description
+              "Configure tunnel load sharing mode.";
+            choice mode {
+              description
+                "Mode.";
+              case load-share {
+                description
+                  "Load-share.";
+                leaf load-share-enable {
+                  type empty;
+                  description
+                    "Tunnel load Share enable.";
+                }
+              }
+              case priority {
+                description
+                  "The tunnel is divided according to the priority load.";
+                leaf priority-enable {
+                  type empty;
+                  description
+                    "Tunnel priority enable.";
+                }
+              }
+              case per-user {
+                description
+                  "Per-user.";
+                leaf per-user-enable {
+                  type empty;
+                  description
+                    "Tunnel per user enable.";
+                }
+              }
+            }
+          }
+          container source-interface {
+            presence "Tunnel bind source interface.";
+            description
+              "Enable/disable tunnel bind source interface.";
+            leaf name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Ethernet' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='GigabitEthernet' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Eth-Trunk' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='10GE' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='LoopBack' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='XGigabitEthernet' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='100GE' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='50GE' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='50|100GE' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='FlexE' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='25GE' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Pos' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Ip-Trunk' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='ATM' or
+                    /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='MEth'";
+              mandatory true;
+              description
+                "Interface name.";
+            }
+            leaf rui-enable {
+              type boolean;
+              must "../rui-enable='false' or (../rui-enable='true' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/../name]/ifm:type='LoopBack')";
+              default "false";
+              description
+                "Enable/disable backup user, can only be configured on loopBack interface.";
+            }
+          }
+          container start-l2tp {
+            must "not(../../l2tp-lns/allow/virtual-template-number)";
+            presence "Start l2tp enable.";
+            description
+              "Enable/disable start l2tp.";
+            container lns-ips {
+              description
+                "List of L2tp start IPs.";
+              list lns-ip {
+                key "identifier-name";
+                max-elements "8";
+                description
+                  "Configure L2tp start IP.";
+                leaf identifier-name {
+                  type string {
+                    length "1..4";
+                  }
+                  description
+                    "Identifier name.";
+                }
+                leaf ip-address {
+                  type inet:ipv4-address-no-zone;
+                  mandatory true;
+                  description
+                    "Ip address.";
+                }
+                leaf weight {
+                  type uint32 {
+                    range "1..10";
+                  }
+                  default "5";
+                  description
+                    "Weight.";
+                }
+                leaf preference {
+                  type uint32 {
+                    range "1..255";
+                  }
+                  default "1";
+                  description
+                    "Preference.";
+                }
+                leaf remote-name {
+                  type string {
+                    length "1..253";
+                  }
+                  description
+                    "Remote name.";
+                }
+              }
+            }
+          }
+          container local-name-lns-ips {
+            description
+              "List of specify configuration information of the L2TP tunnel.";
+            list local-name-lns-ip {
+              key "ip-address";
+              max-elements "8";
+              description
+                "Configure specify information of the L2TP tunnel.";
+              leaf ip-address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Sets specify lns ip address.";
+              }
+              leaf local-name {
+                type string {
+                  length "1..253";
+                }
+                mandatory true;
+                description
+                  "Sets specify local name of the L2TP tunnel.";
+              }
+            }
+          }
+          container block-lns-ip {
+            when "../tunnel-mode/priority-enable";
+            description
+              "Configure block L2TP LNS IP address.";
+            leaf-list ip-address {
+              type inet:ipv4-address-no-zone;
+              description
+                "Configure block L2TP LNS IP address.";
+            }
+          }
+          container password-lns-ips {
+            description
+              "List of lns tunnel password.";
+            list password-lns-ip {
+              key "ip-address";
+              max-elements "8";
+              description
+                "Configure tunnel password and lns-ip.";
+              leaf ip-address {
+                type inet:ipv4-address-no-zone;
+                description
+                  "Sets lns ip address.";
+              }
+              leaf password {
+                type pub-type:password-extend {
+                  length "1..408";
+                }
+                mandatory true;
+                description
+                  "The password is a string ranging from 1 to 255 characters for a plaintext password and 48 to 408 characters for a ciphertext password.";
+              }
+            }
+          }
+          container avp-calling-number {
+            description
+              "Configure avp alling-number parameters.";
+            container avp-enable {
+              description
+                "Configure avp alling-number.";
+              leaf status {
+                type enumeration {
+                  enum "enable" {
+                    value 1;
+                    description
+                      "Enable.";
+                  }
+                  enum "disable" {
+                    value 2;
+                    description
+                      "Disable.";
+                  }
+                }
+                description
+                  "Avp alling-number enable.";
+              }
+            }
+            container calling-number-format {
+              description
+                "Configure number format.";
+              choice module {
+                description
+                  "Module.";
+                case l2tp {
+                  description
+                    "L2TP.";
+                  container l2tp-format {
+                    description
+                      "Configure number format from l2tp.";
+                    choice format {
+                      description
+                        "Format.";
+                      case version1 {
+                        description
+                          "Version1.";
+                        leaf version1-enable {
+                          type empty;
+                          description
+                            "Version1 Enable.";
+                        }
+                        leaf include-option82 {
+                          when "../version1-enable";
+                          type empty;
+                          description
+                            "Include option82.";
+                        }
+                      }
+                      case version2 {
+                        description
+                          "Version2.";
+                        container include-attributes {
+                          description
+                            "List of the user-defined format of the attributes.";
+                          list include-attribute {
+                            key "attribute-type";
+                            max-elements "10";
+                            ordered-by user;
+                            description
+                              "Configure the user-defined format of the attribute.";
+                            leaf attribute-type {
+                              type enumeration {
+                                enum "option82" {
+                                  value 1;
+                                  description
+                                    "Option82.";
+                                }
+                                enum "user-mac" {
+                                  value 2;
+                                  description
+                                    "User mac address.";
+                                }
+                                enum "interface" {
+                                  value 3;
+                                  description
+                                    "Interface.";
+                                }
+                                enum "domain" {
+                                  value 4;
+                                  description
+                                    "Domain.";
+                                }
+                                enum "system-name" {
+                                  value 5;
+                                  description
+                                    "System name.";
+                                }
+                                enum "vlan" {
+                                  value 6;
+                                  description
+                                    "VLAN.";
+                                }
+                                enum "agent-circuit-id" {
+                                  value 7;
+                                  description
+                                    "Agent circuit id.";
+                                }
+                                enum "agent-remote-id" {
+                                  value 8;
+                                  description
+                                    "Agent remote id.";
+                                }
+                                enum "pe-vlan" {
+                                  value 9;
+                                  description
+                                    "Pe-VLAN.";
+                                }
+                                enum "ce-vlan" {
+                                  value 10;
+                                  description
+                                    "Ce-VLAN.";
+                                }
+                              }
+                              description
+                                "Configures the user-defined format of the nas-port-id attribute type.";
+                            }
+                            leaf delimiter {
+                              type string {
+                                length "1";
+                                pattern '[b\*\-\\#$@&:]';
+                              }
+                              description
+                                "Configures the user-defined format of the attribute delimiter one.";
+                            }
+                          }
+                        }
+                        leaf include-delimiter {
+                          type string {
+                            length "1";
+                            pattern '[b\*\-\\#$@&:]';
+                          }
+                          must "count(../include-attributes/include-attribute) >= 1";
+                          description
+                            "The value of the includeDelimiter field must be one of the following values: b, asterisk, hyphen, backslash, number sign, dollar sign, at sign, ampersand and colon.";
+                        }
+                      }
+                    }
+                  }
+                }
+                case aaa {
+                  description
+                    "AAA.";
+                  container aaa-format {
+                    description
+                      "Configure number format from aaa.";
+                    choice format {
+                      description
+                        "Format.";
+                      case lli {
+                        description
+                          "Lli.";
+                        leaf logical-line-id {
+                          type empty;
+                          description
+                            "Enable Logical line ID.";
+                        }
+                      }
+                      case radius-force {
+                        description
+                          "Radius force.";
+                        leaf radius-force {
+                          type empty;
+                          description
+                            "Enable the calling-station-id function delivered by the RADIUS server on the LAC side.";
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              container interface-exclude-subslot {
+                description
+                  "Configure interface exclude subslot.";
+                leaf exclude-enable {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable L2TP AVP configuration information about subslot.";
+                }
+              }
+            }
+          }
+          container other-function-sets {
+            description
+              "Configure other function.";
+            leaf session-limit {
+              type uint32 {
+                range "0..65535"; /* replace */
+              }
+              default "65535";
+              description
+                "Session limit of the tunnel.";
+            }
+            leaf mtu-enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable mtu.";
+            }
+            leaf mss-enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable mss.";
+            }
+            leaf allow-address-change-type {
+              type enumeration {
+                enum "setup-only" {
+                  value 1;
+                  description
+                    "Setup only.";
+                }
+                enum "always" {
+                  value 2;
+                  description
+                    "Always.";
+                }
+              }
+              description
+                "Allow address change type.";
+            }
+            leaf trust-upstream-priority {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable lac packet priority.";
+            }
+            leaf sccrq-time {
+              type uint32 {
+                range "1..1000";
+              }
+              description
+                "Send sccrq delay time.";
+            }
+            leaf dscp-value {
+              type uint32 {
+                range "0..63";
+              }
+              description
+                "Lac dscp value.";
+            }
+          }
+          container cp-source-interfaces {
+            description
+              "List of LAC group bind source interface.";
+            list cp-source-interface {
+              must "up-id-end >= up-id-begin";
+              key "up-id-begin up-id-end";
+              description
+                "Configure LAC group bind source interface.";
+              leaf up-id-begin {
+                type uint32 {
+                  range "1024..1279";
+                }
+                description
+                  "Begin up id.";
+              }
+              leaf up-id-end {
+                type uint32 {
+                  range "1024..1279";
+                }
+                description
+                  "End up id.";
+              }
+              leaf loopback-number {
+                type uint32 {
+                  range "0..2147483647";
+                }
+                default "0";
+                description
+                  "Loopback number.";
+              }
+            }
+          }
+        }
+        container l2tp-lns {
+          description
+            "Configure LNS service.";
+          container allow {
+            must "not(../../l2tp-lac/start-l2tp) and (../../name != 'default-lac')";
+            must "(../../name != 'default-lns' and ./remote-name) or ../../name = 'default-lns'";
+            presence "Allow l2tp virtual-template.";
+            description
+              "Enable/disable specifies the channel peer name and virtual template used by this L2TP group.";
+            leaf virtual-template-number {
+              type uint32 {
+                range "0..1023";
+              }
+              mandatory true;
+              description
+                "Virtual template number.";
+            }
+            leaf remote-name {
+              type string {
+                length "1..253";
+              }
+              description
+                "Remote name.";
+            }
+            leaf lac-source-ip-address {
+              type inet:ipv4-address-no-zone;
+              description
+                "Lac source IP address.";
+            }
+          }
+          container domain {
+            description
+              "Configure LNS Service.";
+            leaf set-type {
+              type enumeration {
+                enum "default" {
+                  value 0;
+                  description
+                    "Default.";
+                }
+                enum "force" {
+                  value 1;
+                  description
+                    "Force.";
+                }
+                enum "replace" {
+                  value 2;
+                  description
+                    "Replace.";
+                }
+              }
+              description
+                "Force authentication enable.";
+            }
+            leaf name {
+              when "../set-type";
+              type leafref {
+                path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+              }
+              mandatory true;
+              description
+                "LNS authen domain name.";
+            }
+            leaf roam-name {
+              type leafref {
+                path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+              }
+              description
+                "LNS roam domain name.";
+            }
+          }
+          container calling-station-id {
+            description
+              "Configure the L2TP attribute parameters.";
+            leaf agent-remote-id {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable format calling-station-id.";
+            }
+            leaf translate-remote-id {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable attribute translate.";
+            }
+          }
+          container other-function-sets {
+            description
+              "Configure other function.";
+            leaf cdn-send-delay-enable {
+              type empty;
+              description
+                "Cdn send delay enable.";
+            }
+            leaf renegotiation-lcp-enable {
+              type empty;
+              description
+                "Renegotiation lcp enable.";
+            }
+            leaf lns-schedule-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable lns schedule.";
+            }
+            leaf mandatory-chap {
+              type enumeration {
+                enum "mandatory-chap" {
+                  value 1;
+                  description
+                    "Mandatory chap.";
+                }
+                enum "challenge-length" {
+                  value 2;
+                  description
+                    "Challenge length.";
+                }
+              }
+              description
+                "Lns chap type.";
+            }
+            leaf mandatory-lcp {
+              type enumeration {
+                enum "mandatory-lcp" {
+                  value 1;
+                  description
+                    "Mandatory lcp.";
+                }
+                enum "on-mismatch" {
+                  value 2;
+                  description
+                    "On mismatch.";
+                }
+                enum "strict" {
+                  value 3;
+                  description
+                    "Strict.";
+                }
+              }
+              description
+                "LnsMndtLcpFlg.";
+            }
+            leaf qos-mode {
+              type enumeration {
+                enum "tunnel" {
+                  value 1;
+                  description
+                    "Tunnel.";
+                }
+                enum "session" {
+                  value 2;
+                  description
+                    "Session.";
+                }
+              }
+              default "tunnel";
+              description
+                "Qos mode.";
+            }
+            leaf sccrp-time {
+              type uint32 {
+                range "500..1000";
+              }
+              description
+                "Send sccrp delay time.";
+            }
+            leaf dscp-value {
+              type uint32 {
+                range "0..63";
+              }
+              description
+                "Lns dscp value.";
+            }
+          }
+        }
+        container group {
+          config false;
+          description
+            "Statistics of all information about L2TP groups.";
+          uses l2tp-group;
+        }
+        container cp-source-interface {
+          config false;
+          description
+            "Statistics of CP l2tp-group source interface info.";
+          container up-sources {
+            config false;
+            description
+              "List of CP l2tp-group source interface info.";
+            list up-source {
+              key "up-id";
+              config false;
+              description
+                "Statistics of up source info.";
+              leaf up-id {
+                type uint32;
+                config false;
+                description
+                  "Index of an up group.";
+              }
+              uses l2tp-group-brief;
+              container routes {
+                config false;
+                description
+                  "List of CP l2tp-group source interface info.";
+                list route {
+                  key "interface-name";
+                  config false;
+                  description
+                    "Statistics of disL2tpGroup.";
+                  uses l2tp-group-source;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container lns-groups {
+      description
+        "List of LNS Group.";
+      list lns-group {
+        key "group-name";
+        max-elements "16";
+        description
+          "Configure LNS Group.";
+        leaf group-name {
+          type string {
+            length "1..30";
+          }
+          description
+            "Name of a LNS Group.";
+          ext:case-sensitivity upper2lower;
+        }
+        container bind-sources {
+          description
+            "List of LNS group bind source interface.";
+          list bind-source {
+            key "interface-name";
+            max-elements "256";
+            description
+              "Configure LNS group bind source interface.";
+            leaf interface-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='GigabitEthernet' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Eth-Trunk' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='LoopBack'";
+              must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ip:ipv4/ip:addresses/ip:address/ip:ip";
+              description
+                "Source Interface.";
+            }
+          }
+        }
+        choice bind-board {
+          description
+            "Bind board.";
+          case bind-slots {
+            description
+              "Bind slots.";
+            uses lns-group-bind-slots;
+          }
+          case bind-backup-groups {
+            description
+              "Bind backup-groups.";
+            container bind-backup-groups {
+              description
+                "List of LNS backup groups bound to LNS tunnel groups.";
+              list bind-backup-group {
+                key "name";
+                max-elements "8";
+                description
+                  "Configure LNS backup group bound to an LNS tunnel group.";
+                leaf name {
+                  type leafref {
+                    path "/bras-l2tp-access:bras-l2tp-access/bras-l2tp-access:lns-backup-groups/bras-l2tp-access:lns-backup-group/bras-l2tp-access:name";
+                  }
+                  description
+                    "Name of an LNS backup group.";
+                }
+              }
+            }
+          }
+        }
+        uses lns-group-common;
+      }
+    }
+    container lns-backup-groups {
+      description
+        "List of LNS backup groups.";
+      list lns-backup-group {
+        key "name";
+        max-elements  "16";
+        description
+          "Configure an LNS backup group. You can specify the master and backup tunnel boards to support the backup function.";
+        leaf name {
+          type string {
+            length "1..30";
+          }
+          description
+            "Name of an LNS backup group.";
+        }
+        container bind-slots {
+          description
+            "Configure master and backup tunnel boards bound to LNS backup groups.";
+          leaf master-slot-id {
+            type string {
+              length "1..15";
+            }
+            description
+              "Slot ID of a tunnel master board.";
+            ext:operation-exclude update;
+          }
+          leaf slave-slot-id {
+            type string {
+              length "1..15";
+            }
+            description
+              "Slot ID of a tunnel slave board.";
+            ext:operation-exclude update;
+          }
+        }
+      }
+    }
+    container protocols {
+      config false;
+      description
+        "List of L2TP protocol infos.";
+      list protocol {
+        key "vendor-name";
+        config false;
+        description
+          "Statistics of L2TP protocol info.";
+        leaf vendor-name {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "This object identifies the Vendor name of the L2TP protocol stack.";
+        }
+        leaf firmware-revision {
+          type int32 {
+            range "0..2147483647";
+          }
+          config false;
+          description
+            "This object defines the firmware revision for the L2TP protocol stack.";
+        }
+        leaf drain-tunnel {
+          type enumeration {
+              enum "true" {
+                value 1;
+                description
+                  "True.";
+              }
+              enum "false" {
+                value 2;
+                description
+                  "False.";
+              }
+            }
+          config false;
+          description
+            "This object indicates if the local L2TP is draining off sessions from all tunnels.";
+        }
+        leaf schema-version {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Vector of supported L2TP protocol version and revision numbers. Supported versions are identified via a two octet pairing where the first octet indicates the version and the second octet contains the revision.";
+        }
+      }
+    }
+    container lac-tunnels {
+      config false;
+      description
+        "List of information of the L2TP tunnels.";
+      list lac-tunnel {
+        key "local-id";
+        config false;
+        description
+          "Statistics of information of the L2TP tunnel.";
+        leaf local-id {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Local ID of a L2TP tunnel.";
+        }
+        leaf local-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Local Name of a L2TP Tunnel.";
+        }
+        leaf remote-id {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "The Peer ID of a L2TP Tunnel.";
+        }
+        leaf remote-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "The Peer Name of a L2TP tunnel.";
+        }
+        leaf status {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The status of the L2TP Tunnel establishment.";
+        }
+        leaf local-ip-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Local IP address.";
+        }
+        leaf local-port {
+          type uint16;
+          config false;
+          description
+            "Local port number.";
+        }
+        leaf remote-ip-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Remote IP address.";
+        }
+        leaf remote-port {
+          type uint16;
+          config false;
+          description
+            "Remote Port Number.";
+        }
+        leaf recall-ip-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Socket IP address.";
+        }
+        leaf vrf {
+          type uint32;
+          config false;
+          description
+            "VPF configured locally.";
+        }
+        container time {
+          config false;
+          description
+            "Statistics of information of the L2TP tunnel time.";
+          leaf start-date {
+            type string {
+              length "1..31";
+            }
+            config false;
+            description
+              "Date when an L2TP tunnel was established.";
+          }
+          leaf start-clock {
+            type string {
+              length "1..31";
+            }
+            config false;
+            description
+              "Time when an L2TP tunnel was established.";
+          }
+          leaf continuance-length {
+            type string {
+              length "1..127";
+            }
+            config false;
+            description
+              "Time when an L2TP tunnel was continuance.";
+          }
+        }
+        container config {
+          config false;
+          description
+            "Statistics of information of the L2TP tunnel configuration.";
+          leaf hello-interval {
+            type uint32;
+            config false;
+            description
+              "Interval for sending Hello packets, in seconds.";
+          }
+          leaf session-limit {
+            type uint32 {
+              range "0..65535";
+            }
+            config false;
+            description
+              "Maximum number of sessions.";
+          }
+          leaf per-user-enable {
+            type boolean;
+            config false;
+            description
+              "Whether per tunnel per user is enabled.";
+          }
+          leaf timeout {
+            type uint32;
+            config false;
+            description
+              "Timeout interval for retransmitting L2TP packets, in seconds.";
+          }
+          leaf local-receive-window {
+            type uint16 {
+              range "0..5000";
+            }
+            config false;
+            description
+              "Local receive window size.";
+          }
+          leaf remote-receive-window {
+            type uint16 {
+              range "0..5000";
+            }
+            config false;
+            description
+              "Remote receive window size.";
+          }
+          leaf is-blocked {
+            type boolean;
+            config false;
+            description
+              "Tunnel is blocked.";
+          }
+          leaf outer-dscp {
+            type uint8;
+            config false;
+            description
+              "DSCP value in the outer VLAN tag of L2TP control packets.";
+          }
+          leaf group-name {
+            type string {
+              length "1..32";
+            }
+            config false;
+            description
+              "Displays the L2TP group name.";
+          }
+        }
+        container radius {
+          config false;
+          description
+            "Statistics of information of the L2TP tunnel Radius configuration.";
+          leaf session-limit {
+            type uint32;
+            config false;
+            description
+              "Session limit delivered by the RADIUS server.";
+          }
+          leaf vrf {
+            type uint32;
+            config false;
+            description
+              "VRF delivered by the RADIUS server.";
+          }
+          leaf assignment-id {
+            type string {
+              length "1..277";
+            }
+            config false;
+            description
+              "Tunnel assignment ID.";
+          }
+        }
+        container statistics {
+          config false;
+          description
+            "Statistics of information of the L2TP tunnel statistic.";
+          leaf active-session-num {
+            type uint32;
+            config false;
+            description
+              "Number of users of the tunnel.";
+          }
+          leaf control-sent-num {
+            type uint32;
+            config false;
+            description
+              "The sequence number for this data or control message, beginning at zero and incrementing by one for each message sent.";
+          }
+          leaf control-receive-num {
+            type uint32;
+            config false;
+            description
+              "The sequence number expected in the next control message to be received.";
+          }
+          leaf retrans-mission-num {
+            type uint32;
+            config false;
+            description
+              "Number of retransmissions of L2TP packets.";
+          }
+        }
+        container redundant {
+          config false;
+          description
+            "Statistics of information of the L2TP Tunnel Redundant.";
+          leaf bas-interface-name {
+            type string {
+              length "1..64";
+            }
+            config false;
+            description
+              "The name of Specifies the BAS interface.";
+          }
+          leaf remote-backup-profile {
+            type string {
+              length "1..128";
+            }
+            config false;
+            description
+              "The name of a remote backup profile.";
+          }
+          leaf remote-backup-service {
+            type string {
+              length "1..32";
+            }
+            config false;
+            description
+              "The name of a remote backup service.";
+          }
+          leaf status {
+            type string {
+              length "1..8";
+            }
+            config false;
+            description
+              "Status of a tunnel, which can be active or inactive.";
+          }
+          leaf register {
+            type string {
+              length "1..6";
+            }
+            config false;
+            description
+              "Flag indicating whether a tunnel is generated on the local or remote end.";
+          }
+          leaf life {
+            type uint32;
+            config false;
+            description
+              "Lifetime of a tunnel, in seconds.";
+          }
+        }
+      }
+    }
+    container lac-sessions {
+      config false;
+      description
+        "List of information of the L2TP sessions.";
+      list lac-session {
+        key "local-tunnel-id local-session-id";
+        config false;
+        description
+          "Statistics of information of the L2TP sessions.";
+        leaf local-tunnel-id {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Local ID of a L2TP tunnel.";
+        }
+        leaf local-session-id {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Local session ID, which uniquely identifies a session.";
+        }
+        leaf remote-tunnel-id {
+          type uint32 {
+              range "1..65535";
+            }
+          config false;
+          description
+            "Remote tunnel ID.";
+        }
+        leaf remote-session-id {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Remote session ID, which uniquely identifies a session.";
+        }
+        leaf local-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Local IP address.";
+        }
+        leaf remote-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Remote IP address.";
+        }
+        leaf lns-reply-ip-address {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Source IP address of packets replied by the LNS.";
+        }
+        leaf local-tunnel-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Local tunnel name.";
+        }
+        leaf remote-tunnel-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Remote tunnel name.";
+        }
+        leaf port {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Port number.";
+        }
+        leaf status {
+          type session-status-type;
+          config false;
+          description
+            "Session establishment status.";
+        }
+        leaf serial-number {
+          type uint32;
+          config false;
+          description
+            "Sequence number of a call.";
+        }
+        leaf id {
+          type uint32;
+          config false;
+          description
+            "ID of a user.";
+        }
+        leaf name {
+          type string {
+            length "1..252";
+          }
+          config false;
+          description
+            "Name of a user.";
+        }
+        leaf pppoe-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Session ID of a PPPoE user.";
+        }
+        leaf mac-address {
+          type string {
+            length "1..29";
+          }
+          config false;
+          description
+            "MAC Address.";
+        }
+        container redundant {
+          config false;
+          description
+            "Statistics of redundant information.";
+          leaf register {
+            type string {
+              length "1..6";
+            }
+            config false;
+            description
+              "Flag indicating whether a Session is generated on the local or remote end.";
+          }
+          leaf traffic-state {
+            type enumeration {
+              enum "normal" {
+                value 0;
+                description
+                  "The session is traffic normally.";
+              }
+              enum "abnormal" {
+                value 1;
+                description
+                  "The session traffic is abnormal.";
+              }
+            }
+            config false;
+            description
+              "The status of both upstream and downstream traffic increases, when the user on the LAC side is in the main state.";
+          }
+          leaf state {
+            type string {
+              length "1..8";
+            }
+            config false;
+            description
+              "Status of a session, which can be active or inactive.";
+          }
+          leaf life {
+            type string {
+              length "1..11";
+            }
+            config false;
+            description
+              "Session survival time (in seconds).";
+          }
+          leaf forwarding-state {
+            type string {
+              length "1..26";
+            }
+            config false;
+            description
+              "Whether packets are forwarded by a local interface or are backed up on the peer device and then forwarded.";
+          }
+        }
+      }
+    }
+    container lns-tunnels {
+      config false;
+      description
+        "List of information about LNS-side L2TP tunnel.";
+      list lns-tunnel {
+        key "slot-id local-id";
+        config false;
+        description
+          "Statistics of information about LNS-side L2TP tunnel.";
+        leaf slot-id {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "Display information about L2TP sessions on a specified tunnel board.";
+        }
+        leaf local-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Local tunnel ID.";
+        }
+        leaf remote-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Remote tunnel ID.";
+        }
+        leaf remote-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Name of the remote device.";
+        }
+        leaf status {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Tunnel establishment status.";
+        }
+        leaf l2tp-group-id {
+          type uint32;
+          config false;
+          description
+            "Number of the L2TP group.";
+        }
+        leaf sessions-number {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Number of users of the tunnel.";
+        }
+        leaf hello-interval {
+          type uint32;
+          config false;
+          description
+            "Interval for sending Hello packets.";
+        }
+        leaf remote-protocol-version {
+          type string {
+            length "1..7";
+          }
+          config false;
+          description
+            "Remote protocol version.";
+        }
+        leaf authentication {
+          type uint16;
+          config false;
+          description
+            "Whether CHAP authentication is performed.";
+        }
+        leaf remote-vendor-name {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Remote vendor name.";
+        }
+        leaf send-window-lower-ward {
+          type uint32;
+          config false;
+          description
+            "Lower limit of the send window.";
+        }
+        leaf received-window-lower-ward {
+          type uint32;
+          config false;
+          description
+            "Lower limit of the receive window.";
+        }
+        leaf received-window-size {
+          type uint16;
+          config false;
+          description
+            "Size of the receive window.";
+        }
+        leaf peer-framing-cap {
+          type uint32;
+          config false;
+          description
+            "Processing capability of synchronous/asynchronous frames.";
+        }
+        leaf peer-ip-address {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Remote IP Address.";
+        }
+        leaf source-ip-address {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Local IP address.";
+        }
+        leaf port {
+          type uint16;
+          config false;
+          description
+            "Remote Port number.";
+        }
+        leaf delay-ack-timer {
+          type uint32;
+          config false;
+          description
+            "Tunnel delay ACK timer.";
+        }
+        leaf idle-cut-timer {
+          type uint32;
+          config false;
+          description
+            "Tunnel idle-cut timer.";
+        }
+        leaf hello-timer {
+          type uint32;
+          config false;
+          description
+            "Tunnel Hello timer.";
+        }
+        leaf ctl-ack-timeout-number {
+          type uint32;
+          config false;
+          description
+            "Number of acknowledgement timeouts.";
+        }
+        leaf ctl-out-of-seq {
+          type uint32;
+          config false;
+          description
+            "Number of packets sent that are discarded because the Ns of the packets is greater than Nr.";
+        }
+        leaf ctl-out-of-window {
+          type uint32;
+          config false;
+          description
+            "Number of packets sent that are discarded because the Ns of the packets is smaller than Sr.";
+        }
+        leaf session-limit {
+          type uint32;
+          config false;
+          description
+            "Maximum number of sessions.";
+        }
+        leaf radius-session-limit {
+          type uint32;
+          config false;
+          description
+            "Maximum number of sessions allowed to be delivered by the RADIUS server.";
+        }
+        leaf outer-dscp {
+          type uint8;
+          config false;
+          description
+            "DSCP value in the outer VLAN tag of L2TP control packets.";
+        }
+        container statistics {
+          config false;
+          description
+            "Display information about LNS-side L2TP tunnel statistics.";
+          leaf received-packets {
+            type uint32;
+            config false;
+            description
+              "Number of packets received.";
+          }
+          leaf received-zlb {
+            type uint32;
+            config false;
+            description
+              "Number of ZLB packets received.";
+          }
+          leaf send-fail {
+            type uint32;
+            config false;
+            description
+              "Count of Sent Fail Packet.";
+          }
+          leaf send-packets {
+            type uint32;
+            config false;
+            description
+              "Count of Sent Packet.";
+          }
+          leaf send-zlb {
+            type uint32;
+            config false;
+            description
+              "Count of Sent ZLB Packet.";
+          }
+          leaf received-hello {
+            type uint32;
+            config false;
+            description
+              "Number of Hello packets received.";
+          }
+          leaf send-hello {
+            type uint32;
+            config false;
+            description
+              "Number of Hello packets sent.";
+          }
+          leaf up-packet-high {
+            type uint32;
+            config false;
+            description
+              "Total number of upstream packets.";
+          }
+          leaf up-packet-low {
+            type uint32;
+            config false;
+            description
+              "Total number of upstream packets.";
+          }
+          leaf up-byte-high {
+            type uint32;
+            config false;
+            description
+              "Total number of upstream bytes.";
+          }
+          leaf up-byte-low {
+            type uint32;
+            config false;
+            description
+              "Total number of upstream bytes.";
+          }
+          leaf down-packet-high {
+            type uint32;
+            config false;
+            description
+              "Total number of downstream packets.";
+          }
+          leaf down-packet-low {
+            type uint32;
+            config false;
+            description
+              "Total number of downstream packets.";
+          }
+          leaf down-byte-high {
+            type uint32;
+            config false;
+            description
+              "Total number of downstream bytes.";
+          }
+          leaf down-byte-low {
+            type uint32;
+            config false;
+            description
+              "Total number of downstream bytes.";
+          }
+        }
+        container time {
+          config false;
+          description
+            "Statistics of information about LNS-side L2TP tunnel time.";
+          leaf start-date {
+            type string {
+              length "1..31";
+            }
+            config false;
+            description
+              "Date when an L2TP tunnel was established.";
+          }
+          leaf start-clock {
+            type string {
+              length "1..31";
+            }
+            config false;
+            description
+              "Time when an L2TP tunnel was established.";
+          }
+          leaf continuance-length {
+            type string {
+              length "1..127";
+            }
+            config false;
+            description
+              "Time when an L2TP tunnel was continuance.";
+          }
+        }
+      }
+    }
+
+    container lns-sessions {
+      config false;
+      description
+        "List of information about LNS-side L2TP sessions.";
+      list lns-session {
+        key "slot-id local-tunnel-id local-session-id";
+        config false;
+        description
+          "Statistics of information about LNS-side L2TP sessions.";
+        leaf slot-id {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "Display information about L2TP sessions on a specified tunnel board.";
+        }
+        leaf local-tunnel-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Local tunnel ID.";
+        }
+        leaf local-session-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "ID of a local session.";
+        }
+        leaf status {
+          type session-status-type;
+          config false;
+          description
+            "Session establishment status.";
+        }
+        leaf l2tp-group-id {
+          type uint32 {
+            range "1..1000";
+          }
+          config false;
+          description
+            "ID of an L2TP group.";
+        }
+        leaf remote-tunnel-id {
+          type uint16 {
+              range "1..65535";
+            }
+          config false;
+          description
+            "Remote tunnel ID.";
+        }
+        leaf remote-session-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "ID of a remote session.";
+        }
+        leaf local-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Local IP address.";
+        }
+        leaf remote-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Remote IP address.";
+        }
+        leaf sequence {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Sequence number.";
+        }
+        leaf peer-framing-type {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Frame type of the peer device. (1: asynchronous; 2: synchronous; 3: both synchronous and asynchronous)";
+        }
+        leaf peer-bearer-type {
+          type int32;
+          config false;
+          description
+            "AVP No. 4 attribute (1: simulated; 2: digital; 3: both simulated and digital)";
+        }
+        leaf ppp-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Index of a PPP entry.";
+        }
+        leaf interface-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Index of the tunnel source interface.";
+        }
+        leaf window-idle-timer {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "ID of the idle-cut timer for the tunnel.";
+        }
+        leaf ctrl-call-ack-timer {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "ID of the timeout timer for control packets.";
+        }
+        leaf result-code {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Error code for a session teardown cause.";
+        }
+        leaf trace-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Service trace ID.";
+        }
+        leaf outer-dscp {
+          type uint8 {
+            range "0..255";
+          }
+          config false;
+          description
+            "DSCP value in the outer VLAN tag of data packets.";
+        }
+        leaf calling-number {
+          type string {
+            length "1..512";
+          }
+          config false;
+          description
+            "Index assigned to each session.";
+        }
+        leaf user-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "ID of a user.";
+        }
+        leaf user-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Name of a user.";
+        }
+      }
+    }
+    container user-urpfs {
+      config false;
+      description
+        "List of datagram statistics information of discard packet with L2TP user address mismatch.";
+      list user-urpf {
+        key "slot-id";
+        config false;
+        description
+          "Statistics of datagram information of discard packet with L2TP user address mismatch.";
+        leaf slot-id {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "The available slot.";
+        }
+        container ipv4 {
+          config false;
+          description
+            "Statistics of datagram information of discard packet with L2TP user IPv4 address mismatch.";
+          uses user-urpf-ipv4-ipv6;
+        }
+        container ipv6 {
+          config false;
+          description
+            "Statistics of datagram information of discard packet with L2TP user IPv6 address mismatch.";
+          uses user-urpf-ipv4-ipv6;
+        }
+      }
+    }
+    container session-number {
+      config false;
+      description
+        "Statistics of session number by tunnel source IP address.";
+      container lacs {
+        config false;
+        description
+          "List of session number of LAC by tunnel source IP address.";
+        list lac {
+          key "source-address vpn-name";
+          config false;
+          description
+            "Statistics of session number of LAC by tunnel source IP address.";
+          uses session-number;
+        }
+      }
+      container lnss {
+        config false;
+        description
+          "List of session number of LNS by tunnel source IP address.";
+        list lns {
+          key "source-address vpn-name";
+          config false;
+          description
+            "Statistics of session number of LNS by tunnel source IP address.";
+          uses session-number;
+        }
+      }
+    }
+    container lac-tunnel-statistics {
+      config false;
+      description
+        "List of lac tunnel statistics infos.";
+      list lac-tunnel-statistic {
+        key "local-id";
+        config false;
+        description
+          "Statistics of lac tunnel info.";
+        uses tunnel-statistics-basic;
+        leaf send-sccrq-number {
+          type uint64;
+          config false;
+          description
+            "Send sccrq number.";
+        }
+        leaf receive-sccrp-number {
+          type uint64;
+          config false;
+          description
+            "Receive sccrp number.";
+        }
+        leaf receive-sccrp-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive sccrp error number.";
+        }
+        leaf send-scccn-number {
+          type uint64;
+          config false;
+          description
+            "Send scccn number.";
+        }
+        leaf send-icrq-number {
+          type uint64;
+          config false;
+          description
+            "Send icrq number.";
+        }
+        leaf receive-stopccn-number {
+          type uint64;
+          config false;
+          description
+            "Receive stopccn number.";
+        }
+        leaf receive-stopccn-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive stopccn error number.";
+        }
+        leaf send-stopccn-number {
+          type uint64;
+          config false;
+          description
+            "Send stopccn number.";
+        }
+        leaf receive-icrp-number {
+          type uint64;
+          config false;
+          description
+            "Receive icrp number.";
+        }
+        leaf receive-icrp-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive icrp error number.";
+        }
+        leaf send-iccn-number {
+          type uint64;
+          config false;
+          description
+            "Send iccn number.";
+        }
+        leaf receive-cdn-number {
+          type uint64;
+          config false;
+          description
+            "Receive cdn number.";
+        }
+        leaf receive-cdn-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive cdn error number.";
+        }
+        leaf send-cdn-number {
+          type uint64;
+          config false;
+          description
+            "Send cdn number.";
+        }
+        leaf receive-hello-number {
+          type uint64;
+          config false;
+          description
+            "Receive hello number.";
+        }
+        leaf receive-hello-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive hello error number.";
+        }
+        leaf send-hello-number {
+          type uint64;
+          config false;
+          description
+            "Send hello number.";
+        }
+        leaf receive-zlb-number {
+          type uint64;
+          config false;
+          description
+            "Receive zlb number.";
+        }
+        leaf receive-zlb-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive zlb error number.";
+        }
+        leaf send-zlb-number {
+          type uint64;
+          config false;
+          description
+            "Send zlb number.";
+        }
+        uses tunnel-statistics-packet;
+      }
+    }
+    container lns-tunnel-statistics {
+      config false;
+      description
+        "List of lns tunnel statistics infos.";
+      list lns-tunnel-statistic {
+        key "local-id";
+        config false;
+        description
+          "Statistics of lns info.";
+        uses tunnel-statistics-basic;
+        leaf receive-sccrq-number {
+          type uint64;
+          config false;
+          description
+            "Receive sccrq number.";
+        }
+        leaf receive-sccrq-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive sccrq error number.";
+        }
+        leaf send-sccrp-number {
+          type uint64;
+          config false;
+          description
+            "Send sccrp number.";
+        }
+        leaf receive-scccn-number {
+          type uint64;
+          config false;
+          description
+            "Receive scccn number.";
+        }
+        leaf receive-scccn-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive scccn error number.";
+        }
+        leaf receive-stopccn-number {
+          type uint64;
+          config false;
+          description
+            "Receive stopccn number.";
+        }
+        leaf receive-stopccn-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive stopccn error number.";
+        }
+        leaf send-stopccn-number {
+          type uint64;
+          config false;
+          description
+            "Send stopccn number.";
+        }
+        leaf receive-icrq-number {
+          type uint64;
+          config false;
+          description
+            "Receive icrq number.";
+        }
+        leaf receive-icrq-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive icrq error number.";
+        }
+        leaf send-icrp-number {
+          type uint64;
+          config false;
+          description
+            "Send icrp number.";
+        }
+        leaf receive-iccn-number {
+          type uint64;
+          config false;
+          description
+            "Receive iccn number.";
+        }
+        leaf receive-iccn-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive iccn error number.";
+        }
+        leaf receive-hello-number {
+          type uint64;
+          config false;
+          description
+            "Receive hello number.";
+        }
+        leaf receive-hello-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive hello error number.";
+        }
+        leaf send-hello-number {
+          type uint64;
+          config false;
+          description
+            "Send hello number.";
+        }
+        leaf receive-zlb-number {
+          type uint64;
+          config false;
+          description
+            "Receive zlb number.";
+        }
+        leaf receive-zlb-error-number {
+          type uint64;
+          config false;
+          description
+            "Receive zlb error number.";
+        }
+        leaf send-zlb-number {
+          type uint64;
+          config false;
+          description
+            "Send zlb number.";
+        }
+        uses tunnel-statistics-packet;
+      }
+    }
+    container lns-tunnel-backups {
+      config false;
+      description
+        "List of information about LNS-side L2TP tunnel Backup.";
+      list lns-tunnel-backup {
+        key "slot-id local-id";
+        config false;
+        description
+          "Statistics of information about LNS-side L2TP tunnel Backup.";
+        leaf slot-id {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "Display information about L2TP sessions on a specified tunnel board.";
+        }
+        leaf local-id {
+          type uint16 {
+              range "1..65535";
+            }
+          config false;
+          description
+            "Displays local tunnel ID.";
+        }
+        leaf remote-id {
+          type uint16 {
+              range "1..65535";
+            }
+          config false;
+          description
+            "Displays remote tunnel ID.";
+        }
+        leaf port {
+          type uint16;
+          config false;
+          description
+            "Displays port.";
+        }
+        leaf session-number {
+          type uint32;
+          config false;
+          description
+            "The upper limit of CP is 4294967295, the other is 3145727.";
+        }
+        leaf remote-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Displays remote name of the tunnel.";
+        }
+        leaf remote-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Remote address.";
+        }
+      }
+    }
+    container lns-session-backups {
+      config false;
+      description
+        "List of backup information about L2TP LNS-side sessions.";
+      list lns-session-backup {
+        key "slot-id local-tunnel-id local-session-id";
+        config false;
+        description
+          "Statistics of backup information about L2TP LNS-side sessions.";
+        leaf slot-id {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "Display information about L2TP sessions on a specified tunnel board.";
+        }
+        leaf local-tunnel-id {
+          type uint16 {
+              range "1..65535";
+            }
+          config false;
+          description
+            "Local tunnel ID.";
+        }
+        leaf local-session-id {
+          type uint16 {
+              range "1..65535";
+            }
+          config false;
+          description
+            "Local session ID, which uniquely identifies a session.";
+        }
+        leaf remote-session-id {
+          type uint16 {
+              range "1..65535";
+            }
+          config false;
+          description
+            "Remote session ID, which uniquely identifies a session.";
+        }
+        leaf remote-tunnel-id {
+          type uint16 {
+              range "1..65535";
+            }
+          config false;
+          description
+            "Remote tunnel ID.";
+        }
+        leaf user-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "ID of a user.";
+        }
+        leaf user-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Name of a user.";
+        }
+      }
+    }
+    container lns-statistics {
+      config false;
+      description
+        "Statistics of l2tp statistics lns.";
+      uses lns-statistics-number;
+    }
+    container lns-session-calling-numbers {
+      config false;
+      description
+        "List of lns session information by calling number.";
+      list lns-session-calling-number {
+        key "calling-number";
+        config false;
+        description
+          "Statistics of lns session information by calling number.";
+        leaf calling-number {
+          type string {
+            length "1..512";
+          }
+          config false;
+          description
+            "Index assigned to each session.";
+        }
+        leaf local-session-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "ID of a local session.";
+        }
+        leaf local-tunnel-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Local tunnel ID.";
+        }
+        leaf status {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Session establishment status.";
+        }
+        leaf l2tp-group-id {
+          type uint32 {
+            range "1..1000";
+          }
+          config false;
+          description
+            "ID of an L2TP group.";
+        }
+        leaf remote-session-id {
+          type uint16 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "ID of a remote session.";
+        }
+        leaf sequence {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Sequence number.";
+        }
+        leaf peer-framing-type {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Frame type of the peer device. (1: asynchronous; 2: synchronous; 3: both synchronous and asynchronous)";
+        }
+        leaf peer-bearer-type {
+          type int32;
+          config false;
+          description
+            "AVP No. 4 attribute (1: simulated; 2: digital; 3: both simulated and digital)";
+        }
+        leaf authentication-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "User authentication name.";
+        }
+        leaf ppp-id {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "Index of a PPP entry.";
+        }
+        leaf interface-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Index of the tunnel source interface.";
+        }
+        leaf window-idle-timer-flag {
+          type boolean;
+          config false;
+          description
+            "Flag of the idle-cut timer for the tunnel.";
+        }
+        leaf ctrl-call-ack-timer-flag {
+          type boolean;
+          config false;
+          description
+            "Flag of the timeout timer for control packets.";
+        }
+        leaf result-code {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "Error code for a session teardown cause.";
+        }
+        leaf trace-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Service trace ID.";
+        }
+        leaf outer-dscp {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "DSCP value in the outer VLAN tag of data packets.";
+        }
+      }
+    }
+    container rui-statistics {
+      config false;
+      description
+        "L2tp Redundant User Information statistics.";
+      uses tunnel-statistics-backup;
+      uses session-statistics-backup;
+      uses lastest-received-message-backup;
+      uses lastest-tunnel-record-backup;
+      uses lastest-session-record-backup;
+    }
+  }
+
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description 
+      "Adds l2tp configuration to aaa domain model.";
+    container l2tp {
+      description 
+        "Configure l2tp to aaa domain model.";
+      container domain-radius-force-enable {
+        description
+          "Configure the L2TP attributes delivered by the RADIUS server for the domain users.";
+        leaf radius-force-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the L2TP attributes delivered by the RADIUS server for the domain users.";
+        }
+      }
+      container authorization {
+        description
+          "Configure the domain name-based authorization for L2TP users.";
+        leaf password {
+          type pub-type:password-extend {
+            length "1..128";
+          }
+          description
+            "The password is a string ranging from 1 to 16 characters for a plaintext password and 1 to 128 characters for a ciphertext password.";
+        }
+      }
+      container groups {
+        description
+          "Configure an L2TP group in the domain on the LAC.";
+        leaf-list name {
+          type leafref {
+            path "/bras-l2tp-access:bras-l2tp-access/bras-l2tp-access:l2tp-groups/bras-l2tp-access:l2tp-group/bras-l2tp-access:name";
+          }
+          max-elements "8";
+          description
+            "Configure the name of an L2TP group.";
+        }
+      }
+      container qos-profile {
+        description
+          "Configure a QoS profile to an AAA domain for L2TP users.";
+        leaf inbound-profile-name {
+          type leafref {
+            path "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile/qos:name";
+          }
+          must "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile[qos:name=current()]/qos:mode='normal'";
+          description
+            "Specifies the name of a QoS profile to the incoming traffic of an AAA domain for L2TP users.";
+        }
+        leaf outbound-profile-name {
+          type leafref {
+            path "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile/qos:name";
+          }
+          must "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile[qos:name=current()]/qos:mode='normal'";
+          description
+            "Specifies the name of a QoS profile to the outgoing traffic of an AAA domain for L2TP users.";
+        }
+      }
+      container dslam-connect-speed {
+        description
+          "Configure an LAC to encapsulate the DSLAM's upstream and downstream rates respectively into the AVP24 and AVP3 attributes of packets to be sent to an LNS.";
+        leaf connect-speed-enable {
+          type empty;
+          description
+            "Enables an LAC to encapsulate the DSLAM's upstream and downstream rates respectively into the AVP24 and AVP3 attributes of packets to be sent to an LNS.";
+        }
+      }
+      container tunnel-account-rfc-2867 {
+        description
+          "Configure that after the accounting defined by RFC 2867 for tunnel users is enabled, the accounting packets for the tunnel and users in the tunnel are sent to the authentication server based on the format defined by RFC 2867.";
+        leaf account-enable {
+          type empty;
+          description
+            "Enables the accounting defined by RFC 2867 for tunnel users.";
+        }
+      }
+      container priority-car-of-tcp-ack-no-payload {
+        must "not(./lns-edsg-ipv4='false' and ./lns-edsg-ipv4-and-ipv6='true')";
+        description
+          "Configure the priority car of TCP ACK packet for the no payload.";
+        leaf lns-priority-car {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the priority car of TCP ACK packet for the no payload of LNS users.";
+        }
+        leaf lns-edsg-ipv4 {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the priority car of TCP ACK packet for the no payload of LNS users, who set edsg service and whose IP type is IPv4.";
+        }
+        leaf lns-edsg-ipv4-and-ipv6 {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the priority car of TCP ACK packet for the no payload of LNS users, who set edsg service and whose IP type is IPv4/IPv6.";
+        }
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description 
+      "Adds l2tp configuration to interface model.";
+    container l2tp-interface {
+      description
+        "Configure l2tp to interface model.";
+      container vt-interface {
+        when "../../ifm:type = 'Virtual-Template'";
+        description
+          "Configure l2tp to vt-interface.";
+        container lns-ppp-echo-slow {
+          description
+            "Configure a device to send PPP echo packets of LNS users to the CPU for processing.";
+          leaf echo-slow-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable a device to send PPP echo packets of LNS users to the CPU for processing.";
+          }
+        }
+      }
+    }
+  }
+
+  augment "/radius:radius/radius:radius-server-groups/radius:radius-server-group" {
+    description 
+      "Adds l2tp configuration to radius group model.";
+    container l2tp {
+      description
+        "Configure l2tp to radius group model.";
+      container lts-tunnel-format-vendor {
+        description
+          "Configure a vendor-specific encapsulation format for LTS user tunnel attributes.";
+        leaf redback-encapsulation {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the Redback encapsulation format for LTS user tunnel attributes.";
+        }
+      }
+      container lns-nas-port-id {
+        description
+          "Configure the format of the nas-port-id attribute sent by the L2TP LNS to the RADIUS server.";
+        container include-attributes {
+          description
+            "List of the user-defined format of the attributes.";
+          list include-attribute {
+            key "attribute-type";
+            max-elements "7";
+            ordered-by user;
+            description
+              "Configure the user-defined format of the attribute.";
+            leaf attribute-type {
+              type enumeration {
+                enum "local-tunnel-ip" {
+                  value 1;
+                  description
+                    "Local tunnel IP.";
+                }
+                enum "peer-tunnel-ip" {
+                  value 2;
+                  description
+                    "Peer tunnel IP.";
+                }
+                enum "local-tunnel-id" {
+                  value 3;
+                  description
+                    "Local tunnel ID.";
+                }
+                enum "peer-tunnel-id" {
+                  value 4;
+                  description
+                    "Peer tunnel ID.";
+                }
+                enum "local-session-id" {
+                  value 5;
+                  description
+                    "Local session ID.";
+                }
+                enum "peer-session-id" {
+                  value 6;
+                  description
+                    "Peer session ID.";
+                }
+                enum "call-serial-number" {
+                  value 7;
+                  description
+                    "Call serial number.";
+                }
+              }
+              description
+                "Configures the user-defined format of the nas-port-id attribute type.";
+            }
+            leaf delimiter {
+              type string {
+                length "1";
+              }
+              description
+                "Configures the user-defined format of the attribute delimiter one.";
+            }
+          }
+        }
+        choice string-or-delimiter {
+          description
+            "Configures the format of the nas-port-id.";
+          case lns-string {
+            description
+              "Specifies a user-defined character string.";
+            leaf lns-string {
+              type string {
+                length "1..31";
+              }
+              must "count(../include-attributes/include-attribute) >= 1";
+              description
+                "Specifies a user-defined character string.";
+            }
+          }
+          case ip-delimiter {
+            description
+              "Specifies a lns ip delimiter.";
+            leaf lns-ip-delimiter {
+              type string {
+                length "1";
+              }
+              must "count(../include-attributes/include-attribute) >= 1";
+              description
+                "Specifies a lns ip delimiter.";
+            }
+          }
+        }
+      }
+      container nas-port-id {
+        description
+          "Configure the nas-port-id attribute of the RADIUS server can carry the IP address of the DSLAM recorded by the physical port description. After the configuration, the nas-port-id attribute of the RADIUS server is encapsulated according to the configuration format.";
+        container include-attributes {
+          description
+            "List of the user-defined format of the nas-port-id attributes.";
+          list include-attribute {
+            key "attribute-type";
+            max-elements "3";
+            ordered-by user;
+            description
+              "Configure the user-defined format of the nas-port-id attribute.";
+            leaf attribute-type {
+              type enumeration {
+                enum "interface-description" {
+                  value 1;
+                  description
+                    "Interface description.";
+                }
+                enum "pe-vlan" {
+                  value 2;
+                  description
+                    "User's peVLAN.";
+                }
+                enum "ce-vlan" {
+                  value 3;
+                  description
+                    "User's ceVLAN.";
+                }
+              }
+              description
+                "Configures the user-defined format of the attribute delimiter one.";
+            }
+            leaf delimiter {
+              type string {
+                length "1";
+                pattern '[b\*\-\\#$@&:]';
+              }
+              description
+                "Configures the user-defined format of the attribute delimiter.";
+            }
+          }
+        }
+        leaf head-delimiter {
+          type string {
+            length "1";
+            pattern '[b\*\-\\#$@&:]';
+          }
+          must "count(../include-attributes/include-attribute) >= 1";
+          description
+            "Configures the user-defined format of the nas-port-id include delimiter.";
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-subscriber/bras-basic-access:layer2-subscriber" {
+    description 
+      "Adds l2tp configuration to the bas interface.";
+    container l2tp {
+      description
+        "Configure l2tp to the bas interface.";
+      container cevlan-offset {
+        description
+          "Configure ceVLAN offset.";
+        leaf offset-value {
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "CeVLAN offset value.";
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description 
+      "Adds l2tp configuration to the LPU.";
+    container l2tp {
+      description
+        "Configure l2tp to the LPU.";
+      uses slot-config;
+    }
+  }
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description 
+      "Adds l2tp configuration to the LPU.";
+    container l2tp {
+      description
+        "Configure l2tp to the LPU.";
+      uses slot-config;
+    }
+  }
+
+  augment "/bras-cu-controller:bras-cu-controller/bras-cu-controller:resource-ups/bras-cu-controller:resource-up" {
+    description "Adds l2tp configuration to the up.";
+    container l2tp {
+      description
+        "Configure l2tp to the up.";
+
+      container lns-groups {
+        description
+          "List of LNS Group for a specified vBRAS-UP.";
+        list lns-group {
+          key "name";
+          max-elements "16";
+          description
+            "Configure LNS Group for a specified vBRAS-UP.";
+          leaf name {
+            type string {
+              length "1..30";
+            }
+            description
+              "Name of a LNS Group.";
+            ext:case-sensitivity upper2lower;
+          }
+          container bind-sources {
+            description
+              "List of UP-LNS group bind source interface.";
+            list bind-source {
+              key "loopback-number";
+              max-elements "256";
+              description
+                "Configure UP-LNS group bind source interface.";
+              leaf loopback-number {
+                type uint32 {
+                  range "0..2147483647";
+                }
+                description
+                  "Loopback number.";
+              }
+            }
+          }
+          uses lns-group-bind-slots;
+          uses lns-group-common;
+        }
+      }
+
+      container session-number {
+        config false;
+        description
+          "Statistics of session number by tunnel source IP address.";
+        container lacs {
+          config false;
+          description
+            "List of session number of LAC by tunnel source IP address.";
+          list lac {
+            key "source-address vpn-name";
+            config false;
+            description
+              "Statistics of session number of LAC by tunnel source IP address.";
+            uses session-number;
+          }
+        }
+        container lnss {
+          config false;
+          description
+            "List of session number of LNS by tunnel source IP address.";
+          list lns {
+            key "source-address vpn-name";
+            config false;
+            description
+              "Statistics of session number of LNS by tunnel source IP address.";
+            uses session-number;
+          }
+        }
+      }
+
+      container used-tunnel {
+        config false;
+        description
+          "Statistics of the number of used L2TP tunnel IDs.";
+        leaf number {
+          type uint32;
+          config false;
+          description
+            "The number of Used Tunnel IDs.";
+        }
+      }
+
+    }
+  }
+
+  augment "/bras-cu-controller:bras-cu-controller/bras-cu-controller:resource-ups/bras-cu-controller:resource-up/bras-cu-controller:remote-up-boards/bras-cu-controller:remote-up-board" {
+    description "Adds l2tp configuration to the up-board.";
+    container l2tp {
+      description
+        "Configure l2tp to the up-board.";
+      container icrq-limit {
+        description
+          "Configure icrq limit.";
+        leaf set-value {
+          type uint32 {
+            range "1..60000";
+          }
+          description
+            "Limit value.";
+        }
+      }
+    }
+  }
+
+}

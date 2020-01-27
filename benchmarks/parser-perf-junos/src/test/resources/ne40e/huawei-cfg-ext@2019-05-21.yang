@@ -1,0 +1,43 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-cfg-ext {
+  yang-version 1.1;
+  namespace "urn:huawei:yang:huawei-cfg-ext";
+  prefix cfg-ext;
+  import huawei-extension {
+    prefix ext;
+  }    
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Display the changes information in the candidate datastore.";
+  revision 2019-05-21 {
+    description
+      "Init revision.";
+    reference
+      "RFC 6241, Section 8.3.";
+  }
+  ext:task-name "config";
+  rpc get-candidate-change {
+    description
+      "Configuration change information.";
+    output  {
+      anydata effective-changes {
+        description
+          "Configuration change information recorded in the candidate datastore.";
+      }
+      anydata ineffective-changes {
+        description
+          "Changes in configurations that have not taken effect in the candidate datastore.";
+      }
+    }
+  }
+}

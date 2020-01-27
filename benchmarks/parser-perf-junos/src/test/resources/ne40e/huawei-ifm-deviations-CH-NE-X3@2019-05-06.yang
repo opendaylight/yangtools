@@ -1,0 +1,114 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifm-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-ifm-deviations-CH-NE-X3";
+  prefix ifm-devs-CH-NE-X3;
+
+  import huawei-ifm {
+    prefix ifm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Common interface management, which includes the public configuration of interfaces.";
+
+  revision 2019-05-06 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  typedef error-down-type-deviations {
+    type enumeration {
+      enum bpdu-protection {
+        value 0;
+        description
+          "BPDU protection.";
+      }
+      enum l2-loop-occured {
+        value 74;
+        description
+          "L2 loop.";
+      }
+    }
+    description
+      "Interface error down type.";
+  }
+
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:dynamic/ifm:sub-if-counts" {
+    deviate not-supported;
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:control-flap/ifm:control-flap-count" {
+    deviate not-supported;
+  }
+  deviation "/ifm:ifm/ifm:auto-recovery-times/ifm:auto-recovery-time/ifm:error-down-type" {
+    deviate replace {
+      type ifm-devs-CH-NE-X3:error-down-type-deviations;
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:error-down/ifm:cause" {
+    deviate replace {
+      type ifm-devs-CH-NE-X3:error-down-type-deviations;
+    }
+  }
+  deviation "/ifm:reset-if-counters-by-type/ifm:input/ifm:if-type" {
+    deviate add {
+      must "../ifm:if-type='Ethernet' or ../ifm:if-type ='GigabitEthernet' or ../ifm:if-type='Eth-Trunk'
+            or ../ifm:if-type='Ip-Trunk' or ../ifm:if-type='Pos' or ../ifm:if-type='Tunnel'
+            or ../ifm:if-type='NULL' or ../ifm:if-type='LoopBack' or ../ifm:if-type='Vlanif' or ../ifm:if-type='100GE'
+            or ../ifm:if-type='40GE' or ../ifm:if-type='25GE' or ../ifm:if-type='MTunnel' or ../ifm:if-type='MEth'
+            or ../ifm:if-type='Cpos' or ../ifm:if-type='E1' or ../ifm:if-type='Serial' or ../ifm:if-type='Mp-group'
+            or ../ifm:if-type='Virtual-Ethernet' or ../ifm:if-type='Ima-group' or ../ifm:if-type='Remote-Ap' or ../ifm:if-type='VBridge'
+            or ../ifm:if-type='Atm-Bundle' or ../ifm:if-type='Lmpif' or ../ifm:if-type='T1' or ../ifm:if-type='T3'
+            or ../ifm:if-type='Global-VE' or ../ifm:if-type='Vbdif' or ../ifm:if-type='E3' or ../ifm:if-type='Pos-Trunk'
+            or ../ifm:if-type='Trunk-Serial' or ../ifm:if-type='Global-Ima-Group' or ../ifm:if-type='Global-Mp-Group'
+            or ../ifm:if-type='Nve' or ../ifm:if-type='Wdm'
+            or ../ifm:if-type='Virtual-Template' or ../ifm:if-type='XGigabitEthernet'
+            or ../ifm:if-type='FlexE' or ../ifm:if-type='50|100GE' or ../ifm:if-type='50GE' or ../ifm:if-type='PW-VE'";
+    }
+  }
+  deviation "/ifm:reset-if-mib-counters-by-type/ifm:input/ifm:if-type" {
+    deviate add {
+      must "../ifm:if-type='Ethernet' or ../ifm:if-type ='GigabitEthernet' or ../ifm:if-type='Eth-Trunk'
+            or ../ifm:if-type='Ip-Trunk' or ../ifm:if-type='Pos' or ../ifm:if-type='Tunnel'
+            or ../ifm:if-type='NULL' or ../ifm:if-type='LoopBack' or ../ifm:if-type='Vlanif' or ../ifm:if-type='100GE'
+            or ../ifm:if-type='40GE' or ../ifm:if-type='25GE' or ../ifm:if-type='MTunnel' or ../ifm:if-type='MEth'
+            or ../ifm:if-type='Serial' or ../ifm:if-type='Mp-group' or ../ifm:if-type='Virtual-Ethernet'
+            or ../ifm:if-type='Ima-group' or ../ifm:if-type='Remote-Ap' or ../ifm:if-type='VBridge'
+            or ../ifm:if-type='Atm-Bundle' or ../ifm:if-type='Lmpif' or ../ifm:if-type='T3'
+            or ../ifm:if-type='Global-VE' or ../ifm:if-type='Vbdif' or ../ifm:if-type='Pos-Trunk' or ../ifm:if-type='Trunk-Serial'
+            or ../ifm:if-type='Global-Ima-Group' or ../ifm:if-type='Global-Mp-Group'
+            or ../ifm:if-type='Nve' or ../ifm:if-type='Virtual-Template' or ../ifm:if-type='XGigabitEthernet'
+            or ../ifm:if-type='FlexE' or ../ifm:if-type='50|100GE' or ../ifm:if-type='50GE' or ../ifm:if-type='PW-VE'";
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:trap-threshold/ifm:input-rising-rate" {
+    deviate replace {
+      default "90";
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:trap-threshold/ifm:input-resume-rate" {
+    deviate replace {
+      default "80";
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:trap-threshold/ifm:output-rising-rate" {
+    deviate replace {
+      default "90";
+    }
+  }
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:trap-threshold/ifm:output-resume-rate" {
+    deviate replace {
+      default "80";
+    }
+  }
+}

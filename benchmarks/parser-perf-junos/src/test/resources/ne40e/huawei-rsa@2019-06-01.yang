@@ -1,0 +1,202 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-rsa {
+  namespace "urn:huawei:yang:huawei-rsa";
+  prefix rsa;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "RSA.";
+  revision 2019-06-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ssh-server";
+  typedef encode-type {
+    type enumeration {
+      enum "der" {
+        value 0;
+        description
+          "Der encode type.";
+      }
+      enum "pem" {
+        value 1;
+        description
+          "Pem encode type.";
+      }
+      enum "openssh" {
+        value 2;
+        description
+          "Openssh encode type.";
+      }
+    }
+    description
+      "RSA encode type list.";
+  }
+  container rsa {
+    description
+      "RSA configuration.";
+    container local-key {
+      presence "create rsaLocalKey";
+      description
+        "Enable/disable Local key code.";
+      leaf key-size {
+        type uint32 {
+          range "2048 | 3072";
+        }
+        default "3072";
+        description
+          "Key size.";
+      }
+      leaf host-key-name {
+        type string {
+          length "0..264";
+        }
+        config false;
+        description
+          "Hostkey name.";
+      }
+      leaf host-key-code {
+        type string {
+          length "0..1024";
+        }
+        config false;
+        description
+          "Hostkey code.";
+      }
+      leaf host-key-ssh1 {
+        type string {
+          length "0..1024";
+        }
+        config false;
+        description
+          "Hostkey code in SSH1 format.";
+      }
+      leaf host-key-pem {
+        type string {
+          length "0..1920";
+        }
+        config false;
+        description
+          "Hostkey code in PEM format.";
+      }
+      leaf host-key-openssh {
+        type string {
+          length "0..1920";
+        }
+        config false;
+        description
+          "Hostkey code in OpenSSH format.";
+      }
+      leaf server-key-name {
+        type string {
+          length "0..264";
+        }
+        config false;
+        description
+          "Server key name.";
+      }
+      leaf server-key-code {
+        type string {
+          length "0..1024";
+        }
+        config false;
+        description
+          "Server key code.";
+      }
+    }
+    container peer-keys {
+      description
+        "List of Peer key table.";
+      list peer-key {
+        key "key-name";
+        description
+          "Configure Peer key code. If the key code is bound, it cannot be deleted, you need to unbind and then delete.";
+        leaf key-name {
+          type string {
+            length "1..40";
+          }
+          description
+            "Key name.";
+        }
+        leaf key-code {
+          type string {
+            length "1..1024";
+          }
+          mandatory true;
+          ext:support-filter "true";			  
+          description
+            "Key code conforming to PEM, OpenSSH or DER format.";
+        }
+        leaf encode-type {
+          type encode-type;
+          default "der";
+          ext:support-filter "true";			  
+          description
+            "Encode type.";
+        }
+      }
+    }
+    container key-pairs {
+      description
+        "List of RSA key-pair label.";
+      list key-pair {
+        key "key-pair-label";
+        max-elements 20;
+        description
+          "Configure RSA key-pair.";
+        leaf key-pair-label {
+          type string {
+            length "1..35";
+            pattern '[a-z0-9_]*';
+          }
+          description
+            "Key-pair Label Name : It only contains underscores (_), lowercase letters and digits.";
+        }
+        leaf key-size {
+          type uint32 {
+            range "2048 | 3072";
+          }
+          default "3072";
+          ext:support-filter "true";
+          description
+            "Size of Key-pair.";
+        }
+        leaf host-key-code {
+          type string {
+            length "0..2048";
+          }
+          config false;
+          ext:support-filter "true";			  
+          description
+            "Hostkey code.";
+        }
+      }
+    }
+    container rsa-global {
+      description
+        "Configure Global configuration.";
+      leaf max-key-pair {
+        type int32 {
+          range "1..20";
+        }
+        default "20";
+        description
+          "Maximum key-pair value.";
+      }
+    }
+  }
+}

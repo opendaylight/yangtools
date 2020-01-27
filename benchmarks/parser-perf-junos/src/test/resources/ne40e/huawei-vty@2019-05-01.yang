@@ -1,0 +1,232 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-vty {
+  namespace "urn:huawei:yang:huawei-vty";
+  prefix vty;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-vty-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "VTY.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "tty";
+  container vty {
+    description
+      "VTY.";
+    container lines {
+      description
+        "List of VTY specific configuration list.";
+      list line {
+        key "index";
+        description
+          "Configure VTY specific configuration policy.";
+        ext:generated-by system;
+        leaf index {
+          type uint8 {
+            range "34..54";
+          }
+          description
+            "Terminal line index.";
+        }
+        leaf idle-timeout-min {
+          type uint16 {
+            range "0..35791";
+          }
+          default "10";
+          ext:support-filter "true";
+          description
+            "Idle timeout.";
+        }
+        leaf idle-timeout-sec {
+          type uint16 {
+            range "0..59";
+          }
+          default "0";
+          ext:support-filter "true";
+          description
+            "Idle timeout.";
+        }
+        leaf auth-mode {
+          type vtyauthmodetype;
+          must "(../auth-mode='aaa' and ../proto-inbound='ssh') or not(../proto-inbound='ssh')";
+          default "init";
+          ext:support-filter "true";
+          description
+            "Authentication Mode.";
+        }
+        leaf auth-password {
+          type pub-type:password {
+            length "8..128";
+          }
+          must "../auth-mode='password'";
+          description
+            "Authentication Password. The password is a string ranging from 8 to 16 characters for a plaintext password and 48 to 128 characters for a ciphertext password.";
+        }
+        leaf privilege-level {
+          type uint8 {
+            range "0..15";
+          }
+          default "0";
+          ext:support-filter "true";
+          description
+            "User privilege level.";
+        }
+        leaf history-cmd-size {
+          type uint16 {
+            range "0..256";
+          }
+          default "10";
+          ext:support-filter "true";
+          description
+            "History command buffer size. Describes the number of commands will be stored in history.";
+        }
+        leaf screen-length {
+          type uint16 {
+            range "0..512";
+          }
+          default "24";
+          ext:support-filter "true";
+          description
+            "VTY screen length value.";
+        }
+        leaf shell-enable {
+          type vtybooltype;
+          default "true";
+          ext:support-filter "true";
+          description
+            "Shell (Enable/Disable).";
+        }
+        leaf acl4-inbound {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          ext:support-filter "true";
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          description
+            "Acl inbound name or number for IPv4 protocol.";
+        }
+        leaf acl4-outbound {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          ext:support-filter "true";
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          description
+            "Acl outbound name or number for IPv4 protocol.";
+        }
+        leaf acl6-inbound {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          ext:support-filter "true";
+          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+          description
+            "Acl inbound name or number for IPv6 protocol.";
+        }
+        leaf acl6-outbound {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          ext:support-filter "true";
+          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+          description
+            "Acl outbound name or number for IPv6 protocol.";
+        }
+        leaf acl4-inbound-num {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          ext:support-filter "true";
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          status deprecated;
+          description
+            "Acl inbound number for IPv4 protocol.";
+        }
+        leaf acl4-outbound-num {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          ext:support-filter "true";
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          status deprecated;
+          description
+            "Acl outbound number for IPv4 protocol.";
+        }
+        leaf acl6-inbound-num {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          ext:support-filter "true";
+          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+          status deprecated;
+          description
+            "Acl inbound number for IPv6 protocol.";
+        }
+        leaf acl6-outbound-num {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          ext:support-filter "true";
+          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+          status deprecated;
+          description
+            "Acl outbound number for IPv6 protocol.";
+        }
+        leaf proto-inbound {
+          type vtyprotoinbndtype;
+          must "(../auth-mode='aaa' and ../proto-inbound='ssh') or not(../proto-inbound='ssh')";
+          default "all";
+          ext:support-filter "true";
+          description
+            "VTY protocol inbound name.";
+        }
+      }
+    }
+    container line-global {
+      description
+        "Configure VTY global configuration.";
+      leaf max-users {
+        type uint32 {
+          range "0..21";
+        }	
+        config false;
+        description
+          "Maximum users can connect to VTY.";
+      }
+      leaf password-lock {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable VTY IP Block.";
+      }
+      leaf security-policy {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable VTY Security Policy.";
+      }
+    }
+  }
+}

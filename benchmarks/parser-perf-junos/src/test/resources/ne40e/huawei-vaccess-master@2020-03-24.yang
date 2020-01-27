@@ -1,0 +1,258 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-vaccess-master {
+  namespace "urn:huawei:yang:huawei-vaccess-master";
+  prefix vaccess-master;
+  import huawei-vaccess {
+    prefix vaccess;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Virtual Access Master Information.";
+  revision 2020-03-24 {
+    description
+      "Fixed some descriptions.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-05 {
+    description
+      "Add some nodes for virtual access master.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-13 {
+    description
+      "Some compatibility conditions are modified.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-13 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "virtual-access";
+  typedef vaccess-run-state {
+    type enumeration {
+      enum "offline" {
+        value 0;
+        description
+          "Offline state.";
+      }
+      enum "online" {
+        value 1;
+        description
+          "Online state.";
+      }
+    }
+    description
+      "Ap run state.";
+  }
+  typedef vaccess-ap-if-state {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "Down.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "Up.";
+      }
+    }
+    description
+      "Ap interface state.";
+  }
+  typedef vaccess-ap-if-type {
+    type enumeration {
+      enum "inner" {
+        value 0;
+        description
+          "Inner.";
+      }
+      enum "outer" {
+        value 1;
+        description
+          "Outer.";
+      }
+    }
+    description
+      "Ap interface attribute.";
+  }
+  typedef vaccess-inner-if-type {
+    type enumeration {
+      enum "to-master" {
+        value 1;
+        description
+          "Connect master interface.";
+      }
+      enum "to-ap" {
+        value 2;
+        description
+          "Connect ap interface.";
+      }
+    }
+    description
+      "Virtual access inner interface type.";
+  }
+
+  augment /vaccess:vaccess {
+    description
+      "Virtual access master Configuration information augment to module vaccess.";
+    container master {
+      when "/vaccess:vaccess/vaccess:global/vaccess:role='master'";
+      description
+        "Configure virtual access master function.";
+      container global {
+        description
+          "Configure bisic master function of virtural access.";
+        leaf admin-ip-address {
+          type inet:ip-address;
+          description
+            "Admin IP of master.";
+        }
+        leaf control-tunnel-keychain-name {
+          type string {
+            length "1..47";
+          }
+          description
+            "Control-tunnel keychain name of master.";
+        }
+      }
+      container aps {
+        description
+          "List of ap configuration of virtural access.";
+        list ap {
+          key "ap-id";
+          unique "admin-ip-address";
+          description
+            "Configure ap function for virtural access.";
+          leaf ap-id {
+            type uint32 {
+              range "1024..8191";
+            }
+            description
+              "Ap ID.";
+          }
+          leaf description {
+            type string {
+              length "1..246";
+            }
+            description
+              "Sysname of ap.";
+          }
+          leaf admin-ip-address {
+            ext:operation-exclude delete;
+            type inet:ip-address;
+            must "../admin-ip-address!=../../../global/admin-ip-address";
+            description
+              "Ap admin IP address. After this node is deleted, the ap and master are disconnected, affecting normal service functions.";
+          }
+          leaf esn {
+            type string {
+              length "1..64";
+            }
+            description
+              "ESN number.";
+          }
+          leaf primary-master-ip {
+            type inet:ip-address;
+            config false;
+            description
+              "Primary master IP address.";
+          }
+          leaf state {
+            type vaccess-run-state;
+            config false;
+            description
+              "Current run state of ap.";
+          }
+          leaf up-time {
+            type yang:date-and-time;
+            config false;
+            description
+              "Online time.";
+          }
+          container ap-interface-infos {
+            config false;
+            description
+              "List of ap interface information parameter.";
+            list ap-interface-info {
+              key "interface-name";
+              description
+                "Operational data of ap interface information.";
+              leaf interface-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                description
+                  "Interface name.";
+              }
+              leaf interface-status {
+                type vaccess-ap-if-state;
+                description
+                  "Interface state.";
+              }
+              leaf interface-type {
+                type vaccess-ap-if-type;
+                description
+                  "Interface type.";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance {
+    when "/vaccess:vaccess/vaccess:global/vaccess:role='master'";
+    description
+      "Inner interface on master of virtual access.";
+    container vaccess-interfaces {
+      description
+        "List of inner interface on master of virtual access.";
+      list vaccess-interface {
+        key "name";
+        description
+          "Configure inner interface on master of virtual access.";
+        leaf name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name='_public_'";
+          must "../../../ni:name=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name";
+          description
+            "Inner interface name on master of virtual access.";
+        }
+      }
+    }
+  }
+}

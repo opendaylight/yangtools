@@ -1,0 +1,5999 @@
+/******************************************************
+* Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+* Module description & tree structure
+***************************************************/
+module huawei-cpudefend {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-cpudefend";
+  prefix cpudefend;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Device security.";
+  revision 2020-03-13 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "cpu-defend";
+  typedef protocol-name {
+    type enumeration {
+      enum "1588acr" {
+        value 0;
+        description
+          "1588ACR protocol.";
+      }
+      enum "802dot1ag" {
+        value 1;
+        description
+          "802.1AG protocol.";
+      }
+      enum "802dot3ah" {
+        value 2;
+        description
+          "802.3AH protocol.";
+      }
+      enum "arp" {
+        value 3;
+        description
+          "ARP protocol.";
+      }
+      enum "arp-miss" {
+        value 4;
+        description
+          "ARP miss protocol.";
+      }
+      enum "atm-inarp" {
+        value 5;
+        description
+          "ATM inARP protocol.";
+      }
+      enum "bfd" {
+        value 6;
+        description
+          "BFD protocol.";
+      }
+      enum "bgp" {
+        value 7;
+        description
+          "BGP protocol.";
+      }
+      enum "bgpv6" {
+        value 8;
+        description
+          "BGPv6 protocol.";
+      }
+      enum "blacklist" {
+        value 9;
+        description
+          "Blacklist.";
+      }
+      enum "bpdu" {
+        value 10;
+        description
+          "BPDU protocol.";
+      }
+      enum "dcn" {
+        value 11;
+        description
+          "DCN protocol.";
+      }
+      enum "default" {
+        value 12;
+        description
+          "Default CAR.";
+      }
+      enum "default-tcp" {
+        value 13;
+        description
+          "Default CAR of tcp.";
+      }
+      enum "default-udp" {
+        value 14;
+        description
+          "Default CAR of udp.";
+      }
+      enum "dhcp" {
+        value 15;
+        description
+          "DHCP protocol.";
+      }
+      enum "dhcpv6" {
+        value 16;
+        description
+          "DHCPv6 protocol.";
+      }
+      enum "diameter" {
+        value 17;
+        description
+          "Diameter protocol.";
+      }
+      enum "dns-client" {
+        value 18;
+        description
+          "DNS client protocol.";
+      }
+      enum "dnsv6" {
+        value 19;
+        description
+          "DNSv6 protocol.";
+      }
+      enum "eapol" {
+        value 20;
+        description
+          "EAPOL protocol.";
+      }
+      enum "fragment" {
+        value 21;
+        description
+          "Fragment protocol.";
+      }
+      enum "ftp-client" {
+        value 22;
+        description
+          "FTP client protocol.";
+      }
+      enum "ftp-server" {
+        value 23;
+        description
+          "FTP server protocol.";
+      }
+      enum "ftpv6-client" {
+        value 24;
+        description
+          "FTPv6 client protocol.";
+      }
+      enum "ftpv6-server" {
+        value 25;
+        description
+          "FTPv6 server protocol.";
+      }
+      enum "hop-by-hop" {
+        value 26;
+        description
+          "IPv6 hop-by-hop protocol.";
+      }
+      enum "http-redirect-chasten" {
+        value 27;
+        description
+          "Http-redirect packet of chasten user.";
+      }
+      enum "hwtacacs" {
+        value 28;
+        description
+          "HWTACACS protocol.";
+      }
+      enum "icmp" {
+        value 29;
+        description
+          "ICMP protocol.";
+      }
+      enum "icmp-broadcast-address-echo" {
+        value 30;
+        description
+          "Broadcast ICMP echo request packets.";
+      }
+      enum "icmp-nd" {
+        value 31;
+        description
+          "ICMPv6-ND protocol.";
+      }
+      enum "icmp-noreach" {
+        value 32;
+        description
+          "IPv6 ND miss.";
+      }
+      enum "icmpv6" {
+        value 33;
+        description
+          "ICMPv6 protocol.";
+      }
+      enum "icmpv6-na" {
+        value 34;
+        description
+          "ICMPv6-NA protocol.";
+      }
+      enum "icmpv6-ns" {
+        value 35;
+        description
+          "ICMPv6-NS protocol.";
+      }
+      enum "icmpv6-ra" {
+        value 36;
+        description
+          "ICMPv6-RA protocol.";
+      }
+      enum "icmpv6-rs" {
+        value 37;
+        description
+          "ICMPv6-RS protocol.";
+      }
+      enum "igmp" {
+        value 38;
+        description
+          "IGMP protocol.";
+      }
+      enum "ipfpm" {
+        value 39;
+        description
+          "IPFPM protocol.";
+      }
+      enum "iptv" {
+        value 40;
+        description
+          "IPTV protocol.";
+      }
+      enum "ipv4-fib-miss" {
+        value 41;
+        description
+          "IPv4 FIB miss.";
+      }
+      enum "ipv4-multicast-fib-miss" {
+        value 42;
+        description
+          "IPv4 multicast FIB miss.";
+      }
+      enum "ipv4-ttl-expire" {
+        value 43;
+        description
+          "IPv4 TTL expires packets.";
+      }
+      enum "ipv6-fib-miss" {
+        value 44;
+        description
+          "IPv6 FIB miss.";
+      }
+      enum "ipv6-ndh-miss" {
+        value 45;
+        description
+          "IPv6 NDH miss.";
+      }
+      enum "ipv6-nd-miss" {
+        value 46;
+        description
+          "IPv6 ND miss.";
+      }
+      enum "ipv6-ttl-expire" {
+        value 47;
+        description
+          "IPv6 TTL expires packets.";
+      }
+      enum "isis" {
+        value 48;
+        description
+          "ISIS protocol.";
+      }
+      enum "lacp" {
+        value 49;
+        description
+          "LACP protocol.";
+      }
+      enum "ldp" {
+        value 50;
+        description
+          "LDP protocol.";
+      }
+      enum "lldp" {
+        value 51;
+        description
+          "LLDP protocol.";
+      }
+      enum "lspping" {
+        value 52;
+        description
+          "LSPPING protocol.";
+      }
+      enum "mka" {
+        value 53;
+        description
+          "MKA protocol.";
+      }
+      enum "mld" {
+        value 54;
+        description
+          "IPv6 MLD protocol.";
+      }
+      enum "mpls-arp-miss" {
+        value 55;
+        description
+          "MPLS ARP miss.";
+      }
+      enum "mpls-router-alert" {
+        value 56;
+        description
+          "MPLS router alert packets.";
+      }
+      enum "mpls-trace-route" {
+        value 57;
+        description
+          "MPLS trace route packets.";
+      }
+      enum "mpls-ttl-expire" {
+        value 58;
+        description
+          "MPLS ttl expires packets.";
+      }
+      enum "msdp" {
+        value 59;
+        description
+          "MSDP protocol.";
+      }
+      enum "mtuv6" {
+        value 60;
+        description
+          "MTUv6 protocol.";
+      }
+      enum "netstream" {
+        value 61;
+        description
+          "NetStream protocol.";
+      }
+      enum "ntp" {
+        value 62;
+        description
+          "NTP protocol.";
+      }
+      enum "openflow" {
+        value 63;
+        description
+          "OpenFlow protocol.";
+      }
+      enum "ospf" {
+        value 64;
+        description
+          "OSPF protocol.";
+      }
+      enum "ospfv3" {
+        value 65;
+        description
+          "OSPFv3 protocol.";
+      }
+      enum "pim" {
+        value 66;
+        description
+          "PIM protocol.";
+      }
+      enum "pimv6" {
+        value 67;
+        description
+          "PIMv6 protocol.";
+      }
+      enum "portal" {
+        value 68;
+        description
+          "Portal protocol.";
+      }
+      enum "ppp" {
+        value 69;
+        description
+          "PPP protocol.";
+      }
+      enum "radius" {
+        value 70;
+        description
+          "Radius protocol.";
+      }
+      enum "rip" {
+        value 71;
+        description
+          "RIP protocol.";
+      }
+      enum "rrpp" {
+        value 72;
+        description
+          "RRPP protocol.";
+      }
+      enum "rsvp" {
+        value 73;
+        description
+          "RSVP protocol.";
+      }
+      enum "snmp" {
+        value 74;
+        description
+          "SNMP protocol.";
+      }
+      enum "snmpv6" {
+        value 75;
+        description
+          "SNMPv6 protocol.";
+      }
+      enum "soft-gre" {
+        value 76;
+        description
+          "Soft GRE protocol.";
+      }
+      enum "ssh-client" {
+        value 77;
+        description
+          "SSH client protocol.";
+      }
+      enum "ssh-server" {
+        value 78;
+        description
+          "SSH server protocol.";
+      }
+      enum "sshv6-server" {
+        value 79;
+        description
+          "SSHv6 server protocol.";
+      }
+      enum "syslog" {
+        value 80;
+        description
+          "SYSLOG protocol.";
+      }
+      enum "tcpsyn" {
+        value 81;
+        description
+          "TCP SYN protocol.";
+      }
+      enum "telnet-client" {
+        value 82;
+        description
+          "TELNET client protocol.";
+      }
+      enum "telnet-server" {
+        value 83;
+        description
+          "TELNET server protocol.";
+      }
+      enum "telnetv6-client" {
+        value 84;
+        description
+          "TELNETv6 client protocol.";
+      }
+      enum "telnetv6-server" {
+        value 85;
+        description
+          "TELNETv6 server protocol.";
+      }
+      enum "tftp" {
+        value 86;
+        description
+          "TFTP protocol.";
+      }
+      enum "tftpv6-client" {
+        value 87;
+        description
+          "TFTPv6 client protocol.";
+      }
+      enum "traffic-behavior-log" {
+        value 88;
+        description
+          "Traffic Behavior Log.";
+      }
+      enum "unicast-vrrp" {
+        value 89;
+        description
+          "Unicast VRRP protocol.";
+      }
+      enum "user-defined-flow-1" {
+        value 90;
+        description
+          "User defined flow 1.";
+      }
+      enum "user-defined-flow-2" {
+        value 91;
+        description
+          "User defined flow 2.";
+      }
+      enum "user-defined-flow-3" {
+        value 92;
+        description
+          "User defined flow 3.";
+      }
+      enum "user-defined-flow-4" {
+        value 93;
+        description
+          "User defined flow 4.";
+      }
+      enum "user-defined-flow-5" {
+        value 94;
+        description
+          "User defined flow 5.";
+      }
+      enum "user-defined-flow-6" {
+        value 95;
+        description
+          "User defined flow 6.";
+      }
+      enum "user-defined-flow-7" {
+        value 96;
+        description
+          "User defined flow 7.";
+      }
+      enum "user-defined-flow-8" {
+        value 97;
+        description
+          "User defined flow 8.";
+      }
+      enum "user-defined-flow-9" {
+        value 98;
+        description
+          "User defined flow 9.";
+      }
+      enum "user-defined-flow-10" {
+        value 99;
+        description
+          "User defined flow 10.";
+      }
+      enum "user-defined-flow-11" {
+        value 100;
+        description
+          "User defined flow 11.";
+      }
+      enum "user-defined-flow-12" {
+        value 101;
+        description
+          "User defined flow 12.";
+      }
+      enum "user-defined-flow-13" {
+        value 102;
+        description
+          "User defined flow 13.";
+      }
+      enum "user-defined-flow-14" {
+        value 103;
+        description
+          "User defined flow 14.";
+      }
+      enum "user-defined-flow-15" {
+        value 104;
+        description
+          "User defined flow 15.";
+      }
+      enum "user-defined-flow-16" {
+        value 105;
+        description
+          "User defined flow 16.";
+      }
+      enum "user-defined-flow-17" {
+        value 106;
+        description
+          "User defined flow 17.";
+      }
+      enum "user-defined-flow-18" {
+        value 107;
+        description
+          "User defined flow 18.";
+      }
+      enum "user-defined-flow-19" {
+        value 108;
+        description
+          "User defined flow 19.";
+      }
+      enum "user-defined-flow-20" {
+        value 109;
+        description
+          "User defined flow 20.";
+      }
+      enum "user-defined-flow-21" {
+        value 110;
+        description
+          "User defined flow 21.";
+      }
+      enum "user-defined-flow-22" {
+        value 111;
+        description
+          "User defined flow 22.";
+      }
+      enum "user-defined-flow-23" {
+        value 112;
+        description
+          "User defined flow 23.";
+      }
+      enum "user-defined-flow-24" {
+        value 113;
+        description
+          "User defined flow 24.";
+      }
+      enum "user-defined-flow-25" {
+        value 114;
+        description
+          "User defined flow 25.";
+      }
+      enum "user-defined-flow-26" {
+        value 115;
+        description
+          "User defined flow 26.";
+      }
+      enum "user-defined-flow-27" {
+        value 116;
+        description
+          "User defined flow 27.";
+      }
+      enum "user-defined-flow-28" {
+        value 117;
+        description
+          "User defined flow 28.";
+      }
+      enum "user-defined-flow-29" {
+        value 118;
+        description
+          "User defined flow 29.";
+      }
+      enum "user-defined-flow-30" {
+        value 119;
+        description
+          "User defined flow 30.";
+      }
+      enum "user-defined-flow-31" {
+        value 120;
+        description
+          "User defined flow 31.";
+      }
+      enum "user-defined-flow-32" {
+        value 121;
+        description
+          "User defined flow 32.";
+      }
+      enum "user-defined-flow-33" {
+        value 122;
+        description
+          "User defined flow 33.";
+      }
+      enum "user-defined-flow-34" {
+        value 123;
+        description
+          "User defined flow 34.";
+      }
+      enum "user-defined-flow-35" {
+        value 124;
+        description
+          "User defined flow 35.";
+      }
+      enum "user-defined-flow-36" {
+        value 125;
+        description
+          "User defined flow 36.";
+      }
+      enum "user-defined-flow-37" {
+        value 126;
+        description
+          "User defined flow 37.";
+      }
+      enum "user-defined-flow-38" {
+        value 127;
+        description
+          "User defined flow 38.";
+      }
+      enum "user-defined-flow-39" {
+        value 128;
+        description
+          "User defined flow 39.";
+      }
+      enum "user-defined-flow-40" {
+        value 129;
+        description
+          "User defined flow 40.";
+      }
+      enum "user-defined-flow-41" {
+        value 130;
+        description
+          "User defined flow 41.";
+      }
+      enum "user-defined-flow-42" {
+        value 131;
+        description
+          "User defined flow 42.";
+      }
+      enum "user-defined-flow-43" {
+        value 132;
+        description
+          "User defined flow 43.";
+      }
+      enum "user-defined-flow-44" {
+        value 133;
+        description
+          "User defined flow 44.";
+      }
+      enum "user-defined-flow-45" {
+        value 134;
+        description
+          "User defined flow 45.";
+      }
+      enum "user-defined-flow-46" {
+        value 135;
+        description
+          "User defined flow 46.";
+      }
+      enum "user-defined-flow-47" {
+        value 136;
+        description
+          "User defined flow 47.";
+      }
+      enum "user-defined-flow-48" {
+        value 137;
+        description
+          "User defined flow 48.";
+      }
+      enum "user-defined-flow-49" {
+        value 138;
+        description
+          "User defined flow 49.";
+      }
+      enum "user-defined-flow-50" {
+        value 139;
+        description
+          "User defined flow 50.";
+      }
+      enum "user-defined-flow-51" {
+        value 140;
+        description
+          "User defined flow 51.";
+      }
+      enum "user-defined-flow-52" {
+        value 141;
+        description
+          "User defined flow 52.";
+      }
+      enum "user-defined-flow-53" {
+        value 142;
+        description
+          "User defined flow 53.";
+      }
+      enum "user-defined-flow-54" {
+        value 143;
+        description
+          "User defined flow 54.";
+      }
+      enum "user-defined-flow-55" {
+        value 144;
+        description
+          "User defined flow 55.";
+      }
+      enum "user-defined-flow-56" {
+        value 145;
+        description
+          "User defined flow 56.";
+      }
+      enum "user-defined-flow-57" {
+        value 146;
+        description
+          "User defined flow 57.";
+      }
+      enum "user-defined-flow-58" {
+        value 147;
+        description
+          "User defined flow 58.";
+      }
+      enum "user-defined-flow-59" {
+        value 148;
+        description
+          "User defined flow 59.";
+      }
+      enum "user-defined-flow-60" {
+        value 149;
+        description
+          "User defined flow 60.";
+      }
+      enum "user-defined-flow-61" {
+        value 150;
+        description
+          "User defined flow 61.";
+      }
+      enum "user-defined-flow-62" {
+        value 151;
+        description
+          "User defined flow 62.";
+      }
+      enum "user-defined-flow-63" {
+        value 152;
+        description
+          "User defined flow 63.";
+      }
+      enum "user-defined-flow-64" {
+        value 153;
+        description
+          "User defined flow 64.";
+      }
+      enum "vrrp" {
+        value 154;
+        description
+          "VRRP protocol.";
+      }
+      enum "web" {
+        value 155;
+        description
+          "Web protocol.";
+      }
+      enum "web-auth-server" {
+        value 156;
+        description
+          "Web authentication server protocol.";
+      }
+      enum "whitelist" {
+        value 157;
+        description
+          "Whitelist.";
+      }
+      enum "whitelist-bgp" {
+        value 158;
+        description
+          "Whitelist of BGP protocol.";
+      }
+      enum "whitelist-isis" {
+        value 159;
+        description
+          "Whitelist of ISIS protocol.";
+      }
+      enum "whitelist-ldp" {
+        value 160;
+        description
+          "Whitelist of LDP protocol.";
+      }
+      enum "whitelist-ospf" {
+        value 161;
+        description
+          "Whitelist of OSPF protocol.";
+      }
+      enum "whitelist-radius" {
+        value 162;
+        description
+          "Whitelist of Radius protocol.";
+      }
+      enum "whitelist-rsvp" {
+        value 163;
+        description
+          "Whitelist of RSVP protocol.";
+      }
+      enum "whitelistv6" {
+        value 164;
+        description
+          "IPv6 whitelist.";
+      }
+      enum "whitelistv6-bgpv6" {
+        value 165;
+        description
+          "IPv6 whitelist of BGPv6 protocol.";
+      }
+      enum "whitelistv6-ospfv3" {
+        value 166;
+        description
+          "IPv6 whitelist of OSPFv3 protocol.";
+      }
+      enum "hwtacacsv6" {
+        value 167;
+        description
+          "HWTACACSv6 protocol.";
+      }
+      enum "lsppingv6" {
+        value 168;
+        description
+          "Lsppingv6 packet.";
+      }
+      enum "pcep" {
+        value 169;
+        description
+          "Pcep packet.";
+      }
+      enum "radiusv6" {
+        value 170;
+        description
+          "Radiusv6 packet.";
+      }
+      enum "syslogv6" {
+        value 171;
+        description
+          "Syslogv6 packet.";
+      }
+      enum "vrrpv6" {
+        value 172;
+        description
+          "Vrrpv6 packet.";
+      }
+      enum "web-auth-serverv6" {
+        value 173;
+        description
+          "Web-auth-serverv6 packet.";
+      }
+      enum "others" {
+        value 174;
+        description
+          "Others packet.";
+      }
+      enum "total-packet" {
+        value 175;
+        description
+          "Total-packet.";
+      }
+    }
+    description
+      "Protocol name.";
+  }
+  typedef alarm-protocol-name {
+    type enumeration {
+      enum "1588acr" {
+        value 0;
+        description
+          "1588ACR protocol.";
+      }
+      enum "802dot1ag" {
+        value 1;
+        description
+          "802.1AG protocol.";
+      }
+      enum "802dot3ah" {
+        value 2;
+        description
+          "802.3AH protocol.";
+      }
+      enum "arp" {
+        value 3;
+        description
+          "ARP protocol.";
+      }
+      enum "arp-miss" {
+        value 4;
+        description
+          "ARP miss protocol.";
+      }
+      enum "bfd" {
+        value 6;
+        description
+          "BFD protocol.";
+      }
+      enum "bgp" {
+        value 7;
+        description
+          "BGP protocol.";
+      }
+      enum "bgpv6" {
+        value 8;
+        description
+          "BGPv6 protocol.";
+      }
+      enum "bpdu" {
+        value 10;
+        description
+          "BPDU protocol.";
+      }
+      enum "dcn" {
+        value 11;
+        description
+          "DCN protocol.";
+      }
+      enum "default-tcp" {
+        value 13;
+        description
+          "Default CAR of tcp.";
+      }
+      enum "default-udp" {
+        value 14;
+        description
+          "Default CAR of udp.";
+      }
+      enum "dhcp" {
+        value 15;
+        description
+          "DHCP protocol.";
+      }
+      enum "dhcpv6" {
+        value 16;
+        description
+          "DHCPv6 protocol.";
+      }
+      enum "dns-client" {
+        value 18;
+        description
+          "DNS client protocol.";
+      }
+      enum "dnsv6" {
+        value 19;
+        description
+          "DNSv6 protocol.";
+      }
+      enum "eapol" {
+        value 20;
+        description
+          "EAPOL protocol.";
+      }
+      enum "ftp-client" {
+        value 22;
+        description
+          "FTP client protocol.";
+      }
+      enum "ftp-server" {
+        value 23;
+        description
+          "FTP server protocol.";
+      }
+      enum "ftpv6-client" {
+        value 24;
+        description
+          "FTPv6 client protocol.";
+      }
+      enum "ftpv6-server" {
+        value 25;
+        description
+          "FTPv6 server protocol.";
+      }
+      enum "hop-by-hop" {
+        value 26;
+        description
+          "IPv6 hop-by-hop protocol.";
+      }
+      enum "hwtacacs" {
+        value 28;
+        description
+          "HWTACACS protocol.";
+      }
+      enum "icmp" {
+        value 29;
+        description
+          "ICMP protocol.";
+      }
+      enum "icmp-broadcast-address-echo" {
+        value 30;
+        description
+          "Broadcast ICMP echo request packets.";
+      }
+      enum "icmp-nd" {
+        value 31;
+        description
+          "ICMPv6-ND protocol.";
+      }
+      enum "icmp-noreach" {
+        value 32;
+        description
+          "IPv6 ND miss.";
+      }
+      enum "icmpv6" {
+        value 33;
+        description
+          "ICMPv6 protocol.";
+      }
+      enum "icmpv6-na" {
+        value 34;
+        description
+          "ICMPv6-NA protocol.";
+      }
+      enum "icmpv6-ra" {
+        value 36;
+        description
+          "ICMPv6-RA protocol.";
+      }
+      enum "icmpv6-rs" {
+        value 37;
+        description
+          "ICMPv6-RS protocol.";
+      }
+      enum "igmp" {
+        value 38;
+        description
+          "IGMP protocol.";
+      }
+      enum "ipfpm" {
+        value 39;
+        description
+          "IPFPM protocol.";
+      }
+      enum "ipv6-fib-miss" {
+        value 44;
+        description
+          "IPv6 FIB miss.";
+      }
+      enum "ipv6-ndh-miss" {
+        value 45;
+        description
+          "IPv6 NDH miss.";
+      }
+      enum "ipv6-nd-miss" {
+        value 46;
+        description
+          "IPv6 ND miss.";
+      }
+      enum "ipv6-ttl-expire" {
+        value 47;
+        description
+          "IPv6 TTL expires packets.";
+      }
+      enum "isis" {
+        value 48;
+        description
+          "ISIS protocol.";
+      }
+      enum "lacp" {
+        value 49;
+        description
+          "LACP protocol.";
+      }
+      enum "ldp" {
+        value 50;
+        description
+          "LDP protocol.";
+      }
+      enum "lldp" {
+        value 51;
+        description
+          "LLDP protocol.";
+      }
+      enum "lspping" {
+        value 52;
+        description
+          "LSPPING protocol.";
+      }
+      enum "mka" {
+        value 53;
+        description
+          "MKA protocol.";
+      }
+      enum "mld" {
+        value 54;
+        description
+          "IPv6 MLD protocol.";
+      }
+      enum "mpls-router-alert" {
+        value 56;
+        description
+          "MPLS router alert packets.";
+      }
+      enum "mpls-trace-route" {
+        value 57;
+        description
+          "MPLS trace route packets.";
+      }
+      enum "msdp" {
+        value 59;
+        description
+          "MSDP protocol.";
+      }
+      enum "mtuv6" {
+        value 60;
+        description
+          "MTUv6 protocol.";
+      }
+      enum "ntp" {
+        value 62;
+        description
+          "NTP protocol.";
+      }
+      enum "ospf" {
+        value 64;
+        description
+          "OSPF protocol.";
+      }
+      enum "ospfv3" {
+        value 65;
+        description
+          "OSPFv3 protocol.";
+      }
+      enum "pim" {
+        value 66;
+        description
+          "PIM protocol.";
+      }
+      enum "pimv6" {
+        value 67;
+        description
+          "PIMv6 protocol.";
+      }
+      enum "ppp" {
+        value 69;
+        description
+          "PPP protocol.";
+      }
+      enum "radius" {
+        value 70;
+        description
+          "Radius protocol.";
+      }
+      enum "rip" {
+        value 71;
+        description
+          "RIP protocol.";
+      }
+      enum "rsvp" {
+        value 73;
+        description
+          "RSVP protocol.";
+      }
+      enum "snmp" {
+        value 74;
+        description
+          "SNMP protocol.";
+      }
+      enum "ssh-client" {
+        value 77;
+        description
+          "SSH client protocol.";
+      }
+      enum "ssh-server" {
+        value 78;
+        description
+          "SSH server protocol.";
+      }
+      enum "sshv6-server" {
+        value 79;
+        description
+          "SSHv6 server protocol.";
+      }
+      enum "telnet-client" {
+        value 82;
+        description
+          "TELNET client protocol.";
+      }
+      enum "telnet-server" {
+        value 83;
+        description
+          "TELNET server protocol.";
+      }
+      enum "telnetv6-client" {
+        value 84;
+        description
+          "TELNETv6 client protocol.";
+      }
+      enum "telnetv6-server" {
+        value 85;
+        description
+          "TELNETv6 server protocol.";
+      }
+      enum "tftp" {
+        value 86;
+        description
+          "TFTP protocol.";
+      }
+      enum "traffic-behavior-log" {
+        value 88;
+        description
+          "Traffic Behavior Log.";
+      }
+      enum "vrrp" {
+        value 154;
+        description
+          "VRRP protocol.";
+      }
+      enum "hwtacacsv6" {
+        value 167;
+        description
+          "HWTACACSv6 protocol.";
+      }
+      enum "lsppingv6" {
+        value 168;
+        description
+          "Lsppingv6 packet.";
+      }
+      enum "pcep" {
+        value 169;
+        description
+          "Pcep packet.";
+      }
+      enum "radiusv6" {
+        value 170;
+        description
+          "Radiusv6 packet.";
+      }
+      enum "syslogv6" {
+        value 171;
+        description
+          "Syslogv6 packet.";
+      }
+      enum "vrrpv6" {
+        value 172;
+        description
+          "Vrrpv6 packet.";
+      }
+      enum "web-auth-serverv6" {
+        value 173;
+        description
+          "Web-auth-serverv6 packet.";
+      }
+      enum "others" {
+        value 174;
+        description
+          "Others packet.";
+      }
+      enum "total-packet" {
+        value 175;
+        description
+          "Total-packet.";
+      }
+    }
+    description
+      "Alarm protocol name.";
+  }
+  typedef urpf-mode {
+    type enumeration {
+      enum "strict" {
+        value 0;
+        description
+          "URPF strict check.";
+      }
+      enum "loose" {
+        value 1;
+        description
+          "URPF loose check.";
+      }
+    }
+    description
+      "URPF check mode.";
+  }
+  typedef host-car-type {
+    type enumeration {
+      enum "host-car" {
+        value 1;
+        description
+          "Host-CAR.";
+      }
+      enum "http-host-car" {
+        value 2;
+        description
+          "HTTP-host-CAR.";
+      }
+      enum "vlan-host-car" {
+        value 3;
+        description
+          "VLAN-host-CAR.";
+      }
+    }
+    description
+      "Host CAR Type.";
+  }
+  typedef sequence-priority {
+    type enumeration {
+      enum "first" {
+        value 1;
+        description
+          "First matching priority.";
+      }
+      enum "second" {
+        value 2;
+        description
+          "Second matching priority.";
+      }
+      enum "third" {
+        value 3;
+        description
+          "Third matching priority.";
+      }
+      enum "fourth" {
+        value 4;
+        description
+          "Fourth matching priority.";
+      }
+      enum "fifth" {
+        value 5;
+        description
+          "Fifth matching priority.";
+      }
+      enum "sixth" {
+        value 6;
+        description
+          "Sixth matching priority.";
+      }
+      enum "seventh" {
+        value 7;
+        description
+          "Seventh matching priority.";
+      }
+    }
+    description
+      "The matching priority of packets to be sent to the CPU.";
+  }
+  typedef cpcar-priority-query {
+    type enumeration {
+      enum "low" {
+        value 1;
+        description
+          "A queue of a low priority.";
+      }
+      enum "middle" {
+        value 2;
+        description
+          "A queue of a middle priority.";
+      }
+      enum "high" {
+        value 3;
+        description
+          "A queue of a high priority.";
+      }
+      enum "be" {
+        value 4;
+        description
+          "The BE queue of a low priority.";
+      }
+      enum "af1" {
+        value 5;
+        description
+          "The AF1 queue of a middle priority.";
+      }
+      enum "af2" {
+        value 6;
+        description
+          "The AF2 queue of a middle priority.";
+      }
+      enum "af3" {
+        value 7;
+        description
+          "The AF3 queue of a middle priority.";
+      }
+      enum "af4" {
+        value 8;
+        description
+          "The AF4 queue of a middle priority.";
+      }
+      enum "ef" {
+        value 9;
+        description
+          "The EF queue of a middle priority.";
+      }
+      enum "cs6" {
+        value 10;
+        description
+          "The CS6 queue of a high priority.";
+      }
+      enum "cs7" {
+        value 11;
+        description
+          "The CS7 queue of a high priority.";
+      }
+    }
+    description
+      "A priority for sending packets to the CPU.";
+  }
+  typedef cpcar-priority {
+    type enumeration {
+      enum "low" {
+        value 1;
+        description
+          "A queue of a low priority.";
+      }
+      enum "middle" {
+        value 2;
+        description
+          "A queue of a middle priority.";
+      }
+      enum "high" {
+        value 3;
+        description
+          "A queue of a high priority.";
+      }
+      enum "be" {
+        value 4;
+        description
+          "The BE queue of a low priority.";
+      }
+      enum "af1" {
+        value 5;
+        description
+          "The AF1 queue of a middle priority.";
+      }
+      enum "af2" {
+        value 6;
+        description
+          "The AF2 queue of a middle priority.";
+      }
+      enum "af3" {
+        value 7;
+        description
+          "The AF3 queue of a middle priority.";
+      }
+      enum "af4" {
+        value 8;
+        description
+          "The AF4 queue of a middle priority.";
+      }
+      enum "ef" {
+        value 9;
+        description
+          "The EF queue of a middle priority.";
+      }
+      enum "cs6" {
+        value 10;
+        description
+          "The CS6 queue of a high priority.";
+      }
+    }
+    description
+      "A priority for sending packets to the CPU.";
+  }
+  typedef arp-check-type {
+    type enumeration {
+      enum "check-destination-ip" {
+        value 0;
+        description
+          "Check ARP packets with invalid destination IP addresses.";
+      }
+      enum "check-valid" {
+        value 1;
+        description
+          "Check invalid ARP packets.";
+      }
+    }
+    description
+      "The type for checking invalid ARP packets.";
+  }
+  typedef port-car-packet {
+    type enumeration {
+      enum "arp" {
+        value 1;
+        description
+          "ARP packet.";
+      }
+      enum "dhcp" {
+        value 2;
+        description
+          "DHCP packet.";
+      }
+      enum "snmp" {
+        value 3;
+        description
+          "SNMP packet.";
+      }
+      enum "telnet" {
+        value 4;
+        description
+          "TELNET packet.";
+      }
+      enum "icmp" {
+        value 5;
+        description
+          "ICMP packet.";
+      }
+      enum "ssh" {
+        value 6;
+        description
+          "SSH packet.";
+      }
+      enum "icmp-nd" {
+        value 7;
+        description
+          "ICMPv6 ND packet.";
+      }
+      enum "icmpv6" {
+        value 8;
+        description
+          "ICMPv6 packet.";
+      }
+      enum "port" {
+        value 9;
+        description
+          "Other packet types.";
+      }
+    }
+    description
+      "Indicates the packet type of the rate limit on the interface.";
+  }
+  typedef tcpip-defend-type {
+    type enumeration {
+      enum "abnormal-packet-defend" {
+        value 1;
+        description
+          "Defense against malformed packet attacks.";
+      }
+      enum "udp-packet-defend" {
+        value 2;
+        description
+          "Defense against UDP packet attacks.";
+      }
+      enum "tcpsyn-flood" {
+        value 3;
+        description
+          "Defense against TCP SYN flooding attacks.";
+      }
+      enum "fragment-flood" {
+        value 4;
+        description
+          "Defense against fragmented packet attacks.";
+      }
+    }
+    description
+      "TCP/IP attack defense type.";
+  }
+  typedef tcpip-defend-v6-type {
+    type enumeration {
+      enum "abnormal-packet-defend" {
+        value 1;
+        description
+          "Defense against malformed packet attacks.";
+      }
+      enum "udp-packet-defend" {
+        value 2;
+        description
+          "Defense against UDP packet attacks.";
+      }
+      enum "tcpsyn-flood" {
+        value 3;
+        description
+          "Defense against TCP SYN flooding attacks.";
+      }
+    }
+    description
+      "TCP/IPv6 attack defense type.";
+  }
+  typedef protocol-group {
+    type enumeration {
+      enum "management" {
+        value 1;
+        description
+          "Management packets.";
+      }
+      enum "whitelist" {
+        value 2;
+        description
+          "Group of authorized users or high-priority users.";
+      }
+      enum "access-user" {
+        value 3;
+        description
+          "Access packets.";
+      }
+      enum "multicast" {
+        value 4;
+        description
+          "Multicast packets.";
+      }
+      enum "link-layer" {
+        value 5;
+        description
+          "Data link layer packets, including connectivity packets and reliability packets.
+          Data link layer packets also include protocol packets that influence services and links on the data link layer.";
+      }
+      enum "mpls" {
+        value 6;
+        description
+          "MPLS packets.";
+      }
+      enum "network-layer" {
+        value 7;
+        description
+          "Network layer packets, including entries that the forwarding plane instructs the control plane to deliver.";
+      }
+      enum "user-defined-flow" {
+        value 8;
+        description
+          "User-defined flows.";
+      }
+      enum "arp" {
+        value 9;
+        description
+          "ARP packets.";
+      }
+      enum "route" {
+        value 10;
+        description
+          "Routing protocol packets.";
+      }
+       enum "oam-check" {
+        value 11;
+        description
+          "Oma check packets.";
+      }
+       enum "heartbeat" {
+        value 12;
+        description
+          "Heartbeat packets.";
+      }
+       enum "blacklist" {
+        value 13;
+        description
+          "Blacklist.";
+      }
+       enum "check-failed" {
+        value 14;
+        description
+          "Check-failed.";
+      }
+        enum "fwddata-to-cp" {
+        value 15;
+        description
+          "Fwddata-to-cp packets.";
+      }
+         enum "clock" {
+        value 16;
+        description
+          "Clock.";
+      }
+    }
+    description
+      "Protocol group into which the protocol packets sent to the CPU are classified.";
+  }
+  typedef acl-type {
+    type enumeration {
+      enum "tcpsyn-flood" {
+        value 1;
+        description
+          "Tcpsyn-flood defense ACL.";
+      }
+      enum "fragment-flood" {
+        value 2;
+        description
+          "Fragment-flood defense ACL.";
+      }
+      enum "dynamic-link-protection" {
+        value 3;
+        description
+          "Dynamic-link-protection ACL.";
+      }
+      enum "whitelist" {
+        value 4;
+        description
+          "Whitelist ACL.";
+      }
+      enum "blacklist" {
+        value 5;
+        description
+          "Blacklist ACL.";
+      }
+      enum "user-defined-flow" {
+        value 6;
+        description
+          "User-defined-flow ACL.";
+      }
+      enum "management-acl" {
+        value 7;
+        description
+          "Management protocol ACL.";
+      }
+    }
+    description
+      "Acl type for local attack defense.";
+  }
+  typedef application-apperceive-action {
+     type enumeration {
+      enum "drop" {
+        value 1;
+        description
+          "Drops the packets to be sent to the CPU.";
+      }
+      enum "min-to-cp" {
+        value 2;
+        description
+          "Sends packets to the CPU at the minimum rate.";
+      }
+    }
+    description
+      "A default action to be taken on the protocol packets to be sent to the CPU when the upper-layer protocols supporting application layer association are disabled.";
+  }
+  typedef attack-source-trace-sample-rate {
+    type enumeration {
+      enum "1" {
+        value 1;
+        description
+          "The sampling ratios of 1:1.";
+      }
+      enum "10" {
+        value 2;
+        description
+          "The sampling ratios of 10:1.";
+      }
+      enum "100" {
+        value 3;
+        description
+          "The sampling ratios of 100:1.";
+      }
+      enum "1000" {
+        value 4;
+        description
+          "The sampling ratios of 1000:1.";
+      }
+    }
+    description
+      "The sampling ratio for the packets that are recorded by attack source tracing.";
+  }
+  typedef application-apperceive-protocol {
+    type enumeration {
+      enum "ftp-server" {
+        value 1;
+        description
+          "FTP server protocol.";
+      }
+      enum "ssh-server" {
+        value 2;
+        description
+          "SSH server protocol.";
+      }
+      enum "snmp" {
+        value 3;
+        description
+          "SNMP protocol.";
+      }
+      enum "telnet-server" {
+        value 4;
+        description
+          "TELNET server protocol.";
+      }
+      enum "tftp" {
+        value 5;
+        description
+          "TFTP protocol.";
+      }
+      enum "bgp" {
+        value 6;
+        description
+          "BGP protocol.";
+      }
+      enum "ldp" {
+        value 7;
+        description
+          "LDP protocol.";
+      }
+      enum "rsvp" {
+        value 8;
+        description
+          "RSVP protocol.";
+      }
+      enum "ospf" {
+        value 9;
+        description
+          "OSPF protocol.";
+      }
+      enum "rip" {
+        value 10;
+        description
+          "RIP protocol.";
+      }
+      enum "msdp" {
+        value 11;
+        description
+          "MSDP protocol.";
+      }
+      enum "pim" {
+        value 12;
+        description
+          "PIM protocol.";
+      }
+      enum "igmp" {
+        value 13;
+        description
+          "IGMP protocol.";
+      }
+      enum "isis" {
+        value 14;
+        description
+          "ISIS client protocol.";
+      }
+      enum "ftp-client" {
+        value 15;
+        description
+          "FTP client protocol.";
+      }
+      enum "telnet-client" {
+        value 16;
+        description
+          "TELNET client protocol.";
+      }
+      enum "ssh-client" {
+        value 17;
+        description
+          "SSH client protocol.";
+      }
+      enum "ntp" {
+        value 18;
+        description
+          "NTP protocol.";
+      }
+      enum "radius" {
+        value 19;
+        description
+          "Radius protocol.";
+      }
+      enum "hwtacacs" {
+        value 20;
+        description
+          "HWTACACS protocol.";
+      }
+      enum "lspping" {
+        value 21;
+        description
+          "LSPPING protocol.";
+      }
+      enum "icmp" {
+        value 22;
+        description
+          "ICMP protocol.";
+      }
+      enum "vrrp" {
+        value 23;
+        description
+          "VRRP protocol.";
+      }
+      enum "dhcp" {
+        value 24;
+        description
+          "DHCP protocol.";
+      }
+      enum "dns-client" {
+        value 25;
+        description
+          "DNS client protocol.";
+      }
+      enum "syslog" {
+        value 26;
+        description
+          "SYSLOG protocol.";
+      }
+      enum "802.1ag" {
+        value 27;
+        description
+          "802.1AG protocol.";
+      }
+      enum "bfd" {
+        value 28;
+        description
+          "BFD protocol.";
+      }
+      enum "lacp" {
+        value 29;
+        description
+          "LACP protocol.";
+      }
+      enum "bgpv6" {
+        value 30;
+        description
+          "BGPv6 protocol.";
+      }
+      enum "ospfv3" {
+        value 31;
+        description
+          "OSPFv3 protocol.";
+      }
+      enum "ftpv6-server" {
+        value 32;
+        description
+          "FTPv6 server protocol.";
+      }
+      enum "ftpv6-client" {
+        value 33;
+        description
+          "FTPv6 client protocol.";
+      }
+      enum "icmpv6" {
+        value 34;
+        description
+          "ICMPv6 protocol.";
+      }
+      enum "pimv6" {
+        value 35;
+        description
+          "PIMv6 protocol.";
+      }
+      enum "sshv6-server" {
+        value 36;
+        description
+          "SSHv6 server protocol.";
+      }
+      enum "telnetv6-client" {
+        value 37;
+        description
+          "TELNETv6 client protocol.";
+      }
+      enum "telnetv6-server" {
+        value 38;
+        description
+          "TELNETv6 server protocol.";
+      }
+      enum "dns-v6" {
+        value 39;
+        description
+          "DNSv6 protocol.";
+      }
+      enum "web-auth-server" {
+        value 40;
+        description
+          "Web authentication server protocol.";
+      }
+      enum "diameter" {
+        value 41;
+        description
+          "Diameter protocol.";
+      }
+      enum "open-flow" {
+        value 42;
+        description
+          "OpenFlow protocol.";
+      }
+      enum "unicast-vrrp" {
+        value 43;
+        description
+          "Unicast VRRP protocol.";
+      }
+      enum "igpmu" {
+        value 44;
+        description
+          "IGPMU protocol.";
+      }
+      enum "ipfpm" {
+        value 45;
+        description
+          "IPFPM protocol.";
+      }
+      enum "hwtacacsv6" {
+        value 46;
+        description
+          "HWTACACSv6 protocol.";
+      }
+      enum "lsppingv6" {
+        value 47;
+        description
+          "Lsppingv6 packet.";
+      }
+      enum "pcep" {
+        value 48;
+        description
+          "Pcep packet.";
+      }
+      enum "radiusv6" {
+        value 49;
+        description
+          "Radiusv6 packet.";
+      }
+      enum "syslogv6" {
+        value 50;
+        description
+          "Syslogv6 packet.";
+      }
+      enum "vrrpv6" {
+        value 51;
+        description
+          "Vrrpv6 packet.";
+      }
+      enum "web-auth-serverv6" {
+        value 52;
+        description
+          "Web-auth-serverv6 packet.";
+      }
+    }
+    description
+      "The protocol type that support application-apperceive.";
+  }
+  typedef protocol-state {
+    type enumeration {
+      enum "closed" {
+        value 0;
+        description
+          "Protocol disabled.";
+      }
+      enum "open" {
+        value 1;
+        description
+          "Protocol enabled.";
+      }
+    }
+    description
+      "Protocol status, open or closed.";
+  }
+  typedef total-car-rate-level {
+    type enumeration {
+      enum "low" {
+        value 1;
+        description
+          "The rate of packets sent to the CPU at a high level.";
+      }
+      enum "middle" {
+        value 2;
+        description
+          "The rate of packets sent to the CPU at a middle level.";
+      }
+      enum "high" {
+        value 3;
+        description
+          "The rate of packets sent to the CPU at a low level.";
+      }
+    }
+    description
+      "The rate level at which packets are sent to the CPU.";
+  }
+  typedef fq-type {
+    type enumeration {
+      enum "be" {
+        value 1;
+        description
+          "BE.";
+      }
+      enum "af1" {
+        value 2;
+        description
+          "AF1.";
+      }
+      enum "af2" {
+        value 3;
+        description
+          "AF2.";
+      }
+      enum "af3" {
+        value 4;
+        description
+          "AF3.";
+      }
+      enum "af4" {
+        value 5;
+        description
+          "AF4.";
+      }
+      enum "ef" {
+        value 6;
+        description
+          "EF.";
+      }
+      enum "cs6" {
+        value 7;
+        description
+          "CS6.";
+      }
+      enum "cs7" {
+        value 8;
+        description
+          "CS7.";
+      }
+    }
+    description
+      "FQ type.";
+  }
+  typedef spu-car-type {
+    type enumeration {
+      enum "icmp" {
+        value 1;
+        description
+          "ICMP protocol.";
+      }
+      enum "tcp" {
+        value 2;
+        description
+          "TCP protocol.";
+      }
+      enum "udp" {
+        value 3;
+        description
+          "UDP protocol.";
+      }
+      enum "gre" {
+        value 4;
+        description
+          "GRE protocol.";
+      }
+      enum "bgp" {
+        value 5;
+        description
+          "BGP protocol.";
+      }
+      enum "default" {
+        value 6;
+        description
+          "Other protocol.";
+      }
+      enum "total" {
+        value 7;
+        description
+          "All protocol.";
+      }
+      enum "ike-total-car" {
+        value 8;
+        description
+          "The total CAR for the IKE protocol.";
+      }
+      enum "ike-tunnel-car" {
+        value 9;
+        description
+          "The tunnel CAR for the IKE protocol.";
+      }
+      enum "plain-sa-miss" {
+        value 10;
+        description
+          "Plain SA miss messages.";
+      }
+      enum "cipher-sa-miss" {
+        value 11;
+        description
+          "Cipher SA miss messages.";
+      }
+      enum "ipsec-rekey" {
+        value 12;
+        description
+          "IPSEC rekey messages.";
+      }
+      enum "ike-dpd" {
+        value 13;
+        description
+          "IKE DPD messages.";
+      }
+      enum "fast-channel" {
+        value 14;
+        description
+          "Fast channel protocol.";
+      }
+      enum "bfd-down" {
+        value 15;
+        description
+          "BFD down protocol.";
+      }
+      enum "pst" {
+        value 16;
+        description
+          "PST protocol.";
+      }
+      enum "dslite-private-ipv4" {
+        value 17;
+        description
+          "Ds-lite private IPv4 protocol.";
+      }
+      enum "ip-option" {
+        value 18;
+        description
+          "IP OPTION protocol packets.";
+      }
+      enum "mtu-exceed" {
+        value 19;
+        description
+          "MTU exceed protocol packets.";
+      }
+      enum "cgn-icmp" {
+        value 20;
+        description
+          "CGN ICMP protocol.";
+      }
+      enum "cgn-icmpv6" {
+        value 21;
+        description
+          "CGN ICMPv6 protocol.";
+      }
+      enum "cgn-ipv4-other" {
+        value 22;
+        description
+          "CGN IPv4 other protocol packets.";
+      }
+      enum "cgn-ipv6-other" {
+        value 23;
+        description
+          "CGN IPv6 other protocol packets.";
+      }
+      enum "cgn-ipv6-raw" {
+        value 24;
+        description
+          "CGN IPv6 RAW packets.";
+      }
+      enum "cgn-total" {
+        value 25;
+        description
+          "The total bandwidth of packets to be sent to the CPU on a CGN board.";
+      }
+    }
+    description
+      "CAR for packets on a service board.";
+  }
+  typedef cp-rate-limit-protocol {
+    type enumeration {
+      enum "dhcp" {
+        value 17;
+        description
+          "DHCP packet.";
+      }
+      enum "dhcpv6" {
+        value 259;
+        description
+          "DHCPv6 packet.";
+      }
+      enum "icmp" {
+        value 12;
+        description
+          "ICMP packet.";
+      }
+      enum "icmpv6" {
+        value 675;
+        description
+          "ICMPv6 packet.";
+      }
+      enum "ldp-hello" {
+        value 171;
+        description
+          "LDP-hello packet.";
+      }
+      enum "rsvp" {
+        value 7;
+        description
+          "RSVP packet.";
+      }
+      enum "ospf" {
+        value 8;
+        description
+          "OSPF packet.";
+      }
+      enum "rip" {
+        value 9;
+        description
+          "RIP packet.";
+      }
+      enum "pim" {
+        value 14;
+        description
+          "PIM packet.";
+      }
+      enum "isis" {
+        value 10;
+        description
+          "ISIS packet.";
+      }
+      enum "vrrp" {
+        value 26;
+        description
+          "VRRP packet.";
+      }
+      enum "riping" {
+        value 437;
+        description
+          "RIPING packet.";
+      }
+      enum "ospfv3" {
+        value 671;
+        description
+          "OSPFv3 packet.";
+      }
+      enum "pimv6" {
+        value 677;
+        description
+          "PIMv6 packet.";
+      }
+      enum "vrrv6" {
+        value 1097;
+        description
+          "VRRv6 packet.";
+      }
+    }
+    description
+      "Indicates the packet type of the rate limit on the interface.";
+  }
+  typedef cp-rate-limit-enhance-protocol {
+    type enumeration {
+      enum "dhcp" {
+        value 1;
+        description
+          "DHCP packet.";
+      }
+      enum "dhcpv6" {
+        value 2;
+        description
+          "DHCPv6 packet.";
+      }
+      enum "icmp" {
+        value 3;
+        description
+          "ICMP packet.";
+      }
+      enum "icmpv6" {
+        value 4;
+        description
+          "ICMPv6 packet.";
+      }
+    }
+    description
+      "Indicates the packet type of the overall rate limit on the interface and its sub-interfaces.";
+  }
+  typedef nd-protocol-type {
+    type enumeration {
+      enum "na" {
+        value 1;
+        description
+          "NA.";
+      }
+      enum "ns-unicast" {
+        value 2;
+        description
+          "NS-UNICAST.";
+      }
+      enum "ns-multicast" {
+        value 3;
+        description
+          "NS-MULTICAST.";
+      }
+    }
+    description
+      "ND protocol types for ND VLAN CAR.";
+  }
+  grouping cp-rate-limit-general {
+    description
+      "Restricts the rate at which packets on the general interface are sent to the CPU.";
+    leaf cir {
+      type uint32 {
+        range "32..1000000";
+      }
+      units "kbit/s";
+      mandatory true;
+      description
+        "Committed information rate.";
+    }
+    leaf cbs {
+      type uint32 {
+        range "100..33554432";
+      }
+      units "Octet";
+      ext:dynamic-default {
+        ext:default-value "../cir" {
+          when "../cir>100";
+          description "The default value is the value of cir when cir is greater than the minimum of cbs.";
+        }
+        ext:default-value "100" {
+          when "../cir<=100";
+          description "The default value is the minimum of cbs when cir is less than or equal to the minimum of cbs.";
+        }
+      }
+      description
+        "Committed burst size.";
+    }
+    leaf prior {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable specifies the packet bandwidth limit for the specified port takes precedence over blacklists, whitelists, and user-defined-flow.";
+    }
+  }
+  grouping cp-rate-limit-dot1q {
+    description
+      "Restricts the rate at which packets on the dot1q-termination interface are sent to the CPU.";
+    leaf cir {
+      type uint32 {
+        range "32..1000000";
+      }
+      units "kbit/s";
+      mandatory true;
+      description
+        "Committed information rate.";
+    }
+    leaf cbs {
+      type uint32 {
+        range "100..33554432";
+      }
+      units "Octet";
+      ext:dynamic-default {
+        ext:default-value "../cir" {
+          when "../cir>100";
+          description "The default value is the value of cir when cir is greater than the minimum of cbs.";
+        }
+        ext:default-value "100" {
+          when "../cir<=100";
+          description "The default value is the minimum of cbs when cir is less than or equal to the minimum of cbs.";
+        }
+      }
+      description
+        "Committed burst size.";
+    }
+    leaf prior {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable specifies the packet bandwidth limit for the specified port takes precedence over blacklists, whitelists, and user-defined-flow.";
+    }
+  }
+  grouping cp-rate-limit-qinq {
+    description
+      "Restricts the rate at which packets on the qinq-termination interface are sent to the CPU.";
+    leaf cir {
+      type uint32 {
+        range "32..1000000";
+      }
+      units "kbit/s";
+      mandatory true;
+      description
+        "Committed information rate.";
+    }
+    leaf cbs {
+      type uint32 {
+        range "100..33554432";
+      }
+      units "Octet";
+      ext:dynamic-default {
+        ext:default-value "../cir" {
+          when "../cir>100";
+          description "The default value is the value of cir when cir is greater than the minimum of cbs.";
+        }
+        ext:default-value "100" {
+          when "../cir<=100";
+          description "The default value is the minimum of cbs when cir is less than or equal to the minimum of cbs.";
+        }
+      }
+      description
+        "Committed burst size.";
+    }
+    leaf prior {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable specifies the packet bandwidth limit for the specified port takes precedence over blacklists, whitelists, and user-defined-flow.";
+    }
+  }
+  grouping cpcar-statistics {
+    description
+      "Displays information about the attack defense.";
+    leaf passed-packets {
+      type uint64;
+      description
+        "Number of passed packets.";
+    }
+    leaf dropped-packets {
+      type uint64;
+      description
+        "Number of dropped packets.";
+    }
+    leaf acl-denied-packets {
+      type uint64;
+      description
+        "Number of packets that hit ACL deny rules.";
+    }
+    leaf configured-cir {
+      type uint32;
+      description
+        "CIR configuration value.";
+    }
+    leaf configured-cbs {
+      type uint32;
+      description
+        "CBS configuration value.";
+    }
+    leaf actual-cir {
+      type uint32;
+      description
+        "CIR actual value.";
+    }
+    leaf actual-cbs {
+      type uint32;
+      description
+        "CBS actual value.";
+    }
+    leaf priority {
+      type cpcar-priority-query;
+      description
+        "Priority.";
+    }
+    leaf min-packet-length {
+      type uint32;
+      description
+        "Length for smallest packet compensation.";
+    }
+    leaf last-drop-start-time {
+      type yang:date-and-time;
+      description
+        "Start time for the last continuous packet loss.";
+    }
+    leaf last-drop-end-time {
+      type yang:date-and-time;
+      description
+        "End time for the last continuous packet loss.";
+    }
+    leaf last-drop-rate {
+      type uint64;
+      units "pps";
+      description
+        "Average packet loss rate during the last continuous packet loss.";
+    }
+    leaf last-drop-packets {
+      type uint64;
+      description
+        "Total number of packets dropped during the last continuous packet loss.";
+    }
+    leaf peak-rate-time {
+      type yang:date-and-time;
+      description
+        "Time when the packet rate reaches the peak rate in the month.";
+    }
+    leaf peak-rate {
+      type uint64;
+      units "pps";
+      description
+        "Peak rate of all packets in the month.";
+    }
+  }
+  grouping packet-statistics {
+    description
+      "Displays statistics about protocol packets.";
+    leaf total-packets {
+      type uint64;
+      description
+        "Total number of packets.";
+    }
+    leaf passed-packets {
+      type uint64;
+      description
+        "Number of passed packets.";
+    }
+    leaf dropped-packets {
+      type uint64;
+      description
+        "Number of dropped packets.";
+    }
+  }
+  grouping cpcar-state {
+    description
+      "Displays the cpcar information.";
+    leaf cir {
+      type uint32;
+      units "kbit/s";
+      description
+        "Committed information rate.";
+    }
+    leaf cbs {
+      type uint32;
+      units "Octet";
+      description
+        "Committed burst size.";
+    }
+    leaf min-packet-length {
+      type uint32;
+      units "Octet";
+      description
+        "Minimum packet length for compensation.";
+    }
+    leaf priority {
+      type cpcar-priority-query;
+      description
+        "Priority for sending packets to the CPU.";
+    }
+    leaf description {
+      type string {
+        length "0..127";
+      }
+      description
+        "Description.";
+    }
+  }
+  grouping protocol-group-state {
+    description
+      "Displays the bandwidth and weight of the packets to be sent to the CPU in protocol groups.";
+    leaf cir-configured {
+      type uint32 {
+        range "0..51200";
+      }
+      units "kbit/s";
+      description
+        "Configured CIR.";
+    }
+    leaf cir-default {
+      type uint32 {
+        range "0..51200";
+      }
+      units "kbit/s";
+      description
+        "Default CIR.";
+    }
+    leaf pir-configured {
+      type uint32 {
+        range "0..51200";
+      }
+      units "kbit/s";
+      description
+        "Configured PIR.";
+    }
+    leaf pir-default {
+      type uint32 {
+        range "0..51200";
+      }
+      units "kbit/s";
+      description
+        "Default PIR.";
+    }
+    leaf weight-configured {
+      type uint32 {
+        range "1..63";
+      }
+      description
+        "Configured weight.";
+    }
+    leaf weight-default {
+      type uint32 {
+        range "1..63";
+      }
+      description
+        "Default weight.";
+    }
+  }
+  grouping alarm-drop-rate {
+    description
+      "Sets alarm parameters for the dropped packets before they are sent to the CPU.";
+    container alarm-drop-rate {
+      description
+        "Configure alarm parameters for the dropped packets before they are sent to the CPU.";
+      leaf enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the alarm function for the packets that are dropped before they are sent to the CPU.";
+      }
+      leaf threshold {
+        type uint32 {
+          range "1..1000000";
+        }
+        default "30000";
+        description
+          "Specifies an upper threshold of the packets dropped within a specified time period.";
+      }
+      leaf interval {
+        type uint32 {
+          range "60..3600";
+        }
+        default "600";
+        description
+          "Specifies the interval for counting the number of dropped packets.";
+      }
+      leaf speed-threshold {
+        type uint32 {
+          range "0..1000000";
+        }
+        units "1/60 pps";
+        default "300";
+        description
+          "Specifies the alarm threshold for the rate at which packets are dropped.";
+      }
+    }
+  }
+  grouping host-car-statistics {
+    description
+      "Statistics about packets controlled by Host CAR.";
+    leaf slot {
+      type string {
+        length "1..32";
+      }
+      description
+        "Slot number.";
+    }
+    leaf car-id {
+      type uint32;
+      description
+        "CAR index.";
+    }
+    leaf passed-bytes {
+      type uint64;
+      description
+        "The number of bytes of all packets passed.";
+    }
+    leaf dropped-bytes {
+      type uint64;
+      description
+        "The number of bytes of all packets dropped.";
+    }
+  }
+  container cpudefend {
+    description
+      "Policies for global management and service plane protection.";
+    container policys {
+      description
+        "List of attack defense policies.";
+      list policy {
+        key "id";
+        max-elements 30;
+        description
+          "Configure attack defense policy.";
+        leaf id {
+          type uint32 {
+            range "1..30";
+          }
+          description
+            "ID of an attack defense policy.";
+        }
+        leaf description {
+          type string {
+            length "1..64";
+          }
+          description
+            "Description about an attack defense policy.";
+        }
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable defense policy.";
+        }
+        leaf icmp-broadcast-echo-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the device to receive broadcast ICMP echo request packets.";
+        }
+        container cpcar-protocol-names {
+          description
+            "List of configure the Committed Access Rate (CAR) function for packets by protocol name.";
+          list cpcar-protocol-name {
+            key "protocol-name";
+            description
+              "Configure the Committed Access Rate (CAR) function for packets by protocol name.";
+            leaf protocol-name {
+              type protocol-name;
+              description
+                "The packet name of the protocol packets.";
+            }
+            leaf cir {
+              type uint32 {
+                range "0..1000000";
+              }
+              units "kbit/s";
+              description
+                "Committed information rate.";
+            }
+            leaf cbs {
+              type uint32 {
+                range "0..9000000";
+              }
+              units "Octet";
+              description
+                "Committed burst size.";
+            }
+            leaf min-packet-length {
+              type uint32 {
+                range "64..9600";
+              }
+              units "Octet";
+              description
+                "Minimum packet length for compensation.";
+            }
+            leaf priority {
+              type cpcar-priority;
+              description
+                "Set a priority for sending packets to the CPU.";
+            }
+          }
+        }
+        container cpcar-protocol-ids {
+          description
+            "List of configure the Committed Access Rate (CAR) function for packets by protocol id.";
+          list cpcar-protocol-id {
+            key "protocol-id";
+            description
+              "Configure the Committed Access Rate (CAR) function for packets by protocol id.";
+            leaf protocol-id {
+              type uint32 {
+                range "35..1658";
+              }
+              description
+                "The packet index of the protocol packets. Some indexes cannot be configured.";
+            }
+            leaf cir {
+              type uint32 {
+                range "0..1000000";
+              }
+              units "kbit/s";
+              description
+                "Committed information rate.";
+            }
+            leaf cbs {
+              type uint32 {
+                range "0..9000000";
+              }
+              units "Octet";
+              description
+                "Committed burst size.";
+            }
+            leaf min-packet-length {
+              type uint32 {
+                range "64..9600";
+              }
+              units "Octet";
+              description
+                "Minimum packet length for compensation.";
+            }
+            leaf priority {
+              type cpcar-priority;
+              description
+                "Set a priority for sending packets to the CPU.";
+            }
+          }
+        }
+        container alarm-protocol-ids {
+          description
+            "List of configure the the alarm function for the packets that are dropped before they are sent to the CPU.";
+          list alarm-protocol-id {
+            key "protocol-id";
+            description
+              "Configure the the alarm function for the packets that are dropped before they are sent to the CPU.";
+            leaf protocol-id {
+              type uint32 {
+                range "35..1658";
+              }
+              description
+                "Enables the alarm function for the dropped packets with the specified index.";
+            }
+            leaf enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the alarm function for the packets that are dropped before they are sent to the CPU.";
+            }
+            leaf threshold {
+              type uint32 {
+                range "1..1000000";
+            }
+              default "30000";
+              description
+                "Specifies an upper threshold of the packets dropped within a specified time period.";
+            }
+            leaf interval {
+              type uint32 {
+                range "60..3600";
+              }
+              default "600";
+              description
+                "Specifies the interval for counting the number of dropped packets.";
+            }
+            leaf speed-threshold {
+              type uint32 {
+                range "0..1000000";
+              }
+              units "1/60 pps";
+              default "300";
+              description
+                "Specifies the alarm threshold for the rate at which packets are dropped.";
+            }
+          }
+        }
+        container ttl-expired-loop {
+          description
+            "Configure the TTL-timeout-based loop detection.";
+          container alarm-drop-rate {
+            description
+              "Configure the TTL-timeout-based loop detection alarm function.";
+            leaf enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the alarm function for the packets that are dropped before they are sent to the CPU.";
+            }
+            leaf threshold {
+              type uint32 {
+                range "1..100";
+              }
+              units "%";
+              default "10";
+              description
+                "Specifies a TTL timeout loop detection alarm threshold.";
+            }
+            leaf interval {
+              type uint32 {
+                range "5..3600";
+              }
+              units "s";
+              default "60";
+              description
+                "Specifies the interval at which the TTL timeout loop detection is implemented.";
+            }
+            leaf resume-cycles {
+              type uint32 {
+                range "1..65535";
+              }
+              default "3";
+              description
+                "Specifies the number of cycles.";
+            }
+          }
+        }
+        container alarm-protocol-names {
+          description
+            "List of configure the the alarm function for the packets that are dropped before they are sent to the CPU.";
+          list alarm-protocol-name {
+            key "protocol-name";
+            description
+              "Configure the the alarm function for the packets that are dropped before they are sent to the CPU.";
+            leaf protocol-name {
+              type alarm-protocol-name;
+              description
+                "The packet name of the protocol packets.";
+            }
+            leaf enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the alarm function for the packets that are dropped before they are sent to the CPU.";
+            }
+            leaf threshold {
+              type uint32 {
+                range "1..1000000";
+              }
+              default "30000";
+              description
+                "Specifies an upper threshold of the packets dropped within a specified time period.";
+            }
+            leaf interval {
+              type uint32 {
+                range "60..3600";
+              }
+              default "600";
+              description
+                "Specifies the interval for counting the number of dropped packets.";
+            }
+            leaf speed-threshold {
+              type uint32 {
+                range "0..1000000";
+              }
+              units "1/60 pps";
+              default "300";
+              description
+                "Specifies the alarm threshold for the rate at which packets are dropped.";
+            }
+          }
+        }
+        container ma-defend {
+          description
+            "Configure the management/control plane protection.";
+          container alarm-drop-rate {
+            description
+              "Configure alarm parameters for the dropped packets before they are sent to the CPU.";
+            leaf enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the alarm function for the packets that are dropped before they are sent to the CPU.";
+            }
+            leaf threshold {
+              type uint32 {
+                range "1..1000000";
+              }
+              default "1000000";
+              description
+                "Specifies an upper threshold of the packets dropped within a specified time period.";
+            }
+            leaf interval {
+              type uint32 {
+                range "60..3600";
+              }
+              default "300";
+              description
+                "Specifies the interval for counting the number of dropped packets.";
+            }
+          }
+        }        
+        container tcpip-defend {
+          description
+            "Configure TCP/IP attack defense protects a device against malformed or typical TCP/IP packets.";
+          leaf abnormal-packet-defend-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable defense against malformed packet attacks.";
+          }
+          leaf udp-packet-defend-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable defense against UDP packet attacks.";
+          }
+          leaf tcpsyn-flood-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable defense against TCP SYN flooding attacks.";
+          }
+          leaf fragment-flood-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable defense against fragmented packet attacks.";
+          }
+          uses alarm-drop-rate;
+        }
+        container ipv6-tcpip-defend {
+          description
+            "Configure IPv6 TCP/IP attack defense protects a device against malformed or typical TCP/IP packets.";
+          leaf abnormal-packet-defend-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable defense against malformed packet attacks.";
+          }
+          leaf udp-packet-defend-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable defense against UDP packet attacks.";
+          }
+          leaf tcpsyn-flood-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable defense against TCP SYN flooding attacks.";
+          }
+          uses alarm-drop-rate;
+        }
+        container total-car {
+          description
+            "Configure the rate limit of the packets sent to the CPU.";
+            container cpu-defend-total-car {
+              description
+                "Configure the rate limit of the packets sent to the CPU.";
+              choice rate-limit {
+                description
+                  "A total rate for sending packets to the CPU.";
+                case value {
+                  description
+                    "Specifies the rate value for sending packets to the CPU.";
+                  leaf value {
+                    type uint32 {
+                      range "0..50000";
+                    }
+                    description
+                      "The value is an integer ranging from 0 to 50000, in pps. Note: the minimum value that can be configured is 2000 pps.";
+                  }
+                }
+                case level {
+                  description
+                    "Specifies the rate level for sending packets to the CPU.";
+                  leaf level {
+                    type total-car-rate-level;
+                    description
+                      "Indicates the rate level at which packets are sent to the CPU.";
+                  }
+                }
+              }
+            }
+          container alarm-drop-rate {
+            description
+              "Configure alarm parameters for the dropped packets before they are sent to the CPU.";
+            leaf enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the alarm function for the packets that are dropped before they are sent to the CPU.";
+            }
+            leaf threshold {
+              type uint32 {
+                range "1..1000000";
+              }
+              default "1000000";
+              description
+                "Specifies an upper threshold of the packets dropped within a specified time period.";
+            }
+            leaf interval {
+              type uint32 {
+                range "60..3600";
+              }
+              default "300";
+              description
+                "Specifies the interval for counting the number of dropped packets.";
+            }
+          }
+        }
+        container urpf {
+          description
+            "Configure local URPF check on an board.";
+            container cpu-defend-urpf {
+              presence "config local urpf";
+              description
+                "Enable/disable local URPF check on an board.";
+                  leaf mode {
+                    type urpf-mode;
+                    mandatory true;
+                    description
+                      "Indicates URPF check mode, such as strict or loose.";
+                  }
+                  leaf default-route {
+                    when "../mode='strict'";
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable indicates that URPF is implemented for packets matching the default route.";
+                  }
+            }
+            uses alarm-drop-rate;
+        }
+        container dynamic-link-protection {
+          description
+            "Configure when the dynamic link protection function is enabled, after a protocol session is established, sufficient bandwidth can be allocated to ensure uninterrupted protocol sessions.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the dynamic link protection function.";
+          }
+        }
+        container cross-board-car {
+          description
+            "Configure implement rate limiting for inter-board trunk packets and inter-board packets on a dumb terminal.";
+          leaf cir {
+            type uint32 {
+              range "0..100000";
+            }
+            units "kbit/s";
+            description
+              "Committed information rate.";
+          }
+          leaf cbs {
+            when "../cir";
+            type uint32 {
+              range "1000..19200000";
+            }
+            units "Octet";
+            description
+              "Committed burst size.";
+          }
+        }
+        container process-sequence {
+          must "./tcpsyn-flood and ./fragment-flood and ./dynamic-link-protection and ./management-acl and ./whitelist and ./blacklist and ./user-defined-flow";
+          description
+            "Configure the match sequence of packets to be sent to the CPU. By default, packets to be sent to the CPU comply with the following match sequence: TCPSYN packets -> packet fragments -> dynamic link protection -> management protocol ACL -> whitelist -> blacklist -> user-defined flow.";
+          leaf tcpsyn-flood {
+            type sequence-priority;
+            must "(../tcpsyn-flood != ../fragment-flood) and (../tcpsyn-flood != ../dynamic-link-protection) and (../tcpsyn-flood != ../management-acl) and (../tcpsyn-flood != ../whitelist) and (../tcpsyn-flood != ../blacklist) and (../tcpsyn-flood != ../user-defined-flow)";
+            default "first";
+            description
+              "Matching order of tcpsyn flood packets. The value ranges from 1 to 7 and cannot be the same as the priority order of other parameters.";
+          }
+          leaf fragment-flood {
+            type sequence-priority;
+            must "(../fragment-flood != ../tcpsyn-flood) and (../fragment-flood != ../dynamic-link-protection) and (../fragment-flood != ../management-acl) and (../fragment-flood != ../whitelist) and (../fragment-flood != ../blacklist) and (../fragment-flood != ../user-defined-flow)";
+            default "second";
+            description
+              "Matching order of fragment flood packets. The value ranges from 1 to 7 and cannot be the same as the priority order of other parameters.";
+          }
+          leaf dynamic-link-protection {
+            type sequence-priority;
+            must "(../dynamic-link-protection != ../tcpsyn-flood) and (../dynamic-link-protection != ../fragment-flood) and (../dynamic-link-protection != ../management-acl) and (../dynamic-link-protection != ../whitelist) and (../dynamic-link-protection != ../blacklist) and (../dynamic-link-protection != ../user-defined-flow)";
+            default "third";
+            description
+              "Matching order of packets in the dynamic link protection. The value ranges from 1 to 7 and cannot be the same as the priority order of other parameters.";
+          }
+          leaf management-acl {
+            type sequence-priority;
+            must "(../management-acl != ../tcpsyn-flood) and (../management-acl != ../fragment-flood) and (../management-acl != ../dynamic-link-protection) and (../management-acl != ../whitelist) and (../management-acl != ../blacklist) and (../management-acl != ../user-defined-flow)";
+            default "fourth";
+            description
+              "Matching order of packets in the management acl. The value ranges from 1 to 7 and cannot be the same as the priority order of other parameters.";
+          }
+          leaf whitelist {
+            type sequence-priority;
+            must "(../whitelist != ../tcpsyn-flood) and (../whitelist != ../fragment-flood) and (../whitelist != ../dynamic-link-protection) and (../whitelist != ../management-acl) and (../whitelist != ../blacklist) and (../whitelist != ../user-defined-flow)";
+            default "fifth";
+            description
+              "Matching order of packets in the whitelist. The value ranges from 1 to 7 and cannot be the same as the priority order of other parameters.";
+          }
+          leaf blacklist {
+            type sequence-priority;
+            must "(../blacklist != ../tcpsyn-flood) and (../blacklist != ../fragment-flood) and (../blacklist != ../dynamic-link-protection) and (../blacklist != ../management-acl) and (../blacklist != ../whitelist) and (../blacklist != ../user-defined-flow)";
+            default "sixth";
+            description
+              "Matching order of packets in the blacklist. The value ranges from 1 to 7 and cannot be the same as the priority order of other parameters.";
+          }
+          leaf user-defined-flow {
+            type sequence-priority;
+            must "(../user-defined-flow != ../tcpsyn-flood) and (../user-defined-flow != ../fragment-flood) and (../user-defined-flow != ../dynamic-link-protection) and (../user-defined-flow != ../management-acl) and (../user-defined-flow != ../whitelist) and (../user-defined-flow != ../blacklist)";
+            default "seventh";
+            description
+              "Matching order of packets in the user-defined flow. The value ranges from 1 to 7 and cannot be the same as the priority order of other parameters.";
+          }
+        }
+        container application-apperceive {
+          description
+            "Configure application-apperceive function associates the enabled and disabled status of control protocols and the status of the forwarding engine at the lower layer.";
+          leaf default-action {
+            type application-apperceive-action;
+            default "min-to-cp";
+            description
+              "Set a default action to be taken on the protocol packets to be sent to the CPU when the upper-layer protocols supporting application-apperceive are disabled.";
+          }
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable application-apperceive function.";
+          }
+          uses alarm-drop-rate;
+        }
+        container attack-source-trace {
+          description
+            "Configure attack source tracing function.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable main switch of attack source tracing function. If the switch is disabled, all attack source tracing functions are disabled.";
+          }
+          leaf cpcar-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the switch of cpcar attack source tracking function.";
+          }
+          leaf tcpip-defend-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the switch of tcpip-defend attack source tracking function.";
+          }
+          leaf application-apperceive-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the switch of application-apperceive attack source tracking function.";
+          }
+          leaf ma-defend-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the switch of ma-defend attack source tracking function.";
+          }
+          leaf totalcar-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the switch of totalcar attack source tracking function.";
+          }
+          leaf sample-rate {
+            type attack-source-trace-sample-rate;
+            default "1000";
+            description
+              "Set the sampling ratio for the packets that are recorded by attack source tracing.";
+          }
+        }
+        container cpu-defend-acl {
+          description
+            "Configure ACLs applied to an attack defense policy.";
+          leaf ip-pool-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the address pool function for an attack defense policy.";
+          }
+          leaf vpn-instance-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable configure the VPN field in the ACL of a whitelist, blacklist, or user-defined flow that is applied to an attack defense policy to take effect.";
+          }
+          leaf ipv6-enhance-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable IPv6-enhance-enable matches IPv6 packets to be sent to the CPU against the whitelist, blacklist, or user-defined flow. The IPv6 packets include the IPv6, NA, BAS NA, QVCT MISS DHCPv6, QVCT MISS ND, PPPoE DHCPv6, NS, BAS NS, BAS LINKLOCAL, BAS reserved multicast, BAS DHCPv6 packets sent from L2TP users.";
+          }
+          leaf dhcp-discover-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable DHCP-DISCOVER packets from matching against ACLs in the blacklist, whitelist, or user-defined flow.";
+          }
+          leaf ipv4-multicast-fib-miss-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable IPv4 MFIB-MISS packets to match against ACLs in the blacklist, whitelist, or user-defined flow.";
+          }
+          leaf management-acl-enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the management protocol ACL delivering function to filter out invalid management protocol packets to be sent to the CPU using hardware.";
+          }
+        }
+        container tm-three-level-scheduling {
+          description
+            "Configure TM three-level scheduling allows high-priority packets to be preferentially sent to the CPU in the case of attacks.";
+          leaf protocol-group-scheduling {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable TM three-level scheduling is enabled by default. After this function is disabled, two-level scheduling takes effect.";
+          }
+          container protocol-group-settings {
+            description
+              "List of configure the CIR, PIR, and weight of the packets to be sent to the CPU in specific protocol groups.";
+            list protocol-group-setting {
+              ext:generated-by system;
+              ext:operation-exclude "create|delete";
+              key "protocol-group";
+              description
+                "Configure the CIR, PIR, and weight of the packets to be sent to the CPU in specific protocol groups.";
+              leaf protocol-group {
+                type protocol-group;
+                description
+                  "Protocol group into which the protocol packets sent to the CPU are classified.";
+              }
+              leaf cir {
+                type uint32 {
+                  range "0..51200";
+                }
+                units "kbit/s";
+                ext:dynamic-default {
+                  ext:default-value "256" {
+                    when "../protocol-group = 'management'";
+                    description "The default value is 256 when type is management.";
+                  }
+                  ext:default-value "1024" {
+                    when "../protocol-group = 'whitelist'";
+                    description "The default value is 1024 when type is whitelist.";
+                  }
+                  ext:default-value "256" {
+                    when "../protocol-group = 'access-user'";
+                    description "The default value is 256 when type is access-user.";
+                  }
+                  ext:default-value "512" {
+                    when "../protocol-group = 'multicast'";
+                    description "The default value is 512 when type is multicast.";
+                  }
+                  ext:default-value "512" {
+                    when "../protocol-group = 'link-layer'";
+                    description "The default value is 512 when type is link-layer.";
+                  }
+                  ext:default-value "256" {
+                    when "../protocol-group = 'mpls'";
+                    description "The default value is 256 when type is MPLS.";
+                  }
+                  ext:default-value "100" {
+                    when "../protocol-group = 'network-layer'";
+                    description "The default value is 100 when type is network-layer.";
+                  }
+                  ext:default-value "512" {
+                    when "../protocol-group = 'user-defined-flow'";
+                    description "The default value is 512 when type is user-defined-flow.";
+                  }
+                  ext:default-value "256" {
+                    when "../protocol-group = 'arp'";
+                    description "The default value is 256 when type is arp.";
+                  }
+                  ext:default-value "512" {
+                    when "../protocol-group = 'route'";
+                    description "The default value is 512 when type is route.";
+                  }
+                }
+                description
+                  "Committed information rate. Protocol-group with different protocol-group-type have different dynamic default values.";
+              }
+              leaf pir {
+                type uint32 {
+                  range "1..51200";
+                }
+                units "kbit/s";
+                ext:dynamic-default {
+                  ext:default-value "20480" {
+                    when "../protocol-group = 'management'";
+                    description "The default value is 20480 when type is management.";
+                  }
+                  ext:default-value "20480" {
+                    when "../protocol-group = 'whitelist'";
+                    description "The default value is 20480 when type is whitelist.";
+                  }
+                  ext:default-value "20480" {
+                    when "../protocol-group = 'access-user'";
+                    description "The default value is 20480 when type is access-user.";
+                  }
+                  ext:default-value "20480" {
+                    when "../protocol-group = 'multicast'";
+                    description "The default value is 20480 when type is multicast.";
+                  }
+                  ext:default-value "20480" {
+                    when "../protocol-group = 'link-layer'";
+                    description "The default value is 20480 when type is link-layer.";
+                  }
+                  ext:default-value "20480" {
+                    when "../protocol-group = 'mpls'";
+                    description "The default value is 20480 when type is MPLS.";
+                  }
+                  ext:default-value "20480" {
+                    when "../protocol-group = 'network-layer'";
+                    description "The default value is 20480 when type is network-layer.";
+                  }
+                  ext:default-value "20480" {
+                    when "../protocol-group = 'user-defined-flow'";
+                    description "The default value is 20480 when type is user-defined-flow.";
+                  }
+                  ext:default-value "20480" {
+                    when "../protocol-group = 'arp'";
+                    description "The default value is 20480 when type is arp.";
+                  }
+                  ext:default-value "20480" {
+                    when "../protocol-group = 'route'";
+                    description "The default value is 20480 when type is route.";
+                  }
+                }
+                must "../pir>=../cir";
+                description
+                  "Peak information rate. Protocol-group with different protocol-group-type have different dynamic default values.";
+              }
+              leaf weight {
+                type uint32 {
+                  range "1..63";
+                }
+                description
+                  "Weight. Protocol-group with different protocol-group-type have different dynamic default values.";
+              }
+            }
+          }
+        }
+        container blacklist {
+          description
+            "Configure a blacklist stores a group of invalid users. You can define a blacklist using ACLs. Attackers are added to the blacklist. Then, packets that match the blacklist are discarded or sent to the CPU with a lower priority.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the blacklist function.";
+          }
+          leaf ipv4-acl {
+            type leafref {
+              path "/acl:acl/acl:groups/acl:group/acl:identity";
+            }
+            must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+            description
+              "IPv4 ACL number or name. An ACL number ranges from 2000 to 3999. An ACL name is a string of 1 to 64 characters, which begins with a-z or A-Z. IPv4 ACL dentity is a number or number must exist, otherwise it does not support delivery.";
+          }
+          leaf ipv6-acl {
+            type leafref {
+              path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+            }
+            must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+            description
+              "IPv6 ACL number or name. An ACL number ranges from 2000 to 3999. An ACL name is a string of 1 to 64 characters, which begins with a-z or A-Z.";
+          }
+          container alarm-drop-rate {
+            description
+              "Configure alarm parameters for the dropped packets before they are sent to the CPU.";
+            leaf enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the alarm function for the packets that are dropped before they are sent to the CPU.";
+            }
+            leaf threshold {
+              type uint32 {
+                range "1..1000000";
+              }
+              default "1000000";
+              description
+                "Specifies an upper threshold of the packets dropped within a specified time period.";
+            }
+            leaf interval {
+              type uint32 {
+                range "60..3600";
+              }
+              default "300";
+              description
+                "Specifies the interval for counting the number of dropped packets.";
+            }
+          }
+        }
+        container user-defined-flows {
+          description
+            "List of user-defined-flow.";
+          list user-defined-flow {
+            key "flow-id";
+            description
+              "Configure user-defined-flow parameters.";
+            leaf flow-id {
+              type uint32 {
+                range "1..64";
+              }
+              description
+                "Specifies the number of a user-defined flow.";
+            }
+            choice acl-type {
+              mandatory true;
+              description
+                "Acl type for user-defined-flow.";
+              case ipv4 {
+                description
+                  "IPv4 user-defined flow.";
+                leaf ipv4-acl {
+                  type leafref {
+                    path "/acl:acl/acl:groups/acl:group/acl:identity";
+                  }
+                  must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+                  mandatory true;
+                  description
+                    "IPv4 ACL number or name. An ACL number ranges from 2000 to 3999. An ACL name is a string of 1 to 64 characters, which begins with a-z or A-Z. IPv4 ACL dentity is a number or number must exist, otherwise it does not support delivery.";
+                }
+                leaf prior {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable configure the highest priority for a user-defined flow in the whitelist, blacklist, and user-defined flows.";
+                }
+              }
+              case ipv6 {
+                description
+                  "IPv6 user-defined flow.";
+                leaf ipv6-acl {
+                  type leafref {
+                    path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                  }
+                  must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+                  mandatory true;
+                  description
+                    "ACL number or name. An ACL number ranges from 2000 to 3999. An ACL name is a string of 1 to 64 characters, which begins with a-z or A-Z.";
+                }
+              }
+            }
+            uses alarm-drop-rate;
+          }
+        }
+        container whitelist {
+          description
+            "Configure a whitelist stores a group of valid users or users with high priorities. By configuring the whitelist, you can enable the system to protect existing services or user services with high priorities.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the whitelist function.";
+          }
+          leaf acl {
+            type leafref {
+              path "/acl:acl/acl:groups/acl:group/acl:identity";
+            }
+            must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+            description
+              "IPv4 ACL number or name. An ACL number ranges from 2000 to 3999. An ACL name is a string of 1 to 64 characters, which begins with a-z or A-Z. IPv4 ACL dentity is a number or number must exist, otherwise it does not support delivery.";
+          }
+          uses alarm-drop-rate;
+        }
+        container ipv6-whitelist {
+          description
+            "Configure a whitelist stores a group of valid users or users with high priorities. By configuring the whitelist, you can enable the system to protect existing services or user services with high priorities.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the IPv6 whitelist function.";
+          }
+          leaf acl {
+            type leafref {
+              path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+            }
+            must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+            description
+              "ACL number or name. An ACL number ranges from 2000 to 3999. An ACL name is a string of 1 to 64 characters, which begins with a-z or A-Z.";
+          }
+          uses alarm-drop-rate;
+        }
+      }
+    }
+    container host-car-defense {
+      config false;
+      description
+        "Statistics of host-CAR is used to perform rate limit for packets that the user side sends to the CPU.";
+      container statistics {
+        config false;
+        description
+          "Displays statistics for the packets of the Host-CAR.";
+        container host-car {
+          config false;
+          description
+            "Displays statistics for the packets of the Host-CAR.";
+          container alls {
+            config false;
+            description
+              "List of displays statistics for the packets of the Host-CAR. If the CAR-ID is not specified, the record with the packet count of 0 is not displayed.";
+            list all {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the Host-CAR. If the CAR-ID is not specified, the record with the packet count of 0 is not displayed.";
+              uses host-car-statistics;
+            }
+          }
+          container auto-adjusts {
+            config false;
+            description
+              "List of displays statistics for the packets of the Host-CAR. Displays the IDs of CAR rules in which the bandwidth values are automatically adjusted..";
+            list auto-adjust {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the Host-CAR. Displays the IDs of CAR rules in which the bandwidth values are automatically adjusted..";
+              uses host-car-statistics;
+            }
+          }
+          container droppeds {
+            config false;
+            description
+              "List of displays statistics for the packets of the Host-CAR. Displays statistics about packets in which some bytes are dropped.";
+            list dropped {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the Host-CAR. Displays statistics about packets in which some bytes are dropped.";
+              uses host-car-statistics;
+            }
+          }
+          container non-droppeds {
+            config false;
+            description
+              "List of displays statistics for the packets of the Host-CAR. Displays statistics in which the passed packet traffic is not 0 and the discarded packet traffic is 0.";
+            list non-dropped {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the Host-CAR. Displays statistics in which the passed packet traffic is not 0 and the discarded packet traffic is 0.";
+              uses host-car-statistics;
+            }
+          }
+        }
+        container http-host-car {
+          config false;
+          description
+            "Displays statistics for the packets of the HTTP-Host-CAR.";
+          container alls {
+            config false;
+            description
+              "List of displays statistics for the packets of the HTTP-Host-CAR. If the CAR-ID is not specified, the record with the packet count of 0 is not displayed.";
+            list all {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the HTTP-Host-CAR. If the CAR-ID is not specified, the record with the packet count of 0 is not displayed.";
+              uses host-car-statistics;
+            }
+          }
+          container auto-adjusts {
+            config false;
+            description
+              "List of displays statistics for the packets of the HTTP-Host-CAR. Displays the IDs of CAR rules in which the bandwidth values are automatically adjusted..";
+            list auto-adjust {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the HTTP-Host-CAR. Displays the IDs of CAR rules in which the bandwidth values are automatically adjusted..";
+              uses host-car-statistics;
+            }
+          }
+          container droppeds {
+            config false;
+            description
+              "List of displays statistics for the packets of the HTTP-Host-CAR. Displays statistics about packets in which some bytes are dropped.";
+            list dropped {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the HTTP-Host-CAR. Displays statistics about packets in which some bytes are dropped.";
+              uses host-car-statistics;
+            }
+          }
+          container non-droppeds {
+            config false;
+            description
+              "List of displays statistics for the packets of the HTTP-Host-CAR. Displays statistics in which the passed packet traffic is not 0 and the discarded packet traffic is 0.";
+            list non-dropped {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the HTTP-Host-CAR. Displays statistics in which the passed packet traffic is not 0 and the discarded packet traffic is 0.";
+              uses host-car-statistics;
+            }
+          }
+        }
+        container vlan-host-car {
+          config false;
+          description
+            "Displays statistics for the packets of the VLAN-Host-CAR.";
+          container alls {
+            config false;
+            description
+              "List of displays statistics for the packets of the VLAN-Host-CAR. If the CAR-ID is not specified, the record with the packet count of 0 is not displayed.";
+            list all {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the VLAN-Host-CAR. If the CAR-ID is not specified, the record with the packet count of 0 is not displayed.";
+              uses host-car-statistics;
+            }
+          }
+          container auto-adjusts {
+            config false;
+            description
+              "List of displays statistics for the packets of the VLAN-Host-CAR. Displays the IDs of CAR rules in which the bandwidth values are automatically adjusted..";
+            list auto-adjust {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the VLAN-Host-CAR. Displays the IDs of CAR rules in which the bandwidth values are automatically adjusted..";
+              uses host-car-statistics;
+            }
+          }
+          container droppeds {
+            config false;
+            description
+              "List of displays statistics for the packets of the VLAN-Host-CAR. Displays statistics about packets in which some bytes are dropped.";
+            list dropped {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the VLAN-Host-CAR. Displays statistics about packets in which some bytes are dropped.";
+              uses host-car-statistics;
+            }
+          }
+          container non-droppeds {
+            config false;
+            description
+              "List of displays statistics for the packets of the VLAN-Host-CAR. Displays statistics in which the passed packet traffic is not 0 and the discarded packet traffic is 0.";
+            list non-dropped {
+              key "slot car-id";
+              description
+                "Displays statistics for the packets of the VLAN-Host-CAR. Displays statistics in which the passed packet traffic is not 0 and the discarded packet traffic is 0.";
+              uses host-car-statistics;
+            }
+          }
+        }
+      }
+      container host-car-parameters {
+        config false;
+        description
+          "List of displays the default and actual CAR parameter values for host-CAR.";
+        list host-car-parameter {
+          key "slot type";
+          description
+            "Operational data of displays the default and actual CAR for host-CAR.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot ID.";
+          }
+          leaf type {
+            type host-car-type;
+            description
+              "HOST-CAR type, such as HOST-CAR, HTTP-HOST-CAR, VLAN-HOST-CAR.";
+          }
+          leaf default-cir {
+            type uint32;
+            description
+              "CIR default value.";
+          }
+          leaf default-cbs {
+            type uint32;
+            description
+              "CBS default value.";
+          }
+          leaf default-pir {
+            type uint32;
+            description
+              "PIR default value.";
+          }
+          leaf default-pbs {
+            type uint32;
+            description
+              "PBS default value.";
+          }
+          leaf default-auto-adjust {
+            type boolean;
+            description
+              "Automatic bandwidth adjustment function default value.";
+          }
+          leaf default-logging-interval {
+            type uint32;
+            description
+              "Logging-interval default value.";
+          }
+          leaf default-logging-discard-threshold {
+            type uint32;
+            description
+              "Logging-discard-threshold default value.";
+          }
+          leaf actual-cir {
+            type uint32;
+            description
+              "CIR actual value.";
+          }
+          leaf actual-cbs {
+            type uint32;
+            description
+              "CBS actual value.";
+          }
+          leaf actual-pir {
+            type uint32;
+            description
+              "PIR actual value.";
+          }
+          leaf actual-pbs {
+            type uint32;
+            description
+              "PBS actual value.";
+          }
+          leaf actual-auto-adjust {
+            type boolean;
+            description
+              "Automatic bandwidth adjustment function actual value.";
+          }
+          leaf actual-logging-interval {
+            type uint32;
+            description
+              "Logging-interval actual value.";
+          }
+          leaf actual-logging-discard-threshold {
+            type uint32;
+            description
+              "Logging-discard-threshold actual value.";
+          }
+        }
+      }
+    }
+    container nd-attack-defense {
+      description
+      "Configure ND packet attack defense.";
+      leaf packet-filter {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable invalid ND packet attack defense to filter out six types of invalid ND packets (NS/NA/RS/RA/Redirect/CPS).";
+        } 
+    }
+    container cross-board-car {
+      config false;
+      description
+        "Implement rate limiting statistics for inter-board trunk packets and inter-board packets on a dumb terminal.";
+      container statisticss {
+        config false;
+        description
+          "List of displays cross-board CAR information on a specific board.";
+        list statistics {
+          key "slot";
+          description
+            "Displays statistics for cross-board CAR on a specific board.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf passed-packets {
+            type uint64;
+            description
+              "Number of passed packets.";
+          }
+          leaf dropped-packets {
+            type uint64;
+            description
+              "Number of dropped packets.";
+          }
+          leaf configured-cir {
+            type uint32;
+            description
+              "CIR configuration value.";
+          }
+          leaf configured-cbs {
+            type uint32;
+            description
+              "CBS configuration value.";
+          }
+          leaf actual-cir {
+            type uint32;
+            description
+              "CIR actual value.";
+          }
+          leaf actual-cbs {
+            type uint32;
+            description
+              "CBS actual value.";
+          }
+        }
+      }
+    }
+    container protocol-port-car {
+      config false;
+      description
+        "Statistics of the rate limit of packets on an interface.";
+      container statisticss {
+        config false;
+        description
+          "List of displays statistics about packet rate limit on an interface.";
+        list statistics {
+          key "interface protocol";
+          description
+            "Displays statistics for the packet rate limit on an interface.";
+          leaf interface {
+            type pub-type:if-name;
+            description
+              "Logical interface name.";
+          }
+          leaf protocol {
+            type port-car-packet;
+            description
+              "Indicates the packet type of the rate limit on the interface.";
+          }
+          uses packet-statistics;
+        }
+      }
+    }
+    container arp-attack-defense {
+      config false;
+      description
+        "Statistics of ARP packet attack defense.";
+      container arp-check-statisticss {
+        config false;
+        description
+          "List of displays statistics about discarded invalid ARP packets on a specific board.";
+        list arp-check-statistics {
+          key "slot type";
+          description
+            "Displays statistics for discarded invalid ARP packets on a specific board.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf type {
+            type arp-check-type;
+            description
+              "The type for checking invalid ARP packets.";
+          }
+          uses packet-statistics;
+        }
+      }
+      container arp-safeguard-statisticss {
+        config false;
+        description
+          "List of displays ARP bidirectional isolation statistics.";
+        list arp-safeguard-statistics {
+          key "slot";
+          description
+            "Displays ARP bidirectional isolation statistics.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot-id.";
+          }
+          leaf arp-request-packets {
+            type uint64;
+            description
+              "The number of arp-request packets.";
+          }
+          leaf arp-reply-packets {
+            type uint64;
+            description
+              "The number of arp-reply packets.";
+          }
+          leaf arp-tocpu-packets {
+            type uint64;
+            description
+              "The number of arp packets sent to the CPU.";
+          }
+          leaf arp-dropped-packets {
+            type uint64;
+            description
+              "The number of arp packets dropped.";
+          }
+        }
+      }
+      container arp-attack-currents {
+        config false;
+        description
+          "List of displays current ARP attack information.";
+        list arp-attack-current {
+          key "number";
+          description
+            "Displays current ARP attack statistics.";
+          leaf number {
+            type uint32;
+            description
+              "The ordinal number of the attack record.";
+          }
+          leaf slot {
+            ext:support-filter "true";
+            type string {
+              length "1..32";
+            }
+            description
+              "Attacked board.";
+          }
+          leaf physical-interface {
+            type pub-type:if-name;
+            description
+              "Physical interface name.";
+          }
+          leaf logical-interface {
+            type pub-type:if-name;
+            description
+              "Logical interface name.";
+          }
+          leaf vlan-id {
+            type uint32 {
+              range "0..4094";
+            }
+            description
+              "VLAN-ID.";
+          }
+          leaf pe-vid {
+            type uint32 {
+              range "0..4094";
+            }
+            description
+              "PE-VLAN-ID.";
+          }
+          leaf ce-vid {
+            type uint32 {
+              range "0..4094";
+            }
+            description
+              "CE-VLAN-ID.";
+          }
+          leaf passed-bytes {
+            type uint64;
+            description
+              "The number of bytes of all packets passed.";
+          }
+          leaf passed-packets {
+            type uint64;
+            description
+              "The number of all packets passed.";
+          }
+          leaf dropped-bytes {
+            type uint64;
+            description
+              "The number of bytes of all packets passed.";
+          }
+          leaf dropped-packets {
+            type uint64;
+            description
+              "The number of all packets dropped.";
+          }
+          leaf defend-start-time {
+            type yang:date-and-time;
+            description
+              "ARP attack defense start time.";
+          }
+        }
+      }
+      container arp-attack-historys {
+        config false;
+        description
+          "List of displays historical ARP attack information.";
+        list arp-attack-history {
+          key "number";
+          description
+            "Displays historical ARP attack statistics.";
+          leaf number {
+            type uint32;
+            description
+              "The ordinal number of the attack record.";
+          }
+          leaf slot {
+            ext:support-filter "true";
+            type string {
+              length "1..32";
+            }
+            description
+              "Attacked board.";
+          }
+          leaf physical-interface {
+            type pub-type:if-name;
+            description
+              "Physical interface name.";
+          }
+          leaf logical-interface {
+            type pub-type:if-name;
+            description
+              "Logical interface name.";
+          }
+          leaf vlan-id {
+            type uint32 {
+              range "0..4094";
+            }
+            description
+              "VLAN-ID.";
+          }
+          leaf pe-vid {
+            type uint32 {
+              range "0..4094";
+            }
+            description
+              "PE-VLAN-ID.";
+          }
+          leaf ce-vid {
+            type uint32 {
+              range "0..4094";
+            }
+            description
+              "CE-VLAN-ID.";
+          }
+          leaf passed-bytes {
+            type uint64;
+            description
+              "The number of bytes of all packets passed.";
+          }
+          leaf passed-packets {
+            type uint64;
+            description
+              "The number of all packets passed.";
+          }
+          leaf dropped-bytes {
+            type uint64;
+            description
+              "The number of bytes of all packets passed.";
+          }
+          leaf dropped-packets {
+            type uint64;
+            description
+              "The number of all packets dropped.";
+          }
+          leaf defend-start-time {
+            type yang:date-and-time;
+            description
+              "ARP attack defense start time.";
+          }
+          leaf defend-end-time {
+            type yang:date-and-time;
+            description
+              "ARP attack defense end time.";
+          }
+        }
+      }
+    }
+    container application-apperceive {
+      config false;
+      description
+        "Statistics of displays application-apperceive on a specified board.";
+      container protocol-states {
+        config false;
+        description
+          "List of displays protocol state on a specified board.";
+        list protocol-state {
+          key "slot protocol";
+          description
+            "Operational state of displays protocol on a specified board.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf protocol {
+            type application-apperceive-protocol;
+            description
+              "Name of the protocols supporting application layer association.";
+          }
+          leaf state {
+            type protocol-state;
+            description
+              "Protocol status, open or closed.";
+          }
+        }
+      }
+      container protocol-statisticss {
+        config false;
+        description
+          "List of displays statistics about protocol packets on a specified board.";
+        list protocol-statistics {
+          key "slot protocol";
+          description
+            "Displays statistics for protocol packets on a specified board.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf protocol {
+            type application-apperceive-protocol;
+            description
+              "Name of the protocols supporting application layer association.";
+          }
+          uses packet-statistics;
+        }
+      }
+    }
+    container cpcar {
+      config false;
+      description
+        "CAR for packets sent to the CPU statistics.";
+      container default-states {
+        config false;
+        description
+          "List of displays the default cpcar information.";
+        list default-state {
+          key "slot protocol-id";
+          description
+            "Displays the default cpcar statistics.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf protocol-id {
+            type uint32 {
+              range "0..65535";
+            }
+            description
+              "The packet index of the protocol packets.";
+          }
+          uses cpcar-state;
+        }
+      }
+      container current-states {
+        config false;
+        description
+          "List of displays the current cpcar information.";
+        list current-state {
+          key "slot protocol-id";
+          description
+            "Displays the current cpcar statistics.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf protocol-id {
+            type uint32 {
+              range "0..65535";
+            }
+            description
+              "The packet index of the protocol packets.";
+          }
+          uses cpcar-state;
+        }
+      }
+      container protocol-name-statisticss {
+        config false;
+        description
+          "List of displays information about the attack defense on a specified board.";
+        list protocol-name-statistics {
+          key "slot protocol-name";
+          description
+            "Displays statistics for the attack defense on a specified board.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf protocol-name {
+            type protocol-name;
+            description
+              "The packet name of the protocol packets.";
+          }
+          uses cpcar-statistics;
+        }
+      }
+      container protocol-id-statisticss {
+        config false;
+        description
+          "List of displays information about the attack defense on a specified board.";
+        list protocol-id-statistics {
+          key "slot protocol-id";
+          description
+            "Displays statistics for the attack defense on a specified board.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf protocol-id {
+            type uint32 {
+              range "35..1658";
+            }
+            description
+              "The packet index of the protocol packets.";
+          }
+          uses cpcar-statistics;
+        }
+      }
+    }
+    container tcpip-defend {
+      config false;
+      description
+        "Statistics of TCP/IP attack defense protects a device against malformed or typical TCP/IP packets.";
+      container ipv4-statisticss {
+        config false;
+        description
+          "List of displays information about tcpip-defend on a specified board.";
+        list ipv4-statistics {
+          key "slot type";
+          description
+            "Displays statistics for tcpip-defend on a specified board.";
+          leaf slot {
+            type string {
+              length "1..32"; 
+            }
+            description
+              "Slot number.";
+          }
+          leaf type {
+            type tcpip-defend-type;
+            description
+              "TCP/IP attack defense type.";
+          }
+          uses packet-statistics;
+        }
+      }
+      container ipv6-statisticss {
+        config false;
+        description
+          "List of displays information about tcpip-defend-v6 on a specified board.";
+        list ipv6-statistics {
+          key "slot type";
+          description
+            "Displays statistics for tcpip-defend-v6 on a specified board.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf type {
+            type tcpip-defend-v6-type;
+            description
+              "TCP/IPv6 attack defense type.";
+          }
+          uses packet-statistics;
+        }
+      }
+    }
+    container urpf {
+      description
+        "Configure Statistics of Unicast Reverse Path Forwarding (URPF).";
+      container ipv4-statisticss {
+        config false;
+        description
+          "List of displays statistics about IPv4 URPF on a specified board.";
+        list ipv4-statistics {
+          key "slot";
+          description
+            "Displays statistics for IPv4 URPF on a specified board.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf discard-packets {
+            type uint64;
+            description
+              "Number of packets dropped on the interface board due to URPF check failure.";
+          }
+        }
+      }
+      container ipv6-statisticss {
+        config false;
+        description
+          "List of displays statistics about IPv6 URPF on a specified board.";
+        list ipv6-statistics {
+          key "slot";
+          description
+            "Displays statistics for IPv6 URPF on a specified board.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf discard-packets {
+            type uint64;
+            description
+              "Number of packets dropped on the interface board due to URPF check failure.";
+          }
+        }
+      }
+      container cpu-defend-urpf {
+        config false;
+        description
+          "Statistics of local URPF on an interface board.";
+        container statisticss {
+          config false;
+          description
+            "List of displays information about cpu defend URPF on a specified board.";
+          list statistics {
+            key "slot";
+            description
+              "Displays statistics for cpu defend URPF on a specified board.";
+            leaf slot {
+              type string {
+                length "1..32";
+              }
+              description
+                "Slot number.";
+            }
+            uses packet-statistics;
+          }
+        }
+      }
+      container global-urpf {
+        presence "config global urpf";
+        description
+          "Enable/disable global URPF check.";
+        leaf mode {
+          type urpf-mode;
+          mandatory true;
+          description
+            "Indicates URPF check mode, such as strict or loose.";
+        }
+        leaf default-route {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable indicates that URPF is implemented for packets matching the default route.";
+        }
+      }
+    }
+    container total-car {
+      config false;
+      description
+        "Statistics of the rate limit of the packets sent to the CPU.";
+      container statisticss {
+        config false;
+        description
+          "List of displays information about total-packet on a specified board.";
+        list statistics {
+          key "slot";
+          description
+            "Displays statistics for total-packet on a specified board.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          uses packet-statistics;
+        }
+      }
+    }
+    container tm-three-level-scheduling {
+      config false;
+      description
+        "Statistics of TM three-level scheduling allows high-priority packets to be preferentially sent to the CPU in the case of attacks.";
+      container protocol-group-statisticss {
+        config false;
+        description
+          "List of displays statistics about the packets to be sent to the CPU in protocol groups.";
+        list protocol-group-statistics {
+          key "slot protocol-group";
+          description
+            "Displays statistics for the packets to be sent to the CPU in protocol groups.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf protocol-group {
+            type protocol-group;
+            description
+              "Protocol group into which the protocol packets sent to the CPU are classified.";
+          }
+          leaf passed-packets {
+            type uint64;
+            description
+              "Number of passed packets.";
+          }
+          leaf dropped-packets {
+            type uint64;
+            description
+              "Number of dropped packets.";
+          }
+          container fq-statistics {
+            description
+              "List of displays statistics about the packets to be sent to the CPU in flow queues of a protocol group.";
+            list fq-statistic {
+              key "fq-type";
+              description
+                "Displays statistics for the packets to be sent to the CPU in flow queues of a protocol group.";
+              leaf fq-type {
+                type fq-type;
+                description
+                  "FQ type. Protocol packets with different priorities within a protocol group are scheduled into eight flow queues (FQs).";
+              }
+              leaf passed-packets {
+                type uint64;
+                description
+                  "Number of passed packets.";
+              }
+              leaf dropped-packets {
+                type uint64;
+                description
+                  "Number of dropped packets.";
+              }
+            }
+          }
+        }
+      }
+      container protocol-group-states {
+        config false;
+        description
+          "List of displays the bandwidth and weight of the packets to be sent to the CPU in protocol groups.";
+        list protocol-group-state {
+          key "slot protocol-group";
+          description
+            "Displays statistics for the bandwidth and weight of the packets to be sent to the CPU in protocol groups.";
+          leaf slot {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot number.";
+          }
+          leaf protocol-group {
+            type protocol-group;
+            description
+              "Protocol group into which the protocol packets sent to the CPU are classified.";
+          }
+          uses protocol-group-state;
+        }
+      }
+    }
+    container port-mac-filter {
+      config false;
+      description
+        "Statistics of the MAC-based blacklist or whitelist function.";
+      container statistics {
+        config false;
+        description
+          "Displays statistics for packets dropped by the MAC-based blacklist or whitelist function.";
+        leaf whitelist-packets {
+          type uint64;
+          description
+            "The number of dropped packets that are not in the whitelist.";
+        }
+        leaf blacklist-packets {
+          type uint64;
+          description
+            "The number of dropped packets that are in the blacklist.";
+        }
+      }
+    }
+  }
+
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+      "Applies an attack defense policy to the board.";
+    container cpudefend {
+      description
+        "Configure policies for global management and service plane protection.";
+      leaf policy-id {
+        type leafref {
+          path "/cpudefend:cpudefend/cpudefend:policys/cpudefend:policy/cpudefend:id";
+        }
+        description
+          "Specifies the id of the attack defense policy to be applied.";
+      }
+    }
+    container cpudefend-devm {
+      ext:operation-exclude "delete" {
+        when "./bras-host-cars/bras-host-car/type";
+        description
+          "The 'cpudefend-devm' cannot be deleted, when bras-host-cars is not empty.";
+      }
+      description
+        "Configure policies for global management and service plane protection.";
+      container ignore-hostcar-acl {
+        description
+          "Configure host CAR and VLAN-Host-CAR not to apply to packets matching a specified ACL rule.";
+        leaf ipv4-acl {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          description
+            "IPv4 ACL number or name. An ACL number ranges from 2000 to 3999. An ACL name is a string of 1 to 64 characters, which begins with a-z or A-Z. IPv4 ACL dentity is a number or number must exist, otherwise it does not support delivery.";
+        }
+        leaf ipv6-acl {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+          description
+            "IPv6 ACL number or name. An ACL number ranges from 2000 to 3999. An ACL name is a string of 1 to 64 characters, which begins with a-z or A-Z.";
+        }
+      }
+      container bras-host-cars {
+        description
+          "List of Host-CAR is used to perform rate limit for packets that the user side sends to the CPU.";
+        list bras-host-car {
+          ext:generated-by system;
+          ext:operation-exclude "create|delete";
+          key "type";
+          description
+            "Configure Host-CAR parameters.";
+          leaf type {
+            type host-car-type;
+            description
+              "HOST-CAR type, such as HOST-CAR, HTTP-HOST-CAR, VLAN-HOST-CAR.";
+          }
+          container rate-limit {
+            description
+              "Configure the bandwidth limit for host-CAR.";
+            leaf cir {
+              type uint32{
+                range "0..4294967295";
+              }
+              units "kbit/s";
+              ext:dynamic-default {
+                ext:default-value "32" {
+                  when "../../type = 'host-car'";
+                  description "The default value is 32 when type is host-car.";
+                }
+                ext:default-value "128" {
+                  when "../../type = 'http-hostcar'";
+                  description "The default value is 128 when type is http-hostcar.";
+                }
+                ext:default-value "5120" {
+                  when "../../type = 'vlan-host-car'";
+                  description "The default value is 5120 when type is VLAN-host-car.";
+                }
+              }
+              must "(../../type='vlan-host-car' and ../cir>=8 and ../cir<=4294967295) or (../../type!='vlan-host-car')";
+              description
+                "Committed information rate. The default value in the CU scene is expanded by 5 times.";
+            }
+            leaf cbs {
+              type uint32 {
+                range "100..4294967295";
+              }
+              units "Octet";
+              ext:dynamic-default {
+                ext:default-value "32000" {
+                  when "../../type = 'host-car'";
+                  description "The default value is 32000 when type is host-car.";
+                }
+                ext:default-value "128000" {
+                  when "../../type = 'http-hostcar'";
+                  description "The default value is 128000 when type is http-hostcar.";
+                }
+                ext:default-value "2560000" {
+                  when "../../type = 'vlan-host-car'";
+                  description "The default value is 2560000 when type is VLAN-host-car.";
+                }
+              }
+              must "(../../type='vlan-host-car' and ../cbs>=10000 and ../cir<=4294967295) or (../../type!='vlan-host-car' and ../cbs>=1000 and ../cir<=4294967295)";
+              description
+                "Committed burst size. The default value in the CU scene is expanded by 5 times.";
+            }
+            leaf pir {
+              type uint32 {
+                range "8..4294967295";
+              }
+              units "kbit/s";
+              ext:dynamic-default {
+                ext:default-value "32" {
+                  when "../../type = 'host-car'";
+                  description "The default value is 32 when type is host-car.";
+                }
+                ext:default-value "128" {
+                  when "../../type = 'http-hostcar'";
+                  description "The default value is 128 when type is http-hostcar.";
+                }
+                ext:default-value "5120" {
+                  when "../../type = 'vlan-host-car'";
+                  description "The default value is 5120 when type is VLAN-host-car.";
+                }
+              }
+              must "../pir>=../cir";
+              description
+                "Peak information rate. The default value in the CU scene is expanded by 5 times.";
+            }
+            leaf pbs {
+              type uint32 {
+                range "0..4294967295";
+              }
+              units "Octet";
+              ext:dynamic-default {
+                ext:default-value "32000" {
+                  when "../../type = 'host-car'";
+                  description "The default value is 32000 when type is host-car.";
+                }
+                ext:default-value "128000" {
+                  when "../../type = 'http-hostcar'";
+                  description "The default value is 128000 when type is http-hostcar.";
+                }
+                ext:default-value "2560000" {
+                  when "../../type = 'vlan-host-car'";
+                  description "The default value is 2560000 when type is VLAN-host-car.";
+                }
+              }
+              description
+                "Peak burst size. The default value in the CU scene is expanded by 5 times.";
+            }
+            leaf auto-adjust-enable {
+              type boolean;
+              ext:dynamic-default {
+                ext:default-value "true" {
+                  when "../../type = 'host-car'";
+                  description "The default value is true when type is host-car.";
+                }
+                ext:default-value "true" {
+                  when "../../type = 'http-hostcar'";
+                  description "The default value is true when type is http-hostcar.";
+                }
+                ext:default-value "false" {
+                  when "../../type = 'vlan-host-car'";
+                  description "The default value is false when type is VLAN-host-car.";
+                }
+              }
+              description
+                "Enable/disable the device to automatically adjust HOST-CAR bandwidth.";
+            }
+          }
+          container logging {
+            description
+              "Configure a device to generate a log when the number of bytes discarded by HOST-CAR within a specified period reaches the specified threshold.";
+            leaf interval {
+              type uint32 {
+                range "1..4294967295";
+              }
+              units "min";
+              default "5";
+              description
+                "The interval at which a device counts the number of bytes discarded by HOST-CAR.";
+            }
+            leaf discard-threshold {
+              type uint32 {
+                range "1..4294967295";
+              }
+              default "30000";
+              description
+                "The number of bytes discarded by HOST-CAR.";
+            }
+          }
+          container attack-detect {
+            description
+              "Configure the attack detection parameters of the host-CAR.";
+            leaf drop-rate-threshold {
+              type uint32{
+                range "1..400";
+              }
+              units "pps";
+              default "1";
+              description
+                "The attack detection threshold for the rate at which packets are dropped by Host-CAR.";
+            }
+          }
+        }
+      }
+      container spu-cars {
+        description
+          "List of configure CAR for packets on a service board.";
+        list spu-car {
+          key "car-type";
+          description
+            "Configure CAR for packets on a service board.";
+          leaf car-type {
+            type spu-car-type;
+            description
+              "CAR type.";
+          }
+          leaf cir {
+            ext:dynamic-default;
+            type uint32 {
+              range "0..10000";
+            }
+            units "pps";
+            description
+              "CIR.";
+          }
+          leaf cbs {
+            ext:dynamic-default;
+            type uint32 {
+              range "0..30000";
+            }
+            units "packet";
+            description
+              "CBS.";
+          }
+        }
+      }
+      container arp-vlan-car {
+        description
+          "Configure the rate limit of ARP VLAN CAR for ARP packets on an interface.";
+        leaf alarm-drop-rate {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable the alarm function for ARP VLAN CAR. By default, the alarm function is enabled for ARP VLAN CAR.";
+        }
+        container level-2-car {
+          description
+            "Configure the level-2 CAR for ARP VLAN CAR.";
+          leaf rate-limit-percent {
+            type uint32 {
+              range "0..100";
+            }
+            default "80";
+            description
+              "The percentage of the bandwidth of level-2 CAR for ARP VLAN CAR in the bandwidth of CP-CAR for ARP protocol packets. The default value is 80. The value 0 indicates no restriction on the bandwidth.";
+          }
+        }
+      }
+      container nd-vlan-car {
+        description
+          "Configure the rate limit of ND VLAN CAR for ND packets on an interface.";
+        container nd-attack-alarms {
+          description
+            "List of the alarm function for ND VLAN CAR.";
+          list nd-attack-alarm {
+            ext:generated-by system;
+            ext:operation-exclude "create|delete";
+            key "type";
+            description
+              "Configure the alarm function for ND VLAN CAR.";
+            leaf type {
+              type nd-protocol-type;
+              description
+                "ND protocol type.";
+            }
+            leaf alarm-enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the alarm function for ND VLAN CAR. By default, the alarm function is enabled for ND VLAN CAR.";
+            }
+          }
+        }
+        container level-2-cars {
+          description
+            "List of the level-2 CAR for ND VLAN CAR.";
+          list level-2-car {
+            ext:generated-by system;
+            ext:operation-exclude "create|delete";
+            key "type";
+            description
+              "Configure the level-2 CAR for ND VLAN CAR.";
+            leaf type {
+              type nd-protocol-type;
+              description
+                "ND protocol type.";
+            }
+            leaf rate-limit-percent {
+              type uint32 {
+                range "0..100";
+              }
+              units "%";
+              default "80";
+              description
+                "The percentage of the bandwidth of level-2 CAR for ND VLAN CAR in the bandwidth of CP-CAR for ND protocol packets. The value 0 indicates no restriction on the bandwidth.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "Applies an attack defense policy to the board.";
+    container cpudefend {
+      description
+        "Configure policies for global management and service plane protection.";
+      leaf policy-id {
+        type leafref {
+          path "/cpudefend:cpudefend/cpudefend:policys/cpudefend:policy/cpudefend:id";
+        }
+        description
+          "Specifies the id of the attack defense policy to be applied.";
+      }
+    }
+    container cpudefend-devm {
+      ext:operation-exclude "delete" {
+        when "./bras-host-cars/bras-host-car/type";
+        description
+          "The 'cpudefend-devm' cannot be deleted, when bras-host-cars is not empty.";
+      }
+      description
+        "Configure policies for global management and service plane protection.";
+      container ignore-hostcar-acl {
+        description
+          "Configure host CAR and VLAN-Host-CAR not to apply to packets matching a specified ACL rule.";
+        leaf ipv4-acl {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+          description
+            "IPv4 ACL number or name. An ACL number ranges from 2000 to 3999. An ACL name is a string of 1 to 64 characters, which begins with a-z or A-Z. IPv4 ACL dentity is a number or number must exist, otherwise it does not support delivery.";
+        }
+        leaf ipv6-acl {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+          description
+            "IPv6 ACL number or name. An ACL number ranges from 2000 to 3999. An ACL name is a string of 1 to 64 characters, which begins with a-z or A-Z.";
+        }
+      }
+      container bras-host-cars {
+        description
+          "List of Host-CAR is used to perform rate limit for packets that the user side sends to the CPU.";
+        list bras-host-car {
+          ext:generated-by system;
+          ext:operation-exclude "create|delete";
+          key "type";
+          description
+            "Configure Host-CAR parameters.";
+          leaf type {
+            type host-car-type;
+            description
+              "HOST-CAR type, such as HOST-CAR, HTTP-HOST-CAR, VLAN-HOST-CAR.";
+          }
+          container rate-limit {
+            description
+              "Configure the bandwidth limit for host-CAR.";
+            leaf cir {
+              type uint32{
+                range "0..4294967295";
+              }
+              units "kbit/s";
+              ext:dynamic-default {
+                ext:default-value "32" {
+                  when "../../type = 'host-car'";
+                  description "The default value is 32 when type is host-car.";
+                }
+                ext:default-value "128" {
+                  when "../../type = 'http-hostcar'";
+                  description "The default value is 128 when type is http-hostcar.";
+                }
+                ext:default-value "5120" {
+                  when "../../type = 'vlan-host-car'";
+                  description "The default value is 5120 when type is VLAN-host-car.";
+                }
+              }
+              must "(../../type='vlan-host-car' and ../cir>=8 and ../cir<=4294967295) or (../../type!='vlan-host-car')";
+              description
+                "Committed information rate. The default value in the CU scene is expanded by 5 times.";
+            }
+            leaf cbs {
+              type uint32 {
+                range "100..4294967295";
+              }
+              units "Octet";
+              ext:dynamic-default {
+                ext:default-value "32000" {
+                  when "../../type = 'host-car'";
+                  description "The default value is 32000 when type is host-car.";
+                }
+                ext:default-value "128000" {
+                  when "../../type = 'http-hostcar'";
+                  description "The default value is 128000 when type is http-hostcar.";
+                }
+                ext:default-value "2560000" {
+                  when "../../type = 'vlan-host-car'";
+                  description "The default value is 2560000 when type is VLAN-host-car.";
+                }
+              }
+              must "(../../type='vlan-host-car' and ../cbs>=10000 and ../cir<=4294967295) or (../../type!='vlan-host-car' and ../cbs>=1000 and ../cir<=4294967295)";
+              description
+                "Committed burst size. The default value in the CU scene is expanded by 5 times.";
+            }
+            leaf pir {
+              type uint32 {
+                range "8..4294967295";
+              }
+              units "kbit/s";
+              ext:dynamic-default {
+                ext:default-value "32" {
+                  when "../../type = 'host-car'";
+                  description "The default value is 32 when type is host-car.";
+                }
+                ext:default-value "128" {
+                  when "../../type = 'http-hostcar'";
+                  description "The default value is 128 when type is http-hostcar.";
+                }
+                ext:default-value "5120" {
+                  when "../../type = 'vlan-host-car'";
+                  description "The default value is 5120 when type is VLAN-host-car.";
+                }
+              }
+              must "../pir>=../cir";
+              description
+                "Peak information rate. The default value in the CU scene is expanded by 5 times.";
+            }
+            leaf pbs {
+              type uint32 {
+                range "0..4294967295";
+              }
+              units "Octet";
+              ext:dynamic-default {
+                ext:default-value "32000" {
+                  when "../../type = 'host-car'";
+                  description "The default value is 32000 when type is host-car.";
+                }
+                ext:default-value "128000" {
+                  when "../../type = 'http-hostcar'";
+                  description "The default value is 128000 when type is http-hostcar.";
+                }
+                ext:default-value "2560000" {
+                  when "../../type = 'vlan-host-car'";
+                  description "The default value is 2560000 when type is VLAN-host-car.";
+                }
+              }
+              description
+                "Peak burst size. The default value in the CU scene is expanded by 5 times.";
+            }
+            leaf auto-adjust-enable {
+              type boolean;
+              ext:dynamic-default {
+                ext:default-value "true" {
+                  when "../../type = 'host-car'";
+                  description "The default value is true when type is host-car.";
+                }
+                ext:default-value "true" {
+                  when "../../type = 'http-hostcar'";
+                  description "The default value is true when type is http-hostcar.";
+                }
+                ext:default-value "false" {
+                  when "../../type = 'vlan-host-car'";
+                  description "The default value is false when type is VLAN-host-car.";
+                }
+              }
+              description
+                "Enable/disable the device to automatically adjust HOST-CAR bandwidth.";
+            }
+          }
+          container logging {
+            description
+              "Configure a device to generate a log when the number of bytes discarded by HOST-CAR within a specified period reaches the specified threshold.";
+            leaf interval {
+              type uint32 {
+                range "1..4294967295";
+              }
+              units "min";
+              default "5";
+              description
+                "The interval at which a device counts the number of bytes discarded by HOST-CAR.";
+            }
+            leaf discard-threshold {
+              type uint32 {
+                range "1..4294967295";
+              }
+              default "30000";
+              description
+                "The number of bytes discarded by HOST-CAR.";
+            }
+          }
+          container attack-detect {
+            description
+              "Configure the attack detection parameters of the host-CAR.";
+            leaf drop-rate-threshold {
+              type uint32{
+                range "1..400";
+              }
+              units "pps";
+              default "1";
+              description
+                "The attack detection threshold for the rate at which packets are dropped by Host-CAR.";
+            }
+          }
+        }
+      }
+      container spu-cars {
+        description
+          "List of configure CAR for packets on a service board.";
+        list spu-car {
+          key "car-type";
+          description
+            "Configure CAR for packets on a service board.";
+          leaf car-type {
+            type spu-car-type;
+            description
+              "CAR type.";
+          }
+          leaf cir {
+            ext:dynamic-default;
+            type uint32 {
+              range "0..10000";
+            }
+            units "pps";
+            description
+              "CIR.";
+          }
+          leaf cbs {
+            ext:dynamic-default;
+            type uint32 {
+              range "0..30000";
+            }
+            units "packet";
+            description
+              "CBS.";
+          }
+        }
+      }
+      container arp-vlan-car {
+        description
+          "Configure the rate limit of ARP VLAN CAR for ARP packets on an interface.";
+        leaf alarm-drop-rate {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable the alarm function for ARP VLAN CAR. By default, the alarm function is enabled for ARP VLAN CAR.";
+        }
+        container level-2-car {
+          description
+            "Configure the level-2 CAR for ARP VLAN CAR.";
+          leaf rate-limit-percent {
+            type uint32 {
+              range "0..100";
+            }
+            default "80";
+            description
+              "The percentage of the bandwidth of level-2 CAR for ARP VLAN CAR in the bandwidth of CP-CAR for ARP protocol packets. The default value is 80. The value 0 indicates no restriction on the bandwidth.";
+          }
+        }
+      }
+      container nd-vlan-car {
+        description
+          "Configure the rate limit of ND VLAN CAR for ND packets on an interface.";
+        container nd-attack-alarms {
+          description
+            "List of the alarm function for ND VLAN CAR.";
+          list nd-attack-alarm {
+            ext:generated-by system;
+            ext:operation-exclude "create|delete";
+            key "type";
+            description
+              "Configure the alarm function for ND VLAN CAR.";
+            leaf type {
+              type nd-protocol-type;
+              description
+                "ND protocol type.";
+            }
+            leaf alarm-enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the alarm function for ND VLAN CAR. By default, the alarm function is enabled for ND VLAN CAR.";
+            }
+          }
+        }
+        container level-2-cars {
+          description
+            "List of the level-2 CAR for ND VLAN CAR.";
+          list level-2-car {
+            ext:generated-by system;
+            ext:operation-exclude "create|delete";
+            key "type";
+            description
+              "Configure the level-2 CAR for ND VLAN CAR.";
+            leaf type {
+              type nd-protocol-type;
+              description
+                "ND protocol type.";
+            }
+            leaf rate-limit-percent {
+              type uint32 {
+                range "0..100";
+              }
+              units "%";
+              default "80";
+              description
+                "The percentage of the bandwidth of level-2 CAR for ND VLAN CAR in the bandwidth of CP-CAR for ND protocol packets. The value 0 indicates no restriction on the bandwidth.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Adds cpudefend configuration to the interface.";
+    container cpudefend {
+      description
+        "Configure policies for global management and service plane protection.";
+      container arp-safeguards {
+        description
+          "Configure ARP bidirectional isolation.";
+        leaf arp-safeguard {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable ARP bidirectional isolation.";
+        }
+      }
+      container host-car-qinq-hashs {
+        description
+          "Configure the QinQ hash mode for host CAR.";
+        leaf host-car-qinq-hash {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the QinQ hash mode for host CAR.";
+        }
+      }
+      container ipv4-urpf {
+        presence "config ipv4 urpf";
+        description
+          "Enable/disable IPv4 URPF check in the interface.";
+        choice method {
+          mandatory true;
+          description
+            "The method of IPv4 URPF.";
+          case general {
+            description
+              "IPv4 general URPF on an interface.";
+            leaf mode {
+              type urpf-mode;
+              mandatory true;
+              description
+                "Indicates URPF check mode, such as strict or loose.";
+            }
+            leaf default-route {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable indicates that URPF is implemented for packets matching the default route.";
+            }
+          }
+          case peer-based {
+            description
+              "IPv4 peer-based URPF on an interface.";
+            leaf peer-id {
+              type uint32 {
+                range "1..255";
+              }
+              mandatory true;
+              description
+                "A peer group ID.";
+            }
+          }
+        }
+        leaf statistics-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable indicates the URPF statistics function.";
+        }
+      }
+      container ipv6-urpf {
+        presence "config ipv6 urpf";
+        description
+          "Enable/disable IPv6 URPF check in the interface.";
+        choice method {
+          mandatory true;
+          description
+            "The method of IPv6 URPF.";
+          case general {
+            description
+              "IPv6 general URPF on an interface.";
+            leaf mode {
+              type urpf-mode;
+              mandatory true;
+              description
+                "Indicates URPF check mode, such as strict or loose.";
+            }
+            leaf default-route {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable indicates that URPF is implemented for packets matching the default route.";
+            }
+          }
+          case peer-based {
+            description
+              "IPv6 peer-based URPF on an interface.";
+            leaf peer-id {
+              type uint32 {
+                range "1..255";
+              }
+              mandatory true;
+              description
+                "A peer group ID.";
+            }
+          }
+        }
+        leaf statistics-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable indicates the URPF statistics function.";
+        }
+      }
+      container arp-vlan-car {
+        description
+          "Configure limit arp rate.";
+        leaf rate-limit {
+          type uint32 {
+            range "0|20..1024";
+          }
+          default "20";
+          description
+            "The rate limit of ARP VLAN CAR for ARP packets on an interface. If the value is 0, ARP VLAN CAR is not performed for ARP packets to be sent to the CPU.";
+        }
+      }
+      container nd-vlan-cars {
+        description
+          "List of limit nd rate.";
+        list nd-vlan-car {
+          ext:generated-by system;
+          ext:operation-exclude "create|delete";
+          key "type";
+          description
+            "Configure the rate limit of ND VLAN CAR for ND packets on an interface.";
+            leaf type {
+              type nd-protocol-type;
+              description
+                "ND protocol type.";
+            }
+            leaf rate-limit {
+              type uint32 {
+                range "0|20..1024";
+              }
+              units "pps";
+              default "100";
+              description
+                "The rate limit of ND VLAN CAR for ND packets on an interface. If the value is 0, ND VLAN CAR is not performed for ND packets to be sent to the CPU.";
+            }
+        }
+      }
+      container protocol-port-car {
+        description
+          "Configure the rate limit of packets on an interface.";
+        container rate-limits {
+          description
+            "List of configure the rate limit of packets on an interface.";
+          list rate-limit {
+            ext:generated-by system {
+              ext:filter "protocol='arp' or protocol='dhcp' or protocol='snmp' or protocol='telnet' or protocol='icmp' or protocol='ssh' or protocol='icmp-nd' or protocol='icmpv6'";
+              description "The instances whose protocol is not 'port' are generated by system automatically.";
+            }
+            ext:operation-exclude "create|delete" {
+              ext:filter "protocol='arp' or protocol='dhcp' or protocol='snmp' or protocol='telnet' or protocol='icmp' or protocol='ssh' or protocol='icmp-nd' or protocol='icmpv6'";
+              description "The instances whose protocol is not 'port' cannot be created or deleted.";
+            }
+            must "((./protocol='port') and (./cp-rate-limit)) or (not(./protocol='port'))";
+            key "protocol";
+            description
+              "Configure the rate limit of packets on an interface.";
+            leaf protocol {
+              type port-car-packet;
+              description
+                "Indicates the packet type of the rate limit on the interface.";
+            }
+            leaf cp-rate-limit {
+              type uint32;
+              ext:dynamic-default {
+                ext:default-value "80" {
+                  when "../protocol = 'dhcp'";
+                  description "The default value is 80 when protocol is DHCP.";
+                }
+                ext:default-value "100" {
+                  when "../protocol = 'snmp'";
+                  description "The default value is 100 when protocol is SNMP.";
+                }
+                ext:default-value "100" {
+                  when "../protocol = 'telnet'";
+                  description "The default value is 100 when protocol is TELNET.";
+                }
+                ext:default-value "120" {
+                  when "../protocol = 'icmp'";
+                  description "The default value is 120 when protocol is ICMP.";
+                }
+                ext:default-value "100" {
+                  when "../protocol = 'ssh'";
+                  description "The default value is 100 when protocol is SSH.";
+                }
+                ext:default-value "30" {
+                  when "../protocol = 'icmp-nd'";
+                  description "The default value is 30 when protocol is ICMP-ND.";
+                }
+                ext:default-value "60" {
+                  when "../protocol = 'icmpv6'";
+                  description "The default value is 60 when protocol is ICMPv6.";
+                }
+              }
+              must "((not(../protocol='port') and ../cp-rate-limit>=20 and ../cp-rate-limit<=500) or (../protocol='port' and ../cp-rate-limit>=1 and ../cp-rate-limit<=30000))";
+              description
+                "Specifies the rate limit of packets on an interface.";
+            }
+          }
+        }
+        container alarm {
+          description
+            "Configure alarm parameters for the PORT-CAR.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the alarm function for the PORT-CAR.";
+          }
+          leaf threshold {
+            type uint32 {
+              range "1..1000000";
+            }
+            default "1000000";
+            description
+              "Specifies an alarm threshold, which indicates the number of packets sent to the interface.";
+          }
+          leaf interval {
+            type uint32 {
+              range "60..3600";
+            }
+            units "s";
+            default "1200";
+            description
+              "Specifies an alarm check period.";
+          }
+        }
+      }
+      container arp-check {
+        description
+          "Configure the destination address check for the ARP packet.";
+        leaf check-destination-ip {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the destination address check for the ARP packet.";
+        }
+      }
+      container arp-filter {
+        description
+          "Configure an interface to filter ARP packets.";
+        leaf filter-gratuitous {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable an interface to filter the gratuitous ARP packets.";
+        }
+        leaf filter-mac-illegal {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable an interface to filter the ARP packets with invalid MAC addresses, including the ARP Request packets whose destination MAC addresses are unicast addresses.";
+        }
+        leaf filter-tha-filled-request {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable an interface to filter the the ARP Request packets whose destination MAC addresses are not null.";
+        }
+      }
+      container cp-rate-limit {
+        description
+          "Configure restricts the rate at which packets on the interface are sent to the CPU. Some interfaces are supported.";
+        container igmp {
+          description
+            "Configure restricts the rate at which IGMP packets on the interface are sent to the CPU.";
+          container general {
+            presence "config general";
+            description
+              "Enable/disable restricts the rate at which packets on the general interface are sent to the CPU.";
+            leaf cir {
+              type uint32 {
+                range "0|32..1000000";
+              }
+              units "kbit/s";
+              mandatory true;
+              description
+                "Committed information rate.";
+            }
+            leaf cbs {
+              type uint32 {
+                range "100..33554432";
+              }
+              units "Octet";
+              ext:dynamic-default {
+                ext:default-value "../cir" {
+                  when "../cir>100";
+                  description "The default value is the value of cir when cir is greater than the minimum of cbs.";
+                }
+                ext:default-value "100" {
+                  when "../cir<=100";
+                  description "The default value is the minimum of cbs when cir is less than or equal to the minimum of cbs.";
+                }
+              }
+              description
+                "Committed burst size.";
+            }
+            leaf prior {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable specifies the IGMP packet bandwidth limit for the specified port takes precedence over blacklists, whitelists, and user-defined-flow.";
+            }
+          }
+          container dot1q-terminations {
+            description
+              "List of restricts the rate at which packets on the dot1q-termination interface are sent to the CPU.";
+            list dot1q-termination {
+              must "(vlan-end>=vlan-begin)";
+              key "vlan-begin vlan-end";
+              description
+                "Configure restricts the rate at which packets on the dot1q-termination interface are sent to the CPU.";
+              leaf vlan-begin {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                  "The start value of the VLAN ID. The VLAN value range is subject to the actual configuration on the device. The VLAN segment cannot be configured to be adjacent to the existing VLAN segment on the device.";
+              }
+              leaf vlan-end {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                  "The start value of the VLAN ID. The VLAN value range is subject to the actual configuration on the device. The VLAN segment cannot be configured to be adjacent to the existing VLAN segment on the device.";
+              }
+              leaf cir {
+                type uint32 {
+                  range "0|32..1000000";
+                }
+                units "kbit/s";
+                mandatory true;
+                description
+                  "Committed information rate.";
+              }
+              leaf cbs {
+                type uint32 {
+                  range "100..33554432";
+                }
+                units "Octet";
+                ext:dynamic-default {
+                  ext:default-value "../cir" {
+                    when "../cir>100";
+                    description "The default value is the value of cir when cir is greater than the minimum of cbs.";
+                  }
+                  ext:default-value "100" {
+                    when "../cir<=100";
+                    description "The default value is the minimum of cbs when cir is less than or equal to the minimum of cbs.";
+                  }
+                }
+                description
+                  "Committed burst size.";
+              }
+              leaf prior {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable specifies the IGMP packet bandwidth limit for the specified port takes precedence over blacklists, whitelists, and user-defined-flow.";
+              }
+            }
+          }
+          container qinq-terminations {
+            description
+                "List of restricts the rate at which packets on the qinq-termination interface are sent to the CPU.";
+            list qinq-termination {
+              must "(ce-vlan-end>=ce-vlan-begin)";
+              key "pe-vlan ce-vlan-begin ce-vlan-end";
+              description
+                "Configure restricts the rate at which packets on the qinq-termination interface are sent to the CPU.";
+              leaf pe-vlan {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                  "The value of the PE VLAN ID. The VLAN value range is subject to the actual configuration on the device.";
+              }
+              leaf ce-vlan-begin {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                  "The start value of the VLAN ID. The VLAN value range is subject to the actual configuration on the device. The VLAN segment cannot be configured to be adjacent to the existing VLAN segment on the device.";
+              }
+              leaf ce-vlan-end {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                  "The start value of the VLAN ID. The VLAN value range is subject to the actual configuration on the device. The VLAN segment cannot be configured to be adjacent to the existing VLAN segment on the device.";
+              }
+              leaf cir {
+                type uint32 {
+                  range "0|32..1000000";
+                }
+                units "kbit/s";
+                mandatory true;
+                description
+                  "Committed information rate.";
+              }
+              leaf cbs {
+                type uint32 {
+                  range "100..33554432";
+                }
+                units "Octet";
+                ext:dynamic-default {
+                  ext:default-value "../cir" {
+                    when "../cir>100";
+                    description "The default value is the value of cir when cir is greater than the minimum of cbs.";
+                  }
+                  ext:default-value "100" {
+                    when "../cir<=100";
+                    description "The default value is the minimum of cbs when cir is less than or equal to the minimum of cbs.";
+                  }
+                }
+                description
+                  "Committed burst size.";
+              }
+              leaf prior {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable specifies the IGMP packet bandwidth limit for the specified port takes precedence over blacklists, whitelists, and user-defined-flow.";
+              }
+            }
+          }
+        }
+        container ports {
+          description
+            "Configure restricts the overall rate at which packets on the interface and its sub-interfaces are sent to the CPU.";
+          container general {
+            description
+              "Configure restricts the rate at which packets on the general interface are sent to the CPU.";
+            choice rate-limit-mode {
+              description
+                "Rate limit mode.";
+              case port {
+                description
+                  "Restricts the overall rate at which packets on the interface and its sub-interfaces are sent to the CPU.";
+                container port {
+                  presence "config general rate limit mode port";
+                  description
+                    "Enable/disable restricts the overall rate at which packets on the interface and its sub-interfaces are sent to the CPU.";
+                  uses cp-rate-limit-general;
+                }
+              }
+              case protocol {
+                description
+                  "Restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+                container protocols {
+                  description
+                    "List of restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+                  list protocol {
+                    key "protocol-type";
+                    description
+                      "Configure restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+                    leaf protocol-type {
+                      type cp-rate-limit-protocol;
+                      description
+                        "Protocol type of packets on an interface sent to the CPU.";
+                    }
+                    uses cp-rate-limit-general;
+                  }
+                }
+              }
+            }
+          }
+          container dot1q-terminations {
+            description
+              "List of restricts the rate at which packets on the dot1q-termination interface are sent to the CPU.";
+            list dot1q-termination {
+              must "(./vlan-end>=./vlan-begin) and (./port or ./protocols)";
+              key "vlan-begin vlan-end";
+              description
+                "Configure restricts the rate at which packets on the dot1q-termination interface are sent to the CPU.";
+              leaf vlan-begin {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                  "The start value of the VLAN ID. The VLAN value range is subject to the actual configuration on the device. The VLAN segment cannot be configured to be adjacent to the existing VLAN segment on the device.";
+              }
+              leaf vlan-end {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                  "The start value of the VLAN ID. The VLAN value range is subject to the actual configuration on the device. The VLAN segment cannot be configured to be adjacent to the existing VLAN segment on the device.";
+              }
+              choice rate-limit-mode {
+                mandatory true;
+                description
+                  "Rate limit mode.";
+                case port {
+                  description
+                    "Restricts the overall rate at which packets on the interface and its sub-interfaces are sent to the CPU.";
+                  container port {
+                    description
+                      "Configure restricts the overall rate at which packets on the interface and its sub-interfaces are sent to the CPU.";
+                    uses cp-rate-limit-dot1q;
+                  }
+                }
+                case protocol {
+                  description
+                    "Restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+                  container protocols {
+                    description
+                      "List of restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+                    list protocol {
+                      key "protocol-type";
+                      description
+                        "Configure restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+                      leaf protocol-type {
+                        type cp-rate-limit-protocol;
+                        description
+                          "Protocol type of packets on an interface sent to the CPU.";
+                      }
+                      uses cp-rate-limit-dot1q;
+                    }
+                  }
+                }
+              }
+            }
+          }
+          container qinq-terminations {
+            description
+              "List of restricts the rate at which packets on the qinq-termination interface are sent to the CPU.";
+            list qinq-termination {
+              must "(ce-vlan-end>=ce-vlan-begin) and (./port or ./protocols)";
+              key "pe-vlan ce-vlan-begin ce-vlan-end";
+              description
+                "Configure restricts the rate at which packets on the qinq-termination interface are sent to the CPU.";
+              leaf pe-vlan {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                  "The value of the PE VLAN ID. The VLAN value range is subject to the actual configuration on the device.";
+              }
+              leaf ce-vlan-begin {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                  "The start value of the VLAN ID. The VLAN value range is subject to the actual configuration on the device. The VLAN segment cannot be configured to be adjacent to the existing VLAN segment on the device.";
+              }
+              leaf ce-vlan-end {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                  "The start value of the VLAN ID. The VLAN value range is subject to the actual configuration on the device. The VLAN segment cannot be configured to be adjacent to the existing VLAN segment on the device.";
+              }
+              choice rate-limit-mode {
+                mandatory true;
+                description
+                  "Rate limit mode.";
+                case port {
+                  description
+                    "Restricts the overall rate at which packets on the interface and its sub-interfaces are sent to the CPU.";
+                  container port {
+                    description
+                        "Configure restricts the overall rate at which packets on the interface and its sub-interfaces are sent to the CPU.";
+                    uses cp-rate-limit-qinq;
+                  }
+                }
+                case protocol {
+                  description
+                    "Restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+                  container protocols {
+                    description
+                      "List of restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+                    list protocol {
+                      key "protocol-type";
+                      description
+                        "Configure restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+                      leaf protocol-type {
+                        type cp-rate-limit-protocol;
+                        description
+                          "Protocol type of packets on an interface sent to the CPU.";
+                      }
+                      uses cp-rate-limit-qinq;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        container enhance {
+          description
+            "Configure restricts the overall rate at which packets on the interface and its sub-interfaces are sent to the CPU.";
+          choice rate-limit-mode {
+            description
+              "Rate limit mode.";
+            case port {
+              description
+                "Restricts the overall rate at which packets on the interface and its sub-interfaces are sent to the CPU.";
+              container port {
+                presence "config enhance port";
+                description
+                  "Enable/disable restricts the overall rate at which packets on the interface and its sub-interfaces are sent to the CPU.";
+                leaf cir {
+                  type uint32 {
+                    range "32..1000000";
+                  }
+                  units "kbit/s";
+                  mandatory true;
+                  description
+                    "Committed information rate.";
+                }
+                leaf cbs {
+                  type uint32 {
+                    range "100..33554432";
+                  }
+                  units "Octet";
+                  ext:dynamic-default {
+                    ext:default-value "../cir" {
+                      when "../cir>100";
+                      description "The default value is the value of cir when cir is greater than the minimum of cbs.";
+                    }
+                    ext:default-value "100" {
+                      when "../cir<=100";
+                      description "The default value is the minimum of cbs when cir is less than or equal to the minimum of cbs.";
+                    }
+                  }
+                  description
+                    "Committed burst size.";
+                }
+              }
+            }
+            case protocol {
+              description
+                "Restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+              container protocols {
+                description
+                  "List of restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+                list protocol {
+                  key "protocol-type";
+                  description
+                    "Configure restricts the overall rate at which packets of a specific protocol on the interface and its sub-interfaces are sent to the CPU.";
+                  leaf protocol-type {
+                    type cp-rate-limit-enhance-protocol;
+                    description
+                      "Protocol type of packets on an interface sent to the CPU.";
+                  }
+                  leaf cir {
+                    type uint32 {
+                      range "32..1000000";
+                    }
+                    units "kbit/s";
+                    mandatory true;
+                    description
+                      "Committed information rate.";
+                  }
+                  leaf cbs {
+                    type uint32 {
+                      range "100..33554432";
+                    }
+                    units "Octet";
+                    ext:dynamic-default {
+                      ext:default-value "../cir" {
+                        when "../cir>100";
+                        description "The default value is the value of cir when cir is greater than the minimum of cbs.";
+                      }
+                      ext:default-value "100" {
+                        when "../cir<=100";
+                        description "The default value is the minimum of cbs when cir is less than or equal to the minimum of cbs.";
+                      }
+                    }
+                    description
+                      "Committed burst size.";
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      container mac-filter {
+        must "./whitelist-enable != 'true' or ./blacklist-enable != 'true'";
+        description
+          "Configure a filtering policy for the MAC-based blacklist or whitelist function.";
+        leaf whitelist-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the MAC-based whitelist function.";
+        }
+        leaf blacklist-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the MAC-based blacklist function.";
+        }
+        container mac-addresss {
+          description
+            "List of specifies a MAC address.";
+          list mac-address {
+            key "mac";
+            max-elements 256;
+            description
+              "Configure specifies a MAC address. A maximum of 256 MAC addresses can be specified for the MAC-based blacklist or whitelist function on a device.";
+            leaf mac {
+              type pub-type:mac-address;
+              description
+                "Mac address.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

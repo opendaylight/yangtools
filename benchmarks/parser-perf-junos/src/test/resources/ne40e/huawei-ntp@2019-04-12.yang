@@ -1,0 +1,1042 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ntp {
+  namespace "urn:huawei:yang:huawei-ntp";
+  prefix ntp;
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ntp-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "NTP component.";
+  revision 2019-04-12 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ntp";
+  container ntp {
+    description
+      "NTP component.";
+    container disables {
+      description
+        "List of NTP to be disabled.";
+      list disable {
+        key "addr-family";
+        description
+          "Configure the NTP service. The 'get' operation is performed to query the disabling status of the NTP service. The 'create' and 'merge' operations are performed to disable the NTP service. The 'delete' operation is performed to enable the NTP service.";
+        leaf addr-family {
+          type addr-family-type;
+          description
+            "IP address family type.";
+        }
+      }
+    }
+    container unicasts {
+      description
+        "List of NTP unicast configurations.";
+      list unicast {
+        key "ip-address type vpn-name";
+        description
+          "Configure NTP unicast.";
+        leaf ip-address {
+          type inet:host; 
+          description
+            "IP address of the remote peer. The IP address must be a host address and cannot be the loopback, broadcast, multicast, or reference clock address.";
+        }
+        leaf type {
+          type peer-mode;
+          description
+            "Indicates a peer or a server configuration.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "Name of a VPN instance. If the entered IP address is an IPv4 address, first enable the IPv4 address family of the VPN instance. If the entered IP address is an IPv6 address, first enable the IPv6 address family of the VPN instance.";
+        }
+        leaf version {
+          type uint8 {
+            range "1..4";
+          }
+          default "3";
+          description
+            "NTP version number.";
+        }
+        leaf is-preferred {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the peer or server as a preferred source.";
+        }
+        leaf ifname {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name = ../vpn-name";
+          description
+            "Interface name to be used for communicating with the server/peer.";
+        }
+        leaf key-id {
+          type leafref {
+            path "../../../authentications/authentication/key-id";
+          }
+          description
+            "Specifies the key number used when transmitting messages to the remote peer.";
+        }
+        leaf max-poll-interval {
+          type uint8 {
+            range "10..17";
+          }
+          units s;
+          default "10";
+          description
+            "Maximum polling interval at which packets are sent. The units is second as power of 2.";
+        }
+        leaf min-poll-interval {
+          type uint8 {
+            range "3..6";
+          }
+          units s;
+          default "6";
+          description
+            "Minimum polling interval at which packets are sent. The units is second as power of 2.";
+        }
+        leaf is-preempt {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the peer or server as preemptive.";
+        }
+        leaf is-burst {
+          when "../type!='Peer'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the server and send a burst of packets when the server is reachable.";
+        }
+        leaf is-iburst {
+          when "../type!='Peer'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the server and send a burst of packets when the server is unreachable.";
+        }
+        leaf port-number {
+          type uint16 {
+            range "123|1025..65535";
+          }
+          default "123";
+          description
+            "Port number.";
+        }
+      }
+    }
+    container broadcasts {
+      description
+        "List of NTP broadcast configurations.";
+      list broadcast {
+        key "ifname type";
+        description
+          "Configure NTP broadcast.";
+        leaf ifname {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Name of an interface.";
+        }
+        leaf type {
+          type cast-mode;
+          description
+            "Broadcast service mode (Client/Server).";
+        }
+        leaf version {
+          when "../type!='Client'";
+          type uint8 {
+            range "1..4";
+          }
+          default "3";
+          description
+            "NTP version number.";
+        }
+        leaf key-id {
+          when "../type!='Client'";
+          type leafref {
+            path "../../../authentications/authentication/key-id";
+          }
+          description
+            "Key ID used to transmit messages to broadcast clients.";
+        }
+        leaf port-number {
+          when "../type!='Client'";
+          type uint16 {
+            range "123|1025..65535";
+          }
+          default "123";
+          description
+            "Port number.";
+        }
+      }
+    }
+    container multicasts {
+      description
+        "List of NTP multicast configurations.";
+      list multicast {
+        key "ifname type ip-address";
+        description
+          "Configure NTP multicast.";
+        leaf ifname {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Name of an interface.";
+        }
+        leaf type {
+          type cast-mode;
+          description
+            "Multicast service mode (Client/Server).";
+        }
+        leaf ip-address {
+          type inet:ip-address; 
+          description
+            "The IP address must be a multicast address and cannot be the loopback, broadcast, host, or reference clock address.";
+        }
+        leaf ttl-value {
+          when "../type!='Client'";
+          type uint8 {
+            range "1..255";
+          }
+          units s;
+          default "16";
+          description
+            "Life span of a multicast packet.";
+        }
+        leaf version {
+          when "../type!='Client'";
+          type uint8 {
+            range "1..4";
+          }
+          default "3";
+          description
+            "NTP version that needs to be set in NTP packets while multicasting.";
+        }
+        leaf key-id {
+          when "../type!='Client'";
+          type leafref {
+            path "../../../authentications/authentication/key-id";
+          }
+          description
+            "Key ID used to transmit messages to multicast clients.";
+        }
+        leaf port-number {
+          when "../type!='Client'";
+          type uint16 {
+            range "123|1025..65535";
+          }
+          default "123";
+          description
+            "Port number.";
+        }
+      }
+    }
+    container manycasts {
+      description
+        "List of NTP manycast configurations.";
+      list manycast {
+        key "ifname type ip-address";
+        description
+          "Configure NTP manycast.";
+        leaf ifname {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Name of an interface.";
+        }
+        leaf type {
+          type cast-mode;
+          description
+            "Manycast service mode (Client/Server).";
+        }
+        leaf ip-address {
+          type inet:ip-address; 
+          description
+            "The IP address must be a multicast address and cannot be the loopback, broadcast, host, or reference clock address.";
+        }
+        leaf ttl-value {
+          when "../type!='Server'";
+          type uint8 {
+            range "1..255";
+          }
+          units s;
+          default "255";
+          description
+            "Life span of a manycast packet.";
+        }
+        leaf key-id {
+          when "../type!='Server'";
+          type leafref {
+            path "../../../authentications/authentication/key-id";
+          }
+          description
+            "Key ID used to transmit messages to a manycast group.";
+        }
+        leaf port-number {
+          when "../type!='Server'";
+          type uint16 {
+            range "123|1025..65535";
+          }
+          default "123";
+          description
+            "Port number.";
+        }
+      }
+    }
+    container authentications {
+      description
+        "List of NTP authentication configurations.";
+      list authentication {
+        key "key-id";
+        description
+          "Configure NTP authentication.";
+        leaf key-id {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Specifies the key number used when transmitting messages to the remote peer.";
+        }
+        leaf mode {
+          type authentication-mode;
+          mandatory true;
+          description
+            "Specify the authentication mode.";
+        }
+        leaf key-value {
+          type pub-type:password-extend {
+            length "1..432";
+          }
+          mandatory true;
+          description
+            "Authentication password, the password is a string ranging from 1 to 255 characters for a plaintext password and 20 to 432 characters for a ciphertext password.";
+        }
+        leaf is-reliable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable key reliability. A client can be synchronized only with the server that provides a reliable key.";
+        }
+      }
+    }
+    container system-config {
+      description
+        "Configure NTP system parameter.";
+      leaf is-auth-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable authentication.";
+      }
+      leaf max-sess-count {
+        type uint16 {
+          range "0..100";
+        }
+        default "100";
+        description
+          "Maximum number of NTP sessions.";
+      }
+      leaf is-kod-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Kiss-o'-Death feature and sending of KISS codes.";
+      }
+      leaf sync-interval {
+        type uint16 {
+          range "180..600";
+        }
+        units s;
+        description
+          "Synchronization interval.";
+      }
+      leaf min-discard-intval {
+        type int32 {
+          range "1..8";
+        }
+        units s;
+        default "1";
+        description
+          "Specifies the minimum packet sending interval. If the actual packet sending interval is smaller than the value, packets are discarded. The units is second as power of 2.";
+      }
+      leaf avg-discard-intval {
+        type int32 {
+          range "1..8";
+        }
+        units s;
+        default "5";
+        description
+          "Average interval at which packets are sent. The units is second as power of 2.";
+      }
+      leaf local-port {
+        type uint16 {
+          range "123|1025..65535";
+        }
+        default "123";
+        description
+          "Port number.";
+      }
+      leaf max-distance {
+        type uint16 {
+          range "1..16";
+        }
+        units s;
+        default "1";
+        description
+          "NTP max distance configuration.";
+      }
+      leaf max-offset {
+        type uint16 {
+          range "0..7620";
+        }
+        units s;
+        default "0";
+        description
+          "NTP offset-limit configuration.";
+      }
+    }
+    container access-controls {
+      description
+        "List of NTP access control.";
+      list access-control {
+        key "access-level";
+        description
+          "Configure the NTP access.";
+        leaf access-level {
+          type access-level;
+          description
+          "The access level (Query/Synchronization/Server/Peer/Limited).";
+        }
+        leaf acl4-identity {
+          type leafref{
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+          description
+            "Number or name of a basic access control list (ACL). If an ACL number is specified, the number ranges from 2000 to 2999. If an ACL name is specified, the name must start with a letter or a digital, spaces not supported, and can not be a number.";
+        }
+        leaf acl6-identity {
+          type leafref{
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+          description
+            "ACL6 number or name. If an ACL6 number is specified, the number ranges from 2000 to 2999. If an ACL6 name is specified, the name must start with a letter or a digital, spaces not supported, and can not be a number.";
+        }
+      }
+    }
+    container clocks {
+      description
+        "List of NTP master clock configurations.";
+      list clock {
+        key "local-addr";
+        description
+          "Configure List of NTP master clock.";
+        leaf local-addr {
+          type inet:ipv4-address-no-zone {
+            pattern '127.127.1.[0-3]';
+          }
+          description
+            "IP address of the local clock. The IP address must be a local host address and cannot be the loopback, broadcast, host, multicast.";
+        }
+        leaf stratum {
+          type uint8 {
+            range "1..15";
+          }
+          default "8";
+          description
+            "Stratum of the NTP master clock. the smaller the value is, the more accurate the clock is.";
+        }
+      }
+    }
+    container in-interface-disables {
+      description
+        "List of interfaces that prohibit the receiving of NTP messages.";
+      list in-interface-disable {
+        key "ifname addr-family";
+        description
+          "Configure the receiving of NTP messages on a specified interface prohibited.";
+        leaf ifname {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Specifies the name of the interface that prohibits the receiving of NTP messages.";
+        }
+        leaf addr-family {
+          type addr-family-type;
+          description
+            "IP address family type.";
+        }
+      }
+    }
+    container source-interfaces {
+      description
+        "List of NTP source interfaces.";
+      list source-interface {
+        key "vpn-name addr-family";
+        description
+          "Configure the NTP source interface. In broadcast and multicast modes, this parameter does not need to be configured because the NTP service is implemented on the source interface.";
+        leaf vpn-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "((../addr-family='IPv6') and (/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast'])) or ((../addr-family='IPv4') and (/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']))";
+          description
+            "Name of a VPN instance.";
+        }
+        leaf addr-family {
+          type addr-family-type;
+          description
+            "IP address family type.";
+        }
+        leaf ifname {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name = ../vpn-name";
+          mandatory true;
+          description
+            "Specifies the local interface used for sending and receiving NTP packets.";
+        }
+      }
+    }
+    container server-source-interfaces {
+      description
+        "List of NTP server source interfaces.";
+      list server-source-interface {
+        key "ifname";
+        description
+          "Configure the NTP server source interface for listening.";
+        leaf ifname {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Server source interface name.";
+        }
+      }
+    }
+    container server-source-ipv6-addresses {
+    	description
+        "List of NTP server source IPv6 addresses.";
+      list server-source-ipv6-address {
+        key "ipv6-addr vpn-name";
+        description
+          "Configure the NTP server source IPv6 address for listening.";
+        leaf ipv6-addr {
+          type inet:ipv6-address-no-zone;
+          description
+            "Server source IPv6 address.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";	
+          description
+            "Name of a VPN instance.";
+        }
+      }
+    }
+    container server-source-all-interfaces {
+      description
+        "List of configuration which enable the NTP server to listen to all interfaces.";
+      list server-source-all-interface {
+        key "addr-family";
+        description
+          "Configure the NTP server listen to all interfaces.";
+        leaf addr-family {
+          type addr-family-type;
+          description
+            "IP address family type of the interface.";
+        }
+      }
+    }
+    container server-enables {
+      description
+        "List of NTP server to be enabled.";
+      list server-enable {
+        key "addr-family";
+        description
+          "Configure the NTP server. The 'get' operation is performed to query the enabling status of the NTP server. The 'create' and 'merge' operations are performed to enable the NTP server. The 'delete' operation is performed to disable the NTP server.";
+        leaf addr-family {
+          type addr-family-type;
+          description
+            "IP address family type.";
+        }
+      }
+    } 
+    container status {
+      config false;
+      description
+        "Statistics of NTP status information.";
+      leaf clock-status {
+        type clock-status;
+        description
+          "Clock status.";
+      }
+      leaf stratum {
+        type int32 {
+          range "1..16";
+        }
+        description
+          "Stratum of the local system clock. If the clock status is unsynchronized, the stratum value is 16.";
+      }
+      leaf source {
+        type string {
+          length "0..63";
+        }
+        description
+        "ID of the reference clock.
+         If the local system clock has been synchronized with a remote NTP server or a reference clock, the ID of the remote NTP server or reference clock is displayed.
+         If the local system clock acts as a reference clock, 'LOCAL(0)' is displayed.
+         If the clock status is Unsynchronized, 'none' is displayed.";
+      }
+      leaf precision{
+        type string {
+          length "0..7";
+        }
+        description
+          "Precision of the local system clock.";
+      }
+      leaf offset {
+        type string {
+          length "0..31";
+        }
+        description
+          "Offset between the local system clock and the NTP server.";
+      }
+      leaf nominal-frequence {
+        type string {
+          length "0..31";
+        }
+        description
+          "Nominal frequency of the local system clock.";
+      }
+      leaf actual-frequence {
+        type string {
+          length "0..31";
+        }
+        description
+          "Actual frequency of the local system clock.";
+      }
+      leaf root-delay {
+        type string {
+          length "0..31";
+        }
+        description
+          "Total delay between the local system clock and the master reference clock.";
+      }
+      leaf root-dispersion {
+        type string {
+          length "0..31";
+        }
+        description
+          "Total dispersion between the local system clock and the master reference clock.";
+      }
+      leaf peer-dispersion {
+        type string {
+          length "0..31";
+        }
+        description
+          "Dispersion between the local system clock and the remote NTP peer.";
+      }
+      leaf reference-time {
+        type string {
+          length "0..53";
+        }
+        description
+          "Reference timestamp when the local system clock was adjusted last time.";
+      }
+      leaf vpn-name {
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        description
+          "Name of a VPN instance.";
+      }
+      leaf sync-state {
+        when "../clock-status!='unsynchronized'";
+        type sync-state;
+        description
+          "Synchronization state of the clock.";
+      }
+    }
+    container board-statuses {
+      config false;
+      description 
+       "List of NTP board statuses.";
+      list board-status {
+        key "board-id";
+        description
+          "Statistics of NTP board status.";
+        leaf board-id {
+          type string {
+            length "0..31";
+          }
+          description
+            "Board identifier.";
+        }
+        leaf source {
+          type string {
+            length "0..63";
+          }
+          description
+            "Board synchronization source.";
+        }
+        leaf configured {
+          type is-configured;
+          description
+            "Whether the NTP server has been configured.";
+        }
+        leaf status {
+          type clock-status;
+          description
+            "Status of clock.";
+        }
+        leaf offset {
+          type string {
+            length "0..31";
+          }
+          description
+            "Clock offset.";
+        }
+        leaf precision {
+          type string {
+            length "0..7";
+          }
+          description
+            "Clock precision.";
+        }
+        leaf poll {
+          type string {
+            length "0..31";
+          }
+          description
+            "Interval at which the board sends packets to its synchronization source.";
+        }
+        leaf reference-time {
+          type string {
+            length "0..63";
+          }
+          description
+            "Latest synchronization time of the clock.";
+        }
+        leaf current-time {
+          type string {
+            length "0..63";
+          }
+          description
+            "Current time of the clock.";
+        }
+      }
+    }
+    container full-sessions {
+      config false;
+      description
+        "List of NTP full-session configurations.";
+      list full-session {
+        key "source local-mode vpn-name ifname";
+        description
+          "Statistics of NTP full session configuration.";
+        leaf source {
+          type string {
+            length "0..63";
+          }
+          description
+            "IP address of the reference clock.";
+        }
+        leaf local-mode {
+          type string {
+            length "0..15";
+          }
+          description
+            "Mode of the local system.";
+        }
+        leaf vpn-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Name of a VPN instance.";
+        }
+        leaf ifname {
+          type string {
+            length "1..31";
+          }
+          description
+            "Peer interface.";
+        }
+        leaf stratum {
+          type uint8 {
+            range "1..16";
+          }
+          description
+            "Clock stratum of the peer.";
+        }
+        leaf clock-status {
+          type string {
+            length "0..63";
+          }
+          description
+            "Status of the clock.";
+        }
+        leaf reference-source {
+          type string {
+            length "0..31";
+          }
+          description
+            "IP address of the remote server or the identifier of the reference clock that the peer system clock has been synchronized with. If the server belongs to a VPN, this field also shows the name of the VPN.";
+        }
+        leaf local-poll {
+          type string {
+            length "0..31";
+          }
+          description
+            "Local polling period.";
+        }
+        leaf current-poll {
+          type string {
+            length "0..7";
+          }
+          description
+            "Current polling interval.";
+        }
+        leaf peer-mode {
+          type string {
+            length "0..15";
+          }
+          description
+            "Mode of the peer system.";
+        }
+        leaf peer-poll {
+          type string {
+            length "0..31";
+          }
+          description
+            "Peer polling period.";
+        }
+        leaf offset {
+          type string {
+            length "0..31";
+          }
+          description
+            "Offset between the local system clock and the peer for the last received packet.";
+        }
+        leaf delay {
+          type string {
+            length "0..31";
+          }
+          description
+            "Delay between the local system clock and the peer for the last received packet.";
+        }
+        leaf dispersion {
+          type string {
+            length "0..31";
+          }
+          description
+            "Dispersion between the local system clock and the peer for the last received packet.";
+        }
+        leaf root-delay {
+          type string {
+            length "0..31";
+          }
+          description
+            "Total delay between the local system clock and the master reference clock.";
+        }
+        leaf root-dispersion {
+          type string {
+            length "0..31";
+          }
+          description
+            "Total dispersion between the local system clock and the master reference clock.";
+        }
+        leaf reachable {
+          type uint8;
+          description
+            "Reachability of the peer.";
+        }
+        leaf distance {
+          type string {
+            length "0..31";
+          }
+          description
+            "Synchronization distance relative to the reference clock source. NTP selects the clock source with the minimum synchronization distance.";
+        }
+        leaf sync-state {
+          type sync-state;
+          description
+            "Synchronization status.";
+        }
+        leaf precision {
+          type string {
+            length "0..7";
+          }
+          description
+            "Peer's clock precision.";
+        }
+        leaf version {
+          type uint8 {
+            range "1..4";
+          }
+          description
+            "NTP version.";
+        }
+        leaf reference-time {
+          type string {
+            length "0..63";
+          }
+          description
+            "Reference timestamp when the local system clock is adjusted last time.";
+        }
+        leaf origin-time {
+          type string {
+            length "0..63";
+          }
+          description
+            "Time when the latest packet was sent from the peer.";
+        }
+        leaf receive-time {
+          type string {
+            length "0..63";
+          }
+          description
+            "Time when the latest packet was received at the local end.";
+        }
+        leaf xmit-time {
+          type string {
+            length "0..63";
+          }
+          description
+            "Time when the latest packet was sent to the peer.";
+        }
+        leaf filter-delay {
+          type string {
+            length "0..199";
+          }
+          description
+            "Filter delay of the latest eight packets received.";
+        }
+        leaf filter-offset {
+          type string {
+            length "0..199";
+          }
+          description
+            "Filter offset of the latest eight packets received.";
+        }
+        leaf filter-dispersion {
+          type string {
+            length "0..199";
+          }
+          description
+            "Filter dispersion of the latest eight packets received.";
+        }
+        leaf reference-status {
+          type string {
+            length "0..31";
+          }
+          description
+            "Status of the reference clock.";
+        }
+        leaf flags {
+          type string {
+            length "0..15";
+          }
+          description
+            "Status flags information of the peer.";
+        }
+        leaf when {
+          type string {
+            length "0..11";
+          }
+          description
+            "Specifies the interval for time synchronization.";
+        }
+      }
+    }
+    container traces {
+      config false;
+      description
+        "List of NTP tracing configurations.";
+      list trace {
+        key "stratum";
+        description
+          "Statistics of NTP trace configuration.";
+        leaf stratum {
+          type int32 {
+            range "1..16";
+          }
+          description
+            "Clock stratum.";
+        }
+        leaf server-address {
+          type inet:ipv4-address;
+          description
+            "Server address.";
+        }
+        leaf reference-source {
+          type inet:ipv4-address;
+          description
+            "Reference clock address.";
+        }
+        leaf offset {
+          type string {
+            length "0..31";
+          }
+          description
+            "Clock offset.";
+        }
+        leaf distance {
+          type string {
+            length "0..15";
+          }
+          description
+            "Synchronization distance.";
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifm-bundle {
+  namespace "urn:huawei:yang:huawei-ifm-bundle";
+  prefix ifm-bundle;
+
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Define the interface that bundles multiple ATM sub-interfaces into a logical interface.";
+
+  revision 2020-02-13 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "trunk";
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    when "ifm:type='Atm-Bundle'";
+    description
+      "Active when the interface is set to type Atm-Bundle.";
+    container bundle {
+      description
+        "Configure the interface that bundles multiple ATM sub-interfaces into a logical interface.";
+      leaf up-member-num {
+        type uint32;
+        config false;
+        description
+          "Display the number of ATM-Bundle member interfaces in the Up state.";
+      }
+      container members {
+        description
+          "List of ATM-Bundle member interfaces.";
+        list member {
+          key "name";
+          description
+            "Configure ATM-Bundle member interfaces.";
+          leaf name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:class='sub-interface' and (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Serial' or /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Ima-group')";
+            description
+              "Name of an ATM-Bundle member interface.";
+          }
+          leaf status {
+            type ifm:port-status;
+            config false;
+            description
+              "Display the status of an ATM-Bundle member interface.";
+          }
+        }
+      }
+    }
+  }
+}

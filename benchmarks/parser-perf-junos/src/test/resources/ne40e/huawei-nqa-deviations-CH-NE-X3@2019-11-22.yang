@@ -1,0 +1,107 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-nqa-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-nqa-deviations-CH-NE-X3";
+  prefix nqa-devs-CH-NE-X3;
+
+  import huawei-nqa {
+    prefix nqa;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Network quality analysis.";
+
+  revision 2019-11-22 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  typedef pw-type-deviations {
+    type enumeration {
+      enum atm-cell-transport {
+        value 3;
+        description
+          "ATM cell transport.";
+      }
+      enum vlan {
+        value 4;
+        description
+          "VLAN.";
+      }
+      enum ethernet {
+        value 5;
+        description
+          "Ethernet.";
+      }
+      enum hdlc {
+        value 6;
+        description
+          "High - level Data Link Control.";
+      }
+      enum ppp {
+        value 7;
+        description
+          "Point - to - Point Protocol.";
+      }
+      enum atm-nto1-vcc {
+        value 9;
+        description
+          "ATM n to one VCC cell mode.";
+      }
+      enum atm-nto1-vpc {
+        value 10;
+        description
+          "ATM n to one VPC cell mode.";
+      }
+      enum ip-layer2 {
+        value 11;
+        description
+          "IP layer 2.";
+      }
+      enum atm-1to1-vcc {
+        value 12;
+        description
+          "ATM one to one VCC cell mode.";
+      }
+      enum atm-1to1-vpc {
+        value 13;
+        description
+          "ATM one to one VPC cell mode.";
+      }
+      enum satop-e1 {
+        value 17;
+        description
+          "Satop e1.";
+      }
+      enum cesopsn-basic {
+        value 21;
+        description
+          "Cesopsn basi.";
+      }
+      enum ip-interworking {
+        value 64;
+        description
+          "IP interworking.";
+      }
+    }
+    description
+      "Description of pw-type.";
+  }
+
+  deviation "/nqa:nqa/nqa:instances/nqa:instance/nqa:type/nqa:pwe3-trace/nqa:pwe3-trace-input/nqa:local-pw-type" {
+    deviate replace {
+      type nqa-devs-CH-NE-X3:pw-type-deviations;
+    }
+  }
+}

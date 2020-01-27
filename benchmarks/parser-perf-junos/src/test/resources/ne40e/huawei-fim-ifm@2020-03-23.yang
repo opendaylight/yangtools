@@ -1,0 +1,367 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-fim-ifm {
+  namespace "urn:huawei:yang:huawei-fim-ifm";
+  prefix fim-ifm;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Common interface management, which includes the public configuration of interfaces.";
+  reference
+    "Huawei private.";
+  revision 2020-03-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forwarding";
+  typedef enable-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+    }
+    description
+      "Enable type.";
+  }
+  typedef statistic-mode-type {
+    type enumeration {
+      enum "forward" {
+        value 1;
+        description
+          "Forward mode statistics.";
+      }
+      enum "mac" {
+        value 0;
+        description
+          "MAC mode statistics.";
+      }
+    }
+    description
+      "Ip Statistic Mode Type.";
+  }
+  typedef ve-mode-type {
+    type enumeration {
+      enum "through" {
+        value 1;
+        description
+          "Software loopback.";
+      }
+      enum "loopback" {
+        value 0;
+        description
+          "Hardware loopback.";
+      }
+      enum "half-through" {
+        value 3;
+        description
+          "Software switch hardware loopback.";
+      }
+    }
+    description
+      "VE Forward Mode Type.";
+  }
+  typedef ve-interface-type {
+    type enumeration {
+      enum "L2VE" {
+        value 1;
+        description
+          "Layer 2 Terminate Virtual-Ethernet interface.";
+      }
+      enum "L3VE" {
+        value 2;
+        description
+          "Layer 3 Access Virtual-Ethernet interface.";
+      }
+      enum "terminate-ve" {
+        value 7;
+        description
+          "Layer 3 Terminate Virtual-Ethernet interface.";
+      }
+    }
+    description
+      "VE Interface Type.";
+  }
+  typedef local-forward-type {
+    type enumeration {
+      enum "unicast" {
+        value 1;
+        description
+          "Unicast Local Forward.";
+      }
+    }
+    description
+      "Trunk Local Forward Type.";
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+      description
+        "Interface forward configuration to the interface management module.";
+    container fim {
+      description
+        "Configure the function of statistic to main interface.";
+      leaf statistic-enable {
+        when "../../ifm:class='main-interface' and ../../ifm:type!='Virtual-Ethernet' and ../../ifm:type!='Tunnel' and ../../ifm:type!='NULL' and ../../ifm:type!='LoopBack' and ../../ifm:type!='Global-VE' and ../../ifm:type!='Nve'";
+        type enable-type;
+        default "disable";
+        description
+          "Enable the function of traffic statistics.";
+      }
+      leaf statistic-mode {
+        type statistic-mode-type;
+        default "mac";
+        description
+          "Configure the traffic statistics mode.";
+      }
+      leaf mac-statistic-enable {
+        when "../../ifm:class='main-interface' and ../../ifm:type!='Virtual-Ethernet' and ../../ifm:type!='Tunnel' and ../../ifm:type!='NULL' and ../../ifm:type!='LoopBack' and ../../ifm:type!='Global-VE' and ../../ifm:type!='Nve' and ../../ifm:type!='Vbdif'";
+        type enable-type;
+        default "disable";
+        description
+          "Enable the function of bit per seconds (bps) statistics.";
+      }
+    }
+    container fim-ifm-mru {
+      description
+        "Configure the maximum receive unit.";
+      leaf mru {
+        when "../../ifm:type!='Virtual-Ethernet' and ../../ifm:type!='Tunnel' and ../../ifm:type!='NULL' and ../../ifm:type!='LoopBack' and ../../ifm:type!='Global-VE' and ../../ifm:type!='Nve' and ../../ifm:type!='FlexE-200GE' and ../../ifm:type!='FlexE-50G' and ../../ifm:type!='FlexE-100G' and ../../ifm:type!='FlexE-50|100G'";
+        type uint16 {
+          range "46..9600";
+        }
+        must "not(/ifm:ifm/ifm:interfaces/ifm:interface/fim-ifm:fim-tcp-mss/fim-ifm:tcp-mss)";
+        description
+          "Maximum receive unit of an interface.";
+      }
+      leaf mru-statistic-enable {
+        when "../mru";
+        type enable-type;
+        default "disable";
+        description
+          "Enable discard statistics of maximum receive unit of an interface.";
+      }
+    }
+    container fim-tcp-mss{
+      description
+        "Configure Tcp mss.";
+      leaf tcp-mss {
+        when "../../ifm:type!='Virtual-Ethernet' and ../../ifm:type!='Tunnel' and ../../ifm:type!='NULL' and ../../ifm:type!='LoopBack' and ../../ifm:type!='Global-VE' and ../../ifm:type!='Nve'";
+        type uint16 {
+          range "32..9500";
+        }
+        units "Byte";
+        must "(not(/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:main-interface/ethernet:l2-attribute) or not(../tcp-mss)) and not(/ifm:ifm/ifm:interfaces/ifm:interface/fim-ifm:fim-ifm-mru/fim-ifm:mru)";
+        description
+          "Maxitum Segment Size of an interface.";
+      }
+    }
+    container fim-ifm-bdifint{
+      when "../ifm:type='Vbdif'";
+      description
+        "Configure forward configurations to VBDIF interface.";
+      leaf vbdif-loopback-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the VBDIF loopback forward mode.";
+      }
+    }
+    container fim-ifm-veint{
+      description
+        "Configure Virtual-Ethernet interface information.";
+      leaf ve-forward-mode {
+        when "(../../ifm:type='Virtual-Ethernet' and ../../ve-group) or (../../ifm:type='Global-VE' and ../../ve-group)";
+        type ve-mode-type;
+        default "loopback";
+        description
+          "Virtual-Ethernet forward mode type.";
+      }
+      leaf ve-slot-id {
+        when "../../ifm:type='Global-VE' and ../../ve-group";
+        type string {
+          length "1..512";
+        }
+        description
+          "Remove boards from a global VE interface.";
+      }
+    }
+    container ve-group {
+      when "../ifm:type='Virtual-Ethernet' or ../ifm:type='Global-VE'";
+      presence "configure ve-group.";
+      description
+        "Enable/disable a Virtual-Ethernet Group.";
+      leaf type {
+        type ve-interface-type;
+        mandatory true;
+        description
+          "Virtual-Ethernet interface type.";
+        ext:operation-exclude update {
+          description "The node cannot be modified when ve-group is configured.";
+        }
+      }
+      leaf id {
+        type uint32 {
+          range "1..8192";
+        }
+        mandatory true;
+        description
+          "Virtual-Ethernet group ID.";
+        ext:operation-exclude update {
+          description "The node cannot be modified when ve-group is configured.";
+        }
+      }
+    }
+
+    container mru-discard-statistic {
+      config false;
+      description
+        "Statistics of maximum receive unit of an interface.";
+      leaf packet {
+        type uint64;
+        description
+          "Display the packets of discarded statistics of maximum receive unit of an interface.";
+      }
+      leaf byte {
+        type uint64;
+        description
+          "Display the bytes of discarded statistics of maximum receive unit of an interface.";
+      }
+    }
+    container macmtu-discard-stat {
+      config false;
+      description
+        "MAC&MTU error statistics.";
+      leaf mtu-ipv4 {
+        type uint64;
+        description
+          "IPv4 MTU error statistics.";
+      }
+      leaf mtu-ipv6 {
+        type uint64;
+        description
+          "IPv6 MTU error statistics.";
+      }
+      leaf mac-ipv4 {
+        type uint64;
+        default "0";
+        description
+          "IPv4 MAC error statistics.";
+      }
+      leaf mac-ipv6 {
+        type uint64;
+        description
+          "IPv6 MAC error statistics.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:global" {
+      description
+        "Global configuration to the interface management module.";
+    container fim-ifm-global {
+      description
+        "Configure FIM global configurations.";
+      leaf global-strict-filter {
+        type enable-type;
+        default "disable";
+        description
+          "Global filter enable status.";
+      }
+      leaf dual-stat-enable {
+        type enable-type;
+        default "disable";
+        description
+          "Set forward mode statistic for all interfaces.";
+      }
+      leaf trunk-delaysend-time {
+        type uint32 {
+          range "1000..300000";
+        }
+        units "ms";
+        default 1500;
+        description
+          "Configure the delay time for an ETH-Trunk interface to join a member interface in a unicast scenario.";
+      }
+      leaf trunk-adjust-enable {
+        type enable-type;
+        default "disable";
+        description
+          "Enable the function of trunk load-blance dynamic-adjust.";
+      }
+      leaf qinq-transport-enable {
+        type enable-type;
+        default "disable";
+        description
+          "Configures Ethernet interfaces to retain the outer TPID EtherType value in received QinQ packets.";
+      }
+    }
+    container fim-trunk-localfwd {
+      description
+        "Configure the function of trunk local forward.";
+      leaf enable {
+        type enable-type;
+        default "disable";
+        description
+          "Trunk Local Forward enable status.";
+      }
+    }
+    container ve-groups {
+      config false;
+      description
+      "List of the relation of Virtual-Ethernet and ve-group.";
+      list ve-group {
+        key "ve-group-id slot-id";
+        description
+          "Operational state of the relation of Virtual-Ethernet and ve-group.";
+        leaf ve-group-id {
+          type uint32;
+          description
+            "VE-group id.";
+        }
+        leaf slot-id {
+          type string {
+            length "1..24";
+          }
+          description
+            "Slot ID.";
+        }
+        leaf l2-ve-ifname {
+          type pub-type:if-name;
+          description
+            "Terminate Virtual-Ethernet interface.";
+        }
+        leaf l3-ve-ifname {
+          type pub-type:if-name;
+          description
+            "Access Virtual-Ethernet interface.";
+        }
+      }
+    }
+  }
+}

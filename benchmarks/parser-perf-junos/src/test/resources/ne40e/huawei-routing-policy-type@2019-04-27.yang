@@ -1,0 +1,436 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-routing-policy-type {
+  yang-version 1;
+  belongs-to huawei-routing-policy {
+    prefix rtp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Defines type definitions associated with the huawei-routing-policy modules.";
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef match-mode-type {
+    type enumeration {
+      enum "permit" {
+        value 0;
+        description
+          "Matching mode of filters.";
+      }
+      enum "deny" {
+        value 1;
+        description
+          "Matching mode of filters.";
+      }
+    }
+    description
+      "Match mode.";
+  }
+  typedef community-filter-type {
+    type enumeration {
+      enum "basic" {
+        value 1;
+        description
+          "The basic type of filter.";
+      }
+      enum "advanced" {
+        value 2;
+        description
+          "The advanced type of filter.";
+      }
+    }
+    description
+      "Filter type.";
+  }
+  typedef protocol-type {
+    type enumeration {
+      enum "direct" {
+        value 1;
+        description
+          "Direct.";
+      }
+      enum "ospf" {
+        value 2;
+        description
+          "Open Shortest Path First.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "Intermediate System-to-Intermediate System.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Static.";
+      }
+      enum "rip" {
+        value 5;
+        description
+          "Routing Information Protocol.";
+      }
+      enum "bgp" {
+        value 6;
+        description
+          "Border Gateway Protocol.";
+      }
+      enum "ospfv3" {
+        value 7;
+        description
+          "OSPFv3.";
+      }
+      enum "ripng" {
+        value 8;
+        description
+          "Routing Information Protocol next generation.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "UNR protocol.";
+      }
+    }
+    description
+      "Match protocol type.";
+  }
+  typedef route-type {
+    type enumeration {
+      enum "external1" {
+        value 1;
+        description
+          "Type-1 external route of OSPF.";
+      }
+      enum "external2" {
+        value 2;
+        description
+          "Type-2 external route of OSPF.";
+      }
+      enum "internal" {
+        value 4;
+        description
+          "OSPF internal route, including inter-area routes and intra-area routes of OSPF.";
+      }
+      enum "isis-level1" {
+        value 5;
+        description
+          "Level-1 route of IS-IS.";
+      }
+      enum "isis-level2" {
+        value 6;
+        description
+          "Level-2 route of IS-IS.";
+      }
+      enum "nssa-external1" {
+        value 7;
+        description
+          "NSSA type-1 external route of OSPF.";
+      }
+      enum "nssa-external2" {
+        value 8;
+        description
+          "NSSA type-2 external route of OSPF.";
+      }
+      enum "ibgp" {
+        value 10;
+        description
+          "Internal route of BGP.";
+      }
+      enum "ebgp" {
+        value 11;
+        description
+          "Eternal route of BGP.";
+      }
+      enum "mvpn1" {
+        value 16;
+        description
+          "MVPN1 type of route.";
+      }
+      enum "mvpn2" {
+        value 17;
+        description
+          "MVPN2 type of route.";
+      }
+      enum "mvpn3" {
+        value 18;
+        description
+          "MVPN3 type of route.";
+      }
+      enum "mvpn4" {
+        value 19;
+        description
+          "MVPN4 type of route.";
+      }
+      enum "mvpn5" {
+        value 20;
+        description
+          "MVPN5 type of route.";
+      }
+      enum "mvpn6" {
+        value 21;
+        description
+          "MVPN6 type of route.";
+      }
+      enum "mvpn7" {
+        value 22;
+        description
+          "MVPN7 type of route.";
+      }
+      enum "evpn-ad" {
+        value 23;
+        description
+          "Ethernet Auto-Discovery (A-D) Route.";
+      }
+      enum "evpn-es" {
+        value 24;
+        description
+          "Ethernet Segment Route.";
+      }
+      enum "evpn-inclusive" {
+        value 25;
+        description
+          "Inclusive Multicast Route.";
+      }
+      enum "evpn-join" {
+        value 26;
+        description
+          "IGMP Join Synch Route.";
+      }
+      enum "evpn-leave" {
+        value 27;
+        description
+          "IGMP Leave Synch Route.";
+      }
+      enum "evpn-mac" {
+        value 28;
+        description
+          "MAC Advertisement Route.";
+      }
+      enum "evpn-prefix" {
+        value 29;
+        description
+          "IP-prefix routes.";
+      }
+      enum "evpn-smet" {
+        value 30;
+        description
+          "Selective Multicast Ethernet Tag Route.";
+      }
+    }
+    description
+      "Match route type.";
+  }
+  typedef cost-type {
+    type enumeration {
+      enum "external" {
+        value 0;
+        description
+          "Cost type of an IS-IS external route.";
+      }
+      enum "internal" {
+        value 1;
+        description
+          "Cost type of an IS-IS internal route.";
+      }
+      enum "type-1" {
+        value 2;
+        description
+          "Type-1 external route of OSPF.";
+      }
+      enum "type-2" {
+        value 3;
+        description
+          "Type-2 external route of OSPF.";
+      }
+      enum "internal-inc-ibgp" {
+        value 4;
+        description
+          "BGP inherits the cost of iterated IGP route cost and advertises routes to IBGP and EBGP peers.";
+      }
+      enum "med-plus-igp" {
+        value 5;
+        description
+          "BGP follow the cost of iterated IGP route cost.";
+      }
+      enum "med-inherit-aigp" {
+        value 6;
+        description
+          "Inherit the AIGP Value as the MED of BGP Routes.";
+      }
+    }
+    description
+      "Cost type.";
+  }
+  typedef origin-type {
+    type enumeration {
+      enum "egp" {
+        value 0;
+        description
+          "BGP routing information comes from the EGP route.";
+      }
+      enum "igp" {
+        value 1;
+        description
+          "BGP routing information comes from the IGP route.";
+      }
+      enum "incomplete" {
+        value 2;
+        description
+          "The source of BGP routing information is unknown.";
+      }
+    }
+    description
+      "Origin type.";
+  }
+  typedef std-community-type {
+    type union {
+      type string {
+        length "1..19";
+        pattern '((6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}|0):(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}|0))';
+      }
+      type uint32 {
+        range "1..4294967040|4294967044..4294967295";
+      }
+    }
+    description
+      "Type definition for community attributes.";
+  }
+  typedef well-known-community-type {
+    type enumeration {
+      enum "internet" {
+        description
+          "The basic type of filter.";
+      }
+      enum "no-advertise" {
+        description
+          "Do not advertise to any peer.";
+      }
+      enum "no-export" {
+        description
+          "Do not export to external peers.";
+      }
+      enum "no-export-subconfed" {
+        description
+          "Do not send outside a sub-confederation.";
+      }
+    }
+    description
+      "Type definition for well-known IETF community attribute values.";
+  }
+  typedef community-type {
+    type union {
+      type well-known-community-type;
+      type std-community-type;
+    }
+    description
+      "Type of the community members.";
+  }
+  typedef ext-community-type {
+    type string {
+      length "3..21";
+    }
+    description
+      "Type definition for extended community attributes.";
+  }
+  typedef ext-community-redirect-ip-type {
+    type string {
+      length "9..17";
+    }
+    description
+      "Type definition for extended community redirect ip attributes.";
+  }
+  typedef community-filter-name-type {
+    type union {
+      type string {
+        length "1..51";
+        pattern '([^?\s0-9][^?\s]{0,50})|([\d][^?\s]*[^?\s0-9][^?\s]*)';
+      }
+      type uint16 {
+        range "1..199" {
+          description
+            "The ID of a basic community attribute filter is an integer ranging from 1 to 99; the ID of an advanced community attribute filter is an integer ranging from 100 to 199.";
+        }
+      }
+    }
+    description
+      "Type definition for community filter name.";
+  }
+  typedef ext-community-filter-name-type {
+    type union {
+      type string {
+        length "1..51";
+        pattern '([^?\s0-9][^?\s]{0,50})|([\d][^?\s]*[^?\s0-9][^?\s]*)';
+      }
+      type uint16 {
+        range "1..399" {
+          description
+            "The ID of a basic extended community attribute filter is an integer ranging from 1 to 199; the ID of an advanced extended community attribute filter is an integer ranging from 200 to 399.";
+        }
+      }
+    }
+    description
+      "Type definition for ext-community filter name.";
+  }
+  typedef as-path-filter-name-type {
+    type union {
+      type string {
+        length "1..51";
+        pattern '([^?\s0-9][^?\s]{0,50})|([\d][^?\s]*[^?\s0-9][^?\s]*)';
+      }
+      type uint16 {
+        range "1..256" {
+          description
+            "The ID of an as-path attribute filter is an integer.";
+        }
+      }
+    }
+    description
+      "Type definition for as path filter name.";
+  }  
+  typedef as-number-validate {
+    type string {
+      length "1..11";
+      pattern '((([1-9]\d{0,8})|([1-3]\d{9})|(4[0-1]\d{8})|(42[0-8]\d{7})|(429[0-3]\d{6})|(4294[0-8]\d{5})|(42949[0-5]\d{4})|(429496[0-6]\d{3})|(4294967[0-1]\d{2})|(42949672[0-8]\d{1})|(429496729[0-5]))|((([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))[\.](([0-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))))';
+    }
+    description
+      "Set the AS_Path value for external routes, which can be an integer or in dotted decimal notation.";
+  }
+  typedef ext-community-color-type {
+    type string {
+      length "3..12";
+    }
+    description
+      "Type definition for extended community color attributes.";
+  }
+  typedef rd-filter-name-type {
+    type union {
+      type uint16 {
+        range "1..1024" {
+          description
+            "The ID of an RD filter is an integer.";
+        }
+      }
+    }
+    description
+      "Type definition for RD filter name.";
+  }
+  typedef large-community-type {
+    type string {
+      length "5..32";
+    }
+    description
+      "Type definition for large community attributes.";
+  }
+}

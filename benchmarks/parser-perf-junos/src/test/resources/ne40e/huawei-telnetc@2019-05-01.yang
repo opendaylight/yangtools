@@ -1,0 +1,61 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-telnetc {
+  namespace "urn:huawei:yang:huawei-telnetc";
+  prefix telnetc;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Telnet Client component.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "telnet-client";
+  container telnetc {
+    description
+      "Telnet Client component.";
+    container client {
+      description
+        "Configure Telnet Client Information.";
+      leaf src-interface {
+        type pub-type:if-name;
+        description
+          "Specify the source interface name. The specified source interface must exist and an IP address must be configured on the interface.";
+      }
+      leaf src-ipv4-addr {
+        when "not(../src-interface)";
+        type inet:ipv4-address-no-zone;
+        description
+          "Source IPv4 Address.";
+      }
+      leaf packet-dscp {
+        type uint32 {
+          range "0..63";
+        }
+        default "48";
+        description
+          "Config DSCP value.";
+      }
+    }
+  }
+}

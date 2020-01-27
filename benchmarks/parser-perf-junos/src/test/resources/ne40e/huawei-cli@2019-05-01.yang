@@ -1,0 +1,90 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-cli {
+  namespace "urn:huawei:yang:huawei-cli";
+  prefix cli;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "CLI window configuration.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "cli";
+  container cli {
+    description
+      "CLI window configuration.";
+    container header {
+      description
+        "Configure the header displayed upon user login or session startup.";
+      choice login-information {
+        description
+          "Login authentication header, which is displayed before a user enters the user name and password in the CLI window.";
+        case head-login-text{
+         description
+         "Specify the information of login banner.";
+        leaf login-text {
+          type string {
+            length "1..478";
+          }
+          description
+            "Text of a login authentication header."; 
+         }
+        }
+        case head-login-file{
+         description
+         "Specify the filename of login banner.";
+        leaf login-file {
+          type string {
+            length "1..64";
+            pattern '(\w+)(:/)(\w.*)';
+          }
+          description
+            "Name of a login authentication header file.";
+         }
+        }
+      }
+      choice shell-information {
+        description
+          "Session startup header, which is displayed after a user enters the user name and password in the CLI window.";
+        case head-shell-text{
+         description
+         "Specify the information of shell banner.";
+        leaf shell-text {
+          type string {
+            length "1..478";
+          }
+          description
+            "Text of a session startup header.";
+         }
+        }
+        case head-shell-file{
+         description
+         "Specify the filename of shell banner.";
+        leaf shell-file {
+          type string {
+            length "1..64";
+            pattern '(\w+)(:/)(\w.*)';
+          }
+          description
+            "Name of a session startup header file.";
+        }
+      }
+    }
+  }
+}
+}

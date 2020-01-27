@@ -1,0 +1,139 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-evpl {
+  namespace "urn:huawei:yang:huawei-evpl";
+  prefix evpl;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Management of Ethernet virtual private line.";
+  revision 2020-03-30 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+/*****************************************************************
+* type definitions
+*****************************************************************/
+  typedef evpl-mode {
+    type enumeration {
+      enum "vxlan-mode" {
+        value 0;
+        description
+          "VXLAN mode.";
+      }
+      enum "mpls-mode" {
+        value 1;
+        description
+          "MPLS mode.";
+      }
+      enum "srv6-mode" {
+        value 2;
+        description
+          "SRv6 mode.";
+      }
+    }
+    description
+      "The mode of EVPL instance.";
+  }
+
+/*****************************************************************
+* data
+*****************************************************************/
+  ext:task-name  "evpl";
+  container evpl {
+    description
+      "Management of EVPL.";
+    container instances {
+      description
+        "List of EVPL instances.";
+      list instance {
+        key "id";
+        description
+          "Configure attribute of EVPL instance.";
+        leaf id {
+          type uint32 {
+            range "1..16777215";
+          }
+          description
+            "The identification of the EVPL instance.";
+        }
+        leaf mode {
+          type evpl-mode;
+          ext:operation-exclude update;
+          mandatory true;
+          description
+            "The mode of the EVPL instance, that not support modification.";
+        }
+        container interfaces {
+          when "(../mode != 'vxlan-mode')";
+          description
+            "List of service interfaces that a EVPL instance corresponds.";
+          list interface {
+            key "name";
+            max-elements "1";
+            description
+              "Configure the service interface that a EVPL instance corresponds.";
+            leaf name {
+              type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              must "(/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = 'PW-VE' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:class != 'main-interface') or (/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type != 'PW-VE')";
+              description
+                "The name of interface.";
+            }
+          }
+        }
+        container peers {
+          when "(../mode = 'vxlan-mode')";
+          description
+            "List of provider edge nodes that a EVPL instance corresponds with VXLAN encapsulation.";
+          list peer {
+            key "name peer-ip";
+            max-elements "1";
+            description
+              "Configure provider edge node that a EVPL instance corresponds with VXLAN encapsulation.";
+            leaf name {
+              type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = 'PW-VE' and /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:class = 'main-interface'";
+              description
+                "The name of interface.";
+            }
+            leaf peer-ip {
+              type inet:ipv4-address-no-zone;
+              description
+                "The address of provider edge node.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

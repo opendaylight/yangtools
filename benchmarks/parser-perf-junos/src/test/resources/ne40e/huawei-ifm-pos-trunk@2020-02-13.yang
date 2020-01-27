@@ -1,0 +1,100 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifm-pos-trunk {
+  namespace "urn:huawei:yang:huawei-ifm-pos-trunk";
+  prefix ifm-pos-trunk;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Defines the Pos-Trunk bundling technology, which bundles multiple physical interfaces into a logical interface.";
+  revision 2020-02-13 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "trunk";
+  typedef active-status-type {
+    type enumeration {
+      enum invalid {
+        value 0;
+        description
+          "Invalid.";
+      }
+      enum active {
+        value 1;
+        description
+          "The interface is in Active state.";
+      }
+      enum inactive {
+        value 2;
+        description
+          "The interface is in InActive state.";
+      }
+    }
+    description
+      "Pos trunk member active state.";
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    when "ifm:type='Pos-Trunk'";
+    description
+      "Active when the interface is set to type Pos-Trunk.";
+    container pos-trunk {
+      description
+        "Configure Pos-Trunk interfaces. It is a logical interface with multiple physical interfaces being bundled.";
+      leaf up-member-num {
+        type uint32 {
+          range "0..2";
+        }
+        config false;
+        description
+          "Specifies the number of member interfaces in the Up state.";
+      }
+      container members {
+        description
+          "List of pos-trunk member interfaces.";
+        list member {
+          key "name";
+          max-elements 2;
+          description
+            "Configure pos-trunk member interfaces.";
+          leaf name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Pos'";	
+            description
+              "Configures a name for a pos-trunk member interface.";
+          }
+          leaf port-status {
+            type ifm:port-status;
+            config false;
+            description
+              "Displays the status of a pos-trunk member interface.";
+          }
+          leaf active-status {
+            type active-status-type;
+            config false;
+            description
+              "Displays the active status of a pos-trunk member interface.";
+          }
+        }
+      }
+    }
+  }
+}

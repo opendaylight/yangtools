@@ -1,0 +1,125 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-mpls-te-bfd-type {
+  belongs-to huawei-mpls-te-bfd {
+    prefix mpls-te-bfd;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+  revision 2020-03-10 {
+    description
+      "Fixed some descriptions.";
+    reference
+      "Huawei private.";
+  }		
+  revision 2019-03-27 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  /*
+   * typedef-stmt
+   */
+  typedef bfd-for-lsp-mode {
+    type enumeration {
+      enum "one-arm-echo" {
+        value 1;
+        description
+          "BFD One Arm Echo.";
+      }
+    }
+    description
+      "Bfd for lsp type.";
+  }
+  typedef bfd-for-tunnel-mode {
+    type enumeration {
+      enum "one-arm-echo" {
+        value 1;
+        description
+          "BFD One Arm Echo.";
+      }
+    }
+    description
+      "Bfd for tunnel type.";
+  }
+  typedef te-tunnel-bfd-for-lsp-mode {
+    type enumeration {
+      enum "one-arm-echo" {
+        value 1;
+        description
+          "BFD One Arm Echo.";
+      }
+      enum "seamless" {
+        value 2;
+        description
+          "BFD Seamless.";
+      }
+      enum "option-tlv" {
+        value 3;
+        description
+          "BFD detection with options.";
+      }
+    }
+    description
+      "Bfd all mode.";
+  }
+  typedef rsvp-te-tunnel-bfd-for-lsp-mode {
+    type enumeration {
+      enum "one-arm-echo" {
+        value 1;
+        description
+          "BFD One Arm Echo.";
+      }
+      enum "option-tlv" {
+        value 3;
+        description
+          "BFD detection with options.";
+      }
+    }
+    description
+      "Bfd all mode.";
+  }
+  typedef te-tunnel-bfd-for-tunnel-mode {
+    type enumeration {
+      enum "one-arm-echo" {
+        value 1;
+        description
+          "BFD One Arm Echo.";
+      }
+      enum "seamless" {
+        value 3;
+        description
+          "BFD Seamless.";
+      }
+    }
+    description
+      "Bfd for tunnel type.";
+  }
+  typedef bfd-ability-type {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "MPLS RSVP-TE BFD enable configuration.";
+      }
+      enum "block" {
+        value 2;
+        description
+          "MPLS RSVP-TE BFD block configuration.";
+      }
+    }
+    description
+      "TE BFD ability type.";
+  }
+}

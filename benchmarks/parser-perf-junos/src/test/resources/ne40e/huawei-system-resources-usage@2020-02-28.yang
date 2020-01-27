@@ -1,0 +1,75 @@
+/******************************************************
+* Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+* Module description & tree structure
+***************************************************/
+module huawei-system-resources-usage {
+  namespace "urn:huawei:yang:huawei-system-resources-usage";
+  prefix system-resources-usage;
+  
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Display system resources usage.";
+  revision 2020-02-28 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forward-system";
+  container system-resources-usage {
+    config false;
+    description
+      "System resources usage.";
+    container resources {
+      description
+        "List of resource informations.";
+      list resource {
+        key "slot resource-name";
+        description
+          "Statistics of resource information.";
+        leaf slot {
+          type string {
+            length "1..16";
+          }
+          description
+            "Slot ID.";
+        }
+        leaf resource-name {
+          type string {
+            length "1..64";
+          }
+          description
+            "Resource name.";
+        }
+        leaf total {
+          type uint32;
+          description
+            "Total resource count.";
+        }
+        leaf allocated {
+          type uint32;
+          description
+            "Allocated resource count.";
+        }
+        leaf free {
+          type uint32;
+          description
+            "Free resource count.";
+        }
+      }
+    }
+  }
+}

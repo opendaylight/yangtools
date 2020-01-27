@@ -1,0 +1,66 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mplsoam {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-mplsoam";
+  prefix mplsoam;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Multiprotocol Label Switching (MPLS) operations, administration and maintenance (OAM), provides the following functions: fault management, performance monitoring, and protection switching.";
+
+  revision 2019-04-18 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  /*****************************************************************
+  * data
+  *****************************************************************/
+  ext:task-name  "tpoam";
+  container mplsoam {
+    description
+      "MPLSoam.";
+    container global {
+      description
+        "Configure global MPLS OAM attribute.";
+      leaf oam-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable global MPLS OAM. By default, global MPLS OAM is disabled.";
+      }
+      leaf fdi-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MPLS OAM FDI. By default, FDI is disabled.";
+      }
+      leaf itu-mode {
+        when "../oam-enable='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable global mode of MPLS OAM.";
+      }
+      leaf oam-num {
+        type uint32;
+        config false;
+        description
+          "Total number of OAM instances, including MPLS OAM and MPLS-TP OAM instances.";
+      }      
+    }
+  }
+}

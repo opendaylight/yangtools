@@ -1,0 +1,189 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-dsa {
+  namespace "urn:huawei:yang:huawei-dsa";
+  prefix dsa;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Dsa.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ssh-server";
+  typedef dsa-key-type {
+    type enumeration {
+      enum "2048" {
+	    value 2048;
+        description
+          "Modulus 2048.";
+      }
+    }
+    description
+      "Dsa key length.";
+  }
+  typedef dsa-encode-type {
+    type enumeration {
+      enum "der" {
+        value 0;
+        description
+          "Der.";
+      }
+      enum "pem" {
+        value 1;
+        description
+          "Pem.";
+      }
+      enum "openssh" {
+        value 2;
+        description
+          "Openssh.";
+      }
+    }
+    description
+      "DSA encodein type list.";
+  }
+  container dsa {
+    description
+      "Dsa.";
+    container local-keys {
+      description
+        "Configure local key table.";
+      container local-key {
+        presence "create dsaLocalKey.";
+        description
+          "Enable/disable local key code.";
+        leaf key-size {
+          type dsa-key-type;
+          default "2048";
+          description
+            "Key size.";
+        }
+        leaf host-key-name {
+          type string {
+            length "0..264";
+          }
+          config false;
+          description
+            "Hostkey name.";
+        }
+        leaf host-key-code {
+          type string {
+            length "0..2048";
+          }
+          config false;
+          description
+            "Hostkey code.";
+        }
+        leaf host-key-pem {
+          type string {
+            length "0..2048";
+          }
+          config false;
+          description
+            "Hostkey code in PEM format.";
+        }
+        leaf host-key-openssh {
+          type string {
+            length "0..2048";
+          }
+          config false;
+          description
+            "Hostkey code in OpenSSH format.";
+        }
+      }
+    }
+    container peer-keys {
+      description
+        "List of peer key table.";
+      list peer-key {
+        key "key-name";
+        description
+          "Configure peer key code. If the key code is bound, it cannot be deleted, you need to unbind and then delete.";
+        leaf key-name {
+          type string {
+            length "1..40";
+          }
+          description
+            "Key name.";
+        }
+        leaf key-code {
+          type string {
+            length "1..2048";
+          }
+          mandatory true;
+          ext:support-filter "true";
+          description
+            "Key code conforming to PEM, OpenSSH or DER format.";
+        }
+        leaf encoding-type {
+          type dsa-encode-type;
+          default "der";
+          ext:support-filter "true";
+          description
+            "Encode type.";
+        }
+      }
+    }
+    container key-pairs {
+      description
+        "List of DSA keypair labels.";
+      list key-pair {
+        key "key-pair-label";
+        max-elements  "20";
+        description
+          "Configure DSA keypair label policy.";
+        leaf key-pair-label {
+          type string {
+            length "1..35";
+            pattern '[a-z0-9_]*';
+          }
+          description
+            "Keypair Label Name : It only contains underscores (_), lowercase letters and digits.";
+        }
+        leaf key-size {
+          type dsa-key-type;
+          default "2048";
+          ext:support-filter "true";
+          description
+            "Size of Keypair.";
+        }
+        leaf host-key-code {
+          type string {
+            length "0..2048";
+          }
+          config false;
+          ext:support-filter "true";
+          description
+            "DSA hostkey code.";
+        }
+      }
+    }
+    container dsa-global {
+      description
+        "Configure Global Configuration.";
+      leaf max-key-pair {
+        type int32 {
+          range "1..20";
+        }
+        default "20";
+        description
+          "Maximum keypair value.";
+      }
+    }
+  }
+}

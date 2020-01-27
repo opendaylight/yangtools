@@ -1,0 +1,43 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-cu-agent-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-bras-cu-agent-deviations-CH-NE-X3";
+  prefix bras-cu-agent-devs-CH-NE-X3;
+
+  import huawei-bras-cu-agent {
+    prefix bras-cu-agent;
+  }
+  import huawei-rbs {
+    prefix rbs;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global Configuration.";
+
+  revision 2019-06-25 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/bras-cu-agent:cu-agent/bras-cu-agent:cu-multicast-rbp/bras-cu-agent:name" {
+    deviate replace {
+      type leafref {
+        path "/rbs:rbs/rbs:profiles/rbs:profile/rbs:name";
+      }
+    }
+  }
+
+}

@@ -1,0 +1,87 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-vlan-fwd {
+  namespace "urn:huawei:yang:huawei-vlan-fwd";
+  prefix vlan-fwd;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-fim-ifm {
+    prefix fim-ifm;
+  }
+
+  ext:task-name "vlan";
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Forwarding VLAN service.";
+  revision 2020-03-06 {
+    description
+      "Change description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-15 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Unknown-unicast alarm threshold.";
+    container unknow-unicast-threshold {
+      when "../ifm:type='Ethernet' or ../ifm:type='GigabitEthernet' or ../ifm:type='Eth-Trunk' or ../ifm:type='100GE' or ../ifm:type='XGigabitEthernet' or ../ifm:type='40GE' or ../ifm:type='10GE' or ../ifm:type='400GE' or ../ifm:type='25GE' or ../ifm:type='FlexE' or ../ifm:type='50GE' or ../ifm:type='50|100GE'";
+      description
+        "Configure unknown-unicast alarm threshold.";
+      leaf threshold {
+        type uint32 {
+          range "1..100";
+        }
+        must "(../../ethernet:ethernet/ethernet:main-interface/ethernet:l2-attribute and not(../../fim-ifm:fim/fim-ifm:statistic-mode='forward')) or (../../ifm:parent-name and ../../ifm:statistic-enable='true') or not(../threshold)";
+        description
+          "Unknown-unicast alarm threshold, which can be disabled.";
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ethernet:ethernet/ethernet:main-interface/ethernet:l2-attribute" {
+    description
+      "Forwarding VLAN service.";
+    container vlan-isolate-attribute {
+      description
+        "Configure VLAN isolation.";
+      leaf isolate-vlanlist {
+        type pub-type:vlan-range;
+        description
+          "Isolated VLAN list.";
+      }
+      leaf outside-vlan-iso {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable VLAN isolation state.";
+      }
+    }
+  }
+
+}

@@ -1,0 +1,45 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-loopdetect-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-loopdetect-deviations-CH-NE-X3";
+  prefix "loopdetect-devs-CH-NE-X3";
+  import huawei-loopdetect {
+    prefix "loopdetect";
+  }
+ import huawei-ifm {
+    prefix "ifm";
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Loopdetect.";
+  revision 2019-04-08 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  deviation /ifm:ifm/ifm:interfaces/ifm:interface/loopdetect:loopdetect/loopdetect:loopback-detect/loopdetect:block-time {
+    deviate replace {
+       type uint32{
+           range 5..255;
+       }
+    }
+  }
+  deviation /loopdetect:loopdetect/loopdetect:trigger-detect/loopdetect:global/loopdetect:min-port-up-time {
+    deviate replace {
+       type uint32{
+           range 1..100;
+       }
+    }
+  }
+}

@@ -1,0 +1,1946 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-clocksync-1588v2 {
+ namespace "urn:huawei:yang:huawei-clocksync-1588v2";
+ prefix clocksync-1588v2;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Clock 1588v2 data model define.";
+
+  revision 2020-03-24 {
+    description
+      "Add dynamic default value and modify node must condition.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-14 {
+    description
+      "Modify the node description and foxed some problems.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-10 {
+    description
+      "Delete uhpc-enable node.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-04 {
+    description
+      "Modify the node description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-06 {
+    description
+      "Add ptsf-switch-enable one leaf node and recover-ptsf-switch rpc node.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-21 {
+    description
+      "Add eth-std-time-port leaf node.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-02 {
+    description
+      "Add time-offset-monitor-cycle, time-stamp-monitor-cycle two leaf node and time-offset-cycle-type, time-stamp-cycle-type two enum type.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-25 {
+    description
+      "Add uhpc-enable, send-gm-wtr two leaf node and fixed some problems.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "clksync";
+  
+  typedef ptp-device-type {
+    type enumeration {
+      enum "none" {
+        value 0;        
+        description
+          "None.";
+      }
+      enum "oc" {
+        value 1;        
+        description
+          "Oc.";
+      }
+      enum "bc" {
+        value 2;
+        description
+          "Bc.";
+      }
+      enum "e2etc" {
+        value 3;
+        description
+          "E2etc.";
+      }
+      enum "p2ptc" {
+        value 4;
+        description
+          "P2ptc.";
+      }
+      enum "e2etcoc" {
+        value 5;
+        description
+          "E2etcoc.";
+      }
+      enum "p2ptcoc" {
+        value 6;
+        description
+          "P2ptcoc.";
+      }
+      enum "e2etcandbc" {
+        value 7;
+        description
+          "E2etcandbc.";
+      }
+      enum "p2ptcandbc" {
+        value 8;
+        description
+          "P2ptcandbc.";
+      }
+      enum "tcandbc" {
+        value 9;
+        description
+          "Tcandbc.";
+      }
+      enum "t-bc" {
+        value 13;
+        description
+          "T-bc.";
+      }
+      enum "t-tc" {
+        value 14;
+        description
+          "T-tc.";
+      }
+    }
+    description
+      "Type of ptp device.";
+  }
+  typedef ptp-profile-type {
+    type enumeration {
+      enum "IEEE1588V2" {
+        value 0;
+        description
+          "IEEE1588V2.";
+      }
+      enum "G8275.1" {
+        value 1;   
+        description
+          "G8275.1.";
+      }
+      enum "CU106" {
+        value 2;
+        description
+          "CU106.";
+      }
+      enum "SMPTE2059-2" {
+        value 4;
+        description
+          "SMPTE2059-2.";
+      }
+    }
+    description
+      "Type of ptp profile.";
+  }
+  typedef ptp-time-source {
+    type enumeration {
+      enum "atomicclock" {
+        value 16;
+        description
+          "Atomicclock.";
+      }
+      enum "gps" {
+        value 32;      
+        description
+          "Gps.";          
+      }
+      enum "terrestrialradio" {
+        value 48;         
+        description
+          "Terrestrialradio.";         
+      }
+      enum "ptp" {
+        value 64;      
+        description
+          "Ptp.";          
+      }
+      enum "ntp" {
+        value 80; 
+        description
+          "Ntp.";         
+      }
+      enum "handset" {
+        value 96;       
+        description
+          "Handset.";        
+      }
+      enum "other" {
+        value 144;      
+        description
+          "Other.";          
+      }
+      enum "internaloscillator" {
+        value 160;       
+        description
+          "Internaloscillator.";         
+      }
+    }
+    description
+      "Type of ptp time source.";
+  }
+  typedef ptp-delay-mechanism {
+    type enumeration {
+      enum "delay" {
+        value 0;       
+        description
+          "Delay.";         
+      }
+      enum "pdelay" {
+        value 1;        
+        description
+          "Pdelay.";        
+      }
+    }
+    description
+      "Type of ptp delay mechanism.";
+  }
+  typedef ptp-port-type {
+    type enumeration {
+      enum "oc" {
+        value 1;       
+        description
+          "Oc.";         
+      }
+      enum "bc" {
+        value 2;       
+        description
+          "Bc.";         
+      }
+      enum "tc" {
+        value 3;      
+        description
+          "Tc.";          
+      }
+      enum "tcoc" {
+        value 4;      
+        description
+          "Tcoc.";          
+      }
+      enum "t-bc" {
+        value 5;      
+        description
+          "T-bc.";          
+      }
+      enum "t-tc" {
+        value 6;      
+        description
+          "T-tc.";          
+      }
+      enum "none" {
+        value 0;      
+        description
+          "None.";          
+      }
+    }
+    description
+      "Type of ptp port.";
+  }
+  typedef ptp-port-state {
+    type enumeration {
+      enum "slave" {
+        value 0;       
+        description
+          "Slave.";         
+      }
+      enum "uncalibrated" {
+        value 1;       
+        description
+          "Uncalibrated.";         
+      }
+      enum "passive" {
+        value 2;       
+        description
+          "Passive.";
+      }
+      enum "master" {
+        value 3;        
+        description
+          "Master.";        
+      }
+      enum "premaster" {
+        value 4;       
+        description
+          "Premaster.";         
+      }
+      enum "listening" {
+        value 5;        
+        description
+          "Listening.";        
+      }
+      enum "faulty" {
+        value 6;      
+        description
+          "Faulty.";          
+      }
+      enum "disabled" {
+        value 7;       
+        description
+          "Disabled.";         
+      }
+      enum "initializing" {
+        value 8;       
+        description
+          "Initializing.";         
+      }
+    }
+    description
+      "State of ptp port.";
+  }
+  typedef ptp-bits-direction {
+    type enumeration {
+      enum "in" {
+        value 0;        
+        description
+          "In.";        
+      }
+      enum "out" {
+        value 1;        
+        description
+          "Out.";        
+      }
+      enum "both" {
+        value 2;        
+        description
+          "Both.";        
+      }
+      enum "none" {
+        value 4;       
+        description
+          "Both.";         
+      }
+    }
+    description
+      "Direction of ptp bits.";
+  }
+  typedef ptp-bits-switch {
+    type enumeration {
+      enum "off" {
+        value 0;  
+        description
+          "Off.";         
+      }
+      enum "on" {
+        value 1;       
+        description
+          "On.";          
+      }
+    }
+    description
+      "Switch of ptp bits.";
+  }
+  typedef ptp-bits-status {
+    type enumeration {
+      enum "normal" {
+        value 0;       
+        description
+          "Normal.";          
+      }
+      enum "abnormal" {
+        value 1;         
+        description
+          "Abnormal.";        
+      }
+    }
+    description
+      "Status of ptp bits.";
+  }
+  typedef ptp-sign-flag {
+    type enumeration {
+      enum "negative" {
+        value 0;       
+        description
+          "Negative.";          
+      }
+      enum "positive" {
+        value 1;        
+        description
+          "Positive.";         
+      }
+    }
+    description
+      "Flag of ptp sign.";
+  }
+  typedef ptp-port-step-type {
+    type enumeration {
+      enum "onestep" {
+        value 0;         
+        description
+          "Onestep.";        
+      }
+      enum "twostep" {
+        value 1;       
+        description
+          "Twostep.";          
+      }
+    }
+    description
+      "Type of ptp port step.";
+  }
+  typedef ptp-octet-string {
+    type string {
+      length "1..255";
+    }
+    description
+      "Octet String.";
+  }
+  typedef ptp-tod-protocol {
+    type enumeration {
+      enum "ccsa" {
+        value 2;         
+        description
+          "CCSA.";        
+      }
+      enum "ubx" {
+        value 0;       
+        description
+          "UBX.";          
+      }
+      enum "nmea" {
+        value 1;        
+        description
+          "NMEA.";         
+      }
+      enum "g-8271" {
+        value 4;        
+        description
+          "G8271.";         
+      }
+    }
+    description
+      "Tod protocol of ptp.";
+  }
+  typedef ptp-pack-type {
+    type enumeration {
+      enum "mac" {
+        value 0;       
+        description
+          "Mac.";          
+      }
+      enum "udp" {
+        value 1;      
+        description
+          "Udp.";           
+      }
+      enum "none" {
+        value 2;       
+        description
+          "None.";          
+      }      
+    }
+    description
+      "Pack Type of ptp.";
+  }
+  typedef ptp-set-mode {
+    type enumeration {
+      enum "manual" {
+        value 0;        
+        description
+          "Manual.";        
+      }
+      enum "auto" {
+        value 1;       
+        description
+          "Auto.";         
+      }
+    }
+    description
+      "Set Mode of ptp.";
+  }
+  typedef ptp-timescale-mode {
+    type enumeration {
+      enum "arb" {
+        value 0;       
+        description
+          "ARB.";         
+      }
+      enum "ptp" {
+        value 1;        
+        description
+          "PTP.";        
+      }
+    }
+    description
+      "Time scale mode of ptp.";
+  }
+  typedef ptp-leap-mode {
+    type enumeration {
+      enum "none" {
+        value 0;       
+        description
+          "None.";         
+      }
+      enum "leap59" {
+        value 1;       
+        description
+          "Leap59.";         
+      }
+      enum "leap61" {
+        value 2;       
+        description
+          "Leap61.";         
+      }
+    }
+    description
+      "Leap mode of ptp.";
+  }
+  typedef ptp-sgnlmsg-string {
+    type string {
+      length "0..512";
+    }
+    description
+      "Sgnl msg string of ptp.";
+  }
+  typedef clock-bits-type {
+    type enumeration {
+      enum "1pps" {
+        value 3;
+        description
+          "Bits type is 1PPS.";
+      }
+      enum "2mhz" {
+        value 1;
+        description
+          "Bits type is 2MHZ.";
+      }
+      enum "2mbps" {
+        value 0;
+        description
+          "Bits type is 2MBPS.";
+      }
+      enum "dcls" {
+        value 2;
+        description
+          "Bits type is DCLS.";
+      }
+      enum "none" {
+        value 255;
+        description
+          "NONE.";
+      }
+    }
+    description
+      "BITS TYPE.";
+  }
+  typedef ssm-level {
+    type enumeration {
+      enum "unk" {
+        value 0;
+        description
+          "Unknown SSM level (UNK).";
+      }
+      enum "prc" {
+        value 2;
+        description
+          "SSM level of the G.811 clock (PRC).";
+      }
+      enum "ssua" {
+        value 4;
+        description
+          "G.812 transit clock (SSUA).";
+      }
+      enum "ssub" {
+        value 8;
+        description
+          "G.812 local clock (SSUB).";
+      }
+      enum "sec" {
+        value 11;
+        description
+          "SDH (sec).";
+      }
+      enum "dnu" {
+        value 15;
+        description
+          "The quality level of the clock source is unavailable (DNU).";
+      }
+      enum "none" {
+        value 16;
+        description
+          "Invalid SSM level.";
+      }
+    }
+    description
+      "SSM level type.";
+  }
+  typedef support-1588-type {
+    type enumeration {
+      enum "unsupporting" {
+        value 0;       
+        description
+          "Not support 1588v2 services.";
+      }
+      enum "supporting" {
+        value 1;       
+        description
+          "Support 1588v2 services.";
+      }
+    }
+    description
+      "Capability of time synchronization.";
+  }
+  typedef time-offset-cycle-type {
+    type enumeration {
+      enum "1min" {
+        value 1;       
+        description
+          "One minute.";
+      }
+      enum "5min" {
+        value 5;       
+        description
+          "Five minute.";
+      }
+      enum "15min" {
+        value 15;       
+        description
+          "Fifteen minute.";
+      }
+    }
+    description
+      "Configure the timeoffset performance monitoring cycle.";
+  }
+  typedef time-stamp-cycle-type {
+    type enumeration {
+      enum "1min" {
+        value 1;       
+        description
+          "One minute.";
+      }
+      enum "5min" {
+        value 5;       
+        description
+          "Five minute.";
+      }
+      enum "15min" {
+        value 15;       
+        description
+          "Fifteen minute.";
+      }
+    }
+    description
+      "Configure the timestamp performance monitoring cycle.";
+  }
+  
+  container clocksync-1588v2 {
+    description
+      "Clock1588v2_type.";
+    container ptp-common {
+      description
+        "Configure common information of PTP clock.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable PTP globally.";
+      }
+      leaf profile {
+        type ptp-profile-type;
+        default "IEEE1588V2";
+        description
+          "Set PTP profile.";
+      }
+      leaf acr-enable {
+        type boolean;
+        must "((not(../profile!='IEEE1588V2' and ../profile!='SMPTE2059-2') and (../acr-enable='true')) or (../acr-enable='false'))";
+        default "false";
+        description
+          "Enable/disable static PTP ACR.";
+      }
+      leaf domain {
+        type uint32 {
+          range "0..255";
+        }
+        ext:dynamic-default {
+          ext:default-value "0" {
+            when "../profile = 'IEEE1588V2'";
+            description 
+              "The default value is 0 when profile is IEEE1588V2.";
+          }
+          ext:default-value "127" {
+            when "../profile = 'SMPTE2059-2'";
+            description 
+              "The default value is 127 when profile is SMPTE2059-2.";
+          }
+          ext:default-value "24" {
+            when "../profile = 'G8275.1' or ../profile = 'CU106'";
+            description
+              "The default value is 24 when profile is G8275.1 or CU106.";
+          }
+        }
+        description
+          "Configure PTP device domain. Only devices in the same PTP domain can be synchronized.";
+      }
+      leaf device-type {
+        type ptp-device-type;
+        must "(((../profile!='IEEE1588V2') and (../profile!='SMPTE2059-2') and (../device-type='none' or ../device-type='t-bc' or ../device-type='t-tc')) or ((../profile='IEEE1588V2' or ../profile='SMPTE2059-2') and (../device-type='none' or ../device-type='oc' or ../device-type='bc' or ../device-type='e2etc' or ../device-type='p2ptc' or ../device-type='e2etcoc' or ../device-type='p2ptcoc' or ../device-type='tcandbc'))) or (../device-type='none')";
+        default "none";
+        description
+          "Set PTP device type.";
+      }
+      leaf slave-only {
+        type boolean;
+        must "((../device-type='oc' and (not(../profile!='IEEE1588V2' and ../profile!='SMPTE2059-2')) and (../slave-only ='true') ) or (../slave-only ='false'))";
+        default "false";
+        description
+          "Enable/disable slave-only function. If a PTP device serves as an OC, the PTP device can only function as a slave clock.";
+      }
+      leaf set-port-state-enable {        
+        type boolean;
+        must "(((../profile='IEEE1588V2' or ../profile='SMPTE2059-2') and  (../dly-measure-enable!='true') and (../slave-only!='true') and (../set-port-state-enable='true')) or (../set-port-state-enable='false'))";
+        default "false";
+        description
+          "Enable/disable static BMC selection. You can manually configure the interface status of a PTP interface clock source.";
+      }
+      leaf access-ctrl-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable access control for BMC selection. Only clock sources in the list of permitted clock sources can participate in BMC selection.";
+      }
+      leaf dly-measure-enable {
+       type boolean;
+       must "(((../device-type='bc' or ../device-type='t-bc' or ../device-type='tcandbc') and (../enable='true' and ../set-port-state-enable!='true' and ../dly-measure-enable='true')) or (../dly-measure-enable='false'))";
+        default "false";
+        description
+          "Enable/disable auto-measurement of ring-network asymmetry delay of optical fibers. The fiber length change will be tested as the interface connecting to the fiber goes from Down to Up after enabled.";
+      }
+      leaf passive-measure-enable {
+        type boolean;
+        must "((../enable='true' and ../passive-measure-enable='true') or (../passive-measure-enable='false'))";
+        default "false";
+        description
+          "Enable/disable performance monitor of a passive interface. If performance monitoring is enabled on passive interfaces and devices remain in a stable time synchronization state, devices will monitor the time offset values (between the master and slave devices) on passive interfaces every 1000s.";
+      }
+      leaf passive-alarm-threshold {
+        type int32 {
+          range "55..10000";
+        }
+        default "200";
+        description
+          "Set passive alarm threshold. After performance monitoring is enabled on passive interfaces, if the time offset value between the master and slave devices exceeds the alarm threshold, an alarm indicating that the passive interface optical fiber length has changed will be reported to the NMS.";
+      }
+      leaf utc-time {
+        type string {
+          length "1..50";
+        }
+        config false;
+        description
+          "Current UTC time.";
+      }
+      leaf current-utc-offset {
+        type int32 {
+          range "0..255";
+        }  
+        default "35";
+        description
+          "Current offset between the UTC and the TAI.";
+      }
+      leaf current-utc-offset-learn {
+        type int32 {
+          range "0..255";
+        }  
+        default "35";
+        config false;
+        description
+          "Current offset between the UTC and the TAI.";
+      }
+      leaf std-time-port {
+        type pub-type:if-name;
+        must "(../../ptp-bits-srcs/ptp-bits-src[clocksync-1588v2:bits-name=current()]/clocksync-1588v2:bits-direction='in') and ((../../ptp-bits-srcs/ptp-bits-src[clocksync-1588v2:bits-name=current()]/clocksync-1588v2:bits-signal='1pps') or (../../ptp-bits-srcs/ptp-bits-src[clocksync-1588v2:bits-name=current()]/clocksync-1588v2:bits-signal='dcls'))";
+        description
+          "Configure an external time interface as the standard time reference port.";
+      }
+      leaf eth-std-time-port {
+        type pub-type:if-name;
+        must "not(../std-time-port)";
+        description
+          "Configure an Ethernet interface as the absolute standard time interface.";
+      }
+      leaf clk-class-alm-thd {
+        type uint32 {
+          range "0..255";
+        }
+        default "6";
+        description
+          "Clock class threshold of PTP alarm.";
+      }
+      leaf offset-sum-alm-thd {
+        type uint32 {
+          range "0..1000000000";
+        }
+        default "500";
+        description
+          "Indicates the difference threshold of the ptpoffsetsum between max and min during the statistical period.";
+      }
+      leaf std-offset-alm-thd {
+        type uint32 {
+          range "200..1000";
+        }
+        default "500";
+        description
+          "PTP standard time offset alarm threshold (ns).";
+      }
+      leaf max-steps-removed {
+        type uint32 {
+          range "1..255";
+        }
+        default "255";
+        description
+          "Configure the max steps removed of time synchronization equipment.";
+      }
+      leaf tod-protocol {
+        type ptp-tod-protocol;
+        default "ubx";
+        description
+          "TOD format of 1PPS+TOD time signals.";
+      }
+      leaf send-gm-wtr {
+        type uint32 {
+          range "0..720";
+        }
+        units min;
+        default "0";
+        description
+          "Configure the wait-to-restore (WTR) time for the local device to send announce messages carrying GM attributes after the time server recovers, by default, the WTR time is 0, that is, the function is disabled.";
+      }
+      leaf time-offset-monitor-cycle {
+        type time-offset-cycle-type;
+        units min;
+        default "15min";
+        description
+          "Configure the timeoffset performance monitoring cycle.";
+      }
+      leaf time-stamp-monitor-cycle {
+        type time-stamp-cycle-type;
+        units min;
+        default "15min";
+        description
+          "Configure the timestamp performance monitoring cycle.";
+      }
+      leaf ptsf-switch-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable ptsf source-switching function.";
+      }
+    }
+    container ptp-local-src {
+      description
+        "Configure local PTP clock source.";
+      leaf virtual-clock-id {
+        type string {
+            length "8";
+          }
+        default "00000000";
+        description
+          "User can configure virtual-clock-id between 1 and 0xffffffff.";
+      }
+      leaf local-clock-id {
+        type ptp-octet-string;
+        default "0000000000000000";
+        config false;
+        description
+          "Clock ID of the local PTP clock source. It is a 16-digit hexadecimal number, such as 286ed4fffe42f7ca.";
+      }
+      leaf time-source {
+        type ptp-time-source;
+        default "internaloscillator";
+        description
+          "Type of the local PTP clock source.";
+        }
+      leaf accuracy {
+       type uint32 {
+          range "0..255";
+        }
+        must "((not(../../ptp-common/profile!='IEEE1588V2') or not(../../ptp-common/profile!='SMPTE2059-2'))  or (../../ptp-common/profile!='SMPTE2059-2' and ../../ptp-common/profile!='IEEE1588V2' and (../accuracy=49 or ../accuracy=254)))";
+        ext:dynamic-default {
+          ext:default-value "49" {
+            when "../../ptp-common/profile='IEEE1588V2' or ../../ptp-common/profile='SMPTE2059-2'";
+            description 
+              "The default value is 49 when profile is IEEE1588V2 or SMPTE2059-2.";
+          }
+          ext:default-value "254" {
+            when "../../ptp-common/profile='G8275.1' or ../../ptp-common/profile='CU106'";
+            description 
+              "The default value is 254 when profile is G8275.1 or CU106.";
+          }
+        }
+        description
+          "Accuracy of the local PTP clock source.";
+      }
+      leaf clk-class {
+         type uint32 {
+          range "0..255";
+        }
+        must "((not(../../ptp-common/profile!='IEEE1588V2') or not(../../ptp-common/profile!='SMPTE2059-2'))  or (../../ptp-common/profile!='SMPTE2059-2' and ../../ptp-common/profile!='IEEE1588V2' and (../clk-class=187 or ../clk-class=248)))";
+        ext:dynamic-default {
+          ext:default-value "187" {
+            when "../../ptp-common/profile='IEEE1588V2' or ../../ptp-common/profile='SMPTE2059-2'";
+            description 
+              "The default value is 187 when profile is IEEE1588V2 or SMPTE2059-2.";
+          }
+          ext:default-value "248" {
+            when "../../ptp-common/profile='G8275.1' or ../../ptp-common/profile='CU106'";
+            description 
+              "The default value is 248 when profile is G8275.1 or CU106.";
+          }
+        }
+        description
+          "Class of the local PTP clock source.";
+      }
+      leaf priority1 {
+       type uint32 {
+          range "0..255";
+        }
+        must "((not(../../ptp-common/profile!='IEEE1588V2') or not(../../ptp-common/profile!='SMPTE2059-2'))  or ((../../ptp-common/profile!='IEEE1588V2') and (../../ptp-common/profile!='SMPTE2059-2') and (../priority1=128)))";
+        default "128";
+        description
+          "Priority1 of the local PTP clock source.";
+      }
+      leaf priority2 {
+        type uint32 {
+          range "0..255";
+        }
+        default "128";
+        description
+          "Priority2 of the local PTP clock source.";
+      }
+      leaf local-priority {
+        type uint32 {
+          range "1..255";
+        }
+        must "(((../../ptp-common/profile!='IEEE1588V2') and (../../ptp-common/profile!='SMPTE2059-2'))  or ((../../ptp-common/profile='IEEE1588V2' or ../../ptp-common/profile='SMPTE2059-2') and (../local-priority=128)))";
+        default "128";
+        description
+          "Local priority of the local PTP clock source.";
+      }
+    }
+    container ptp-atr-src {
+      description
+        "Configure PTP ATR clock source.";
+      leaf atr-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable PTP ATR clock source.";
+      }
+      leaf atr-status {
+        type ptp-bits-status;
+        default "normal";
+        config false;
+        description
+          "PTP ATR clock source status.";
+      }
+      leaf atr-time-source {
+        type ptp-time-source;
+        default "internaloscillator";
+        config false;
+        description
+          "Type of the ATR clock source.";
+      }
+      leaf atr-accuracy {
+        type uint32 {
+          range "0..255";
+        }
+        default "49";
+        config false;
+        description
+          "Accuracy of the ATR clock source, which is used for BMC algorithm.";
+      }
+      leaf atr-clk-class {
+        type uint32 {
+          range "0..255";
+        }
+        default "187";
+        config false;
+        description
+          "Class of the ATR clock source, which is used for BMC algorithm.";
+      }
+      leaf atr-priority1 {
+        type uint32 {
+          range "0..255";
+        }
+        default "128";
+        config false;
+        description
+          "Priority1 of the ATR clock source, which is used for BMC algorithm.";
+      }
+      leaf atr-priority2 {
+        type uint32 {
+          range "0..255";
+        }
+        default "128";
+        config false;
+        description
+          "Priority2 of the ATR clock source, which is used for BMC algorithm.";
+      }
+    }
+    container ptp-grand-master-attr {
+      config false;
+      description
+        "Statistics of the current master clock.";
+      leaf master-clock-id {
+        type ptp-octet-string;
+        description
+          "Number of the current master clock. It is a 16-digit hexadecimal number, such as 286ed4fffe42f7ca.";
+      }
+      leaf recv-src-name {
+        type string {
+          length "1..63";
+        }
+        description
+          "Name of the interface to which the current master clock accesses.";
+      }
+      leaf step-removed {
+        type uint32 {
+          range "0..127";
+        }
+        description
+          "Number of hops between the master clock and a local device.";
+      }
+      leaf time-source {
+        type ptp-time-source;
+        default "internaloscillator";
+        description
+          "Type of the current master clock.";
+      }
+      leaf accuracy {
+        type uint32 {
+          range "0..255";
+        }
+        default "49";
+        description
+          "Accuracy of the current master clock. It is a two-digit hexadecimal number, such as 0x20.";
+      }
+      leaf clk-class {
+        type uint32 {
+          range "0..255";
+        }
+        default "187";
+        description
+          "Class of the current master clock.";
+      }
+      leaf priority1 {
+        type uint32 {
+          range "0..255";
+        }
+        default "128";
+        description
+          "Priority1 of the current master clock.";
+      }
+      leaf priority2 {
+        type uint32 {
+          range "0..255";
+        }
+        default "128";
+        description
+          "Priority2 of the current master clock.";
+      }
+      leaf gm-utc-offset {
+        type int32 {
+          range "0..255";
+        }
+        default "35";
+        description
+          "UTC offset of the current master clock.";
+      }
+      leaf gm-utc-offset-valid {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the UTC offset of the current master clock.";
+      }
+      leaf gm-timescale {
+        type ptp-timescale-mode;
+        default "ptp";
+        description
+          "Timescale of the current master clock.";
+      }
+      leaf gm-time-traceable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable time trace. If enabled, the time of the current master clock source can be traced.";
+      }
+      leaf gm-leap {
+        type ptp-leap-mode;
+        default "none";
+        description
+          "Leap value of the current master clock.";
+      }
+      leaf gm-freq-traceable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable frequency trace. If enabled, the frequency of the current master clock can be traced.";
+      }
+      leaf gm-offset-scaled {
+        type string {
+          length "1..16";
+        }
+        default "0xffff";
+        description
+          "Clock stability of the current master clock.";
+      }
+      leaf sync-uncertain {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable synchronization uncertain status of the current master clock.";
+      }
+    }
+    container ptp-permit-clk-ids {
+      description
+        "List of configure clock sources that are allowed to participate in BMC selection.";
+      list ptp-permit-clk-id {
+        key "permit-clkid";
+        max-elements  "64";
+        description
+          "Configure clock sources that are allowed to participate in BMC selection.";
+        leaf permit-clkid {
+          type string {
+            length "16";
+          }
+          description
+            "Number of a clock source. It is a 16-digit hexadecimal number, such as 286ed4fffe466c57.";
+        }
+      }
+    }
+    container ptp-bits-srcs {
+      description
+        "List of configure PTP BITS clock sources.";
+      list ptp-bits-src {
+        key "bits-name";
+        description
+          "Configure PTP BITS clock sources.";
+        ext:generated-by system;
+        leaf bits-name {
+          type pub-type:if-name;
+          description
+            "Name of a BITS interface.";
+        }
+        leaf bits-switch {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable BITS clock sources can participate in BMC selection. BITS clock sources can participate in BMC selection only when the status is on.";
+        }
+        leaf bits-signal {
+          type clock-bits-type;
+          must "((../bits-signal='1pps' or ../bits-signal='dcls') and (../bits-direction='in' or ../bits-direction='out')) or ((../bits-signal='dcls') and (../bits-direction='both')) or (../bits-signal='none')";
+          default "1pps";
+          description
+            "BITS signal type.";
+        }
+        leaf bits-direction {
+          when "../bits-signal!='none'" ;
+          type ptp-bits-direction;
+          default "in";
+          description
+            "Transmission direction of BITS signals. If the signal type is 1PPS, you must specify the input and output directions of BITS signals.";
+        }
+        leaf bits-status {
+          type ptp-bits-status;
+          config false;
+          description
+            "Status of PTP BITS clock sources.";
+        }
+        leaf bits-recv-delay {
+          type int32 {
+            range "0..2000000";
+          }
+          default "0";
+          description
+            "Delay for receiving BITS time signals.";
+        }
+        leaf bits-send-delay {
+          type int32 {
+            range "0..1600";
+          }
+          default "0";
+          description
+            "Delay for sending BITS time signals.";
+        }
+        container ptp-bits-bmc-attrs{
+          description
+            "Configure BMC parameters for selecting PTP BITS clock sources.";
+          leaf local-priority {
+            type uint32 {
+              range "1..255";
+            }
+            default "128";
+            description
+              "Local Priority of the BITS clock source in G8275.1 profile.";
+          }
+          container ptp-bits-bmc-attr{
+            when "not(../../../../ptp-common/tod-protocol='g-8271')";
+            description
+              "Configure BMC parameters for selecting PTP BITS clock sources.";
+            leaf time-source {
+              type ptp-time-source;
+              must "(((../time-source='atomicclock' or ../time-source='gps' or ../time-source='terrestrialradio' or ../time-source='ptp' or ../time-source='ntp' or ../time-source='handset' or ../time-source='other' or ../time-source='internaloscillator')))";
+              description
+                "Type of the BITS clock source.";
+            }
+            leaf accuracy {
+              type uint32 {
+                range "0..255";
+              }
+              description
+                "Accuracy of the BITS clock source.";
+            }
+            leaf clk-class {
+              type uint32 {
+                range "0..255";
+              }
+              description
+                "Class of the BITS clock source.";
+            }
+            leaf priority1 {
+              type uint32 {
+                range "0..255";
+              }
+              must "((not(../../../../../ptp-common/profile!='IEEE1588V2' and ../../../../../ptp-common/profile!='SMPTE2059-2')) or ((((../../../../../ptp-common/profile!='IEEE1588V2') and (../../../../../ptp-common/profile!='SMPTE2059-2'))) and ../priority1=128))";  
+              default "128";
+              description
+                "Priority1 of the BITS clock source in 1588v2 profile.";
+            }
+            leaf priority2 {
+              type uint32 {
+                range "0..255";
+               }
+              default "128";
+              description
+                "Priority2 of the BITS clock source.";
+            }
+            leaf gm-clockid {
+              type string {
+                length "16";
+              }
+              default "0000000000000000";
+              description
+                "Grand master clock ID of BITS clock source. It is a 16-digit hexadecimal number which should be inputted by consumer.";
+            }
+            leaf offset-scaled {
+              type uint32 {
+                range "1..3";
+              }
+              default "1";
+              description
+                "Offset scaled log variance can be configured to be 1: 0xFFFF or 2: 0x4E5D or 3: 0x4B32.";
+            }
+          }
+
+          container ptp-bits-bmc-learn{
+            config false;
+            description
+            "Statistics of BMC parameters for selecting PTP BITS clock sources.";
+            leaf time-source{
+              type ptp-time-source;
+              default "gps";
+              description
+                "Type of the BITS clock source.";
+            }
+            leaf accuracy{
+              type uint32 {
+                range "0..255";
+              }
+              default "32";
+              description
+                "Accuracy of the BITS clock source.";
+            }
+            leaf clk-class {
+              type uint32 {
+                range "0..255";
+              }
+              default "6";
+              description
+                "Class of the BITS clock source.";
+            }
+            leaf priority1 {
+              type uint32 {
+                range "0..255";
+              }
+              default "128";
+              description
+                "Priority1 of the BITS clock source in 1588v2 profile.";
+            }
+            leaf priority2 {
+              type uint32 {
+                range "0..255";
+              }
+              default "128";
+              description
+                "Priority2 of the BITS clock source.";
+            }
+            leaf gm-clockid{
+              type string {
+                length "16";
+              }
+              default "0000000000000000";
+              description
+                "Grand master clock ID of BITS clock source. It is a 16-digit hexadecimal number which should be inputted by consumer.";
+            }
+            leaf offset-scaled {
+              type uint32 {
+                range "1..3";
+              }
+              default "1";
+              description
+                "Offset scaled log variance can be configured to be 1: 0xFFFF or 2: 0x4E5D or 3: 0x4B32.";
+            }
+          }
+        }
+      }
+    }
+    container ptp-port-deviation-sigs {
+      config false;
+      description
+        "List of statistics of gps signalings of PTP port.";
+      list ptp-port-deviation-sig {
+        key "src-name tlv-type";
+        description
+          "Statistics of gps signalings of PTP port.";
+        leaf src-name {
+          type pub-type:if-name;
+          description
+            "Name of a PTP interface clock source.";
+        }
+        leaf tlv-type {
+          type uint32;
+          description
+            "TLV type of PTP message.";
+        }
+        leaf tlv {
+          type ptp-sgnlmsg-string;
+          description
+            "TLV info of PTP message.";
+        }
+      }
+    }
+    container ptp-active-lic-slots {
+      description
+        "List of configure the 1588v2 license for the board.";
+      list ptp-active-lic-slot {
+        key "active-lic-slot";
+        max-elements  "32";
+        description
+          "Configure the 1588v2 license.";
+        leaf active-lic-slot {
+          type string {
+            length "1..16";
+          }
+          description
+            "Slot ID of the board activated with the 1588v2 license.";
+        }
+      }
+    }
+
+    container ptp-port-stats{
+      config false;
+      description
+        "List of PTP port statistics.";
+        list ptp-port-stat {
+        key "ifname";
+        description
+          "PTP port statistics.";
+        leaf ifname {
+          type pub-type:if-name;
+          description
+            "Name of a PTP interface clock source.";
+        }
+        container ptp-port-pkt-stat {
+          description
+            "Statistics of PTP port packet.";
+          leaf port-recv-announce {
+            type uint32;
+            default "0";
+            description
+              "Number of Announce packets received on a PTP port.";
+          }
+          leaf port-recv-sync {
+            type uint32;
+            default "0";
+            description
+              "Number of Sync packets received on a PTP port.";
+          }
+          leaf port-recv-req {
+            type uint32;
+            default "0";
+            description
+              "Number of Request packets received on a PTP port.";
+          }
+          leaf port-recv-resp {
+            type uint32;
+            default "0";
+            description
+              "Number of Response packets received on a PTP port.";
+          }
+          leaf port-recv-pdresp-followup {
+            type uint32;
+            default "0";
+            description
+              "Number of Pdelay Response FollowUp packets received on a PTP port.";
+          }
+          leaf port-recv-followup {
+            type uint32;
+            default "0";
+            description
+              "Number of FollowUp packets received on a PTP port.";
+          }
+          leaf port-send-announce {
+            type uint32;
+            default "0";
+            description
+              "Number of Announce packets sent on a PTP port.";
+          }
+          leaf port-send-sync {
+            type uint32;
+            default "0";
+            description
+              "Number of Sync packets sent on a PTP port.";
+          }
+          leaf port-send-req {
+            type uint32;
+            default "0";
+            description
+              "Number of Request packets sent on a PTP port.";
+          }
+          leaf port-send-resp {
+            type uint32;
+            default "0";
+            description
+              "Number of Response packets sent on a PTP port.";
+          }
+          leaf port-send-followup {
+            type uint32;
+            default "0";
+            description
+              "Number of FollowUp packets sent on a PTP port.";
+          }
+          leaf port-send-pdresp-followup {
+            type uint32;
+            default "0";
+            description
+              "Number of Pdelay Response FollowUp packets sent on a PTP port.";
+          }
+          leaf port-discard-announce {
+            type uint32;
+            default "0";
+            description
+              "Number of Announce packets discarded on a PTP port.";
+          }
+          leaf port-discard-sync {
+            type uint32;
+            default "0";
+            description
+              "Number of Sync packets discarded on a PTP port.";
+          }
+          leaf port-discard-delayreq {
+            type uint32;
+            default "0";
+            description
+              "Number of Delay Req packets discarded on a PTP port.";
+          }
+          leaf port-discard-pdelayreq {
+            type uint32;
+            default "0";
+            description
+              "Number of Pdelay Req packets discarded on a PTP port.";
+          }
+          leaf port-discard-resp {
+            type uint32;
+            default "0";
+            description
+              "Number of Response packets discarded on a PTP port.";
+          }
+          leaf port-discard-pdelayresp {
+            type uint32;
+            default "0";
+            description
+              "Number of Pdelay Response packets discarded on a PTP port.";
+          }
+          leaf port-discard-followup {
+            type uint32;
+            default "0";
+            description
+              "Number of FollowUp packets discarded on a PTP port.";
+          }
+          leaf port-discard-pdrespfollowup {
+            type uint32;
+            default "0";
+            description
+              "Number of Pdelay Response FollowUp packets discarded on a PTP port.";
+          }
+        }
+        container ptp-port-passive-stat {
+          description
+            "Statistics of the passive port performance of the PTP clock.";
+          leaf port-ps-timeoffset-max {
+            type int32;
+            default "0";
+            description
+              "Maximum time offset value of the passive port of the PTP clock.";
+          }
+          leaf port-ps-timeoffset-min {
+            type int32;
+            default "0";
+            description
+              "Minimum time offset value of the passive port of the PTP clock.";
+          }
+          leaf port-ps-timeoffset-mean {
+            type int32;
+            default "0";
+            description
+              "Average time offset value of the passive port of the PTP clock.";
+          }
+          leaf port-ps-timeoffset-cur {
+            type int32;
+            default "0";
+            description
+              "Current time offset value of the passive port of the PTP clock.";
+          }
+        }
+      }
+    }
+
+    container port-pts-capabilitys {
+      config false;
+      description
+        "List of statistics of capability of time synchronization at PTP port.";
+      list port-pts-capability {
+        key "ptp-src-name";
+        description
+          "Statistics of capability of time synchronization at PTP port.";
+        leaf ptp-src-name {
+          type pub-type:if-name;
+          description
+            "Source port name.";
+        }
+        leaf is-support-1588 {
+          type support-1588-type;
+          description
+            "Capability of time synchronization.";
+        }
+      }
+    }
+
+    container ptp-common-state {
+      config false;
+      description
+        "Statistics of clock performance.";
+      leaf max-t2-minus-t1 {
+        type string {
+          length "1..64";
+        }
+        description
+          "Max value of T2 minus T1.";
+      }
+      leaf min-t2-minus-t1 {
+        type string {
+          length "1..64";
+        }
+        description
+          "Min value of T2 minus T1.";
+      }
+    }
+  }
+  
+  rpc reset-ptp-pkt {
+    description
+      "Clear statistics, including packet and timestamp statistics.";
+    ext:node-ref "/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-port-stats/clocksync-1588v2:ptp-port-stat";
+    input {
+      leaf port-name {
+        type pub-type:if-name;
+        description
+          "If interface-name, Clear specific interface statistics, if all, clears all interfaces statistics, including packet and timestamp statistics.";
+      }
+    }
+  }
+  
+  rpc recover-ptsf-switch {
+    description
+      "Ptsf switching of the time source to be recovered.";
+    ext:node-ref "/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-port-stats/clocksync-1588v2:ptp-port-stat";
+    input {
+      leaf recover-ptsf-src-name {
+        type pub-type:if-name;
+        description
+          "Interface name of the time source to be recovered.";
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Interface.";
+    container ptp-port-srcs {
+      description
+        "Configure PTP interface clock sources.";
+      leaf port-enable {
+        type boolean;
+        must "((../port-enable='true') and (/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type) and (/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type!='none') and not((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='tcandbc') and (../ptp-port-advance/port-type-set='none'))) or (../port-enable='false')";
+        default "false";
+        description
+          "Enable/disable PTP for PTP interface clock sources.";
+      }
+      leaf port-num {
+        type int32 {
+          range "0..65535";
+        }
+        config false;
+        description
+          "Port number of PTP interface clock sources.";
+      }
+      leaf port-state {
+        type ptp-port-state;
+        config false;
+        description
+          "Interface status of a PTP clock source.";
+      }
+      leaf permit-dmac {
+        type pub-type:mac-address;
+        description
+          "Configure the destination MAC address of the packets that can be received and processed by 1588v2 interfaces.";
+      }
+      container ptp-port-advance {
+        description
+          "Configure advanced attributes of a PTP interface clock source.";
+        leaf port-domain {
+          type uint32 {
+            range "0..255";
+          }
+          must "(((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='tcandbc') and (../port-type-set='tc')) or ((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:profile='IEEE1588V2' and ../port-domain=0) or ((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:profile='G8275.1' or /clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:profile='CU106') and ../port-domain=24) or (/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:profile='SMPTE2059-2' and ../port-domain=127)) or (../port-domain=0 and ../../port-enable='false'))";
+          default "0";
+          description
+            "Clock domain of PTP interface clock sources. The clock domain can be configured only if the PTP device type is TCandBC and the PTP interface type is TC.";
+        }
+        leaf port-type-set {
+          type ptp-port-type;
+          must "(/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='tcandbc') or (../port-type-set='none')";
+          default "none";
+          description
+            "Type of the PTP interface clock source.";
+        }
+        leaf port-type {
+          type ptp-port-type;
+          default "none";
+          config false;
+          description
+            "Type of the PTP interface clock source.";
+        }
+        leaf delay-mechanism {
+          type ptp-delay-mechanism;
+          must "((((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='bc') or (/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='oc') or (/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='tcandbc')) and (../../port-enable='false')) or (../delay-mechanism='delay'))";
+          default "delay";
+          description
+            "Delay measurement mechanism for PTP packets.";
+        }
+        leaf port-cfg-state {
+          type ptp-port-state; 
+          default "initializing";
+          description
+            "In static BMC selection, the status of an interface clock source can be manually configured, such as master or slave.";
+        }
+        leaf clk-step {
+          type ptp-port-step-type;
+          default "onestep";
+          description
+            "Number of devices that an Announce packet of an interface clock source passes through before the packet reaches a local device.";
+        }
+        leaf not-slave {
+          type boolean;
+          must "(((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-bc') or (/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-tc')) or (((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type!='t-bc') and (/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type!='t-tc')) and ../not-slave='true') or (../not-slave='true'))";
+          default "true";
+          description
+            "Enable/disable local priority of a PTP interface in G8275.1 profile.";
+        }
+        leaf port-local-priority {
+          type int32 {
+            range "1..255";
+          }
+          must "(((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-bc') or (/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-tc')) or (../port-local-priority='128'))";
+          default "128";
+          description
+            "Local priority of a PTP interface in G8275.1 profile.";
+        }
+      }
+      container ptp-pkt-pack {
+        description
+          "Configure PTP packet encapsulation mode. A PTP packet can be encapsulated in a Layer 2 frame or in a Layer 3 UDP packet.";
+        leaf pkt-pack-type {
+          type ptp-pack-type;
+          must "((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-bc' or /clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-tc') and  (../pkt-pack-type='mac')) or ((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type and /clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type!='t-bc' and /clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type!='t-tc') and (../pkt-pack-type='mac' or ../pkt-pack-type='udp')) or (../pkt-pack-type='mac')";
+          default "mac";
+          description
+            "PTP packet encapsulation mode. A PTP packet can be encapsulated in a Layer 2 frame or in a Layer 3 UDP packet.";
+        }
+        container ptp-pkt-mac-pack {
+          when "../pkt-pack-type ='mac' and (/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:profile != 'SMPTE2059-2')";
+          description
+            "Configure layer 2 MAC encapsulation for PTP packets.";
+          leaf mac-egress-dest-mac {
+            type pub-type:mac-address;
+            must "((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:profile='G8275.1' or /clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:profile='CU106') and (../mac-egress-dest-mac='011b-1900-0000' or ../mac-egress-dest-mac='0180-c200-000e')) or ((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:profile='IEEE1588V2'))";
+            default "011b-1900-0000";
+            description
+              "Destination MAC address for a PTP packet encapsulated in a Layer 2 frame.";
+          }
+          leaf mac-egress-vlan-id {
+            type int32 {
+              range "0..4094";
+            }
+            default "0";
+            description
+              "VLAN ID for a PTP packet encapsulated in a Layer 2 frame.";
+          }
+          leaf mac-egress-pkt-priority {
+            type int32 {
+              range "0..7";
+            }
+            must "(../mac-egress-vlan-id!=0) or ((../mac-egress-vlan-id=0) and (../mac-egress-pkt-priority=7))";
+            default "7";
+            description
+              "Packet priority of a PTP packet encapsulated in a Layer 2 frame.";
+          }
+        }
+        container ptp-pkt-udp-pack {
+          when "not(../pkt-pack-type='mac')";
+          description
+            "Configure layer 3 UDP encapsulation for PTP packets.";
+          leaf udp-egress-src-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Source IP address for a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+          leaf udp-egress-dest-ip {
+            type inet:ipv4-address-no-zone;
+            must "../udp-egress-src-ip!='0.0.0.0' or (../udp-egress-src-ip='0.0.0.0' and ../udp-egress-dest-ip='0.0.0.0')";
+            description
+              "Destination IP address for a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+          leaf udp-egress-dscp {
+            type int32 {
+              range "0..63";
+            }
+            must "../udp-egress-src-ip!='0.0.0.0' or (../udp-egress-src-ip='0.0.0.0' and ../udp-egress-dscp=0)";
+            default "0";
+            description
+              "DSCP value for a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+          leaf udp-egress-vlan-id {
+            type int32 {
+              range "0..4094";
+            }
+            must "../udp-egress-src-ip!='0.0.0.0' or (../udp-egress-src-ip='0.0.0.0' and ../udp-egress-vlan-id=0)";
+            default "0";
+            description
+              "VLAN ID for a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+          leaf udp-egress-pkt-priority {
+            type int32 {
+              range "0..7";
+            }
+            must "../udp-egress-vlan-id!=0 or (../udp-egress-vlan-id=0 and ../udp-egress-pkt-priority=7)";
+            default "7";
+            description
+              "Priority of a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+          leaf udp-egress-dest-mac {
+            type pub-type:mac-address;
+            must "../udp-egress-src-ip!='0.0.0.0' or (../udp-egress-src-ip='0.0.0.0' and ../udp-egress-dest-mac='0100-5e00-0181')"; 
+            default "0100-5e00-0181";
+            description
+              "Destination MAC address for a PTP packet encapsulated in a Layer 3 UDP packet.";
+          }
+        }
+      }
+      container ptp-peer-clock {
+        config false;
+        description
+          "Statistics of information about the upstream PTP device.";
+        leaf peer-port-clk-id {
+          type string {
+            length "16";
+          }
+          default "0000000000000000";
+          description
+            "Clock number of an upstream PTP device.";
+        }
+        leaf peer-port-num {
+          type int32 {
+            range "0..65535";
+          }
+          description
+            "Number of the interface on the upstream device that is connected to a local device.";
+        }
+        leaf peer-announce-send-interval {
+          type int32 {
+            range "0..20";
+          }
+          description
+            "Intervals at which Announce packets are sent on the interface of the upstream PTP device that is connected to a local device. the calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+        }
+      }
+      container ptp-pkt-control {
+        description
+          "Configure PTP packet control. Including discarding the received Announce packets and setting packet transmission intervals.";
+        leaf announce-drop {
+         type boolean;
+          must "((not(/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-bc') and not(/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-tc')) or ((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-bc') or (/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-tc') and ../announce-drop='false') or (../announce-drop='false'))";
+          default "false";
+          description
+            "Enable/disable an interface to discard the received Announce packets.";
+        }
+        leaf delay-req-send-disable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable an interface to send Delay_Req message.";
+        }
+        leaf announce-interval {
+          type int32 {
+            range "0..20";
+          }
+          default "7";
+          description
+            "Set an interval at which Announce packets are sent on a PTP interface. the calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+        }
+        leaf announce-receipt-timeout {
+          type int32 {
+            range "2..255";
+          }
+          default "3";
+          description
+            "Timeout occurrences of announce packet receiving on the PTP interface. If the number of timeouts exceeds the set value, the newly received Announce packets will enter the timeout processing procedure.";
+        }
+        leaf sync-interval {
+          type int32 {
+            range "0..20";
+          }
+          default "3";
+          description
+            "Interval at which Sync packets are sent on a PTP interface.the calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+        }
+        leaf min-delay-req-interval {
+          type int32 {
+            range "0..20";
+          }
+          default "7";
+          description
+            "Set the minimum interval at which Delay_Req packets are sent on a PTP interface.the calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+        }
+        leaf min-pdelay-req-interval {
+          type int32 {
+            range "0..20";
+          }
+          must "((not(/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-bc') and not(/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-tc')) or ((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-bc') or (/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='t-tc') and ../min-pdelay-req-interval=7) or (../min-pdelay-req-interval=7))";
+          default "7";
+          description
+            "Set the minimum interval at which Pdelay_Req packets are sent on a PTP interface.the calculation formula for the interval in seconds is (2 to the power of interval/1024)s.";
+        }
+      }
+      container ptp-asymmetry-correction {
+        description
+          "Configure asymmetric delay correction for port fibers. Calculate the correction value after auto-measurement of ring-network asymmetry delay is enabled and asymmetry delay of optical fibers is tested, including positive and negative flags as well as the value to be corrected, and set the value on the interface.";
+        leaf correction-flag {
+          type ptp-sign-flag;
+          default "positive";
+          description
+            "Signal flag of correction value.";
+        }
+        leaf correction-value {
+          type int32 {
+            range "0..2000000";
+          }
+          default "0";
+          description
+            "Correction value.";
+        }
+      }
+      container ptp-tcoc-static-clock-src {
+        description
+          "Configure clock ID and port number of a TCOC static clock source.";
+        leaf tcoc-static-clk-id {
+          type string {
+            length "16";
+          }
+          must "((/clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='p2ptcoc' or /clocksync-1588v2:clocksync-1588v2/clocksync-1588v2:ptp-common/clocksync-1588v2:device-type='e2etcoc') or (../tcoc-static-clk-id='0000000000000000'))";
+          default "0000000000000000";
+          description
+            "When the TCOC device type is used, TCOC static Clock ID and interface number can be specified for PTP interface clock sources, so that a local device can trace a specified upstream PTP device.";
+        }
+        leaf tcoc-static-clk-port-num {
+          type int32 {
+            range "0..65535";
+          }
+          must "not(../tcoc-static-clk-id='0000000000000000') or (../tcoc-static-clk-id='0000000000000000' and ../tcoc-static-clk-port-num=0)";
+          default "0";
+          description
+            "When the TCOC device type is used, TCOC static Clock ID and interface number can be specified for PTP interface clock sources, so that a local device can trace a specified upstream PTP device.";
+        }
+      }
+      container ptp-ring-fiber-length-change {
+        config false;
+        description
+          "Statistics of ring-network asymmetry delay. If auto-measurement of ring-network asymmetry delay is enabled, the device can automatically calculate the correction value, including positive and negative flags as well as the value to be corrected.";
+        leaf change-value-flag {
+          type ptp-sign-flag;
+          description
+            "If auto-measurement of ring-network asymmetry delay is enabled, the device can automatically calculate the correction value, including positive and negative flags as well as the value to be corrected.";
+        }
+        leaf change-value {
+          type uint32;
+          description
+            "If auto-measurement of ring-network asymmetry delay is enabled, the device can automatically calculate the correction value, including positive and negative flags as well as the value to be corrected.";
+        }
+      }
+    }
+  }
+}

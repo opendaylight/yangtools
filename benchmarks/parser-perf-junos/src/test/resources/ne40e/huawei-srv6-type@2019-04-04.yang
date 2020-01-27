@@ -1,0 +1,146 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-srv6-type {
+  belongs-to huawei-srv6 {
+    prefix srv6;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "SRv6 type defined file.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef protocol-type {
+      type enumeration {
+	    enum "null" {
+		  value 0;
+		  description
+		    "NULL.";				
+		}
+	    enum "evpn" {
+		  value 1;
+		  description
+		    "EVPN.";				
+		}
+		enum "evpn-l3vpn" {
+		  value 2;
+		  description
+		    "EVPN L3VPN.";				
+		}				
+      }
+	  description
+	    "Protocol Type.";
+  }
+  typedef mode-type {
+    type enumeration {
+      enum "uniform" {
+        value 1;	  
+        description
+          "Uniform mode.";
+      }
+      enum "pipe" {
+        value 2;	  
+        description
+          "Pipe mode.";
+      }
+    }
+    description
+      "Pipe mode types.";
+  }  
+  typedef service-class {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "BE.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "AF1.";
+      }
+      enum "af2" {
+        value 2;	  
+        description
+          "AF2.";
+      }
+      enum "af3" {
+        value 3;	  
+        description
+          "AF3.";
+      }
+      enum "af4" {
+        value 4;	  
+        description
+          "AF4.";
+      }
+      enum "ef" {
+        value 5;	  
+        description
+          "EF.";
+      }
+      enum "cs6" {
+        value 6;	  
+        description
+          "CS6.";
+      }
+      enum "cs7" {
+        value 7;	  
+        description
+          "CS7.";
+      }
+    }
+    description
+      "Service type.";
+  }
+  typedef color {
+    type enumeration {
+      enum "green" {
+        value 0;	  
+        description
+          "Green.";
+      }
+      enum "yellow" {
+        value 1;	  
+        description
+          "Yellow.";
+      }
+      enum "red" {
+        value 2;	  
+        description
+          "Red.";
+      }	
+    }
+    description
+      "Color type.";
+  }
+  typedef inner-type {
+    type enumeration {
+      enum "null" {
+        value 0;	  
+        description
+          "Green.";
+      }
+      enum "ipv4" {
+        value 1;	  
+        description
+          "Yellow.";
+      }
+    }
+    description
+      "Indicates the type of the original packet sent from the SFF to the SF.";
+  }  
+}

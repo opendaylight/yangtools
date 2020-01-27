@@ -1,0 +1,526 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp-lsp {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bgp-lsp";
+  prefix bgp-lsp;
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-bfd {
+    prefix bfd;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-bgp {
+    prefix bgp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef lsp-type {
+    type enumeration {
+      enum "ingress" {
+        value 1;
+        description
+          "Ingress of the BGP LSP.";
+      }
+      enum "transit" {
+        value 2;
+        description
+          "Transit node of the BGP LSP.";
+      }
+      enum "egress" {
+        value 4;
+        description
+          "Egress of the BGP LSP.";
+      }
+    }
+    description
+      "The type of the BGP LSP.";
+  }
+  typedef lsp-frr-type {
+    type enumeration {
+      enum "primary" {
+        value 1;
+        description
+          "Primary LSP type.";
+      }
+      enum "backup" {
+        value 2;
+        description
+          "Backup LSP type.";
+      }
+    }
+    description
+      "The type of the bgpLspFrr.";
+  }
+  typedef label-operation-type {
+    type enumeration {
+      enum "push" {
+        value 0;
+        description
+          "Push a label.";
+      }
+      enum "swap" {
+        value 1;
+        description
+          "Swap a Label.";
+      }
+      enum "pop" {
+        value 2;
+        description
+          "Pop out a label.";
+      }
+      enum "swappush" {
+        value 3;
+        description
+          "Swap a label and push a label.";
+      }
+      enum "popgo" {
+        value 4;
+        description
+          "Packets are forwarded based on the next hop directly mapped to the
+          label after label popping.";
+      }
+    }
+    description
+      "The type of the bgpLabelOperation.";
+  }
+  typedef exp-mode-type {
+    type enumeration {
+      enum null {
+        value 0;
+        description
+          "Default value.";
+      }
+      enum pipe {
+        value 1;
+        description
+          "The priority of BGP labels is not modified, and the outer label is removed.";
+      }
+      enum uniform {
+        value 2;
+        description
+          "The label priority of intra-AS tunnels is copied to the BGP label.";
+      }
+    }
+    description
+      "The type of bgpcommExpMode.";
+  }
+  typedef bgp-bfd-trigger-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "No policy for establishing BGP BFD sessions is configured.";
+      }
+      enum "host" {
+        value 1;
+        description
+          "Use host addresses to dynamically establish BGP BFD sessions.";
+      }
+      enum "ip-prefix" {
+        value 2;
+        description
+          "IP prefix list used to dynamically establish a BFD session to monitor an LDP tunnel.";
+      }
+    }
+    description
+      "The type of BGP BFD trigger.";
+  }
+  grouping bgp-pipe-type {
+    description
+      "BGP pipe type.";
+    leaf ttl-mode {
+      type enumeration {
+        enum "pipe" {
+          value 2;
+          description
+            "The priority of BGP labels is not modified, and the outer label is removed.";
+        }
+        enum "uniform" {
+          value 1;
+          description
+            "The label priority of intra-AS tunnels is copied to the BGP label.";
+        }
+      }
+      default "pipe";
+      description
+        "Specifies the TTL mode, The available options are Uniform and Pipe. By default, the mode is Pipe.";
+    }
+  }
+  container bgp-lsp {
+    description
+      "BGP LSP configuration and query items.";
+    container bfd {
+      description
+        "Configure dynamic BFD for BGP LSP.";
+      container parameters {
+        description
+          "Configure parameters of BFD for BGP LSP.";
+        leaf enable {
+          when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true' and /bfd:bfd";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable dynamic BFD for BGP LSP.";
+        }
+        leaf min-tx-interval {
+          when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true'";
+          type uint32 {
+            range "3..1000";
+          }
+          units "ms";
+          description
+            "Interval at which BFD packets are sent.";
+        }
+        leaf min-rx-interval {
+          when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true'";
+          type uint32 {
+            range "3..1000";
+          }
+          units "ms";
+          description
+            "Interval at which BFD packets are received.";
+        }
+        leaf detection-multiplier {
+          when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true'";
+          type uint32 {
+            range "3..50";
+          }
+          default "3";
+          description
+            "BFD detection multiplier.";
+        }
+        leaf trigger {
+          when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true' and /bfd:bfd";
+          type bgp-bfd-trigger-type;
+          must "( ../trigger='ip-prefix' and ../trigger-ip-prefix-name ) or not ( ../trigger='ip-prefix' or ../trigger-ip-prefix-name )";
+          default "none";
+          description
+            "Configure a policy for creating BGP LSP BFD sessions.";
+        }
+        leaf trigger-ip-prefix-name {
+          when "../trigger='ip-prefix'";
+          type leafref {
+            path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+          }
+          description
+            "To use an IP prefix list to dynamically create BFD sessions, specify a name of the IP prefix list.";
+        }
+      }
+      container sessions {
+        config false;
+        description
+          "List of the sessions of dynamic BFD for BGP LSP.";
+        list session {
+          key "fec-address out-if-name next-hop index";
+          config false;
+          description
+            "Statistics of a session of dynamic BFD for BGP LSP.";
+          leaf fec-address {
+            type inet:ipv4-address-no-zone;
+            config false;
+            description
+              "Display the FEC address of the session of dynamic BFD for BGP LSP.";
+          }
+          leaf out-if-name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            config false;
+            description
+              "Display the outbound interface of a BGP LSP.";
+          }
+          leaf next-hop {
+            type inet:ipv4-address-no-zone;
+            config false;
+            description
+              "Display the next hop of a BGP LSP.";
+          }
+          leaf index {
+            type uint32;
+            config false;
+            description
+              "Display the LSP index of a BGP LSP.";
+          }
+          leaf discriminator {
+            type uint32;
+            config false;
+            description
+              "Display the BFD discriminator of the BFD session of dynamic BFD for BGP LSP.";
+          }
+          leaf state {
+            type enumeration {
+              enum "admin-down" {
+                value 0;
+                description
+                  "The BGP LSP BFD session is administratively Down.";
+              }
+              enum "down" {
+                value 1;
+                description
+                  "The BGP LSP BFD session is Down.";
+              }
+              enum "init" {
+                value 2;
+                description
+                  "The BGP LSP BFD session is in initial state.";
+              }
+              enum "up" {
+                value 3;
+                description
+                  "The BGP LSP BFD session is Up.";
+              }
+            }
+            config false;
+            description
+              "Display the BFD session state of dynamic BFD for BGP LSP.";
+          }
+          leaf min-tx-interval {
+            type uint32;
+            units "ms";
+            config false;
+            description
+              "Display the minimum interval at which BFD packets of the session of dynamic BFD for BGP LSP are sent.";
+          }
+          leaf min-rx-interval {
+            type uint32;
+            units "ms";
+            config false;
+            description
+              "Display the minimum interval at which BFD packets of the session of dynamic BFD for BGP LSP are received.";
+          }
+          leaf detection-multiplier {
+            type uint32;
+            config false;
+            description
+              "Display the BFD detection multiplier of the BFD session of dynamic BFD for BGP LSP.";
+          }
+          leaf age {
+            type uint32;
+            config false;
+            description
+              "Display the BFD session age of dynamic BFD for BGP LSP.";
+          }
+        }
+      }
+    }
+    container states {
+      config false;
+      description
+        "List of BGP LSPs.";
+      list state {
+        key "vrf-name af destination-address prefix-length index type indirect-id frr-type";
+        config false;
+        description
+          "Operational state of BGP LSP.";
+        leaf vrf-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          config false;
+          description
+            "Name of a BGP instance.";
+        }
+        leaf af {
+          type bgp:af-type;
+          config false;
+          description
+            "Specifies the address family type of a BGP instance.";
+        }
+        leaf destination-address {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "Destination address of an LSP.";
+        }
+        leaf prefix-length {
+          type uint32 {
+            range "0..128";
+          }
+          config false;
+          description
+            "Prefix length of the destination address of an LSP.";
+        }
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "LSP index.";
+        }
+        leaf type {
+          type lsp-type;
+          config false;
+          description
+            "LSP type.";
+        }
+        leaf indirect-id {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "IndirectID.";
+        }
+        leaf frr-type {
+          type lsp-frr-type;
+          config false;
+          description
+            "FRR role.";
+        }
+        leaf nexthop {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "Next hop of an LSP.";
+        }
+        leaf inbound-if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          config false;
+          description
+            "Inbound interface of an LSP.";
+        }
+        leaf outbound-if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          config false;
+          description
+            "Outbound interface of an LSP.";
+        }
+        leaf mtu {
+          type uint32 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "LSP MTU.";
+        }
+        leaf duration {
+          type uint32;
+          config false;
+          description
+            "LSP duration.";
+        }
+        leaf in-label {
+          type uint32;
+          config false;
+          description
+            "In-label of an LSP.";
+        }
+        leaf out-label {
+          type uint32;
+          config false;
+          description
+            "Out-label of an LSP.";
+        }
+        leaf out-tunnel-index {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Index of an outbound LSP.";
+        }
+        leaf label-operation {
+          type label-operation-type;
+          config false;
+          description
+            "Label operation type.";
+        }
+        leaf qos-priority-mode {
+          type exp-mode-type;
+          config false;
+          description
+            "QoS priority mode of an LSP.";
+        }
+        leaf tunnel-id {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "ID of an outbound LSP.";
+        }
+        leaf route-distinguisher {
+          type string {
+            length "3..21";
+          }
+          config false;
+          description
+            "A VPN address family takes effect only after it is configured with an RD. The format of an RD is as follows:
+            1. 16-bit AS number:32-bit user-defined number, for example, 101:3. An AS number ranges from 0 to 65535, and a user-defined number ranges from 0 to 4294967295. The AS number and user-defined number cannot be both 0s. This means that the RD value cannot be 0:0.
+            2. 32-bit IP address:16-bit user-defined number, for example: 192.168.122.15:1. The IP address ranges from 0.0.0.0 to 255.255.255.255, and the user-defined number ranges from 0 to 65535.
+            3. 32-bit AS number:16-bit user-defined number, for example, 10.11:3. An AS number ranges from 0.0 to 65535.65535 or from 0 to 4294967295, and a user-defined number ranges from 0 to 65535. The AS number and user-defined number cannot be both 0s. This means that the RD value cannot be 0.0:0.";
+        }
+        container tunnels {
+          config false;
+          description
+            "List of tunnel information.";
+          list tunnel {
+            key "value";
+            config false;
+            description
+              "Operational state of tunnel information.";
+            leaf value {
+              type string {
+                length "1..50";
+              }
+              config false;
+              description
+                "The tunnel-key.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment /mpls:mpls/mpls:common/mpls:global {
+    description
+      "MPLS BGP global configuration.";
+    container bgp-ttl-mode {
+      when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true'";
+      description
+        "Configure the TTL mode. The available options are uniform and pipe.";
+      uses bgp-pipe-type;
+    }
+  }
+  ext:task-name "bgp";
+}

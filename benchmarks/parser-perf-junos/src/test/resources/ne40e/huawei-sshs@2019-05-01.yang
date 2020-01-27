@@ -1,0 +1,949 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-sshs {
+  namespace "urn:huawei:yang:huawei-sshs";
+  prefix sshs;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-rsa {
+    prefix rsa;
+  }
+  import huawei-dsa {
+    prefix dsa;
+  }
+  import huawei-ecc {
+    prefix ecc;
+  }
+  import huawei-sm2 {
+    prefix sm2;
+  }
+  include huawei-sshs-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "SSH server.";
+  revision 2019-05-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ssh-server";
+  container sshs {
+    description
+      "SSH Server.";
+    container server {
+      description
+        "Configure Server configuration statistics.";
+      leaf authentication-timeout {
+        type int32 {
+          range "1..120";
+        }
+        default "60";
+        description
+          "User can set the authentication timeout period of the SSH. By default, SSH authentication timeout interval is 60 seconds.";
+      }
+      leaf rekey-interval {
+        type int32 {
+          range "0..24";
+        }
+        default "0";
+        description
+          "User can set the interval for updating the key pair of the SSH server. By default, the interval for updating the key pair of the SSH server is 0 that indicates no updating.";
+      }
+      leaf keep-alive-enable {
+        type sshsbool;
+        default "Enable";
+        description
+          "SSH server supports keep alive functionality & will respond to client keep alive packets.";
+      }
+      leaf compatible-ssh1x {
+        type sshsbool;
+        default "Disable";
+        description
+          "User can enable the earlier version-compatible function on the SSH server. By default, compatibility is enabled.";
+      }
+      leaf ip-block-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable SSH IP Block.";
+      }
+      leaf authorization-def {
+        type defauthor;
+        default "aaa";
+        description
+          "SSH Authorization.";
+      }
+      leaf authentication-def {
+        type sshsbool;
+        default "Enable";
+        description
+          "User can enable default authentication type as password on the SSH server. By default, it is enabled.";
+      }
+      leaf packet-dscp {
+        type uint32 {
+          range "0..63";
+        }
+        default "48";
+        description
+          "Config DSCP value.";
+      }
+      leaf auth-retries {
+        type int32 {
+          range "1..5";
+        }
+        default "3";
+        description
+          "User can set authentication retry times. By default retry times is 3.";
+      }
+      leaf auth-bogus-mode {
+        type sshsbool;
+        default "Enable";
+        description
+          "The bogus list of acceptable authentication 'method name' values makes it possible for the server to avoid disclosing information on which accounts exist.";
+      }
+      leaf sftp-max-user {
+        type int32 {
+          range "0..15";
+        }
+        default "5";
+        description
+          "User can configure maximum number of clients can be connected to server at any point of time for SFTP service.";
+      }
+      leaf sftp-timeout-min {
+        type uint16 {
+          range "0..35791";
+        }
+        default "10";
+        description
+          "SFTP idle timeout in minutes.";
+      }
+      leaf sftp-timeout-sec {
+        type uint8 {
+          range "0..59";
+        }
+        default "0";
+        description
+          "SFTP idle timeout in seconds.";
+      }
+      leaf scp-max-session {
+        type int32 {
+          range "0..5";
+        }
+        default "2";
+        description
+          "User can configure maximum number of clients can be connected to server at any point of time for SCP service.";
+      }
+      leaf src-ipv6-addr {
+        type inet:ipv6-address-no-zone;
+        status deprecated;
+        description
+          "SSH IPv6 Server source IpAddress.";
+      }
+      leaf src-ipv6-vpn-name {
+        when "../src-ipv6-addr";
+        type string {
+          length "1..32";
+        }
+        status deprecated;
+        description
+          "SSH IPv6 server source VpnName.";
+      }
+      leaf src-interf-name {
+        type string {
+          length "1..32";
+        }
+        status deprecated;
+        description
+          "Specify the source interface name.";
+      }
+      leaf rsa-host-key {
+        type leafref {
+          path "/rsa:rsa/rsa:key-pairs/rsa:key-pair/rsa:key-pair-label";
+        }
+        description
+          "User can assign the rsa host key for rsa connection.";
+      }
+      leaf dsa-host-key {
+        type leafref {
+          path "/dsa:dsa/dsa:key-pairs/dsa:key-pair/dsa:key-pair-label";
+        }
+        description
+          "User can assign the dsa host key for dsa connection.";
+      }
+      leaf ecc-host-key {
+        type leafref {
+          path "/ecc:ecc/ecc:key-pairs/ecc:key-pair/ecc:key-pair-label";
+        }
+        description
+          "User can assign the ecc host key for ecc connection.";
+      }
+      leaf sm2-host-key {
+        type leafref {
+          path "/sm2:sm2/sm2:sm2-key-pairs/sm2:sm2-key-pair/sm2:key-pair-label";
+        }
+        description
+          "SM2 host key name.";
+      }
+      leaf ipv4-acl-name {
+        type leafref {
+          path "/acl:acl/acl:groups/acl:group/acl:identity";
+        }
+		must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+        description
+          "Server ACL name or number for IPv4 connections.";
+      }
+      leaf ipv4-acl-number {
+        type leafref {
+          path "/acl:acl/acl:groups/acl:group/acl:identity";
+        }
+        must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+        status deprecated;
+        description
+          "Server ACL number for IPv4 connections. The node /sshs:sshs/sshs:server/sshs:ipv4-acl-number is deprecated. You are advised to use the node /sshs:sshs/sshs:server/sshs:ipv4-acl-name.";
+      }
+      leaf ipv6-acl-name {
+        type leafref {
+          path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+        }
+		must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+        description
+          "Server ACL name or number for IPv6 connections.";
+      }
+      leaf ipv6-acl-number {
+        type leafref {
+          path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+        }
+        must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+        status deprecated;
+        description
+          "Server ACL number for IPv6 connections. The node /sshs:sshs/sshs:server/sshs:ipv6-acl-number is deprecated. You are advised to use the node /sshs:sshs/sshs:server/sshs:ipv6-acl-name.";
+      }
+      leaf ssh-version {
+        type version;
+        config false;
+        description
+          "Indicates the SSH protocol version that the server supports. A version 1.99 can supports both protocol version 2.0 & protocol version 1.x, if the compatability is enabled.";
+      }
+      leaf rsa-server-key {
+        type string {
+          length "1..35";
+        }
+        config false;
+        description
+          "User can assign the rsa server key for rsa connection.";
+      }
+    }
+    container users {
+      description
+        "List of SSH user configuration.";
+      list user {
+        key "name";
+        description
+          "Configure SSH user configuration policy.";
+        leaf name {
+          type string {
+            length "1..253";
+          }
+          description
+            "User name is a string of characters without a blank space.";
+        }
+        leaf auth-type {
+          type sshsuserauth;
+          default "NotSet";
+          ext:support-filter "true";
+          description
+            "Authentication type.";
+        }
+        leaf sftp-dir {
+          type string {
+            length "1..255";
+          }
+          ext:support-filter "true";
+          description
+            "SFTP service directory.";
+        }
+        leaf key-name {
+          when "../pub-key-type";
+          type string {
+            length "1..40";
+          }
+          must "../pub-key-type = 'RSA' or ../pub-key-type = 'SM2' or ../pub-key-type = 'DSA' or ../pub-key-type = 'ECC'";
+          must "(../pub-key-type = 'RSA' and ../key-name = /rsa:rsa/rsa:peer-keys/rsa:peer-key[rsa:key-name=current()]/rsa:key-name) or ../pub-key-type != 'RSA'";
+          must "(../pub-key-type = 'DSA' and ../key-name = /dsa:dsa/dsa:peer-keys/dsa:peer-key[dsa:key-name=current()]/dsa:key-name) or ../pub-key-type != 'DSA'";
+          must "(../pub-key-type = 'ECC' and ../key-name = /ecc:ecc/ecc:peer-keys/ecc:peer-key[ecc:key-name=current()]/ecc:key-name) or ../pub-key-type != 'ECC'";
+          must "(../pub-key-type = 'SM2' and ../key-name = /sm2:sm2/sm2:sm2-peer-keys/sm2:sm2-peer-key[sm2:key-name=current()]/sm2:key-name) or ../pub-key-type != 'SM2'";
+          ext:support-filter "true";
+          description
+            "Key name.";
+        }
+        leaf service-type {
+          type sshssrvctype;
+          default "NotSet";
+          ext:support-filter "true";
+          description
+            "SSH service types supported.";
+        }
+        leaf pub-key-type {
+          type sshspubkeytype;
+          default "NotSet";
+          ext:support-filter "true";
+          description
+            "SSH user public key type.";
+        }
+      }
+    }
+    container cipher-alg {
+      must "../cipher-alg/descbc = 'true' or ../cipher-alg/des3cbc = 'true' or ../cipher-alg/aes128cbc = 'true' or ../cipher-alg/aes192cbc = 'true' or ../cipher-alg/aes256cbc = 'true' or ../cipher-alg/aes128ctr = 'true' or ../cipher-alg/aes192ctr = 'true' or ../cipher-alg/aes256ctr = 'true' or ../cipher-alg/arcfour128 = 'true' or ../cipher-alg/arcfour256 = 'true' or ../cipher-alg/blowfishcbc = 'true' or ../cipher-alg/aes128gcm = 'true' or ../cipher-alg/aes256gcm = 'true'";
+      description
+        "Configure Encryption algorithms supported for SSHS.";
+      leaf descbc {
+        type sshsbooltype;
+        default "false";
+        description
+          "DES CBC encryption algorithm.";
+      }
+      leaf des3cbc {
+        type sshsbooltype;
+        default "false";
+        description
+          "3DES CBC encryption algorithm.";
+      }
+      leaf aes128cbc {
+        type sshsbooltype;
+        default "false";
+        description
+          "AES128 CBC encryption algorithm.";
+      }
+      leaf aes192cbc {
+        type sshsbooltype;
+        default "false";
+        description
+          "AES192 CBC encryption algorithm.";
+      }
+      leaf aes256cbc {
+        type sshsbooltype;
+        default "false";
+        description
+          "AES256 CBC encryption algorithm.";
+      }
+      leaf aes128ctr {
+        type sshsbooltype;
+        default "true";
+        description
+          "AES128 CTR encryption algorithm.";
+      }
+      leaf aes192ctr {
+        type sshsbooltype;
+        default "true";
+        description
+          "AES192 CTR encryption algorithm.";
+      }
+      leaf aes256ctr {
+        type sshsbooltype;
+        default "true";
+        description
+          "AES256 CTR encryption algorithm.";
+      }
+      leaf arcfour128 {
+        type sshsbooltype;
+        default "false";
+        description
+          "ARCFOUR128 encryption algorithm.";
+      }
+      leaf arcfour256 {
+        type sshsbooltype;
+        default "false";
+        description
+          "ARCFOUR256 encryption algorithm.";
+      }
+      leaf blowfishcbc {
+        type sshsbooltype;
+        default "false";
+        description
+          "BLOWFISH CBC encryption algorithm.";
+      }
+      leaf aes128gcm {
+        type sshsbooltype;
+        default "true";
+        description
+          "AES128 GCM encryption algorithm.";
+      }
+      leaf aes256gcm {
+        type sshsbooltype;
+        default "true";
+        description
+          "AES256 GCM encryption algorithm.";
+      }
+    }
+    container hmac-alg {
+      must "../hmac-alg/md5 = 'true' or ../hmac-alg/md596 = 'true' or ../hmac-alg/sha1 = 'true' or ../hmac-alg/sha196 = 'true' or ../hmac-alg/sha2256 = 'true' or ../hmac-alg/sha225696 = 'true' or ../hmac-alg/sha2512 = 'true'";
+      description
+        "Configure HMAC algorithms supported for SSHS.";
+      leaf md5 {
+        type sshsbooltype;
+        default "false";
+        description
+          "MD5 Hmac Algorithm.";
+      }
+      leaf md596 {
+        type sshsbooltype;
+        default "false";
+        description
+          "MD5_96 Hmac Algorithm.";
+      }
+      leaf sha1 {
+        type sshsbooltype;
+        default "false";
+        description
+          "SHA1 Hmac Algorithm.";
+      }
+      leaf sha196 {
+        type sshsbooltype;
+        default "false";
+        description
+          "SHA1_96 Hmac Algorithm.";
+      }
+      leaf sha2256 {
+        type sshsbooltype;
+        default "true";
+        description
+          "SHA2_256 Hmac Algorithm.";
+      }
+      leaf sha225696 {
+        type sshsbooltype;
+        default "false";
+        description
+          "SHA2_256_96 Hmac Algorithm.";
+      }
+      leaf sha2512 {
+        type sshsbooltype;
+        default "true";
+        description
+          "SHA2_512 Hmac Algorithm.";
+      }
+    }
+    container key-exc-alg {
+      must "../key-exc-alg/dh-group14-sha1 = 'true' or ../key-exc-alg/dh-group1-sha1 = 'true' or ../key-exc-alg/ecdh-sha2-nistp521 = 'true' or ../key-exc-alg/ecdh-sha2-nistp384 = 'true' or ../key-exc-alg/ecdh-sha2-nistp384 = 'true' or ../key-exc-alg/ecdh-sha2-nistp256 = 'true' or ../key-exc-alg/dh-group-exchange-sha256 = 'true' or ../key-exc-alg/sm2-kep-sha2-nistp256 = 'true'";
+        description
+        "Configure Key Exchange Algorithm.";
+      leaf dh-group14-sha1 {
+        type sshsbooltype;
+        default "false";
+        description
+          "Diffie-hellman-group14-sha1 algorithm.";
+      }
+      leaf dh-group1-sha1 {
+        type sshsbooltype;
+        default "false";
+        description
+          "Diffie-hellman-group1-sha1 algorithm.";
+      }
+      leaf ecdh-sha2-nistp521 {
+        type sshsbooltype;
+        default "false";
+        description
+          "Ecdh-sha2-nistp521 algorithm.";
+      }
+      leaf ecdh-sha2-nistp384 {
+        type sshsbooltype;
+        default "false";
+        description
+          "Ecdh-sha2-nistp384 algorithm.";
+      }
+      leaf ecdh-sha2-nistp256 {
+        type sshsbooltype;
+        default "false";
+        description
+          "Ecdh-sha2-nistp256 algorithm.";
+      }
+      leaf dh-group-exchange-sha256 {
+        type sshsbooltype;
+        default "true";
+        description
+          "Diffie-hellman-group-exchange-sha256 algorithm.";
+      }
+      leaf dh-group-exchange-sha1 {
+        type sshsbooltype;
+        default "false";
+        description
+          "Diffie-hellman-group-exchange-sha1 algorithm.";
+      }
+      leaf sm2-kep-sha2-nistp256 {
+        type sshsbooltype;
+        default "false";
+        description
+          "Sm2kep-sha2-nistp256 algorithm.";
+      }
+      leaf dh-min-len {
+        type uint32 {
+          range "1024 | 2048";
+        }
+        default "2048";
+        description
+          "Sets the minimum key length for a key exchange algorithm.";
+      }
+    }
+    container server-enable {
+      description
+        "Configure SSH server enable.";
+      leaf stelnet-ipv4-enable {
+        type sshsenableflag;
+        default "Disable";
+        description
+          "User can enable the stelnet IPv4 server.";
+      }
+      leaf stelnet-ipv6-enable {
+        type sshsenableflag;
+        default "Disable";
+        description
+          "User can enable the stelnet IPv6 server.";
+      }
+      leaf sftp-ipv4-enable {
+        type sshsenableflag;
+        default "Disable";
+        description
+          "User can enable the sftp IPv4 server.";
+      }
+      leaf sftp-ipv6-enable {
+        type sshsenableflag;
+        default "Disable";
+        description
+          "User can enable the sftp IPv6 server.";
+      }
+      leaf scp-ipv4-enable {
+        type sshsenableflag;
+        default "Disable";
+        description
+          "User can enable the scp IPv4 server.";
+      }
+      leaf scp-ipv6-enable {
+        type sshsenableflag;
+        default "Disable";
+        description
+          "User can enable the scp IPv6 server.";
+      }
+      leaf snetconf-ipv4-enable {
+        type sshsenableflag;
+        default "Disable";
+        description
+          "User can enable the snetconf IPv4 server.";
+      }
+      leaf snetconf-ipv6-enable {
+        type sshsenableflag;
+        default "Disable";
+        description
+          "User can enable the snetconf IPv6 server.";
+      }
+      leaf netconf-830-ipv4-enable {
+        type sshsenableflag;
+        default "Disable";
+        description
+          "User can enable the snetconf IPv4 server of port 830.";
+      }
+      leaf netconf-830-ipv6-enable {
+        type sshsenableflag;
+        default "Disable";
+        description
+          "User can enable the snetconf IPv6 server of port 830.";
+      }
+    }
+    container server-port {
+      description
+        "Configure Port.";
+      leaf ipv4-port-number {
+        type int32 {
+          range "22 | 1025..65535";
+        }
+        default "22";
+        description
+          "User can change the number of the port monitored by the IPv4 SSH server. Default port number is 22.";
+      }
+      leaf ipv6-port-number {
+        type int32 {
+          range "22 | 1025..65535";
+        }
+        default "22";
+        description
+          "User can change the number of the port monitored by the SSH IPv6 server. Default port number is 22.";
+      }
+    }
+    container default-dir {
+      description
+        "Configure SSH server default configuration.";
+      leaf sftp-dir {
+        type string {
+          length "1..255";
+        }
+        description
+          "Default sftp default directory of SSH user. The specified folder path must exist, otherwise an error will be reported.";
+      }
+    }
+    container pubkey-alg {
+            must "../pubkey-alg/dsa = 'true' or ../pubkey-alg/ecc = 'true' or ../pubkey-alg/rsa = 'true' or ../pubkey-alg/sm2 = 'true'";
+      description
+        "Configure public key algorithm.";
+      leaf dsa {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable DSA public key algorithm.";
+      }
+      leaf ecc {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable ECC public key algorithm.";
+      }
+      leaf rsa {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable RSA public key algorithm.";
+      }
+      leaf sm2 {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable SM2 public key algorithm.";
+      }
+    }
+    container login-fail-alarm {
+      description
+        "Configure Alarm when manager login failed frequently.";
+      leaf upper-limit {
+        type uint32 {
+          range "0..100";
+        }
+        must "../upper-limit >= ../lower-limit";
+        default "30";
+        description
+          "Login Alarm report times, default is 30 times.";
+      }
+      leaf lower-limit {
+        type uint32 {
+          range "0..45";
+        }
+        must "../lower-limit <= ../upper-limit";
+        default "20";
+        description
+          "Login Alarm resume times, default is 20 times.";
+      }
+      leaf period {
+        type uint32 {
+          range "1..120";
+        }
+        units min;
+        default "5";
+        description
+          "Login Alarm period, default is 5 minutes.";
+      }
+    }
+    container rekey {
+      description
+        "Configure reKey.";
+      leaf max-packet {
+        type uint32 {
+          range "268435456..2147483648";
+        }
+        default "2147483648";
+        description
+          "Rekey Max Packet Number.";
+      }
+      leaf time {
+        type int32 {
+          range "30..1440";
+        }
+        units min;
+        default "60";
+        description
+          "Rekey Time.";
+      }
+      leaf max-data {
+        type int32 {
+          range "100..10000";
+        }
+        units MB;
+        default "1000";
+        description
+          "Rekey Max Data.";
+      }
+    }
+    container keyboard {
+      description
+        "Configure Keyborad support.";
+      leaf keyboard-enable {
+        type keyboardflag;
+        default "enablekeyboard";
+        description
+          "Flag of keyborad support.";
+      }
+    }
+    container netconf {
+      description
+        "Configure SSH NCA Configuration list.";
+      leaf timeout-min {
+        type uint16 {
+          range "0..35791";
+        }
+        units min;
+        default "10";
+        description
+          "The timeout period for a terminal user in minutes.";
+      }
+      leaf timeout-sec {
+        type uint8 {
+          range "0..59";
+        }
+        units s;
+        default "0";
+        description
+          "The timeout period for a terminal user in seconds.";
+      }
+      leaf max-sessions {
+        type int32 {
+          range "0..20";
+        }
+        default "5";
+        description
+          "User can configure maximum number of clients can be connected to server at any point of time for Netconf service. The maximum value is customized by the PAF file.";
+      }
+    }
+    container ipv4-server-sources {
+      description
+        "List of Specify the source interface list.";
+      list ipv4-server-source {
+        key "src-interface";
+        description
+          "Configure Specify the source interface policy.";
+        leaf src-interface {
+          type pub-type:if-name;
+          description
+            "Specify the source interface name. The specified source interface must exist and an IP address must be configured on the interface.";
+        }
+      }
+    }
+    container ipv6-server-sources {
+      description
+        "List of SSH IPv6 server source address list.";
+      list ipv6-server-source {
+        key "src-ipv6-addr";
+        description
+          "Configure SSH IPv6 server source address policy.";
+        leaf src-ipv6-addr {
+          type inet:ipv6-address-no-zone ;
+          description
+            "SSH IPv6 server source IP address.";
+        }
+        leaf src-ipv6-vpn-name {
+          type string {
+            length "1..31";
+          }
+          description
+            "Specify the source VPN instance. The specified VPN instance must exist and IPv6-family must be enabled in the VPN instance.";
+        }
+      }
+    }
+    container all-server-source {
+      description
+        "Configure Specify all interfaces.";
+      leaf all-ipv4-interface {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Specify all IPv4 interfaces.";
+      }
+      leaf all-ipv6-interface {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Specify all IPv6 interfaces.";
+      }
+    }
+    container session-statuses {
+      config false;
+      description
+        "List of Session statistic list.";
+      list session-status {
+        key "session-num";
+        config false;
+        description
+          "Session statistics.";
+        leaf session-num {
+          type int32 {
+            range "0..1024";
+          }
+          config false;
+          description
+            "Unique identification number for the session.";
+        }
+        leaf service-index {
+          type string {
+            length "0..12";
+          }
+          config false;
+          description
+            "The connection index of the session belonging to particular service type.";
+        }
+        leaf version {
+          type string {
+            length "0..8";
+          }
+          config false;
+          description
+            "The current SSH protocol version of the session.";
+        }
+        leaf conn-state {
+          type connstate;
+          config false;
+          description
+            "The state of the current connection.";
+        }
+        leaf user-name {
+          type string {
+            length "0..253";
+          }
+          config false;
+          description
+            "Name of the user for the current session.";
+        }
+        leaf ctos-cipher {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The encryption algorithm name used for transmission from client to server.";
+        }
+        leaf stoc-cipher {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The encryption algorithm name used for transmission from server to client.";
+        }
+        leaf ctos-compress {
+          type string {
+            length "0..10";
+          }
+          config false;
+          description
+            "The compression algorithm name used for transmission from client to server.";
+        }
+        leaf stoc-compress {
+          type string {
+            length "0..10";
+          }
+          config false;
+          description
+            "The compression algorithm name used for transmission from server to client.";
+        }
+        leaf ctos-hmac {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The Mac algorithm name chosen for the current client to server transmission for integrity.";
+        }
+        leaf stoc-hmac {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The Mac algorithm name chosen for the current server to client transmission for integrity.";
+        }
+        leaf key-exchange {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "The key negotiation algorithm chosen for the current session.";
+        }
+        leaf service-type {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The current session service type.";
+        }
+        leaf session-retry {
+          type int32 {
+            range "0..1024";
+          }
+          config false;
+          description
+            "The number of times the user have retired authenticating to the server before successful connection for the current session.";
+        }
+        leaf session-auth-type {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The authentication type used for the current session.";
+        }
+        leaf connection-port {
+          type int32 {
+            range "22..65535";
+          }
+          config false;
+          description
+            "Port used for the current session.";
+        }
+        leaf session-key-type {
+          type sshspubkeytype;
+          config false;
+          description
+            "Public key type used for current session.";
+	    }
+	  }
+    }
+  }
+  rpc activate-ip {
+    description
+      "Activate ip.";
+    input {
+      leaf ip-address {
+        type inet:ip-address-no-zone;
+        mandatory true;
+        description
+          "IP Address.";
+      }
+      leaf vpn-name {
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        description
+          "VPN Name.";
+      }
+    }
+  }
+}

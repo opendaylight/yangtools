@@ -1,0 +1,265 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-routing-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-routing-deviations-CH-NE-X3";
+  prefix rt-devs-CH-NE-X3;
+
+  import huawei-routing {
+    prefix rt;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This YANG module defines essential components for the management
+     of a routing subsystem.";
+
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  typedef protocol-type-deviations {
+    type enumeration {
+      enum init {
+        value 0;
+        description
+          "Initial.";
+      }
+      enum direct {
+        value 1;
+        description
+          "Direct.";
+      }
+      enum ospf {
+        value 2;
+        description
+          "Open Shortest Path First.";
+      }
+      enum isis {
+        value 3;
+        description
+          "Intermediate System-to-Intermediate System.";
+      }
+      enum static {
+        value 4;
+        description
+          "Static.";
+      }
+      enum rip {
+        value 5;
+        description
+          "Routing Information Protocol.";
+      }
+      enum bgp {
+        value 6;
+        description
+          "Border Gateway Protocol.";
+      }
+      enum unr {
+        value 11;
+        description
+          "UNR protocol.";
+      }
+      enum total {
+        value 9;
+        description
+          "All protocols.";
+      }
+    }
+    description
+      "Protocol type.";
+  }
+
+  typedef ipv6-protocol-type-deviations {
+    type enumeration {
+      enum init {
+        value 0;
+        description
+          "Initial.";
+      }
+      enum direct {
+        value 1;
+        description
+          "Direct.";
+      }
+      enum isis {
+        value 3;
+        description
+          "Intermediate System-to-Intermediate System.";
+      }
+      enum static {
+        value 4;
+        description
+          "Static.";
+      }
+      enum bgp {
+        value 6;
+        description
+          "Border Gateway Protocol.";
+      }
+      enum ospfv3 {
+        value 7;
+        description
+          "OSPFv3.";
+      }
+      enum ripng {
+        value 8;
+        description
+          "Routing Information Protocol next generation.";
+      }
+      enum unr {
+        value 11;
+        description
+          "UNR protocol.";
+      }
+      enum total {
+        value 9;
+        description
+          "All protocols.";
+      }
+    }
+    description
+      "Protocol type.";
+  }
+
+  typedef statistic-protocol-type-deviations {
+    type enumeration {
+      enum direct {
+        value 1;
+        description
+          "Direct.";
+      }
+      enum static {
+        value 2;
+        description
+          "Static.";
+      }
+      enum rip {
+        value 3;
+        description
+          "Routing Information Protocol.";
+      }
+      enum ospf {
+        value 5;
+        description
+          "Open Shortest Path First.";
+      }
+      enum isis {
+        value 7;
+        description
+          "Intermediate System-to-Intermediate System.";
+      }
+      enum bgp {
+        value 8;
+        description
+          "Border Gateway Protocol.";
+      }
+      enum unr {
+        value 9;
+        description
+          "UNR protocol.";
+      }
+      enum total {
+        value 12;
+        description
+          "All protocols.";
+      }
+    }
+    description
+      "Route statistic protocol type.";
+  }
+
+  typedef ipv6-statistic-protocol-type-deviations {
+    type enumeration {
+      enum direct {
+        value 1;
+        description
+          "Direct.";
+      }
+      enum static {
+        value 2;
+        description
+          "Static.";
+      }
+      enum ripng {
+        value 4;
+        description
+          "Routing Information Protocol next generation.";
+      }
+      enum ospfv3 {
+        value 6;
+        description
+          "OSPFv3.";
+      }
+      enum isis {
+        value 7;
+        description
+          "Intermediate System-to-Intermediate System.";
+      }
+      enum bgp {
+        value 8;
+        description
+          "Border Gateway Protocol.";
+      }
+      enum unr {
+        value 9;
+        description
+          "UNR protocol.";
+      }
+      enum total {
+        value 12;
+        description
+          "All protocols.";
+      }
+    }
+    description
+      "Route statistic protocol type.";
+  }
+
+  deviation "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/rt:routing/rt:routing-manage/rt:topologys/rt:topology/rt:routes/rt:ipv4-unicast-routes/rt:ipv4-unicast-route/rt:protocol-type" {
+    deviate replace {
+      type rt-devs-CH-NE-X3:protocol-type-deviations;
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/rt:routing/rt:routing-manage/rt:topologys/rt:topology/rt:routes/rt:ipv6-unicast-routes/rt:ipv6-unicast-route/rt:protocol-type" {
+    deviate replace {
+      type rt-devs-CH-NE-X3:ipv6-protocol-type-deviations;
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/rt:routing/rt:routing-manage/rt:topologys/rt:topology/rt:routes/rt:ipv4-route-statistics/rt:ipv4-route-statistic/rt:protocol-type" {
+    deviate replace {
+      type rt-devs-CH-NE-X3:statistic-protocol-type-deviations;
+    }
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/rt:routing/rt:routing-manage/rt:topologys/rt:topology/rt:routes/rt:ipv6-route-statistics/rt:ipv6-route-statistic/rt:protocol-type" {
+    deviate replace {
+      type rt-devs-CH-NE-X3:ipv6-statistic-protocol-type-deviations;
+    }
+  }
+  deviation "/rt:routing/rt:routing-manage/rt:ipv4-vpn-route-statisticss/rt:ipv4-vpn-route-statistics/rt:protocol-type" {
+    deviate replace {
+      type rt-devs-CH-NE-X3:statistic-protocol-type-deviations;
+    }
+  }
+  deviation "/rt:routing/rt:routing-manage/rt:ipv6-vpn-route-statisticss/rt:ipv6-vpn-route-statistics/rt:protocol-type" {
+    deviate replace {
+      type rt-devs-CH-NE-X3:ipv6-statistic-protocol-type-deviations;
+    }
+  }
+}

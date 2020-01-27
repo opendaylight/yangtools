@@ -1,0 +1,249 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls-forward-devm {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-mpls-forward-devm";
+  prefix mpls-forward-devm;
+
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-loadbalance {
+    prefix loadbalance;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "MPLS forward for DEVM.";
+
+  revision 2020-02-27 {
+    description
+      "The type of some nodes is fixed.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-27 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+  typedef hash-cfg-flag {
+    type enumeration {
+      enum payload-header {
+        value 64;
+        description
+          "Hashed based on payload-header.";
+      }
+      enum label {
+        value 192;
+        description
+          "Hashed based on label.";
+      }
+      enum ip {
+        value 160;
+        description
+          "Hashed based on label or payload-header.";
+      }
+      enum ip-tos {
+        value 193;
+        description
+          "Hashed based on label or TOS.";
+      }
+      enum mac {
+        value 196;
+        description
+          "Hashed based on label or MAC.";
+      }
+    }
+    description
+      "Hash configuration flag.";
+  }
+  typedef enable-flag {
+    type enumeration {
+      enum enable {
+        value 1;
+        description
+          "The CFG is enabled.";
+      }
+      enum disable {
+        value 0;
+        description
+          "The CFG is disabled.";
+      }
+    }
+    description
+      "Enable flag type.";
+  }
+  typedef check-mode {
+    type enumeration {
+      enum ip {
+        value 291;
+        description
+          "The check mode is IP.";
+      }
+      enum label-contained-length {
+        value 292;
+        description
+          "The check mode is label-contained-length.";
+      }
+    }
+    description
+      "Check mode.";
+  }
+  typedef hash-type {
+    type enumeration {
+      enum flow {
+        value 194;
+        description
+          "Load balance based on flow.";
+      }
+      enum packet {
+        value 195;
+        description
+          "Load balance based on packet.";
+      }
+    }
+    description
+      "Hash type.";
+  }
+
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "MPLS forward configuration to the DEVM module.";
+    container mpls-forward {
+      description
+        "Configure MPLS forward.";
+      container mpls-hash-mode {
+        description
+          "Configure MPLS hash mode.";
+        leaf hashcfg {
+          type hash-cfg-flag;
+          default "ip";
+          description
+            "MPLS hash mode value.";
+        }
+      }
+      container mplsfrags {
+        description
+          "Configure dynamic load balance.";
+        leaf mplsfrag-enable {
+          type enable-flag;
+          default "disable";
+          description
+            "MPLS fragment enable value.";
+        }
+      }
+      container mpls-load-ctrwords {
+        description
+          "Configure MPLS load balance control word disable.";
+        leaf mplsload-ctrword-disable {
+          type enable-flag;
+          default "disable";
+          description
+            "MPLS load balance control word disable value.";
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+      "MPLS forward configuration to the DEVM module.";
+    container mpls-forward {
+      description
+        "Configure MPLS forward.";
+      container mpls-hash-mode {
+        description
+          "Configure MPLS hash mode.";
+        leaf hashcfg {
+          type hash-cfg-flag;
+          default "ip";
+          description
+            "MPLS hash mode value.";
+        }
+      }
+      container mplsfrags {
+        description
+          "Configure dynamic load balance configuration.";
+        leaf mplsfrag-enable {
+          type enable-flag;
+          default "disable";
+          description
+            "MPLS fragment enable value.";
+        }
+      }
+      container mpls-load-ctrwords {
+        description
+          "Configure MPLS load balance control word disable.";
+        leaf mplsload-ctrword-disable {
+          type enable-flag;
+          default "disable";
+          description
+            "MPLS load balance control word disable value.";
+        }
+      }
+    }
+  }
+  augment "/loadbalance:loadbalance" {
+    description
+      "MPLS forward configuration to the load balance module.";
+    container mpls-hashpacket {
+      description
+        "Configure load balance based on packet.";
+      list hashpacket {
+        key "slotid";
+        description
+          "Configure load balance based on packet.";
+        leaf slotid {
+          type string {
+            length "1..32";
+          }
+          description
+            "Slot ID.";
+        }
+        leaf hash-type {
+          type hash-type;
+          default "flow";
+          description
+            "Load balance mode.";
+          ext:support-filter "true";
+        }
+      }
+    }
+    container mpls-intfmtu {
+      description
+        "Configure interface MTU check mode.";
+      list intfmtu {
+        key "slotid";
+        description
+          "Configure interface MTU check mode.";
+        leaf slotid {
+          type string {
+            length "1..32";
+          }
+          description
+            "Slot ID.";
+        }
+        leaf chkmode {
+          type check-mode;
+          mandatory true;
+          description
+            "Check mode configuration.";
+          ext:support-filter "true";
+        }
+      }
+    }  
+  }
+  ext:task-name "forwarding";
+}

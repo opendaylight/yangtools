@@ -1,0 +1,314 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp-flow {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-bgp-flow";
+  prefix bgp-flow;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-bgp {
+    prefix bgp;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+  /*
+   * grouping-stmt
+   */  
+  grouping bgp-peer-ipv4flow-cap-type {
+    description
+      "BGP IPv4-flow peer redirect tunnelv6.";
+    leaf redirect-tunnelv6 {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable the function to handle the extended community attribute redirect-tunnelv6.";
+    }
+  }
+  /*
+   * augment-stmt
+   */
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:afs/bgp:af" {
+    description
+      "BGP flow address family configuration.";
+    container ipv4-flow {
+      when "../bgp:type='ipv4flow'";
+      description
+        "Configure IPv4-family flow options.";
+      container common {
+        description
+          "Configure BGP IPv4-family flow common options.";
+        leaf route-match-destination {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable matching the route destination.";
+        }
+        leaf validation-mode-as {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable using the route validation-mode include-as command, you can configure flow-route validation mode include as.";
+        }
+        leaf redirect-ip-relay-tnl-enable {
+          when "../../../../../../../ni:name='_public_'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable flow-route recursive-lookup tunnel.";
+        }
+        leaf redirect-ipv6-relay-tnl-sel-name{
+          when "../../../../../../../ni:name='_public_'";
+          type leafref {
+            path "/rtp:routing-policy/rtp:tunnel-selectors/rtp:tunnel-selector/rtp:name";
+          }
+          description
+            "Flow-route Tunnel Selector Name.";
+        }
+        uses bgp:reflector-cluster-type;
+        leaf reflect-between-client {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable route reflection between clients. If clients of a route reflector (RR) are fully meshed, you can disable route reflection among clients to reduce the cost.";
+        }
+      }
+    }
+    container ipv6-flow {
+      when "../bgp:type='ipv6flow'";
+      description
+        "Configure IPv6-family flow options.";
+      container common {
+        description
+          "Configure BGP IPv6-family flow common options.";
+        leaf route-match-destination {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable matchingatch the route destination.";
+        }
+        leaf validation-mode-as {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable using the route validation-mode include-as command, you can configure flow-route validation mode include as.";
+        }
+        leaf reflect-between-client {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable route reflection between clients. If clients of a route reflector (RR) are fully meshed, you can disable route reflection among clients to reduce the cost.";
+        }
+        uses bgp:reflector-cluster-type;
+      }
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/bgp:bgp/bgp:base-process/bgp:peers/bgp:peer/bgp:afs/bgp:af" {
+    description
+      "BGP flow address family configuration.";
+    container ipv4-flow {
+      when "../bgp:type='ipv4flow'";
+      description
+        "Configure IPv4-family flow options.";
+        leaf advertise-community {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable advertise the community attribute to a peer or a peer group.";
+        }
+        leaf reflect-client {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the local device as a route reflector (RR) and a peer or peer group as its client. This configuration is applicable between IBGP peers only. The configurations of RRs and its clients in an address family are valid only in this address family. Therefore, it is recommended to configure RRs and its clients in the specified address family that is required.";
+        }
+        leaf validation-disable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable route validation.";
+        }
+        leaf redirect-ip {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable peer handle the extended community attribute redirect-ip.";
+       }
+        leaf redirect-ip-vaildation {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the function to indicate whether validation redirect ip, and this command only support IPv4-family flow address family.";
+       }
+        leaf redirect-ip-rfc-compatible {
+          type boolean;
+          must "not(../redirect-ip-rfc-compatible='true' and ../redirect-ip-draft-compatible='true')";
+          default "false";
+          description
+            "Enable/disable sending both number for the apply redirect IPv4 action.";
+       }
+        leaf redirect-ip-draft-compatible {
+          type boolean;
+          must "not(../redirect-ip-rfc-compatible='true' and ../redirect-ip-draft-compatible='true')";
+          default "false";
+          description
+            "Enable/disable sending both number for the apply redirect IPv4 action.";
+       }
+        uses bgp-peer-ipv4flow-cap-type;
+        leaf graceful-restart-static-timer {
+          type uint32 {
+            range "3600..86400";
+          }
+          units s;
+          description
+            "Specifies the maximum time during which a peer waits for a BGP session reestablishment.";
+        }
+        choice import-policy-type {
+          description
+            "Set route policy or filter.";
+          case rtp-ref {
+            description
+              "Route policy.";
+            leaf import-policy {
+              type leafref {
+                path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+              }
+              description
+                "Specify the filtering policy applied to the routes learned from a peer. By default, no such policy is specified.";
+            }
+          }
+        }
+        choice export-policy-type {
+          description
+            "Set route policy or filter.";
+          case rtp-ref {
+            description
+              "Route policy.";
+            leaf export-policy {
+              type leafref {
+                path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+              }
+              description
+                "Specify the filtering policy applied to the routes to be advertised to a peer. By default, no such policy is specified.";
+            }
+          }
+        }
+        leaf advertise-large-community {
+          type bgp:peer-enable-config-type;
+          default "default";
+          description
+            "Enable large-community attribute advertisement. The Link-state address family and the RPD address family do not support this element.";
+        }
+        leaf route-update-interval {
+          when "../../../../../../../../ni:name='_public_'";
+          type uint16 {
+            range "0..600";
+          }
+          units "s";
+          description
+            "Specify the minimum interval at which Update packets are sent. By default, the interval at which Update packets are sent to IBGP peers is 15s, 
+            and the interval at which Update packets are sent to EBGP peers is 30s. When routes change, a router will send Update packets to notify its peers. 
+            If a route changes frequently, you can set an interval at which Update packets are sent to prevent the router from sending Update packets each time the route changes. 
+            This configuration is valid only to the routes learned from peers.";
+          ext:dynamic-default;
+        }
+        uses bgp:route-limit-type;
+}
+    container ipv6-flow {
+      when "../bgp:type='ipv6flow'";
+      description
+        "Configure IPv6-family flow options.";
+        leaf advertise-community {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable advertise the community attribute to a peer or a peer group.";
+        }
+        leaf reflect-client {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the local device as a route reflector (RR) and a peer or peer group as its client. This configuration is applicable between IBGP peers only. The configurations of RRs and its clients in an address family are valid only in this address family. Therefore, it is recommended to configure RRs and its clients in the specified address family that is required.";
+        }
+        leaf validation-disable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable route validation.";
+        }
+        leaf graceful-restart-static-timer {
+          type uint32 {
+            range "3600..86400";
+          }
+          units s;
+          description
+            "Specifies the maximum time during which a peer waits for a BGP session reestablishment.";
+        }
+        choice import-policy-type {
+          description
+            "Set route policy or filter.";
+          case rtp-ref {
+            description
+              "Route policy.";
+            leaf import-policy {
+              type leafref {
+                path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+              }
+              description
+                "Specify the filtering policy applied to the routes learned from a peer. By default, no such policy is specified.";
+            }
+          }
+        }
+        choice export-policy-type {
+          description
+            "Set route policy or filter.";
+          case rtp-ref {
+            description
+              "Route policy.";
+            leaf export-policy {
+              type leafref {
+                path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+              }
+              description
+                "Specify the filtering policy applied to the routes to be advertised to a peer. By default, no such policy is specified.";
+            }
+          }
+        }
+        leaf advertise-large-community {
+          type bgp:peer-enable-config-type;
+          default "default";
+          description
+            "Enable large-community attribute advertisement. The Link-state address family and the RPD address family do not support this element.";
+        }
+        uses bgp:rt-update-interval-type;
+        uses bgp:route-limit-type;
+    }
+  }
+  ext:task-name "bgp";
+}

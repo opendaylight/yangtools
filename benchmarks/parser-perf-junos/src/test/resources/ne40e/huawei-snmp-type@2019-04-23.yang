@@ -1,0 +1,307 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-snmp-type {
+  belongs-to huawei-snmp {
+    prefix snmp;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "SNMP type.";
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef snmp-engine-id {
+    type yang:hex-string {
+      pattern '([0-9a-fA-F]){2}(:([0-9a-fA-F]){2}){4,31}';
+    }
+    description
+      "The engine ID specified as a list of colon-specified
+      hexadecimal octets, e.g., '80:00:02:b8:04:61:62:63'.";
+  }
+  typedef snmp-privacy {
+    type enumeration {
+      enum "noPriv" {
+        value 0;
+        description
+          "No Privacy.";
+      }
+      enum "des56" {
+        value 1;
+        description
+          "DES56.";
+      }
+      enum "3des168" {
+        value 5;
+        description
+          "3DES168.";
+      }
+      enum "aes128" {
+        value 2;
+        description
+          "AES128.";
+      }
+      enum "aes192" {
+        value 3;
+        description
+          "AES192.";
+      }
+      enum "aes256" {
+        value 4;
+        description
+          "AES256.";
+      }
+    }
+    description
+      "SNMP privacy enum.";
+  }
+  typedef snmp-version {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None Version.";
+      }
+      enum "v1" {
+        value 1;
+        description
+          "SNMP v1.";
+      }
+      enum "v2c" {
+        value 2;
+        description
+          "SNMP v2c.";
+      }
+      enum "v1v2c" {
+        value 3;
+        description
+          "SNMP v1v2c.";
+      }
+      enum "v3" {
+        value 4;
+        description
+          "SNMP v3.";
+      }
+      enum "v1v3" {
+        value 5;
+        description
+          "SNMP v1v3.";
+      }
+      enum "v2cv3" {
+        value 6;
+        description
+          "SNMP v2cv3.";
+      }
+      enum "all" {
+        value 7;
+        description
+          "All SNMP Versions.";
+      }
+    }
+    description
+      "SNMP version enum.";
+  }
+  typedef snmp-notify {
+    type enumeration {
+      enum "trap" {
+        value 1;
+        description
+          "Trap.";
+      }
+      enum "inform" {
+        value 2;
+        description
+          "Inform.";
+      }
+    }
+    description
+      "SNMP notify type enum.";
+  }
+  typedef snmp-security-level {
+    type enumeration {
+      enum "noAuthNoPriv" {
+        value 1;
+        description
+          "No Authentication No Privacy.";
+      }
+      enum "authentication" {
+        value 2;
+        description
+          "Authentication No Privacy.";
+      }
+      enum "privacy" {
+        value 3;
+        description
+          "Authentication Privacy.";
+      }
+    }
+    description
+      "SNMP security level enum.";
+  }
+  typedef snmp-filter {
+    type enumeration {
+      enum "included" {
+        value 1;
+        description
+          "Included.";
+      }
+      enum "excluded" {
+        value 2;
+        description
+          "Excluded.";
+      }
+    }
+    description
+      "SNMP filter type enum.";
+  }
+  typedef snmp-access {
+    type enumeration {
+      enum "read" {
+        value 0;
+        description
+          "Read access.";
+      }
+      enum "write" {
+        value 1;
+        description
+          "Write access.";
+      }
+    }
+    description
+      "SNMP access enum.";
+  }
+  typedef snmp-authenmode {
+    type enumeration {
+      enum "noAuth" {
+        value 0;
+        description
+          "NoAuth.";
+      }
+      enum "md5" {
+        value 1;
+        description
+          "MD5.";
+      }
+      enum "sha" {
+        value 2;
+        description
+          "SHA.";
+      }
+      enum "sha2-224" {
+        value 5;
+        description
+          "SHA2-224.";
+      }
+      enum "sha2-256" {
+        value 6;
+        description
+          "SHA2-256.";
+      }
+      enum "sha2-384" {
+        value 7;
+        description
+          "SHA2-384.";
+      }
+      enum "sha2-512" {
+        value 8;
+        description
+          "SHA2-512.";
+      }
+    }
+    description
+      "SNMP authentication protocol enum.";
+  }
+  typedef snmp-domain {
+    type enumeration {
+      enum "snmpUDPDomain" {
+        value 1;
+        description
+          "SNMP UDP Domain.";
+      }
+    }
+    description
+      "SNMP address domain enum.";
+  }
+  typedef snmp-security-model {
+    type enumeration {
+      enum "v1" {
+        value 1;
+        description
+          "SNMPv1: SNMPv1.";
+      }
+      enum "v2c" {
+        value 2;
+        description
+          "SNMPv2c: SNMPv2c.";
+      }
+      enum "usm" {
+        value 3;
+        description
+          "USM: USM.";
+      }
+    }
+    description
+      "SNMP security model enum.";
+  }
+  typedef snmp-target-host-version {
+    type enumeration {
+      enum "v1" {
+        value 0;
+        description
+          "V1.";
+      }
+      enum "v2c" {
+        value 1;
+        description
+          "V2c.";
+      }
+      enum "v3" {
+        value 2;
+        description
+          "V3.";
+      }
+    }
+    description
+      "SNMP target-host version enum.";
+  }
+  typedef snmp-proxy-type {
+    type enumeration {
+      enum "read" {
+        value 1;
+        description
+          "Read access.";
+      }
+      enum "write" {
+        value 2;
+        description
+          "Write access.";
+      }
+      enum "trap" {
+        value 3;
+        description
+          "Trap.";
+      }
+      enum "inform" {
+        value 4;
+        description
+          "Inform.";
+      }
+    }
+    description
+      "SNMP proxy type enum.";
+  }
+}

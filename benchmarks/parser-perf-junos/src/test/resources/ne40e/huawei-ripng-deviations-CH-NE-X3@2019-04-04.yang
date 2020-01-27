@@ -1,0 +1,39 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ripng-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-ripng-deviations-CH-NE-X3";
+  prefix ripng-devs-CH-NE-X3;
+
+  import huawei-ripng {
+    prefix ripng;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "RIPng management.";
+
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/ni:network-instance/ni:instances/ni:instance/ripng:ripng/ripng:processs/ripng:process/ripng:import-routes/ripng:import-route/ripng:policy-type/ripng:route-filter/ripng:route-filter" {
+    deviate not-supported;
+  }
+  deviation "/ni:network-instance/ni:instances/ni:instance/ripng:ripng/ripng:processs/ripng:process/ripng:preference/ripng:policy-type/ripng:route-filter/ripng:route-filter" {
+    deviate not-supported;
+  }
+}

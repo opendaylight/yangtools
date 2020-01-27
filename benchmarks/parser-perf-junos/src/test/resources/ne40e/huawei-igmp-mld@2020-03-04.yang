@@ -1,0 +1,1031 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-igmp-mld {
+  namespace "urn:huawei:yang:huawei-igmp-mld";
+  prefix igmp-mld;
+
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3-multicast {
+    prefix l3mc;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "The module defines the configuration and operational state for
+     the Internet Group Management Protocol (IGMP) and Multicast
+     Listener Discovery (MLD) protocols.";
+  revision 2020-03-04 {
+    description
+      "Add units for some nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-08 {
+    description
+      "Modify description; Add ssm-mapping-policy node; Add must for some nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-30 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+
+  augment "/ni:network-instance/ni:instances/ni:instance" {
+    description
+      "Adds igmp/mld configuration to the l3vpn module.";
+    container igmp {
+      when "../l3mc:multicast/l3mc:ipv4";
+      description
+        "Configure IGMP configurations.";
+      container global {
+        presence "Create IGMP.";
+        description
+          "Enable/disable IGMP in an instance.";
+        leaf query-interval {
+          type uint32 {
+            range "1..18000";
+          }
+          units "s";
+          default "60";
+          description
+            "Specify the interval at which the router sends general query messages.";
+        }
+        leaf query-response-interval {
+          type uint32 {
+            range "1..125";
+          }
+          units "s";
+          default "10";
+          description
+            "Specify the maximum response time for a query message.";
+        }
+        leaf robustness {
+          type uint32 {
+            range "2..5";
+          }
+          default "2";
+          description
+            "Specify the number of times for retransmitting a message to avoid the packet loss.";
+        }
+        leaf last-member-query-interval {
+          type uint32 {
+            range "1..25";
+          }
+          units "s";
+          default "1";
+          description
+            "Specify the interval at which the querier sends last-member query messages. This parameter makes sense only when the current querier runs IGMPv2, IGMPv3 or MLD.";
+        }
+        leaf require-router-alert {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the router to process only the messages whose IP headers contain Router-Alert options globally.";
+        }
+        leaf send-router-alert {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable the router to send the messages with Router-Alert options in the IP headers globally.";
+        }
+        leaf other-querier-present-time {
+          type uint32 {
+            range "60..300";
+          }
+          units "s";
+          description
+            "Set the global Keepalive period for other queriers.";
+        }
+        leaf ssm-mapping-dns-domain {
+          type string {
+            length "1..63";
+          }
+          default "in-addr.arpa";
+          description
+            "Specify the name extension of DNS.";
+        }
+        leaf ssm-mapping-query-dns {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable that whether SSM-mapping is based on DNS.";
+        }
+        leaf ssm-mapping-query-dns-policy {
+          when "../ssm-mapping-query-dns='true'";
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+          description
+            "Configure and filter the acl name of DNS ssm-mapping.";
+        }
+        container ssm-mappings {
+          description
+            "List of SSM-mapping rules.";
+          list ssm-mapping {
+            key "group-address mask-length source-address";
+            description
+              "Configure SSM-mapping rules.";
+            leaf group-address {
+              type inet:ipv4-address-no-zone {
+                pattern '(22[4-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+              }
+              description
+                "Specify the address of a multicast group. In the case of an IPv4 address, the value ranges from 224.0.1.0 to 239.255.255.255, in dotted decimal notation. In the case of an IPv6 address, the value ranges from FF00:: to FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF, in the hexadecimal format.";
+            }
+            leaf mask-length {
+              type uint32 {
+                range "4..32";
+              }
+              description
+                "Specify the mask length of a multicast group address.";
+            }
+            leaf source-address {
+              type inet:ipv4-address-no-zone {
+                pattern '(12[0-6]|1[0-1]\d|[1-9]\d|[1-9])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(12[8-9]|1[3-9]\d|2[0-1]\d|22[0-3])(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}';
+              }
+              description
+                "Specify the address of a multicast source. In the case of an IPv4 address, the value is in dotted decimal notation; in the case of an IPv6 address, the value ranges from FF00:: to FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF, in hexadecimal notation.";
+            }
+          }
+        }
+      }
+      container interfaces {
+        description
+          "List of MGMD configurations on interfaces.";
+        list interface {
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/ifm:vrf-name=current()/../../../ni:name";
+          key "name";
+          description
+            "Configure MGMD on an interface.";
+          leaf name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Specify the type and number of an interface.";
+          }
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable protocols on an interface.";
+          }
+          leaf ip-source-policy-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable a policy for filtering IGMP Report messages based on host addresses. By default, no policy is configured for filtering IGMP Report messages based on host addresses.";
+          }
+          leaf ip-source-policy-name {
+            when "../ip-source-policy-enable='true'";
+            type leafref {
+              path "/acl:acl/acl:groups/acl:group/acl:identity";
+            }
+            must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";			
+            description
+              "Configure an ACL that defines a host addresses range. The value is an integer ranging from 2000 to 2999, or a case-sensitive string.";
+          }
+          leaf query-interval {
+            type uint32 {
+              range "1..18000";
+            }
+            units "s";
+            default "60";
+            description
+              "Specify the interval at which the router sends general query messages.";
+          }
+          leaf query-response-interval {
+            type uint32 {
+              range "1..125";
+            }
+            units "s";
+            default "10";
+            description
+              "Specify the maximum response time for a query message. This time is used to control the deadline of mainframe feed back the relation-ship of group members.";
+          }
+          leaf robustness {
+            type uint32 {
+              range "2..5";
+            }
+            default "2";
+            description
+              "Specify the number of times for retransmitting messages to avoid packet loss.";
+          }
+          leaf version {
+            type uint32 {
+              range "1..3";
+            }
+            default "2";
+            description
+              "Specify the version of IGMP or MLD running on an interface.";
+          }
+          leaf last-member-query-interval {
+            type uint32 {
+              range "1..25";
+            }
+            units "s";
+            default "1";
+            description
+              "Specify the interval at which the querier sends last-member query messages. This parameter makes sense only when the current querier runs IGMPv2, IGMPv3 or MLD.";
+          }
+          leaf require-router-alert {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable an interface to process only messages whose IP headers contain Router-Alert options.";
+          }
+          leaf send-router-alert {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable an interface to send the messages with Router-Alert options in the IP headers.";
+          }
+          leaf other-querier-present-time {
+            type uint32 {
+              range "60..300";
+            }
+            units "s";
+            description
+              "Set the Keepalive period for other queriers on an interface.";
+          }
+          leaf immediately-leave {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable an interface that receives a Leave message of a certain group to immediately delete the corresponding group records, without sending a last-member query message.";
+          }
+          leaf immediately-leave-policy {
+            when "../immediately-leave='true'";
+            type leafref {
+              path "/acl:acl/acl:groups/acl:group/acl:identity";
+            }
+            must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+            description
+              "Configure an ACL that defines a multicast group range. The basic ACL number ranges from 2000 to 2999, and the advanced ACL number ranges from 3000 to 3999. The name is a case-sensitive string.";
+          }
+          leaf on-demand-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable records about the groups that the interface joins never to age. By default, the group records age periodically. 1. This command is applicable to IGMPv2, IGMPv3, and MLD only. 2. This command can be used on the querier only.";
+          }
+          leaf entry-limit {
+            type uint32 {
+              range "1..16384";
+            }
+            description
+              "Specify the maximum number of entries that the current interface can create.";
+          }
+          leaf entry-limit-acl-name {
+            when "../entry-limit>0";
+            type leafref {
+              path "/acl:acl/acl:groups/acl:group/acl:identity";
+            }
+            must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+            description
+              "Specify the range of multicast groups, the number of IGMP entries corresponding to which needs not be limited. The basic ACL number ranges from 2000 to 2999. The basic ACL filters group addresses only, without distinguishing (*, G) entries and (S, G) entries; the advanced ACL number ranges from 3000 to 3999. The advanced ACL filters (S, G) entries of the interface only. The name is a case-sensitive string.";
+          }
+          leaf ssm-mapping-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable SSM mapping on an interface.";
+          }
+          leaf ssm-mapping-policy {
+            when "../ssm-mapping-enable='true'";
+            type string {
+              length "1..31";
+            }
+            description
+              "Configure a policy for SSM Mapping on an interface.";
+          }
+          leaf group-acl-name {
+            type leafref {
+              path "/acl:acl/acl:groups/acl:group/acl:identity";
+            }
+            must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='advance'";
+            description
+              "Set a filter for multicast groups on an interface to control the range of multicast groups that hosts can join. The basic ACL number ranges from 2000 to 2999, and the advanced ACL number ranges from 3000 to 3999. The name is a case-sensitive string.";
+          }
+          leaf group-acl-version {
+            when "../group-acl-name";
+            type uint32 {
+              range "1..3";
+            }
+            description
+              "Forbids hosts that use a specified version to join the multicast group. The version can be specified in this command only after a multicast filtering policy is configured.";
+          }
+          leaf query-acl-name {
+            type leafref {
+              path "/acl:acl/acl:groups/acl:group/acl:identity";
+            }
+            must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";			
+            description
+              "Configure an ACL that defines a host addresses range. The value is an integer ranging from 2000 to 2999, or a case-sensitive string.";
+          }
+        }
+      }
+      container static-groups {
+        description
+          "List of static multicast groups configurations.";
+        list static-group {
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/interface]/ifm:vrf-name=current()/../../../ni:name";
+          key "interface group-address is-source-address source-address is-inc-step-group-mask inc-step-group-mask is-source-dns-ssm-mapping";
+          description
+            "Configure a static multicast group.";
+          leaf interface {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Specify the name of an interface.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(22[5-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|224(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|[1-9]))(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){2}|224\.0(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|[1-9]))(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))';
+            }
+            description
+              "Specify the address of a multicast group. In batch configuration mode, this parameter specifies the start multicast group address. In the case of an IPv4 address, the value ranges from 224.0.1.0 to 239.255.255.255, in dotted decimal notation; in the case of an IPv6 address, the value is in hexadecimal notation and in the format of FFxA:xxxx:xxxx::xxxx, among which x ranges from 0 to F and A can be 0, or in the range of 3 to F.";
+          }
+          leaf is-source-address {
+            type boolean;
+            must "../is-source-address='false' or ../is-source-dns-ssm-mapping='false'";
+            description
+              "Enable/disable a device to configure an address for the multicast source.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone;
+            must "../source-address='0.0.0.0' or ../is-source-address='true'";
+            description
+              "Specify the address of a multicast source. In the case of an IPv4 address, the value is in dotted decimal notation. In the case of an IPv6 address, the value is in hexadecimal notation.";
+          }
+          leaf is-inc-step-group-mask {
+            type boolean;
+            must "../is-inc-step-group-mask='false' or ../is-source-dns-ssm-mapping='false'";
+            description
+              "Enable/disable a device to specify the step mask in batch configuration mode.";
+          }
+          leaf inc-step-group-mask {
+            type inet:ipv4-address-no-zone;
+            must "../inc-step-group-mask='0.0.0.0' or ../is-inc-step-group-mask='true'";
+            description
+              "Specify the step mask of a group address in batch configuration mode. The step mask refers to the distance between two multicast group addresses. The value is expressed in wildcard-mask mode and dotted decimal notation, and ranges from 0.0.0.1 to 15.255.255.255.";
+          }
+          leaf is-source-dns-ssm-mapping {
+            type boolean;
+            must "../is-source-dns-ssm-mapping='false' or (../is-source-address='false' and ../is-inc-step-group-mask='false')";
+            description
+              "Enable/disable an DNS based SSM mapping.";
+          }
+          leaf group-number {
+            when "../is-inc-step-group-mask='true'";
+            type uint32 {
+              range "2..512";
+            }
+            mandatory true;
+            description
+              "Specify the number of multicast group addresses in batch configuration mode.";
+          }
+        }
+      }
+      container dot1q-static-groups {
+        description
+          "List of static multicast groups in dot1q-termination interface.";
+        list dot1q-static-group {
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/interface]/ifm:vrf-name=current()/../../../ni:name";
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/interface]/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:dot1q-termination";
+          must "begin-vid<=end-vid";		  
+          key "interface group-address is-source-address source-address is-inc-step-group-mask inc-step-group-mask begin-vid end-vid";
+          description
+            "Configure a static multicast group in a dot1q-termination interface.";
+          leaf interface {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Specify the name of an interface.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(22[5-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|224(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|[1-9]))(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){2}|224\.0(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|[1-9]))(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))';
+            }
+            description
+              "Specify the address of a multicast group. In batch configuration mode, this parameter specifies the start multicast group address. In the case of an IPv4 address, the value ranges from 224.0.1.0 to 239.255.255.255, in dotted decimal notation; in the case of an IPv6 address, the value is in hexadecimal notation and in the format of FFxA:xxxx:xxxx::xxxx, among which x ranges from 0 to F and A can be 0, or in the range of 3 to F.";
+          }
+          leaf is-source-address {
+            type boolean;
+            description
+              "Enable/disable a device to configure an address for the multicast source.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone;
+            must "../source-address='0.0.0.0' or ../is-source-address='true'";
+            description
+              "Specify the address of a multicast source. In the case of an IPv4 address, the value is in dotted decimal notation. In the case of an IPv6 address, the value is in hexadecimal notation.";
+          }
+          leaf is-inc-step-group-mask {
+            type boolean;
+            description
+              "Enable/disable a device to specify the step mask in batch configuration mode.";
+          }
+          leaf inc-step-group-mask {
+            type inet:ipv4-address-no-zone;
+            must "(../is-inc-step-group-mask='true' and ../inc-step-group-mask!='0.0.0.0') or (../is-inc-step-group-mask='false' and ../inc-step-group-mask='0.0.0.0')";
+            description
+              "Specify the step mask is set for multicast group addresses configured in a batch. The step mask refers to the distance between two multicast group addresses. The value is expressed in wildcard-mask mode and dotted decimal notation, and ranges from 0.0.0.1 to 15.255.255.255.";
+          }
+          leaf begin-vid {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "Specify the start DOT1Q tag.";
+          }
+          leaf end-vid {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "Specify the end DOT1Q tag.";
+          }
+          leaf group-number {
+            when "../is-inc-step-group-mask='true'";
+            type uint32 {
+              range "2..512";
+            }
+            mandatory true;
+            description
+              "Specify the number of multicast group addresses configured in a batch.";
+          }
+        }
+      }
+      container qinq-static-groups {
+        description
+          "List of static multicast groups configuration on qinq-termination interface.";
+        list qinq-static-group {
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/interface]/ifm:vrf-name=current()/../../../ni:name";
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/interface]/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:qinq-termination";
+          must "ce-begin-vid<=ce-end-vid";		  
+          key "interface group-address is-source-address source-address is-inc-step-group-mask inc-step-group-mask pe-vid ce-begin-vid ce-end-vid";
+          description
+            "Configure a static multicast group on a qinq-termination interface.";
+          leaf interface {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Specify the name of an interface.";
+          }
+          leaf group-address {
+            type inet:ipv4-address-no-zone {
+              pattern '(22[5-9]|23\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|224(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|[1-9]))(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){2}|224\.0(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|[1-9]))(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d))';
+            }
+            description
+              "Specify the address of a multicast group. In batch configuration mode, this parameter specifies the start multicast group address. In the case of an IPv4 address, the value ranges from 224.0.1.0 to 239.255.255.255, in dotted decimal notation; in the case of an IPv6 address, the value is in hexadecimal notation and in the format of FFxA:xxxx:xxxx::xxxx, among which x ranges from 0 to F and A can be 0, or in the range of 3 to F.";
+          }
+          leaf is-source-address {
+            type boolean;
+            description
+              "Enable/disable a device to configure an address for the multicast source.";
+          }
+          leaf source-address {
+            type inet:ipv4-address-no-zone;
+            must "../source-address='0.0.0.0' or ../is-source-address='true'";
+            description
+              "Specify the address of a multicast source. In the case of an IPv4 address, the value is in dotted decimal notation. In the case of an IPv6 address, the value is in hexadecimal notation.";
+          }
+          leaf is-inc-step-group-mask {
+            type boolean;
+            description
+              "Enable/disable a device to specify the step mask in batch configuration mode.";
+          }
+          leaf inc-step-group-mask {
+            type inet:ipv4-address-no-zone;
+            must "(../is-inc-step-group-mask='true' and ../inc-step-group-mask!='0.0.0.0')  or (../is-inc-step-group-mask='false' and ../inc-step-group-mask='0.0.0.0')";
+            description
+              "Specify the step mask is set for multicast group addresses configured in a batch. The step mask refers to the distance between two multicast group addresses. The value is expressed in wildcard-mask mode and dotted decimal notation, and ranges from 0.0.0.1 to 15.255.255.255.";
+          }
+          leaf pe-vid {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "QINQ PE ID in an outer VLAN tag.";
+          }
+          leaf ce-begin-vid {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "Specify the start QINQ CE ID.";
+          }
+          leaf ce-end-vid {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "Specify the end QINQ CE ID.";
+          }
+          leaf group-number {
+            when "../is-inc-step-group-mask='true'";
+            type uint32 {
+              range "2..512";
+            }
+            mandatory true;
+            description
+              "Specify the number of multicast group addresses configured in a batch.";
+          }
+        }
+      }
+    }
+    container mld {
+      when "../l3mc:multicast/l3mc:ipv6";
+      description
+        "Configure MLD configurations.";
+      container global {
+        presence "Create MLD.";
+        description
+          "Enable/disable MLD in an instance.";
+        leaf query-interval {
+          type uint32 {
+            range "1..18000";
+          }
+          units "s";
+          default "125";
+          description
+            "Specify the interval at which the router sends general query messages.";
+        }
+        leaf query-response-interval {
+          type uint32 {
+            range "1..125";
+          }
+          units "s";
+          default "10";
+          description
+            "Specify the maximum response time for a query message.";
+        }
+        leaf robustness {
+          type uint32 {
+            range "2..5";
+          }
+          default "2";
+          description
+            "Specify the number of times for retransmitting a message to avoid the packet loss.";
+        }
+        leaf last-member-query-interval {
+          type uint32 {
+            range "1..25";
+          }
+          units "s";
+          default "1";
+          description
+            "Specify the interval at which the querier sends last-member query messages. This parameter makes sense only when the current querier runs IGMPv2, IGMPv3 or MLD.";
+        }
+        leaf require-router-alert {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the router to process only the messages whose IP headers contain Router-Alert options globally.";
+        }
+        leaf send-router-alert {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable the router to send the messages with Router-Alert options in the IP headers globally.";
+        }
+        leaf other-querier-present-time {
+          type uint32 {
+            range "60..300";
+          }
+          units "s";
+          description
+            "Set the global Keepalive period for other queriers.";
+        }
+        container ssm-mappings {
+          description
+            "List of SSM-mapping rules configurations.";
+          list ssm-mapping {
+            key "group-address mask-length source-address";
+            description
+              "Configure a SSM-mapping rule.";
+            leaf group-address {
+              type inet:ipv6-address-no-zone {
+                pattern '([Ff]{2}[0-9a-fA-F]{2})[0-9a-fA-F:\.]*';
+              }
+              description
+                "Specify the address of a multicast group. In the case of an IPv6 address, the value ranges from FF00:: to FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF, in the hexadecimal format.";
+            }
+            leaf mask-length {
+              type uint32 {
+                range "16 | 32 | 64 | 128";
+              }
+              description
+                "Specify the mask length of a multicast group address.";
+            }
+            leaf source-address {
+              type inet:ipv6-address-no-zone {
+                pattern '(([1-9A-Ea-e][0-9A-Fa-f]{3}:)|([Ff][0-9A-Da-d][0-9A-Fa-f]{2}:)|([Ff][Ee][0-7C-Fc-f][0-9A-Fa-f]:)|((0)?[1-9A-Fa-f][0-9A-Fa-f]{2}:)|((00)?[1-9A-Fa-f][0-9A-Fa-f]:)|((000)?[1-9A-Fa-f]:)).+';
+              }
+              description
+                "Specify the address of a multicast source. In the case of an IPv6 address, the value ranges from FF00:: to FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF, in hexadecimal notation.";
+            }
+          }
+        }
+      }
+      container interfaces {
+        description
+          "List of MGMD configurations on all interfaces.";
+        list interface {
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/name]/ifm:vrf-name=current()/../../../ni:name";
+          key "name";
+          description
+            "Configure MGMD on an interface.";
+          leaf name {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Specify the type and number of an interface.";
+          }
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable protocols on an interface.";
+          }
+          leaf ip-source-policy-enable {
+            type boolean;
+            must "../ip-source-policy-enable='false' or ../ip-source-policy-name";
+            default "false";
+            description
+              "Enable/disable a policy for filtering IGMP Report messages based on host addresses.";
+          }
+          leaf ip-source-policy-name {
+            when "../ip-source-policy-enable='true'";
+            type leafref {
+              path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+            }
+            must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";			
+            description
+              "Configure an ACL that defines a host addresses range. The value is an integer ranging from 2000 to 2999, or a case-sensitive string.";
+          }
+          leaf query-interval {
+            type uint32 {
+              range "1..18000";
+            }
+            units "s";
+            default "125";
+            description
+              "Specify the interval at which the router sends general query messages.";
+          }
+          leaf query-response-interval {
+            type uint32 {
+              range "1..125";
+            }
+            units "s";
+            default "10";
+            description
+              "Specify the maximum response time for a query message. This time is used to control the deadline of mainframe feed back the relation-ship of group members.";
+          }
+          leaf robustness {
+            type uint32 {
+              range "2..5";
+            }
+            default "2";
+            description
+              "Specify the number of times for retransmitting messages to avoid packet loss.";
+          }
+          leaf version {
+            type uint32 {
+              range "1..2";
+            }
+            default "2";
+            description
+              "Specify the version of IGMP or MLD running on an interface.";
+          }
+          leaf last-member-query-interval {
+            type uint32 {
+              range "1..25";
+            }
+            units "s";
+            default "1";
+            description
+              "Specify the interval at which the querier sends last-member query messages. This parameter makes sense only when the current querier runs IGMPv2, IGMPv3 or MLD.";
+          }
+          leaf require-router-alert {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable an interface to process only messages whose IP headers contain Router-Alert options.";
+          }
+          leaf send-router-alert {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable an interface to send the messages with Router-Alert options in the IP headers.";
+          }
+          leaf other-querier-present-time {
+            type uint32 {
+              range "60..300";
+            }
+            units "s";
+            description
+              "Set the Keepalive period for other queriers on an interface. The value ranges from 60 to 300, in second.";
+          }
+          leaf immediately-leave {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable an interface that receives a Leave message of a certain group to immediately delete the corresponding group records, without sending a last-member query message.";
+          }
+          leaf immediately-leave-policy {
+            when "../immediately-leave='true'";
+            type leafref {
+              path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+            }
+            must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+            description
+              "Configure an ACL that defines a multicast group range. The basic ACL number ranges from 2000 to 2999, and the advanced ACL number ranges from 3000 to 3999. The name is a case-sensitive string.";
+          }
+          leaf on-demand-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable records about the groups that the interface joins never to age. By default, the group records age periodically. 1. This command is applicable to IGMPv2, IGMPv3, and MLD only. 2. This command can be used on the querier only.";
+          }
+          leaf ssm-mapping-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable SSM mapping on an interface.";
+          }
+          leaf group-acl-name {
+            type leafref {
+              path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+            }
+            must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic' or /acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='advance'";
+            description
+              "Set a filter for multicast groups on an interface to control the range of multicast groups that hosts can join. The basic ACL number ranges from 2000 to 2999, and the advanced ACL number ranges from 3000 to 3999. The name is a case-sensitive string.";
+          }
+          leaf group-acl-version {
+            when "../group-acl-name";
+            type uint32 {
+              range "1..2";
+            }
+            description
+              "Forbids hosts that use a specified version to join the multicast group. The version can be specified in this command only after a multicast filtering policy is configured.";
+          }
+          leaf query-acl-name {
+            type leafref {
+              path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+            }
+            must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";			
+            description
+              "Configure an ACL that defines a host addresses range. The value is an integer ranging from 2000 to 2999, or a case-sensitive string.";
+          }
+        }
+      }
+      container static-groups {
+        description
+          "List of static multicast groups configurations on interfaces.";
+        list static-group {
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/interface]/ifm:vrf-name=current()/../../../ni:name";
+          key "interface group-address is-source-address source-address is-mask-length mask-length";
+          description
+            "Configure a static multicast group.";
+          leaf interface {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Specify the name of an interface.";
+          }
+          leaf group-address {
+            type inet:ipv6-address-no-zone {
+              pattern '[Ff]{2}[0-9A-Fa-f][03-9a-fA-F].+';
+            }
+            description
+              "Specify the address of a multicast group. In batch configuration mode, this parameter specifies the start multicast group address. In the case of an IPv6 address, the value is in hexadecimal notation and in the format of FFxA:xxxx:xxxx::xxxx, among which x ranges from 0 to F and A can be 0, or in the range of 3 to F.";
+          }
+          leaf is-source-address {
+            type boolean;
+            description
+              "Enable/disable a device to configure an address for the multicast source.";
+          }
+          leaf source-address {
+            type inet:ipv6-address-no-zone;
+            must "../source-address='::' or ../is-source-address='true'";
+            description
+              "Specify the address of a multicast source.";
+          }
+          leaf is-mask-length {
+            type boolean;
+            description
+              "Enable/disable a device to specify the length for the step mask of a multicast group address in batch configuration mode.";
+          }
+          leaf mask-length {
+            type uint32 {
+              range "0..128";
+            }
+            must "../mask-length=0 or ../is-mask-length='true'";
+            description
+              "Specify the mask length of a multicast group address. In the case of an IPv6 address, the mask length is 16/32/64/128.";
+          }
+          leaf total-number {
+            when "../is-mask-length='true'";
+            type uint32 {
+              range "2..512";
+            }
+            mandatory true;
+            description
+              "Specify the number of multicast group addresses in batch configuration mode.";
+          }
+        }
+      }
+      container dot1q-static-groups {
+        description
+          "List of static multicast groups on dot1q-termination interfaces.";
+        list dot1q-static-group {
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/interface]/ifm:vrf-name=current()/../../../ni:name";
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/interface]/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:dot1q-termination";
+          must "begin-vid<=end-vid";
+          key "interface group-address is-source-address source-address is-mask-length mask-length begin-vid end-vid";
+          description
+            "Configure a static multicast group on a dot1q-termination interface.";
+          leaf interface {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Specify the name of an interface.";
+          }
+          leaf group-address {
+            type inet:ipv6-address-no-zone {
+              pattern '[Ff]{2}[0-9A-Fa-f][03-9a-fA-F].+';
+            }
+            description
+              "Specify the address of a multicast group. In batch configuration mode, this parameter specifies the start multicast group address. In the case of an IPv6 address, the value is in hexadecimal notation and in the format of FFxA:xxxx:xxxx::xxxx, among which x ranges from 0 to F and A can be 0, or in the range of 3 to F.";
+          }
+          leaf is-source-address {
+            type boolean;
+            description
+              "Enable/disable a device to configure an address for the multicast source.";
+          }
+          leaf source-address {
+            type inet:ipv6-address-no-zone;
+            must "../source-address='::' or ../is-source-address='true'";
+            description
+              "Specify the address of a multicast source.";
+          }
+          leaf is-mask-length {
+            type boolean;
+            description
+              "Enable/disable a device to specify the length for the step mask of a multicast group address in batch configuration mode.";
+          }
+          leaf mask-length {
+            type uint32 {
+              range "0..128";
+            }
+            must "(../is-mask-length='true' and ../mask-length>=9) or (../is-mask-length='false' and ../mask-length=0)";
+            description
+              "Specify the step mask length of a multicast group address. An IPv4 address uses a mask with a length from 4 to 32 bits. An IPv6 address uses a mask with a length of 16, 32, 64, or 128 bits.";
+          }
+          leaf begin-vid {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "Specify the start DOT1Q tag.";
+          }
+          leaf end-vid {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "Specify the end DOT1Q tag.";
+          }
+          leaf group-number {
+            when "../is-mask-length='true'";
+            type uint32 {
+              range "2..512";
+            }
+            mandatory true;
+            description
+              "Specify the number of multicast group addresses configured in a batch.";
+          }
+        }
+      }
+      container qinq-static-groups {
+        description
+          "List of static multicast groups configuration on qinq-termination interfaces.";
+        list qinq-static-group {
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/interface]/ifm:vrf-name=current()/../../../ni:name";
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/interface]/ethernet:ethernet/ethernet:l3-sub-interface/ethernet:qinq-termination";
+          must "ce-begin-vid<=ce-end-vid";		  
+          key "interface group-address is-source-address source-address is-mask-length mask-length pe-vid ce-begin-vid ce-end-vid";
+          description
+            "Configure a static multicast group.";
+          leaf interface {
+            type leafref {
+              path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+            }
+            description
+              "Specify the name of an interface.";
+          }
+          leaf group-address {
+            type inet:ipv6-address-no-zone {
+              pattern '[Ff]{2}[0-9A-Fa-f][03-9a-fA-F].+';
+            }
+            description
+              "Specify the address of a multicast group. In batch configuration mode, this parameter specifies the start multicast group address. In the case of an IPv6 address, the value is in hexadecimal notation and in the format of FFxA:xxxx:xxxx::xxxx, among which x ranges from 0 to F and A can be 0, or in the range of 3 to F.";
+          }
+          leaf is-source-address {
+            type boolean;
+            description
+              "Enable/disable a device to configure an address for the multicast source.";
+          }
+          leaf source-address {
+            type inet:ipv6-address-no-zone;
+            must "../source-address='::' or ../is-source-address='true'";
+            description
+              "Specify the address of a multicast source.";
+          }
+          leaf is-mask-length {
+            type boolean;
+            description
+              "Enable/disable a device to specify the length for the step mask of a multicast group address in batch configuration mode.";
+          }
+          leaf mask-length {
+            type uint32 {
+              range "0..128";
+            }
+            must "(../is-mask-length='true' and ../mask-length>=9) or (../is-mask-length='false' and ../mask-length=0)";
+            description
+              "Specify the step mask length of a multicast group address. An IPv4 address uses a mask with a length from 4 to 32 bits. An IPv6 address uses a mask with a length of 16, 32, 64, or 128 bits.";
+          }
+          leaf pe-vid {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "QINQ PE ID in an outer VLAN tag.";
+          }
+          leaf ce-begin-vid {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "Specify the start QINQ CE ID.";
+          }
+          leaf ce-end-vid {
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "Specify the end QINQ CE ID.";
+          }
+          leaf group-number {
+            when "../is-mask-length='true'";
+            type uint32 {
+              range "2..512";
+            }
+            mandatory true;
+            description
+              "Specify the number of multicast group addresses configured in a batch.";
+          }
+        }
+      }
+    }
+  }
+  ext:task-name "igmp";
+}

@@ -1,0 +1,468 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-te-interface {
+  namespace "urn:huawei:yang:huawei-te-interface";
+  prefix te-interface;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-mpls-te {
+    prefix mpls-te;
+  }
+  import huawei-te {
+    prefix te;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  include huawei-te-interface-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the traffic engineering configuration.";
+  revision 2020-04-09 {
+    description
+      "Modify the type of the affinity attribute.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-10 {
+    description
+      "Add bandwidth for ietf and some conditions fixed.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-14 {
+    description
+      "Add static-reserved-bandwidth.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-07-29 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "mpls-te";
+  /*
+   * augment-stmt
+   */
+  augment /ni:network-instance/ni:instances/ni:instance/te:te {
+    description
+      "TE Configuration information augment to network instance.";
+    container interfaces {
+      description
+        "List of interfaces.";
+      list interface {
+        key "name";
+        description
+          "Configure interface with the TE capability.";
+        leaf name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          must "../../../../ni:name=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name";
+          description
+            "Specifies the name of a physical interface. The name is case-insensitive.";
+        }
+        leaf mpls-te-enable {
+          when "/mpls:mpls/mpls-te:te/mpls-te:enable='true'";
+          type boolean;
+          must "/ni:network-instance/ni:instances/ni:instance/mpls:mpls/mpls:common/mpls:mpls-interfaces/mpls:mpls-interface[mpls:name=current()/../name]";
+          default "false";
+          description
+            "Enable/disable MPLS TE in the interface.";
+        }
+        leaf p2mp-te-disable {
+          when "../mpls-te-enable='true'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable P2MP-TE on the interface.";
+        }
+        container attribute {
+          when "../mpls-te-enable='true'";
+          must "not(admin-groups-name) or admin-groups='0x0'";
+          description
+            "Configure TE parameters.";
+          leaf metric {
+            type uint32 {
+              range "1..16777215";
+            }
+            description
+            "Specifies the Value of TE interface metric. The link with smallest metric value is used preferentially as a TE LSP.";
+          }
+          leaf admin-groups {
+            type pub-type:hex-binary;
+            default "0x0";
+            ext:case-sensitivity upper2lower;
+            description
+              "Specifies interface management attributes. They are total 32 bits. Each bit is one attribute that is established on a TE LSP. Standby LSPs are selected based on the limit of the LSP affinity attribute.";
+          }
+          leaf-list admin-groups-name {
+            type leafref {
+              path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+            }
+            max-elements "32";
+            description
+              "Configure the interface management attributes. They are total 32 bits. Each bit is one attribute that is established on a TE LSP. Standby LSPs are selected based on the limit of the LSP affinity attribute.";
+          }
+          leaf-list srlg-group {
+            type uint32 {
+              range "0..4294967295";
+            }
+            max-elements "64";
+            description
+              "Configure a list of risk-shared link groups of TE interfaces.";
+          }
+          container bandwidth {
+            must "/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:ds-te-mode='non-ietf' or (/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:bcm-model/mpls-te:bcm-mode='mam' and max-reserved>=(bc0+bc1+bc2+bc3+bc4+bc5+bc6+bc7)) or /mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:bcm-model/mpls-te:bcm-mode='rdm'";
+            description
+              "Configure TE link bandwidth attributes.";
+            leaf max-reserved {
+              type uint32 {
+                range "0..4000000000";
+                ext:value-meaning {
+                  ext:item "0" {
+                    ext:meaning "Physical interface bandwidth.";
+                  }
+                }
+              }
+              units "kbit/s";
+              default "0";
+              description
+                "Specifies the maximum reserved bandwidth (kbit/s) of TE interfaces.
+                 Special explanation:
+                 Constraint: If a static BC0 or dynamic BC0 bandwidth is configured, the value of the static maximum reservable bandwidth node must be higher than or equal to the static or dynamic BC0 bandwidth. The configured bandwidth of the static maximum reservable bandwidth on a TE interface cannot exceed the physical bandwidth of the interface. The value of the static maximum reservable bandwidth is mutually exclusive with the dynamic maximum reservable bandwidth.";
+            }
+            leaf bc0 {
+              type uint32 {
+                range "0..4000000000";
+                ext:value-meaning {
+                  ext:item "0" {
+                    ext:meaning "Physical interface bandwidth.";
+                  }
+                }
+              }
+              units "kbit/s";
+              must "../max-reserved and (../max-reserved>=../bc0)";
+              default "0";
+              description
+                "Bc0 bandwidth value in kbps.
+                 Special explanation:
+                 Constraint: When a static BC0 bandwidth is configured, the value of the static maximum reservable bandwidth must be higher than or equal to the static BC0 bandwidth. And the value of the static BC0 bandwidth is mutually exclusive with the dynamic BC0 bandwidth and the dynamic maximum reservable bandwidth.";
+            }
+            leaf bc1 {
+              when "/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:ds-te-mode='ietf'";
+              type uint32 {
+                range "0..4000000000";
+                ext:value-meaning {
+                  ext:item "0" {
+                    ext:meaning "Physical interface bandwidth.";
+                  }
+                }
+              }
+              units "kbit/s";
+              must "../max-reserved and (../max-reserved>=../bc1) and ((/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:bcm-model/mpls-te:bcm-mode = 'mam') or (../bc0 >= ../bc1))";
+              default "0";
+              description
+                "Bc1 bandwidth value in kbps.
+                 Special explanation:
+                 Constraint: When a static BC1 bandwidth is configured, the value of the static maximum reservable bandwidth must be higher than or equal to the static BC1 bandwidth. And the value of the static BC1 bandwidth is mutually exclusive with the dynamic BC1 bandwidth and the dynamic maximum reservable bandwidth.";
+            }
+            leaf bc2 {
+              when "/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:ds-te-mode='ietf'";
+              type uint32 {
+                range "0..4000000000";
+                ext:value-meaning {
+                  ext:item "0" {
+                    ext:meaning "Physical interface bandwidth.";
+                  }
+                }
+              }
+              units "kbit/s";
+              must "../max-reserved and (../max-reserved>=../bc2) and ((/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:bcm-model/mpls-te:bcm-mode = 'mam') or (../bc1 >= ../bc2))";
+              default "0";
+              description
+                "Bc2 bandwidth value in kbps.
+                 Special explanation:
+                 Constraint: When a static BC2 bandwidth is configured, the value of the static maximum reservable bandwidth must be higher than or equal to the static BC2 bandwidth. And the value of the static BC2 bandwidth is mutually exclusive with the dynamic BC2 bandwidth and the dynamic maximum reservable bandwidth.";
+            }
+            leaf bc3 {
+              when "/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:ds-te-mode='ietf'";
+              type uint32 {
+                range "0..4000000000";
+                ext:value-meaning {
+                  ext:item "0" {
+                    ext:meaning "Physical interface bandwidth.";
+                  }
+                }
+              }
+              units "kbit/s";
+              must "../max-reserved and (../max-reserved>=../bc3) and ((/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:bcm-model/mpls-te:bcm-mode = 'mam') or (../bc2 >= ../bc3))";
+              default "0";
+              description
+                "Bc3 bandwidth value in kbps.
+                 Special explanation:
+                 Constraint: When a static BC3 bandwidth is configured, the value of the static maximum reservable bandwidth must be higher than or equal to the static BC3 bandwidth. And the value of the static BC3 bandwidth is mutually exclusive with the dynamic BC3 bandwidth and the dynamic maximum reservable bandwidth.";
+            }
+            leaf bc4 {
+              when "/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:ds-te-mode='ietf'";
+              type uint32 {
+                range "0..4000000000";
+                ext:value-meaning {
+                  ext:item "0" {
+                    ext:meaning "Physical interface bandwidth.";
+                  }
+                }
+              }
+              units "kbit/s";
+              must "../max-reserved and (../max-reserved>=../bc4) and ((/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:bcm-model/mpls-te:bcm-mode = 'mam') or (../bc3 >= ../bc4))";
+              default "0";
+              description
+                "Bc4 bandwidth value in kbps.
+                 Special explanation:
+                 Constraint: When a static BC4 bandwidth is configured, the value of the static maximum reservable bandwidth must be higher than or equal to the static BC4 bandwidth. And the value of the static BC4 bandwidth is mutually exclusive with the dynamic BC4 bandwidth and the dynamic maximum reservable bandwidth.";
+            }
+            leaf bc5 {
+              when "/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:ds-te-mode='ietf'";
+              type uint32 {
+                range "0..4000000000";
+                ext:value-meaning {
+                  ext:item "0" {
+                    ext:meaning "Physical interface bandwidth.";
+                  }
+                }
+              }
+              units "kbit/s";
+              must "../max-reserved and (../max-reserved>=../bc5) and ((/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:bcm-model/mpls-te:bcm-mode = 'mam') or (../bc4 >= ../bc5))";
+              default "0";
+              description
+                "Bc5 bandwidth value in kbps.
+                 Special explanation:
+                 Constraint: When a static BC5 bandwidth is configured, the value of the static maximum reservable bandwidth must be higher than or equal to the static BC5 bandwidth. And the value of the static BC5 bandwidth is mutually exclusive with the dynamic BC5 bandwidth and the dynamic maximum reservable bandwidth.";
+            }
+            leaf bc6 {
+              when "/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:ds-te-mode='ietf'";
+              type uint32 {
+                range "0..4000000000";
+                ext:value-meaning {
+                  ext:item "0" {
+                    ext:meaning "Physical interface bandwidth.";
+                  }
+                }
+              }
+              units "kbit/s";
+              must "../max-reserved and (../max-reserved>=../bc6) and ((/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:bcm-model/mpls-te:bcm-mode = 'mam') or (../bc5 >= ../bc6))";
+              default "0";
+              description
+                "Bc6 bandwidth value in kbps.
+                 Special explanation:
+                 Constraint: When a static BC6 bandwidth is configured, the value of the static maximum reservable bandwidth must be higher than or equal to the static BC6 bandwidth. And the value of the static BC6 bandwidth is mutually exclusive with the dynamic BC6 bandwidth and the dynamic maximum reservable bandwidth.";
+            }
+            leaf bc7 {
+              when "/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:ds-te-mode='ietf'";
+              type uint32 {
+                range "0..4000000000";
+                ext:value-meaning {
+                  ext:item "0" {
+                    ext:meaning "Physical interface bandwidth.";
+                  }
+                }
+              }
+              units "kbit/s";
+              must "../max-reserved and (../max-reserved>=../bc7) and ((/mpls:mpls/mpls-te:te/mpls-te:global/mpls-te:bcm-model/mpls-te:bcm-mode = 'mam') or (../bc6 >= ../bc7))";
+              default "0";
+              description
+                "Bc7 bandwidth value in kbps.
+                 Special explanation:
+                 Constraint: When a static BC7 bandwidth is configured, the value of the static maximum reservable bandwidth must be higher than or equal to the static BC7 bandwidth. And the value of the static BC7 bandwidth is mutually exclusive with the dynamic BC7 bandwidth and the dynamic maximum reservable bandwidth.";
+            }
+            leaf dynamic-max-reserved-percent {
+              type uint16 {
+                range "1..1000";
+              }
+              description
+                "Specifies the dynamic maximum reserved bandwidth percent of TE interfaces.
+                 Special explanation:
+                 Constraint: If a dynamic BC0 bandwidth node is configured, the value of dynamic maximum reservable bandwidth cannot be deleted and is mutually exclusive with the static maximum reservable bandwidth.";
+            }
+            leaf dynamic-bc0-percent {
+              type uint8 {
+                range "1..100";
+              }
+              units "%";
+              must "../dynamic-max-reserved-percent or ../max-reserved";
+              description
+                "Specifies the dynamic Bc0 bandwidth percent.
+                 Special explanation:
+                 Constraint: When a dynamic BC0 bandwidth node is configured, either of the dynamic and static maximum reservable bandwidth must be configured. If a static maximum reservable bandwidth is configured, the value of the dynamic BC0 bandwidth must be lower than or equal to the static maximum reservable bandwidth. And the value of dynamic BC0 bandwidth is mutually exclusive with the static BC0 bandwidth.";
+            }
+            leaf change-threshold-down {
+              type int32 {
+                range "0..100";
+              }
+              units "%";
+              default "10";
+              description
+              "Specifies the flooding threshold of bandwidth consumption percentage. Establishing TE LSPs consumes the bandwidth of the TE interface, and the available bandwidth of the interface is therefore reduced. If the percentage of the reduced bandwidth is larger than the configured flooding threshold, the bandwidth of the TE interface will be flooded to the network.";
+            }
+            leaf change-threshold-up {
+              type int32 {
+                range "0..100";
+              }
+              units "%";
+              default "10";
+              description
+              "Specifies the flooding threshold of the percentage of released bandwidth compared with the available interface bandwidth. When a TE LSP of an interface is removed, the bandwidth of the TE LSP is released. The available bandwidth of the interface is therefore increased. If the percentage of the increased bandwidth is larger than the configured flooding threshold, the bandwidth of the TE interface will be flooded over the network.";
+            }
+          }
+          container status {
+            config false;
+            description
+              "Operational state of TE interface information.";
+            leaf used-bandwidth {
+              type uint32 {
+                range "0..40000000";
+              }
+              units "kbit/s";
+              config false;
+              description
+                "Allocated bandwidth on an interface.";
+            }
+            leaf line-protocol-state {
+              type line-protocol-status;
+              config false;
+              description
+                "TE Interface line protocol current state.";
+            }
+            leaf static-reserved-bandwidth {
+              type uint32 {
+                range "0..40000000";
+              }
+              units "kbit/s";
+              config false;
+              description
+                "Static reserved bandwidth on an interface.";
+            }
+          }
+        }
+        container mpls-te-attribute {
+          when "../mpls-te-enable='true'";
+          description
+            "Configure MPLS TE link parameters.";
+          leaf auto-frr-mode {
+            type rsvp-fast-reroute-mode;
+            default "default";
+            description
+              "Auto FRR protection modes: global inheritance, link protection, node protection and self-adapting. By default, global AutoFRR is global inheritance. Link protection: A bypass tunnel can be used to protect only the links where the outbound interface of the primary LSP resides. Node protection: A bypass tunnel can be used to protect the downstream node of the links where the outbound interface of the primary LSP resides. Self-adapting: A bypass tunnel can be dynamically selected node protection or link protection according to the network conditions.";
+          }
+          container auto-frr-attributes {
+            description
+              "Configure MPLS TE link frr parameters.";
+            leaf bandwidth {
+              type uint32 {
+                range "0..4000000000";
+              }
+              units "kbit/s";
+              default "0";
+              description
+                "TE link auto bypass tunnel bandwidth (kbits/s) requested by an active tunnel. The value cannot exceed the bandwidth of the active tunnel.";
+            }
+            leaf setup-priority {
+              type uint32 {
+                range "0..7";
+              }
+              must "(../setup-priority>=../hold-priority)";
+              default "7";
+              description
+                "TE link auto bypass tunnel setup priority.";
+            }
+            leaf hold-priority {
+              type uint32 {
+                range "0..7";
+              }
+              must "(../setup-priority>=../hold-priority)";
+              default "7";
+              description
+                "TE link auto bypass tunnel hold priority.";
+            }
+            leaf hop-limit {
+              type uint32 {
+                range "1..32";
+              }
+              default "32";
+              description
+                "TE link auto bypass tunnel hop limit.";
+            }
+            leaf include-any {
+              type pub-type:hex-binary;
+              must "not(../include-any-affinity-name or ../exclude-any-affinity-name)";
+              default "0x0";
+              description
+                "TE link auto bypass tunnel administrative group attribute (include any).";
+            }
+            leaf exclude-any {
+              type pub-type:hex-binary;
+              must "not(../include-any-affinity-name or ../exclude-any-affinity-name)";
+              default "0x0";
+              description
+                "TE link auto bypass tunnel administrative group attribute (exclude).";
+            }
+            leaf include-all {
+              type pub-type:hex-binary;
+              config false;
+              description
+                "TE link auto bypass tunnel administrative group attribute (include all).";
+            }
+            leaf-list include-any-affinity-name {
+              type leafref {
+                path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+              }
+              must "not(../include-any or ../exclude-any)";
+              max-elements 32;
+              description
+                "Configure a list of affinity names that can be refer to a tunnel to include any.";
+            }
+            leaf-list exclude-any-affinity-name {
+              type leafref {
+                path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+              }
+              must "not(../include-any or ../exclude-any)";
+              max-elements 32;
+              description
+                "Configure tunnel path affinity attribute: exclude.";
+            }
+            leaf-list include-all-affinity-name {
+              type leafref {
+                path "/te:te/te:affinity-define/te:affinity-mappings/te:affinity-mapping/te:attribute-name";
+              }
+              must "not(../include-any or ../exclude-any)";
+              max-elements 32;
+              description
+                "Configure a list of affinity names that can be refer to a tunnel to include all.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

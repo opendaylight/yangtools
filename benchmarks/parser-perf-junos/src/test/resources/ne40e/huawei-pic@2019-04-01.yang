@@ -1,0 +1,7160 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-pic {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-pic";
+  prefix pic;
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-driver {
+    prefix driver;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-license {
+    prefix lcs;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Global Configuration.";
+  revision 2019-04-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef detect-signal-type {
+    type enumeration {
+      enum "nodetect" {
+        value 1;
+        description
+          "No detect signal.";
+      }
+      enum "detect" {
+        value 0;
+        description
+          "Detect signal.";
+      }
+    }
+    description
+      "Detect signal.";
+  }
+  typedef fxso-impedance-type {
+    type enumeration {
+      enum "600ohm" {
+        value 0;
+        description
+          "Impedance is 600 ohm.";
+      }
+      enum "900ohm" {
+        value 1;
+        description
+          "Impedance is 900 ohm.";
+      }
+      enum "270ohm" {
+        value 2;
+        description
+          "Impedance is 270 ohm.";
+      }
+      enum "220ohm" {
+        value 3;
+        description
+          "Impedance is 220 ohm.";
+      }
+      enum "370ohm-620ohm" {
+        value 4;
+        description
+          "Impedance is 370 ohm.";
+      }
+      enum "320ohm" {
+        value 5;
+        description
+          "Impedance is 320 ohm.";
+      }
+      enum "370ohm-820ohm" {
+        value 6;
+        description
+          "Impedance is 820 ohm.";
+      }
+      enum "275ohm" {
+        value 7;
+        description
+          "Impedance is 275 ohm.";
+      }
+      enum "20ohm" {
+        value 8;
+        description
+          "Impedance is 20 ohm.";
+      }
+      enum "350ohm" {
+        value 9;
+        description
+          "Impedance is 350 ohm.";
+      }
+      enum "200ohm" {
+        value 10;
+        description
+          "Impedance is 200 ohm.";
+      }
+      enum "600ohm-2.16uf" {
+        value 11;
+        description
+          "Impedance is 600 ohm and 2.16uf.";
+      }
+      enum "900ohm-1uf" {
+        value 12;
+        description
+          "Impedance is 900 ohm and 1uf.";
+      }
+      enum "900ohm-2.16uf" {
+        value 13;
+        description
+          "Impedance is 900 ohm and 2.16 uF.";
+      }
+      enum "600ohm-1uf" {
+        value 14;
+        description
+          "Impedance is 600 ohm and 1 uF.";
+      }
+      enum "global-impedance" {
+        value 15;
+        description
+          "Global impedance.";
+      }
+    }
+    description
+      "FXOS impedance type.";
+  }
+  typedef devm-trans-alarm-type {
+    type enumeration {
+      enum "AUAIS" {
+        value 0;
+        description
+          "Line Alarm Indication Signal.";
+      }
+      enum "B3TCA" {
+        value 1;
+        description
+          "B3 Threshold Crossing Alarm.";
+      }
+      enum "LAIS" {
+        value 2;
+        description
+          "Line alarm indication Signal.";
+      }
+      enum "LOF" {
+        value 3;
+        description
+          "Loss of Frame.";
+      }
+      enum "LOM" {
+        value 4;
+        description
+          "Loss of Tributary Multiframe.";
+      }
+      enum "LOP" {
+        value 5;
+        description
+          "Loss of Pointer.";
+      }
+      enum "LOS" {
+        value 6;
+        description
+          "Loss of Signal.";
+      }
+      enum "LRDI" {
+        value 7;
+        description
+          "Line Remote Defect Indication.";
+      }
+      enum "LREI" {
+        value 8;
+        description
+          "Line Remote Error Indication.";
+      }
+      enum "OOF" {
+        value 9;
+        description
+          "Out of Frame.";
+      }
+      enum "PAIS" {
+        value 10;
+        description
+          "Path Alarm Indication Signal.";
+      }
+      enum "PRDI" {
+        value 11;
+        description
+          "Path Remote Defect Indication.";
+      }
+      enum "PREI" {
+        value 12;
+        description
+          "Path Remote Error Indication.";
+      }
+      enum "PPLM" {
+        value 13;
+        description
+          "Path Payload Mismatch.";
+      }
+      enum "RDOOL" {
+        value 14;
+        description
+          "Receive Data Out of Lock.";
+      }
+      enum "RROOL" {
+        value 15;
+        description
+          "Receive Reference Out of Lock.";
+      }
+      enum "SDBERE" {
+        value 16;
+        description
+          "Signal Degrade Threshold Alarm.";
+      }
+      enum "SFBERE" {
+        value 17;
+        description
+          "Signal Fail Threshold Alarm.";
+      }
+      enum "TROOL" {
+        value 18;
+        description
+          "Transmit Reference Out of Lock.";
+      }
+      enum "PUNEQ" {
+        value 19;
+        description
+          "Path Unequipped Indication.";
+      }
+      enum "LCD" {
+        value 20;
+        description
+          "Loss of Code Group Synchronization.";
+      }
+      enum "WLNK" {
+        value 21;
+        description
+          "WLNK.";
+      }
+      enum "ODU-AIS" {
+        value 22;
+        description
+          "ODU Alarm Indication Signal.";
+      }
+      enum "ODU-LCK" {
+        value 23;
+        description
+          "ODU locked.";
+      }
+      enum "ODU-OCI" {
+        value 24;
+        description
+          "ODU Open Connection Indication.";
+      }
+      enum "OTU-AIS" {
+        value 25;
+        description
+          "OTU Alarm Indication Signal.";
+      }
+      enum "OTU-LOM" {
+        value 26;
+        description
+          "Loss of OTN Multiframe.";
+      }
+      enum "OTU-SD-BER" {
+        value 27;
+        description
+          "OTU signal degrade.";
+      }
+      enum "OTU-SF-BER" {
+        value 28;
+        description
+          "OTU signal fail.";
+      }
+      enum "PM-BDI" {
+        value 29;
+        description
+          "PM backward Defect Indication.";
+      }
+      enum "PM-TIM" {
+        value 30;
+        description
+          "PM type identifier mismatch.";
+      }
+      enum "R-LOF" {
+        value 31;
+        description
+          "Loss of OTN Frame.";
+      }
+      enum "R-LOS" {
+        value 32;
+        description
+          "Loss of OTN Signal.";
+      }
+      enum "R-OOF" {
+        value 33;
+        description
+          "Out of OTN Frame.";
+      }
+      enum "SM-BDI" {
+        value 34;
+        description
+          "SM Backward Defect Indication.";
+      }
+      enum "SM-IAE" {
+        value 35;
+        description
+          "SM Incoming Alignment Error.";
+      }
+      enum "SM-TIM" {
+        value 36;
+        description
+          "SM type identifier mismatch.";
+      }
+      enum "B1TCA" {
+        value 40;
+        description
+          "B1 Threshold Crossing Alarm.";
+      }
+      enum "B2TCA" {
+        value 41;
+        description
+          "B2 Threshold Crossing Alarm.";
+      }
+    }
+    description
+      "Transmission alarm type.";
+  }
+  typedef eth-speed-type {
+    type enumeration {
+      enum "10M" {
+        value 0;
+        description
+          "Configure 10M.";
+      }
+      enum "100M" {
+        value 1;
+        description
+          "Configure 100M.";
+      }
+      enum "1000M" {
+        value 2;
+        description
+          "Configure 1000M.";
+      }
+      enum "2500M" {
+        value 5;
+        description
+          "Configure 2500M.";
+      }
+      enum "10G" {
+        value 6;
+        description
+          "Configure 10G.";
+      }
+      enum "40G" {
+        value 7;
+        description
+          "Configure 40G.";
+      }
+      enum "100G" {
+        value 8;
+        description
+          "Configure 100G.";
+      }
+      enum "auto" {
+        value 9;
+        description
+          "Auto.";
+      }
+      enum "1G" {
+        value 10;
+        description
+          "Configure 1G.";
+      }
+      enum "2G" {
+        value 11;
+        description
+          "Configure 2G.";
+      }
+      enum "3G" {
+        value 12;
+        description
+          "Configure 3G.";
+      }
+      enum "4G" {
+        value 13;
+        description
+          "Configure 4G.";
+      }
+      enum "1.25G" {
+        value 14;
+        description
+          "Configure 1.25G.";
+      }
+      enum "2.5G" {
+        value 15;
+        description
+          "Configure 2.5G.";
+      }
+      enum "3.75G" {
+        value 16;
+        description
+          "Configure 3.75G.";
+      }
+      enum "5G" {
+        value 17;
+        description
+          "Configure 5G.";
+      }
+      enum "15G" {
+        value 18;
+        description
+          "Configure 15G.";
+      }
+      enum "20G" {
+        value 19;
+        description
+          "Configure 20G.";
+      }
+      enum "25G" {
+        value 20;
+        description
+          "Configure 25G.";
+      }
+      enum "30G" {
+        value 21;
+        description
+          "Configure 30G.";
+      }
+      enum "35G" {
+        value 22;
+        description
+          "Configure 35G.";
+      }
+      enum "45G" {
+        value 24;
+        description
+          "Configure 45G.";
+      }
+      enum "50G" {
+        value 25;
+        description
+          "Configure 50G.";
+      }
+      enum "55G" {
+        value 26;
+        description
+          "Configure 55G.";
+      }
+      enum "60G" {
+        value 27;
+        description
+          "Configure 60G.";
+      }
+      enum "65G" {
+        value 28;
+        description
+          "Configure 65G.";
+      }
+      enum "70G" {
+        value 29;
+        description
+          "Configure 70G.";
+      }
+      enum "75G" {
+        value 30;
+        description
+          "Configure 75G.";
+      }
+      enum "80G" {
+        value 31;
+        description
+          "Configure 80G.";
+      }
+      enum "85G" {
+        value 32;
+        description
+          "Configure 85G.";
+      }
+      enum "90G" {
+        value 33;
+        description
+          "Configure 90G.";
+      }
+      enum "95G" {
+        value 34;
+        description
+          "Configure 95G.";
+      }
+      enum "0G" {
+        value 35;
+        description
+          "Configure 0G.";
+      }
+      enum "400G" {
+        value 36;
+        description
+          "Configure 400G.";
+      }
+    }
+    description
+      "Speed type.";
+  }
+  typedef eth-duplex-type {
+    type enumeration {
+      enum "half" {
+        value 1;
+        description
+          "Half duplex.";
+      }
+      enum "full" {
+        value 2;
+        description
+          "Full duplex.";
+      }
+      enum "auto" {
+        value 0;
+        description
+          "Auto.";
+      }
+    }
+    description
+      "Duplex type.";
+  }
+  typedef pic-statistic-port-type {
+    type enumeration {
+      enum "ATM" {
+        value 0;
+        description
+          "ATM port.";
+      }
+      enum "C37" {
+        value 1;
+        description
+          "C37 serial port.";
+      }
+      enum "CODIR" {
+        value 2;
+        description
+          "Co-directional serial port.";
+      }
+      enum "CPOS" {
+        value 3;
+        description
+          "CPOS port.";
+      }
+      enum "E1" {
+        value 4;
+        description
+          "E1 port.";
+      }
+      enum "E3" {
+        value 5;
+        description
+          "E3 port.";
+      }
+      enum "ECMSERIAL" {
+        value 6;
+        description
+          "Physical serial port.";
+      }
+      enum "ETH" {
+        value 7;
+        description
+          "Ethernet port.";
+      }
+      enum "FLEXEPHY" {
+        value 8;
+        description
+          "FlexE physical port.";
+      }
+      enum "FLEXE" {
+        value 9;
+        description
+          "FlexE business port.";
+      }
+      enum "OTN" {
+        value 10;
+        description
+          "OTN port.";
+      }
+      enum "POS" {
+        value 11;
+        description
+          "POS port.";
+      }
+      enum "VOICE" {
+        value 12;
+        description
+          "Voice serial port.";
+      }
+    }
+    description
+      "Pic statistic port type.";
+  }
+  typedef lcs-active-status-type {
+    type enumeration {
+      enum "unallocated" {
+        value 0;
+        description
+          "Unallocated.";
+      }
+      enum "allocated" {
+        value 1;
+        description
+          "Allocated.";
+      }
+      enum "activated" {
+        value 2;
+        description
+          "Activated.";
+      }
+    }
+    description
+      "Liscense active status type.";
+  }
+  typedef port-negotiation-mode-type {
+    type enumeration {
+      enum "slave" {
+        value 0;
+        description
+          "Slave.";
+      }
+      enum "na" {
+        value 1;
+        description
+          "NA.";
+      }
+      enum "auto" {
+        value 2;
+        description
+          "Auto.";
+      }
+      enum "master" {
+        value 3;
+        description
+          "Master.";
+      }
+    }
+    description
+      "Port negotiation mode type.";
+  }
+  typedef alarm-ais-insert-name {
+    type enumeration {
+      enum "hptim" {
+          value 1;
+          description
+          "Hptim.";
+      }
+      enum "lptim" {
+          value 2;
+          description
+          "Lptim.";
+      }
+      enum "rstim" {
+          value 3;
+          description
+          "Rstim.";
+      }
+      enum "hptimatm" {
+          value 4;
+          description
+          "Hptimatm.";
+      }
+      enum "hpuneqatm" {
+          value 5;
+          description
+          "Hpuneqatm.";
+      }
+      enum "hpuneq" {
+          value 6;
+          description
+          "Hpuneq.";
+      }
+      enum "hpplm" {
+          value 7;
+          description
+          "Hpplm.";
+      }
+      enum "lpuneq" {
+          value 8;
+          description
+          "Lpuneq.";
+      }
+    }
+    description
+      "Alarm Name.";
+  }
+  typedef port-trans-mode-type {
+    type enumeration {
+      enum "lan-mode" {
+        value 0;
+        description
+          "LAN Mode.";
+      }
+      enum "wan-mode" {
+        value 1;
+        description
+          "WAN Mode.";
+      }
+      enum "otn-mode" {
+        value 2;
+        description
+          "OTN Mode.";
+      }
+      enum "flexe-mode" {
+        value 3;
+        description
+          "FLEXE Mode.";
+      }
+    }
+    description
+      "Port transmit mode type.";
+  }
+  typedef tunable-wavelength-type {
+    type enumeration {
+      enum "191.15THZ-1568.362NM" {
+        value 99;
+        description
+          "C-band:99-191.15THz-1568.362nm.";
+      }
+      enum "191.20THZ-1567.952NM" {
+        value 98;
+        description
+          "C-band:98-191.20THz-1567.952nm.";
+      }
+      enum "191.25THZ-1567.542NM" {
+        value 97;
+        description
+          "C-band:97-191.25THz-1567.542nm.";
+      }
+      enum "191.30THZ-1567.133NM" {
+        value 96;
+        description
+          "C-band:96-191.30THz-1567.133nm.";
+      }
+      enum "191.35THZ-1566.723NM" {
+        value 95;
+        description
+          "C-band:95-191.35THz-1566.723nm.";
+      }
+      enum "191.40THZ-1566.314NM" {
+        value 94;
+        description
+          "C-band:94-191.40THz-1566.314nm.";
+      }
+      enum "191.45THZ-1565.905NM" {
+        value 93;
+        description
+          "C-band:93-191.45THz-1565.905nm.";
+      }
+      enum "191.50THZ-1565.496NM" {
+        value 92;
+        description
+          "C-band:92-191.50THz-1565.496nm.";
+      }
+      enum "191.55THZ-1565.087NM" {
+        value 91;
+        description
+          "C-band:91-191.55THz-1565.087nm.";
+      }
+      enum "191.60THZ-1564.679NM" {
+        value 90;
+        description
+          "C-band:90-191.60THz-1564.679nm.";
+      }
+      enum "191.65THZ-1564.271NM" {
+        value 89;
+        description
+          "C-band:89-191.65THz-1564.271nm.";
+      }
+      enum "191.70THZ-1563.863NM" {
+        value 88;
+        description
+          "C-band:88-191.70THz-1563.863nm.";
+      }
+      enum "191.75THZ-1563.455NM" {
+        value 87;
+        description
+          "C-band:87-191.75THz-1563.455nm.";
+      }
+      enum "191.80THZ-1563.047NM" {
+        value 86;
+        description
+          "C-band:86-191.80THz-1563.047nm.";
+      }
+      enum "191.85THZ-1562.640NM" {
+        value 85;
+        description
+          "C-band:85-191.85THz-1562.640nm.";
+      }
+      enum "191.90THZ-1562.233NM" {
+        value 84;
+        description
+          "C-band:84-191.90THz-1562.233nm.";
+      }
+      enum "191.95THZ-1561.826NM" {
+        value 83;
+        description
+          "C-band:83-191.95THz-1561.826nm.";
+      }
+      enum "192.00THZ-1561.419NM" {
+        value 82;
+        description
+          "C-band:82-192.00THz-1561.419nm.";
+      }
+      enum "192.05THZ-1561.013NM" {
+        value 81;
+        description
+          "C-band:81-192.05THz-1561.013nm.";
+      }
+      enum "192.10THZ-1560.606NM" {
+        value 80;
+        description
+          "C-band:80-192.10THz-1560.606nm.";
+      }
+      enum "192.15THZ-1560.200NM" {
+        value 79;
+        description
+          "C-band:79-192.15THz-1560.200nm.";
+      }
+      enum "192.20THZ-1559.794NM" {
+        value 78;
+        description
+          "C-band:78-192.20THz-1559.794nm.";
+      }
+      enum "192.25THZ-1559.389NM" {
+        value 77;
+        description
+          "C-band:77-192.25THz-1559.389nm.";
+      }
+      enum "192.30THZ-1558.983NM" {
+        value 76;
+        description
+          "C-band:76-192.30THz-1558.983nm.";
+      }
+      enum "192.35THZ-1558.578NM" {
+        value 75;
+        description
+          "C-band:75-192.35THz-1558.578nm.";
+      }
+      enum "192.40THZ-1558.173NM" {
+        value 74;
+        description
+          "C-band:74-192.40THz-1558.173nm.";
+      }
+      enum "192.45THZ-1557.768NM" {
+        value 73;
+        description
+          "C-band:73-192.45THz-1557.768nm.";
+      }
+      enum "192.50THZ-1557.363NM" {
+        value 72;
+        description
+          "C-band:72-192.50THz-1557.363nm.";
+      }
+      enum "192.55THZ-1556.959NM" {
+        value 71;
+        description
+          "C-band:71-192.55THz-1556.959nm.";
+      }
+      enum "192.60THZ-1556.555NM" {
+        value 70;
+        description
+          "C-band:70-192.60THz-1556.555nm.";
+      }
+      enum "192.65THZ-1556.151NM" {
+        value 69;
+        description
+          "C-band:69-192.65THz-1556.151nm.";
+      }
+      enum "192.70THZ-1555.747NM" {
+        value 68;
+        description
+          "C-band:68-192.70THz-1555.747nm.";
+      }
+      enum "192.75THZ-1555.343NM" {
+        value 67;
+        description
+          "C-band:67-192.75THz-1555.343nm.";
+      }
+      enum "192.80THZ-1554.940NM" {
+        value 66;
+        description
+          "C-band:66-192.80THz-1554.940nm.";
+      }
+      enum "192.85THZ-1554.537NM" {
+        value 65;
+        description
+          "C-band:65-192.85THz-1554.537nm.";
+      }
+      enum "192.90THZ-1554.134NM" {
+        value 64;
+        description
+          "C-band:64-192.90THz-1554.134nm.";
+      }
+      enum "192.95THZ-1553.731NM" {
+        value 63;
+        description
+          "C-band:63-192.95THz-1553.731nm.";
+      }
+      enum "193.00THZ-1553.329NM" {
+        value 62;
+        description
+          "C-band:62-193.00THz-1553.329nm.";
+      }
+      enum "193.05THZ-1552.926NM" {
+        value 61;
+        description
+          "C-band:61-193.05THz-1552.926nm.";
+      }
+      enum "193.10THZ-1552.524NM" {
+        value 60;
+        description
+          "C-band:60-193.10THz-1552.524nm.";
+      }
+      enum "193.15THZ-1552.122NM" {
+        value 59;
+        description
+          "C-band:59-193.15THz-1552.122nm.";
+      }
+      enum "193.20THZ-1551.721NM" {
+        value 58;
+        description
+          "C-band:58-193.20THz-1551.721nm.";
+      }
+      enum "193.25THZ-1551.319NM" {
+        value 57;
+        description
+          "C-band:57-193.25THz-1551.319nm.";
+      }
+      enum "193.30THZ-1550.918NM" {
+        value 56;
+        description
+          "C-band:56-193.30THz-1550.918nm.";
+      }
+      enum "193.35THZ-1550.517NM" {
+        value 55;
+        description
+          "C-band:55-193.35THz-1550.517nm.";
+      }
+      enum "193.40THZ-1550.116NM" {
+        value 54;
+        description
+          "C-band:54-193.40THz-1550.116nm.";
+      }
+      enum "193.45THZ-1549.715NM" {
+        value 53;
+        description
+          "C-band:53-193.45THz-1549.715nm.";
+      }
+      enum "193.50THZ-1549.315NM" {
+        value 52;
+        description
+          "C-band:52-193.50THz-1549.315nm.";
+      }
+      enum "193.55THZ-1548.915NM" {
+        value 51;
+        description
+          "C-band:51-193.55THz-1548.915nm.";
+      }
+      enum "193.60THZ-1548.515NM" {
+        value 50;
+        description
+          "C-band:50-193.60THz-1548.515nm.";
+      }
+      enum "193.65THZ-1548.115NM" {
+        value 49;
+        description
+          "C-band:49-193.65THz-1548.115nm.";
+      }
+      enum "193.70THZ-1547.715NM" {
+        value 48;
+        description
+          "C-band:48-193.70THz-1547.715nm.";
+      }
+      enum "193.75THZ-1547.316NM" {
+        value 47;
+        description
+          "C-band:47-193.75THz-1547.316nm.";
+      }
+      enum "193.80THZ-1546.917NM" {
+        value 46;
+        description
+          "C-band:46-193.80THz-1546.917nm.";
+      }
+      enum "193.85THZ-1546.518NM" {
+        value 45;
+        description
+          "C-band:45-193.85THz-1546.518nm.";
+      }
+      enum "193.90THZ-1546.119NM" {
+        value 44;
+        description
+          "C-band:44-193.90THz-1546.119nm.";
+      }
+      enum "193.95THZ-1545.720NM" {
+        value 43;
+        description
+          "C-band:43-193.95THz-1545.720nm.";
+      }
+      enum "194.00THZ-1545.322NM" {
+        value 42;
+        description
+          "C-band:42-194.00THz-1545.322nm.";
+      }
+      enum "194.05THZ-1544.924NM" {
+        value 41;
+        description
+          "C-band:41-194.05THz-1544.924nm.";
+      }
+      enum "194.10THZ-1544.526NM" {
+        value 40;
+        description
+          "C-band:40-194.10THz-1544.526nm.";
+      }
+      enum "194.15THZ-1544.128NM" {
+        value 39;
+        description
+          "C-band:39-194.15THz-1544.128nm.";
+      }
+      enum "194.20THZ-1543.730NM" {
+        value 38;
+        description
+          "C-band:38-194.20THz-1543.730nm.";
+      }
+      enum "194.25THZ-1543.333NM" {
+        value 37;
+        description
+          "C-band:37-194.25THz-1543.333nm.";
+      }
+      enum "194.30THZ-1542.936NM" {
+        value 36;
+        description
+          "C-band:36-194.30THz-1542.936nm.";
+      }
+      enum "194.35THZ-1542.539NM" {
+        value 35;
+        description
+          "C-band:35-194.35THz-1542.539nm.";
+      }
+      enum "194.40THZ-1542.142NM" {
+        value 34;
+        description
+          "C-band:34-194.40THz-1542.142nm.";
+      }
+      enum "194.45THZ-1541.746NM" {
+        value 33;
+        description
+          "C-band:33-194.45THz-1541.746nm.";
+      }
+      enum "194.50THZ-1541.349NM" {
+        value 32;
+        description
+          "C-band:32-194.50THz-1541.349nm.";
+      }
+      enum "194.55THZ-1540.953NM" {
+        value 31;
+        description
+          "C-band:31-194.55THz-1540.953nm.";
+      }
+      enum "194.60THZ-1540.557NM" {
+        value 30;
+        description
+          "C-band:30-194.60THz-1540.557nm.";
+      }
+      enum "194.65THZ-1540.162NM" {
+        value 29;
+        description
+          "C-band:29-194.65THz-1540.162nm.";
+      }
+      enum "194.70THZ-1539.766NM" {
+        value 28;
+        description
+          "C-band:28-194.70THz-1539.766nm.";
+      }
+      enum "194.75THZ-1539.371NM" {
+        value 27;
+        description
+          "C-band:27-194.75THz-1539.371nm.";
+      }
+      enum "194.80THZ-1538.976NM" {
+        value 26;
+        description
+          "C-band:26-194.80THz-1538.976nm.";
+      }
+      enum "194.85THZ-1538.581NM" {
+        value 25;
+        description
+          "C-band:25-194.85THz-1538.581nm.";
+      }
+      enum "194.90THZ-1538.186NM" {
+        value 24;
+        description
+          "C-band:24-194.90THz-1538.186nm.";
+      }
+      enum "194.95THZ-1537.792NM" {
+        value 23;
+        description
+          "C-band:23-194.95THz-1537.792nm.";
+      }
+      enum "195.00THZ-1537.397NM" {
+        value 22;
+        description
+          "C-band:22-195.00THz-1537.397nm.";
+      }
+      enum "195.05THZ-1537.003NM" {
+        value 21;
+        description
+          "C-band:21-195.05THz-1537.003nm.";
+      }
+      enum "195.10THZ-1536.609NM" {
+        value 20;
+        description
+          "C-band:20-195.10THz-1536.609nm.";
+      }
+      enum "195.15THZ-1536.216NM" {
+        value 19;
+        description
+          "C-band:19-195.15THz-1536.216nm.";
+      }
+      enum "195.20THZ-1535.822NM" {
+        value 18;
+        description
+          "C-band:18-195.20THz-1535.822nm.";
+      }
+      enum "195.25THZ-1535.429NM" {
+        value 17;
+        description
+          "C-band:17-195.25THz-1535.429nm.";
+      }
+      enum "195.30THZ-1535.036NM" {
+        value 16;
+        description
+          "C-band:16-195.30THz-1535.036nm.";
+      }
+      enum "195.35THZ-1534.643NM" {
+        value 15;
+        description
+          "C-band:15-195.35THz-1534.643nm.";
+      }
+      enum "195.40THZ-1534.250NM" {
+        value 14;
+        description
+          "C-band:14-195.40THz-1534.250nm.";
+      }
+      enum "195.45THZ-1533.858NM" {
+        value 13;
+        description
+          "C-band:13-195.45THz-1533.858nm.";
+      }
+      enum "195.50THZ-1533.465NM" {
+        value 12;
+        description
+          "C-band:12-195.50THz-1533.465nm.";
+      }
+      enum "195.55THZ-1533.073NM" {
+        value 11;
+        description
+          "C-band:11-195.55THz-1533.073nm.";
+      }
+      enum "195.60THZ-1532.681NM" {
+        value 10;
+        description
+          "C-band:10-195.60THz-1532.681nm.";
+      }
+      enum "195.65THZ-1532.290NM" {
+        value 9;
+        description
+          "C-band:09-195.65THz-1532.290nm.";
+      }
+      enum "195.70THZ-1531.898NM" {
+        value 8;
+        description
+          "C-band:08-195.70THz-1531.898nm.";
+      }
+      enum "195.75THZ-1531.507NM" {
+        value 7;
+        description
+          "C-band:07-195.75THz-1531.507nm.";
+      }
+      enum "195.80THZ-1531.116NM" {
+        value 6;
+        description
+          "C-band:06-195.80THz-1531.116nm.";
+      }
+      enum "195.85THZ-1530.725NM" {
+        value 5;
+        description
+          "C-band:05-195.85THz-1530.725nm.";
+      }
+      enum "195.90THZ-1530.334NM" {
+        value 4;
+        description
+          "C-band:04-195.90THz-1530.334nm.";
+      }
+      enum "195.95THZ-1529.944NM" {
+        value 3;
+        description
+          "C-band:03-195.95THz-1529.944nm.";
+      }
+      enum "196.00THZ-1529.553NM" {
+        value 2;
+        description
+          "C-band:02-196.00THz-1529.553nm.";
+      }
+      enum "196.05THZ-1529.163NM" {
+        value 1;
+        description
+          "C-band:01-196.05THz-1529.163nm.";
+      }
+      enum "196.10THZ-1528.773NM" {
+        value 0;
+        description
+          "C-band:00-196.10THz-1528.773nm.";
+      }
+    }
+    description
+      "Enum of wavelength and frequence.";
+  }
+  grouping channel-sets {
+    description
+      "Channel sets.";
+    container channel-sets {
+      description
+        "List of channel sets.";
+      list channel-set {
+        key "number timeslot-list";
+        max-elements 30;
+        description
+          "Configure channel-sets.";
+        leaf number {
+          type uint32 {
+            range "0..30";
+          }
+          description
+            "Set number.";
+        }
+        leaf timeslot-list {
+          type string {
+            length "1..61";
+          }
+          description
+            "Timeslot list. Please enter a number from 1 to 31 with ',' or '-' in the middle.";
+        }
+      }
+    }
+  }
+  container pic {
+    description
+      "Pic Configuration.";
+    container panel-split-ports {
+      description
+        "List of Panel Ports.";
+      list panel-split-port {
+        ext:generated-by "system";
+        ext:operation-exclude "create";
+        key "position";
+        description
+          "Configure Panel Port.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Panel Port Position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+        }
+        leaf split-type {
+          ext:dynamic-default ;
+          type enumeration {
+            enum "4X10GE" {
+              value 1;
+              description
+                "Four 10G optical fiber ports.";
+            }
+            enum "1X100GE" {
+              value 3;
+              description
+                "One 100G optical fiber port.";
+            }
+            enum "10X10GE" {
+              value 4;
+              description
+                "Ten 10G optical fiber ports.";
+            }
+            enum "1X40GE" {
+              value 2;
+              description
+                "One 40G optical fiber port.";
+            }
+            enum "4X25GE-NULL" {
+              value 5;
+              description
+                "4*25GE-null.";
+            }
+            enum "NULL-1X100GE" {
+              value 12;
+              description
+                "Null-1*100GE.";
+            }
+            enum "4X10GE-1X40GE" {
+              value 9;
+              description
+                "Four 10G optical fiber ports and one 40G optical fiber port.";
+            }
+            enum "4X10GE-4X10GE" {
+              value 10;
+              description
+                "Four 10G optical fiber ports and four 10G optical fiber ports.";
+            }
+            enum "1X50GE" {
+              value 23;
+              description
+                "One 50G optical fiber port.";
+            }
+            enum "4X25GE" {
+              value 22;
+              description
+                "Four 25G optical fiber ports.";
+            }
+            enum "1X25GE-2X1GE" {
+              value 17;
+              description
+                "One 25G optical fiber port and two 1G optical fiber ports.";
+            }
+            enum "1X10GE-2X10GE" {
+              value 18;
+              description
+                "One 10G optical fiber port and two 10G optical fiber ports.";
+            }
+            enum "NULL-2X25GE" {
+              value 15;
+              description
+                "Null-2*25GE.";
+            }
+            enum "1X50GE-NULL" {
+              value 16;
+              description
+                "1*50GE-null.";
+            }
+            enum "ADAPT" {
+              value 21;
+              description
+                "Auto-adapt.";
+            }
+          }
+          must "not(../position) or (../position and (../split-type='4X10GE' or ../split-type='1X100GE' or ../split-type='10X10GE' or ../split-type='1X40GE' 
+            or ../split-type='4X25GE-NULL' or ../split-type='NULL-1X100GE' or ../split-type='4X10GE-1X40GE' or ../split-type='4X10GE-4X10GE' or ../split-type='4X25GE' 
+            or ../split-type='1X50GE' or ../split-type='1X25GE-2X1GE' or ../split-type='1X10GE-2X10GE' or ../split-type='NULL-2X25GE' or ../split-type='1X50GE-NULL' or ../split-type='ADAPT') )";
+          description
+            "Panel port split type. Modifying the configuration affects the instances of ports and interfaces. For details about the impact, see the description of each enumerated item.";
+        }
+        container split-ports {
+          config false;
+          description
+            "List of Split Ports.";
+          list port {
+            key "split-position";
+            description
+              "Operational state of Split Port.";
+            leaf split-position {
+              type string {
+                length "1..32";
+              }
+              description
+                "Split Port Position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+            }
+            leaf port-name {
+              type pub-type:if-name;
+              description
+                "Split Port Name.";
+            }
+          }
+        }
+      }
+    }
+    container auto-clears {
+      description
+        "List of Auto Clears.";
+      list auto-clear {
+        ext:generated-by "system";
+        ext:operation-exclude "create";
+        key "type";
+        description
+          "Configure Auto Clear.";
+        leaf type {
+          type enumeration {
+            enum "lsrclose" {
+              value 7;
+              description
+                "Laser Close.";
+            }
+          }
+          description
+            "Auto Clear Type.";
+        }
+        leaf status {
+          type enumeration {
+            enum "disabled" {
+              value 1;
+              description
+                "Disabled.";
+            }
+            enum "enabled" {
+              value 0;
+              description
+                "Enabled.";
+            }
+          }
+          default "enabled";
+          description
+            "Auto Clear Status.";
+        }
+        leaf time {
+          type uint32 {
+            range "1..2880";
+          }
+          default "5";
+          description
+            "Auto Clear Time.";
+        }
+      }
+    }
+    container tad-trans-alarm-if-downs {
+      description
+        "List of Global TAD Alarm Status Information.";
+      list tad-trans-alarm-if-down {
+        ext:generated-by "system";
+        key "port-type alarm-type";
+        description
+          "Configure Global TAD Alarm Status Information.";
+        leaf port-type {
+          type enumeration {
+            enum "wan" {
+              value 1;
+              description
+                "WAN port type.";
+            }
+            enum "pos" {
+              value 2;
+              description
+                "POS port type.";
+            }
+          }
+          description
+            "Global TAD Port Type. If the hardware does not support it, returning to the current interface does not support it.";
+        }
+        leaf alarm-type {
+          type enumeration {
+            enum "LOS" {
+              value 6;
+              description
+                "Loss of Signal.";
+            }
+            enum "LAIS" {
+              value 2;
+              description
+                "Line alarm indication Signal.";
+            }
+            enum "LOF" {
+              value 3;
+              description
+                "Loss of Frame.";
+            }
+            enum "OOF" {
+              value 9;
+              description
+                "Out of Frame.";
+            }
+            enum "AUAIS" {
+              value 0;
+              description
+                "Line Alarm Indication Signal.";
+            }
+            enum "B3TCA" {
+              value 1;
+              description
+                "B3 Threshold Crossing Alarm.";
+            }
+            enum "B1TCA" {
+              value 40;
+              description
+                "B1 Threshold Crossing Alarm.";
+            }
+            enum "B2TCA" {
+              value 41;
+              description
+                "B2 Threshold Crossing Alarm.";
+            }
+            enum "LOM" {
+              value 4;
+              description
+                "Loss of Tributary Multiframe.";
+            }
+            enum "LOP" {
+              value 5;
+              description
+                "Loss of Pointer.";
+            }
+            enum "LRDI" {
+              value 7;
+              description
+                "Line Remote Defect Indication.";
+            }
+            enum "LREI" {
+              value 8;
+              description
+                "Line Remote Error Indication.";
+            }
+            enum "PAIS" {
+              value 10;
+              description
+                "Path Alarm Indication Signal.";
+            }
+            enum "PRDI" {
+              value 11;
+              description
+                "Path Remote Defect Indication.";
+            }
+            enum "PREI" {
+              value 12;
+              description
+                "Path Remote Error Indication.";
+            }
+            enum "PPLM" {
+              value 13;
+              description
+                "Path Payload Mismatch.";
+            }
+            enum "RDOOL" {
+              value 14;
+              description
+                "Receive Data Out of Lock.";
+            }
+            enum "RROOL" {
+              value 15;
+              description
+                "Receive Reference Out of Lock.";
+            }
+            enum "SDBERE" {
+              value 16;
+              description
+                "Signal Degrade Threshold Alarm.";
+            }
+            enum "SFBERE" {
+              value 17;
+              description
+                "Signal Fail Threshold Alarm.";
+            }
+            enum "TROOL" {
+              value 18;
+              description
+                "Transmit Reference Out of Lock.";
+            }
+            enum "PUNEQ" {
+              value 19;
+              description
+                "Path Unequipped Indication.";
+            }
+            enum "LCD" {
+              value 20;
+              description
+                "Loss of Code Group Synchronization.";
+            }
+          }
+          description
+            "Global TAD Alarm Type. If the hardware does not support it, returning to the current interface does not support it.";
+        }
+        leaf if-down {
+          ext:dynamic-default ;
+          type boolean;
+          description
+            "Enable/disable Global TAD Alarm If down.";
+        }
+      }
+    }
+    container alarm-ais-inserts {
+      description
+        "List of Alarm Insert Ais Configuration.";
+      list alarm-ais-insert {
+        ext:generated-by "system";
+        ext:operation-exclude "create";
+        key "name";
+        description
+          "Configure Alarm Insert Ais Configuration.";
+        leaf name {
+          type alarm-ais-insert-name;
+          description
+            "Alarm Name.";
+        }
+        leaf ais {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Alarm Insert Ais Enable.";
+        }
+        leaf rdi {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable Peer Alarm Report RDI Enable.";
+        }
+      }
+    }
+    container port-statistics {
+      config false;
+      description
+        "List of Port statistics.";
+      list statistic {
+        key "chassis-id board-id port-type";
+        description
+          "Operational state of Port statistic.";
+        leaf chassis-id {
+          type string {
+            length "1..32";
+          }
+          description
+            "Chassis id.";
+        }
+        leaf board-id {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Board id.";
+        }
+        leaf port-type {
+          type pic-statistic-port-type;
+          description
+            "Port type.";
+        }
+        leaf total-port-num {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Total port number.";
+        }
+        leaf phy-up-port-num {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Physical up port number.";
+        }
+      }
+    }
+  }
+  rpc laser-turn {
+    ext:node-ref "devm/ports/port"; 
+    description
+      "Set port laser.";
+    input  {
+      leaf laser-shutdown {
+        type enumeration {
+          enum "on" {
+            value 0;
+            description
+              "Laser open.";
+          }
+          enum "off" {
+            value 1;
+            description
+              "Laser close.";
+          }
+        }
+        default "on";
+        description
+          "Laser open or shut.";
+      }
+      leaf laser-test-time {
+        type uint32 {
+          range "200..30000";
+        }
+        units "10 ms";
+        description
+          "Laser open time(10ms).";
+      }
+      leaf port-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Port position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  rpc attr-abort {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Port attr detect abort.";
+    input  {
+      leaf position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Entity position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  rpc attr-start {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Port attr detect start.";
+    input  {
+      leaf position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Entity position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  rpc clear-port-crc-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear CRC error alarm.";
+    input  {
+      leaf port-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Port Position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  rpc clear-port-input-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear input error alarm.";
+    input  {
+      leaf port-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Port Position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  rpc clear-port-output-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear output error alarm.";
+    input  {
+      leaf port-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Port Position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  rpc clear-port-sdh-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear sdh error alarm.";
+    input  {
+      leaf port-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Port Position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  rpc clear-port-symbol-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear symbol error alarm.";
+    input  {
+      leaf port-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Port Position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  rpc clear-port-trans-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear tad alarm information.";
+    input  {
+      leaf port-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Port Position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  rpc clear-port-rx-pause-err-alarm {
+    ext:node-ref "/devm/ports/port";
+    description
+      "Clear pause-frame error alarm.";
+    input  {
+      leaf port-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Port Position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+      }
+    }
+  }
+  augment /driver:driver/driver:global-attribute {
+    description
+      "Global configuration.";
+    container global {
+      description
+        "Configure Ethernet port.";
+      leaf hold-off-timer {
+        type uint32 {
+          range "0|20..10000";
+        }
+        units "ms";
+        default "0";
+        description
+          "Global TAD Hold Down Time.";
+      }
+      leaf hold-up-timer {
+        type uint32 {
+          range "0|200..3600000";
+        }
+        units "ms";
+        default "300";
+        description
+          "Global TAD Hold Up Time.";
+      }
+      leaf up-hold-time {
+        ext:dynamic-default ;
+        type uint32 {
+          range "0..86400000";
+        }
+        units "ms";
+        description
+          "Global Eth Up Hold Time (ms).";
+      }
+      leaf down-hold-time {
+        type uint32 {
+          range "0..86400000";
+        }
+        units "ms";
+        default "0";
+        description
+          "Global Eth Down Hold Time (ms).";
+      }
+      leaf crc-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the crc error monitor.";
+      }
+      leaf symbol-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the symbol error monitor.";
+      }
+      leaf input-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the input error monitor.";
+      }
+      leaf output-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the Output error monitor.";
+      }
+      leaf sdh-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the sdh error monitor.";
+      }
+      leaf bip8-sd-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the BIP8-SD error monitor.";
+      }
+      leaf badbytes-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the Bad-Bytes error monitor.";
+      }
+      leaf optical-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the optical module abnormal monitor.";
+      }
+      leaf tx-pause-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the tx-pause error monitor.";
+      }
+      leaf loopback-clear {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the loop auto-clear function.";
+      }
+      leaf loopback-clear-period {
+        type uint32 {
+          range "1..2880";
+        }
+        default "5";
+        description
+          "The period of loop auto-clear function.";
+      }
+      leaf port-down-laser-shut-log-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the laser-shut log for port down.";
+      }
+      leaf optical-certified-alarm {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the trap function for an uncertified optical module.";
+      }
+      leaf optical-certified-down {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the down function for an uncertified optical module.";
+      }
+      leaf optical-alarm-std-enable {
+        type enumeration {
+          enum "disabled" {
+            value 0;
+            description
+              "Disabled.";
+          }
+          enum "enabled" {
+            value 1;
+            description
+              "Enabled.";
+          }
+        }
+        default "disabled";
+        description
+          "Enalbe or disable the optical module alarm threshold standardization.";
+      }
+      leaf port-bandwidth-type {
+        type enumeration {
+          enum "data-link" {
+            value 0;
+            description
+              "Data link.";
+          }
+          enum "physical" {
+            value 1;
+            description
+              "Physical.";
+          }
+        }
+        default "data-link";
+        description
+          "Port Bandwidth Type.";
+      }
+      leaf driver-mode {
+        type enumeration {
+          enum "default" {
+            value 0;
+            description
+              "Default Mode.";
+          }
+          enum "lower" {
+            value 1;
+            description
+              "Lower mode.";
+          }
+          enum "higher" {
+            value 2;
+            description
+              "Higher mode.";
+          }
+        }
+        default "default";
+        description
+          "E1 driver Mode.";
+      }
+    }
+  }
+  augment /devm:devm/devm:ports/devm:port {
+    description
+      "Ports.";
+    container ethernet {
+      description
+        "Configure Ethernet port.";
+      leaf speed {
+        ext:dynamic-default ;
+        type eth-speed-type;
+        description
+          "Speed of an Ethernet port. This leaf needs to be set at the same time as other leafs.";
+      }
+      leaf duplex {
+        ext:dynamic-default ;
+        type eth-duplex-type;
+        description
+          "Duplex type of an Ethernet port. This leaf needs to be set at the same time as other leafs.";
+      }
+      leaf negotiation {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "enabled" {
+            value 1;
+            description
+              "Enabled.";
+          }
+          enum "disabled" {
+            value 0;
+            description
+              "Disabled.";
+          }
+        }
+        description
+          "Auto negotiation on an Ethernet port. This leaf needs to be set at the same time as other leafs.";
+      }
+      leaf negotiation-mode {
+        ext:dynamic-default ;
+        type port-negotiation-mode-type;
+        description
+          "Auto negotiation mode. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf down-hold-time {
+        ext:dynamic-default ;
+        type uint32 {
+          range "0..86400000";
+        }
+        description
+          "Down hold time.";
+      }
+      leaf up-hold-time {
+        ext:dynamic-default ;
+        type uint32 {
+          range "0..86400000";
+        }
+        description
+          "Up hold time.";
+      }
+      leaf trans-mode {
+        ext:dynamic-default ;
+        type port-trans-mode-type;
+        description
+          "Transmit mode of an Ethernet port.";
+      }
+      leaf speed-switch-mode {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "manual" {
+            value 0;
+            description
+              "Manual.";
+          }
+          enum "auto" {
+            value 1;
+            description
+              "Auto.";
+          }
+        }
+        description
+          "Port speed switch mode. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf bit-error {
+        ext:dynamic-default ;
+        when "../trans-mode='otn-mode'";
+        type enumeration {
+          enum "crc" {
+            value 0;
+            description
+              "CRC error.";
+          }
+          enum "prefec" {
+            value 1;
+            description
+              "Prefec error.";
+          }
+        }
+        description
+          "Bit error type. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf trigger-time {
+        ext:dynamic-default ;
+        when "../trans-mode='otn-mode' and ../bit-error!='crc'";
+        type uint32 {
+          range "1..100";
+        }
+        description
+          "Prefec error detecting cycle.";
+      }
+      leaf trigger-time-type {
+        ext:dynamic-default ;
+        when "../trans-mode='otn-mode' and ../bit-error!='crc'";
+        type enumeration {
+          enum "second" {
+            value 0;
+            description
+              "Second level.";
+          }
+          enum "200ms" {
+            value 1;
+            description
+              "Configure 200ms level.";
+          }
+        }
+        description
+          "Prefec error detecting cycle type. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf tx-power-cfg-type {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "tx-power-target" {
+            value 0;
+            description
+              "Optical power configurations enable.";
+          }
+          enum "attenuation" {
+            value 1;
+            description
+              "Optical attenuation configuration enable.";
+          }
+        }
+        description
+          "Optical power cfg type. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf tx-power-target-value {
+        ext:dynamic-default ;
+        when "../tx-power-cfg-type = 'tx-power-target'";
+        type int32 {
+          range "-180..10";
+        }
+        description
+          "Optical power target value(0.1dB). If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf fec-mode {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "standard" {
+            value 1;
+            description
+              "Standard.";
+          }
+          enum "none" {
+            value 0;
+            description
+              "None.";
+          }
+          enum "enhanced" {
+            value 2;
+            description
+              "Enhanced.";
+          }
+          enum "enhanced-i-4" {
+            value 4;
+            description
+              "Enhanced-i-4.";
+          }
+          enum "enhanced-i-7" {
+            value 3;
+            description
+              "Enhanced-i-7.";
+          }
+          enum "lhaul-sd" {
+            value 5;
+            description
+              "Lhaul-sd.";
+          }
+        }
+        description
+          "Fec mode. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf eth-fec-mode {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "standard" {
+            value 1;
+            description
+              "Standard.";
+          }
+          enum "none" {
+            value 2;
+            description
+              "None.";
+          }
+          enum "disable" {
+            value 0;
+            description
+              "Disable.";
+          }
+        }
+        description
+          "Eth Fec Mode. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf fec-pre-alm-thrc {
+        ext:dynamic-default ;
+        type uint32 {
+          range "1..999";
+        }
+        must "((../fec-pre-alm-thrp and ../fec-pre-rsum-thrc and ../fec-pre-rsum-thrp) and ((../fec-pre-alm-thrc > ../fec-pre-rsum-thrc and ../fec-pre-alm-thrp = ../fec-pre-rsum-thrp) or (../fec-pre-alm-thrp < ../fec-pre-rsum-thrp)))";
+        description
+          "PreFec error ratio coefficient (x of xE-y). FEC recover-threshold should be less than trigger-threshold. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf fec-pre-alm-thrp {
+        ext:dynamic-default ;
+        type uint32 {
+          range "1..8";
+        }
+        must "((../fec-pre-alm-thrc and ../fec-pre-rsum-thrc and ../fec-pre-rsum-thrp) and ((../fec-pre-alm-thrc > ../fec-pre-rsum-thrc and ../fec-pre-alm-thrp = ../fec-pre-rsum-thrp) or (../fec-pre-alm-thrp < ../fec-pre-rsum-thrp)))";
+        description
+          "PreFec error ratio exponent (y of xE-y). FEC recover-threshold should be less than trigger-threshold. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf fec-pre-rsum-thrc {
+        ext:dynamic-default ;
+        type uint32 {
+          range "1..999";
+        }
+        must "((../fec-pre-alm-thrc and ../fec-pre-alm-thrp and ../fec-pre-rsum-thrp) and ((../fec-pre-alm-thrc > ../fec-pre-rsum-thrc and ../fec-pre-alm-thrp = ../fec-pre-rsum-thrp) or (../fec-pre-alm-thrp < ../fec-pre-rsum-thrp)))";
+        description
+          "For resume-threshold: PreFec error ratio coefficient (x of xE-y). If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf fec-pre-rsum-thrp {
+        ext:dynamic-default ;
+        type uint32 {
+          range "1..9";
+        }
+        must "((../fec-pre-alm-thrc and ../fec-pre-alm-thrp and ../fec-pre-rsum-thrc) and ((../fec-pre-alm-thrc > ../fec-pre-rsum-thrc and ../fec-pre-alm-thrp = ../fec-pre-rsum-thrp) or (../fec-pre-alm-thrp < ../fec-pre-rsum-thrp)))";
+        description
+          "For resume-threshold: PreFec error ratio exponent (y of xE-y). If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf jumbo-frame {
+        ext:dynamic-default ;
+        type uint32 {
+          range "0..4294967295";
+        }
+        description
+          "Maximum packet length of jumbo frames. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf flowctl {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "all-enabled" {
+            value 3;
+            description
+              "All Enabled.";
+          }
+          enum "receive-enabled" {
+            value 1;
+            description
+              "Receive Enabled.";
+          }
+          enum "send-enabled" {
+            value 2;
+            description
+              "Send Enabled.";
+          }
+          enum "all-disabled" {
+            value 0;
+            description
+              "All Disabled.";
+          }
+          enum "default-config" {
+            value 9;
+            description
+              "Default config.";
+          }
+        }
+        description
+          "Flow control method of an Ethernet port.";
+      }
+      leaf gf-media-type {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "copper" {
+            value 3;
+            description
+              "Copper.";
+          }
+          enum "fiber100" {
+            value 2;
+            description
+              "Fiber 100M.";
+          }
+          enum "fiber1000" {
+            value 1;
+            description
+              "Fiber 1000M.";
+          }
+          enum "auto" {
+            value 0;
+            description
+              "Auto.";
+          }
+        }
+        description
+          "Medium type on an Ethernet GF port. This leaf needs to be set at the same time as other leafs.";
+      }
+      leaf hold-up {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "enabled" {
+            value 1;
+            description
+              "Enabled.";
+          }
+          enum "disabled" {
+            value 0;
+            description
+              "Disabled.";
+          }
+        }
+        description
+          "Whether the hold-up function is configured on a Ethernet port.";
+      }
+      leaf txipg {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "shrink" {
+            value 0;
+            description
+              "Shrink.";
+          }
+          enum "non-shrink" {
+            value 1;
+            description
+              "Non-shrink.";
+          }
+        }
+        description
+          "Inter-packet Gap.";
+      }
+      leaf mru {
+        type uint32 {
+          range "1520..9700";
+        }
+        default "9700";
+        description
+          "Maximum Receive Unit. The MRU value should be a multiple of 8.";
+      }
+      leaf inter-packet-gap {
+        ext:dynamic-default ;
+        type uint32 {
+          range "8..12";
+        }
+        units "Byte";
+        description
+          "Inter-Packet Gap (bytes). The default values are related to the hardware type. There are many default values. Such as 11, 12.";
+      }
+      leaf mac-itf-mode {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "SGMII" {
+            value 0;
+            description
+              "SGMII.";
+          }
+          enum "1000base-x-auto-negotiation" {
+            value 1;
+            description
+              "Configure 1000Base-X auto-negotiation.";
+          }
+          enum "1000base-x-not-auto-negotiation" {
+            value 2;
+            description
+              "Configure 1000Base-X not-auto-negotiation.";
+          }
+        }
+        description
+          "PHY/MAC workmode of an Ethernet Interface. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf switch-speed {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "1G" {
+            value 1;
+            description
+              "GE Mode.";
+          }
+          enum "10G" {
+            value 10;
+            description
+              "Configure 10GE Mode.";
+          }
+          enum "25G" {
+            value 25;
+            description
+              "Configure 25GE Mode.";
+          }
+          enum "undo" {
+            value 0;
+            description
+              "Cancel Setting.";
+          }
+        }
+        description
+          "Switch GE/10GE/25GE. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf promiscuous-mode {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "on" {
+            value 1;
+            description
+              "Promiscuous mode on.";
+          }
+          enum "off" {
+            value 0;
+            description
+              "Promiscuous mode off.";
+          }
+        }
+        description
+          "Promiscuous of an Ethernet MGE port.";
+      }
+      leaf flexphy-speed {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "50GE" {
+            value 50;
+            description
+              "Configure 50GE.";
+          }
+          enum "100GE" {
+            value 100;
+            description
+              "Configure 100GE.";
+          }
+        }
+        description
+          "Port speed in manual switch mode. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf attenuation {
+        ext:dynamic-default ;
+        type uint32 {
+          range "0..200";
+        }
+	units "0.1 dB";
+        description
+          "Optical attenuation(0.1dB). Default values are related to hardware types. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf local-fault-status {
+        type enumeration {
+          enum "normal" {
+            value 0;
+            description
+              "Normal.";
+          }
+          enum "fault" {
+            value 1;
+            description
+              "Fault.";
+          }
+        }
+        config false;
+        description
+          "Local fault.";
+      }
+      leaf romote-fault-status {
+        type enumeration {
+          enum "normal" {
+            value 0;
+            description
+              "Normal.";
+          }
+          enum "fault" {
+            value 1;
+            description
+              "Fault.";
+          }
+        }
+        config false;
+        description
+          "Remote fault.";
+      }
+      container eth-wan-attr {
+        description
+          "Configure Ethernet port attributes.";
+        leaf frame-format {
+          ext:dynamic-default ;
+          type enumeration {
+            enum "SDH" {
+              value 0;
+              description
+                "Synchronous Digital Hierarchy.";
+            }
+            enum "SONET" {
+              value 1;
+              description
+                "Synchronous Optical Network.";
+            }
+          }
+          description
+            "Frame format of an Ethernet WAN port. Default values are related to hardware types. If the hardware does not support it, returning to the current interface does not support it.";
+        }
+        leaf j0-mode {
+          ext:dynamic-default ;
+          type enumeration {
+            enum "1byte" {
+              value 1;
+              description
+                "Configure 1 byte mode.";
+            }
+            enum "16byte" {
+              value 16;
+              description
+                "Configure 16 bytes mode.";
+            }
+            enum "64byte-or-null-mode" {
+              value 64;
+              description
+                "Configure 64bytes or null mode.";
+            }
+          }
+          description
+            "J0 mode on an Ethernet WAN port.";
+        }
+        leaf j0-value {
+          when "../j0-mode='1byte'";
+          type uint32 {
+            range "0..255";
+          }
+          default "1";
+          description
+            "Vaule of j0-mode on an Ethernet WAN port.";
+        }
+        leaf j0-trace {
+          when "../j0-mode='16byte' or ../j0-mode='64byte-or-null-mode'";
+          type string {
+            length "0..62";
+          }
+          must "(string-length(../j0-trace)<16 and ../j0-mode='16byte') or ../j0-mode='64byte-or-null-mode'";
+          default "";
+          description
+            "Description of the j0 mode on an Ethernet WAN port.";
+        }
+        leaf j1-mode {
+          ext:dynamic-default ;
+          type enumeration {
+            enum "1byte" {
+              value 1;
+              description
+                "Configure 1 byte mode.";
+            }
+            enum "16byte" {
+              value 16;
+              description
+                "Configure 16 bytes mode.";
+            }
+            enum "64byte-or-null-mode" {
+              value 64;
+              description
+                "Configure 64byte or null mode.";
+            }
+          }
+          description
+            "J1 mode on an Ethernet WAN port.";
+        }
+        leaf j1-value {
+          when "../j1-mode='1byte'";
+          type uint32 {
+            range "0..255";
+          }
+          default "1";
+          description
+            "Value of j1-mode on an Ethernet WAN port.";
+        }
+        leaf j1-trace {
+          when "../j1-mode='16byte' or ../j1-mode='64byte-or-null-mode'";
+          type string {
+            length "0..62";
+          }
+          must "(string-length(../j1-trace)<16 and ../j1-mode='16byte') or ../j1-mode='64byte-or-null-mode'";
+          default "";
+          description
+            "Description of the j1 mode on an Ethernet WAN port.";
+        }
+        leaf c2 {
+          ext:dynamic-default ;
+          type uint32 {
+            range "0..255";
+          }
+          description
+            "C2 mode on an Ethernet WAN port.";
+        }
+        leaf clock {
+          ext:dynamic-default ;
+          type enumeration {
+            enum "master" {
+              value 0;
+              description
+                "Master clock.";
+            }
+            enum "slave" {
+              value 1;
+              description
+                "Slave clock.";
+            }
+          }
+          description
+            "Active/standby clock on an Ethernet WAN port. Default values are related to hardware types. If the hardware does not support it, returning to the current interface does not support it.";
+        }
+        leaf scramble {
+          ext:dynamic-default ;
+          type enumeration {
+            enum "enabled" {
+              value 3;
+              description
+                "Enabled.";
+            }
+            enum "disabled" {
+              value 0;
+              description
+                "Disabled.";
+            }
+          }
+          description
+            "Whether the scrambling function is configured on an Ethernet WAN port. Default values are related to hardware types. If the hardware does not support it, returning to the current interface does not support it.";
+        }
+        leaf rx-j0-value {
+          type uint32 {
+            range "0..127";
+          }
+          config false;
+          description
+            "Value of rxj0mode on an Ethernet WAN port.";
+        }
+        leaf rx-j0-trace {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "Receive J0 description.";
+        }
+        leaf rx-j1-value {
+          type uint32 {
+            range "0..127";
+          }
+          config false;
+          description
+            "Receive j1 value.";
+        }
+        leaf rx-j1-trace {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "Receive J1 description.";
+        }
+        leaf rx-c2 {
+          type uint32 {
+            range "0..255";
+          }
+          config false;
+          description
+            "Receive C2 value.";
+        }
+        leaf rx-j0-mode {
+          type enumeration {
+            enum "1byte" {
+              value 1;
+              description
+                "Configure 1byte.";
+            }
+            enum "16byte" {
+              value 16;
+              description
+                "Configure 16byte.";
+            }
+            enum "64byte-or-null-mode" {
+              value 64;
+              description
+                "Configure 64byte or null mode.";
+            }
+            enum "peer" {
+              value 128;
+              description
+                "Peer.";
+            }
+          }
+          config false;
+          description
+            "Rx j0 mode on an Ethernet WAN port.";
+        }
+        leaf rx-j1-mode {
+          type enumeration {
+            enum "1byte" {
+              value 1;
+              description
+                "Configure 1byte.";
+            }
+            enum "16byte" {
+              value 16;
+              description
+                "Configure 16byte.";
+            }
+            enum "64byte-or-null-mode" {
+              value 64;
+              description
+                "Configure 64byte or null mode.";
+            }
+            enum "peer" {
+              value 128;
+              description
+                "Peer.";
+            }
+          }
+          config false;
+          description
+            "Rx j1 mode on an Ethernet WAN port.";
+        }
+      }
+    }
+    container laser {
+      description
+        "Configure Laser. Port insertion does not support configuration for some optical modules, such as electrical modules.";
+      leaf auto-shut-enable {
+        type enumeration {
+          enum "enable" {
+            value 1;
+            description
+              "Laser automatic shutdown enable.";
+          }
+          enum "disable" {
+            value 0;
+            description
+              "Laser automatic shutdown disable.";
+          }
+        }
+        default "disable";
+        description
+          "Laser auto shutdown.";
+      }
+      leaf open-time {
+        type uint32 {
+          range "100..300";
+        }
+        units "10 ms";
+        default "200";
+        description
+          "Laser open time.";
+      }
+      leaf close-time {
+        type uint32 {
+          range "200..30000";
+        }
+        units "10 ms";        
+        default "6000";
+        description
+          "Laser close time.";
+      }
+      leaf status {
+        type enumeration {
+          enum "on" {
+            value 0;
+            description
+              "Laser on.";
+          }
+          enum "off" {
+            value 1;
+            description
+              "Laser off.";
+          }
+          enum "offline" {
+            value 2;
+            description
+              "Laser offline.";
+          }
+        }
+        default "on";
+        config false;
+        description
+          "Laser status.";
+      }
+    }
+    container optical-module {
+      description
+        "Configure information about optical transceivers.";
+      leaf rx-high-power-warn-en {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable receiving optical power high warning.";
+      }
+      leaf rx-low-power-warn-en {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable receiving optical power low warning.";
+      }
+      leaf tx-high-power-warn-en {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable transmit optical power high warning.";
+      }
+      leaf tx-low-power-warn-en {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable transmit optical power low warning.";
+      }
+      leaf volt-high-warn-en {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable optical module voltage high warning.";
+      }
+      leaf volt-low-warn-en {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable optical module voltage low warning.";
+      }
+      leaf wave-modulation-mode {
+        ext:dynamic-default ;
+        when "../../ethernet/trans-mode='otn-mode'";
+        type enumeration {
+          enum "dqpsk" {
+            value 0;
+            description
+              "Dqpsk.";
+          }
+          enum "qpsk" {
+            value 1;
+            description
+              "Qpsk.";
+          }
+        }
+        description
+          "Lightwave modulation mode. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf wavelength-channel-number {
+        ext:dynamic-default ;
+        type tunable-wavelength-type;
+        must "not(../tunable-wavelength or ../tunable-frequency)";
+        description
+          "Tunable optical module wave length. If the hardware does not support it, returning to the current interface does not support it.";
+
+      }
+      leaf tunable-wavelength {
+        ext:dynamic-default ;
+        type uint32 {
+          range "0..4294967294";
+        }
+        must "not(../wavelength-channel-number or ../tunable-frequency)";
+        description
+          "Wavelength value of a tunable optical module, in THz. Any two of the following cannot be set at the same time: wavelength channel number, wavelength value, and frequency value.";
+      }
+      leaf tunable-frequency {
+        ext:dynamic-default ;
+        type uint32 {
+          range "0..4294967294";
+        }
+        must "not(../tunable-wavelength or ../wavelength-channel-number)";
+        description
+          "Frequency value of a tunable optical module, in nm. Any two of the following cannot be set at the same time: wavelength channel number, wavelength value, and frequency value.";
+      }
+      leaf signal-dqpsk-tx {
+        when "../wave-modulation-mode!='qpsk'";
+        type uint32 {
+          range "1..8";
+        }
+        default "1";
+        description
+          "Differential quadrature phase shift keying transmit value.";
+      }
+      leaf signal-dqpsk-rx {
+        when "../wave-modulation-mode!='qpsk'";
+        type uint32 {
+          range "1..8";
+        }
+        default "1";
+        description
+          "Differential quadrature phase shift keying receive value.";
+      }
+      leaf vendor-name {
+        type string {
+          length "0..20";
+        }
+        config false;
+        description
+          "Name of an optical transceiver Verder.";
+      }
+      leaf vendor-pn {
+        type string {
+          length "0..20";
+        }
+        config false;
+        description
+          "Optical Transceiver Verder PN.";
+      }
+      leaf trans-bw {
+        type string {
+          length "0..16";
+        }
+        config false;
+        description
+          "Optical transceiver bandwidth.";
+      }
+      leaf trans-mode {
+        type enumeration {
+          enum "unknown" {
+            value 0;
+            description
+              "Unknown.";
+          }
+          enum "single-mode" {
+            value 1;
+            description
+              "Single mode.";
+          }
+          enum "multi-mode" {
+            value 2;
+            description
+              "Multi mode.";
+          }
+          enum "copper-mode" {
+            value 3;
+            description
+              "Copper mode.";
+          }
+        }
+        config false;
+        description
+          "Optical transceiver transmission mode.";
+      }
+      leaf hot-plug {
+        type boolean;
+        default "true";
+        config false;
+        description
+          "Hot plug.";
+      }
+      leaf type {
+        type enumeration {
+          enum "unknown" {
+            value 0;
+            description
+              "Unknown.";
+          }
+          enum "sc" {
+            value 1;
+            description
+              "Sc.";
+          }
+          enum "gbic" {
+            value 2;
+            description
+              "Gbic.";
+          }
+          enum "sfp" {
+            value 3;
+            description
+              "Sfp.";
+          }
+          enum "esfp" {
+            value 4;
+            description
+              "Esfp.";
+          }
+          enum "copper" {
+            value 5;
+            description
+              "Copper.";
+          }
+          enum "xfp" {
+            value 6;
+            description
+              "Xfp.";
+          }
+          enum "xenpak" {
+            value 7;
+            description
+              "Xenpak.";
+          }
+          enum "transponder" {
+            value 8;
+            description
+              "Transponder.";
+          }
+          enum "cfp" {
+            value 9;
+            description
+              "Cfp.";
+          }
+          enum "smb" {
+            value 10;
+            description
+              "Smb.";
+          }
+          enum "sfp-plus" {
+            value 11;
+            description
+              "Sfp+.";
+          }
+          enum "cxp" {
+            value 12;
+            description
+              "Cxp.";
+          }
+          enum "qsfp" {
+            value 13;
+            description
+              "Qsfp.";
+          }
+          enum "qsfp-plus" {
+            value 14;
+            description
+              "Qsfp+.";
+          }
+          enum "cfp2" {
+            value 15;
+            description
+              "Cfp2.";
+          }
+          enum "dwdmsfp" {
+            value 16;
+            description
+              "Dwdmsfp.";
+          }
+          enum "msa100glh" {
+            value 17;
+            description
+              "Msa100glh.";
+          }
+          enum "gps" {
+            value 18;
+            description
+              "Gps.";
+          }
+          enum "csfp" {
+            value 19;
+            description
+              "Csfp.";
+          }
+          enum "cfp4" {
+            value 20;
+            description
+              "Cfp4.";
+          }
+          enum "qsfp28" {
+            value 21;
+            description
+              "Qsfp28.";
+          }
+          enum "sfp-and-sfp-plus" {
+            value 22;
+            description
+              "Sfp/sfp+.";
+          }
+          enum "cfp8" {
+            value 23;
+            description
+              "Cfp8.";
+          }
+          enum "sfp28" {
+            value 24;
+            description
+              "Sfp28.";
+          }
+          enum "qsfp-dd" {
+            value 25;
+            description
+              "Qsfp-dd.";
+          }
+          enum "gponsfp" {
+            value 26;
+            description
+              "Gponsfp.";
+          }
+          enum "cfp2dco" {
+            value 27;
+            description
+              "Cfp2dco.";
+          }
+        }
+        config false;
+        description
+          "Optical type.";
+      }
+      leaf fiber-type {
+        type enumeration {
+          enum "unknown" {
+            value 0;
+            description
+              "Unknown.";
+          }
+          enum "sc" {
+            value 1;
+            description
+              "Sc.";
+          }
+          enum "style-1-copper-connector" {
+            value 2;
+            description
+              "Style-1-copper-connector.";
+          }
+          enum "style-2-copper-connector" {
+            value 3;
+            description
+              "Style-2-copper-connector.";
+          }
+          enum "bnc-tnc" {
+            value 4;
+            description
+              "Bnc-tnc.";
+          }
+          enum "coaxial-headers" {
+            value 5;
+            description
+              "Coaxial-headers.";
+          }
+          enum "fiber-jack" {
+            value 6;
+            description
+              "Fiber-jack.";
+          }
+          enum "lc" {
+            value 7;
+            description
+              "Lc.";
+          }
+          enum "mt-rj" {
+            value 8;
+            description
+              "Mt-rj.";
+          }
+          enum "mu" {
+            value 9;
+            description
+              "Mu.";
+          }
+          enum "sg" {
+            value 10;
+            description
+              "Sg.";
+          }
+          enum "optical-pigtail" {
+            value 11;
+            description
+              "Optical-pigtail.";
+          }
+          enum "hssdcii" {
+            value 12;
+            description
+              "HssdcII.";
+          }
+          enum "copper-pigtail" {
+            value 13;
+            description
+              "Copper-pigtail.";
+          }
+          enum "MPO" {
+            value 14;
+            description
+              "MPO.";
+          }
+        }
+        config false;
+        description
+          "Optical fiber type.";
+      }
+      leaf wavelength {
+        type string {
+          length "0..128";
+        }
+        config false;
+        description
+          "Wavelength.";
+      }
+      leaf transmission-distance {
+        type string {
+          length "0..32";
+        }
+        config false;
+        description
+          "Transmission distance.";
+      }
+      leaf tx-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Transmit power.";
+      }
+      leaf rx-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Receiving power.";
+      }
+      leaf rx-high-warn-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Receiving high warning power.";
+      }
+      leaf rx-low-warn-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Receiving low warning power.";
+      }
+      leaf tx-high-warn-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Transmit high warning power.";
+      }
+      leaf tx-low-warn-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Transmit low warning power.";
+      }
+      leaf rx-high-alarm-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Receiving high alarm power.";
+      }
+      leaf rx-low-alarm-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Receiving low alarm power.";
+      }
+      leaf tx-high-alarm-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Transmit high alarm power.";
+      }
+      leaf tx-low-alarm-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Transmit low alarm power.";
+      }
+      leaf tunable {
+        type enumeration {
+          enum "not-supported" {
+            value 1;
+            description
+              "Not supported.";
+          }
+          enum "not-tunable" {
+            value 2;
+            description
+              "Not tunable.";
+          }
+          enum "tunable" {
+            value 3;
+            description
+              "Tunable.";
+          }
+          enum "supported" {
+            value 4;
+            description
+              "Supported.";
+          }
+        }
+        config false;
+        description
+          "Configure 0ptical module tunable type.";
+      }
+      leaf chromatic-dispersion {
+        type string {
+          length "0..32";
+        }
+        config false;
+        description
+          "Chromatic dispersion.";
+      }
+      leaf polarization-mode-dispersion {
+        type string {
+          length "0..32";
+        }
+        config false;
+        description
+          "Polarization mode dispersion.";
+      }
+      leaf direction-type {
+        type enumeration {
+          enum "not-supported" {
+            value 1;
+            description
+              "Not supported.";
+          }
+          enum "dual-fiber-bidirection" {
+            value 2;
+            description
+              "Dual fibre bidirectional.";
+          }
+          enum "single-fiber-bidirectional" {
+            value 3;
+            description
+              "Single fiber bidirectional.";
+          }
+          enum "dual-fiber-two-port-bidirectional" {
+            value 4;
+            description
+              "Dual-fiber two-port bidirectional.";
+          }
+        }
+        config false;
+        description
+          "Configure 0ptical module direction type.";
+      }
+      leaf total-rx-power {
+        type string {
+          length "0..64";
+        }
+        units "dBm";
+        config false;
+        description
+          "Total receive power (dBm).";
+      }
+      leaf total-rx-high-warn {
+        type string {
+          length "0..64";
+        }
+        units "dBm";
+        config false;
+        description
+          "Total receive high warning power (dBm).";
+      }
+      leaf total-rx-low-warn {
+        type string {
+          length "0..64";
+        }
+        units "dBm";
+        config false;
+        description
+          "Total receive low warning power (dBm).";
+      }
+      leaf total-rx-high-alarm {
+        type string {
+          length "0..64";
+        }
+        units "dBm";
+        config false;
+        description
+          "Total receive hign alarm power (dBm).";
+      }
+      leaf total-rx-low-alarm {
+        type string {
+          length "0..64";
+        }
+        units "dBm";
+        config false;
+        description
+          "Total receive low alarm power (dBm).";
+      }
+      leaf bias {
+        type int32 {
+          range "-99999999..99999999";
+        }
+        config false;
+        description
+          "Optical bias (mA).";
+      }
+      leaf voltage {
+        type int32 {
+          range "-99999999..99999999";
+        }
+        config false;
+        description
+          "Optical voltage (mV).";
+      }
+      leaf temperature {
+        type int32 {
+          range "-99999999..99999999";
+        }
+        config false;
+        description
+          "Optical temperature (C).";
+      }
+      leaf vendor-oui {
+        type string {
+          length "0..128";
+        }
+        config false;
+        description
+          "Corporate Identity Allocated by IEEE.";
+      }
+      leaf vendor-rev {
+        type string {
+          length "0..128";
+        }
+        config false;
+        description
+          "Optical module product model version.";
+      }
+      leaf gpon-sn {
+        type string {
+          length "0..128";
+        }
+        config false;
+        description
+          "SN provided by the manufacturer.";
+      }
+      container channels {
+        config false;
+        description
+          "List of Optical Channel Information.";
+        list channel {
+          key "number";
+          config false;
+          description
+            "Operational state of Optical Channel Information.";
+          leaf number {
+            type uint32 {
+              range "0..9";
+            }
+            config false;
+            description
+              "Channel number.";
+          }
+          leaf tx-power {
+            type string {
+              length "0..64";
+            }
+            config false;
+            description
+              "Transmit power (dbm).";
+          }
+          leaf rx-power {
+            type string {
+              length "0..64";
+            }
+            config false;
+            description
+              "Receive power (dbm).";
+          }
+        }
+      }
+      container wave-mapping {
+        config false;
+        description
+          "Operational state of Optical Wave Map Information.";
+        list wave-map {
+          key "index";
+          description
+            "Operational state of Optical Wave Map Information.";
+          leaf index {
+            type uint32 {
+              range "0..4294967295";
+            }
+            description
+              "Table index.";
+          }
+          leaf frequency {
+            type string {
+              length "0..64";
+            }
+            description
+              "Frequency Value (THz).";
+          }
+          leaf wavelength {
+            type string {
+              length "0..64";
+            }
+            description
+              "Wavelength Value (nm).";
+          }
+        }
+      }
+    }
+    container transmission-alarm {
+      description
+        "Configure TAD Alarm Information.";
+      leaf holdoff-timer {
+        type uint32 {
+          range "0|20..10000";
+        }
+        units "ms";
+        default "0";
+        description
+          "TAD Hold Down Time.";
+      }
+      leaf holdup-timer {
+        type uint32 {
+          range "0|200..3600000";
+        }
+        units "ms";
+        default "300";
+        description
+          "TAD Hold Up Time.";
+      }
+      leaf threshold-b3tca {
+        ext:dynamic-default ;
+        type uint32 {
+          range "3..9";
+        }
+        description
+          "TAD Alarm B3tca Threshold (x of 10e-x).";
+      }
+      leaf threshold-b1tca {
+        ext:dynamic-default ;
+        type uint32 {
+          range "3..9";
+        }
+        description
+          "TAD Alarm B1tca Threshold (x of 10e-x).";
+      }
+      leaf threshold-b2tca {
+        ext:dynamic-default ;
+        type uint32 {
+          range "3..9";
+        }
+        description
+          "TAD Alarm B2tca Threshold (x of 10e-x).";
+      }
+      leaf threshold-bip2tca {
+        ext:dynamic-default ;
+        type uint32 {
+          range "3..9";
+        }
+        description
+          "TAD Alarm Bip2tca Threshold (x of 10e-x).";
+      }
+      leaf threshold-sdbere {
+        ext:dynamic-default ;
+        type uint32 {
+          range "3..9";
+        }
+        must "../threshold-sdbere >= ../threshold-sfbere";
+        description
+          "TAD Alarm Sdbere Threshold (x of 10e-x).";
+      }
+      leaf threshold-sfbere {
+        ext:dynamic-default ;
+        type uint32 {
+          range "3..9";
+        }
+        must "../threshold-sdbere >= ../threshold-sfbere";
+        description
+          "TAD Alarm Sfbere Threshold (x of 10e-x).";
+      }
+      leaf damp-suppress {
+        type uint32 {
+          range "2..19999";
+        }
+        must "((../damp-suppress and ../damp-reuse and ../damp-ceiling and ../damp-decayok and ../damp-decayng) and ../damp-suppress >= ../damp-reuse and ../damp-suppress < ../damp-ceiling) or 
+          (not(../damp-suppress) and not(../damp-reuse) and not(../damp-ceiling) and not(../damp-decayok) and not(../damp-decayng))";
+        description
+          "TAD Alarm Damp Suppress Value.";
+      }
+      leaf damp-reuse {
+        type uint32 {
+          range "1..19998";
+        }
+        must "((../damp-suppress and ../damp-reuse and ../damp-ceiling and ../damp-decayok and ../damp-decayng) and ../damp-suppress >= ../damp-reuse) or 
+          (not(../damp-suppress) and not(../damp-reuse) and not(../damp-ceiling) and not(../damp-decayok) and not(../damp-decayng))";
+        description
+          "TAD Alarm Damping Reuse Value.";
+      }
+      leaf damp-ceiling {
+        type uint32 {
+          range "1001..20000";
+        }
+        must "((../damp-suppress and ../damp-reuse and ../damp-ceiling and ../damp-decayok and ../damp-decayng) and ../damp-suppress < ../damp-ceiling) or 
+          (not(../damp-suppress) and not(../damp-reuse) and not(../damp-ceiling) and not(../damp-decayok) and not(../damp-decayng))";
+        description
+          "TAD Alarm Damping Ceiling Value.";
+      }
+      leaf damp-decayok {
+        type uint32 {
+          range "500..10000";
+        }
+        units "ms";
+        must "(../damp-suppress and ../damp-reuse and ../damp-ceiling and ../damp-decayok and ../damp-decayng) or 
+          (not(../damp-suppress) and not(../damp-reuse) and not(../damp-ceiling) and not(../damp-decayok) and not(../damp-decayng))";
+        description
+          "TAD Alarm OK Half Decay Value.";
+      }
+      leaf damp-decayng {
+        type uint32 {
+          range "500..10000";
+        }
+        units "ms";
+        must "(../damp-suppress and ../damp-reuse and ../damp-ceiling and ../damp-decayok and ../damp-decayng) or 
+          (not(../damp-suppress) and not(../damp-reuse) and not(../damp-ceiling) and not(../damp-decayok) and not(../damp-decayng))";
+        description
+          "TAD Alarm NG Half Decay Value.";
+      }
+      leaf alm-last-reset-time {
+        type yang:date-and-time;
+        config false;
+        description
+          "TAD Last Reset Time.";
+      }
+      leaf filter-function {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "TAD Alarm Filter Function.";
+      }
+      leaf damping-function {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "TAD Alarm Damping Function.";
+      }
+      container trans-alarm-ifdowns {
+        description
+          "List of TAD Alarm Status Information.";
+        list trans-alarm-ifdown {
+          ext:generated-by "system";
+          ext:operation-exclude "create";
+          key "alarm-type";
+          description
+            "Configure TAD Alarm Status Information.";
+          leaf alarm-type {
+            type devm-trans-alarm-type;
+            description
+              "TAD Alarm Type.";
+          }
+          leaf ifdown {
+            ext:dynamic-default ;
+            type boolean;
+            description
+              "Enable/disable TAD Alarm If down. if the ifdown is true, the alarm will cause the port down.";
+          }
+          leaf alarm-status {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "TAD Alarm Status.";
+          }
+          leaf is-in-filtering {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "TAD Alarm Is In Filtering.";
+          }
+          leaf is-in-suppressing {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "TAD Alarm Is In Suppressing.";
+          }
+          leaf is-in-aging {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "TAD Alarm Is In Aging.";
+          }
+          leaf flapping-count {
+            type uint32;
+            config false;
+            description
+              "TAD Alarm Flapping Count.";
+          }
+          leaf suppressing-count {
+            type uint32;
+            config false;
+            description
+              "TAD Alarm Suppressing Count.";
+          }
+          leaf figure-of-merit {
+            type string {
+              length "0..16";
+            }
+            config false;
+            description
+              "TAD Alarm Figure Of Merit.";
+          }
+        }
+      }
+    }
+    container pos {
+      description
+        "Configure Pos port.";
+      leaf frame-format {
+        type enumeration {
+          enum "SDH" {
+            value 0;
+            description
+              "Synchronous Digital Hierarchy.";
+          }
+          enum "SONET" {
+            value 1;
+            description
+              "Synchronous Optical Network.";
+          }
+        }
+        default "SDH";
+        description
+          "Frame format of a pos port. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf crc {
+        type enumeration {
+          enum "16bit" {
+            value 0;
+            description
+              "Configure 16Bit.";
+          }
+          enum "32bit" {
+            value 1;
+            description
+              "Configure 32Bit.";
+          }
+        }
+        default "32bit";
+        description
+          "CRC mode of a pos port, which can be 32 or 64 bytes. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf hold-up {
+        type enumeration {
+          enum "disabled" {
+            value 0;
+            description
+              "Disabled.";
+          }
+          enum "enabled" {
+            value 1;
+            description
+              "Enabled.";
+          }
+        }
+        default "disabled";
+        description
+          "Whether the hold-up function is configured on a pos port.";
+      }
+      leaf speed {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "undo" {
+            value 0;
+            description
+              "Undo config.";
+          }
+          enum "155M" {
+            value 1;
+            description
+              "Configure 155M.";
+          }
+          enum "622M" {
+            value 2;
+            description
+              "Configure 622M.";
+          }
+        }
+        description
+          "Set 155M or 622M portrate. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf j0-mode {
+        type enumeration {
+          enum "1byte" {
+            value 1;
+            description
+              "Configure 1 byte mode.";
+          }
+          enum "16byte" {
+            value 16;
+            description
+              "Configure 16 bytes mode.";
+          }
+          enum "64byte-or-null-mode" {
+            value 64;
+            description
+              "Configure 64bytes or null mode.";
+          }
+          enum "peer" {
+            value 128;
+            description
+              "Peer.";
+          }
+        }
+        default "16byte";
+        description
+          "J0 mode on a pos port.";
+      }
+      leaf j0-value {
+        when "../j0-mode='1byte'";
+        type uint32 {
+          range "0..127";
+        }
+        default "1";
+        description
+          "Vaule of j0-mode on a pos port.";
+      }
+      leaf j0-trace {
+        when "../j0-mode='16byte' or ../j0-mode='64byte-or-null-mode'";
+        type string {
+          length "0..62";
+        }
+        must "(string-length(../j0-trace)>0 and string-length(../j0-trace)<16 and ../j0-mode='16byte') or ../j0-mode='64byte-or-null-mode'";
+        default "NetEngine";
+        description
+          "Description of the j0 mode on a pos port.";
+      }
+      leaf j1-mode {
+        type enumeration {
+          enum "1byte" {
+            value 1;
+            description
+              "Configure 1 byte mode.";
+          }
+          enum "16byte" {
+            value 16;
+            description
+              "Configure 16 bytes mode.";
+          }
+          enum "64byte-or-null-mode" {
+            value 64;
+            description
+              "Configure 64byte or null mode.";
+          }
+          enum "peer" {
+            value 128;
+            description
+              "Peer.";
+          }
+        }
+        default "16byte";
+        description
+          "J1 mode on a pos port.";
+      }
+      leaf j1-value {
+        when "../j1-mode='1byte'";
+        type uint32 {
+          range "0..127";
+        }
+        default "1";
+        description
+          "Value of j1-mode on a pos port.";
+      }
+      leaf j1-trace {
+        when "../j1-mode='16byte' or ../j1-mode='64byte-or-null-mode'";
+        type string {
+          length "0..62";
+        }
+        must "(string-length(../j1-trace)>0 and string-length(../j1-trace)<16 and ../j1-mode='16byte') or ../j1-mode='64byte-or-null-mode'";
+        default "NetEngine";
+        description
+          "Description of the j1 mode on a pos port.";
+      }
+      leaf c2 {
+        type uint32 {
+          range "0..255";
+        }
+        default "22";
+        description
+          "C2 mode on a pos port.";
+      }
+      leaf clock {
+        type enumeration {
+          enum "master" {
+            value 0;
+            description
+              "Master clock.";
+          }
+          enum "slave" {
+            value 1;
+            description
+              "Slave clock.";
+          }
+        }
+        default "master";
+        description
+          "Active/standby clock on a pos port. Default values are related to hardware types. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf scramble {
+        type enumeration {
+          enum "enabled" {
+            value 3;
+            description
+              "Enabled.";
+          }
+          enum "disabled" {
+            value 0;
+            description
+              "Disabled.";
+          }
+        }
+        default "enabled";
+        description
+          "Whether the scrambling function is configured on a pos port. Default values are related to hardware types. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf rx-j0-value {
+        type uint32 {
+          range "0..127";
+        }
+        config false;
+        description
+          "Value of rxj0mode on a pos port.";
+      }
+      leaf rx-j0-trace {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Receive J0 description.";
+      }
+      leaf rx-j1-value {
+        type uint32 {
+          range "0..127";
+        }
+        config false;
+        description
+          "Receive j1 value.";
+      }
+      leaf rx-j1-trace {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Receive J1 description.";
+      }
+      leaf rx-c2 {
+        type uint32 {
+          range "0..255";
+        }
+        config false;
+        description
+          "Receive C2 value.";
+      }
+      leaf rx-j0-mode {
+        type enumeration {
+          enum "1byte" {
+            value 1;
+            description
+              "Configure 1byte.";
+          }
+          enum "16byte" {
+            value 16;
+            description
+              "Configure 16byte.";
+          }
+          enum "64byte-or-null-mode" {
+            value 64;
+            description
+              "Configure 64byte-or-null-mode.";
+          }
+          enum "peer" {
+            value 128;
+            description
+              "Peer.";
+          }
+        }
+        config false;
+        description
+          "Receive J0 mode on a pos port.";
+      }
+      leaf rx-j1-mode {
+        type enumeration {
+          enum "1byte" {
+            value 1;
+            description
+              "Configure 1byte.";
+          }
+          enum "16byte" {
+            value 16;
+            description
+              "Configure 16byte.";
+          }
+          enum "64byte-or-null-mode" {
+            value 64;
+            description
+              "Configure 64byte-or-null-mode.";
+          }
+          enum "peer" {
+            value 128;
+            description
+              "Peer.";
+          }
+        }
+        config false;
+        description
+          "Receive J1 mode on a pos port.";
+      }
+    }
+    container atm {
+      description
+        "Configure ATM port.";
+      leaf hold-up {
+        type enumeration {
+          enum "disabled" {
+            value 0;
+            description
+              "Disabled.";
+          }
+          enum "enabled" {
+            value 1;
+            description
+              "Enabled.";
+          }
+        }
+        default "disabled";
+        description
+          "Whether the hold-up function is configured on an ATM port.";
+      }
+      leaf j0-mode {
+        type enumeration {
+          enum "16byte" {
+            value 16;
+            description
+              "Configure 16 bytes mode.";
+          }
+          enum "peer" {
+            value 128;
+            description
+              "Peer.";
+          }
+        }
+        default "16byte";
+        description
+          "J0 mode on an ATM port.";
+      }
+      leaf j0-trace {
+        when "../j0-mode='16byte'";
+        type string {
+          length "1..15";
+        }
+        default "NetEngine";
+        description
+          "Description of the j0 mode on an ATM port.";
+      }
+      leaf j1-mode {
+        type enumeration {
+          enum "16byte" {
+            value 16;
+            description
+              "Configure 16 bytes mode.";
+          }
+          enum "64byte-or-null-mode" {
+            value 64;
+            description
+              "Configure 64byte or null mode.";
+          }
+          enum "peer" {
+            value 128;
+            description
+              "Peer.";
+          }
+        }
+        default "16byte";
+        description
+          "J1 mode on an ATM port.";
+      }
+      leaf j1-trace {
+        when "../j1-mode='16byte' or ../j1-mode='64byte-or-null-mode'";
+        type string {
+          length "1..62";
+        }
+        must "(string-length(../j1-trace)<16 and ../j1-mode='16byte') or ../j1-mode='64byte-or-null-mode'";
+        default "NetEngine";
+        description
+          "Description of the j1 mode on an ATM port.";
+      }
+      leaf c2 {
+        type uint32 {
+          range "0..255";
+        }
+        default "19";
+        description
+          "C2 mode on an ATM port.";
+      }
+      leaf clock {
+        type enumeration {
+          enum "master" {
+            value 0;
+            description
+              "Master clock.";
+          }
+          enum "slave" {
+            value 1;
+            description
+              "Slave clock.";
+          }
+        }
+        default "master";
+        description
+          "Active/standby clock on an ATM port. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf scramble {
+        type enumeration {
+          enum "enabled" {
+            value 3;
+            description
+              "Enabled.";
+          }
+          enum "disabled" {
+            value 0;
+            description
+              "Disabled.";
+          }
+        }
+        default "enabled";
+        description
+          "Whether the scrambling function is configured on an ATM port. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf rx-j0-trace {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Receive J0 description.";
+      }
+      leaf rx-j1-trace {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Receive J1 description.";
+      }
+      leaf rx-c2 {
+        type uint32 {
+          range "0..255";
+        }
+        config false;
+        description
+          "Receive C2 value.";
+      }
+      leaf rx-j0-mode {
+        type enumeration {
+          enum "16byte" {
+            value 16;
+            description
+              "Configure 16byte.";
+          }
+          enum "peer" {
+            value 128;
+            description
+              "Peer.";
+          }
+        }
+        config false;
+        description
+          "Receive J0 mode on an ATM port.";
+      }
+      leaf rx-j1-mode {
+        type enumeration {
+          enum "16byte" {
+            value 16;
+            description
+              "Configure 16byte.";
+          }
+          enum "64byte-or-null-mode" {
+            value 64;
+            description
+              "Configure 64byte-or-null-mode.";
+          }
+          enum "peer" {
+            value 128;
+            description
+              "Peer.";
+          }
+        }
+        config false;
+        description
+          "Receive J1 mode on an ATM port.";
+      }
+    }
+    container cpos {
+      description
+        "Configure Cpos port.";
+      leaf mapping-mode {
+        type enumeration {
+          enum "h-mode" {
+            value 0;
+            description
+              "H-mode.";
+          }
+          enum "a-mode" {
+            value 1;
+            description
+              "A-mode.";
+          }
+          enum "l-mode" {
+            value 2;
+            description
+              "L-mode.";
+          }
+        }
+        must "((not(../pic:e1t1s/pic:e1t1/pic:channel-sets)) and ((../mapping-mode='h-mode') or (../mapping-mode='a-mode') or (../mapping-mode='l-mode'))) or (../mapping-mode='h-mode')";
+        default "h-mode";
+        description
+          "Mapping mode.";
+      }
+      leaf frame-format {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "sdh" {
+            value 0;
+            description
+              "Synchronous Digital Hierarchy.";
+          }
+          enum "sonet" {
+            value 1;
+            description
+              "Synchronous Optical Network.";
+          }
+        }
+        description
+          "Cpos port frame format.";
+      }
+      leaf multiplex {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "au-3" {
+            value 1;
+            description
+              "Au-3.";
+          }
+          enum "au-4" {
+            value 0;
+            description
+              "Au-4.";
+          }
+        }
+        must "((../frame-format='sdh') and ((../multiplex='au-3')or(../multiplex='au-4'))) or (../multiplex='au-3')";
+        description
+          "Multiplex mode. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf lb-hold-time {
+        when "not(../../devm:loopback-mode='noLoopback')";
+        type uint32 {
+          range "0..43200";
+        }
+        default "0";
+        description
+          "Cpos Port Loopback auto-clear period.";
+      }
+      leaf hold-up {
+        type enumeration {
+          enum "enabled" {
+            value 1;
+            description
+              "Enabled.";
+          }
+          enum "disabled" {
+            value 0;
+            description
+              "Disabled.";
+          }
+        }
+        default "disabled";
+        description
+          "Whether the hold-up function is configured on a CPOS port.";
+      }
+      leaf hp-mapping-mode {
+        type enumeration {
+          enum "VC4" {
+            value 1;
+            description
+              "VC4.";
+          }
+          enum "VC12" {
+            value 0;
+            description
+              "VC12.";
+          }
+        }
+        must "((not(../e1t1s)) and ((../hp-mapping-mode='VC4') or (../hp-mapping-mode='VC12'))) or (../hp-mapping-mode='VC12')";
+        default "VC12";
+        description
+          "Hp mapping mode. Ports added to APS group are not allowed to be configured.";
+      }
+      leaf ais-flag {
+        ext:dynamic-default;
+        type enumeration {
+          enum "enable" {
+            value 1;
+            description
+              "Enable.";
+          }
+          enum "disable" {
+            value 0;
+            description
+              "Disable.";
+          }
+        }
+        must "../hp-mapping-mode='VC12'";
+        description
+          "Ais flag. If the hardware does not support it, returning to the current interface does not support it. Ports added to LMSP are not allowed to be configured.";
+      }
+      leaf tuais-flag {
+        ext:dynamic-default;
+        type enumeration {
+          enum "enable" {
+            value 1;
+            description
+              "Enable.";
+          }
+          enum "disable" {
+            value 0;
+            description
+              "Disable.";
+          }
+        }
+        must "../hp-mapping-mode='VC12'";
+        description
+          "Tuais flag. If the hardware does not support it, returning to the current interface does not support it. Ports added to LMSP are not allowed to be configured. CES/PPP or CES/ATM service mix is not supported.";
+      }
+      leaf j0-mode {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "SDH" {
+            value 0;
+            description
+              "Synchronous Digital Hierarchy.";
+          }
+          enum "SONET" {
+            value 1;
+            description
+              "Synchronous Optical Network.";
+          }
+        }
+        description
+          "J0 mode on a port.";
+      }
+      leaf j0-value {
+        when "../j0-mode='SONET'";
+        type uint32 {
+          range "0..127";
+        }
+        default "0";
+        description
+          "Vaule of j0-mode on a port.";
+      }
+      leaf j0-trace {
+        when "../j0-mode='SDH'";
+        type string {
+          length "1..15";
+        }
+        default "NetEngine";
+        description
+          "Description of the j0 mode on a port.";
+      }
+      leaf j1-mode {
+        type enumeration {
+          enum "1byte" {
+            value 1;
+            description
+              "Configure 1 byte.";
+          }
+          enum "16byte" {
+            value 16;
+            description
+              "Configure 16 bytes.";
+          }
+          enum "64byte-or-null-mode" {
+            value 64;
+            description
+              "Configure 64byte-or-null-mode.";
+          }
+        }
+        default "16byte";
+        description
+          "J1 mode on a port.";
+      }
+      leaf j1-value {
+        when "../j1-mode='1byte'";
+        type uint32 {
+          range "0..127";
+        }
+        default "1";
+        description
+          "Value of j1-mode on a port.";
+      }
+      leaf j1-trace {
+        when "../j1-mode='16byte' or ../j1-mode='64byte-or-null-mode'";
+        type string {
+          length "1..62";
+        }
+        must "(string-length(../j1-trace)<16 and ../j1-mode='16byte') or ../j1-mode='64byte-or-null-mode'";
+        default "NetEngine";
+        description
+          "Description of the j1 mode on a port.";
+      }
+      leaf c2 {
+        type uint32 {
+          range "0..255";
+        }
+        default "2";
+        description
+          "C2 mode on a port.";
+      }
+      leaf clock {
+        type enumeration {
+          enum "master" {
+            value 0;
+            description
+              "Master.";
+          }
+          enum "slave" {
+            value 1;
+            description
+              "Slave.";
+          }
+        }
+        default "master";
+        description
+          "Active/standby clock on a port. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf rx-j0-value {
+        type uint32 {
+          range "0..127";
+        }
+        config false;
+        description
+          "Value of rxj0mode on a port.";
+      }
+      leaf rx-j0-trace {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Rxj0Trace on a port.";
+      }
+      leaf rx-j1-value {
+        type uint32 {
+          range "0..127";
+        }
+        config false;
+        description
+          "Value of rxj1mode on a port.";
+      }
+      leaf rx-j1-trace {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Rxj1Trace on a port.";
+      }
+      leaf rx-c2 {
+        type uint32 {
+          range "0..255";
+        }
+        config false;
+        description
+          "RxC2 on a port.";
+      }
+      container e1t1s {
+        when "../hp-mapping-mode='VC12'";
+        description
+          "List of E1T1 port attributes.";
+        list e1t1 {
+          ext:generated-by "system";
+          ext:operation-exclude "create";
+          key "number";
+          max-elements 63;
+          description
+            "Configure E1T1 port attribute.";
+          leaf number {
+            type uint32 {
+              range "1..63";
+            }
+            description
+              "E1T1 number.";
+          }
+          leaf work-mode {
+            type enumeration {
+              enum "framed" {
+                value 0;
+                description
+                  "Framed.";
+              }
+              enum "unframed" {
+                value 1;
+                description
+                  "Unframed.";
+              }
+            }
+            must "((not(../channel-sets)) and ((../work-mode='framed')or(../work-mode='unframed'))) or (../work-mode='framed')";
+            default "framed";
+            description
+              "E1T1 Work mode. Configuration is not allowed to join the APS group.";
+          }
+          leaf clock {
+            type enumeration {
+              enum "master" {
+                value 0;
+                description
+                  "Master.";
+              }
+              enum "slave" {
+                value 1;
+                description
+                  "Slave.";
+              }
+              enum "domain" {
+                value 2;
+                description
+                  "Domain.";
+              }
+            }
+            default "master";
+            description
+              "Clock mode.";
+          }
+          leaf clock-recovery-domain {
+            when "../clock='domain'";
+            type uint32 {
+              range "1..8";
+            }
+            description
+              "Clock recovery-domain value.";
+          }
+          leaf clock-master-domain {
+            when "not(../clock='master')";
+            type uint32 {
+              range "1..32";
+            }
+            description
+              "Clock master-domain value.";
+          }
+          leaf frame-format {
+            when "../work-mode='framed'";
+            type enumeration {
+              enum "no-crc4" {
+                value 0;
+                description
+                  "No CRC4.";
+              }
+              enum "crc4" {
+                value 1;
+                description
+                  "CRC4.";
+              }
+            }
+            default "no-crc4";
+            description
+              "Frame format.";
+          }
+          leaf loopback {
+            type enumeration {
+              enum "none" {
+                value 0;
+                description
+                  "None.";
+              }
+              enum "local" {
+                value 1;
+                description
+                  "Local.";
+              }
+              enum "remote" {
+                value 2;
+                description
+                  "Remote.";
+              }
+            }
+            default "none";
+            description
+              "Loopback mode.";
+          }
+          leaf j2-trace {
+            type string {
+              length "1..15";
+            }
+            default "NetEngine";
+            description
+              "J2 trace.";
+          }
+          leaf v5-trace {
+            ext:dynamic-default ;
+            type uint32 {
+              range "0..7";
+            }
+            description
+              "V5trace.";
+          }
+          leaf auto-clr-period {
+            when "not(../loopback='none')";
+            type uint32 {
+              range "0..43200";
+            }
+            default "0";
+            description
+              "Loopback auto-clear period.";
+          }
+          leaf rx-j2-trace {
+            type string {
+              length "1..15";
+            }
+            config false;
+            description
+              "Rx j2Trace.";
+          }
+          container channel-sets {
+            when "../work-mode='framed'";
+            description
+              "List of Channel sets.";
+            list channel-set {
+              key "number timeslot-list";
+              unique number;
+              unique timeslot-list;
+              max-elements 30;
+              description
+                "Configure Channel-sets.";
+              leaf number {
+                type uint32 {
+                  range "0..30";
+                }
+                description
+                  "Set number.";
+              }
+              leaf timeslot-list {
+                type string {
+                  length "1..61";
+                }
+                description
+                  "Timeslot list. Please enter a number from 1 to 31 with ',' or '-' in the middle.";
+              }
+            }
+          }
+        }
+      }
+    }
+    container port-alarm {
+      description
+        "Configure port alarm information.";
+      leaf crc-enabled-down {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable CRC error enable down.";
+      }
+      leaf input-enabled-down {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable input error enable down.";
+      }
+      leaf input-error-high-threshold {
+        type uint32 {
+          range "1..4294967295";
+        }
+        must "../input-error-high-threshold >= ../input-error-low-threshold";
+        default "1000";
+        description
+          "The high threshold of input error alarm threshold. The number of error packets counted in the time in interval exceeds this threshold will produce input-error alarm.";
+      }
+      leaf input-error-low-threshold {
+        type uint32 {
+          range "1..4294967295";
+        }
+        must "../input-error-high-threshold >= ../input-error-low-threshold";
+        default "100";
+        description
+          "The low threshold of input error alarm threshold. The number of error packets counted in the time in interval less than this threshold will recover input-error alarm.";
+      }
+      leaf input-error-interval {
+        type uint32 {
+          range "1..65535";
+        }
+        units "s";
+        default "10";
+        description
+          "Time interval for statistical input-error alarm.";
+      }
+      leaf output-enabled-down {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable output error enable down.";
+      }
+      leaf output-error-high-threshold {
+        type uint32 {
+          range "1..4294967295";
+        }
+        must "../output-error-high-threshold >= ../output-error-low-threshold";
+        default "1000";
+        description
+          "The high threshold of output error alarm threshold. The number of error packets counted in the time in interval exceeds this threshold will produce output-error alarm.";
+      }
+      leaf output-error-low-threshold {
+        type uint32 {
+          range "1..4294967295";
+        }
+        must "../output-error-high-threshold >= ../output-error-low-threshold";
+        default "100";
+        description
+          "The low threshold of output error alarm threshold. The number of error packets counted in the time in interval less than this threshold will recover output-error alarm.";
+      }
+      leaf output-error-interval {
+        type uint32 {
+          range "1..65535";
+        }
+        units "s";
+        default "10";
+        description
+          "Time interval for statistical input-error alarm.";
+      }
+      leaf phy-updown-en {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable phyUpDownEn.";
+      }
+      leaf crc-per-cur {
+        type string {
+          length "0..8";
+        }
+        config false;
+        description
+          "Current Value of packet error ratio.";
+      }
+      container eth-port-alarm {
+        description
+          "Configure ethernet port alarm information.";
+        leaf symbol-enabled-down {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable symbol error enable down.";
+        }
+        leaf symbol-error-high-threshold {
+          type uint32 {
+            range "1..4294967295";
+          }
+          must "../symbol-error-high-threshold >= ../symbol-error-low-threshold";
+          default "1000";
+          description
+            "The high threshold of symbol error alarm threshold. The number of error packets counted in the time in interval exceeds this threshold will produce symbol-error alarm.";
+        }
+        leaf symbol-error-low-threshold {
+          type uint32 {
+            range "1..4294967295";
+          }
+          must "../symbol-error-high-threshold >= ../symbol-error-low-threshold";
+          default "100";
+          description
+            "The low threshold of symbol error alarm threshold. The number of error packets counted in the time in interval less than this threshold will recover symbol-error alarm.";
+        }
+        leaf symbol-error-interval {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "10";
+          description
+            "Time interval for statistical symbol-error alarm.";
+        }
+        leaf bip8-sd-enabled-down {
+          ext:dynamic-default ;
+          type boolean;
+          description
+            "Enable/disable BIP8-SD error enable down.";
+        }
+        leaf bip8-sd-error-high-threshold {
+          ext:dynamic-default ;
+          type uint32 {
+            range "6..9";
+          }
+          description
+            "The high threshold of BIP8-SD error alarm threshold (x of 10Ex). The number of error packets counted in the time in interval exceeds this threshold will produce bip8-sd-error alarm.";
+        }
+        leaf bad-bytes-threshold {
+          type uint32 {
+            range "1..65535";
+          }
+          default "1000";
+          description
+            "Bad-bytes alarm Threshold.";
+        }
+        leaf bad-bytes-interval {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "10";
+          description
+            "Time interval for statistical bad-bytes alarm.";
+        }
+        leaf tx-pause-error-high-threshold {
+          type uint32 {
+            range "1..4294967295";
+          }
+          must "../tx-pause-error-high-threshold >= ../tx-pause-error-low-threshold";
+          default "500";
+          description
+            "The high threshold of tx-pause error alarm threshold. The number of error packets counted in the time in interval exceeds this threshold will produce tx-pause-error alarm.";
+        }
+        leaf tx-pause-error-low-threshold {
+          type uint32 {
+            range "1..4294967295";
+          }
+          must "../tx-pause-error-high-threshold >= ../tx-pause-error-low-threshold";
+          default "100";
+          description
+            "The low threshold of tx-pause error alarm threshold. The number of error packets counted in the time in interval less than this threshold will recover tx-pause-error alarm.";
+        }
+        leaf tx-pause-error-interval {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "10";
+          description
+            "Time interval for statistical tx-pause-error alarm.";
+        }
+        leaf rx-pause-error-high-threshold {
+          type uint32 {
+            range "1..4294967295";
+          }
+          must "../rx-pause-error-high-threshold >= ../rx-pause-error-low-threshold";
+          default "500";
+          description
+            "The high threshold of rx-pause error alarm threshold. The number of error packets counted in the time in interval exceeds this threshold will produce rx-pause-error alarm.";
+        }
+        leaf rx-pause-error-low-threshold {
+          type uint32 {
+            range "1..4294967295";
+          }
+          must "../rx-pause-error-high-threshold >= ../rx-pause-error-low-threshold";
+          default "100";
+          description
+            "The low threshold of rx-pause error alarm threshold. The number of error packets counted in the time in interval less than this threshold will recover rx-pause-error alarm.";
+        }
+        leaf rx-pause-error-interval {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "10";
+          description
+            "Time interval for statistical rx-pause-error alarm.";
+        }
+      }
+      container sdh-port-alarm {
+        description
+          "Configure SDH port alarm information.";
+        leaf sdh-enabled-down {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable SDH error enable down.";
+        }
+        leaf sdh-error-high-threshold {
+          type uint32 {
+            range "1..4294967295";
+          }
+          must "../sdh-error-high-threshold >= ../sdh-error-low-threshold";
+          default "1000";
+          description
+            "The high threshold of SDH error alarm threshold. The number of error packets counted in the time in interval exceeds this threshold will produce sdh-error alarm.";
+        }
+        leaf sdh-error-low-threshold {
+          type uint32 {
+            range "1..4294967295";
+          }
+          must "../sdh-error-high-threshold >= ../sdh-error-low-threshold";
+          default "100";
+          description
+            "The low threshold of SDH error alarm threshold. The number of error packets counted in the time in interval less than this threshold will recover sdh-error alarm.";
+        }
+        leaf sdh-error-interval {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "10";
+          description
+            "Time interval for statistical sdh-error alarm.";
+        }
+        leaf sdh-b1-err-threshold {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "1000";
+          description
+            "B1 Error Threshold.";
+        }
+        leaf sdh-b2-err-threshold {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "1000";
+          description
+            "B2 Error Threshold.";
+        }
+        leaf sdh-b1-err-interval {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "10";
+          description
+            "B1 error interval.";
+        }
+        leaf sdh-b2-err-interval {
+          type uint32 {
+            range "1..65535";
+          }
+          units "s";
+          default "10";
+          description
+            "B2 error interval.";
+        }
+      }
+      container pdh-port-alarm {
+        must "trigger-thres > resume-thres";
+        description
+          "Configure PDH port alarm information.";
+        leaf trigger-thres {
+          type uint32 {
+            range "1..900";
+          }
+          default "65";
+          description
+            "The value of pdh-port-alarm trigger-threshold.";
+        }
+        leaf resume-thres {
+          type uint32 {
+            range "1..899";
+          }
+          default "30";
+          description
+            "The value of pdh-port-alarm resume-threshold.";
+        }
+      }
+      container crc-mfe-alarm {
+        when "../crc-mfs-alarm";
+        must "(crc-mfe-alm-thr-coefficient > crc-mfe-rsum-thr-coefficient and crc-mfe-alm-thr-power = crc-mfe-rsum-thr-power) or (crc-mfe-alm-thr-power < crc-mfe-rsum-thr-power)";
+        presence "Enable mfe alarm threshold.";
+        description
+          "Enable/disable CRC MFE ALARM.";
+        leaf crc-mfe-alm-thr-coefficient {
+          ext:dynamic-default ;
+          type uint32 {
+            range "1..9";
+          }
+          mandatory true;
+          description
+            "Mac fcs exc coefficient (x of xE-y). The range is 1 to 9.";
+        }
+        leaf crc-mfe-alm-thr-power {
+          ext:dynamic-default ;
+          type uint32 {
+            range "2..5";
+          }
+          mandatory true;
+          description
+            "Mac fcs exc exponent (y of xE-y). The range is 2 to 5.";
+        }
+        leaf crc-mfe-rsum-thr-coefficient {
+          ext:dynamic-default ;
+          type uint32 {
+            range "1..9";
+          }
+          mandatory true;
+          description
+            "Mac fcs exc coefficient (x of xE-y). The range is 1 to 9.";
+        }
+        leaf crc-mfe-rsum-thr-power {
+          ext:dynamic-default ;
+          type uint32 {
+            range "2..6";
+          }
+          mandatory true;
+          description
+            "For resume-threshold: mac fcs exc exponent (y of xE-y). The range is 2 to 6.";
+        }
+        leaf crc-mfe-alm-lsp-en {
+          ext:dynamic-default ;
+          type boolean;
+          mandatory true;
+          description
+            "Enable/disable configure MFE (mac fcs exc) of crc-error trigger LSP.";
+        }
+      }
+      container crc-sample {
+        when "../crc-per-alarm";
+        must "crc-per-child-win-alarm-num <= crc-per-child-win-max-num and crc-per-child-win-resume-num <= crc-per-child-win-max-num";
+        description
+          "Configure crc error windows.";
+        leaf crc-per-samp-win-factor {
+          ext:dynamic-default ;
+          type uint32 {
+            range "10..100";
+          }
+          description
+            "Sample window factor, default is 50.";
+        }
+        leaf crc-per-child-win-max-num {
+          ext:dynamic-default ;
+          type uint32 {
+            range "10..100";
+          }
+          description
+            "Maximum number of child windows, default is 50.";
+        }
+        leaf crc-per-child-win-alarm-num {
+          ext:dynamic-default ;
+          type uint32 {
+            range "1..100";
+          }
+          description
+            "Minimal number of child windows for alarm generating, default is 5.";
+        }
+        leaf crc-per-child-win-resume-num {
+          ext:dynamic-default ;
+          type uint32 {
+            range "1..100";
+          }
+          description
+            "Minimal number of child windows for alarm resuming, default is 30.";
+        }
+        leaf crc-alg-realtime-factor {
+          ext:dynamic-default ;
+          type uint32 {
+            range "0..10";
+          }
+          description
+            "Realtime factor template for crc-error algorithm.";
+        }
+      }
+      choice alarm-type {
+        default "crc-error-threshold";
+        description
+          "CRC alarm config.";
+        case crc-error-threshold {
+          description
+            "Configure set crc error threshold.";
+          container crc-error-threshold {
+            description
+              "Configure set crc error threshold.";
+            leaf crc-error-high {
+              type uint32 {
+                range "1..4294967295";
+              }
+              must "../crc-error-high >= ../crc-error-low";
+              default "1000";
+              description
+                "The high threshold of CRC error alarm threshold. The number of error packets counted in the time in interval exceeds this threshold will produce crc-error alarm.";
+            }
+            leaf crc-error-low {
+              type uint32 {
+                range "1..4294967295";
+              }
+              must "../crc-error-high >= ../crc-error-low";
+              default "100";
+              description
+                "The low threshold of CRC error alarm threshold. The number of error packets counted in the time in interval less than this threshold will recover crc-error alarm.";
+            }
+            leaf crc-error {
+              type uint32 {
+                range "1..65535";
+              }
+              default "1000";
+              description
+                "CRC error threshold.";
+            }
+            leaf crc-error-interval {
+              type uint32 {
+                range "1..65535";
+              }
+              units "s";
+              default "10";
+              description
+                "Time interval for statistical crc-error alarm.";
+            }
+            leaf crc-shutdown-en {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable crc shutdown. The port will shutdown when the number of error packets counted in the time in interval exceeds threshold.";
+            }
+            leaf crc-error-percent-alm-thr {
+              ext:dynamic-default ;
+              type uint32 {
+                range "1..100";
+              }
+              units "%";
+              must "not(../crc-error-high) and not(../crc-error-low) and not(../crc-error-interval)";
+              description
+                "Crc-error alarm percent threshold, Higher than this threshold will produce crc-error alarm, lower than this threshold will recover crc-error alarm.";
+            }
+          }
+        }
+        case link-quality {
+          description
+            "Enable/disable set link quality threshold.";
+          container link-quality {
+            must "(link-quality-alm-thr-coefficient > link-quality-rsum-thr-coefficient and link-quality-alm-thr-power = link-quality-rsum-thr-power) or (link-quality-alm-thr-power < link-quality-rsum-thr-power)";
+            presence "Enable link quality threshold.";
+            description
+              "Enable/disable set link quality threshold.";
+            leaf link-quality-alm-thr-coefficient {
+              ext:dynamic-default ;
+              type uint32 {
+                range "1..9";
+              }
+              mandatory true;
+              description
+                "Link-quality alarm Trigger coefficient.";
+            }
+            leaf link-quality-alm-thr-power {
+              ext:dynamic-default ;
+              type uint32 {
+                range "1..7";
+              }
+              mandatory true;
+              description
+                "Link-quality alarm Trigger power.";
+            }
+            leaf link-quality-rsum-thr-coefficient {
+              ext:dynamic-default ;
+              type uint32 {
+                range "1..9";
+              }
+              mandatory true;
+              description
+                "Link-quality alarm Recovery coefficient.";
+            }
+            leaf link-quality-rsum-thr-power {
+              ext:dynamic-default ;
+              type uint32 {
+                range "1..7";
+              }
+              mandatory true;
+              description
+                "Link-quality alarm Recovery power.";
+            }
+          }
+        }
+        case crc-per-alarm {
+          description
+            "Enable/disable set crc packet-error-ratio alarm threshold.";
+          container crc-per-alarm {
+            must "((crc-per-alm-thr-coefficient > crc-per-rsum-thr-coefficient and crc-per-alm-thr-power = crc-per-rsum-thr-power) or (crc-per-alm-thr-power < crc-per-rsum-thr-power))";
+            must "((crc-per-alm-sec-en='false' and crc-per-alm-lsp-en='true') or (crc-per-alm-sec-en='true' and crc-per-alm-lsp-en='false') or (crc-per-alm-sec-en='false' and crc-per-alm-lsp-en='false'))";
+            presence "Enable crc alarm threshold.";
+            description
+              "Enable/disable set crc packet-error-ratio alarm threshold.";
+            leaf crc-per-alm-thr-coefficient {
+              type uint32 {
+                range "1..9";
+              }
+              mandatory true;
+              description
+                "Packet error ratio coefficient (x of xE-y). The range is 1 to 9.";
+            }
+            leaf crc-per-alm-thr-power {
+              type uint32 {
+                range "1..7";
+              }
+              mandatory true;
+              description
+                "Packet error ratio exponent (y of xE-y). The range is 1 to 7.";
+            }
+            leaf crc-per-rsum-thr-coefficient {
+              type uint32 {
+                range "1..9";
+              }
+              mandatory true;
+              description
+                "Packet error ratio coefficient (x of xE-y). The range is 1 to 9.";
+            }
+            leaf crc-per-rsum-thr-power {
+              type uint32 {
+                range "1..8";
+              }
+              mandatory true;
+              description
+                "For resume-threshold: Packet error ratio exponent (y of xE-y). The range is 1 to 8.";
+            }
+            leaf crc-per-alm-lsp-en {
+              type boolean;
+              mandatory true;
+              description
+                "Enable/disable configure PER (packet error ratio) of crc-error trigger LSP.";
+            }
+            leaf crc-per-alm-sec-en {
+              type boolean;
+              mandatory true;
+              description
+                "Enable/disable configure PER (packet error ratio) of crc-error trigger section.";
+            }
+          }
+          container crc-per-warn {
+            must "((crc-per-war-thr-coefficient > crc-per-war-rsum-thr-coefficient and crc-per-war-thr-power = crc-per-war-rsum-thr-power) or crc-per-war-thr-power < crc-per-war-rsum-thr-power)";
+            must "((crc-per-war-thr-coefficient > ../crc-per-alarm/crc-per-alm-thr-coefficient and crc-per-war-thr-power = ../crc-per-alarm/crc-per-alm-thr-power) or crc-per-war-thr-power > ../crc-per-alarm/crc-per-alm-thr-power)";
+            must "((crc-per-war-rsum-thr-coefficient < ../crc-per-alarm/crc-per-rsum-thr-coefficient and crc-per-war-rsum-thr-power = ../crc-per-alarm/crc-per-rsum-thr-power) or crc-per-war-rsum-thr-power > ../crc-per-alarm/crc-per-rsum-thr-power)";
+            presence "Enable crc warn threshold.";
+            description
+              "Enable/disable set crc packet-error-ratio warn threshold.";
+            leaf crc-per-war-thr-coefficient {
+              ext:dynamic-default ;
+              type uint32 {
+                range "1..9";
+              }
+              mandatory true;
+              description
+                "Packet error ratio coefficient (x of xE-y). The range is 1 to 9.";
+            }
+            leaf crc-per-war-thr-power {
+              ext:dynamic-default ;
+              type uint32 {
+                range "1..7";
+              }
+              mandatory true;
+              description
+                "Packet error ratio exponent (y of xE-y). The range is 1 to 7.";
+            }
+            leaf crc-per-war-rsum-thr-coefficient {
+              ext:dynamic-default ;
+              type uint32 {
+                range "1..9";
+              }
+              mandatory true;
+              description
+                "Packet error ratio coefficient (x of xE-y). The range is 1 to 9.";
+            }
+            leaf crc-per-war-rsum-thr-power {
+              ext:dynamic-default ;
+              type uint32 {
+                range "1..8";
+              }
+              mandatory true;
+              description
+                "For resume-threshold: Packet error ratio exponent (y of xE-y). The range is 1 to 8.";
+            }
+          }
+        }
+        case crc-mfs-alarm {
+          description
+            "Enable/disable CRC MFS ALARM.";
+          container crc-mfs-alarm {
+            must "(crc-mfs-alm-thr-coefficient > crc-mfs-rsum-thr-coefficient and crc-mfs-alm-thr-power = crc-mfs-rsum-thr-power) or (crc-mfs-alm-thr-power < crc-mfs-rsum-thr-power)";
+            presence "Enable mfs alarm threshold.";
+            description
+              "Enable/disable CRC MFS ALARM.";
+            leaf crc-mfs-alm-thr-coefficient {
+              type uint32 {
+                range "1..9";
+              }
+              mandatory true;
+              description
+                "Mac fcs sd coefficient (x of xE-y). The range is 1 to 9.";
+            }
+            leaf crc-mfs-alm-thr-power {
+              type uint32 {
+                range "5..9";
+              }
+              mandatory true;
+              description
+                "Mac fcs sd exponent (y of xE-y). The range is 5 to 9.";
+            }
+            leaf crc-mfs-rsum-thr-coefficient {
+              type uint32 {
+                range "1..9";
+              }
+              mandatory true;
+              description
+                "Mac fcs sd coefficient (x of xE-y). The range is 1 to 9.";
+            }
+            leaf crc-mfs-rsum-thr-power {
+              type uint32 {
+                range "5..10";
+              }
+              mandatory true;
+              description
+                "For resume-threshold: mac fcs sd exponent (y of xE-y). The range is 5 to 10.";
+            }
+            leaf crc-mfs-alm-lsp-en {
+              type boolean;
+	      mandatory true;
+              description
+                "Enable/disable configure MFS (mac fcs sd) of crc-error trigger LSP.";
+            }
+          }
+        }
+      }
+    }
+    container adm-port {
+      description
+        "Configure ADM Port.";
+      leaf rx-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Receive power.";
+      }
+      leaf tx-power {
+        type string {
+          length "0..64";
+        }
+        config false;
+        description
+          "Transmit power.";
+      }
+      leaf descriton {
+        type string {
+          length "1..242";
+        }
+        description
+          "Adm port description.";
+      }
+      leaf wavelength {
+        type string {
+          length "0..8";
+        }
+        config false;
+        description
+          "Length of wave.";
+      }
+      leaf conect-relation {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Connection relation.";
+      }
+      leaf direction {
+        type string {
+          length "0..8";
+        }
+        config false;
+        description
+          "Direction.";
+      }
+      leaf wave-band {
+        type string {
+          length "0..8";
+        }
+        config false;
+        description
+          "Wave band.";
+      }
+      leaf wavelength-num {
+        type string {
+          length "0..8";
+        }
+        config false;
+        description
+          "Wavelength number.";
+      }
+      leaf tx-wavelength {
+        type string {
+          length "0..8";
+        }
+        config false;
+        description
+          "Length of wave-TX.";
+      }
+      leaf rx-wavelength {
+        type string {
+          length "0..8";
+        }
+        config false;
+        description
+          "Length of wave-RX.";
+      }
+      leaf tx-wavelength-num {
+        type string {
+          length "0..8";
+        }
+        config false;
+        description
+          "Wave length number tx.";
+      }
+      leaf rx-wavelength-num {
+        type string {
+          length "0..8";
+        }
+        config false;
+        description
+          "Wave length number rx.";
+      }
+    }
+    container phy-serial {
+      must "(port-mode = 'v-35' and physical-mode = 'sync') or ((port-mode = 'rs-422' or port-mode = 'rs-485' or port-mode = 'rs-232') and physical-mode = 'async') or ((port-mode = 'fxo' or port-mode = 'fxs' or port-mode = 'em' or port-mode = 'c3794' or port-mode = 'codir') and not(physical-mode)) or (port-mode = 'x-21' or port-mode = 'v-24')";
+      description
+        "Configure physical serial port.";
+      leaf baudrate {
+        ext:dynamic-default ;
+        when "../port-mode = 'v-35' or ../port-mode = 'x-21' or ../port-mode = 'rs-485' or ../port-mode = 'rs-422' or ../port-mode = 'v-24' or ../port-mode = 'rs-232'";
+        type enumeration {
+          enum "600bit" {
+            value 0;
+            description
+              "Baudrate is 600 bit.";
+          }
+          enum "1200bit" {
+            value 1;
+            description
+              "Baudrate is 1200 bit.";
+          }
+          enum "2400bit" {
+            value 2;
+            description
+              "Baudrate is 2400 bit.";
+          }
+          enum "4800bit" {
+            value 3;
+            description
+              "Baudrate is 4800 bit.";
+          }
+          enum "9600bit" {
+            value 4;
+            description
+              "Baudrate is 9600 bit.";
+          }
+          enum "19200bit" {
+            value 5;
+            description
+              "Baudrate is 19200 bit.";
+          }
+          enum "38400bit" {
+            value 6;
+            description
+              "Baudrate is 38400 bit.";
+          }
+          enum "48000bit" {
+            value 7;
+            description
+              "Baudrate is 48000 bit.";
+          }
+          enum "64kbit" {
+            value 8;
+            description
+              "Baudrate is 64 Kbit.";
+          }
+          enum "128kbit" {
+            value 9;
+            description
+              "Baudrate is 128 Kbit.";
+          }
+          enum "192kbit" {
+            value 10;
+            description
+              "Baudrate is 192 Kbit.";
+          }
+          enum "256kbit" {
+            value 11;
+            description
+              "Baudrate is 256 Kbit.";
+          }
+          enum "320kbit" {
+            value 12;
+            description
+              "Baudrate is 320 Kbit.";
+          }
+          enum "384kbit" {
+            value 13;
+            description
+              "Baudrate is 384 Kbit.";
+          }
+          enum "448kbit" {
+            value 14;
+            description
+              "Baudrate is 448 Kbit.";
+          }
+          enum "512kbit" {
+            value 15;
+            description
+              "Baudrate is 512 Kbit.";
+          }
+          enum "576kbit" {
+            value 16;
+            description
+              "Baudrate is 576 Kbit.";
+          }
+          enum "640kbit" {
+            value 17;
+            description
+              "Baudrate is 640 Kbit.";
+          }
+          enum "704kbit" {
+            value 18;
+            description
+              "Baudrate is 704 Kbit.";
+          }
+          enum "768kbit" {
+            value 19;
+            description
+              "Baudrate is 768 Kbit.";
+          }
+          enum "832kbit" {
+            value 20;
+            description
+              "Baudrate is 832 Kbit.";
+          }
+          enum "896kbit" {
+            value 21;
+            description
+              "Baudrate is 896 Kbit.";
+          }
+          enum "960kbit" {
+            value 22;
+            description
+              "Baudrate is 960 Kbit.";
+          }
+          enum "1024kbit" {
+            value 23;
+            description
+              "Baudrate is 1024 Kbit.";
+          }
+          enum "1088kbit" {
+            value 24;
+            description
+              "Baudrate is 1088 Kbit.";
+          }
+          enum "1152kbit" {
+            value 25;
+            description
+              "Baudrate is 1152 Kbit.";
+          }
+          enum "1216kbit" {
+            value 26;
+            description
+              "Baudrate is 1216 Kbit.";
+          }
+          enum "1280kbit" {
+            value 27;
+            description
+              "Baudrate is 1280 Kbit.";
+          }
+          enum "1344kbit" {
+            value 28;
+            description
+              "Baudrate is 1344 Kbit.";
+          }
+          enum "1408kbit" {
+            value 29;
+            description
+              "Baudrate is 1408 Kbit.";
+          }
+          enum "1472kbit" {
+            value 30;
+            description
+              "Baudrate is 1472 Kbit.";
+          }
+          enum "1536kbit" {
+            value 31;
+            description
+              "Baudrate is 1536 Kbit.";
+          }
+          enum "1600kbit" {
+            value 32;
+            description
+              "Baudrate is 1600 Kbit.";
+          }
+          enum "1664kbit" {
+            value 33;
+            description
+              "Baudrate is 1664 Kbit.";
+          }
+          enum "1728kbit" {
+            value 34;
+            description
+              "Baudrate is 1728 Kbit.";
+          }
+          enum "1792kbit" {
+            value 35;
+            description
+              "Baudrate is 1792 Kbit.";
+          }
+          enum "1856kbit" {
+            value 36;
+            description
+              "Baudrate is 1856 Kbit.";
+          }
+          enum "1920kbit" {
+            value 37;
+            description
+              "Baudrate is 1920 Kbit.";
+          }
+          enum "1984kbit" {
+            value 38;
+            description
+              "Baudrate is 1984 Kbit.";
+          }
+        }
+        description
+          "Baud rate. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf clock-source-mode {
+        ext:dynamic-default ;
+        when "(../port-mode='v-35' or ../port-mode='v-24') and ../physical-mode='sync'";
+        type enumeration {
+          enum "internal" {
+            value 0;
+            description
+              "Internal mode.";
+          }
+          enum "external" {
+            value 1;
+            description
+              "External mode.";
+          }
+          enum "slave" {
+            value 2;
+            description
+              "Slave mode.";
+          }
+        }
+        description
+          "Clock source mode. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf data-bits {
+        when "../physical-mode='async'";
+        type uint32 {
+          range "5..8";
+        }
+        units "bit";
+        default "8";
+        description
+          "Data bits. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf mux-protocol {
+        when "../physical-mode='async' and (../baudrate='48000bit' or ../baudrate='38400bit' or ../baudrate='19200bit' or ../baudrate='9600bit' or ../baudrate='4800bit' or ../baudrate='2400bit' or ../baudrate='1200bit' or ../baudrate='600bit')";
+        type enumeration {
+          enum "s-bit-loopback" {
+            value 0;
+            description
+              "S bit is loopback.";
+          }
+          enum "s-bit-0" {
+            value 1;
+            description
+              "S bit is 0.";
+          }
+          enum "s-bit-1" {
+            value 2;
+            description
+              "S bit is 1.";
+          }
+        }
+        default "s-bit-loopback";
+        description
+          "Rate multiplexing protocol. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf parity {
+        when "../physical-mode='async'";
+        type enumeration {
+          enum "even" {
+            value 1;
+            description
+              "Even.";
+          }
+          enum "none" {
+            value 0;
+            description
+              "None.";
+          }
+          enum "odd" {
+            value 2;
+            description
+              "Odd.";
+          }
+        }
+        default "none";
+        description
+          "Parity check. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf phase-clock-send {
+        when "../physical-mode='sync'";
+        type enumeration {
+          enum "in-phase" {
+            value 0;
+            description
+              "In-phase.";
+          }
+          enum "inverse-phase" {
+            value 1;
+            description
+              "Inverse-phase.";
+          }
+        }
+        default "inverse-phase";
+        description
+          "Transmit signal sampling. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf phase-clock-rec {
+        when "../physical-mode='sync'";
+        type enumeration {
+          enum "in-phase" {
+            value 0;
+            description
+              "In-phase.";
+          }
+          enum "inverse-phase" {
+            value 1;
+            description
+              "Inverse-phase.";
+          }
+        }
+        default "in-phase";
+        description
+          "Receive signal sampling. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf physical-mode {
+        ext:dynamic-default ;
+        when "../port-mode = 'v-35' or ../port-mode = 'x-21' or ../port-mode = 'rs-485' or ../port-mode = 'rs-422' or ../port-mode = 'v-24' or ../port-mode = 'rs-232'";
+        type enumeration {
+          enum "async" {
+            value 0;
+            description
+              "Async.";
+          }
+          enum "sync" {
+            value 1;
+            description
+              "Sync.";
+          }
+        }
+        description
+          "Clock synchronization mode. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf port-mode {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "v-35" {
+            value 5;
+            description
+              "Mode is v-35.";
+          }
+          enum "x-21" {
+            value 4;
+            description
+              "Mode is x-21.";
+          }
+          enum "rs-485" {
+            value 1;
+            description
+              "Mode is rs-485.";
+          }
+          enum "rs-422" {
+            value 2;
+            description
+              "Mode is rs-422.";
+          }
+          enum "fxo" {
+            value 8;
+            description
+              "Mode is fxo.";
+          }
+          enum "fxs" {
+            value 7;
+            description
+              "Mode is fxs.";
+          }
+          enum "v-24" {
+            value 3;
+            description
+              "Mode is v-24.";
+          }
+          enum "rs-232" {
+            value 0;
+            description
+              "Mode is rs-232.";
+          }
+          enum "em" {
+            value 6;
+            description
+              "Mode is em.";
+          }
+          enum "c3794" {
+            value 10;
+            description
+              "Mode is c3794.";
+          }
+          enum "codir" {
+            value 11;
+            description
+              "Mode is codir.";
+          }
+        }
+        description
+          "Port mode.";
+      }
+      leaf stop-bits {
+        when "../physical-mode='async'";
+        type uint32 {
+          range "1..2";
+        }
+        units "bit";
+        default "1";
+        description
+          "Stop Bit. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf work-mode {
+        when "../port-mode = 'v-35' or ../port-mode = 'x-21' or ../port-mode = 'v-24' or ../port-mode = 'rs-232'";
+        type enumeration {
+          enum "dce" {
+            value 0;
+            description
+              "Mode is dce.";
+          }
+          enum "dte" {
+            value 1;
+            description
+              "Mode is dte.";
+          }
+        }
+        default "dce";
+        description
+          "Serial work mode. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf phase-mode {
+        when "../physical-mode='async' and (../baudrate='4800bit' or ../baudrate='19200bit')";
+        type enumeration {
+          enum "sequence" {
+            value 0;
+            description
+              "Mode is sequence.";
+          }
+          enum "interval" {
+            value 1;
+            description
+              "Mode is interval.";
+          }
+        }
+        default "sequence";
+        description
+          "X.50 phase. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf detect-dsr-signal {
+        when "(../port-mode='v-24' or ../port-mode='v-35' or ../port-mode='rs-232') and (../work-mode='dte')";
+        type detect-signal-type;
+        default "detect";
+        description
+          "DSR detect enable. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf detect-dtr-signal {
+        when "(../port-mode='v-24' or ../port-mode='v-35' or ../port-mode='rs-232') and (../work-mode='dce')";
+        type detect-signal-type;
+        default "detect";
+        description
+          "DTR detect enable. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf detect-dcd-signal {
+        when "(../port-mode='v-24' or ../port-mode='v-35') and (../work-mode='dte') and ../physical-mode='sync'";
+        type detect-signal-type;
+        default "detect";
+        description
+          "DCD detect enable. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf detect-cts-signal {
+        when "../port-mode='x-21' and ../work-mode='dte'";
+        type detect-signal-type;
+        default "detect";
+        description
+          "CTS detect enable. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf detect-rts-signal {
+        when "../port-mode='x-21' and ../work-mode='dce'";
+        type detect-signal-type;
+        default "detect";
+        description
+          "RTS detect enable. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      container ser-attrs {
+        config false;
+        description
+          "List of physical serial port properties.";
+        list ser-attr {
+          key "number";
+          description
+            "Operational state of physical serial port properties.";
+          leaf number {
+            type uint32;
+            description
+              "Number.";
+          }
+          leaf baudrate {
+            type uint32;
+            description
+              "Serial baud rate (bps).";
+          }
+          leaf databits {
+            type string {
+              length "0..8";
+            }
+            description
+              "Serial data bits (bit).";
+          }
+          leaf parity {
+            type string {
+              length "0..8";
+            }
+            description
+              "Serial parity check.";
+          }
+          leaf stopbits {
+            type string {
+              length "0..8";
+            }
+            description
+              "Serial stop Bit (bit).";
+          }
+        }
+      }
+    }
+    container phy-voice {
+      description
+        "Configure voice port.";
+      leaf pcm-law-vaule {
+        type enumeration {
+          enum "a-law" {
+            value 0;
+            description
+              "A-law.";
+          }
+          enum "u-law" {
+            value 1;
+            description
+              "U-law.";
+          }
+        }
+        default "a-law";
+        description
+          "PCM companding model.";
+      }
+      container fxo {
+        when "../../phy-serial/port-mode='fxo'";
+        description
+          "Configure FXO config.";
+        leaf gain-send {
+          type string {
+            length "1..8";
+          }
+          units "dB";
+          default "0";
+          description
+            "FXO Transmit gain. The value must be in range [-6, 5], step: 0.5, example: -6, -5.5, -5,..., 5.";
+        }
+        leaf gain-rec {
+          type string {
+            length "1..8";
+          }
+          units "dB";
+          default "0";
+          description
+            "FXO Receive gain. The value must be in range [-6, 5], step: 0.5, example: -6, -5.5, -5,..., 5.";
+        }
+        leaf dc-imped {
+          type enumeration {
+            enum "50ohm" {
+              value 0;
+              description
+                "Configure 50ohm.";
+            }
+            enum "800ohm" {
+              value 1;
+              description
+                "Configure 800ohm.";
+            }
+          }
+          default "50ohm";
+          description
+            "FXO DC impedance.";
+        }
+        leaf ac-imped {
+          type fxso-impedance-type;
+          default "600ohm";
+          description
+            "FXO AC impedance.";
+        }
+        leaf ring-min-dur {
+          type enumeration {
+            enum "100ms" {
+              value 0;
+              description
+                "Duration is 100ms.";
+            }
+            enum "150ms" {
+              value 1;
+              description
+                "Duration is 150ms.";
+            }
+            enum "200ms" {
+              value 2;
+              description
+                "Duration is 200ms.";
+            }
+            enum "256ms" {
+              value 3;
+              description
+                "Duration is 256ms.";
+            }
+            enum "384ms" {
+              value 4;
+              description
+                "Duration is 384ms.";
+            }
+            enum "512ms" {
+              value 5;
+              description
+                "Duration is 512ms.";
+            }
+            enum "640ms" {
+              value 6;
+              description
+                "Duration is 640ms.";
+            }
+            enum "1024ms" {
+              value 7;
+              description
+                "Duration is 1024ms.";
+            }
+          }
+          default "200ms";
+          description
+            "FXO ring minimum duration.";
+        }
+        leaf ring-max-inter {
+          type enumeration {
+            enum "not-use" {
+              value 0;
+              description
+                "Not use.";
+            }
+            enum "128ms" {
+              value 1;
+              description
+                "Duration is 128ms.";
+            }
+            enum "256ms" {
+              value 2;
+              description
+                "Duration is 256ms.";
+            }
+            enum "284ms" {
+              value 3;
+              description
+                "Duration is 284ms.";
+            }
+            enum "512ms" {
+              value 4;
+              description
+                "Duration is 512ms.";
+            }
+            enum "640ms" {
+              value 5;
+              description
+                "Duration is 640ms.";
+            }
+            enum "768ms" {
+              value 6;
+              description
+                "Duration is 768ms.";
+            }
+            enum "896ms" {
+              value 7;
+              description
+                "Duration is 896ms.";
+            }
+            enum "1024ms" {
+              value 8;
+              description
+                "Duration is 1024ms.";
+            }
+            enum "1152ms" {
+              value 9;
+              description
+                "Duration is 1152ms.";
+            }
+            enum "1280ms" {
+              value 10;
+              description
+                "Duration is 1280ms.";
+            }
+            enum "1408ms" {
+              value 11;
+              description
+                "Duration is 1408ms.";
+            }
+            enum "1536ms" {
+              value 12;
+              description
+                "Duration is 1536ms.";
+            }
+            enum "1664ms" {
+              value 13;
+              description
+                "Duration is 1664ms.";
+            }
+            enum "1792ms" {
+              value 14;
+              description
+                "Duration is 1792ms.";
+            }
+            enum "1920ms" {
+              value 15;
+              description
+                "Duration is 1920ms.";
+            }
+          }
+          default "not-use";
+          description
+            "FXO ring maximum interval.";
+        }
+        leaf ring-frequence {
+          type enumeration {
+            enum "16HZ" {
+              value 0;
+              description
+                "Frequence is 16Hz.";
+            }
+            enum "25HZ" {
+              value 1;
+              description
+                "Frequence is 25Hz.";
+            }
+            enum "50HZ" {
+              value 2;
+              description
+                "Frequence is 50Hz.";
+            }
+          }
+          default "25HZ";
+          description
+            "FXO ring frequence.";
+        }
+        leaf ring-ac-ampli {
+          type enumeration {
+            enum "74V" {
+              value 0;
+              description
+                "Amplitude is 74V.";
+            }
+            enum "65V" {
+              value 1;
+              description
+                "Amplitude is 65V.";
+            }
+            enum "50V" {
+              value 2;
+              description
+                "Amplitude is 50V.";
+            }
+          }
+          default "50V";
+          description
+            "FXO ring AC amplitude.";
+        }
+      }
+      container fxs {
+        when "../../phy-serial/port-mode='fxs'";
+        description
+          "Configure FXS config.";
+        leaf fxs-current {
+          type enumeration {
+            enum "16ma" {
+              value 0;
+              description
+                "Current is 16mA.";
+            }
+            enum "20ma" {
+              value 1;
+              description
+                "Current is 20mA.";
+            }
+          }
+          default "16ma";
+          description
+            "FXS current.";
+        }
+        leaf fxs-gain-send {
+          type string {
+            length "1..8";
+          }
+          units "dB";
+          default "0";
+          description
+            "FXS Transmit gain. The value must be in range [-6, 5], step: 0.5, example: -6, -5.5, -5,..., 5.";
+        }
+        leaf fxs-gain-rec {
+          type string {
+            length "1..8";
+          }
+          units "dB";
+          default "-7";
+          description
+            "FXS Receive gain. The value must be in range [-12, 0], step: 0.5, example: -12, -11.5, -11,..., 0.";
+        }
+        leaf fxs-hotline-en {
+          type enumeration {
+            enum "enable" {
+              value 1;
+              description
+                "Enable.";
+            }
+            enum "disable" {
+              value 0;
+              description
+                "Disable.";
+            }
+          }
+          default "enable";
+          description
+            "FXS hotline enable.";
+        }
+        leaf fxs-dc-imped {
+          type fxso-impedance-type;
+          default "600ohm";
+          description
+            "FXS impedance.";
+        }
+      }
+      container em {
+        when "../../phy-serial/port-mode='em'";
+        description
+          "Configure E&M config.";
+        leaf em-gain-send {
+          type string {
+            length "1..8";
+          }
+          units "dB";
+          default "0";
+          description
+            "E&M Transmit gain. The value must be in range [-7, 13.5], step: 0.5, example: -7, -6.5, -6,..., 13.5.";
+        }
+        leaf em-gain-rec {
+          type string {
+            length "1..8";
+          }
+          units "dB";
+          default "0";
+          description
+            "E&M Receive gain. The value must be in range [-20, 1.5], step: 0.5, example: -20, -19.5, -19,..., 1.5.";
+        }
+        leaf emuserline-mode {
+          ext:dynamic-default ;
+          type enumeration {
+            enum "4wire" {
+              value 1;
+              description
+                "Mode is 4 wire.";
+            }
+            enum "2wire" {
+              value 0;
+              description
+                "Mode is 2 wire.";
+            }
+          }
+          description
+            "E&M user line mode.";
+        }
+        leaf emuserline-stat {
+          type enumeration {
+            enum "4wire" {
+              value 1;
+              description
+                "Mode is 4 wire.";
+            }
+            enum "2wire" {
+              value 0;
+              description
+                "Mode is 2 wire.";
+            }
+          }
+          config false;
+          description
+            "E&M user line mode.";
+        }
+      }
+    }
+    container e1t1 {
+      description
+        "Configure E1T1 port.";
+      leaf work-mode {
+        type enumeration {
+          enum "framed" {
+            value 0;
+            description
+              "Framed.";
+          }
+          enum "unframed" {
+            value 1;
+            description
+              "Unframed.";
+          }
+        }
+        must "((not(../channel-sets))and((../work-mode='framed')or(../work-mode='unframed')))or(../work-mode='framed')";
+        default "framed";
+        description
+          "E1T1 work mode.";
+      }
+      leaf frame-format {
+        when "../work-mode='framed'";
+        type enumeration {
+          enum "no-crc4" {
+            value 0;
+            description
+              "No crc4.";
+          }
+          enum "crc4" {
+            value 1;
+            description
+              "CRC4.";
+          }
+        }
+        default "no-crc4";
+        description
+          "E1T1 port frame format.";
+      }
+      leaf clock {
+        type enumeration {
+          enum "master" {
+            value 0;
+            description
+              "Master.";
+          }
+          enum "slave" {
+            value 1;
+            description
+              "Slave.";
+          }
+        }
+        default "master";
+        description
+          "Clock mode. In remote loopback mode, the clock can not be master. In local loopback mode, the clock can not be slave.";
+      }
+      leaf code {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "hdb3" {
+            value 0;
+            description
+              "Hdb3.";
+          }
+          enum "ami" {
+            value 1;
+            description
+              "Ami.";
+          }
+        }
+        description
+          "Code. If the hardware does not support it, returning to the current interface does not support it.";
+      }
+      leaf loopback-holdtime {
+        when "not(../../devm:loopback-mode='noLoopback')";
+        type uint32 {
+          range "0..43200";
+        }
+        default "0";
+        description
+          "E1T1 Port Loopback auto-clear period.";
+      }
+      leaf bipv-static {
+        type uint64;
+        default "0";
+        config false;
+        description
+          "Bipolar Violation statics.";
+      }
+      leaf fas-static {
+        type uint64;
+        default "0";
+        config false;
+        description
+          "FAS Error Count.";
+      }
+      leaf crc-static {
+        type uint64;
+        default "0";
+        config false;
+        description
+          "CRC4 Error Count.";
+      }
+      container channel-sets {
+        when "../work-mode='framed'";
+        description
+          "List of Channel sets.";
+        list channel-set {
+          key "number timeslot-list";
+          unique number;
+          unique timeslot-list;
+          max-elements 30;
+          description
+            "Configure Channel-sets.";
+          leaf number {
+            type uint32 {
+              range "0..30";
+            }
+            description
+              "Set number.";
+          }
+          leaf timeslot-list {
+            type string {
+              length "1..61";
+            }
+            description
+              "Timeslot list. Please enter a number from 1 to 31 with ',' or '-' in the middle.";
+          }
+        }
+      }
+    }
+    container e3t3 {
+      description
+        "Configure E3T3 port.";
+      leaf work-mode {
+        type enumeration {
+          enum "framed" {
+            value 0;
+            description
+              "Framed.";
+          }
+          enum "unframed" {
+            value 1;
+            description
+              "Unframed.";
+          }
+        }
+        default "framed";
+        description
+          "E3T3 work mode.";
+      }
+      leaf if-framed {
+        when "../work-mode='framed'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable Create Framed Serial Port.";
+      }
+      leaf clock {
+        type enumeration {
+          enum "master" {
+            value 0;
+            description
+              "Master.";
+          }
+          enum "slave" {
+            value 1;
+            description
+              "Slave.";
+          }
+        }
+        default "master";
+        description
+          "Clock mode. In remote loopback mode, the clock can not be master. In local loopback mode, the clock can not be slave.";
+      }
+      leaf frame-format {
+        type enumeration {
+          enum "G.751" {
+            value 0;
+            description
+              "G.751.";
+          }
+          enum "none" {
+            value 1;
+            description
+              "None.";
+          }
+        }
+        config false;
+        description
+          "E3T3 port frame format.";
+      }
+      leaf e3t3-flag {
+        type enumeration {
+          enum "E3" {
+            value 0;
+            description
+              "E3.";
+          }
+          enum "T3" {
+            value 1;
+            description
+              "T3.";
+          }
+        }
+        config false;
+        description
+          "E3T3 service mode.";
+      }
+    }
+  }
+  augment /ifm:ifm/ifm:interfaces/ifm:interface/ifm:mib-statistics {
+    description
+      "Error packet statistics on an Ethernet interface.";
+    container eth-port-err-sts {
+      config false;
+      description
+        "Operational state of error packet statistics on an Ethernet interface.";
+      leaf rx-pause {
+        type uint64;
+        default "0";
+        description
+          "Receive PAUSE packets.";
+      }
+      leaf rx-jumbo-octets {
+        type uint64;
+        default "0";
+        description
+          "The packet length is longer than 1518 bytes.";
+      }
+      leaf rx-crc {
+        type uint64;
+        default "0";
+        description
+          "CRC error packet.";
+      }
+      leaf rx-symbol {
+        type uint64;
+        default "0";
+        description
+          "Invalid symbol packet.";
+      }
+      leaf rx-over-run {
+        type uint64;
+        default "0";
+        description
+          "Packet overflowed from the FIFO in the inbound direction.";
+      }
+      leaf rx-inrange-len {
+        type uint64;
+        default "0";
+        description
+          "Packet with unmatched length.";
+      }
+      leaf rx-long {
+        type uint64;
+        default "0";
+        description
+          "Oversized packet.";
+      }
+      leaf rx-jabber {
+        type uint64;
+        default "0";
+        description
+          "CRC error packet whose length is longer than 1518 bytes.";
+      }
+      leaf rx-alignment {
+        type uint64;
+        default "0";
+        description
+          "Packet whose length is not an integer multiply of 8 bits.";
+      }
+      leaf rx-fragment {
+        type uint64;
+        default "0";
+        description
+          "CRC packet whose length is shorter than 64 bytes.";
+      }
+      leaf rx-undersize {
+        type uint64;
+        default "0";
+        description
+          "Packet whose length is shorter than 64 bytes.";
+      }
+      leaf tx-pause {
+        type uint64;
+        default "0";
+        description
+          "Send PAUSE packets.";
+      }
+      leaf tx-jumbo-octets {
+        type uint64;
+        default "0";
+        description
+          "The length of a packet sent is longer than 1518 bytes.";
+      }
+      leaf tx-over-run {
+        type uint64;
+        default "0";
+        description
+          "Overflow statistics in the transmit direction.";
+      }
+      leaf tx-under-run {
+        type uint64;
+        default "0";
+        description
+          "Underflow statistics in the transmit direction.";
+      }
+      leaf tx-system {
+        type uint64;
+        default "0";
+        description
+          "There is no EOP or SOP packet.";
+      }
+      leaf tx-lost {
+        type uint64;
+        default "0";
+        description
+          "Discarded packet in the transmit direction.";
+      }
+    }
+  }
+  augment /lcs:license {
+    description
+      "Port basic license.";
+    container lcs-ports {
+      description
+        "List of all Port basic License Information.";
+      list port-basic {
+        key "position";
+        description
+          "Configure Port basic License Information.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+        }
+        leaf active-status {
+          type lcs-active-status-type;
+          config false;
+          description
+            "Activated State.";
+        }
+      }
+    }
+    container upgrade-ports {
+      description
+        "List of all UPGRADE License Information.";
+      list port-upgrade {
+        key "position";
+        description
+          "Configure UPGRADE License Information.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+        }
+        leaf active-status {
+          type lcs-active-status-type;
+          config false;
+          description
+            "Activated State.";
+        }
+      }
+    }
+    container flexe-ports {
+      description
+        "List of all FlexE License Information.";
+      list port-flexe {
+        key "position";
+        description
+          "Configure FlexE License Information.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+        }
+        leaf active-status {
+          type lcs-active-status-type;
+          config false;
+          description
+            "Activated State.";
+        }
+      }
+    }
+    container expand-ports {
+      description
+        "List of all Port Bandwidth Expansion License Information.";
+      list port-expand {
+        key "position";
+        description
+          "Configure Port Bandwidth Expansion License Information.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position. The position is expressed in the format of slotID/cardID/portID. For example, 1/0/1. Here 1/0/1 is an example. The value may vary with devices.";
+        }
+        leaf active-count {
+          type uint32 {
+            range "1..2";
+          }
+          mandatory true;
+          description
+            "Resources Configured.";
+        }
+        leaf used-count {
+          type uint32;
+          config false;
+          description
+            "Resources Used.";
+        }
+        leaf active-status {
+          type lcs-active-status-type;
+          config false;
+          description
+            "Activated State.";
+        }
+      }
+    }
+    container rtus {
+      description
+        "List of all RTU License Information.";
+      list rtu {
+        key "position";
+        description
+          "Configure RTU License Information.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Position. The position is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+        }
+        leaf active-status {
+          type lcs-active-status-type;
+          config false;
+          description
+            "Activated State.";
+        }
+      }
+    }
+  }
+  augment /devm:devm/devm:cards/devm:card {
+    description
+      "Flexible card.";
+    container card-tdm-param {
+      description
+        "Configure card tdm param.";
+      leaf idle-code {
+        ext:case-sensitivity "lower-only";
+        type string {
+          length "1..2";
+          pattern '\s*[a-f0-9]+';
+        }
+        default "ff";
+        description
+          "Idle code.";
+      }
+      leaf idle-code-e1 {
+        type string {
+          length "1..2";
+          pattern '\s*0|ff';
+        }
+        default "0";
+        description
+          "E1 port idle code.";
+      }
+      leaf impedance {
+        type enumeration {
+          enum "75ohms" {
+            value 75;
+            description
+              "Configure 75ohms.";
+          }
+          enum "120ohms" {
+            value 150;
+            description
+              "Configure 120ohms.";
+          }
+        }
+        default "75ohms";
+        description
+          "ImpedanceMode.";
+      }
+    }
+    container service-mode {
+      description
+        "Configure serviceMode.";
+      leaf portrate {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "155M" {
+            value 0;
+            description
+              "Configure 155M bytes.";
+          }
+          enum "622M" {
+            value 1;
+            description
+              "Configure 622M bytes.";
+          }
+        }
+        description
+          "Set port rate.";
+      }
+      leaf bandwidth-mode {
+        ext:dynamic-default ;
+        type enumeration {
+          enum "ETH-28X10GF" {
+            value 1;
+            description
+              "Twenty-eight 10G optical fiber ports.";
+          }
+          enum "ETH-26X10GF-18XGF" {
+            value 2;
+            description
+              "Twenty-six 10G optical fiber ports and eighteen 1G optical fiber ports.";
+          }
+          enum "ETH-20X10GF-24XGF" {
+            value 3;
+            description
+              "Twenty 10G optical fiber ports and twenty-four 1G optical fiber ports.";
+          }
+          enum "ETH-2X100GE-30X10GF-10XGF" {
+            value 4;
+            description
+              "Two 100G optical fiber ports, thirty 10G optical fiber ports and ten 1G optical fiber ports.";
+          }
+          enum "ETH-2X100GE-26X10GF-14XGF" {
+            value 5;
+            description
+              "Two 100G optical fiber ports, twenty-six 10G optical fiber ports and fourteen 1G optical fiber ports.";
+          }
+          enum "ETH-2X100GE" {
+            value 6;
+            description
+              "Two 100G optical fiber ports.";
+          }
+          enum "ETH-1X100GE-4X10GF" {
+            value 7;
+            description
+              "One 100G optical fiber port and four 10G optical fiber ports.";
+          }
+        }
+        description
+          "Bandwidth Mode. Modifying the configuration affects the instances of ports and interfaces. For details about the impact, see the description of each enumerated item.";
+      }
+    }
+    container port-group-modes {
+      description
+        "List of switch mode supported by port group.";
+      list port-group-mode {
+        ext:generated-by "system";
+        ext:operation-exclude "create";
+        key "port-groupid";
+        description
+          "Configure switch mode supported by port group.";
+        leaf port-groupid {
+          type uint32 {
+            range "1..10000";
+          }
+          description
+            "Index of Port Group.";
+        }
+        leaf port-list {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "Port list in group.";
+        }
+        leaf mode-type {
+          type enumeration {
+            enum "25GE-10GE" {
+              value 1;
+              description
+                "Configure 25GE-10GE.";
+            }
+            enum "10GE-1GE" {
+              value 2;
+              description
+                "Configure 10GE-1GE.";
+            }
+          }
+          default "25GE-10GE";
+          description
+            "Switch mode.";
+        }
+      }
+    }
+    container queue-priority {
+      description
+        "Configure MAC Queue Priority Enable.";
+      leaf queue-pri-enable {
+        type enumeration {
+          enum "disable" {
+            value 0;
+            description
+              "Disable.";
+          }
+          enum "enable" {
+            value 1;
+            description
+              "Enable.";
+          }
+        }
+        default "enable";
+        description
+          "MAC Queue Priority Enable.";
+      }
+    }
+    container frame-format {
+      description
+        "Configure card frame format.";
+      leaf frame-format {
+        type enumeration {
+          enum "SDH" {
+            value 0;
+            description
+              "Synchronous Digital Hierarchy.";
+          }
+          enum "SONET" {
+            value 1;
+            description
+              "Synchronous Optical Network.";
+          }
+        }
+        must "../frame-format='SONET' or ../frame-format='SDH'";
+        default "SDH";
+        description
+          "FrameFormat.";
+      }
+    }
+    container process-mode {
+      description
+        "Configure Subcard Fault Handling Mode.";
+      leaf process-mode {
+        type enumeration {
+          enum "reset" {
+            value 0;
+            description
+              "Reset.";
+          }
+          enum "isolate" {
+            value 1;
+            description
+              "Isolate.";
+          }
+        }
+        default "reset";
+        description
+          "Card-Fault Process-Mode.";
+      }
+      leaf shield-mode {
+        type enumeration {
+          enum "disabled" {
+            value 0;
+            description
+              "Disabled.";
+          }
+          enum "enabled" {
+            value 1;
+            description
+              "Enabled.";
+          }
+        }
+        default "disabled";
+        description
+          "Shield Card-Fault Process-Mode Global-Config.";
+      }
+    }
+    container em-set {
+      description
+        "Configure E&M voice signaling.";
+      leaf single-mode {
+        type enumeration {
+          enum "bell-1" {
+            value 0;
+            description
+              "Bell-1 mode.";
+          }
+          enum "bell-2" {
+            value 1;
+            description
+              "Bell-2 mode.";
+          }
+          enum "bell-3" {
+            value 2;
+            description
+              "Bell-3 mode.";
+          }
+          enum "bell-4" {
+            value 3;
+            description
+              "Bell-4 mode.";
+          }
+          enum "bell-5" {
+            value 4;
+            description
+              "Bell-5 mode.";
+          }
+        }
+        default "bell-5";
+        description
+          "E&M signaling mode.";
+      }
+      leaf userline-mode {
+        type enumeration {
+          enum "4wire" {
+            value 1;
+            description
+              "Configure 4 wire mode.";
+          }
+          enum "2wire" {
+            value 0;
+            description
+              "Configure 2 wire mode.";
+          }
+        }
+        default "4wire";
+        description
+          "E&M user line mode.";
+      }
+    }
+    container service-switch {
+      description
+        "Configure service switch.";
+      leaf service-switch-mode {
+        type enumeration {
+          enum "p2mp" {
+            value 0;
+            description
+              "Point to multipoint mode.";
+          }
+          enum "time-delay" {
+            value 1;
+            description
+              "Time delay mode.";
+          }
+        }
+        default "p2mp";
+        description
+          "Service mode switch.";
+      }
+    }
+    container panel-slots {
+      config false;
+      description
+        "Operational state of card panel extend slots.";
+      leaf slot {
+        type string {
+          length "0..32";
+        }
+        config false;
+        description
+          "Card Panel Slots.";
+      }
+    }
+  }
+  augment /devm:devm/devm:mpu-boards/devm:mpu-board {
+    description
+      "Mac set.";
+    container cmac-padding {
+      description
+        "Configure chip global filling function.";
+      leaf padding {
+        type enumeration {
+          enum "disable" {
+            value 0;
+            description
+              "Enable Chip Global fill function.";
+          }
+          enum "enable" {
+            value 1;
+            description
+              "Disable Chip Global fill function.";
+          }
+        }
+        default "disable";
+        description
+          "Chip global filling function.";
+      }
+    }
+  }
+  augment /devm:devm/devm:lpu-boards/devm:lpu-board {
+    description
+      "Mac set.";
+    container cmac-padding {
+      description
+        "Configure chip global filling function.";
+      leaf padding {
+        type enumeration {
+          enum "disable" {
+            value 0;
+            description
+              "Enable Chip Global fill function.";
+          }
+          enum "enable" {
+            value 1;
+            description
+              "Disable Chip Global fill function.";
+          }
+        }
+        default "disable";
+        description
+          "Chip global filling function.";
+      }
+    }
+  }
+  ext:task-name "device-mgr";
+}

@@ -1,0 +1,1217 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-bgp-common {
+  yang-version 1;
+  belongs-to huawei-bgp {
+    prefix bgp;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  include huawei-bgp-type;
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+  revision 2020-02-25 {
+    description
+      "The YANG descriptions are modified according to new standards.";
+    reference "Huawei private.";
+  }
+  revision 2019-03-22 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  grouping peer-timer-para-type {
+    description
+      "BGP timer.";
+    container timer {
+      description
+        "Configure BGP peer timer parameters.";
+      leaf keep-alive-time {
+        type uint32 {
+          range "0..21845";
+        }
+        units "s";
+        must "(../keep-alive-time != 0 and (../hold-time>=../keep-alive-time * 3) and ../hold-time != ../keep-alive-time ) or (../hold-time = 0 and ../keep-alive-time = 0)";
+        default "60";
+        description
+          "If the value of a timer changes, the BGP peer relationship between the routers is disconnected. This is because the peers need to re-negotiate the Keepalive time and hold time. Therefore, confirm the action before you change the value of the timer. The Keepalive time should be at least three times of the hold time.";
+      }
+      leaf hold-time {
+        type uint32 {
+          range "0..65535";
+        }
+        units "s";
+        must "(../hold-time!=1) and (../hold-time!=2) and (((../hold-time>=../keep-alive-time * 3) and ../hold-time != ../keep-alive-time ) or (../hold-time = 0 and ../keep-alive-time = 0)) and ../hold-time>=../min-hold-time";
+        default "180";
+        description
+          "Hold time. The value of the hold time can be 0 or range from 3 to 65535. When setting keepalive-time and hold-time, note the following:
+          1. The values of keepalive-time and hold-time cannot both be 0. Otherwise, the BGP timer becomes invalid. That is, BGP does not detect link faults according to the timer.
+          2. The value of hold-time is much greater than that of keepalive-time, such as, keepalive 1 and hold 65535. If the value of hold-time is too large, BGP cannot detect link faults timely.
+          The priority of a timer is lower than that of a peer timer.
+          After a connection is established between peers, the values of keepalive-time and hold-time are negotiated by the peers. The smaller value of hold-time contained in Open packets of both peers is taken as the value of hold-time. The smaller value of the locally set value of keepalive-time and one third of the value of hold-time is taken as the value of keepalive-time.";
+      }
+      leaf min-hold-time {
+        type uint32 {
+          range "0..65535";
+        }
+        units "s";
+        must "((../min-hold-time=0) or (../min-hold-time>=20 and not(../min-hold-time>65535))) and ../hold-time>=../min-hold-time";
+        default "0";
+        description
+          "The minimum hold time is either 0 or an integer ranging from 20 to 65535. If the value is changed, the new value takes effect since the next peer relationship establishment. During the peer relationship establishment, the local device checks the hold time of the remote end. If the hold time is less than the minimum hold time, the local device sends an error packet with error code 02 and subcode 06, and the peer relationship fails to be established.";
+      }
+      leaf connect-retry-time {
+        type uint16 {
+          range "1..65535";
+        }
+        units "s";
+        default "32";
+        description
+          "ConnectRetry interval.";
+      }
+    }
+  }
+  grouping fake-as-type {
+    description
+      "BGP fake-as.";
+    container fake-as-parameter {
+      description
+        "Configure BGP fake-as parameters.";
+      leaf fake-as {
+        type bgp:as-number-validate;
+        description
+          "Fake AS number that is specified for a local peer. By default, a peer uses the actual AS number of the local end.
+          An AS number can be in either two-byte format or four-byte format:
+          The two-byte format is X. X is an integer ranging from 1 to 65535.
+          The four-byte format is X.Y and X. When the format is X.Y, X and Y are both integers, with the value of X ranging from 1 to 65535, and the value of Y ranging from 0 to 65535; when the format is X, X is an interger, with the value of X ranging from 1 to 4294967295.";
+      }
+      leaf dual-as {
+        when "../fake-as";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function to the remote EBGP peer can use the actual or fake AS number when specifying the AS number for a local peer. The local peer uses the fake and actual AS numbers to establish a BGP peer relationship with the remote end and identifies the AS number configured by the remote end through the error code (OPEN Message Error) and sub-error code (Bad Peer AS) of the Notification message from the remote end.";
+      }
+      leaf prepend-global-as {
+        when "../fake-as";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function to add the global AS number to the update packets to be advertised.";
+      }
+      leaf prepend-fake-as {
+        when "../fake-as";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function to add the fake AS number to received update packets.";
+      }
+    }
+  }
+  grouping default-route-advertise-type {
+    description
+      "The default-route-advertise-type configuration.";
+    leaf default-route-advertise {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable a device to advertise the default route to its peers. This option enables a device to send a default route with the device as the next hop address to its peers, regardless of whether there is a default route in the local routing table.";
+    }
+    choice default-route-advertise-policy-type {
+      description
+        "Set default route advertise-policy.";
+      case rtp-ref {
+        description
+          "The default-route-advertise-policy.";
+        leaf default-route-advertise-policy {
+          when "../default-route-advertise='true'";
+          type leafref {
+            path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+          }
+          description
+            "Specify the name of a used policy.";
+        }
+      }
+    }
+  }
+  grouping ip-prefix-filter-type {
+    description
+      "IPv4 prefix filter type configuration.";
+    leaf import-ip-prefix {
+      type leafref {
+        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+      }
+      description
+        "Specify the IPv4 filtering policy applied to the routes received from a specified peer. By default, no such policy is specified.";
+    }
+    leaf export-ip-prefix {
+      type leafref {
+        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+      }
+      description
+        "Specify the IPv4 filtering policy applied to the routes to be advertised to a specified peer. By default, no such policy is specified.";
+    }
+  }
+  grouping ipv6-prefix-filter-type {
+    description
+      "IPv6 prefix filter type configuration.";
+    leaf import-ipv6-prefix {
+      type leafref {
+        path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+      }
+      description
+        "Specify the IPv6 filtering policy applied to the routes received from a specified peer. By default, no such policy is specified.";
+    }
+    leaf export-ipv6-prefix {
+      type leafref {
+        path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+      }
+      description
+        "Specify the IPv6 filtering policy applied to the routes to be advertised to a specified peer. By default, no such policy is specified.";
+    }
+  }
+  grouping route-limit-accept-type {
+    description
+      "BGP route limit configuration options.";
+    container route-limit {
+      description
+        "Configure parameters of routes limited from this peer.";
+      leaf number {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Configure the maximum number of routes that can be accepted from a peer.";
+      }
+      leaf accept-prefix {
+        when "../number";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the device to keep receiving routes and the routes are valid if the maximum number of routes allowed have been received and the alert-only parameter is specified.";
+      }
+      leaf percent {
+        when "../number";
+        type uint8 {
+          range "1..100";
+        }
+        default "75";
+        description
+          "Specify the percentage of routes when a router starts to generate an alarm.";
+      }
+      leaf type {
+        when "../number";
+        type bgp:route-limit-type;
+        must "(../type='idle-timeout' and ../idle-timeout) or (../type!='idle-timeout')";
+        default "noparameter";
+        description
+          "Set the processing method as alert-only, idle-forever, or idle-timeout when the number of routes exceeds the set threshold. When alert-only is used, only an alarm is generated when the number of routes exceeds the threshold. In this case, new routes are no longer accepted. When idle-forever is used, connections are not automatically reestablished after being cut off until BGP connections are reset if the number of routes exceeds the set threshold. When idle-timeout is used and the idle-timeout timer is specified, the connections are automatically reestablished after being cut off if the number of routes exceeds the set threshold. You can reset BGP connections to reestablish the connections before the idle-timeout times expires.";
+      }
+      leaf idle-timeout {
+        when "../type='idle-timeout'";
+        type uint16 {
+          range "1..1200";
+        }
+        units "min";
+        description
+          "Specify the value of the idle-timeout timer to automatically reestablish the connections after they are cut off when the number of routes exceeds the set threshold.";
+      }
+    }
+  }
+  grouping public-as-only-type {
+    description
+      "BGP Remove private AS number from outbound updates configuration options.";
+    container public-as-only {
+      description
+        "Configure BGP Remove private AS number from outbound updates parameters.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable BGP to send Update packets carrying only public AS numbers.";
+      }
+      choice remove-private-as {
+        description
+          "Remove AS numbers except peer AS number from outbound updates.";
+        case all {
+          description
+            "Remove all private AS numbers.";
+          leaf force {
+            when "../enable='true'";
+            type empty;
+            description
+              "Configures BGP to carry only the public AS number instead of the private AS number when BGP sends Update packets. By default, BGP can carry the private AS number when BGP sends Update packets.";
+          }
+        }
+        case left-most {
+          description
+            "Remove the left-most private AS numbers.";
+          leaf limited {
+            when "../enable='true'";
+            type empty;
+            description
+              "When the BGP sends update packets, the left ends of both the local AS and public AS do not carry the private AS. By default, BGP can carry the private AS number when BGP sends Update packets.";
+          }
+        }
+      }
+      leaf replace {
+        when "../force or ../limited";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function to the private AS is replaced by the local AS when the BGP sends update packets.";
+      }
+      leaf no-skip-as {
+        when "../force or ../limited";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function to the neighbour AS is not processed when the BGP sends update packets.";
+      }
+    }
+  }
+  grouping as-path-filter-type {
+    description
+      "AS-path-filter-type configuration.";
+    leaf import-as-path-filter {
+      type leafref {
+        path "/rtp:routing-policy/rtp:as-path-filters/rtp:as-path-filter/rtp:name";
+      }
+      description
+        "Apply an AS_Path-based filtering policy to the routes received from a specified peer. The policy can be identified with a name or number, and the number ranges from 1 to 256. By default, no such policy is specified. Therefore, all BGP routes can be accepted.";
+    }
+    leaf export-as-path-filter {
+      type leafref {
+        path "/rtp:routing-policy/rtp:as-path-filters/rtp:as-path-filter/rtp:name";
+      }
+      description
+        "Apply an AS_Path-based filtering policy to the routes to be advertised to a specified peer. The policy can be identified with a name or number, and the number ranges from 1 to 256. By default, no such policy is specified. Therefore, all BGP routes can be advertised.";
+    }
+  }
+  grouping ipv4-default-route-match-conditions-type {
+    description
+      "IPv4 default route matching condition configuration.";
+    container default-route-match-conditions {
+      when "../default-route-match-mode and ../default-route-match-mode!='null'";
+      description
+        "List of condition matching to filter the default routes to be advertised. The value takes effect only when the default route matching mode is not null and more than one IPv4 default route matching condition lists are configured.";
+      list default-route-match-condition {
+        key "address mask";
+        min-elements 1;
+        max-elements 4;
+        description
+          "Configure the matching condition for default route advertisement.";
+        leaf address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Configure a prefix that is used to match default routes.";
+        }
+        leaf mask {
+          type uint32 {
+            range "0..32";
+          }
+          description
+            "Configure a mask that is used to match default routes.";
+        }
+      }
+    }
+  }
+  grouping ipv6-default-route-match-conditions-type {
+    description
+      "IPv6 default route matching condition configuration.";
+    container default-route-match-conditions {
+      when "../default-route-match-mode and ../default-route-match-mode!='null'";
+      description
+        "List of condition matching to filter the default routes to be advertised. The value takes effect only when the default route matching mode is not null and more than one IPv6 default route matching condition lists are configured.";
+      list default-route-match-condition {
+        key "address mask";
+        min-elements 1;
+        max-elements 4;
+        description
+          "Configure the matching condition for default route advertisement.";
+        leaf address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Configure a IPv6-prefix that is used to match default routes.";
+        }
+        leaf mask {
+          type uint32 {
+            range "0..128";
+          }
+          description
+            "Configure a mask that is used to match default routes.";
+        }
+      }
+    }
+  }
+  grouping path-attr-map-type {
+    description
+      "Path attribute type configuration.";
+    leaf path-attr-discard-id-map {
+      type pub-type:id-range {
+        pattern '((2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])?(-(2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9]))?(,((2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])(-(2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9]))?))*)|((([\+|\-](2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9]))|([\+|\-]\((2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])-(2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])\)))?(,(([\+|\-](2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9]))|([\+|\-]\((2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])-(2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])\))))*)';
+        ext:value-range 1..255;
+      }
+      description
+        "Specify a discard attrId list. The format of a list is as follows: 20-30, 55. No support the attribute ids as follows:
+        IBGP peer or CONFEDERATION EBGP peer or CONFEDERATION IBGP peer: 1 (ORIGIN), 2 (AS_PATH), 3 (NEXT_HOP), 4 (MED), 5 (LOCALPREF), 8 (COMMUNITY), 9 (ORIGINATOR), 10 (CLUSTER-ID), 14 (MP_NLRI), 15 (MP_UNLRI), 16 (EXTCOMMUNITY),
+        EBGP peer: 1 (ORIGIN), 2 (AS_PATH), 3 (NEXT_HOP), 4 (MED), 8 (COMMUNITY), 14 (MP_NLRI), 15 (MP_UNLRI), 16 (EXTCOMMUNITY)";
+    }
+    leaf path-attr-withdraw-id-map {
+      type pub-type:id-range {
+        pattern '((2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])?(-(2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9]))?(,((2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])(-(2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9]))?))*)|((([\+|\-](2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9]))|([\+|\-]\((2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])-(2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])\)))?(,(([\+|\-](2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9]))|([\+|\-]\((2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])-(2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[1-9])\))))*)';
+        ext:value-range 1..255;
+      }
+      description
+        "Specify a withdraw attrId list. The format of a list is as follows: 20-30, 55. No support the attribute ids as follows:
+        IBGP peer or CONFEDERATION EBGP peer or CONFEDERATION IBGP peer: 1 (ORIGIN), 2 (AS_PATH), 3 (NEXT_HOP), 4 (MED), 5 (LOCALPREF), 8 (COMMUNITY), 9 (ORIGINATOR), 10 (CLUSTER-ID), 14 (MP_NLRI), 15 (MP_UNLRI), 16 (EXTCOMMUNITY),
+        EBGP peer: 1 (ORIGIN), 2 (AS_PATH), 3 (NEXT_HOP), 4 (MED), 8 (COMMUNITY), 14 (MP_NLRI), 15 (MP_UNLRI), 16 (EXTCOMMUNITY)";
+    }
+  }
+  grouping authentication-attr-type {
+    description
+      "Authentication attribute type configuration.";
+    leaf password-type {
+      type bgp:password-type;
+      must "not(../password-type and ../password-type!='null' and ../key-chain-name)";
+      must "(not(../password-type and ../password-type!='null') and not(../password-text)) or (../password-type and ../password-type!='null' and ../password-text)";
+      default "null";
+      description
+        "Enable BGP peers to establish a TCP connection and perform the Message Digest 5 (MD5) authentication for BGP messages. Plaintexts and ciphertexts are supported.";
+    }
+    leaf password-text {
+      when "../password-type and ../password-type!='null'";
+      type pub-type:password-extend;
+      mandatory true;
+      description
+        "Enable BGP peers to establish a TCP connection and perform the Message Digest 5 (MD5) authentication for BGP messages. The character string in a password identifies the contents of the password, spaces not supported. The TCP connection can be established only when the same MD5 authentication password is set on both ends. If a plaintext is used, the maximum password length is 255. If a ciphertext is used, the maximum password length is 432. If the length is set to 0, no password is set.";
+    }
+    leaf key-chain-name {
+      type string {
+        length "1..47";
+      }
+      must "not(../password-type and ../password-type!='null' and ../key-chain-name)";
+      description
+        "Specify the Keychain authentication name used when BGP peers establish a TCP connection. The value is a string, spaces not supported. By default, the Keychain authentication is not configured. Keychain authentication mode and password authentication mode are mutually exclusive. Configuring Keychain authentication can enhance the security of the TCP connections between BGP peers. Keychain authentication using the same encryption algorithm and password must be configured on the two ends of BGP peers to establish a TCP connection and exchange BGP packets. Before configuring BGP Keychain authentication, you need to configure Keychain according to keychain name. Otherwise, the TCP connections between the BGP peers cannot be established.";
+    }
+  }
+  grouping choice-policy-set {
+    description
+      "Specify the route-policy or filter for imported RIBs.";
+    choice policy-type {
+      description
+        "Set policy or filter.";
+      case rtp-ref {
+        description
+          "Specify the route policy.";
+        leaf policy-name {
+          type leafref {
+            path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+          }
+          description
+            "Specify the route policy.";
+        }
+      }
+    }
+  }
+  grouping safi-lsp-options {
+    description
+      "Parameters relating to options for lsp.";
+    leaf ingress-protect-mode-bgp-frr {
+      type boolean;
+      must "(../ingress-protect-mode-bgp-frr='false') or (../ingress-protect-mode-bgp-frr='true' and ../maximum-load-balancing-ingress=1)";
+      default "false";
+      description
+        "Enable/disable ingress LSP protection mode to FRR.";
+    }
+    leaf maximum-load-balancing-ingress {
+      type uint16 {
+        range "1..65535";
+      }
+      default "1";
+      description
+        "Maximum number of ingress LSPs for load balancing. The default value is 1, indicating that this attribute is not configured. Configuring the number of ingress LSPs for load balancing and configuring BGP FRR of ingress LSPs are mutually exclusive.";
+    }
+    leaf maximum-load-balancing-transit {
+      type uint16 {
+        range "1..65535";
+      }
+      default "1";
+      description
+        "Maximum number of transit LSPs for load balancing. The default value is 1, indicating that this attribute is not configured.";
+    }
+  }
+  grouping import-ribs-type {
+    description
+      "Import RIBs configuration.";
+    container import-ribs {
+      description
+        "List of imported RIBs configuration.";
+      list import-rib {
+        key "source-vpn source-address-family";
+        description
+          "Configure imported RIBs.";
+        leaf source-vpn {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "Source VPN name.";
+        }
+        leaf source-address-family {
+          type bgp:import-rib-ipv4-safi-type;
+          description
+            "Source address family type.";
+        }
+        leaf valid-route {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable imported valid route.";
+        }
+        leaf include-label-route {
+          when "../source-address-family='ipv4uni'";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable imported include label route.";
+        }
+        uses choice-policy-set {
+          refine policy-type {
+            description
+              "Specify the route-policy or filter for imported RIBs.";
+          }
+        }
+      }
+    }
+  }
+  grouping global-timer-para-type {
+    description
+      "BGP timer.";
+    leaf connect-retry-time {
+      type uint16 {
+        range "1..65535";
+      }
+      units "s";
+      default "32";
+      description
+        "ConnectRetry interval.";
+    }
+    leaf keep-alive-time {
+      type uint32 {
+        range "0..21845";
+      }
+      units "s";
+      must "(../keep-alive-time != 0 and (../hold-time>=../keep-alive-time * 3) and ../hold-time != ../keep-alive-time ) or (../hold-time = 0 and ../keep-alive-time = 0)";
+      default "60";
+      description
+        "Specify the Keepalive time of a peer or peer group. The value is an integer. If the value of a timer changes, the peers need to re-negotiate the interval value for the keepalive-time and hold-time. This disconnects the BGP peer relationship between the routers. Therefore, you need to double check whether it is a must to change the value of the timer. Ensure that the hold time is at least three times longer than the keepalive time when you configure the BGP timer.";
+    }
+    leaf hold-time {
+      type uint32 {
+        range "0..65535";
+      }
+      units "s";
+      must "(../hold-time!=1) and (../hold-time!=2) and (((../hold-time>=../keep-alive-time * 3) and ../hold-time != ../keep-alive-time ) or (../hold-time = 0 and ../keep-alive-time = 0)) and ../hold-time>=../min-hold-time";
+      default "180";
+      description
+        "Specify the Hold time of a peer or peer group. The value is either 0 or an integer ranging from 0 to 65535. When setting the timer values of keepalive-time and hold-time, avoid the following settings: 1.The interval values of keepalive-time and hold-time are both set to 0. This will cause BGP timer to become invalid, and BGP will not detect link faults based on the timer.
+        2. The interval value of hold-time is much greater than that of keepalive-time. For example, the interval value of keepalive-time is 1, and that of hold-time is 65535. If the interval value of hold-time is too large, BGP will not be able to detect link faults in time. The priority of the timer configured here is lower than that of timer configured with interval values of keepalive-time and hold-time of a peer. After a connection is established between peers, the interval values of keepalive-time and hold-time are negotiated by the peers. The smaller interval value of hold-time contained in Open packets of both peers is taken as the interval value of hold-time. The smaller interval value of one third of the interval value of hold-time and the locally set interval value of keepalive-time is taken as the interval value of keepalive-time.";
+    }
+    leaf min-hold-time {
+      type uint32 {
+        range "0..65535";
+      }
+      units "s";
+      must "((../min-hold-time=0) or (../min-hold-time>=20 and not(../min-hold-time>65535))) and ../hold-time>=../min-hold-time";
+      default "0";
+      description
+        "The minimum hold time is either 0 or an integer ranging from 20 to 65535. If the value is changed, the new value takes effect since the next peer relationship establishment. During the peer relationship establishment, the local device checks the hold time of the remote end. If the hold time is less than the minimum hold time, the local device sends an error packet with error code 02 and subcode 06, and the peer relationship fails to be established.";
+    }
+  }
+  grouping default-route-originate-type {
+    description
+      "The default-route-originate-type configuration.";
+    list default-route-originate {
+      key "vpn-name";
+      description
+        "Configure advertised default VPNv4 route.";
+      leaf vpn-name {
+        type leafref {
+          path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+        }
+        must "../vpn-name!='_public_'";
+        description
+          "VPN instance name. It uniquely identifies a VPN instance. The name is a string of case-sensitive characters.";
+      }
+    }
+  }
+  grouping import-routes-type {
+    description
+      "Imported routes configuration.";
+    container import-routes {
+      description
+        "List of imported routes.";
+      list import-route {
+        key "protocol process-id";
+        description
+          "Apply route import policy. Routes of other protocol types can be imported by BGP. By default, BGP does not import routes of other protocol types.";
+        leaf protocol {
+          type bgp:ipv4-import-route-protocol-type;
+          description
+            "Routing protocol from which routes can be imported.";
+        }
+        leaf process-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          must "((../protocol='ospf' or ../protocol='isis' or ../protocol='rip') and ../process-id!=0) or (../protocol!='ospf' and ../protocol!='isis' and ../protocol!='rip' and ../process-id=0)";
+          description
+            "Process ID of an imported routing protocol. The process ID is 0, if the imported routing protocol is direct routes, static routes, UNRs, or OP-routes. The process ID must be specified range from 1 to 4294967295, if the imported routing protocol is RIP, OSPF, ISIS.";
+        }
+        choice policy-type {
+          description
+            "Set route policy or filter.";
+          case rtp-ref {
+            description
+              "Route policy.";
+            leaf policy-name {
+              type leafref {
+                path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+              }
+              description
+                "When routes are imported from other routing protocols, the route-policy filter can be used to filter the routes and change route attributes.";
+            }
+          }
+        }
+      }
+    }
+  }
+  grouping rt-update-interval-type {
+    description
+      "Route update interval configuration.";
+    leaf route-update-interval {
+      type uint16 {
+        range "0..600";
+      }
+      units "s";
+      description
+        "Specify the minimum interval at which Update packets are sent. By default, the interval at which Update packets are sent to IBGP peers is 15s, 
+        and the interval at which Update packets are sent to EBGP peers is 30s. When routes change, a router will send Update packets to notify its peers. 
+        If a route changes frequently, you can set an interval at which Update packets are sent to prevent the router from sending Update packets each time the route changes. 
+        This configuration is valid only to the routes learned from peers.";
+      ext:dynamic-default;
+    }
+  }
+  grouping bgp-route-preference-options {
+    description
+      "Configuration parameters relating to the BGP routes preference.";
+    container preference {
+      description
+        "Configure parameters relating to options for BGP routes preference.";
+      choice set-value-or-policy {
+        default "set-value";
+        description
+          "Set BGP routes preference by value or policy.";
+        case set-value {
+          description
+            "Set BGP routes preference by value.";
+          leaf external {
+            type uint8 {
+              range "1..255";
+            }
+            default "255";
+            description
+              "Set the protocol priority of EBGP routes. The value is an integer. An EBGP route is the optimal route learned from a peer outside the local AS.";
+          }
+          leaf internal {
+            type uint8 {
+              range "1..255";
+            }
+            default "255";
+            description
+              "Set the protocol priority of IBGP routes. The value is an integer. An IBGP route is a route learned from a peer inside the local AS.";
+          }
+          leaf local {
+            type uint8 {
+              range "1..255";
+            }
+            default "255";
+            description
+              "Set the protocol priority of a local BGP route. A local route refers to an automatically or manually summarized route.";
+          }
+        }
+      }
+    }
+  }
+  grouping dampening-route-config {
+    description
+      "The dampening route type.";
+    leaf half-life-time {
+      type uint16 {
+        range "1..45";
+      }
+      units "min";
+      default "15";
+      description
+        "Configure a half-life for reachable routes.";
+    }
+    leaf reuse {
+      type uint16 {
+        range "1..20000";
+      }
+      default "750";
+      description
+        "Configure a threshold for a route to be unsuppressed. If the penalty value of the route falls below the threshold, the route is reused.";
+    }
+    leaf suppress {
+      type uint16 {
+        range "1..20000";
+      }
+      default "2000";
+      description
+        "Configure a threshold for a route to be suppressed. When the penalty value of the route exceeds the suppression threshold, the route is suppressed. The configured suppression threshold must be greater than the reuse threshold.";
+    }
+    leaf ceiling {
+      type uint16 {
+        range "1001..20000";
+      }
+      default "16000";
+      description
+        "Configure the penalty ceiling. The configured threshold must be greater than the suppression threshold.";
+    }
+    leaf update-standard {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable update standard.";
+    }
+  }
+  grouping vrf-af-dampening-routes-ext {
+    description
+      "Parameters related to the use of dampening routes.";
+    container dampening-routes {
+      description
+        "List of route dampening.";
+      list dampening-route {
+        must "reuse < suppress and suppress < ceiling";
+        key "peer-type";
+        description
+          "Configure BGP route dampening or modify various BGP route dampening parameters. If a suppression policy for route dampening is configured, routes are preferentially matched against the suppression parameters defined in the suppression policy. If no parameter is configured, the default value of each parameter is used. The four route dampening parameters are mutually dependent. If you configure one of the parameters, the other parameters also need to be configured. When you configure BGP route dampening, the values of reuse threshold, suppress threshold, and penalty ceiling must meet the inequality of reuse threshold < suppress threshold < penalty ceiling. If Maximum suppression time obtained by using the formula of Maximum suppression time = Half life (of reachable routes) x 60 x (ln (Penalty ceiling/Reuse threshold)/ln(2)) is smaller than 1, suppression cannot be performed. Ensure that the value of the maximum suppression time is equal to or greater than 1. This means that the value of the penalty ceiling/reuse threshold must be great enough.";
+        leaf peer-type {
+          type dampening-route-ext-peer-type;
+          description
+            "Configure the peer type.";
+        }
+        uses dampening-route-config;
+      }
+    }
+  }
+  grouping vrf-af-dampening-routes {
+    description
+      "Parameters related to the use of dampening routes.";
+    container dampening-routes {
+      description
+        "List of route dampening.";
+      list dampening-route {
+        must "reuse < suppress and suppress < ceiling";
+        key "peer-type";
+        description
+          "Configure BGP route dampening or modify various BGP route dampening parameters. If a suppression policy for route dampening is configured, routes are preferentially matched against the suppression parameters defined in the suppression policy. If no parameter is configured, the default value of each parameter is used. The four route dampening parameters are mutually dependent. If you configure one of the parameters, the other parameters also need to be configured. When you configure BGP route dampening, the values of reuse threshold, suppress threshold, and penalty ceiling must meet the inequality of reuse threshold < suppress threshold < penalty ceiling. If Maximum suppression time obtained by using the formula of Maximum suppression time = Half life (of reachable routes) x 60 x (ln (Penalty ceiling/Reuse threshold)/ln(2)) is smaller than 1, suppression cannot be performed. Ensure that the value of the maximum suppression time is equal to or greater than 1. This means that the value of the penalty ceiling/reuse threshold must be great enough.";
+        leaf peer-type {
+          type dampening-route-peer-type;
+          description
+            "Configure the peer type.";
+        }
+        uses dampening-route-config;
+      }
+    }
+  }
+  grouping preferred-value-type {
+    description
+      "Route update interval configuration.";
+    leaf preferred-value {
+      type uint32 {
+        range "0..65535";
+      }
+      default "0";
+      description
+        "Assign a preferred value for the routes learned from a specified peer. After a preferred value is configured for the routes learned from a specified peer,
+        all the routes that learnt from this peer will use this preferred value. When multiple routes reach the same address prefix, the route with the largest preferred value will be selected.";
+    }
+  }
+  grouping route-limit-type {
+    description
+      "BGP route limit configuration options.";
+    container route-limit {
+      description
+        "Configure parameters of routes limited from this peer.";
+      leaf number {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Configure the maximum number of routes that can be accepted from a peer.";
+      }
+      leaf percent {
+        when "../number";
+        type uint8 {
+          range "1..100";
+        }
+        default "75";
+        description
+          "Specify the percentage of routes when a router starts to generate an alarm.";
+      }
+      leaf type {
+        when "../number";
+        type bgp:route-limit-type;
+        must "(../type='idle-timeout' and ../idle-timeout) or (../type!='idle-timeout')";
+        default "noparameter";
+        description
+          "Set the processing method as alert-only, idle-forever, or idle-timeout when the number of routes exceeds the set threshold. When alert-only is used, only an alarm is generated when the number of routes exceeds the threshold. In this case, new routes are no longer accepted. When idle-forever is used, connections are not automatically reestablished after being cut off until BGP connections are reset if the number of routes exceeds the set threshold. When idle-timeout is used and the idle-timeout timer is specified, the connections are automatically reestablished after being cut off if the number of routes exceeds the set threshold. You can reset BGP connections to reestablish the connections before the idle-timeout times expires.";
+      }
+      leaf idle-timeout {
+        when "../type='idle-timeout'";
+        type uint16 {
+          range "1..1200";
+        }
+        units "min";
+        description
+          "Specify the value of the idle-timeout timer to automatically reestablish the connections after they are cut off when the number of routes exceeds the set threshold.";
+      }
+    }
+  }
+  grouping vpn-brief-num-type {
+    description
+      "BGP vpn brief statistics infomation.";
+    leaf peer-number {
+      type uint32;
+      description
+        "Set the number of peers in a specified address family.";
+    }
+    leaf route-number {
+      type uint32;
+      description
+        "Set the number of routes in a specified address family.";
+    }
+    leaf route-distinguisher-number {
+      type uint32;
+      description
+        "Number of RDs.";
+    }
+  }
+  grouping bit-error-detection-type {
+    description
+      "BGP bit-error detection parameters.";
+    container bit-error-detection {      
+      description
+        "Configure BGP bit-error detection parameters.";
+    leaf enable {
+      type boolean;
+      must "(../enable='false') or (../enable='true' and (../med or ../local-preference))";
+      default "false";
+      description
+        "Enable/disable association between bit error events and the adjustment of route attributes.";
+    }
+    leaf med {
+      when "../enable='true'";
+      type uint32 {
+        range "1..4294967295";
+      }
+      description
+        "Specify the MED adjustment for BGP routes used when a bit error event occurs.";
+    }
+    leaf local-preference {
+      when "../enable='true'";
+      type uint32 {
+        range "1..4294967295";
+      }
+      description
+        "Specify the local preference adjustment for BGP routes used when a bit error event occurs.";
+    }
+    choice policy-type {
+      description
+        "Set route-policy or route-filter for bit-error-triggered protection switching.";
+      case rtp-ref {
+        description
+          "Route policy.";
+        leaf route-policy {
+          when "../enable='true'";
+          type leafref {
+            path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+          }
+          description
+            "Specify the name of route-policy for bit-error-triggered protection switching. The MED or local preference of only the routes that match the route-policy is adjusted.";
+        }
+      }
+    }
+  }
+  }
+  grouping nexthop-recursive-lookup-delay {
+    description
+      "Next hop change responding delay configuration.";
+    container delay {
+      description
+        "Configure time of next hop change responding delay.";
+      leaf time {
+        type uint8 {
+          range "1..100";
+        }
+        units "s";
+        must "(not(../no-critical-event-time) or (../no-critical-event-time > ../time))";
+        description
+          "Specify the delay in responding to the next hop change.";
+      }
+      leaf no-critical-event-time {
+        type uint8 {
+          range "1..100";
+        }
+        units "s";
+        must "(not(../time) or (../no-critical-event-time > ../time))";
+        description
+          "Specify the delay in responding to the next hop change on non critical relay change event.";
+      }
+    }
+  }
+  grouping nexthop-recursive-lookup-restrain {
+    description
+      "Next hop iteration restrain configuration.";
+      leaf restrain {
+        type boolean;
+          default "true";
+          description
+          "Enable/disable the function to restrain next hop iteration in case of next hop flapping.";
+       }
+  }
+  grouping nexthop-recursive-lookup-default-route {
+    description
+      "Next hop iteration default route configuration.";
+      leaf default-route {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable default route.";
+      }
+  }
+ grouping ipv4-filter-protocol-policy-choice-type {
+    description
+      "IPv4 filter protocol policy choice type configuration.";
+    choice ipv4-filter-protocol-policy-type {
+      mandatory true;
+      description
+        "Set IPv4 filter protocol policy.";
+      case acl-ref {
+        description
+          "ACL Route Policy.";
+        leaf acl-name-or-num {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          description
+            "Specify the name or number of an ACL Rule. The number value ranges from 2000 to 2999 and is used by basic ACL rules. The name must start with a letter, and the name is case-sensitive.";
+        }
+      }
+      case ip-prefix-ref {
+        description
+          "IP prefix Policy.";
+        leaf ipv4-prefix-filter {
+          type leafref {
+            path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+          }
+          description
+            "Specify the IPv4 prefix list name.";
+        }
+      }
+    }
+  }
+  grouping ipv4-import-filter-protocol-policy-choice-type {
+    description
+      "IPv4 import filter protocol policy choice type configuration.";
+    choice ipv4-import-filter-protocol-policy-type {
+      description
+        "Set IPv4 filter protocol policy.";
+      case acl-ref {
+        description
+          "ACL Route Policy.";
+        leaf acl-name-or-num {
+          type leafref {
+            path "/acl:acl/acl:groups/acl:group/acl:identity";
+          }
+          description
+            "Specify the name or number of an ACL Rule. The number value ranges from 2000 to 2999 and is used by basic ACL rules. The name must start with a letter, and the name is case-sensitive.";
+        }
+      }
+      case ip-prefix-ref {
+        description
+          "IP prefix Policy.";
+        leaf ipv4-prefix-filter {
+          type leafref {
+            path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+          }
+          description
+            "Specify the IPv4 prefix list name.";
+        }
+      }
+    }
+  }
+  grouping ipv6-filter-protocol-policy-choice-type {
+    description
+      "IPv6 filter protocol policy choice type configuration.";
+    choice ipv6-filter-protocol-policy-type {
+      mandatory true;
+      description
+        "Set IPv6 filter protocol policy.";
+      case acl6-ref {
+        description
+          "The ACL Route Policy.";
+        leaf acl6-name-or-num {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          description
+            "Specify the name or number of an ACL6 Rule. The number value ranges from 2000 to 2999 and is used by basic ACL6 rules. The name must start with a letter, and the name is case-sensitive.";
+        }
+      }
+      case ipv6-prefix-ref {
+        description
+          "IPv6 prefix Policy.";
+        leaf ipv6-prefix-filter {
+          type leafref {
+            path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+          }
+          description
+            "Specify the IPv6 prefix list name.";
+        }
+      }
+    }
+  }
+  grouping ipv6-import-filter-protocol-policy-choice-type {
+    description
+      "IPv6 import filter protocol policy choice type configuration.";
+    choice ipv6-import-filter-protocol-policy-type {
+      description
+        "Set IPv6 filter protocol policy.";
+      case acl6-ref {
+        description
+          "ACL route policy.";
+        leaf acl6-name-or-num {
+          type leafref {
+            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+          }
+          description
+            "Specify the name or number of an ACL6 Rule. The number value ranges from 2000 to 2999 and is used by basic ACL6 rules. The name must start with a letter, and the name is case-sensitive.";
+        }
+      }
+      case ipv6-prefix-ref {
+        description
+          "IPv6 prefix Policy.";
+        leaf ipv6-prefix-filter {
+          type leafref {
+            path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+          }
+          description
+            "Specify the IPv6 prefix list name.";
+        }
+      }
+    }
+  }
+  grouping ipv4-import-filter-protocol-type {
+    description
+      "IPv4 import filter protocol type configuration.";
+    container import-filter-policy {
+      description
+        "Configure a filtering policy. It is used to filter the routes received from a peer. By default, routes are not filtered.";
+      uses ipv4-import-filter-protocol-policy-choice-type;
+    }
+  }
+  grouping ipv6-import-filter-protocol-type {
+    description
+      "IPv6 import filter protocol type configuration.";
+    container import-filter-policy {
+      description
+        "Configure a filtering policy. It is used to filter the routes received from a peer. By default, routes are not filtered.";
+      uses ipv6-import-filter-protocol-policy-choice-type;
+    }
+  }
+  grouping ipv6-export-filter-protocol-type {
+    description
+      "IPv6 export filter protocol type configuration.";
+    container export-filter-policys {
+      description
+        "List of filtering policies.";
+      list export-filter-policy {
+        key "protocol process-id";
+        description
+          "Apply a filtering policy. It is used to filter the routes to be advertised to the peer. By default, routes are not filtered.";
+        leaf protocol {
+          type bgp:ipv6-export-filter-protocol-type;
+          description
+            "Specify the name of a routing protocol. The routing protocol takes effect only on the routes to be advertised. The IPv4 address family supports the direct, IS-IS, OSPF, RIP, and static routing protocols. The IPv6 unicast address family of a public network instance supports the direct, IS-IS, OSPFv3, RIPng, and static routing protocols. The IPv6 address family of a VPNv6 instance supports the direct, IS-IS, RIPng, and static routing protocols.";
+        }
+        leaf process-id {
+          type uint32 {
+            range "0..4294967295";
+          }
+          description
+            "Specify the process ID required to be matched. The value is an integer ranging from 0 to 4294967295. If direct or static routes need to be filtered, no process ID is required.";
+        }
+        uses ipv6-filter-protocol-policy-choice-type;
+      }
+    }
+  }
+  grouping ipv4vpn-export-filter-protocol-type {
+    description
+      "VPNv4 export filter protocol type configuration.";
+    container export-filter-policy {
+      description
+        "Configure a filtering policy. It is used to filter the routes received from a peer. By default, routes are not filtered.";
+      uses ipv4-import-filter-protocol-policy-choice-type;
+    }
+  }
+  grouping ipv6vpn-export-filter-protocol-type {
+    description
+      "VPNV6 export filter protocol type configuration.";
+    container export-filter-policy {
+      description
+        "Configure a filtering policy. It is used to filter the routes received from a peer. By default, routes are not filtered.";
+      uses ipv6-import-filter-protocol-policy-choice-type;
+    }
+  }
+  grouping advertise-large-community-type {
+    description
+      "The advertise-large-community-type configuration.";
+    leaf advertise-large-community {
+      type bgp:peer-comm-config-type;
+      default "default";
+      description
+        "Enable large-community attribute advertisement. The Link-state address family and the RPD address family do not support this element.";
+    }
+    leaf advertise-large-community-state {
+      type boolean;
+      default "false";
+      config false;
+      description
+        "Whether large-community attribute advertisement is enabled on a peer. The Link-state address family and the RPD address family do not support this element.";
+    }
+  }
+  grouping advertise-large-community-group-type {
+    description
+      "The advertise-large-community-type configuration.";
+    leaf advertise-large-community {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable large-community attribute advertisement. The Link-state address family and the RPD address family do not support this element.";
+    }
+  }
+  grouping slow-peer-type {
+    description
+      "Peer advertising routes slowly configuration.";
+    container slow-peer {
+      description
+        "Configure peer advertising routes slowly.";
+      leaf detection {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable detect slow peers.";
+      }
+      leaf detection-threshold {
+        type uint16 {
+          range "120..3600";
+        }
+        units "s";
+        default "300";
+        description
+          "Specify the time in seconds lagging behind average when a peer is determined to be a slow peer.";
+      }
+      leaf absolute-detection {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable absolute-detect slow peers.";
+      }
+      leaf absolute-detection-threshold {
+        type uint16 {
+          range "3..3600";
+        }
+        units "s";
+        default "9";
+        description
+          "Specify the packet send delay time in second when a peer is determined to be a slow peer.";
+      }
+    }
+  }
+  grouping bestroute-med-plus-igp-type {
+    description
+      "Use the sum of MED multiplied by a MED multiplier and IGP cost multiplied by an IGP cost multiplier to select routes.";
+    leaf bestroute-med-plus-igp {
+      type boolean;
+      must "not(../bestroute-igp-metric-ignore='true' and ../bestroute-med-plus-igp='true')";
+      default "false";
+      description
+        "Enable/disable the function to add the IGP cost to the next-hop destination to the MED before comparing MED values for path selection.";
+    }
+    leaf bestroute-med-multiplier {
+      when "../bestroute-med-plus-igp='true'";
+      type uint16 {
+        range "1..1000";
+      }
+      default "1";
+      description
+        "Value of med product factor.";
+    }
+    leaf bestroute-igp-multiplier {
+      when "../bestroute-med-plus-igp='true'";
+      type uint16 {
+        range "1..1000";
+      }
+      default "1";
+      description
+        "Value of IGP cost product factor.";
+    }
+    leaf bestroute-igp-metric-ignore {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable BGP to ignore the IGP cost of each BGP route to the next hop in route selection. By default, a BGP route with a smaller IGP cost to the next hop is preferred.";
+    }
+  }
+  grouping bestroute-router-id-prior-clusterlist-type {
+    description
+      "Router ID prior CLUSTER_LIST during the best route selection.";
+    leaf bestroute-router-id-prior-clusterlist {
+      type boolean;
+      default "false";
+      description
+        "Enable/disable BGP to compare originator before clusterlist in route selection.";
+    }
+  }
+}

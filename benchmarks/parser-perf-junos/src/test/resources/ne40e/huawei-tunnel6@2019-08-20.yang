@@ -1,0 +1,74 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-tunnel6 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-tunnel6";
+  prefix tunnel6;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "IP tunnel related configuration.";
+  revision 2019-08-20 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  container tunnel6 {
+    description
+      "IP tunnel related configuration.";
+	container global {
+      description
+        "Configure global configuration of IP tunnel.";
+      leaf encapsulation-limit {
+        type uint8 {
+          range "0..255";
+        }
+        default "4";
+        description
+          "Tunnel encapsulation limit carried in the destination option header extension option in the IPv6 header.";
+      }
+      leaf flow-label {
+        type uint32 {
+          range "0..1048575";
+        }
+        default "0";
+        description
+          "IPv6 flow-label.";
+      }
+      leaf hop-limit {
+        type uint8 {
+          range "1..255";
+        }
+        default "64";
+        description
+          "IPv6 hop-limit.";
+      }
+      leaf traffic-class {
+        type uint16 {
+          range "0..256";
+          ext:value-meaning {
+            ext:item  "256" {
+              ext:meaning "Original";
+            }
+          }
+        }
+        default "0";
+        description
+          "IPv6 traffic-class.";
+      }
+    }
+  }
+  ext:task-name  "ip-stack";
+}

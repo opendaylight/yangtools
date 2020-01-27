@@ -1,0 +1,578 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-qos-bras {
+  namespace "urn:huawei:yang:huawei-qos-bras";
+  prefix qos-bras;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-aaa{
+    prefix aaa;
+  }
+  import huawei-bras-basic-access{
+    prefix bras-basic-access;
+  }
+  import huawei-bras-qos{
+    prefix bras-qos;
+  }
+  import huawei-qos{
+    prefix qos;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Quality of service for bras.";
+  revision 2020-03-03 {
+    description
+      "Modify descriptions and add new nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-02 {
+    description
+      "Add new nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-09-20 {
+    description
+      "Add new nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-06 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "qos";
+  typedef aaa-stream-flag {
+    type enumeration {
+      enum "up-stream" {
+        value 1; 
+        description
+          "Trust DS domain.";
+      }
+    }
+    description
+      "Stream flag.";
+  }
+  typedef aaa-map-type {
+    type enumeration {
+      enum "inner-8021p" {
+        value 1; 
+        description
+          "Inner 802.1p Priority.";
+      }
+      enum "outer-8021p" {
+        value 2; 
+        description
+          "Outer 802.1p Priority.";
+      }
+      enum "dscp" {
+        value 3; 
+        description
+          "Dscp Type.";
+      }
+      enum "mpls-exp" {
+        value 4; 
+        description
+          "MPLS-eXP Type.";
+      }
+    }
+    description
+      "Map type.";
+  }
+  typedef aaa-trust-type {
+    type enumeration {
+      enum "trust-8021p-inner" {
+        value 9;
+        description
+          "Trust-8021p-inner.";
+      }
+      enum "trust-8021p-outer" {
+        value 10;
+        description
+          "Trust-8021p-outer.";
+      }
+      enum "trust-dscp-inner" {
+        value 13;
+        description
+          "Trust-dscp-inner.";
+      }
+      enum "trust-dscp-outer" {
+        value 8;
+        description
+          "Trust-dscp-outer.";
+      }
+      enum "trust-exp-inner" {
+        value 11;
+        description
+          "Trust-exp-inner.";
+      }
+      enum "trust-exp-outer" {
+        value 12;
+        description
+          "Trust-exp-outer.";
+      }
+      enum "unchangeable" {
+        value 15;
+        description
+          "Unchangeable.";
+      }
+    }
+    description
+      "Trust type.";
+  }
+  typedef aaa-direction-type {
+    type enumeration {
+      enum "up-stream" {
+        value 1;
+        description
+          "Upstream.";
+      }
+      enum "down-stream" {
+        value 2;
+        description
+          "Downstream.";
+      }
+    }
+    description
+      "AAA direction type.";
+  }
+  typedef exclude-type {
+    type enumeration {
+      enum "user-queue" {
+        value 1;
+        description
+          "User queue.";
+      }
+      enum "car" {
+        value 2;
+        description
+          "Car.";
+      }
+      enum "all" {
+        value 0;
+        description
+          "All.";
+      }
+    }
+    description
+      "Session group exclude type.";
+  }
+  typedef aaa-l2-trust-type {
+    type enumeration {
+      enum "trust-8021p-inner" {
+        value 9;
+        description
+          "L2 trust 8021p inner.";
+      }
+      enum "trust-8021p-outer" {
+        value 10;
+        description
+          "L2 trust 8021p outer.";
+      }
+      enum "trust-dscp-outer" {
+        value 8;
+        description
+          "L2 trust dscp outer.";
+      }
+    }
+    description
+      "L2 trust type.";
+  }
+  typedef rate-mode-type {
+    type enumeration {
+      enum "car" {
+        value 0;
+        description
+          "Car.";
+      }
+      enum "user-queue" {
+        value 1;
+        description
+          "User queue.";
+      }
+    }
+    description
+      "Rate limit mode type.";
+  }
+  typedef granularity-type {
+    type enumeration {
+      enum "1" {
+        value 1;
+        description
+          "1kbps.";
+      }
+      enum "16" {
+        value 16;
+        description
+          "16kbps.";
+      }
+      enum "32" {
+        value 32;
+        description
+          "32kbps.";
+      }
+      enum "64" {
+        value 64;
+        description
+          "64kbps.";
+      }
+      enum "128" {
+        value 128;
+        description
+          "128kbps.";
+      }
+      enum "256" {
+        value 256;
+        description
+          "256kbps.";
+      }
+      enum "512" {
+        value 512;
+        description
+          "512kbps.";
+      }
+      enum "1024" {
+         value 1024;
+        description
+          "1024kbps.";
+      }  
+    }
+    description
+      "Granularity type.";
+  }
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas/bras-qos:bras-qos" {
+    description "Adds aaa domain configuration to bras-qos model.";
+    container trusts {
+      description
+        "List of configure trust diffserv domain.";
+      list trust {
+        key "up-stream-flag";
+        description
+          "Configure trust diffserv domain.";
+        leaf up-stream-flag {
+          type aaa-stream-flag;
+          description
+            "To select trusting diffserv domain.";
+        }
+        leaf diffserv-domain-name {
+          type leafref {
+            path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+          }
+          default "default";
+          description
+            "Name of a diffserv domain.";
+        }
+      }
+    }
+    container per-hop-behaviors {
+      description
+        "List of configure priority mappings.";
+      list per-hop-behavior {
+        key "type";
+        description
+          "Configure priority mappings.";
+        leaf type {
+          type aaa-map-type;
+          description
+            "Map type.";
+        }
+      }
+    }
+    container user-prioritys {
+      description
+        "List of configure user priority.";
+      list user-priority {
+        key "direction";
+        description
+          "Configure user priority.";
+        ext:generated-by system {
+          description "The instance is generated automatically.";
+        }
+        ext:operation-exclude create|delete {
+          description "The instances cannot be created and deleted.";
+        }
+        leaf direction {
+          type aaa-direction-type;
+          description
+            "Direction.";
+        }
+        choice type {
+          default trust;
+          description
+            "Specify type of user priority.";
+          case trust {
+            description
+              "Specify type of user priority choice case as trust.";
+            leaf trust-type {
+              type aaa-trust-type;
+              default "unchangeable";
+              description
+                "Trust type.";
+            }
+          }
+          case priority {
+            description
+              "Specify type of user priority choice case as priority value.";
+            leaf priority-value {
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "Priority value.";
+            }
+          }
+        }
+      }
+    }
+    container profile-applys {
+      description
+        "List of configure QoS profile application.";
+      list profile-apply {
+        key "direction";
+        description
+          "Configure QoS profile application.";
+        leaf direction {
+          type qos:qos-direction-type;
+          description
+            "Direction.";
+        }
+        leaf profile-name {
+          type leafref {
+            path "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile/qos:name";
+          }
+          mandatory true;
+          description
+            "Name of Qos Profile.";
+        }
+      }
+    }
+    container redirect-diffserv-domain {
+      description
+        "Configure redirect diffserv domain.";
+      leaf diffserv-domain-name {
+        type leafref {
+          path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+        }
+        description
+          "Name of a diffserv domain.";
+      }
+    }
+    container session-group-excludes {
+      description
+        "List of configure session group exclude.";
+      list session-group-exclude {
+        must "(./type='all' and not (../session-group-exclude[type='user-queue']) and not(../session-group-exclude[type='car']) or (./type!='all' and not(../session-group-exclude[type='all'])))";
+        key "type direction";
+        description
+          "Configure session group exclude.";
+        leaf type {
+          type exclude-type;
+          description
+            "Session group exclude type.";
+        }
+        leaf direction {
+          type qos:qos-direction-type;
+          description
+            "Direction.";
+        }
+      }
+    }
+    container l2-user-priority {
+      description
+        "Configure L2 user priority.";
+      leaf trust-type {
+        type aaa-l2-trust-type;
+        description
+          "Trust type.";
+      }
+    }
+    container rate-limits {
+      description
+        "List of configure rate limit mode.";
+      list rate-limit {
+        key "direction";
+        description
+          "Configure rate limit mode.";
+        leaf direction {
+          type qos:qos-direction-type;
+          description
+            "Direction.";
+        }
+        leaf mode {
+          type rate-mode-type;
+          mandatory true;
+          description
+            "Rate limit mode.";
+        }
+      }
+    }
+    container dscp-user-priority {
+      description
+        "Configure dscp user priority.";
+      leaf value {
+        type uint8 {
+          range "0..63";
+        }
+        description
+          "Dscp value.";
+      }
+    }
+    container link-adjustment {
+      description
+        "Configure link adjustment.";
+      leaf enable {
+        type qos:enable-type;
+        description
+          "Link adjustment remote enable.";
+      }
+      leaf adjust-value {
+        type int32 {
+          range "-64..-1 | 1..64";
+        }
+        description
+          "Adjust value.";
+      }
+      leaf shaping-mode {
+        type qos:link-adjustment-type;
+        description
+          "Shaping mode. If users access the network through PPPoA, the remote link type must be set to cell; if users access the network through PPPoE, the remote link type does not need to be set to cell.";
+      }
+    }
+    container user-queue-granularitys {
+      description
+        "Configure user queue granularity.";
+      container user-queue-granularity {
+        presence "create user-queue-granularity";
+        description
+          "Enable/disable user queue granularity.";
+        leaf granularity-value {
+          type granularity-type;
+          mandatory true;
+          description
+            "Specify the value of granularity (range:1/16/32/64/128/256/512/1024).";
+        }
+      }
+    }
+  }//augment bras-qos:bras-qos
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-subscriber/bras-basic-access:layer2-subscriber" {
+    description "L2 BAS interface QoS configurations.";
+      container qos-profile-applys {
+        description
+          "List of configure profile application.";
+        list qos-profile-apply {
+          must "./ce-begin-vlan-id <= ./ce-end-vlan-id";
+          key "direction any-other-type pe-vlan-id ce-begin-vlan-id ce-end-vlan-id";
+          description
+            "Configure profile application.";
+          leaf direction {
+            type qos:all-direction-type;
+            description
+              "Direction.";
+          }
+          leaf any-other-type {
+            type qos:any-other-type;
+            description
+              "BAS QoS profile apply any other type.";
+          }
+          leaf pe-vlan-id {
+            type uint32 {
+              range "0..4094";
+            }
+            description
+              "PE VLAN ID.";
+          }
+          leaf ce-begin-vlan-id {
+            type uint32 {
+              range "0..4094";
+            }
+            description
+              "CE begin VLAN ID.";
+          }
+          leaf ce-end-vlan-id {
+            type uint32 {
+              range "0..4094";
+            }
+            description
+              "CE end VLAN ID.";
+          }
+          leaf identify-type {
+            type qos:bas-profile-identifier-type;
+            mandatory true;
+            description
+              "Identify type. The range supported by this node varies according to the interface type.";
+          }
+          leaf profile-name {
+            type leafref {
+              path "/qos:qos/qos:queue-scheduler-template/qos:profiles/qos:profile/qos:name";
+            }
+            mandatory true;
+            description
+              "QoS profile name.";
+          }
+          leaf group-name {
+            type qos:template-name;
+            description
+              "The name of user queue group.";
+          }
+          leaf session-limit-number {
+            type uint32 {
+              range "1..256";
+            }
+            description
+              "Session limit number.";
+          }
+        }
+      }
+      container user-group-queue-applys {
+        description
+          "List of configure user group queue application.";
+        list user-group-queue-apply {
+          key "direction";
+          description
+            "Configure user group queue application.";
+          leaf direction {
+            type qos:out-direction-type;
+            description
+              "Group queue direction.";
+          }
+          leaf group-queue-name {
+            ext:operation-exclude update {
+              description "After the configuration is created, the node cannot be modified.";
+            }
+            type leafref {
+              path "/qos:qos/qos:queue-scheduler-template/qos:user-group-queues/qos:user-group-queue/qos:name";
+            }
+            mandatory true;
+            description
+              "Group queue name.";
+          }
+          leaf group-name {
+            ext:operation-exclude update {
+              description "After the configuration is created, the node cannot be modified.";
+            }
+            type string {
+              length "1..31";
+            }
+            description
+              "Group-name.";
+          }
+        }
+      }
+  }//augment bras-qos:bras-qos
+}

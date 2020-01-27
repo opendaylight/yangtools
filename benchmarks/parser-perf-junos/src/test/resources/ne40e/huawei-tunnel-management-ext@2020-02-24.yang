@@ -1,0 +1,53 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-tunnel-management-ext {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-tunnel-management-ext";
+  prefix tnlm-ext;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-tunnel-management {
+    prefix tnlm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-srpolicy {
+    prefix srpolicy;
+  }
+  import huawei-segment-routing {
+    prefix sr;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Tunnel management, including management on tunnel policies and tunnel selectors.";
+  revision 2020-02-24 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "tunnel";
+  augment "/tnlm:tunnel-management/tnlm:tunnel-policys/tnlm:tunnel-policy/tnlm:ipv4-set/tnlm:policy-type/tnlm:binding/tnlm:nexthops/tnlm:nexthop" {
+    description
+      "Augment the huawei-tunnel-management-ext model to add tunnel-policy configuration.";
+    leaf group-id {
+      when "../tnlm:bind-type='sr-te-policy-group'";
+      type leafref {
+        path "/ni:network-instance/ni:instances/ni:instance/sr:segment-routing/srpolicy:srpolicy/srpolicy:policy-groups/srpolicy:policy-group/srpolicy:index";
+      }
+      description
+        "SR TE policy group ID.";
+    }
+  }
+}

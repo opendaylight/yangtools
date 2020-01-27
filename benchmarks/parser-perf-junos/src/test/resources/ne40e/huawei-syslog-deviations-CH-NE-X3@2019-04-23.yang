@@ -1,0 +1,33 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-syslog-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-syslog-deviations-CH-NE-X3";
+  prefix syslog-devs-CH-NE-X3;
+
+  import huawei-syslog {
+    prefix syslog;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Deviation of syslog module.";
+
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/syslog:syslog/syslog:domain-servers/syslog:domain-server/syslog:is-brief-format" {
+    deviate not-supported;
+  }
+}

@@ -1,0 +1,53 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-http-redirect-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-bras-http-redirect-deviations-CH-NE-X3";
+  prefix bras-http-redirect-devs-CH-NE-X3;
+
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-bras-http-redirect {
+    prefix bras-http-redirect;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global Configuration.";
+
+  revision 2020-01-17 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+  deviation /aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas/bras-http-redirect:http-redirect/bras-http-redirect:web-individualization/bras-http-redirect:user-mac-encrypt-in-des {
+    deviate not-supported;
+  }
+  deviation /aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas/bras-http-redirect:http-redirect/bras-http-redirect:web-individualization/bras-http-redirect:ap-mac-encrypted-in-des {
+    deviate not-supported;
+  }
+  deviation /aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas/bras-http-redirect:http-redirect/bras-http-redirect:web-individualization {
+    deviate delete { 
+      must "(./user-mac-aes128-cipher-text='false' and ./user-mac-simple-text-keyword='false') or (./user-mac-aes128-cipher-text='false' and ./user-mac-encrypt-in-des='false') or (./user-mac-encrypt-in-des='false' and ./user-mac-simple-text-keyword='false')";
+      must "(./ap-mac-aes128-cipher-text='false' and ./ap-mac-simple-text-keyword='false') or (./ap-mac-aes128-cipher-text='false' and ./ap-mac-encrypted-in-des='false') or (./ap-mac-encrypted-in-des='false' and ./ap-mac-simple-text-keyword='false')";
+    }
+  }
+  deviation /aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas/bras-http-redirect:http-redirect/bras-http-redirect:web-individualization {
+    deviate add { 
+      must "not(./user-mac-simple-text-keyword='true' and ./user-mac-aes128-cipher-text='true')";
+      must "not(./ap-mac-simple-text-keyword='true' and ./ap-mac-aes128-cipher-text='true')";
+    }
+  }
+}

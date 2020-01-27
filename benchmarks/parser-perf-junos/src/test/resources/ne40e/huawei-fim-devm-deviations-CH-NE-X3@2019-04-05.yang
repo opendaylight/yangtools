@@ -1,0 +1,40 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-fim-devm-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-fim-devm-deviations-CH-NE-X3";
+  prefix fim-devm-devs-CH-NE-X3;
+  import huawei-fim-devm {
+    prefix fim-devm;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "The modifications in the schema file are synchronized to the YANG file.";
+  revision 2019-04-05 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  deviation /devm:devm/devm:mpu-boards/devm:mpu-board/fim-devm:fim {
+    deviate not-supported;
+  }
+  deviation /devm:devm/devm:mpu-boards/devm:mpu-board/fim-devm:macmtu-discard-statistics {
+    deviate not-supported;
+  }
+  deviation /devm:devm/devm:mpu-boards/devm:mpu-board/fim-devm:ve-mac-address {
+    deviate not-supported;
+  }
+}

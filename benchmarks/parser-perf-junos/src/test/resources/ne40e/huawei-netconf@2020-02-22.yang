@@ -1,0 +1,82 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-netconf {
+  namespace "urn:huawei:yang:huawei-netconf";
+  prefix netconf;
+  import huawei-extension {
+    prefix ext;
+  }  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "The NETCONF protocol defines a simple mechanism through which a network device can be managed, configuration data information can be retrieved, and new configuration data can be uploaded and manipulated.";
+  revision 2020-02-22 {
+    description
+      "Add rpc to manage active YANG modules.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-05-05 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "netconf";  
+  container netconf {
+    description
+      "The NETCONF protocol defines a simple mechanism through which a network device can be managed, configuration data information can be retrieved, and new configuration data can be uploaded and manipulated.";
+    container operation-log-switch {
+      description
+        "Configure to get RPC oper log.";
+      leaf get {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable to get oper log.";
+      }
+    }
+
+    container active-modules {
+      config false;
+      description
+        "List of active YANG modules.";
+      list active-module {
+        key "module-name";
+        config false;
+        description
+          "Statistics of active YANG module.";
+        leaf module-name {
+          type string {
+            length "1..127";
+          }
+          description
+            "Active YANG module name.";
+        }
+      }
+    }
+  }
+  rpc activate-module {
+    description
+      "Activate YANG modules.";
+    ext:node-ref "/netconf/active-modules/active-module";
+    input  {
+      leaf module-name {
+          type leafref {
+            path "/netconf:netconf/netconf:active-modules/netconf:active-module/netconf:module-name";
+          }
+          mandatory true;
+          description
+            "The YANG module name to activate.";
+      }
+    }
+  }
+}

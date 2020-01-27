@@ -1,0 +1,475 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-keychain {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-keychain";
+  prefix keychain;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Keychain.";
+  revision 2019-04-29 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "key-chain";
+  typedef keychain-mode {
+    type enumeration {
+      enum "absolute" {
+        value 5;
+        description
+          "Absolute time mode.";
+      }
+      enum "daily" {
+        value 1;
+        description
+          "Daily periodicity mode.";
+      }
+      enum "monthly" {
+        value 2;
+        description
+          "Monthly periodicity mode.";
+      }
+      enum "weekly" {
+        value 3;
+        description
+          "Weekly periodicity mode.";
+      }
+      enum "yearly" {
+        value 4;
+        description
+          "Yearly periodicity mode.";
+      }
+    }
+    description
+      "Timing mode.";
+  }
+  typedef keychain-time-zone {
+    type enumeration {
+      enum "UTC" {
+        value 1;
+        description
+          "UTC time zone.";
+      }
+      enum "LMT" {
+        value 0;
+        description
+          "LMT time zone.";
+      }
+    }
+    description
+      "Time Zone.";
+  }
+  typedef keychain-algorithm-type {
+    type enumeration {
+      enum "md5" {
+        value 1;
+        description
+          "MD5 algorithm.";
+      }
+      enum "sha-1" {
+        value 2;
+        description
+          "SHA-1 algorithm.";
+      }
+      enum "hmac-md5" {
+        value 3;
+        description
+          "HMAC-MD5 algorithm.";
+      }
+      enum "hmac-sha1-12" {
+        value 4;
+        description
+          "HMAC-SHA1-12 algorithm.";
+      }
+      enum "hmac-sha1-20" {
+        value 5;
+        description
+          "HMAC-SHA1-20 algorithm.";
+      }
+      enum "hmac-sha-256" {
+        value 6;
+        description
+          "HMAC-SHA-256 algorithm.";
+      }
+      enum "sha-256" {
+        value 7;
+        description
+          "SHA-256 algorithm.";
+      }
+      enum "sm3" {
+        value 8;
+        description
+          "SM3 algorithm.";
+      }
+    }
+    description
+      "Algorithm configuration for that Key-ID.";
+  }
+  typedef keychain-key-id-status {
+    type enumeration {
+      enum "active" {
+        value 0;
+        description
+          "Active.";
+      }
+      enum "inactive" {
+        value 1;
+        description
+          "Inactive.";
+      }
+    }
+    description
+      "Status of key ID.";
+  }
+  typedef keychain-dig-len-16or32 {
+    type enumeration {
+      enum "16" {
+        value 16;
+        description
+          "16 Byte..";
+      }
+      enum "32" {
+        value 32;
+        description
+          "32 Byte..";
+      }
+    }
+    description
+      "Digest length 16 or 32 byte.";
+  }
+  typedef keychain-dig-len-16or20 {
+    type enumeration {
+      enum "16" {
+        value 16;
+        description
+          "16 Byte..";
+      }
+      enum "20" {
+        value 20;
+        description
+          "20 Byte..";
+      }
+    }
+    description
+      "Digest length 16 or 20 byte.";
+  }
+  container keychain {
+    description
+      "Keychain.";
+    container keychains {
+      description
+        "List of keychain instances.";
+      list keychain {
+        key "name";
+        max-elements  "5000";
+        description
+          "Configure keychain instance.";
+        leaf name {
+          type string {
+            length "1..47";
+            pattern '[^A-Z]+';
+          }
+          ext:case-sensitivity lower-only;
+          description
+            "The name of keychain instance.";
+        }
+        leaf kc-mode {
+          type keychain-mode;
+          mandatory true;
+          description
+            "The time mode of keychain instance.";
+          ext:support-filter "true";
+        }
+        leaf time-zone {
+          type keychain-time-zone;
+          default "LMT";
+          description
+            "The time zone of keychain instance.";
+          ext:support-filter "true";
+        }
+        leaf digest-len-sha256 {
+          type keychain-dig-len-16or32;
+          default "32";
+          description
+            "The digest length of SHA-256 algorithm.";
+          ext:support-filter "true";
+        }
+        leaf digest-len-hmac-sha256 {
+          type keychain-dig-len-16or32;
+          default "32";
+          description
+            "The digest length of HMAC-SHA-256 algorithm.";
+          ext:support-filter "true";
+        }
+        leaf digest-len-hmac-sha120 {
+          type keychain-dig-len-16or20;
+          default "20";
+          description
+            "The digest length of HMAC-SHA1-20 algorithm.";
+          ext:support-filter "true";
+        }
+        leaf recv-tolerance {
+          type uint32 {
+            range "0..14400";
+          }
+          units min;
+          description
+            "The receive tolerance value in minutes for a keychain, 0 means that time is infinite.";
+          ext:support-filter "true";
+        }
+        container kc-tcp {
+          description
+            "Configure the parameter for TCP enhanced authentication option. The corresponding keychain must have been created.";
+          leaf tcp-kind {
+            type uint32 {
+              range "28..255";
+            }
+            default "254";
+            description
+              "The value of TCP kind.";
+            ext:support-filter "true";
+          }
+          leaf tcp-md5-alg-id {
+            type uint32 {
+              range "1..63";
+            }
+            default "3";
+            description
+              "TCP algorithm Id of MD5.";
+            ext:support-filter "true";
+          }
+          leaf tcp-sha1-alg-id {
+            type uint32 {
+              range "1..63";
+            }
+            default "4";
+            description
+              "TCP algorithm Id of SHA-1.";
+            ext:support-filter "true";
+          }
+          leaf tcp-hmac-md5-alg-id {
+            type uint32 {
+              range "1..63";
+            }
+            default "5";
+            description
+              "TCP algorithm Id of HMAC-MD5.";
+            ext:support-filter "true";
+          }
+          leaf tcp-hmac-sha112-id {
+            type uint32 {
+              range "1..63";
+            }
+            default "2";
+            description
+              "TCP algorithm Id of HMAC-SHA1-12.";
+            ext:support-filter "true";
+          }
+          leaf tcp-hmac-sha120-id {
+            type uint32 {
+              range "1..63";
+            }
+            default "6";
+            description
+              "TCP algorithm Id of HMAC-SHA1-20.";
+            ext:support-filter "true";
+          }
+          leaf tcp-hmac-sha256-id {
+            type uint32 {
+              range "1..63";
+            }
+            default "7";
+            description
+              "TCP algorithm Id of HMAC-SHA-256.";
+            ext:support-filter "true";
+          }
+          leaf tcp-sha256-alg-id {
+            type uint32 {
+              range "1..63";
+            }
+            default "8";
+            description
+              "TCP algorithm Id of SHA-256.";
+            ext:support-filter "true";
+          }
+          leaf tcp-sm3-alg-id {
+            type uint32 {
+              range "1..63";
+            }
+            default "9";
+            description
+              "TCP algorithm Id of SM3.";
+            ext:support-filter "true";
+          }
+        }
+        container abs-key-ids {
+          when "../kc-mode='absolute'";
+          description
+            "List of absolute time mode key-id.";
+          list abs-key-id {
+            key "key-id";
+            max-elements 64;
+            description
+              "Configure absolute time mode key-id instance. The corresponding keychain must have been created.";
+            leaf key-id {
+              type uint32 {
+                range "0..63";
+              }
+              description
+                "ID of key-id.";
+            }
+            leaf algorithm {
+              type keychain-algorithm-type;
+              description
+                "The algorithm that should be associated to the key-id.";
+              ext:support-filter "true";
+            }
+            leaf cipher-string {
+              type pub-type:password-extend {
+                length "1..432";
+              }
+              description
+                "Authentication password of key-id.";
+            }
+            leaf default-send-key-id {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the default send key-id of keychain instance. A keychain instance can have only one key-id as the default send key-id.";
+              ext:support-filter "true";
+            }
+            leaf abs-send-start-date {
+              type pub-type:date;
+              must "../abs-send-start-time and (../send-duration or (../abs-send-end-date and ../abs-send-end-time))";
+              description
+                "Date for the key-id start to be send activity, the combination of abs-send-start-date and abs-send-start-time must be earlier than that of abs-send-end-date and abs-send-end-time.";
+              ext:support-filter "true";
+            }
+            leaf abs-send-start-time {
+              type pub-type:time-hhmm;
+              must "../abs-send-start-date and (../send-duration or (../abs-send-end-date and ../abs-send-end-time))";
+              description
+                "Time for the key-id start to be send activity, the combination of abs-send-start-date and abs-send-start-time must be earlier than that of abs-send-end-date and abs-send-end-time.";
+              ext:support-filter "true";
+            }
+            leaf abs-recv-start-date {
+              type pub-type:date;
+              must "../abs-recv-start-time and (../recv-duration or (../abs-recv-end-date and ../abs-recv-end-time))";
+              description
+                "Date for the key-id start to be receive activity, the combination of abs-recv-start-date and abs-recv-start-time must be earlier than that of abs-recv-end-date and abs-recv-end-time.";
+              ext:support-filter "true";
+            }
+            leaf abs-recv-start-time {
+              type pub-type:time-hhmm;
+              must "../abs-recv-start-date and (../recv-duration or (../abs-recv-end-date and ../abs-recv-end-time))";
+              description
+                "Time for the key-id start to be receive activity, the combination of abs-recv-start-date and abs-recv-start-time must be earlier than that of abs-recv-end-date and abs-recv-end-time.";
+              ext:support-filter "true";
+            }
+            choice send-end-mode {
+              description
+                "The end mode keychain instance.";
+              case end-by-duration {
+                description
+                  "End the keychain instance by duration.";
+                  leaf send-duration {
+                    type uint32 {
+                      range "0..26280000";
+                    }
+                    units min;
+                    must "../abs-send-start-date and ../abs-send-start-time";
+                    description
+                      "Duration of the key-id keep send active, 0 means that time is infinite.";
+                    ext:support-filter "true";
+                  }
+              }
+              case end-by-specified-time {
+                description
+                  "End the keychain instance by specified-time.";
+                  leaf abs-send-end-date {
+                    type pub-type:date;
+                    must "../abs-send-start-date and ../abs-send-start-time and ../abs-send-end-time";
+                    description
+                      "Date for the key-id stop to be send activity, the combination of abs-send-start-date and abs-send-start-time must be earlier than that of abs-send-end-date and abs-send-end-time.";
+                    ext:support-filter "true";
+                  }
+                  leaf abs-send-end-time {
+                    type pub-type:time-hhmm;
+                    must "../abs-send-start-date and ../abs-send-start-time and ../abs-send-end-date";
+                    description
+                      "Time for the key-id stop to be send activity, the combination of abs-send-start-date and abs-send-start-time must be earlier than that of abs-send-end-date and abs-send-end-time.";
+                    ext:support-filter "true";
+                  }
+                }
+            }
+            choice receive-end-mode {
+              description
+                "The end mode keychain instance.";
+              case end-by-duration {
+                description
+                  "End the keychain instance by duration.";
+                  leaf recv-duration {
+                    type uint32 {
+                      range "0..26280000";
+                    }
+                    units min;
+                    must "../abs-recv-start-date and ../abs-recv-start-time";
+                    description
+                      "Duration of the key-id keep receive active, 0 means that time is infinite.";
+                    ext:support-filter "true";
+                  }
+              }
+              case end-by-specified-time {
+                description
+                  "End the keychain instance by specified-time.";
+                  leaf abs-recv-end-date {
+                    type pub-type:date;
+                    must "../abs-recv-start-date and ../abs-recv-start-time and ../abs-recv-end-time";
+                    description
+                      "Date for the key-id stop to be receive activity, the combination of abs-recv-start-date and abs-recv-start-time must be earlier than that of abs-recv-end-date and abs-recv-end-time.";
+                    ext:support-filter "true";
+                  }
+                  leaf abs-recv-end-time {
+                    type pub-type:time-hhmm;
+                    must "../abs-recv-start-date and ../abs-recv-start-time and ../abs-recv-end-date";
+                    description
+                      "Time for the key-id stop to be receive activity, the combination of abs-recv-start-date and abs-recv-start-time must be earlier than that of abs-recv-end-date and abs-recv-end-time.";
+                    ext:support-filter "true";
+                  }
+              }
+            }
+            leaf send-status {
+              type keychain-key-id-status;
+              config false;
+              description
+                "Send status of key-id.";
+            }
+            leaf recv-status {
+              type keychain-key-id-status;
+              config false;
+              description
+                "Receive status of key-id.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

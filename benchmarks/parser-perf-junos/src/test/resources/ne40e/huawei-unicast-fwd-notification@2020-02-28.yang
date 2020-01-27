@@ -1,0 +1,388 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-unicast-fwd-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-unicast-fwd-notification";
+  prefix unicast-fwd-notification;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of unicast-fwd-notification.";
+  revision 2020-02-28 {
+    description
+      "Update the nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-18 {
+    description
+      "Update the name of the nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-07-08 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forwarding";
+  notification forward-arp-alarm {
+    description
+      "The ARP Miss event continuously exists.";
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Interface index.";
+    }
+  }
+  notification forward-arp-alarm-resume {
+    description
+      "The ARP Miss alarm has resumed.";
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Interface index.";
+    }
+  }
+  notification forward-fib-alarm {
+    description
+      "The board in [slot] does not support import of [route-description] static routes between public and VPN instances.";
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf route-description {
+      type string {
+        length "0..15";
+      }
+      description
+        "IPv4/IPv6 route flag.";
+    }
+  }
+  notification forward-fib-alarm-resume {
+    description
+      "The alarm is cleared, and the device becomes normal.";
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf route-description {
+      type string {
+        length "0..15";
+      }
+      description
+        "IPv4/IPv6 route flag.";
+    }
+  }
+  notification forward-resource-lack-for-license {
+    description
+      "The number of used resources on the board has exceeded the upper threshold. To continue using these resources, purchase and activate corresponding license resource items as soon as possible.";
+    leaf license-item {
+      type string {
+        length "0..63";
+      }
+      description
+        "License type.";
+    }
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf resource-name {
+      type string {
+        length "0..127";
+      }
+      description
+        "Resource item name.";
+    }
+  }
+  notification forward-resource-lack-for-license-resume {
+    description
+      "The license resource alarm has resumed.";
+    leaf license-item {
+      type string {
+        length "0..63";
+      }
+      description
+        "License type.";
+    }
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf resource-name {
+      type string {
+        length "0..127";
+      }
+      description
+        "Resource item name.";
+    }
+  }
+  notification forward-fail-for-license {
+    description
+      "Because the license named [license-item] was not activated for the board in the slot [slot],the operation is failed.";
+    leaf license-item {
+      type string {
+        length "0..63";
+      }
+      description
+        "License name.";
+    }
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf operation {
+      type uint32 {
+        range "0..64";
+      }
+      description
+        "Operation ID.";
+    }
+  }
+  notification forward-fail-for-license-resume {
+    description
+      "The license named [license-item] was activated for the board in the slot [slot].";
+    leaf license-item {
+      type string {
+        length "0..63";
+      }
+      description
+        "License name.";
+    }
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+    leaf operation {
+      type uint32 {
+        range "0..64";
+      }
+      description
+        "Operation ID.";
+    }
+  }
+  notification seu-igp-down-risking {
+    description
+      "A SEU logic error occurred on the subcard of the current interface, causing the IGP interruption.";
+    leaf card {
+      type uint32 {
+        range "0..64";
+      }
+      description
+        "Card ID.";
+    }
+    leaf port {
+      type uint32 {
+        range "0..256";
+      }
+      description
+        "Port ID.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Interface name.";
+    }
+    leaf protocol {
+      type string {
+        length "0..63";
+      }
+      description
+        "Protocol name.";
+    }
+  }
+  notification seu-igp-down-risking-resume {
+    description
+      "The alarm was cleared because the IGP went Up again or the soft failure of the SEU logic on the subcard was rectified.";
+    leaf card {
+      type uint32 {
+        range "0..64";
+      }
+      description
+        "Card ID.";
+    }
+    leaf port {
+      type uint32 {
+        range "0..256";
+      }
+      description
+        "Port ID.";
+    }
+    leaf ifname {
+      type leafref {
+        path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+      }
+      description
+        "Interface name.";
+    }
+    leaf protocol {
+      type string {
+        length "0..63";
+      }
+      description
+        "Protocol name.";
+    }
+  }
+  notification nd-proxy-not-support-alarm {
+    description
+      "The board does not support proxy ND on VLANIF and BDIF interfaces.";
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+  }
+  notification nd-proxy-not-support-alarm-resume {
+    description
+      "The alarm is cleared because the proxy ND configuration has been deleted on the current VLANIF and BDIF interfaces or the board has been replaced with one that supports proxy ND on VLANIF and BDIF interfaces.";
+    leaf slot {
+      type string {
+        length "0..15";
+      }
+      description
+        "Slot ID.";
+    }
+  }
+  notification forward-entry-inconsistent {
+    description
+      "The entry on the control plane became inconsistent with that on the forwarding plane.";
+    leaf service-type {
+      type uint32;
+      description
+        "Service type.";
+    }
+    leaf vpn-name {
+      type leafref {
+        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+      }
+      description
+        "VPN name.";
+    }
+    leaf destination {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination IP address.";
+    }
+    leaf destination-mask {
+      type uint32 {
+        range "1..32";
+      }
+      description
+        "Destination IP address mask.";
+    }
+    leaf index {
+      type uint32;
+      description
+        "Reserved parameter.";
+    }
+    leaf description {
+      type string {
+        length "1..64";
+      }
+      description
+        "Detailed description of forwarding information.";
+    }
+  }
+  notification forward-entry-inconsistent-resume {
+    description
+      "The entry on the control plane became consistent with that on the forwarding plane.";
+    leaf service-type {
+      type uint32;
+      description
+        "Service type.";
+    }
+    leaf vpn-name {
+      type leafref {
+        path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+    }
+      description
+        "VPN name.";
+    }
+    leaf destination {
+      type inet:ipv4-address-no-zone;
+      description
+        "Destination IP address.";
+    }
+    leaf destination-mask {
+      type uint32 {
+        range "1..32";
+      }
+      description
+        "Destination IP address mask.";
+    }
+    leaf index {
+      type uint32;
+      description
+        "Reserved parameter.";
+    }
+    leaf description {
+      type string {
+        length "1..64";
+      }
+      description
+        "Detailed description of forwarding information.";
+    }
+  }
+}

@@ -1,0 +1,2660 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ipv6-nd {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-ipv6-nd";
+  prefix ipv6-nd;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ip {
+    prefix ip;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-ethernet {
+    prefix ethernet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "ND management.";
+  revision 2019-11-20 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef nd-flag {
+    type enumeration {
+      enum "false" {
+        value 0;
+        description
+          "NO.";
+      }
+      enum "true" {
+        value 1;
+        description
+          "YES.";
+      }
+    }
+    description
+      "Description of nd-flag.";
+  }
+  typedef nd-switch-state {
+    type enumeration {
+      enum "off" {
+        value 0;
+        description
+          "Off.";
+      }
+      enum "on" {
+        value 1;
+        description
+          "On.";
+      }
+    }
+    description
+      "The state of the switch.";
+  }
+  typedef nd-ngb-state {
+    type enumeration {
+      enum "incomplete" {
+        value 0;
+        description
+          "Address resolution is being performed on the entry.";
+      }
+      enum "reachable" {
+        value 1;
+        description
+          "The neighbor is known to have been reachable recently.";
+      }
+      enum "stale" {
+        value 2;
+        description
+          "The neighbor is no longer known to be reachable, but until traffic is sent to the neighbor no attempt should be made to verify its reachability.";
+      }
+      enum "delay" {
+        value 3;
+        description
+          "The neighbor is no longer known to be reachable, and traffic has recently been sent to the neighbor. Rather than probe the neighbor immediately, however,
+            delay sending probes for a short while in order to give upper-layer protocols a chance to provide reachability confirmation.";
+      }
+      enum "probe" {
+        value 4;
+        description
+          "The neighbor is no longer known to be reachable, and unicast Neighbor Solicitation probes are being sent to verify reachability.";
+      }
+    }
+    description
+        "The Neighbor Unreachability Detection state.";
+    reference
+        "RFC 4861: Neighbor Discovery for IP version 6 (IPv6) Section 7.3.2";
+  }
+  typedef nd-route-preference {
+    type enumeration {
+      enum "medium" {
+        value 0;
+        description
+          "Preference medium.";
+      }
+      enum "high" {
+        value 1;
+        description
+          "Preference high.";
+      }
+      enum "low" {
+        value 3;
+        description
+          "Preference low.";
+      }
+    }
+    description
+      "The RA router preference level.";
+  }
+  typedef nd-nb-type {
+    type enumeration {
+      enum "remote" {
+        value 0;
+        description
+          "Remote pushed.";
+      }
+      enum "static" {
+        value 1;
+        description
+          "Statically configured.";
+      }
+      enum "dynamic" {
+        value 2;
+        description
+          "Dynamically resolved.";
+      }
+    }
+    description
+      "The origin of neighbor entry.";
+  }
+  container ipv6-nd {
+    description
+      "ND management.";
+    container global {
+      description
+        "Configure global configuration of ND.";
+      leaf ns-send-rate-limit {
+        type uint16 {
+          range "1..1000";
+        }
+        units "pps";
+        default "550";
+        description
+          "Rate limit of sending NS packet.";
+      }
+      leaf na-send-rate-limit {
+        type uint16 {
+          range "1..10240";
+        }
+        units "pps";
+        default "5000";
+        description
+          "Rate limit of sending NA packet.";
+      }
+      leaf rs-send-rate-limit {
+        type uint16 {
+          range "1..1000";
+        }
+        units "pps";
+        default "550";
+        description
+          "Rate limit of sending RS packet.";
+      }
+      leaf ra-send-rate-limit {
+        type uint16 {
+          range "1..1000";
+        }
+        units "pps";
+        default "550";
+        description
+          "Rate limit of sending RA packet.";
+      }
+      leaf dad-detect {
+        type nd-flag;
+      default "true";
+        description
+          "The switch of DAD enhanced detection.";
+      }
+      leaf mac-check-flag {
+        type nd-flag;
+        default "false";
+        description
+          "Enable IPv6 ND MAC check.";
+      }
+      leaf auto-detect-flag {
+        type nd-switch-state;
+        default "on";
+        description
+          "To enable the automatic detection of ND entries.";
+      }
+      leaf prefix-strict-flag {
+        type nd-switch-state;
+        default "on";
+        description
+          "ND Prefix learning strict.";
+      }
+      leaf pre-detect-flag {
+        type nd-switch-state;
+        default "off";
+        description
+          "To determine whether to enable pre-detection.";
+      }
+      leaf hop-limit {
+        type uint8 {
+          range "1..255";
+        }
+        default "64";
+        description
+          "IPv6 packet hoplimit.";
+      }
+      leaf stale-time {
+        type uint32 {
+          range "60..172800";
+        }
+        units "s";
+        default "1200";
+        description
+          "Aging time of the global stale state.";
+      }
+      leaf rsa-calculate-rate-limit {
+        type uint32 {
+          range "0..100";
+          ext:value-meaning {
+            ext:item  "0" {
+              ext:meaning "disabling the function of rsa calculation limit";
+            }
+          }
+        }
+        default "0";
+        description
+          "Rate limit for RSA option calculation.";
+      }
+    }    
+    container ipv6-neighbors {
+      config false;
+      description
+        "List of information about neighbor entry query.";
+      list ipv6-neighbor {
+        key "if-name ipv6-addr";
+        description
+          "Statistics of query neighbor entries which can be static, or dynamic.";
+        leaf if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          description
+            "Interface name.";
+        }
+        leaf ipv6-addr {
+          type inet:ipv6-address-no-zone;
+          description
+            "IPv6 address of a neighbor entry.";
+        }
+        leaf mac-addr {
+          type pub-type:mac-address;
+          mandatory true;
+          description
+            "MAC address.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "VPN name.";
+          ext:support-filter "true";
+        }
+        leaf vlan-id {
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "VLAN ID.";
+          ext:support-filter "true";
+        }
+        leaf state {
+          type nd-ngb-state;
+          description
+            "Status of a neighbor entry.";
+        }
+        leaf static-flag {
+          type nd-nb-type;
+          description
+            "Type of a neighbor entry. The available options are static, dynamic or remote.";
+        }
+        leaf age {
+          type uint32 {
+            range "0..4294967293";
+          }
+          units "min";
+          description
+            "Time when a neighbor entry is established.";
+        }
+        leaf is-router {
+          type nd-flag;
+          description
+            "Is a Router.";
+        }
+        leaf cevid {
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "Inner VLAN tag. If this parameter is not set, the value of the VLAN ID is considered to be 0. If this parameter is set, it indicates that the ND entry is in the associated VLAN.";
+        }
+        leaf strict-flag {
+          type boolean;
+          description
+            "Strict security mode.";
+        }
+        leaf nickname {
+          type uint32 {
+            range "1..65535";
+          }
+          description
+            "Nickname which uniquely identifies an RB on a TRILL network.";
+        }
+        leaf bd-id {
+          type uint32 {
+            range "1..16777215";
+          }
+          description
+            "Bridge-domain ID.";
+        }
+        leaf vni {
+          type uint32 {
+            range "1..16777215";
+          }
+          description
+            "Vxlan VNI.";
+        }
+        leaf source-addr {
+          type inet:ip-address-no-zone;
+          description
+            "Tunnel SourceIPAddr.";
+        }
+        leaf peer-addr {
+          type inet:ip-address-no-zone;
+          description
+            "Tunnel PeerIPAddr.";
+        }
+      }
+    }
+    container nd-pkt-stats {
+      config false;		
+      description
+        "Statistics of ND packets.";
+      container ns-stats {
+        description
+          "Statistics of NS packets.";        
+        container ns-global {
+          description
+            "Statistics of global NS packets.";
+          leaf send-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of sent NS packets.";
+          }
+          leaf send-dip-ucast {
+            type uint32;
+            units "packet";
+            description
+              "Number of sent NS packets with the destination address as a unicast address.";
+          }
+          leaf send-dip-mcast {
+            type uint32;
+            units "packet";
+            description
+              "Number of sent NS packets with the destination address as a multicast address.";
+          }
+          leaf send-target-linklocal {
+            type uint32;
+            units "packet";
+            description
+              "Number of sent NS packets with the target address as a link-local address.";
+          }
+          leaf send-target-global {
+            type uint32;
+            units "packet";
+            description
+              "Number of sent NS packets with the target address as a global address.";
+          }
+          leaf recv-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of received NS packets.";
+          }
+          leaf recv-valid-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of received valid NS packets.";
+          }
+          leaf recv-dip-ucast {
+            type uint32;
+            units "packet";
+            description
+              "Number of received NS packets with the destination address as a unicast address.";
+          }
+          leaf recv-dip-mcast {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets with the destination address as a multicast address.";
+          }
+          leaf recv-target-linklocal {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets with the target address as a link-local address.";
+          }
+          leaf recv-target-global {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets with the target address as a global address.";
+          }
+          leaf drop-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of discarded NS packets.";
+          }
+          leaf drop-checksum-err {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to checksum errors.";
+          }
+          leaf drop-bad-len {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to bad packet length.";
+          }
+          leaf drop-bad-code {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to bad code.";
+          }
+          leaf drop-bad-hoplimit {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to bad hoplimit.";
+          }
+          leaf drop-bad-src-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to bad source MAC addresses.";
+          }
+          leaf drop-bad-dst-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to bad destination MAC addresses.";
+          }
+          leaf drop-bad-tgt-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to bad target MAC addresses.";
+          }
+          leaf drop-bad-src-ip {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to bad source IP addresses.";
+          }
+          leaf drop-bad-dst-ip {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to bad destination IP addresses.";
+          }
+          leaf drop-bad-tgt-ip {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to bad target IP addresses.";
+          }
+          leaf drop-bad-option {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to bad options.";
+          }
+          leaf drop-local-addr {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded because the source address is the local address.";
+          }        
+          leaf drop-mac-check {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to source MAC address consistency check errors.";
+          }
+          leaf drop-rate-limit {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to global rate limit.";
+          }
+          leaf drop-src-mac-attack {
+            type uint32;
+            units "packet";
+            description
+              "Number of NS packets discarded due to source MAC address attacks.";
+          }        
+        }
+        container ns-slots {
+          config false;
+          description
+            "List of NS packets in these slots.";
+          list ns-slot {
+            key "slot-id";
+            description
+              "Statistics of NS packets in the slot.";
+            leaf slot-id {
+              type string {
+                length "1..24";
+              }
+              description
+                "Slot ID, which refers to the position of logical MPU board and physical LPU boards.";
+            }          
+            leaf send-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of sent NS packets.";
+            }
+            leaf send-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of sent NS packets with the destination address as a unicast address.";
+            }
+            leaf send-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of sent NS packets with the destination address as a multicast address.";
+            }
+            leaf send-target-linklocal {
+              type uint32;
+              units "packet";
+              description
+                "Number of sent NS packets with the target address as a link-local address.";
+            }
+            leaf send-target-global {
+              type uint32;
+              units "packet";
+              description
+                "Number of sent NS packets with the target address as a global address.";
+            }
+            leaf recv-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received NS packets.";
+            }
+            leaf recv-valid-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received valid NS packets.";
+            }
+            leaf recv-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of received NS packets with the destination address as a unicast address.";
+            }
+            leaf recv-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets with the destination address as a multicast address.";
+            }
+            leaf recv-target-linklocal {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets with the destination address as a link-local address.";
+            }
+            leaf recv-target-global {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets with the destination address as a global address.";
+            }
+            leaf drop-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of discarded NS packets.";
+            }
+            leaf drop-checksum-err {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to checksum errors.";
+            }
+            leaf drop-bad-len {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad packet length.";
+            }
+            leaf drop-bad-code {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad code.";
+            }
+            leaf drop-bad-hoplimit {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad hoplimit.";
+            }
+            leaf drop-bad-src-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad source MAC addresses.";
+            }
+            leaf drop-bad-dst-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad destination MAC addresses.";
+            }
+            leaf drop-bad-tgt-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad target MAC addresses.";
+            }
+            leaf drop-bad-src-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad source IP addresses.";
+            }
+            leaf drop-bad-dst-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad destination IP addresses.";
+            }
+            leaf drop-bad-tgt-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad target IP addresses.";
+            }
+            leaf drop-bad-option {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad options.";
+            }
+            leaf drop-local-addr {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded because the source address is the local address.";
+            }        
+            leaf drop-mac-check {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to source MAC address consistency check errors.";
+            }
+            leaf drop-rate-limit {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to global rate limit.";
+            }
+            leaf drop-src-mac-attack {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to source MAC address attacks.";
+            }
+          }        
+        }
+        container ns-ifs {
+          config false;
+          description
+            "List of NS packets in these interfaces.";
+          list ns-if {
+            key "if-name";
+            description
+              "Statistics of NS packets in the interface.";
+            leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Interface name.";
+            }          
+            leaf send-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of sent NS packets.";
+            }
+            leaf send-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of sent NS packets with the destination address as a unicast address.";
+            }
+            leaf send-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of sent NS packets with the destination address as a multicast address.";
+            }
+            leaf send-target-linklocal {
+              type uint32;
+              units "packet";
+              description
+                "Number of sent NS packets with the target address as a link-local address.";
+            }
+            leaf send-target-global {
+              type uint32;
+              units "packet";
+              description
+                "Number of sent NS packets with the target address as a global address.";
+            }
+            leaf recv-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received NS packets.";
+            }
+            leaf recv-valid-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received valid NS packets.";
+            }
+            leaf recv-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of received NS packets with the destination address as a unicast address.";
+            }
+            leaf recv-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets with the destination address as a multicast address.";
+            }
+            leaf recv-target-linklocal {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets with the destination address as a link-local address.";
+            }
+            leaf recv-target-global {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets with the destination address as a global address.";
+            }
+            leaf drop-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of discarded NS packets.";
+            }
+            leaf drop-checksum-err {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to checksum errors.";
+            }
+            leaf drop-bad-len {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad packet length.";
+            }
+            leaf drop-bad-code {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad code.";
+            }
+            leaf drop-bad-hoplimit {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad hoplimit.";
+            }
+            leaf drop-bad-src-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad source MAC addresses.";
+            }
+            leaf drop-bad-dst-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad destination MAC addresses.";
+            }
+            leaf drop-bad-tgt-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad target MAC addresses.";
+            }
+            leaf drop-bad-src-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad source IP addresses.";
+            }
+            leaf drop-bad-dst-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad destination IP addresses.";
+            }
+            leaf drop-bad-tgt-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad target IP addresses.";
+            }
+            leaf drop-bad-option {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to bad options.";
+            }
+            leaf drop-local-addr {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded because the source address is the local address.";
+            }        
+            leaf drop-mac-check {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to source MAC address consistency check errors.";
+            }
+            leaf drop-rate-limit {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to global rate limit.";
+            }
+            leaf drop-src-mac-attack {
+              type uint32;
+              units "packet";
+              description
+                "Number of NS packets discarded due to source MAC address attacks.";
+            }
+          }        
+        }
+      }
+      container na-stats {
+        description
+          "Statistics of NA packets.";      
+        container na-global {
+          description
+            "Statistics of global NA packets.";
+          leaf send-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of send NA packets.";
+          }
+          leaf send-dip-ucast {
+            type uint32;
+            units "packet";
+            description
+              "Number of send NA packets with the destination address as a unicast address.";
+          }
+          leaf send-dip-mcast {
+            type uint32;
+            units "packet";
+            description
+              "Number of send NA packets with the destination address as a multicast address.";
+          }
+          leaf send-target-linklocal {
+            type uint32;
+            units "packet";
+            description
+              "Number of send NA packets with the target address as a link-local address.";
+          }
+          leaf send-target-global {
+            type uint32;
+            units "packet";
+            description
+              "Number of send NA packets with the target address as a global address.";
+          }
+          leaf recv-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of received NA packets.";
+          }
+          leaf recv-valid-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of received valid NA packets.";
+          }
+          leaf recv-dip-ucast {
+            type uint32;
+            units "packet";
+            description
+              "Number of received NA packets with the destination address as a unicast address.";
+          }
+          leaf recv-dip-mcast {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets with the destination address as a multicast address.";
+          }
+          leaf recv-target-linklocal {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets with the destination address as a link-local address.";
+          }
+          leaf recv-target-global {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets with the destination address as a global address.";
+          }
+          leaf drop-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of discarded NA packets.";
+          }
+          leaf drop-checksum-err {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to checksum errors.";
+          }
+          leaf drop-bad-len {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to bad packet length.";
+          }
+          leaf drop-bad-code {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to bad code.";
+          }
+          leaf drop-bad-hoplimit {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to bad hoplimit.";
+          }
+          leaf drop-bad-src-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to bad source MAC addresses.";
+          }
+          leaf drop-bad-dst-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to bad destination MAC addresses.";
+          }
+          leaf drop-bad-tgt-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to bad target MAC addresses.";
+          }
+          leaf drop-bad-src-ip {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to bad source IP addresses.";
+          }
+          leaf drop-bad-dst-ip {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to bad destination IP addresses.";
+          }
+          leaf drop-bad-tgt-ip {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to bad target IP addresses.";
+          }
+          leaf drop-bad-option {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to bad options.";
+          }
+          leaf drop-local-addr {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded because the source address is the local address.";
+          }        
+          leaf drop-mac-check {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to source MAC address consistency check errors.";
+          }
+          leaf drop-rate-limit {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to global rate limit.";
+          }
+          leaf drop-src-mac-attack {
+            type uint32;
+            units "packet";
+            description
+              "Number of NA packets discarded due to source MAC address attacks.";
+          }        
+        }
+        container na-slots {
+          description
+            "List of NA packets in these slots.";
+          list na-slot {
+            key "slot-id";
+            description
+              "Statistics of NA packets in the slot.";
+            leaf slot-id {
+              type string {
+                length "1..24";
+              }
+              description
+                "Slot ID, which refers to the position of logical MPU board and physical LPU boards.";
+            }        
+            leaf send-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of send NA packets.";
+            }
+            leaf send-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of send NA packets with the destination address as a unicast address.";
+            }
+            leaf send-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of send NA packets with the destination address as a multicast address.";
+            }
+            leaf send-target-linklocal {
+              type uint32;
+              units "packet";
+              description
+                "Number of send NA packets with the target address as a link-local address.";
+            }
+            leaf send-target-global {
+              type uint32;
+              units "packet";
+              description
+                "Number of send NA packets with the target address as a global address.";
+            }
+            leaf recv-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received NA packets.";
+            }
+            leaf recv-valid-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received valid NA packets.";
+            }
+            leaf recv-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of received NA packets with the destination address as a unicast address.";
+            }
+            leaf recv-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets with the destination address as a multicast address.";
+            }
+            leaf recv-target-linklocal {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets with the destination address as a link-local address.";
+            }
+            leaf recv-target-global {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets with the destination address as a global address.";
+            }
+            leaf drop-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of discarded NA packets.";
+            }
+            leaf drop-checksum-err {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to checksum errors.";
+            }
+            leaf drop-bad-len {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad packet length.";
+            }
+            leaf drop-bad-code {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad code.";
+            }
+            leaf drop-bad-hoplimit {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad hoplimit.";
+            }
+            leaf drop-bad-src-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad source MAC addresses.";
+            }
+            leaf drop-bad-dst-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad destination MAC addresses.";
+            }
+            leaf drop-bad-tgt-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad target MAC addresses.";
+            }
+            leaf drop-bad-src-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad source IP addresses.";
+            }
+            leaf drop-bad-dst-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad destination IP addresses.";
+            }
+            leaf drop-bad-tgt-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad target IP addresses.";
+            }
+            leaf drop-bad-option {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad options.";
+            }
+            leaf drop-local-addr {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded because the source address is the local address.";
+            }        
+            leaf drop-mac-check {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to source MAC address consistency check errors.";
+            }
+            leaf drop-rate-limit {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to global rate limit.";
+            }
+            leaf drop-src-mac-attack {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to source MAC address attacks.";
+            }
+          }        
+        }
+        container na-ifs {
+          description
+            "List of NA packets in these interfaces.";
+          list na-if {
+            key "if-name";
+            description
+              "Statistics of NA packets in the interface.";
+            leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Interface name.";
+            }              
+            leaf send-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of send NA packets.";
+            }
+            leaf send-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of send NA packets with the destination address as a unicast address.";
+            }
+            leaf send-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of send NA packets with the destination address as a multicast address.";
+            }
+            leaf send-target-linklocal {
+              type uint32;
+              units "packet";
+              description
+                "Number of send NA packets with the target address as a link-local address.";
+            }
+            leaf send-target-global {
+              type uint32;
+              units "packet";
+              description
+                "Number of send NA packets with the target address as a global address.";
+            }
+            leaf recv-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received NA packets.";
+            }
+            leaf recv-valid-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received valid NA packets.";
+            }
+            leaf recv-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of received NA packets with the destination address as a unicast address.";
+            }
+            leaf recv-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets with the destination address as a multicast address.";
+            }
+            leaf recv-target-linklocal {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets with the destination address as a link-local address.";
+            }
+            leaf recv-target-global {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets with the destination address as a global address.";
+            }
+            leaf drop-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of discarded NA packets.";
+            }
+            leaf drop-checksum-err {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to checksum errors.";
+            }
+            leaf drop-bad-len {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad packet length.";
+            }
+            leaf drop-bad-code {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad code.";
+            }
+            leaf drop-bad-hoplimit {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad hoplimit.";
+            }
+            leaf drop-bad-src-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad source MAC addresses.";
+            }
+            leaf drop-bad-dst-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad destination MAC addresses.";
+            }
+            leaf drop-bad-tgt-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad target MAC addresses.";
+            }
+            leaf drop-bad-src-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad source IP addresses.";
+            }
+            leaf drop-bad-dst-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad destination IP addresses.";
+            }
+            leaf drop-bad-tgt-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad target IP addresses.";
+            }
+            leaf drop-bad-option {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to bad options.";
+            }
+            leaf drop-local-addr {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded because the source address is the local address.";
+            }        
+            leaf drop-mac-check {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to source MAC address consistency check errors.";
+            }
+            leaf drop-rate-limit {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to global rate limit.";
+            }
+            leaf drop-src-mac-attack {
+              type uint32;
+              units "packet";
+              description
+                "Number of NA packets discarded due to source MAC address attacks.";
+            }
+          }        
+        }
+      }
+      container rs-stats {
+        description
+          "Statistics of RS packets.";      
+        container rs-global {
+          description
+            "Statistics of global RS packets.";
+          leaf send-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of send RS packets.";
+          }
+          leaf send-dip-mcast {
+            type uint32;
+            units "packet";
+            description
+              "Number of send RS packets with the destination address as a multicast address.";
+          }
+          leaf recv-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of received RS packets.";
+          }
+          leaf recv-valid-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of received valid RS packets.";
+          }
+          leaf recv-dip-ucast {
+            type uint32;
+            units "packet";
+            description
+              "Number of received RS packets with the destination address as a unicast address.";
+          }
+          leaf recv-dip-mcast {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets with the destination address as a multicast address.";
+          }
+          leaf drop-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of discarded RS packets.";
+          }
+          leaf drop-checksum-err {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to checksum errors.";
+          }
+          leaf drop-bad-len {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to bad packet length.";
+          }
+          leaf drop-bad-code {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to bad code.";
+          }
+          leaf drop-bad-hoplimit {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to bad hoplimit.";
+          }
+          leaf drop-bad-src-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to bad source MAC addresses.";
+          }
+          leaf drop-bad-dst-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to bad destination MAC addresses.";
+          }
+          leaf drop-bad-tgt-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to bad target MAC addresses.";
+          }
+          leaf drop-bad-src-ip {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to bad source IP addresses.";
+          }
+          leaf drop-bad-dst-ip {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to bad destination IP addresses.";
+          }
+          leaf drop-bad-option {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to bad options.";
+          }
+          leaf drop-local-addr {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded because the source address is the local address.";
+          }        
+          leaf drop-mac-check {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to source MAC address consistency check errors.";
+          }
+          leaf drop-rate-limit {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to global rate limit.";
+          }
+          leaf drop-src-mac-attack {
+            type uint32;
+            units "packet";
+            description
+              "Number of RS packets discarded due to source MAC address attacks.";
+          }        
+        }
+        container rs-slots {
+          description
+            "List of RS packets in these slots.";
+          list rs-slot {
+            key "slot-id";
+            description
+              "Statistics of RS packets in the slot.";
+            leaf slot-id {
+              type string {
+                length "1..24";
+              }
+              description
+                "Slot ID, which refers to the position of logical MPU board and physical LPU boards.";
+            }        
+            leaf send-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of send RS packets.";
+            }
+            leaf send-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of send RS packets with the destination address as a multicast address.";
+            }
+            leaf recv-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received RS packets.";
+            }
+            leaf recv-valid-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received valid RS packets.";
+            }
+            leaf recv-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of received RS packets with the destination address as a unicast address.";
+            }
+            leaf recv-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets with the destination address as a multicast address.";
+            }
+            leaf drop-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of discarded RS packets.";
+            }
+            leaf drop-checksum-err {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to checksum errors.";
+            }
+            leaf drop-bad-len {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad packet length.";
+            }
+            leaf drop-bad-code {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad code.";
+            }
+            leaf drop-bad-hoplimit {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad hoplimit.";
+            }
+            leaf drop-bad-src-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad source MAC addresses.";
+            }
+            leaf drop-bad-dst-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad destination MAC addresses.";
+            }
+            leaf drop-bad-tgt-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad target MAC addresses.";
+            }
+            leaf drop-bad-src-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad source IP addresses.";
+            }
+            leaf drop-bad-dst-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad destination IP addresses.";
+            }
+            leaf drop-bad-option {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad options.";
+            }
+            leaf drop-local-addr {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded because the source address is the local address.";
+            }        
+            leaf drop-mac-check {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to source MAC address consistency check errors.";
+            }
+            leaf drop-rate-limit {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to global rate limit.";
+            }
+            leaf drop-src-mac-attack {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to source MAC address attacks.";
+            }
+          }        
+        }
+        container rs-ifs {
+          description
+            "List of RS packets in these interfaces.";
+          list rs-if {
+            key "if-name";
+            description
+              "Statistics of RS packets in the interface.";
+            leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Interface name.";
+            }          
+            leaf send-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of send RS packets.";
+            }
+            leaf send-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of send RS packets with the destination address as a multicast address.";
+            }
+            leaf recv-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received RS packets.";
+            }
+            leaf recv-valid-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received valid RS packets.";
+            }
+            leaf recv-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of received RS packets with the destination address as a unicast address.";
+            }
+            leaf recv-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets with the destination address as a multicast address.";
+            }
+            leaf drop-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of discarded RS packets.";
+            }
+            leaf drop-checksum-err {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to checksum errors.";
+            }
+            leaf drop-bad-len {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad packet length.";
+            }
+            leaf drop-bad-code {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad code.";
+            }
+            leaf drop-bad-hoplimit {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad hoplimit.";
+            }
+            leaf drop-bad-src-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad source MAC addresses.";
+            }
+            leaf drop-bad-dst-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad destination MAC addresses.";
+            }
+            leaf drop-bad-tgt-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad target MAC addresses.";
+            }
+            leaf drop-bad-src-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad source IP addresses.";
+            }
+            leaf drop-bad-dst-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad destination IP addresses.";
+            }
+            leaf drop-bad-option {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to bad options.";
+            }
+            leaf drop-local-addr {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded because the source address is the local address.";
+            }        
+            leaf drop-mac-check {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to source MAC address consistency check errors.";
+            }
+            leaf drop-rate-limit {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to global rate limit.";
+            }
+            leaf drop-src-mac-attack {
+              type uint32;
+              units "packet";
+              description
+                "Number of RS packets discarded due to source MAC address attacks.";
+            }
+          }        
+        }
+      }
+      container ra-stats {
+        description
+          "Statistics of RA packets.";      
+        container ra-global {
+          description
+            "Statistics of global RA packets.";
+          leaf send-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of send RA packets.";
+          }
+          leaf send-dip-ucast {
+            type uint32;
+            units "packet";
+            description
+              "Number of send RA packets with the destination address as a unicast address.";
+          }
+          leaf send-dip-mcast {
+            type uint32;
+            units "packet";
+            description
+              "Number of send RA packets with the destination address as a multicast address.";
+          }
+          leaf recv-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of received RA packets.";
+          }
+          leaf recv-valid-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of received valid RA packets.";
+          }
+          leaf recv-dip-ucast {
+            type uint32;
+            units "packet";
+            description
+              "Number of received RA packets with the destination address as a unicast address.";
+          }
+          leaf recv-dip-mcast {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets with the destination address as a multicast address.";
+          }
+          leaf drop-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of discarded RA packets.";
+          }
+          leaf drop-checksum-err {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to checksum errors.";
+          }
+          leaf drop-bad-len {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to bad packet length.";
+          }
+          leaf drop-bad-code {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to bad code.";
+          }
+          leaf drop-bad-hoplimit {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to bad hoplimit.";
+          }
+          leaf drop-bad-src-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to bad source MAC addresses.";
+          }
+          leaf drop-bad-dst-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to bad destination MAC addresses.";
+          }
+          leaf drop-bad-tgt-mac {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to bad target MAC addresses.";
+          }
+          leaf drop-bad-src-ip {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to bad source IP addresses.";
+          }
+          leaf drop-bad-dst-ip {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to bad destination IP addresses.";
+          }
+          leaf drop-bad-option {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to bad options.";
+          }
+          leaf drop-local-addr {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded because the source address is the local address.";
+          }        
+          leaf drop-mac-check {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to source MAC address consistency check errors.";
+          }
+          leaf drop-rate-limit {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to global rate limit.";
+          }
+          leaf drop-src-mac-attack {
+            type uint32;
+            units "packet";
+            description
+              "Number of RA packets discarded due to source MAC address attacks.";
+          }        
+        }
+        container ra-slots {
+          description
+            "List of RA packets in these slots.";
+          list ra-slot {
+            key "slot-id";
+            description
+              "Statistics of RA packets in the slot.";
+            leaf slot-id {
+              type string {
+                length "1..24";
+              }
+              description
+                "Slot ID, which refers to the position of logical MPU board and physical LPU boards.";
+            }        
+            leaf send-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of send RA packets.";
+            }
+            leaf send-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of send RA packets with the destination address as a unicast address.";
+            }
+            leaf send-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of send RA packets with the destination address as a multicast address.";
+            }
+            leaf recv-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received RA packets.";
+            }
+            leaf recv-valid-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received valid RA packets.";
+            }
+            leaf recv-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of received RA packets with the destination address as a unicast address.";
+            }
+            leaf recv-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets with the destination address as a multicast address.";
+            }
+            leaf drop-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of discarded RA packets.";
+            }
+            leaf drop-checksum-err {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to checksum errors.";
+            }
+            leaf drop-bad-len {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad packet length.";
+            }
+            leaf drop-bad-code {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad code.";
+            }
+            leaf drop-bad-hoplimit {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad hoplimit.";
+            }
+            leaf drop-bad-src-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad source MAC addresses.";
+            }
+            leaf drop-bad-dst-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad destination MAC addresses.";
+            }
+            leaf drop-bad-tgt-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad target MAC addresses.";
+            }
+            leaf drop-bad-src-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad source IP addresses.";
+            }
+            leaf drop-bad-dst-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad destination IP addresses.";
+            }
+            leaf drop-bad-option {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad options.";
+            }
+            leaf drop-local-addr {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded because the source address is the local address.";
+            }        
+            leaf drop-mac-check {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to source MAC address consistency check errors.";
+            }
+            leaf drop-rate-limit {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to global rate limit.";
+            }
+            leaf drop-src-mac-attack {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to source MAC address attacks.";
+            }
+          }        
+        }
+        container ra-ifs {
+          description
+            "List of RA packets in these interfaces.";
+          list ra-if {
+            key "if-name";
+            description
+              "Statistics of RA packets in the interface.";
+            leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Interface name.";
+            }          
+            leaf send-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of send RA packets.";
+            }
+            leaf send-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of send RA packets with the destination address as a unicast address.";
+            }
+            leaf send-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of send RA packets with the destination address as a multicast address.";
+            }
+            leaf recv-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received RA packets.";
+            }
+            leaf recv-valid-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received valid RA packets.";
+            }
+            leaf recv-dip-ucast {
+              type uint32;
+              units "packet";
+              description
+                "Number of received RA packets with the destination address as a unicast address.";
+            }
+            leaf recv-dip-mcast {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets with the destination address as a multicast address.";
+            }
+            leaf drop-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of discarded RA packets.";
+            }
+            leaf drop-checksum-err {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to checksum errors.";
+            }
+            leaf drop-bad-len {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad packet length.";
+            }
+            leaf drop-bad-code {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad code.";
+            }
+            leaf drop-bad-hoplimit {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad hoplimit.";
+            }
+            leaf drop-bad-src-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad source MAC addresses.";
+            }
+            leaf drop-bad-dst-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad destination MAC addresses.";
+            }
+            leaf drop-bad-tgt-mac {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad target MAC addresses.";
+            }
+            leaf drop-bad-src-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad source IP addresses.";
+            }
+            leaf drop-bad-dst-ip {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad destination IP addresses.";
+            }
+            leaf drop-bad-option {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to bad options.";
+            }
+            leaf drop-local-addr {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded because the source address is the local address.";
+            }        
+            leaf drop-mac-check {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to source MAC address consistency check errors.";
+            }
+            leaf drop-rate-limit {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to global rate limit.";
+            }
+            leaf drop-src-mac-attack {
+              type uint32;
+              units "packet";
+              description
+                "Number of RA packets discarded due to source MAC address attacks.";
+            }        
+          }
+        }
+      }
+      container ndmiss-stats {
+        description
+          "Statistics of ND Miss packets.";      
+        container ndmiss-global {
+          description
+            "Statistics of global ND Miss packets.";
+          leaf recv-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of received ND Miss packets.";
+          }
+          leaf recv-valid-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of received valid ND Miss packets.";
+          }
+          leaf drop-total {
+            type uint32;
+            units "packet";
+            description
+              "Number of discarded ND Miss packets.";
+          }
+          leaf drop-rate-limit {
+            type uint32;
+            units "packet";
+            description
+              "Number of ND Miss packets discarded due to global rate limit.";
+          }        
+        }
+        container ndmiss-slots {
+          description
+            "List of ND Miss packets in these slots.";
+          list ndmiss-slot {
+            key "slot-id";
+            description
+              "Statistics of ND Miss packets in the slot.";
+            leaf slot-id {
+              type string {
+                length "1..24";
+              }
+              description
+                "Slot ID, which refers to the position of logical MPU board and physical LPU boards.";
+            }        
+            leaf recv-total {
+              type uint32;
+
+              units "packet";
+
+              description
+                "Number of received ND Miss packets.";
+            }
+            leaf recv-valid-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received valid ND Miss packets.";
+            }
+            leaf drop-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of discarded ND Miss packets.";
+            }
+            leaf drop-rate-limit {
+              type uint32;
+              units "packet";
+              description
+                "Number of ND Miss packets discarded due to global rate limit.";
+            }
+          }        
+        }
+        container ndmiss-ifs {
+          description
+            "List of ND Miss packets in these interfaces.";
+          list ndmiss-if {
+            key "if-name";
+            description
+              "Statistics of ND Miss packets in the interface.";
+            leaf if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Interface name.";
+            }          
+            leaf recv-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received ND Miss packets.";
+            }
+            leaf recv-valid-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of received valid ND Miss packets.";
+            }
+            leaf drop-total {
+              type uint32;
+              units "packet";
+              description
+                "Number of discarded ND Miss packets.";
+            }
+            leaf drop-rate-limit {
+              type uint32;
+              units "packet";
+              description
+                "Number of ND Miss packets discarded due to global rate limit.";
+            }
+          }        
+        }
+      }      
+    }    
+  }
+  rpc nd-pkt-clear-all {
+    description
+      "To clear all ND statistics.";
+    ext:node-ref "/ipv6-nd/nd-pkt-stats";      
+  }  
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ip:ipv6" {
+    when "../ifm:type!='Tunnel' and ../ifm:type!='LoopBack' and ../ifm:type!='ServiceIf' and ../ifm:type!='Virtual-if'";
+    description
+      "All configurations of the ND under the interface.";
+    container nd-collection {
+      description
+        "Configure ND interface configurations.";
+      container if-property {
+        description
+          "Configure ND interface configurations.";
+        leaf retrans-timer {
+          type uint32 {
+            range "1000..4294967295";
+          }
+          units "ms";
+          default "1000";
+          description
+            "To set the retransmission timer of a router.";
+        }
+        leaf nud-reach-time {
+          when "../../../../ifm:type!='Ip-Trunk' and ../../../../ifm:type!='Pos' and ../../../../ifm:type!='Mp-group'";
+          type uint32 {
+            range "1..3600000";
+          }
+          units "ms";
+          default "1200000";
+          description
+            "To set the reachable time of a neighbor.";
+        }
+        leaf attempts-value {
+          type uint32 {
+            range "0..600";
+          }
+          default "1";
+          description
+            "To set the number of sent NS messages during DAD.";
+        }
+        leaf ns-mcast-flag {
+          when "../../../../ethernet:ethernet/ethernet:l3-sub-interface/ethernet:dot1q-termination or ../../../../ethernet:ethernet/ethernet:l3-sub-interface/ethernet:qinq-termination";
+          type nd-switch-state;
+          default "off";
+          description
+            "Flag of Enabling multicast.";
+        }
+        leaf max-dyn-nb-num {
+          when "../../../../ifm:type!='Ip-Trunk' and ../../../../ifm:type!='Pos' and ../../../../ifm:type!='Mp-group'";
+          type uint64 {
+            range "0..65536";
+          }
+          default "0";
+          description
+            "The maximum of limitation of dynamic neighbor.";
+        }
+        leaf dad-timeout {
+          when "../../../../ethernet:ethernet/ethernet:l3-sub-interface/ethernet:dot1q-termination or ../../../../ethernet:ethernet/ethernet:l3-sub-interface/ethernet:qinq-termination";
+          type uint32 {
+            range "1..60";
+          }
+          units "s";
+          default "1";
+          description
+            "Timeout of DAD.";
+        }
+        leaf nud-attempts {
+          when "../../../../ifm:type!='Ip-Trunk' and ../../../../ifm:type!='Pos' and ../../../../ifm:type!='Mp-group'";
+          type uint8 {
+            range "1..10";
+          }
+          default "3";
+          description
+            "ND entries NUD attempts.";
+        }
+        leaf na-glean {
+          when "../../../../ifm:type!='Ip-Trunk' and ../../../../ifm:type!='Pos' and ../../../../ifm:type!='Mp-group'";
+          type nd-switch-state;
+          default "off";
+          description
+            "Flag of Generate NB when receiving NA packet.";
+        }
+        leaf ma-flag {
+          when "../../../../ifm:type!='MEth'";
+          type nd-switch-state;
+          default "off";
+          description
+            "Flag of obtaining the routable address through state-based automatic configuration.";
+        }
+        leaf o-flag {
+          when "../../../../ifm:type!='MEth'";
+          type nd-switch-state;
+          default "off";
+          description
+            "Flag of set state-based automatic configuration.";
+        }
+        leaf ra-halt-flag {
+          when "../../../../ifm:type!='MEth'";
+          type nd-switch-state;
+          default "on";
+          description
+            "To suppress the advertisement of RA packets.";
+        }
+        leaf max-interval {
+          when "../../../../ifm:type!='MEth'";
+          type uint32 {
+            range "4..1800";
+          }
+          units "s";
+          default "600";
+          description
+            "The Maximum interval between periodic RA packets sent on this interface.";
+        }
+        leaf ra-lifetime {
+          when "../../../../ifm:type!='MEth'";
+          type uint32 {
+            range "0|4..9000";
+          }
+          units "s";
+          must "../ipv6-nd:ra-lifetime >= ../ipv6-nd:max-interval";
+          description
+            "TTL of RA packets. If the value is 0, it implies that this node is not a router. And the value from 1 to 3 is invalid.";
+        }
+        leaf ra-preference {
+          when "../../../../ifm:type!='MEth'";
+          type nd-route-preference;
+          default "medium";
+          description
+            "RA router preference.";
+        }
+        leaf ra-prefix-flag {
+          when "../../../../ifm:type!='MEth'";
+          type nd-switch-state;
+          default "on";
+          description
+            "Flag of RA packet carry prefix information.";
+        }
+        leaf ra-mtu-flag {
+          when "../../../../ifm:type!='MEth'";
+          type nd-switch-state;
+          default "on";
+          description
+            "Flag of RA Packet Carry MTU Option.";
+        }
+        leaf strict-flag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable strict security mode.";
+        }
+        leaf ts-fuzz-factor {
+          type uint16 {
+            range "0..1000";
+          }
+          units "s";
+          default "1";
+          description
+            "Fuzz factor for timestamp option.";
+        }
+        leaf ts-clock-drift {
+          type uint8 {
+            range "0..100";
+          }
+          default "1";
+          description
+            "Drift for timestamp option.";
+        }
+        leaf ts-delta {
+          type uint16 {
+            range "0..1000";
+          }
+          units "s";
+          default "300";
+          description
+            "Delta for timestamp option.";
+        }
+        leaf rsa-min-key-len {
+          type uint16 {
+            range "384..3072";
+          }
+          units "bit";
+          must "(../rsa-min-key-len<=../rsa-max-key-len)";
+          default "512";
+          description
+            "The minimum length of acceptable RSA key pair.";
+        }
+        leaf rsa-max-key-len {
+          type uint16 {
+            range "384..3072";
+          }
+          units "bit";
+          must "(../rsa-max-key-len>=../rsa-min-key-len)";
+          default "2048";
+          description
+            "The maximum length of acceptable RSA key pair.";
+        }
+        leaf stale-time {
+          when "../../../../ifm:type!='Ip-Trunk' and ../../../../ifm:type!='Pos' and ../../../../ifm:type!='Mp-group'";
+          type uint32 {
+            range "60..172800";
+          }
+          units "s";
+          description
+            "Aging time of the stale state.";
+        }
+        leaf collect-host-flag {
+          when "../../../../ifm:type='Vbdif'";
+          type nd-switch-state;
+          default "off";
+          description
+            "Flag of Collect Host Information.";
+        }
+        leaf generate-rd-enable {
+          when "../../../../ifm:type='Vbdif'";
+          type nd-switch-state;
+          default "off";
+          description
+            "Flag of Generate redirect ND table.";
+        }
+        leaf nud-interval {
+          when "../../../../ifm:type!='Ip-Trunk' and ../../../../ifm:type!='Pos' and ../../../../ifm:type!='Mp-group'";
+          type uint32 {
+            range "1000..4294967295";
+          }
+          units "ms";
+          description
+            "ND entries NUD interval.";
+        }
+      }
+      container proxys {
+        when "../../../ifm:type!='MEth' and ../../../ifm:type!='Ip-Trunk' and ../../../ifm:type!='PW-VE'";
+        description
+          "Configure list of ND Proxy.";
+        leaf route-proxy {
+          type nd-switch-state;
+          default "off";
+          description
+            "Router Proxy.";
+        }
+        leaf inner-vlan-proxy {
+          when "../../../../ifm:class='sub-interface' or ../../../../ifm:type='Vlanif'";
+          type nd-switch-state;
+          default "off";
+          description
+            "InnerVLAN Proxy.";
+        }
+        leaf inter-vlan-proxy {
+          when "../../../../ifm:class='sub-interface' or ../../../../ifm:type='Vlanif'";
+          type nd-switch-state;
+          default "off";
+          description
+            "InterVLAN Proxy.";
+        }
+        leaf anyway-proxy {
+          type nd-switch-state;
+          default "off";
+          description
+            "Anyway Proxy.";
+        }
+      }     
+    }
+  }
+  ext:task-name "nd";
+}

@@ -1,0 +1,931 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls-forward {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-mpls-forward";
+  prefix mpls-forward;
+
+  import huawei-loadbalance {
+    prefix loadbalance;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-tunnel-management {
+    prefix tnlm;
+  }
+  import huawei-mpls-te {
+    prefix mpls-te;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "MPLS forward.";
+ revision 2020-03-25 {
+    description
+      "Modifying some non-standard descriptions.";
+    reference "Huawei private.";
+  }
+
+  revision 2020-02-27 {
+    description
+      "Removing the invalid definition of enumeration type and modifying the invalid statements.";
+    reference "Huawei private.";
+  }
+  revision 2019-03-27 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+  
+  typedef hash-type {
+    type enumeration {
+      enum flow {
+        value 194;
+        description
+          "Load balance based on flow.";
+      }
+      enum packet {
+        value 195;
+        description
+          "Load balance based on packet.";
+      }
+    }
+    description
+      "Hash type.";
+  }
+  typedef l3vpn-ingpipe-mode {
+    type enumeration {
+      enum pipe {
+        value 1;
+        description
+          "Pipe mode.";
+      }
+      enum shortpipe {
+        value 2;
+        description
+          "Short pipe mode.";
+      }
+      enum uniform {
+        value 3;
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "The mode of the L3VPN ingress pipe mode.";
+  }
+  typedef l3vpn-egpipe-mode {
+    type enumeration {
+      enum pipe {
+        value 1;
+        description
+          "Pipe mode.";
+      }
+      enum shortpipe {
+        value 2;
+        description
+          "Short pipe mode.";
+      }
+      enum uniform {
+        value 3;
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "The mode of the L3VPN egress pipe mode.";
+  }
+  typedef l3vpn-pipe-mode {
+    type enumeration {
+      enum pipe {
+        value 1;
+        description
+          "Pipe mode.";
+      }
+      enum shortpipe {
+        value 2;
+        description
+          "Short pipe mode.";
+      }
+      enum uniform {
+        value 3;
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "The mode of the L3VPN pipe mode.";
+  }
+
+  typedef l3vpn-ttl-mode {
+    type enumeration {
+      enum pipe {
+        value 1;
+        description
+          "Pipe mode.";
+      }
+      enum uniform {
+        value 3;
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "The mode of the L3VPN tunnel.";
+  }
+
+  typedef l3vpn-service-class {
+    type enumeration {
+      enum be {
+        value 0;
+        description
+          "BE service class.";
+      }
+      enum af1 {
+        value 1;
+        description
+          "AF1 service class.";
+      }
+      enum af2 {
+        value 2;
+        description
+          "AF2 service class.";
+      }
+      enum af3 {
+        value 3;
+        description
+          "AF3 service class.";
+      }
+      enum af4 {
+        value 4;
+        description
+          "AF4 service class.";
+      }
+      enum ef {
+        value 5;
+        description
+          "EF service class.";
+      }
+      enum cs6 {
+        value 6;
+        description
+          "CS6 service class.";
+      }
+      enum cs7 {
+        value 7;
+        description
+          "CS7 service class.";
+      }
+    }
+    description
+      "The service class of L3VPN.";
+  }
+  typedef l3vpn-color {
+    type enumeration {
+      enum green {
+        value 0;
+        description
+          "Green.";
+      }
+      enum yellow {
+        value 1;
+        description
+          "Yellow.";
+      }
+      enum red {
+        value 2;
+        description
+          "Red.";
+      }
+    }
+    description
+      "The color of L3VPN.";
+  }
+  typedef deep-hash-flag {
+    type enumeration {
+      enum l3 {
+        value 1;
+        description
+          "Hashed based on L3 IP.";
+      }
+    }
+    description
+      "Deep hash configuration flag.";
+  }
+  typedef deep-hash-fragment {
+    type enumeration {
+      enum ip {
+        value 1;
+        description
+          "Hash-field based on IP.";
+      }
+      enum disable {
+        value 3;
+        description
+          "Hash-field not based on anything.";
+      }
+    }
+    description
+      "Deep hash configuration fragment.";
+  }
+  typedef enable-flag {
+    type enumeration {
+      enum enable {
+        value 1;
+        description
+          "The CFG is enabled.";
+      }
+      enum disable {
+        value 0;
+        description
+          "The CFG is disabled.";
+      }
+    }
+    description
+      "Enable flag type.";
+  }
+  typedef te-pipe-mode {
+    type enumeration {
+      enum pipe {
+        value 1;
+        description
+          "Pipe mode.";
+      }
+      enum uniform {
+        value 3;
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "TE pipe mode.";
+  }
+
+  typedef te-pipe-service-class {
+    type enumeration {
+      enum be {
+        value 0;
+        description
+          "Best effort (EF) service class.";
+      }
+      enum af1 {
+        value 1;
+        description
+          "Assured forwarding 1 (AF1) service class.";
+      }
+      enum af2 {
+        value 2;
+        description
+          "Assured forwarding 2 (AF2) service class.";
+      }
+      enum af3 {
+        value 3;
+        description
+          "Assured forwarding 3 (AF3) service class.";
+      }
+      enum af4 {
+        value 4;
+        description
+          "Assured forwarding 4 (AF4) service class.";
+      }
+      enum ef {
+        value 5;
+        description
+          "Expedited forwarding (EF) service class.";
+      }
+      enum cs6 {
+        value 6;
+        description
+          "Class selector 6 (CS6) service class.";
+      }
+      enum cs7 {
+        value 7;
+        description
+          "Class selector 7 (CS7) service class.";
+      }
+    }
+    description
+      "TE pipe service class.";
+  }
+
+  typedef te-pipe-color {
+    type enumeration {
+      enum green {
+        value 0;
+        description
+          "Green.";
+      }
+      enum yellow {
+        value 1;
+        description
+          "Yellow.";
+      }
+      enum red {
+        value 2;
+        description
+          "Red.";
+      }
+    }
+    description
+      "TE pipe color.";
+  }
+  typedef check-mode {
+    type enumeration {
+      enum ip {
+        value 291;
+        description
+          "The check mode is IP.";
+      }
+      enum label-contained-length {
+        value 292;
+        description
+          "The check mode is label-contained-length.";
+      }
+    }
+    description
+      "Check mode.";
+  }
+  typedef enl-exp-mode {
+    type enumeration {
+      enum pipe {
+        value 2;
+        description
+          "Pipe mode.";
+      }
+      enum uniform {
+        value 1;
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "Explicit null label EXP mode.";
+  }
+  typedef enl-ttl-mode {
+    type enumeration {
+      enum pipe {
+        value 1;
+        description
+          "Pipe mode.";
+      }
+      enum uniform {
+        value 0;
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "Explicit null label TTL mode.";
+  }
+  typedef ela-exp-mode {
+    type enumeration {
+      enum pipe {
+        value 2;
+        description
+          "Pipe mode.";
+      }
+      enum uniform {
+        value 1;
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "Entropy label EXP mode.";
+  }
+  typedef ela-ttl-mode {
+    type enumeration {
+      enum pipe {
+        value 1;
+        description
+          "Pipe mode.";
+      }
+      enum uniform {
+        value 0;
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "Entropy label TTL mode.";
+  }
+  
+  augment "/loadbalance:loadbalance" {
+    description
+      "MPLS forward configuration to the load balance module.";
+    container mpls-hashpacket {
+      description
+        "Configure load balance based on packet.";
+      leaf hash-type {
+        type hash-type;
+        default "flow";
+        description
+          "Load balance mode.";
+      }
+    }
+    container mpls-intfmtu {
+      description
+        "Configure interface MTU check mode.";
+      leaf chkmode {
+        type check-mode;
+        default "ip";
+        description
+          "Check mode configuration.";
+      }
+    }
+    container mpls-loadblc-elawords {
+      description
+        "Configure MPLS entropy label load balance control word enable.";
+      leaf elawords-enable {
+        type enable-flag;
+        default "disable";
+        description
+          "MPLS entropy label load balance control word enable value.";
+      }
+    }
+    container p2mp-load-balance-num {
+      description
+        "Configure P2MP trunk load balance.";
+      leaf number {
+        type uint32 {
+          range "2..64";
+        }
+        default "16";
+        description
+          "P2MP trunk load balance number.";
+      }
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af" {
+    description
+      "MPLS forward configuration to the L3VPN module.";
+    container vrfpipe {
+      description
+        "Configure L3VPN pipe.";
+      leaf split-mode {
+        type boolean;
+        must "((../split-mode='false' and ../pipe-mode and not(../ingress-pipe-mode) and not(../egress-pipe-mode)) or (../split-mode='true' and not(../pipe-mode) and ../ingress-pipe-mode and ../egress-pipe-mode))";
+        default "false";
+        description
+          "Enable/disable pipe mode.";
+      }
+      leaf pipe-mode {
+        when "../split-mode='false'";
+        type l3vpn-pipe-mode;
+        default "uniform";
+        description
+          "Pipe mode.";
+      }
+      leaf ingress-pipe-mode {
+        when "../split-mode='true'";
+        type l3vpn-ingpipe-mode;
+        default "uniform";
+        description
+          "Ingress pipe mode.";
+      }
+      leaf service-class {
+        when "(../pipe-mode='pipe' or ../pipe-mode='shortpipe' or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortpipe')";
+        type l3vpn-service-class;
+        default "be";
+        description
+          "Service class.";
+      }
+      leaf color {
+        when "(../pipe-mode='pipe' or ../pipe-mode='shortpipe'  or ../ingress-pipe-mode='pipe' or ../ingress-pipe-mode='shortpipe')";
+        type l3vpn-color;
+        default "green";
+        description
+          "Color.";
+      }
+      leaf egress-pipe-mode {
+        when "../split-mode='true'";
+        type l3vpn-egpipe-mode;
+        default "uniform";
+        description
+          "Egress pipe mode.";
+      }
+      leaf domain-name {
+        when "(../pipe-mode='shortpipe'  or ../egress-pipe-mode='shortpipe')";
+        type leafref {
+          path "/qos:qos/qos:classifier-template/qos:diffserv-domains/qos:diffserv-domain/qos:name";
+        }
+        default "default";
+        description
+          "DS domain name.";
+      }
+    }
+    container vpn-ttlmode {
+      description
+        "Configure TTL mode.";
+      leaf ttlmode {
+        type l3vpn-ttl-mode;
+        default "pipe";
+        description
+          "TTL mode value.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "MPLS forward configuration to the ifm module.";
+    container deephashcfg {
+      when "../ifm:type='Ethernet' or ../ifm:type='GigabitEthernet' or ../ifm:type='100GE' or ../ifm:type='10GE' or ../ifm:type='4x10GE' or ../ifm:type='10x10GE' or ../ifm:type='3x40GE' or ../ifm:type='4x25GE' or ../ifm:type='25GE' or ../ifm:type='50GE' or ../ifm:type='50|100GE' or ../ifm:type='XGigabitEthernet' or ../ifm:type='Pos' or ../ifm:type='40GE' or ../ifm:type='MEth' or ../ifm:type='400GE' or ../ifm:type='GEBrief' or ../ifm:type='200GE'";
+      description
+        "Configure MPLS deep hash mode.";
+      leaf fragment-field {
+        type deep-hash-fragment;
+        default "disable";
+        description
+          "MPLS deep hash fields.";
+      }
+      leaf deepmplshash {
+        type deep-hash-flag;
+        default "l3";
+        description
+          "MPLS deep hash value.";
+      }
+    }
+    container if-poison-reverse {
+      when "../ifm:type='Ethernet' or ../ifm:type='GigabitEthernet' or ../ifm:type='100GE' or ../ifm:type='10GE' or ../ifm:type='4x10GE' or ../ifm:type='10x10GE' or ../ifm:type='3x40GE' or ../ifm:type='4x25GE' or ../ifm:type='25GE' or ../ifm:type='XGigabitEthernet' or ../ifm:type='Eth-Trunk' or ../ifm:type='Ip-Trunk' or ../ifm:type='400GE' or ../ifm:type='Pos' or ../ifm:type='40GE' or ../ifm:type='MEth' or ../ifm:type='GEBrief' or ../ifm:type='200GE' or ../ifm:type='50|100GE' or ../ifm:type='50GE'";
+      presence "Enable poison reverse on an interface";
+      description
+        "Configure MPLS poison reverse on the interface.";
+    }
+    container if-p2mp-load-balance {
+      when "../ifm:type='Eth-Trunk' or ../ifm:type='Ip-Trunk'";
+      description
+        "Configure Trunk-enable.";
+      leaf loadbanlance-enable {
+        type enable-flag;
+        default "disable";
+        description
+          "Trunk enable flag.";
+      }
+      leaf root-loadbanlance-enable {
+        type enable-flag;
+        default "disable";
+        description
+          "Root node trunk enable flag.";
+      }
+      leaf root-loadbanlance-spmsidis {
+        when "../root-loadbanlance-enable='enable' or /mpls:mpls/mpls-forward:p2mp-forceload/mpls-forward:forceload-enable='enable'";
+        type enable-flag;
+        default "disable";
+        description
+          "Root node S-PMSI trunk disable flag.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/tnlm:tunnel-protocol/tnlm:type/mpls-te:mpls-te/mpls-te:te-tunnel" {
+    description
+      "MPLS forward configuration to the MPLS TE tunnel module.";    
+    container mplstunnelpipe {
+      description
+        "Configure TE pipe mode.";
+      leaf pipe-mode {
+        type te-pipe-mode;
+        default "uniform";
+        description
+          "Specifies the pipe mode of TE tunnel.";
+      }
+      leaf service-class {
+        when "not(../pipe-mode='uniform')";
+        type te-pipe-service-class;
+        default "be";
+        description
+          "PHB of ingress packet.";
+      }
+      leaf color {
+        when "not(../pipe-mode='uniform')";
+        type te-pipe-color;
+        default "green";
+        description
+          "Color of ingress packet.";
+      }
+    }
+    container mpls-tunnel-service-class {
+      description
+        "Configure specifies the service class of te tunnel.";
+      leaf default-enable {
+        type boolean;
+        must "(../default-enable='false') or not(../af1-enable='true' or ../af2-enable='true' or ../af3-enable='true' or ../af4-enable='true' or ../be-enable='true' or ../cs6-enable='true' or ../cs7-enable='true' or ../ef-enable='true')";
+        default "false";
+        description
+          "Enable/disable default service class.";
+      }
+      leaf be-enable {
+        type boolean;
+        must "../be-enable='false' or ../default-enable='false'";
+        default "false";
+        description
+          "Enable/disable BE service class.";
+      }
+      leaf af1-enable {
+        type boolean;
+        must "../af1-enable='false' or ../default-enable='false'";
+        default "false";
+        description
+          "Enable/disable AF1 service class.";
+      }
+      leaf af2-enable {
+        type boolean;
+        must "../af2-enable='false' or ../default-enable='false'";
+        default "false";
+        description
+          "Enable/disable AF2 service class.";
+      }
+      leaf af3-enable {
+        type boolean;
+        must "../af3-enable='false' or ../default-enable='false'";
+        default "false";
+        description
+          "Enable/disable AF3 service class.";
+      }
+      leaf af4-enable {
+        type boolean;
+        must "../af4-enable='false' or ../default-enable='false'";
+        default "false";
+        description
+          "Enable/disable AF4 service class.";
+      }
+      leaf ef-enable {
+        type boolean;
+        must "../ef-enable='false' or ../default-enable='false'";
+        default "false";
+        description
+          "Enable/disable EF service class.";
+      }
+      leaf cs6-enable {
+        type boolean;
+        must "../cs6-enable='false' or ../default-enable='false'";
+        default "false";
+        description
+          "Enable/disable CS6 service class.";
+      }
+      leaf cs7-enable {
+        type boolean;
+        must "../cs7-enable='false' or ../default-enable='false'";
+        default "false";
+        description
+          "Enable/disable CS7 service class.";
+      }
+    }
+    container mpls-tunnel-dscp {
+      when "../mpls-te:common-attributes/mpls-te:signal-protocol='segment-routing'";
+      description
+        "Configure DSCP value.";
+      leaf ipv4-defalut {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable default of IPv4.";
+      }
+      leaf ipv6-defalut {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable default of IPv6.";
+      }
+      leaf ipv4-dscp-value {
+        type string {
+          length "1..512";
+        }
+        must "../ipv4-dscp-value='*' or ../ipv4-defalut='false'";
+        default "*";
+        description
+          "IPv4 DSCP, in the format of 0,1,2,3-10,63. A DSCP value is an integer ranging from 0 to 63.Entering an asterisk (*) deletes DSCP configuration.";
+      }
+      leaf ipv6-dscp-value {
+        type string {
+          length "1..512";
+        }
+        must "../ipv6-dscp-value='*' or ../ipv6-defalut='false'";
+        default "*";
+        description
+          "IPv6 DSCP, in the format of 0,1,2,3-10,63. A DSCP value is an integer ranging from 0 to 63.Entering an asterisk (*) deletes DSCP configuration.";
+      }
+    }
+  }
+  augment "/mpls:mpls" {
+    description
+      "MPLS forward configuration to the MPLS module.";
+    container ds-enhance {
+      description
+        "Configure global shortpipe.";
+      leaf enhance-enable {
+        type enable-flag;
+        default "disable";
+        description
+          "Shortpipe global enhance enable.";
+      }
+    }
+    container p2mp-fastswitch {
+      description
+        "Configure P2MP fast switch.";
+      leaf fastswitch-enable {
+        type enable-flag;
+        default "disable";
+        description
+          "P2MP global fast switch.";
+      }
+    }
+    container p2mp-forceload {
+      description
+        "Configure P2MP forceload.";
+      leaf forceload-enable {
+        type enable-flag;
+        default "disable";
+        description
+          "P2MP force loadbalance.";
+      }
+    }
+    container p2mp-frrwtrtime {
+      description
+        "Configure P2MP FRR WTR for forwarding plane.";
+      leaf frrwtrtime-forpdt {
+        type uint32 {
+          range "5..600";
+        }
+        default "5";
+        description
+          "P2MP FRR WTR for forwarding plane.";
+      }
+    }
+    container te-reverse-path-forwarding {
+      description
+        "Configure MPLS TE global RPF capability.";
+      leaf te-rpf-enable {
+        type enable-flag;
+        default "enable";
+        description
+          "MPLS TE RPF capability enable.";
+      }
+    }
+    container bgp-separate {
+      description
+        "Configure MPLS multiple hop disjoint.";
+      leaf bgpsepen {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MPLS multi-tunnel encapsulation decoupling.";
+      }
+    }
+    container ldp-separate {
+      description
+        "Configure MPLS global convergence enhancement.";
+      leaf ldpsepen {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable LDP-SRBE convergence enhancement.";
+      }
+    }
+    container te-multiprot {
+      description
+        "Configure MPLS TE global multi-protect fast switch.";
+      leaf multi-protect-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable MPLS TE multi-protect fast switch.";
+      }
+    }
+    container active-tnl {
+      config false;
+      description
+        "Statistics of MPLS TE LSP state INFOs.";
+      list tnlactinfo {
+        key "interfacename";
+        config false;
+        description
+          "Statistics of MPLS TE LSP state INFOs.";
+        leaf interfacename {
+          type pub-type:if-name;
+          config false;
+          description
+            "Specifies an MPLS TE interface name.";
+        }
+        leaf activepath {
+          type string {
+            length "1..30";
+          }
+          config false;
+          description
+            "MPLS TE LSP forward type.";
+        }
+        leaf tunnelid {
+          type pub-type:hex-binary;
+          config false;
+          description
+            "Tunnel ID.";
+        }
+        leaf outinterface {
+          type string {
+            length "1..30";
+          }
+          config false;
+          description
+            "The tunnel out interface.";
+        }
+      }
+    }
+    container disp-convergence-mode {
+      config false;
+      description
+        "Operational state of convergence mode state info.";
+      leaf is-enable {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Convergence mode enable check.";
+      }
+    }
+  }
+  augment "/mpls:mpls/mpls:common/mpls:global" {
+    when "/mpls:mpls/mpls:common/mpls:global/mpls:mpls-enable='true'";
+    description
+      "MPLS forward configuration to the MPLS module.";
+    container exp-ttl-mode {
+      description
+        "Configure pipe mode for explicit null label.";
+      leaf exppipemode {
+        type enl-exp-mode;
+        default "uniform";
+        description
+          "Pipe mode of EXP for explicit null label.";
+      }
+      leaf ttlpipemode {
+        type enl-ttl-mode;
+        default "uniform";
+        description
+          "Pipe mode of TTL for explicit null label.";
+      }
+    }
+    container entropy-label-mode {
+      description
+        "Configure pipe mode for entropy label.";
+      leaf exp-pipemode {
+        type ela-exp-mode;
+        default "uniform";
+        description
+          "Pipe mode of EXP for entropy label.";
+      }
+      leaf ttl-pipemode {
+        type ela-ttl-mode;
+        default "uniform";
+        description
+          "Pipe mode of TTL for entropy label.";
+      }
+    }
+  }
+  augment "/mpls:mpls/mpls:common" {
+    description
+      "MPLS forward configuration to the MPLS module.";
+    container mpls-forward {
+      description
+        "Configure MPLS forward configuration to the MPLS module.";
+      container static-label-only {
+        description
+          "Configure the parameters related to the exclusive static label range. The function takes effect after the device is restarted.";
+        leaf max-label {
+          type uint32 {
+            range "2048..15999";
+          }
+          description
+            "The static label in the exclusive range ranges from 16 to the configured value. The labels that exceed the range can be used by both static and dynamic services.";
+        }
+      }
+    }
+  }
+  ext:task-name "forwarding";
+}

@@ -1,0 +1,3217 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-pppox-access {
+  namespace urn:huawei:yang:huawei-bras-pppox-access;
+  prefix bras-pppox-access;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }  
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-bras-basic-access {
+    prefix bras-basic-access;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-aaa {
+    prefix aaa;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "PPPoX Access.";
+  revision 2019-12-21 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-10 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-01 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-20 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+
+  typedef auth-mode-type {
+    type enumeration {
+      enum "pap" {
+        value 1;
+        description
+          "PAP authentication mode.";
+      }
+      enum "chap" {
+        value 2;
+        description
+          "CHAP authentication mode.";
+      }
+      enum "mschapv1" {
+        value 3;
+        description
+          "MSCHAPv1 authentication mode.";
+      }
+      enum "mschapv2" {
+        value 4;
+        description
+          "MSCHAPv2 authentication mode.";
+      }
+    }
+    description
+      "Authentication mode type.";
+  }
+  
+  typedef padx-send-type {
+    type enumeration {
+      enum "ipcp" {
+        value 1;
+        description
+          "Ipcp send mode.";
+      }
+      enum "ipv6cp" {
+        value 2;
+        description
+          "IPv6cp send mode.";
+      }
+      enum "firstncp" {
+        value 3;
+        description
+          "Firstncp send mode.";
+      }
+      enum "lastncp" {
+        value 4;
+        description
+          "Lastncp send mode.";
+      }
+      enum "allncp" {
+        value 5;
+        description
+          "Allncp send mode.";
+      }
+    }
+    description
+      "Padx send type.";
+  }
+
+  typedef urpf-ip-type {
+    type enumeration {
+      enum "ipv4" {
+        value 1;
+        description
+          "PPPoX user source IPv4 address type.";
+      }
+      enum "ipv6" {
+        value 2;
+        description
+          "PPPoX user source IPv6 address type.";
+      }
+    }
+    description
+      "IP type.";
+  }
+
+  typedef authentication-type {
+    type enumeration {
+      enum "chap" {
+        value "0";
+        description
+          "Indicates the CHAP mode.";
+      }
+      enum "pap" {
+        value "1";
+        description
+          "Indicates the PAP mode.";
+      }
+      enum "mschap-v1" {
+        value "2";
+        description
+          "Indicates the MSCHAPv1 mode.";
+      }
+      enum "mschap-v2" {
+        value "3";
+        description
+          "Indicates the MSCHAPv2 mode.";
+      }
+      enum "none" {
+        value "4";
+        description
+          "None.";
+      }
+    }
+    description
+      "Indicate the mode of PPP authentication for a PPPoE user in a domain.";
+  }
+  typedef ppp-damp-level-type {
+    type enumeration {
+      enum "light" {
+        value "0";
+        description
+          "Light weight.";
+      }
+      enum "middle" {
+        value "1";
+        description
+          "Middle weight.";
+      }
+      enum "heavy" {
+        value "2";
+        description
+          "Heavy weight.";
+      }
+      enum "manual" {
+        value "3";
+        description
+          "Manually configure the parameters.";
+      }
+    }
+    description
+      "PPP damp level type is light/middle/heavy/manual.";
+  }
+  grouping ppp-basic-chasten-info {
+    description
+      "Common PPP chasten information of different chasten type.";  
+    leaf global-online-fail {
+      type string {
+        length "1..31";
+      }
+      config false;
+      description
+        "Global online fail number.";
+    }
+    leaf global-quick-offline {
+      type string {
+        length "1..31";
+      }
+      config false;
+      description
+        "Global quick offline number.";
+    }
+    leaf vlan-online-fail {
+      type string {
+        length "1..31";
+      }
+      config false;
+      description
+        "VLAN online fail number.";
+    }
+    leaf vlan-quick-offline {
+      type string {
+        length "1..31";
+      }
+      config false;
+      description
+        "VLAN quick offline number.";
+    }
+    leaf global-online-fail-number {
+      type string {
+        length "1..31";
+      }
+      config false;
+      description
+        "Global online fail number.";
+    }
+    leaf global-quick-offline-number {
+      type string {
+        length "1..31";
+      }
+      config false;
+      description
+        "Global quick offline number.";
+    }
+    leaf vlan-online-fail-number {
+      type string {
+        length "1..31";
+      }
+      config false;
+      description
+        "VLAN online fail number.";
+    }
+    leaf vlan-quick-offline-number {
+      type string {
+        length "1..31";
+      }
+      config false;
+      description
+        "VLAN quick offline number.";
+    }
+    leaf index {
+      type string {
+        length "1..200";
+      }
+      config false;
+      description
+        "Display index information.";
+    }
+    leaf interface-name {
+      type string {
+        length "1..49";
+      }
+      config false;
+      description
+        "Interface name information.";
+    }
+    leaf pe-vlan {
+      type string {
+        length "1..200";
+      }
+      config false;
+      description
+        "Pe VLAN ID.";
+    }
+    leaf ce-vlan {
+      type string {
+        length "1..200";
+      }
+      config false;
+      description
+        "Ce VLAN ID.";
+    }
+    leaf free-time {
+      type string {
+        length "1..200";
+      }
+      config false;
+      description
+        "Free time information.";
+    }
+    leaf chasten-type {
+      type string {
+        length "1..200";
+      }
+      config false;
+      description
+        "Chasten type information.";
+    }
+  }
+  grouping pppox-slot-statistic {
+    description
+      "PPPoX statistics of specified slot.";
+    container pppoe-slot-statistic {
+      config false;
+      description
+        "PPPoE statistics for specified slot.";
+      leaf active-sessions {
+        type uint32;
+        config false;
+        description
+          "Active session of slot.";
+      }
+      leaf total-sessions {
+        type uint32;
+        config false;
+        description
+          "Total session of slot.";
+      }
+      leaf receive-padi-packets {
+        type uint32;
+        config false;
+        description
+          "Receive padi packet of slot.";
+      }
+      leaf discard-padi-packets {
+        type uint32;
+        config false;
+        description
+          "Discard padi packet of slot.";
+      }
+      leaf send-pado-packets {
+        type uint32;
+        config false;
+        description
+          "Send pado packet of slot.";
+      }
+      leaf receive-padr-packets {
+        type uint32;
+        config false;
+        description
+          "Receive padr packet of slot.";
+      }
+      leaf discard-padr-packets {
+        type uint32;
+        config false;
+        description
+          "Discard padr packet of slot.";
+      }
+      leaf send-pads-packets {
+        type uint32;
+        config false;
+        description
+          "Send pads packet of slot.";
+      }
+      leaf discard-padr-same-mac {
+        type uint32;
+        config false;
+        description
+          "Discard padr samemac of slot.";
+      }
+      leaf receive-padt-packets {
+        type uint32;
+        config false;
+        description
+          "Receive padt packet of slot.";
+      }
+      leaf discard-padt-packets {
+        type uint32;
+        config false;
+        description
+          "Discard padt packet of slot.";
+      }
+      leaf send-padt-packets {
+        type uint32;
+        config false;
+        description
+          "Send padt packet of slot.";
+      }
+      leaf send-padm-packets {
+        type uint32;
+        config false;
+        description
+          "Send padm packet of slot.";
+      }
+      leaf send-padm-url-packets {
+        type uint32;
+        config false;
+        description
+          "Send padm url packet of slot.";
+      }
+      leaf send-padm-motm-packets {
+        type uint32;
+        config false;
+        description
+          "Send padm motm packet of slot.";
+      }
+      leaf send-padn-packets {
+        type uint32;
+        config false;
+        description
+          "Send padn packet of slot.";
+      }
+      leaf receive-session-packets {
+        type uint32;
+        config false;
+        description
+          "Receive session packet of slot.";
+      }
+      leaf discard-session-packets {
+        type uint32;
+        config false;
+        description
+          "Discard session packet of slot.";
+      }
+      leaf send-session-packets {
+        type uint32;
+        config false;
+        description
+          "Send session packet of slot.";
+      }
+      leaf receive-packets {
+        type uint32;
+        config false;
+        description
+          "Receive packet of slot.";
+      }
+      leaf discard-packets {
+        type uint32;
+        config false;
+        description
+          "Discard packet of slot.";
+      }
+      leaf invalid-version {
+        type uint32;
+        config false;
+        description
+          "Invalid version of slot.";
+      }
+      leaf invalid-pad-code {
+        type uint32;
+        config false;
+        description
+          "Invalid pad code of slot.";
+      }
+      leaf invalid-pad-tags {
+        type uint32;
+        config false;
+        description
+          "Invalid pad tags of slot.";
+      }
+      leaf invalid-pad-tag-length {
+        type uint32;
+        config false;
+        description
+          "Invalid pad tag length of slot.";
+      }
+      leaf invalid-pad-type {
+        type uint32;
+        config false;
+        description
+          "Invalid pad type of slot.";
+      }
+      leaf invalid-padi-sessions {
+        type uint32;
+        config false;
+        description
+          "Invalid padi session of slot.";
+      }
+      leaf invalid-padr-sessions {
+        type uint32;
+        config false;
+        description
+          "Invalid padr session of slot.";
+      }
+      leaf invalid-pad-packet-length {
+        type uint32;
+        config false;
+        description
+          "Invalid pad packet length of slot.";
+      }
+      leaf other-invalid-pad-packets {
+        type uint32;
+        config false;
+        description
+          "Other invalid pad packets of slot.";
+      }
+      leaf total-invalid-pad-packets {
+        type uint32;
+        config false;
+        description
+          "Total invalid pad packets of slot.";
+      }
+      leaf send-null-pads-packets {
+        type uint32;
+        config false;
+        description
+          "Send null pads packet of slot.";
+      }
+    }
+    container ppp-slot-statistic {
+      config false;
+      description
+        "PPP statistics for specified slot.";
+      leaf send-echo-request {
+        type uint32;
+        config false;
+        description
+          "Send echo request of slot.";
+      }
+      leaf send-echo-reply {
+        type uint32;
+        config false;
+        description
+          "Send echo reply of slot.";
+      }
+      leaf send-echo-failed {
+        type uint32;
+        config false;
+        description
+          "Send echo failed of slot.";
+      }
+      leaf receive-echo-reply {
+        type uint32;
+        config false;
+        description
+          "Receive echo reply of slot.";
+      }
+      leaf receive-echo-request {
+        type uint32;
+        config false;
+        description
+          "Receive echo request of slot.";
+      }
+      leaf send-lcp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Send lcp connection request of slot.";
+      }
+      leaf send-lcp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Send lcp connection nak of slot.";
+      }
+      leaf send-lcp-connection-rejection {
+        type uint32;
+        config false;
+        description
+          "Send lcp connection rejection of slot.";
+      }
+      leaf send-lcp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Send lcp connection ack of slot.";
+      }
+      leaf send-lcp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Send lcp code rejection of slot.";
+      }
+      leaf send-lcp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Send lcp protocol rejection of slot.";
+      }
+      leaf send-lcp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Send lcp termination request of slot.";
+      }
+      leaf send-lcp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Send lcp termination ack of slot.";
+      }
+      leaf receive-lcp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Receive lcp connection request of slot.";
+      }
+      leaf receive-lcp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Receive lcp connection nak of slot.";
+      }
+      leaf receive-lcp-connection-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive lcp connection rejection of slot.";
+      }
+      leaf receive-lcp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Receive lcp connection ack of slot.";
+      }
+      leaf receive-lcp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive lcp code rejection of slot.";
+      }
+      leaf receive-lcp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive lcp protocol rejection of slot.";
+      }
+      leaf receive-lcp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Receive lcp termination request of slot.";
+      }
+      leaf receive-lcp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Receive lcp termination ack of slot.";
+      }
+      leaf send-ipcp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Send ipcp connection request of slot.";
+      }
+      leaf send-ipcp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Send ipcp connection nak of slot.";
+      }
+      leaf send-ipcp-connection-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ipcp connection rejection of slot.";
+      }
+      leaf send-ipcp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Send ipcp connection ack of slot.";
+      }
+      leaf send-ipcp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ipcp code rejection of slot.";
+      }
+      leaf send-ipcp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ipcp protocol rejection of slot.";
+      }
+      leaf send-ipcp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Send ipcp termination request of slot.";
+      }
+      leaf send-ipccp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Send ipcp termination ack of slot.";
+      }
+      leaf receive-ipcp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp connection request of slot.";
+      }
+      leaf receive-ipcp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp connection nak of slot.";
+      }
+      leaf receive-ipcp-connection-rejection {
+        type uint32;
+        config false;
+        description
+          "Send echo request of slot.";
+      }
+      leaf receive-ipcp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp connection ack of slot.";
+      }
+      leaf receive-ipcp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp code rejection of slot.";
+      }
+      leaf receive-ipcp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp protocol rejection of slot.";
+      }
+      leaf receive-ipcp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp termination request of slot.";
+      }
+      leaf receive-ipcp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp termination ack of slot.";
+      }
+      leaf send-ip6cp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp connection request of slot.";
+      }
+      leaf send-ip6cp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp connection nak of slot.";
+      }
+      leaf send-ip6cp-connection-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp connection rejection of slot.";
+      }
+      leaf send-ip6cp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp connection ack of slot.";
+      }
+      leaf send-ip6cp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp code rejection of slot.";
+      }
+      leaf send-ip6cp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp protocol rejection of slot.";
+      }
+      leaf send-ip6cp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp termination request of slot.";
+      }
+      leaf send-ip6cp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp termination ack of slot.";
+      }
+      leaf receive-ip6cp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp connection request of slot.";
+      }
+      leaf receive-ip6cp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp connection nak of slot.";
+      }
+      leaf receive-ip6cp-connection-reject {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp connection rejection of slot.";
+      }
+      leaf receive-ip6cp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp connection ack of slot.";
+      }
+      leaf receive-ip6cp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp code rejection of slot.";
+      }
+      leaf receive-ip6cp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp protocol rejection of slot.";
+      }
+      leaf receive-ip6cp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp termination request of slot.";
+      }
+      leaf receive-ip6cp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp termination ack of slot.";
+      }
+      leaf send-pap-authentication-ack {
+        type uint32;
+        config false;
+        description
+          "Send pap authentication ack of slot.";
+      }
+      leaf send-pap-authentication-nak {
+        type uint32;
+        config false;
+        description
+          "Send pap authentication nak of slot.";
+      }
+      leaf send-chap-challenge {
+        type uint32;
+        config false;
+        description
+          "Send chap challenge of slot.";
+      }
+      leaf send-chap-authentication-ack {
+        type uint32;
+        config false;
+        description
+          "Send chap authentication ack of slot.";
+      }
+      leaf send-chap-authentication-fail {
+        type uint32;
+        config false;
+        description
+          "Send chap authentication fail of slot.";
+      }
+      leaf discard-dail-fast {
+        type uint32;
+        config false;
+        description
+          "Discard dial fast of slot.";
+      }
+      leaf discard-chasten {
+        type uint32;
+        config false;
+        description
+          "Discard chasten of slot.";
+      }
+      leaf receive-pap-authentication-request {
+        type uint32;
+        config false;
+        description
+          "Receive pap authentication request of slot.";
+      }
+      leaf receive-chap-response {
+        type uint32;
+        config false;
+        description
+          "Receive chap response of slot.";
+      }
+    }
+  }
+  grouping urpf-discard-statistic {
+    description
+      "PPP user urpf discard packet statistics.";
+    container urpf-discard-statistics {
+      config false;
+      description
+        "PPP user urpf discard packet statistics.";
+      container urpf-ipv4-discard-statistic {
+        config false;
+        description
+          "Statistics of the IPv4 message count discarded when the PPPoX user source IPv4 address mismatch.";
+        leaf ppp-ipv4-packet-high-bits {
+          type uint32;
+          config false;
+          description
+            "IPv4 packet loss count, packet loss count with 64bit count, this field is high 32bit.";
+        }
+        leaf ppp-ipv4-packet-low-bits {
+          type uint32;
+          config false;
+          description
+            "IPv4 packet loss count, packet loss count with 64bit count, this field is low 32bit.";
+        }
+      }
+      container urpf-ipv6-discard-statistic {
+        config false;
+        description
+          "Statistics of IPv6 packet loss count.";
+        leaf ppp-ipv6-packet-high-bits {
+          type uint32;
+          config false;
+          description
+            "IPv6 packet loss count, packet loss count with 64bit count, this field is high 32bit.";
+        }
+        leaf ppp-ipv6-packet-low-bits {
+          type uint32;
+          config false;
+          description
+            "IPv6 packet loss count, packet loss count with 64bit count, this field is low 32bit.";
+        }
+      }
+    }
+  }
+
+  container bras-pppox-access {
+    description
+      "PPPoX Access.";
+    container ppp-chastens {
+      description
+        "List of restricts the number of connection requests from a PPP user.";
+      list ppp-chasten {
+        key "quick-offline";
+        description
+          "Configure the number of connection requests from a PPP user.";
+        ext:generated-by system {
+          ext:filter "quick-offline='false'";
+          description "The ppp connection chasten whose request-sessions is 6 and request-period is 60 seconds and block-period is 300 seconds, is generated by system automatically.";
+        }
+        leaf quick-offline {
+          type boolean;
+          description
+            "Enable/disable specifies the maximum number of times that a PPP user can go offline immediately after going online during a specific time period. If a large number of users go offline immediately after going online on a live network, the CPU is overloaded or the RADIUS server may go Down. After you specify quickoffline, PPP user accounts are frozen for blocking-period seconds if the PPP users go offline immediately after going online for request-sessions times during request-period seconds.";
+        }
+        choice chasten-type {
+          default chasten;
+          description
+            "Chasten type.";
+          case chasten {
+            description
+              "Chasten.";
+            leaf chasten {
+              type empty;
+              description
+                "Restricts the number of connection requests from a PPP user is restricted based on MAC addresses.";
+            }
+          }
+          case option105 {
+            description
+              "Option105 chasten.";
+            leaf option105 {
+              type empty;
+              must "../multi-sessions-per-mac = 'false'";
+              description
+                "Restricts the number of connection requests from a PPP user based on the Option 105 information, it can not support with one-to-many mappings between one MAC address and multiple PPP sessions at the same time.";
+            }
+          }
+        }
+        leaf padi-discard {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable specifies that the packets of the users whose accounts are frozen are discarded in the PPPoE active discovery initiation (PADI) phase. By default, the packets of the users whose accounts are frozen are discarded in the PPPoE active discovery request (PADR) phase.";
+        }       
+        leaf multi-sessions-per-mac {
+          type boolean;
+          must "not(../multi-sessions-per-mac = 'true' and ../option105)";
+          default "false";
+          description
+            "Enable/disable restricts the number of PPP connection requests based on the MAC address in scenarios in which one-to-many mappings between one MAC address and multiple PPP sessions are configured.";
+        }
+        leaf request-sessions {
+          type uint32 {
+            range "1..10000";
+          }
+          mandatory true;
+          description
+            "Specifies the number of PPP connection requests.";
+        }
+        leaf request-period {
+          type uint32 {
+            range "1..3600";
+          }
+          mandatory true;
+          description
+            "Specifies the period for sending PPP connection requests in seconds.";
+        }
+        leaf block-period {
+          type uint32 {
+            range "0..3600";
+          }
+          mandatory true;
+          description
+            "Specifies the period when a PPP connection request is blocked in seconds.";
+        }
+      }
+    }
+    container ppp-dampening {
+      presence "PPP protocol status damping enable.";
+      description
+        "Enable/disable type of PPP damp. If dampen-level is set to manual, the settings of the other parameters need to meet the following requirement: suppress-value/1000 <= (reuse-value/1000) * 2^ (max-suppress-time/half-life-period).";
+      ext:generated-by system;
+      leaf dampen-level {
+        type ppp-damp-level-type;
+        default "light";
+        description
+          "PPP protocol status damping level.";
+      }
+      leaf half-life-period {
+        when "../dampen-level='manual'";
+        type uint8 {
+          range "1..60";
+        }
+        units s;
+        mandatory true;
+        description
+          "PPP protocol status damping half life time (seconds)";
+      }
+      leaf suppress-value {
+        when "../dampen-level='manual'";
+        type uint16 {
+          range "1..20000";
+        }
+        must "../suppress-value >= ../reuse-value";
+        mandatory true;
+        description
+          "1000 times of PPP protocol status damping suppress threshold.";
+      }
+      leaf reuse-value {
+        when "../dampen-level='manual'";
+        type uint16 {
+          range "1..20000";
+        }
+        must "../suppress-value >= ../reuse-value";
+        mandatory true;
+        description
+          "1000 times of PPP protocol status damping reuse threshold.";
+      }
+      leaf max-suppress-time {
+        when "../dampen-level='manual'";
+        type uint8 {
+          range "1..255";
+        }
+        units s;
+        mandatory true;
+        description
+          "PPP protocol status damping max suppress time (seconds)";
+      }
+    }
+    container ppp-echo-slow-acl {
+      description
+        "Configure PPP slow reply for PPP echo packets with a specified MAC address.";
+      leaf acl-number {
+        type leafref {
+          path "/acl:acl/acl:groups/acl:group/acl:identity";
+        }
+        must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='link'";
+        description
+          "Specifies an ACL number.";
+      }
+    }
+    container user-threshold {
+      description
+        "Configure PPPoE user warning threshold.";
+      leaf slot-warning-value {
+        type uint8 {
+          range "1..100";
+        }
+        default "100";
+        description
+          "Sets an alarm threshold for PPP users allowed to access an interface board. By default, the alarm threshold for PPP users allowed to access an interface board is 100.";
+      }
+      leaf entire-warning-value {
+        type uint8 {
+          range "1..100";
+        }
+        default "100";
+        description
+          "Sets an alarm threshold for PPP users allowed to access the entire. By default, the alarm threshold for PPP users allowed to access the entire is 100.";
+      }
+    }
+    container bgp-over-pppoe-enable {
+      description
+        "Configure BGP route forwarding between a CPE and BRAS.";
+      leaf over-pppoe-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable BGP route forwarding between a CPE and BRAS.";
+      }
+    }
+    container pppoe-user-aaa {
+      description
+        "Configure PPPoE user.";
+      leaf name-check {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the device to check whether a login request from a PPPopE user contains a user name and to deny the request if it does not contain a user name.";
+      }
+      leaf gateway-loopback {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a loopback address as the preferentially used gateway address for PPPoE users who receive IP addresses from the RADIUS server.";
+      }
+      leaf offline-standardize {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the conversion of the PPPoE user offline reason.";
+      }
+    }
+    container pppoe-rui-session-segment {
+      description
+        "Configure PPPoE RUI remote-mac session-id segment.";
+      leaf start-session-id {
+        type uint16 {
+          range "1..65534";
+        }
+        default "1";
+        description
+          "Start session ID.";
+      }
+      leaf end-session-id {
+        type uint16 {
+          range "1..65534";
+        }
+        must "../end-session-id >= ../start-session-id";
+        default "65534";
+        description
+          "End session ID.";
+      }
+    }
+    container ppp-vlan-subinterface {
+      description
+        "Configure the Statistics of PPP qinq Sub Interface.";
+      leaf statistic-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable statistics.";
+      }
+    }
+    container pppoe-option82-sub-option {
+      description
+        "Configure enable a device to encapsulate sub-options into the Option 82 field of DHCP Discover messages to be sent to the DHCP server in scenarios where IP addresses are assigned to PPPoE users from a remote address pool.";
+      leaf option82-sub-option-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable whether a device is enabled to encapsulate sub-options into the Option 82 field of DHCP Discover messages to be sent to the DHCP server in scenarios where IP addresses are assigned to PPPoE users from a remote address pool.";
+      }
+    }
+    container pppoe-server {
+      description
+        "Configure information about the PPPoE server.";
+      leaf ncp-limit-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable whether the function to limit the number of times for interface boards to receive IPCP negotiation packets is enabled. 0: The function is not enabled. 1: The function is enabled.";
+      }
+      leaf same-user-forbid-flag {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable allow access of users with same MAC address or not.";
+      }
+      leaf padt-delay-flag {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable whether PADT packets of PPPoE users are delayed to be sent.";
+      }
+      leaf remote-mac-max-session-number {
+        type uint32 {
+          range "1..16384";
+        }
+        default "1";
+        description
+          "Maximum number of sessions that can be negotiated by the remote MAC address.";
+      }
+      leaf max-pay-load-flag {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable whether the MRU is negotiated according to the RFC 4638.";
+      }
+    }
+    container ppp-user-infos {
+      config false;
+      description
+        "List of the specify PPP protocal informations.";
+      list ppp-user-info {
+        key "user-id";
+        config false;
+        description
+          "Statistics of the specify PPP protocal information.";
+        leaf user-id {
+          type uint32;
+          config false;
+          description
+            "The Id of the online user.";
+        }
+        leaf user-name {
+          type string {
+            length "1..253";
+          }
+          config false;
+          description
+            "The name of the online user.";
+          ext:support-filter "true";
+        }
+        leaf circuit-id {
+          type string {
+            length "1..200";
+          }
+          config false;
+          description
+            "The circuit id of the online user.";
+          ext:support-filter "true";
+        }
+        leaf remote-id {
+          type string {
+            length "1..200";
+          }
+          config false;
+          description
+            "The remote id of the online user.";
+          ext:support-filter "true";
+        }
+        leaf ipv4-address {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IPv4 address of the online user.";
+          ext:support-filter "true";
+        }
+        leaf ipv6-address {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "IPv6 address of the online user.";
+          ext:support-filter "true";
+        }
+        leaf vpn-instance-name {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The vpn instance name of the online user.";
+          ext:support-filter "true";
+        }
+        leaf session-id {
+          type uint32;
+          config false;
+          description
+            "The session id.";
+        }
+        leaf mac {
+          type pub-type:mac-address {
+            length "0..255";
+          }
+          config false;
+          description
+            "The Mac address of online user.";
+        }
+        leaf interface-name {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Display of specified interface.";
+        }
+        leaf pe-vlan {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The pe VLAN.";
+        }
+        leaf ce-vlan {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The ce VLAN.";
+        }
+        leaf ip {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "IP address.";
+        }
+        leaf gateway {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The gate way.";
+        }
+        leaf user-ip-netmask-client {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The user IP netmask of client.";
+        }
+        leaf user-ip-netmask-radius {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The user IP netmask of radius.";
+        }
+        leaf user-ip-netmask-result {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The user IP netmask of result.";
+        }
+        leaf primary-dns {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The primary dns.";
+        }
+        leaf second-dns {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The second dns.";
+        }
+        leaf ipv6-interfaceid-type {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The IPv6 interface ID type.";
+        }
+        leaf ipv6-local-interfaceid {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The IPv6 local interface ID.";
+        }
+        leaf ipv6-peer-interfaceid {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The IPv6 peer interface ID.";
+        }
+        leaf user-ip-type {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The user iptype.";
+        }
+        leaf authentication {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The authentication mode.";
+        }
+        leaf mtu {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The max transmitation number of the mtu.";
+        }
+        leaf mru {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The max receive number of the mru.";
+        }
+        leaf magic-number {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The magic number.";
+        }
+        leaf called-number {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The called number.";
+        }
+        leaf calling-number {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The calling number.";
+        }
+        leaf keep-alive-time {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The keep alive time.";
+        }
+        leaf retransmit-times {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The retransmit times.";
+        }
+        leaf datacheck {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The data is check or not.";
+        }
+        leaf negotiation-timer {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The negotiation timer.";
+        }
+        leaf request-timeout {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The request timeout.";
+        }
+        leaf host-name {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The host name.";
+        }
+        leaf challenge-retry-times {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The challenge retry times.";
+        }
+        leaf challenge-timeout {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The challenge timeout.";
+        }
+        leaf min-challenge-length {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The min challenge length.";
+        }
+        leaf max-challenge-length {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The max challenge length.";
+        }
+        leaf challenge-retry-times-msv1 {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The challenge retry times of MSV1.";
+        }
+        leaf challenge-timeout-msv1 {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The challenge timeout of MSV1.";
+        }
+        leaf min-challenge-length-msv1 {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The min challenge length of MSV1.";
+        }
+        leaf max-challenge-length-msv1 {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The max challenge length of MSV1.";
+        }
+        leaf challenge-retry-times-msv2 {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The challenge retry times of MSV2.";
+        }
+        leaf challenge-timeout-msv2 {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The challenge timeout of MSV2.";
+        }
+        leaf min-challenge-length-msv2 {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The min challenge length of MSV2.";
+        }
+        leaf max-challenge-length-msv2 {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The max challenge length of MSV2.";
+        }
+        leaf lac-peer-ip {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lac peer IP.";
+        }
+        leaf lac-peer-tunnel-id {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lac peer tunnel id.";
+        }
+        leaf lac-peer-session-id {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lac peer session id.";
+        }
+        leaf lac-local-ip {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lac local IP.";
+        }
+        leaf lac-local-tunnel-id {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lac local tunnel id.";
+        }
+        leaf lac-local-session-id {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lac local session id.";
+        }
+        leaf lac-source-udp-port {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lac source udp port.";
+        }
+        leaf lac-destination-udp-port {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lac destination udpport.";
+        }
+        leaf lns-peer-ip {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lns peer IP.";
+        }
+        leaf lns-peer-tunnel-id {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lns peer tunnel id.";
+        }
+        leaf lns-peer-session-id {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lns peer session id.";
+        }
+        leaf lns-local-ip {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lns local IP.";
+        }
+        leaf lns-local-tunnel-id {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lns local tunnel id.";
+        }
+        leaf lns-local-session-id {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lns local session id.";
+        }
+        leaf lns-source-udp-port {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lns source udp port.";
+        }
+        leaf lns-destination-udp-port {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "The lns destination udp port.";
+        }
+      }
+    }
+    container bras-pppoe-user-delays {
+      config false;
+      description
+        "List of PPPoE User Detecting Delay Informations.";
+      list bras-pppoe-user-delay {
+        key "user-mac";
+        config false;
+        description
+          "Statistics of PPPoE User Detecting Delay Informations.";
+        leaf user-mac {
+          type pub-type:mac-address;
+          config false;
+          description
+            "User Mac address.";
+        }
+        leaf detecting-delay-time {
+          type uint32;
+          config false;
+          description
+            "User Detecting Delay Time.";
+        }
+        leaf time-stamp {
+          type uint32;
+          config false;
+          description
+            "Acquisition Time.";
+        }
+      }
+    }
+    container ppp-chasten-infos {
+      config false;
+      description
+        "List of chastens information.";
+      list ppp-chasten-info {
+        key "slot-id";
+        config false;
+        description
+          "Statistics of chasten information.";
+        leaf slot-id {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "Slot number information.";
+        }
+        leaf mac-address {
+          type pub-type:mac-address {
+            length "0..255";
+          }
+          config false;
+          description
+            "Mac address information.";
+          ext:support-filter "true";
+        }
+        leaf circuit-id {
+          type string {
+            length "1..200";
+          }
+          config false;
+          description
+            "Circuit ID.";
+          ext:support-filter "true";
+        }
+        leaf remote-id {
+          type string {
+            length "1..200";
+          }
+          config false;
+          description
+            "Remote ID.";
+          ext:support-filter "true";
+        }
+        leaf vlan-mac-fail {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "VLAN mac fail number.";
+        }
+        leaf vlan-mac-qucik-offline {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "VLAN mac quick offline.";
+        }
+        leaf vlan-option-fail {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "VLAN option105 fail number.";
+        }
+        leaf vlan-option-quick {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "VLAN option105 quick number.";
+        }
+        leaf global-mac-fail {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Global mac fail number.";
+        }
+        leaf global-mac-quick-offline {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Global mac quick offline number.";
+        }
+        leaf global-option-fail {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Global option105 fail number.";
+        }
+        leaf global-option-quick {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Global option105 quick number.";
+        }
+        uses ppp-basic-chasten-info;
+      }
+    }
+    container ppp-option105-chasten-statistics {
+      config false;
+      description
+        "List of option105 chastens information.";
+      list ppp-option105-chasten-statistic {
+        key "slot-id"; 
+        config false;
+        description
+          "Statistics of option105 chasten information.";
+        leaf slot-id {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "Slot number information.";
+        }
+        leaf circuit-id {
+          type string {
+            length "1..200";
+          }
+          config false;
+          description
+            "Circuit ID.";
+        }
+        leaf remote-id {
+          type string {
+            length "1..200";
+          }
+          config false;
+          description
+            "Remote ID.";
+        }
+        leaf mac-address {
+          type string {
+            length "1..200";
+          }
+          config false;
+          description
+            "Mac address information.";
+        }
+        uses ppp-basic-chasten-info;
+      }
+    } 
+  }
+  rpc reset-pppoe-user-login-failure-number {
+    description
+      "Reset statistics about login failures because the number of PPPOE users on a board exceeds the upper limit.";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+
+  rpc reset-ppp-slot-statistic {
+    description
+      "Reset PPP statistics of slot.";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+
+  rpc reset-pppoe-slot-statistic {
+    description
+      "Reset PPPoE statistics of slot.";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+    }
+  }
+
+  rpc reset-ppp-interface-statistic {
+    description
+      "Reset PPP statistics of interface.";
+    input {
+      leaf interface-name {
+        type string {
+          length "1..49";
+        }
+        mandatory true;
+        description
+          "Interface name.";
+      }
+    }
+  }
+
+  rpc reset-pppoe-interface-statistic {
+    description
+      "Reset PPPoE statistics of specified interface.";
+    input {
+      leaf interface-name {
+        type string {
+          length "1..49";
+        }
+        mandatory true;
+        description
+          "Interface name.";
+      }
+    }
+  }
+
+  rpc reset-chasten-ppp-user-by-mac {
+    description
+      "Reset PPP user's chasten information by Mac address.";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+      leaf mac {
+        type pub-type:mac-address {
+          length "0..255";
+        }
+        mandatory true;
+        description
+          "Mac address.";
+      }
+    }
+  }
+
+  rpc reset-chasten-ppp-user-by-option105 {
+    description
+      "Reset PPP user's chasten information of option105 by circuit id or remote id.";
+    input {
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "Board position.";
+      }
+      choice id-type {
+        mandatory true;
+        description
+          "ID type.";
+        case circuit-id {
+          description
+            "Circuit ID.";
+          leaf circuit-id {
+            type string {
+              length "1..200";
+            }
+            mandatory true;
+            description
+              "Reset PPP user's chasten information by Circuit ID.";
+          }
+        }
+        case remote-id {
+          description
+            "Remote ID.";
+          leaf remote-id {
+            type string {
+              length "1..200";
+            }
+            mandatory true;
+            description
+              "Reset PPP user's chasten information by Remote ID.";
+          }
+        }
+      }
+    }
+  }
+
+  rpc reset-urpf-discard-statistic {
+    description
+      "Reset the count of all ppp-user urpf discard packet statistics.";
+    input {
+      leaf reset-flag {
+        type empty;
+        description
+          "Clear all flag.";
+      }
+    }
+  }
+
+  rpc reset-specified-urpf-statistic {
+    description
+      "Reset the count of specified ppp-user urpf discard packet statistics.";
+    input {
+      leaf ip-type {
+        type urpf-ip-type;
+        mandatory true;
+        description
+          "PPPoX user source address type.";
+      }
+      leaf board-position {
+        type string {
+          length "1..32";
+        }
+        mandatory true;
+        description
+          "The available slot.";
+      }
+    }
+  }
+  
+  augment "/aaa:aaa/aaa:domains/aaa:domain/bras-basic-access:bas" {
+    description
+      "PPPoX configurations under domain.";
+    container bras-pppox {
+      description
+        "Configure PPPoX under domain.";
+      container address-release-separate {
+        description
+          "Configure PPPoE dual-stack users to go offline from a single stack.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable PPPoE dual-stack users to go offline from a single stack.";
+        }
+      }
+      container force-authen-type {
+        description
+          "Configure indicates the mode of PPP authentication for a PPPoE user in a domain.";
+        leaf force-authentication-type {
+          type authentication-type;
+          default "none";
+          description
+            "Indicates the mode of PPP authentication for a PPPoE user in a domain.";
+        }
+      }
+      container force-assign-interface-id {
+        description
+          "Configure the router to allocate interface IDs and reject that are not 0 and do not conflict with one another carried in Configure-Request messages sent from users during IPv6CP negotiation.";
+        leaf assign-interface-id {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable allocates interface IDs during IPv6CP negotiation.";
+        }
+      }
+      container dhcpv6-wait-delay {
+        description
+          "Configure a timeout period for waiting for a DHCPv6 connection request from a PPPoE user on the.";
+        choice wait-time-set-type {
+          default limited;
+          description
+            "Limited type or infinity type.";
+          case limited {
+            description
+              "Limited type.";
+            leaf wait-dhcpv6-time {
+              type uint8 {
+                range "30..120";
+              }
+              default "60";
+              description
+                "Specifys the timeout period for waiting for a DHCPv6 connection request.";
+            }
+          }
+          case infinity {
+            description
+              "Infinity type.";
+            leaf infinity {
+              type empty;
+              description
+                "The infinite timeout period for waiting for a DHCPv6 connection request will not end the PPPv6 connection.";
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board"  {
+    description
+      "PPPoX configurations of access board.";
+    container bras-pppox {
+      description
+        "Configure PPPoX under access slot.";
+      container slot-access-limit {
+        description
+          "Configure slot access limit.";
+        leaf access-user-limit {
+          type uint32 {
+            range "0..131072";
+          }
+          description
+            "Access limit user number.";
+        }
+      }
+      container access-ip {
+        config false;
+        description
+          "PPP access IP number informations statistics for slot.";
+        leaf access-ip-number {
+          type uint32 {
+            range "0..131072";
+          }
+          config false;
+          description
+            "Number of accessed users, counted by user IP.";
+        }
+      }
+      container access-ip-limit {
+        config false;
+        description
+          "Statistics of access IP limit.";
+        leaf fail-number {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Number of users who fail to go online because the number of PPP users on a board exceeds the upper limit.";
+        }
+      }
+      container ppp-echo-deploy-mode {
+        description
+          "Configure a service board to process PPP echo probe packets in separate mode.";
+        leaf separate-mode {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable processes PPP echo packets in separate mode.";
+        }
+      }
+      container load-balance-identify-pppoe {
+        description
+          "Configure load balance identify PPPoE.";
+        leaf load-balance-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to identify the IP.";
+        }
+      }
+      container max-sessions {
+        description
+          "Configure the maximum number of users allowed to go online through an interface board.";
+        leaf max-session-number {
+          type uint32 {
+            range "0..262144";
+          }
+          description
+            "Maximum number of sessions supported on an interface board. The value ranges from 0 to 131072 for LPU240/LPU480 board, from 0 to 65534 for LPU50/LPU120 and other boards, and depends on the boards of UP in the CU scenario.";
+        }
+      }
+
+      uses pppox-slot-statistic;
+
+      uses urpf-discard-statistic;
+    }
+  }
+ 
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board"  {
+    description
+      "PPPox configurations under access slot.";
+    container bras-pppox {
+      description
+        "Configure PPPox under access slot.";
+      container slot-access-limit {
+        description
+          "Configure slot access limit.";
+        leaf access-user-limit {
+          type uint32 {
+            range "0..131072";
+          }
+          description
+            "Access limit user number.";
+        }
+      }
+      container access-ip {
+        config false;
+        description
+          "Statistics of PPP access IP number informations of slot.";
+        leaf access-ip-number {
+          type uint32 {
+            range "0..131072";
+          }
+          config false;
+          description
+            "Number of accessed users, counted by user IP.";
+        }
+      }
+      container access-ip-limit {
+        config false;
+        description
+          "Statistics of access IP limit.";
+        leaf fail-number {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Number of users who fail to go online because the number of PPP users on a board exceeds the upper limit.";
+        }
+      }
+      container ppp-echo-deploy-mode {
+        description
+          "Configure a service board to process PPP echo probe packets in separate mode.";
+        leaf separate-mode {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable processes PPP echo packets in separate mode.";
+        }
+      }
+      container load-balance-identify-pppoe {
+        description
+          "Configure load balance identify PPPoE.";
+        leaf load-balance-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable a device to identify the IP.";
+        }
+      }
+      container max-sessions {
+        description
+          "Configure the maximum number of users allowed to go online through an interface board.";
+        leaf max-session-number {
+          type uint32 {
+            range "0..262144";
+          }
+          description
+            "Maximum number of sessions supported on an interface board. The value ranges from 0 to 131072 for LPU240/LPU480 board, from 0 to 65534 for LPU50/LPU120 and other boards, and depends on the boards of UP in the CU scenario.";
+        }
+      }
+
+      uses pppox-slot-statistic;
+
+      uses urpf-discard-statistic;
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "PPPoE interface config.";
+    container pppoe-bind-vt {
+      presence "PPPoE bind Virtual-Template interface.";
+      description
+        "Enable/disable PPPoE bind Virtual-Template interface.";
+      leaf name {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type = 'Virtual-Template'";
+        mandatory true;
+        description
+          "Virtual-Template name.";
+      }
+    }
+  
+    container pppoe-vt {
+      when "../ifm:type = 'Virtual-Template'";
+      description
+        "Configure PPPoE Virtual-Template.";
+      leaf-list authen-mode-priority {
+        type auth-mode-type;
+        ordered-by user;
+        description
+          "Configure authentication mode.";
+      }
+      leaf keep-alive-interval {
+        type uint32 {
+          range "0..65535";
+        }
+        default "20";
+        description
+          "Keepalive interval (in second).";
+      }
+      leaf keep-alive-times {
+        type uint32 {
+          range "1..10";
+        }
+        default "3";
+        description
+          "Keepalive retransmit times.";
+      }
+      leaf keep-alive-response-interval {
+        type uint32 {
+          range "1..65535";
+        }
+        description
+          "Keepalive response timeout (in second).";
+      }
+      leaf keep-alive-data-check {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable keepalive optimizing.";
+      }
+      leaf motm {
+        type string {
+          length "1..255";
+        }
+        description
+          "Tag information in a PPPoE MOTM packet.";
+      }
+      leaf motm-delimiter {
+        type string {
+          length "1";
+        }
+        default ",";
+        description
+          "Delimiter between sub-items.";
+      }
+      leaf negotiate-interval {
+        type uint32 {
+          range "1..10";
+        }
+        default "3";
+        description
+          "Interval at which negotiation is performed.";
+      }
+      leaf negotiate-times {
+        type uint32 {
+          range "1..30";
+        }
+        default "10";
+        description
+          "Number of negotiation retransmissions.";
+      }
+      leaf ac-name {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a PPPoE server.";
+      }
+      leaf-list service-name {
+        type string {
+          length "1..31";
+        }
+        description
+          "Configure service-Name 1 for PPPoE negotiation.";
+      }
+      leaf exact-match {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable PPPOE service name matching type.";
+      }
+      leaf padn-send {
+        type padx-send-type;
+        default "ipcp";
+        description
+          "The Specify packet-sending policy of padn.";
+      }
+      leaf padm-send {
+        type padx-send-type;
+        default "ipcp";
+        description
+          "The Specify packet-sending policy of padm.";
+      }
+      leaf keep-alive-adjust-system {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable if this parameter is set to 1, the system is adjusted.";
+      }
+      leaf keep-alive-adjust-retransmit {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable if this parameter is set to 1, the system is adjusted to retransmit.";
+      }
+      leaf mru {
+        type uint32 {
+          range "1024..9600";
+        }
+        default "1492";
+        description
+          "Maximum receive unit.";
+      }
+      leaf lcp-delay {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable lcp delay negotiation.";
+      }
+      leaf lcp-delay-force {
+        type boolean;
+        must "(not ((../lcp-delay = 'false') and (../lcp-delay-force = 'true')))";
+        default "false";
+        description
+          "Enable/disable lcp delay negotiation force.";
+      }
+      leaf chap-user-name {
+        type string {
+          length "1..253";
+        }
+        description
+          "Chap user name.";
+      }
+    }
+    container tcp-mss-value {
+      when "../ifm:type = 'Virtual-Template'";
+      description
+        "Configure the maximum segment size (MSS) that can be sent to the peer in a TCP session.";
+      leaf mss-value {
+        type uint32 {
+          range "1..8978";
+        }
+        description
+          "The value is an integer ranging from 1 to 8978.";
+      }
+    }
+    container ipv4-urpf {
+      when "../ifm:type = 'Virtual-Template'";
+      description
+        "Configure IPv4 URPF for PPPoE users in the virtual template.";
+      leaf strict-check {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable indicates URPF strict check. This means that a packet can pass the URPF check only when its source address matches the source address in a specific forwarding entry and its inbound interface also matches the inbound interface in the specific entry.";
+      }
+      leaf subnet-check {
+        when "../strict-check='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable strict URPF check for the PPPoE leased line users and common PPPoE users. If the parameter is not specified, URPF strict check is enabled only for common PPPoE users.";
+      }
+    }
+    container ipv6-urpf {
+      when "../ifm:type = 'Virtual-Template'";
+      description
+        "Configure IPv6 URPF for IPv6 L2TP users and IPv6 PPPoE users in the virtual template.";
+      leaf strict-check {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable indicates URPF strict check. That is, a packet can pass the URPF check only when there is a matched entry in the forwarding table and the inbound interface is matched.";
+      }
+      leaf subnet-check {
+        when "../strict-check='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable strict URPF check for common L2TP users, dual-stack L2TP users, L2TP leased line users, common PPPoE users, dual-stack PPPoE users, and PPPoE leased line users. If the parameter is not specified, strict URPF check is enabled only for common L2TP users, dual-stack L2TP users, common PPPoE users and dual-stack PPPoE users.";
+      }
+    }
+    container roam-domain {
+      when "../ifm:type = 'Virtual-Template'";
+      description
+        "Configure roam domain.";
+      leaf roam-domain-name {
+        type leafref {
+          path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+        }
+        description
+          "Roam domain name.";
+      }
+    }
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas" {
+    description
+      "PPPoX bas statistics.";
+    container pppoe-bas-statics {
+      config false;
+      description
+        "PPPoE information statistics for interface.";
+      leaf active-session {
+        type uint32;
+        config false;
+        description
+          "Active session of specified interface.";
+      }
+      leaf total-sessions {
+        type uint32;
+        config false;
+        description
+          "Total sessions of specified interface.";
+      }
+      leaf receive-padi-packets {
+        type uint32;
+        config false;
+        description
+          "Receive padi packets of specified interface.";
+      }
+      leaf discard-padi-packets {
+        type uint32;
+        config false;
+        description
+          "Discard padi packets of specified interface.";
+      }
+      leaf send-pado-packets {
+        type uint32;
+        config false;
+        description
+          "Send pado packets of specified interface.";
+      }
+      leaf receive-padr-packets {
+        type uint32;
+        config false;
+        description
+          "Receive padr packets of specified interface.";
+      }
+      leaf discard-padr-packets {
+        type uint32;
+        config false;
+        description
+          "Discard padr packets of specified interface.";
+      }
+      leaf send-pads-packets {
+        type uint32;
+        config false;
+        description
+          "Send pads packets of specified interface.";
+      }
+      leaf discard-padr-same-mac {
+        type uint32;
+        config false;
+        description
+          "Discard padr samemac of specified interface.";
+      }
+      leaf receive-padt-packets {
+        type uint32;
+        config false;
+        description
+          "Receive padt packets of specified interface.";
+      }
+      leaf discard-padt-packets {
+        type uint32;
+        config false;
+        description
+          "Discard padt packets of specified interface.";
+      }
+      leaf send-padt-packets {
+        type uint32;
+        config false;
+        description
+          "Send padt packets of specified interface.";
+      }
+      leaf send-padm-packets {
+        type uint32;
+        config false;
+        description
+          "Send padm packets of specified interface.";
+      }
+      leaf send-padm-url-packets {
+        type uint32;
+        config false;
+        description
+          "Send padm url packets of specified interface.";
+      }
+      leaf send-padm-motm-packets {
+        type uint32;
+        config false;
+        description
+          "Send padm motm packets of specified interface.";
+      }
+      leaf send-padn-packets {
+        type uint32;
+        config false;
+        description
+          "Send padn packets of specified interface.";
+      }
+      leaf receive-session-packets {
+        type uint32;
+        config false;
+        description
+          "Receive session packets of specified interface.";
+      }
+      leaf discard-session-packets {
+        type uint32;
+        config false;
+        description
+          "Discard session packets of specified interface.";
+      }
+      leaf send-session-packets {
+        type uint32;
+        config false;
+        description
+          "Send session packets of specified interface.";
+      }
+      leaf receive-packets {
+        type uint32;
+        config false;
+        description
+          "Receive packets of specified interface.";
+      }
+      leaf discard-packets {
+        type uint32;
+        config false;
+        description
+          "Discard packet of specified interface.";
+      }
+      leaf invalid-version {
+        type uint32;
+        config false;
+        description
+          "Invalid version of specified interface.";
+      }
+      leaf invalid-pad-code {
+        type uint32;
+        config false;
+        description
+          "Invalid pad code of specified interface.";
+      }
+      leaf invalid-pad-tags {
+        type uint32;
+        config false;
+        description
+          "Invalid pad tags of specified interface.";
+      }
+      leaf invalid-pad-tag-length {
+        type uint32;
+        config false;
+        description
+          "Invalid pad tag length of specified interface.";
+      }
+      leaf invalid-pad-type {
+        type uint32;
+        config false;
+        description
+          "Invalid pad type of specified interface.";
+      }
+      leaf invalid-padi-sessions {
+        type uint32;
+        config false;
+        description
+          "Invalid padi sessions of specified interface.";
+      }
+      leaf invalid-padr-sessions {
+        type uint32;
+        config false;
+        description
+          "Invalid padr sessions of specified interface.";
+      }
+      leaf invalid-pad-packet-length {
+        type uint32;
+        config false;
+        description
+          "Invalid pad packet length of specified interface.";
+      }
+      leaf other-invalid-pad-packets {
+        type uint32;
+        config false;
+        description
+          "Other invalid pad packets of specified interface.";
+      }
+      leaf total-invalid-pad-packets {
+        type uint32;
+        config false;
+        description
+          "Total invalid pad packets of specified interface.";
+      }
+    }
+    container ppp-bas-statistics {
+      config false;
+      description
+        "PPP information statistics for interface.";
+      leaf send-echo-request {
+        type uint32;
+        config false;
+        description
+          "Send echo request of interface.";
+      }
+      leaf send-echo-reply {
+        type uint32;
+        config false;
+        description
+          "Send echo reply of interface.";
+      }
+      leaf send-echo-failed {
+        type uint32;
+        config false;
+        description
+          "Send echo failed of interface.";
+      }
+      leaf receive-echo-reply {
+        type uint32;
+        config false;
+        description
+          "Receive echo reply of interface.";
+      }
+      leaf receive-echo-request {
+        type uint32;
+        config false;
+        description
+          "Receive echo request of interface.";
+      }
+      leaf send-echo-receipt-fast {
+        type uint32;
+        config false;
+        description
+          "Send echo receipt fast of interface.";
+      }
+      leaf receive-echo-request-fast {
+        type uint32;
+        config false;
+        description
+          "Receive echo request fast of interface.";
+      }
+      leaf send-lcp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Send lcp connection request of interface.";
+      }
+      leaf send-lcp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Send lcp connection nak of interface.";
+      }
+      leaf send-lcp-connection-rejection {
+        type uint32;
+        config false;
+        description
+          "Send lcp connection rejection of interface.";
+      }
+      leaf send-lcp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Send lcp connection ack of interface.";
+      }
+      leaf send-lcp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Send lcp code rejection of interface.";
+      }
+      leaf send-lcp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Send lcp protocol rejection of interface.";
+      }
+      leaf send-lcp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Send lcp termination request of interface.";
+      }
+      leaf send-lcp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Send lcp termination ack of interface.";
+      }
+      leaf receive-lcp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Receive lcp connection request of interface.";
+      }
+      leaf receive-lcp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Receive lcp connection nak of interface.";
+      }
+      leaf receive-lcp-connection-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive lcp connection rejection of interface.";
+      }
+      leaf receive-lcp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Receive lcp connection ack of interface.";
+      }
+      leaf receive-lcp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive lcp code rejection of interface.";
+      }
+      leaf receive-lcp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive lcp protocol rejection of interface.";
+      }
+      leaf receive-lcp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Receive lcp termination request of interface.";
+      }
+      leaf receive-lcp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Receive lcp termination ack of interface.";
+      }
+      leaf send-ipcp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Send ipcp connection request of interface.";
+      }
+      leaf send-ipcp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Send ipcp connection nak of interface.";
+      }
+      leaf send-ipcp-connection-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ipcp connection rejection of interface.";
+      }
+      leaf send-ipcp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Send ipcp connection ack of interface.";
+      }
+      leaf send-ipcp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ipcp code rejection of interface.";
+      }
+      leaf send-ipcp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ipcp protocol rejection of interface.";
+      }
+      leaf send-ipcp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Send ipcp termination request of interface.";
+      }
+      leaf send-ipccp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Send ipcp termination ack of interface.";
+      }
+      leaf receive-ipcp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp connection request of interface.";
+      }
+      leaf receive-ipcp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp connection nak of interface.";
+      }
+      leaf receive-ipcp-connection-rejection {
+        type uint32;
+        config false;
+        description
+          "Send echo request of interface.";
+      }
+      leaf receive-ipcp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp connection ack of interface.";
+      }
+      leaf receive-ipcp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp code rejection of interface.";
+      }
+      leaf receive-ipcp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp protocol rejection of interface.";
+      }
+      leaf receive-ipcp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp termination request of interface.";
+      }
+      leaf receive-ipcp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Receive ipcp termination ack of interface.";
+      }
+      leaf send-ip6cp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp connection request of interface.";
+      }
+      leaf send-ip6cp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp connection nak of interface.";
+      }
+      leaf send-ip6cp-connection-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp connection rejection of interface.";
+      }
+      leaf send-ip6cp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp connection ack of interface.";
+      }
+      leaf send-ip6cp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp code rejection of interface.";
+      }
+      leaf send-ip6cp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp protocol rejection of interface.";
+      }
+      leaf send-ip6cp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp termination request of interface.";
+      }
+      leaf send-ip6cp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Send ip6cp termination ack of interface.";
+      }
+      leaf receive-ip6cp-connection-request {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp connection request of interface.";
+      }
+      leaf receive-ip6cp-connection-nak {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp connection nak of interface.";
+      }
+      leaf receive-ip6cp-connection-reject {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp connection rejection of interface.";
+      }
+      leaf receive-ip6cp-connection-ack {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp connection ack of interface.";
+      }
+      leaf receive-ip6cp-code-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp code rejection of interface.";
+      }
+      leaf receive-ip6cp-protocol-rejection {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp protocol rejection of interface.";
+      }
+      leaf receive-ip6cp-termination-request {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp termination request of interface.";
+      }
+      leaf receive-ip6cp-termination-ack {
+        type uint32;
+        config false;
+        description
+          "Receive ip6cp termination ack of interface.";
+      }
+      leaf send-pap-authentication-ack {
+        type uint32;
+        config false;
+        description
+          "Send pap authentication ack of interface.";
+      }
+      leaf send-pap-authentication-nak {
+        type uint32;
+        config false;
+        description
+          "Send pap authentication nak of interface.";
+      }
+      leaf send-chap-challenge {
+        type uint32;
+        config false;
+        description
+          "Send chap challenge of interface.";
+      }
+      leaf send-chap-authentication-ack {
+        type uint32;
+        config false;
+        description
+          "Send chap authentication ack of interface.";
+      }
+      leaf send-chap-authentication-fail {
+        type uint32;
+        config false;
+        description
+          "Send chap authentication fail of interface.";
+      }
+      leaf discard-dail-fast {
+        type uint32;
+        config false;
+        description
+          "Discard dial fast of interface.";
+      }
+      leaf discard-chasten {
+        type uint32;
+        config false;
+        description
+          "Discard chasten of interface.";
+      }
+      leaf receive-pap-authentication-request {
+        type uint32;
+        config false;
+        description
+          "Receive pap authentication request of interface.";
+      }
+      leaf receive-chap-response {
+        type uint32;
+        config false;
+        description
+          "Receive chap response of interface.";
+      }
+    }
+  }
+  
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/bras-basic-access:bas/bras-basic-access:access-type/bras-basic-access:layer2-subscriber/bras-basic-access:layer2-subscriber" {
+    description
+      "PPP configurations under bas interface.";
+    container ppp {
+      description
+        "Configure PPP under bas interface.";
+      container roam-domain {
+        description
+          "Configure the roaming domain by the roam-domain command.";
+        leaf name {
+          type leafref {
+            path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+          }
+          description
+            "Roam domain name.";
+        }
+      }
+      container keep-alive-slow {
+        description
+          "Configure PPP keep alive slow.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable PPP keep alive slow.";
+        }
+      }
+      container access-ip-limit {
+        presence "Create access IP limit.";
+        description
+          "Enable/disable access IP limit.";
+        leaf access-user-limit {
+          type uint32 {
+            range "0..131072";
+          }
+          mandatory true;
+          description
+            "Access limit user number.";
+        }
+        leaf exclude-enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable access limit exclude.";
+        }
+      }
+      container access-ip {
+        config false;
+        description
+          "Statistics of PPP access IP number information of interface.";
+        leaf access-ip-number {
+          type uint32 {
+            range "0..131072";
+          }
+          description
+            "Number of accessed users, counted by user IP.";
+        }
+      }
+      container default-domain {
+        description
+          "Configure the default authentication domain for PPP users.";
+        leaf domain-name {
+          type leafref {
+            path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+          }
+          description
+            "Specifies the name of the default authentication domain for PPP users.";
+        }
+        leaf force-domain-name {
+          type leafref {
+            path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+          }
+          description
+            "Specifies the force name of the default authentication domain for PPP users.";
+        }
+      }
+    }
+    container map-interface {
+      config false;
+      description
+        "Statistics of mapping interface name of bas interface.";
+      leaf map-interface-name {
+        type string {
+          length "1..63";
+        }
+        config false;
+        description
+          "Mapping interface name.";
+      }
+    }
+  }
+}

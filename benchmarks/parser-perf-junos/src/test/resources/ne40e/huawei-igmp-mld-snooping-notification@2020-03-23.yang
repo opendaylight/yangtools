@@ -1,0 +1,290 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-igmp-mld-snooping-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-igmp-mld-snooping-notification";
+  prefix ims-n;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "The module defines notifications for IGMP snooping and MLD snooping.";
+  revision 2020-03-23 {
+    description
+      "Modify descriptions for some nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-07-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef ip-addr-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown type.";
+      }
+      enum "ipv4unicast" {
+        value 1;
+        description
+          "IPv4 unicast.";
+      }
+      enum "ipv6unicast" {
+        value 2;
+        description
+          "IPv6 unicast.";
+      }
+    }
+    description
+      "Address family.";
+  }
+  notification hw-igmp-mld-snooping-global-entry-threshold-exceed {
+    description
+      "The total number of global multicast groups exceeded the upper threshold.";
+    leaf address-family {
+      type ims-n:ip-addr-type;
+      description
+        "Address family.";
+    }
+    leaf limit-type {
+      type uint32;
+      description
+        "Limit type: - BD(1) - VLAN(2) - VSI(3).";
+    }
+    leaf current-number {
+      type uint32;
+      description
+        "Current number of global multicast groups.";
+    }
+    leaf limit-number {
+      type uint32;
+      description
+        "Maximum number of global multicast groups.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "Alarm trigger threshold.";
+    }
+  }
+  notification hw-igmp-mld-snooping-global-entry-threshold-resume {
+    description
+      "The total number of global multicast groups fell below the lower threshold.";
+    leaf address-family {
+      type ims-n:ip-addr-type;
+      description
+        "Address family.";
+    }
+    leaf limit-type {
+      type uint32;
+      description
+        "Limit type: - BD(1) - VLAN(2) - VSI(3).";
+    }
+    leaf current-number {
+      type uint32;
+      description
+        "Current number of global multicast groups.";
+    }
+    leaf limit-number {
+      type uint32;
+      description
+        "Maximum number of global multicast groups.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "Alarm trigger threshold.";
+    }
+    leaf reason-type {
+      type uint32;
+      description
+        "Alarm clear reason: - 1: Users left the multicast group. - 2: The configuration changed.";
+    }
+  }
+  notification hw-igmp-mld-snooping-report-listening-threshold-exceed {
+    description
+      "The number of Layer 2 multicast QinQ stacking/mapping users on a board reached the threshold.";
+    leaf address-family {
+      type ims-n:ip-addr-type;
+      description
+        "Address family.";
+    }
+    leaf slot-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Slot name of a board.";
+    }
+    leaf current-number {
+      type uint32;
+      description
+        "Current number of listened users.";
+    }
+    leaf total-number {
+      type uint32;
+      description
+        "Maximum number of listened users.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "Threshold of user number.";
+    }
+  }
+  notification hw-igmp-mld-snooping-report-listening-threshold-resume {
+    description
+      "The number of Layer 2 multicast QinQ stacking/mapping users on a board fell below the threshold.";
+    leaf address-family {
+      type ims-n:ip-addr-type;
+      description
+        "Address family.";
+    }
+    leaf slot-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Slot name of a board.";
+    }
+    leaf current-number {
+      type uint32;
+      description
+        "Current number of listened users.";
+    }
+    leaf total-number {
+      type uint32;
+      description
+        "Maximum number of listened users.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "Threshold of user number.";
+    }
+    leaf reason-type {
+      type uint32;
+      description
+        "Value of raised reason type.";
+    }
+  }
+  notification hw-igmp-mld-snooping-user-per-group-threshold-exceed {
+    description
+      "The number of L2 multicast user entries in one group exceeded the upper threshold on a specific board.";
+    leaf address-family {
+      type ims-n:ip-addr-type;
+      description
+        "Address family.";
+    }
+    leaf slot-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Slot name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Vsi Name.";
+    }
+    leaf multicast-group {
+      type inet:ip-address-no-zone;
+      description
+        "Group address.";
+    }
+    leaf multicast-source {
+      type inet:ip-address-no-zone;
+      description
+        "Multicast source.";
+    }
+    leaf current-count {
+      type uint32;
+      description
+        "Indicates the current value for the user entry in one group on a specific board.";
+    }
+    leaf limit-count {
+      type uint32;
+      description
+        "Indicates the value for the user entry limit in one group on a specific board.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "Indicates the alarm threshold for the user entry limit in one group on a specific board.";
+    }
+  }
+  notification hw-igmp-mld-snooping-user-per-group-threshold-resume {
+    description
+      "The number of L2 multicast user entries in one group fell below the lower threshold on a specific board.";
+    leaf address-family {
+      type ims-n:ip-addr-type;
+      description
+        "Address family.";
+    }
+    leaf slot-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Slot name.";
+    }
+    leaf vsi-name {
+      type string {
+        length "1..31";
+      }
+      description
+        "Vsi Name.";
+    }
+    leaf multicast-group {
+      type inet:ip-address-no-zone;
+      description
+        "Group address.";
+    }
+    leaf multicast-source {
+      type inet:ip-address-no-zone;
+      description
+        "Multicast source.";
+    }
+    leaf current-count {
+      type uint32;
+      description
+        "Indicates the current value for the user entry in one group on a specific board.";
+    }
+    leaf limit-count {
+      type uint32;
+      description
+        "Indicates the value for the user entry limit in one group on a specific board.";
+    }
+    leaf threshold {
+      type uint32;
+      description
+        "Indicates the alarm threshold for the user entry limit in one group on a specific board.";
+    }
+    leaf reason-type {
+      type uint32;
+      description
+        "The value of raise reason type.";
+    }
+  }
+  ext:task-name  "l2mc";
+}

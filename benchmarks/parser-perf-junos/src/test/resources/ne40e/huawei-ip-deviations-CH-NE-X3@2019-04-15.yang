@@ -1,0 +1,36 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ip-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-ip-deviations-CH-NE-X3";
+  prefix ip-devs-CH-NE-X3;
+
+  import huawei-ip {
+    prefix ip;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Common interface management, which includes the public configuration of interfaces.";
+
+  revision 2019-04-15 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/ifm:ifm/ifm:interfaces/ifm:interface/ip:ipv4/ip:state/ip:gateways" {
+    deviate not-supported;
+  }
+}

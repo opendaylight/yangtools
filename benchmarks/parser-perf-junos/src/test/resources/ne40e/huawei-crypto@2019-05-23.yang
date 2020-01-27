@@ -1,0 +1,68 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-crypto {
+  namespace "urn:huawei:yang:huawei-crypto";
+  prefix crypto;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Crypto mode.";
+  revision 2019-05-23 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "system";
+  typedef algorithm-type {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Default encryption type, more secure.";
+      }
+      enum "hmac-sha256" {
+        value 1;
+        description
+          "Encryption type of hmac-sha256.";
+      }
+    }
+    description
+      "The encryption type of irreversible algorithm.";
+  }
+  container crypto {
+    description
+      "Crypto mode.";
+    container drbg {
+      description
+        "Configure DRBG.";
+      leaf is-drbg-enabled {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable DRBG.";
+      }
+    }
+    container encryption-algorithm {
+      description
+        "Configure password encryption.";
+      leaf type {
+        type algorithm-type;
+        default "default";
+        description
+          "Password encryption irreversible algorithm.";
+      }
+    }
+  }
+}

@@ -1,0 +1,144 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-dhcpv6-server {
+  namespace "urn:huawei:yang:huawei-bras-dhcpv6-server";
+  prefix bras-dhcpv6-server;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Configure the DHCPv6 server.";
+  revision 2020-02-22 {
+    description
+      "Description modification.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-17 {  
+    description  
+      "Second revision.";  
+    reference  
+      "Huawei private.";  
+  }  
+  revision 2019-09-27 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ipv6pool";
+/********************************groupings***************************************/
+  grouping dhcpv6-server-property {
+    description
+      "Configure a status (Up/Down) switchover for a DHCPv6 server.";
+    leaf dead-count {
+      type uint8 {
+        range "1..64";
+      }
+      default "1";
+      description
+        "Specify the maximum number of times at which the DHCPv6 server does not send response packets.";
+    }
+    leaf time-out {
+      type uint8 {
+        range "1..60";
+      }
+      units "s";
+      default "25";
+      description
+        "Specify a timeout period. If a device receives no response from the DHCPv6 server within the timeout period, it re-sends request packets.";
+    }
+    leaf dead-time {
+      type uint16 {
+        range "1..65535";
+      }
+      units "min";
+      default "3";
+      description
+        "Specify a period within which the DHCPv6 server is down. After the dead-time, the DHCPv6 server is set to up.";
+    }
+  }
+/********************************groupings***************************************/
+  container bras-dhcpv6-server {
+    description
+      "Configure the DHCPv6 server.";
+    container dhcpv6-server-groups {
+      description
+        "List of DHCPv6 server groups.";
+      list dhcpv6-server-group {
+        key "name";
+        max-elements  "4096";
+        description
+          "Configure a DHCPv6 server group.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern '[a-z0-9._-]{1,32}';
+          }
+          must "../name != '-' and ../name != '--'";
+          description
+            "Specify the name of the DHCPv6 server group.";
+          ext:case-sensitivity "lower-only";
+        }
+        container server-source {
+          description
+            "Configure the source address for packets to be sent to the DHCPv6 server group.";
+          choice source-address {
+            description
+              "Configure the source address for packets to be sent to the DHCPv6 server group.";
+            case link-address {
+          description
+                "Configures the source address, which is a link address of the prefix pool bound to a remote address pool.";
+              leaf link-address {
+                type empty;
+                description
+                  "Indicate that the source address is a link address of the prefix pool bound to a remote address pool.";
+              }
+            }
+            case if-name {
+          description
+                "Configures the type and number of the interface whose address is the source address.";
+              leaf if-name {
+                type leafref {
+                  path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+                }
+                must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='GigabitEthernet' or
+                      /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='10GE' or
+                      /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='XGigabitEthernet' or
+                      /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='100GE' or
+                      /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Virtual-Ethernet' or
+                      /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='50GE' or
+                      /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='50|100GE' or
+                      /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='FlexE' or
+                      /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='25GE' or
+                      /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Ethernet' or
+                      /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='Eth-Trunk' or
+                      /ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:type='LoopBack'";
+                description
+                  "Indicate the type and number of the interface whose address is the source address.";
+              }
+            }
+          }
+        }
+      }
+    }
+    container server-global-property {
+      description
+        "Configure a status (Up/Down) switchover for global DHCPv6 server.";
+      uses dhcpv6-server-property;
+    }
+  }
+}

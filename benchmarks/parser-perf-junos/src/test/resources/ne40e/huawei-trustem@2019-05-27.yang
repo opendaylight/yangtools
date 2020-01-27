@@ -1,0 +1,98 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-trustem {
+  namespace "urn:huawei:yang:huawei-trustem";
+  prefix trustem;
+  import huawei-extension {
+    prefix ext;
+  } 
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Indicate TPM (Trusted Platform Module) environment management.";
+  revision 2019-05-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+
+  ext:task-name "tpm";
+  
+  typedef status-type {
+    type enumeration {
+      enum "active" {
+        value 1;
+        description
+          "Status active.";
+      }
+      enum "inactive" {
+        value 2;
+        description
+          "Status inactive.";
+      }
+      enum "NA" {
+        value 0;
+        description
+          "Status not applicable.";
+      }
+    }
+    description
+      "TPM status.";
+  }
+
+  container trustem {
+    config false;
+    description
+      "Indicate trust environment management.";
+    container statuss {
+      config false;
+      description
+        "List of operational state of TPM status information.";
+      list status {
+        key "slot-id";
+        config false;
+        description
+          "Operational state of TPM status information.";
+        leaf slot-id {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Slot ID of a board.";
+        }
+        leaf version {
+          type string {
+            length "1..127";
+          }
+          config false;
+          description
+            "TPM version.";
+        }
+        leaf manufacturer {
+          type string {
+            length "1..127";
+          }
+          config false;
+          description
+            "TPM manufacturer.";
+        }
+        leaf status {
+          type status-type;
+          config false;
+          description
+            "TPM status.";
+        }
+      }
+    }
+  }
+}

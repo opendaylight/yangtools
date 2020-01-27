@@ -1,0 +1,72 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-unicast-fwd-srv6 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-unicast-fwd-srv6";
+  prefix unicast-fwd-srv6;
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+   import huawei-srv6 {
+    prefix srv6;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Unicast forward SRv6 configuration.";
+  revision 2020-03-19 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef srv6-ttl-mode-type {
+    type enumeration {
+      enum "pipe" {
+        value 1;
+        description
+          "Pipe mode.";
+      }
+      enum "uniform" {
+        value 3;
+        description
+          "Uniform mode.";
+      }
+    }
+    description
+      "SRv6 TTL mode type.";
+  }
+  ext:task-name "forwarding";
+  augment "/ni:network-instance/ni:instances/ni:instance/srv6:srv6" {
+    description
+      "Unicast forward configuration to the SRv6 module.";
+    container global-ipv6uc-attribute {
+      when "../srv6:enable = 'true'";
+      description
+        "Configure global IPv6 unicast attributes.";
+      leaf forward-mode-through {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the forwarding mode of an SRv6 Tunnel to software loopback.";
+      }
+    leaf srv6-ttl-mode{
+        type srv6-ttl-mode-type;
+        default "pipe";
+        description
+          "Set SRv6 tunnel-encapsulated mode.";
+      }
+    }
+  }
+}

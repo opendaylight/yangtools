@@ -1,0 +1,586 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-lacp {
+  namespace "urn:huawei:yang:huawei-lacp";
+  prefix lacp;
+
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }  
+  import huawei-ifm-trunk {
+    prefix ifm-trunk;
+  }   
+  import huawei-pub-type {
+    prefix pub-type;
+  } 
+  import huawei-vrrp {
+    prefix vrrp;
+  }
+  import huawei-ip {
+    prefix ip;
+  } 
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Link Aggregation Control Protocol (LACP) management, which includes static LACP configuration, dynamic LACP learning.";
+  revision 2020-02-18 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "trunk";   
+   typedef receive-timeout-type {
+    type enumeration {
+      enum "slow" {
+      value 0;
+        description
+          "Indicate that the timeout period of Eth-Trunk interfaces in static LACP mode to receive packets is 90 seconds and the peer end sends an LACP packet every 30 seconds. In this mode, the device responds to the LACP packets from the peer slowly but consumes fewer system resources.";
+      }
+      enum "fast" {
+      value 1;	  
+        description
+          "Indicate that the timeout period of Eth-Trunk interfaces in static LACP mode to receive packets is 3 seconds and the peer end sends an LACP packet every 1 second. In this mode, the device can quickly respond to the LACP packets from the peer but consume more system resources.";
+      }
+    }
+    description
+      "LACP receive timeout type.";
+  }
+  typedef select-std {
+    type enumeration {
+      enum "speed" {
+        value 1;
+        description
+          "Indicate that the interface with a higher rate is selected as the active interface.";
+      }
+      enum "priority" {
+        value 3;
+        description
+          "Indicate that the interface with a higher priority is selected as the active interface.";
+      }
+    }
+    description
+      "LACP select standard.";
+  }
+  typedef sysmac {
+    type enumeration {
+      enum "local" {
+        value 1;
+        description
+          "The operate system ID is obtained from local configure.";
+      }
+      enum "remote" {
+        value 2;
+        description
+          "The operate system ID is obtained from remote device.";
+      }
+    }
+    description
+      "LACP system MAC source.";
+  }
+  typedef member-selected-state {
+    type enumeration {
+      enum "selected" {
+        value 1;
+        description
+          "The interface is in the selected state.";
+      }
+      enum "unselected" {
+        value 0;
+        description
+          "The interface is in the unselected state.";
+      }
+      enum "indep" {
+        value 2;
+        description
+          "The interface is in the independent state.";
+      }
+      enum "force-up" {
+        value 3;
+        description
+          "The interface is in the force up state.";
+      }
+    }
+    description
+      "Trunk member selected state.";
+  }
+  typedef port-type {
+    type enumeration {
+      enum "null" {
+        value 0;
+        description
+          "0M.";
+      }
+      enum "10M" {
+        value 1;
+        description
+          "10M.";
+      }
+      enum "100M" {
+        value 2;
+        description
+          "100M.";
+      }
+      enum "1GE" {
+        value 3;
+        description
+          "1GE.";
+      }
+      enum "10GE" {
+        value 4;
+        description
+          "10GE.";
+      }
+      enum "100GE" {
+        value 5;
+        description
+          "100GE.";
+      }
+      enum "1TE" {
+        value 6;
+        description
+          "1TE.";
+      }
+      enum "10TE" {
+        value 7;
+        description
+          "10TE.";
+      }
+      enum "100TE" {
+        value 8;
+        description
+          "100TE.";
+      }
+      enum "1000TE" {
+        value 9;
+        description
+          "1000TE.";
+      }
+      enum "40GE" {
+        value 10;
+        description
+          "40GE.";
+      }
+      enum "400GE" {
+        value 11;
+        description
+          "400GE.";
+      }
+      enum "25GE" {
+        value 12;
+        description
+          "25GE.";
+      }
+    }
+    description
+      "LACP port type.";
+  }
+  typedef port-role-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None role.";
+      }
+      enum "master" {
+        value 1;
+        description
+          "Master role.";
+      }
+      enum "slave" {
+        value 2;
+        description
+          "Slave role.";
+      }
+    }
+    description
+      "Lacp port role.";
+  }
+  typedef ifmlag-member-selected-state {
+    type enumeration {
+      enum "selected" {
+        value 1;
+        description
+          "The interface is in the selected state.";
+      }
+      enum "unselected" {
+        value 0;
+        description
+          "The interface is in the unselected state.";
+      }
+      enum "standby" {
+        value 2;
+        description
+          "The interface is in the standby state.";
+      }
+    }
+    description
+      "Lag member selected state.";
+  }
+  container lacp {
+    description
+      "Link aggregation control protocol.";
+    container global {
+      description
+        "Configure global attributes.";
+      leaf sys-priority {
+        type uint16 {
+          range "0..65535";
+        }
+        default "32768";
+        description
+          "The device with a higher system priority is selected as the actor, and then active member interfaces are selected based on the configuration of the Eth-Trunk interface on the actor. If the system priorities are the same, the actor is selected based on the system ID. The device with the smaller system ID becomes the actor.";
+      }
+      leaf ignore-aggregation {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the device to ignore the value of the reserved field in LACP PDUs by configuring ignore aggregation delay.";
+      }
+    }
+  }	
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk" {
+    when "ifm-trunk:work-mode='static' and ifm-trunk:type ='eth-trunk'";
+    description
+      "Configure LACP configurations on Eth-Trunk interface.";
+    container lacp {
+      description
+        "Configure LACP configurations on Eth-Trunk interface.";  
+      leaf receive-timeout-type {
+        type receive-timeout-type;
+        default "slow";
+        description
+          "Timeout period for an Eth-Trunk interface in static LACP mode to receive LACP packets. The fast mode indicates a short interval, and the slow mode indicates a long interval.";
+      }
+      leaf fast-timeout-value {
+        when "../receive-timeout-type='fast'";
+        type uint32 {
+          range "3..90";
+        }
+        units s;
+        default "3";
+        description
+          "Set the value of fast timeout.";
+      }
+      leaf support-preempt {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the preemption function and the high-priority link can replace the low-priority link and switch to active.";
+      }	  
+      leaf select-port-std {
+        type select-std;
+        default "priority";
+        description
+          "Indicate that active interfaces are selected based on the interface priority or rate.";
+      }
+      leaf preempt-delay {
+        type uint32 {
+          range "0..180";
+        }
+        units s;
+        default "30";
+        description
+          "When the preemption function is enabled, the high-priority link switches to active after the configured delay time.";
+      }
+      leaf max-active-num {
+        type uint32 {
+          range "1..64";
+        }
+        ext:dynamic-default;        
+        description
+          "After the number of up member links reaches the upper limit, the bandwidth of the Eth-Trunk interface does not increase even if more member links go up. Setting the maximum number of up member links improves network reliability on the basis of sufficient bandwidth. The maximum value of the leaf varies according to the device model. The default value is the maximum value. The maximum value is obtained using the PAF file.";
+      }
+      leaf collect-max-delay {
+        type uint16 {
+          range "0..65535";
+        }
+        units "10 us";
+        default "0";
+        description
+          "The port receive the max delay time of collecting from parterner.";
+      }
+      leaf mix-rate-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the mix-rate link function and LACP will select links with different rate at the same time.";
+      }
+      leaf backup-enable {
+        ext:operation-exclude update {
+          when "../../ifm-trunk:members";
+          description 
+            "The lacp backup mode cannot be updated, when the Eth-trunk has member ports.";
+        }
+        type boolean;
+        default "false";
+        description
+          "Enable/disable port role negotiation function. The users can configure the port role. The primary role port is negotiated preferentially.";
+      }
+      leaf damp-state-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the dampening state flaping function and LACP will dampen state flapping.";
+      }
+      leaf damp-mac-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the dampening unexpeced MAC-PDU flaping function and LACP will dampen unexpected MAC-PDU flapping.";
+      }
+      leaf sys-mac {
+        type pub-type:mac-address {
+          length "0..255";
+        }
+        description
+          "Specify the LACP system ID of a trunk interface.";
+      }
+      leaf sys-priority {
+        type uint32 {
+          range "0..65535";
+        }
+        description
+          "Specify the LACP system priority of a trunk interface.";
+      }
+      container track-vrrp {
+        must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()/if-name]/ip:ipv4/vrrp:vrrp/vrrp:groups/vrrp:group[vrrp:id=current()/vrrp-id]/vrrp:admin-flag";
+        presence "track vrrp";
+        description
+          "Enable/disable Eth-Trunk interface binding VRRP.";
+        leaf vrrp-id {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ip:ipv4/vrrp:vrrp/vrrp:groups/vrrp:group/vrrp:id";
+          }
+          mandatory true;
+          description
+            "VRRP ID.";
+        }
+        leaf if-name {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          mandatory true;		  
+          description
+            "Specified interface.";
+        }
+        leaf sys-priority {
+          type uint16 {
+            range "0..65535";
+          }
+          description
+            "LACP system priority of VRRP-bound Eth-Trunk interface.";
+        }
+        leaf id-ext {
+          type boolean;
+          default "false";			  
+          description
+            "Enable/disable status of LACP port number extension.";
+        }
+      }
+      leaf portup-num {
+        type uint32;
+        config false;
+        description
+          "Number of up LACP interfaces in this Eth-Trunk interface.";
+      }	  
+      leaf oper-syspri {
+        type uint32;
+        config false;
+        description
+          "Specify the operate LACP system priority of a trunk interface.";
+      }
+      leaf oper-sysmac {
+        type pub-type:mac-address {
+          length "0..255";
+        }
+        config false;
+        description
+          "Specify the operate LACP system ID of a trunk interface.";
+      }
+      leaf sysmac-source {
+        type sysmac;
+        config false;
+        description
+          "Specify the source of LACP operate system ID.";
+      }
+      leaf portkey {
+        type uint16 {
+            range "1..65535";
+        }
+        description
+          "Set the portkey of a trunk interface.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface/ifm-trunk:trunk/ifm-trunk:members/ifm-trunk:member" {
+    description
+      "Interface LACP attribute.";
+    container lacp {
+      description
+        "Configure interface LACP attribute.";	
+      container port-attributes {
+        when "../../../../ifm-trunk:type='eth-trunk' and ../../../../ifm-trunk:work-mode='static'";  	  
+        description
+          "Configure interface LACP configurable attributes.";
+        leaf priority {		
+          type uint16 {
+            range "0..65535";
+          }
+          default "32768";
+          description
+            "The interface with high LACP priority is selected as the active interface.";
+        }
+        leaf role {
+          when "../../../../../lacp:lacp/lacp:backup-enable='true'";  		
+          type port-role-type;
+          default "none";
+          description
+            "The interface configured with the master role is preferentially negotiated. If the trunk up condition is not met, the trunk is switched to the backup interface for negotiation. If the port is not configured with a role, the port does not participate in the negotiation.";
+        }		
+      }
+      container port-negotiate-parameter {
+        when "../../../../ifm-trunk:type='eth-trunk' and ../../../../ifm-trunk:work-mode='static'";
+        config false;		
+        description
+          "Statistics of interface LACP negotiate information.";
+        leaf status {
+          type member-selected-state;
+          description
+            "Interface LACP selected status.";
+        }
+        leaf port-type {
+          type port-type;
+          description
+            "LACP interface type.";
+        }
+        leaf actor-state {
+          type string {
+            length "8";
+          }
+          description
+            "Actor select state.";
+        }
+        leaf actor-portkey {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Actor interface keyword.";
+        }
+        leaf actor-sysid {
+          type string {
+            length "0..255";
+          }
+          description
+            "LACP actor system priority and system MAC.";
+        }
+        leaf actor-portno {
+          type uint32;
+          description
+            "LACP actor interface number.";
+        }
+        leaf partner-sysprimac {
+          type string {
+            length "0..255";
+          }
+          description
+            "LACP partner system priority and system MAC.";
+        }
+        leaf partner-syspri {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Partner system priority.";
+        }
+        leaf partner-sysid {
+          type pub-type:mac-address {
+            length "0..255";
+          }
+          description
+            "Partner system ID.";
+        }
+        leaf partner-portpri {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Partner interface priority.";
+        }
+        leaf partner-id {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Partner interface ID.";
+        }
+        leaf partner-portkey {
+          type uint32 {
+            range "0..65535";
+          }
+          description
+            "Partner interface keyword.";
+        }
+        leaf partner-state {
+          type string {
+            length "8";
+          }
+          description
+            "Partner select state.";
+        }
+        leaf reference-port {
+          type boolean;
+          description
+            "LACP reference interface.";
+        }
+      }
+      container pdu-statistic {
+        config false;
+        description
+          "Statistics of LACP PDU information.";
+        leaf recv-pdunum {
+          type uint32;
+          description
+            "Number of received LACP PDUs.";
+        }
+        leaf recv-err-pdunum {
+          type uint32;
+          description
+            "Number of received error LACP PDUs.";
+        }
+        leaf send-pdunum {
+          type uint32;
+          description
+            "Number of transmitted LACP PDUs.";
+        }
+        leaf recv-marker-pdunum {
+          type uint32;
+          description
+            "Number of received marker LACP PDUs.";
+        }
+        leaf recv-err-makernum {
+          type uint32;
+          description
+            "Number of received error marker LACP PDUs.";
+        }
+        leaf send-makernum {
+          type uint32;
+          description
+            "Number of transmitted marker LACP PDUs.";
+        }
+      }		  
+    }
+  }
+}

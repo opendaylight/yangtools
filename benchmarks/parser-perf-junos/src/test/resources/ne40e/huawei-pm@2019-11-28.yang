@@ -1,0 +1,350 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-pm {
+  namespace "urn:huawei:yang:huawei-pm";
+  prefix pm;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Performance management module.";
+  revision 2019-11-28 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "perf-mgr";
+  
+  typedef pm-instance-type-name-type {
+    type string {
+      length "1..63";
+    }
+    description
+      "The type of instance type name.";
+  }
+  typedef pm-instance-name-type {
+    type string {
+      length "1..255";
+    }
+    description
+      "The type of instance name.";
+  }
+  typedef pm-task-name-type {
+    type string {
+      length "1..31";
+      pattern '[A-Za-z0-9][A-Za-z0-9_]*';
+    }
+    description
+      "The type of task name.";
+  }
+  typedef pm-upload-request-name-type {
+    type string {
+      length "1..31";
+      pattern '[A-Za-z0-9][A-Za-z0-9_]*';
+    }
+    description
+      "The type of upload request name.";
+  }
+  typedef pm-file-server-name-type {
+    type string {
+      length "1..31";
+      pattern '[A-Za-z0-9][A-Za-z0-9_]*';
+    }
+    description
+      "The type of file server name.";
+  }
+  typedef pm-transfer-protocol-type {
+    type enumeration {
+      enum "ftp" {
+        value 1;
+        description
+          "File Transfer Protocol (FTP).";
+      }
+      enum "sftp" {
+        value 3;
+        description
+          "Secure File Transfer Protocol (SFTP).";
+      }
+    }
+    description
+      "Protocol type.";
+  }
+  typedef pm-vpn-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None. A public instance is used.";
+      }
+      enum "manage-vpn" {
+        value 1;
+        description
+          "Management VPN.";
+      }
+      enum "vpn-instance" {
+        value 2;
+        description
+          "VPN instance.";
+      }
+    }
+    description
+      "VPN type.";
+  }
+  typedef pm-sample-interval-type {
+    type enumeration {
+      enum "1-minute" {
+        value 1;
+        description
+          "Sets the sampling cycle to 1 minute.";
+      }
+      enum "2-minutes" {
+        value 2;
+        description
+          "Sets the sampling cycle to 2 minute.";
+      }
+      enum "3-minutes" {
+        value 3;
+        description
+          "Sets the sampling cycle to 3 minutes.";
+      }
+      enum "5-minutes" {
+        value 5;
+        description
+          "Sets the sampling cycle to 5 minutes.";
+      }
+      enum "10-minutes" {
+        value 10;
+        description
+          "Sets the sampling cycle to 10 minutes.";
+      }
+      enum "15-minutes" {
+        value 15;
+        description
+          "Sets the sampling cycle to 15 minutes.";
+      }
+      enum "30-minutes" {
+        value 30;
+        description
+          "Sets the sampling cycle to 30 minutes.";
+      }
+      enum "60-minutes" {
+        value 60;
+        description
+          "Sets the sampling cycle to 60 minutes.";
+      }
+      enum "not-support" {
+        value 0;
+        description
+          "Sampling interval is less than 1 minute.";
+      }
+    }
+    description
+      "PM sampling interval value.";
+  }
+  typedef pm-statistic-cycle-type {
+    type enumeration {
+      enum "1-minute" {
+        value 1;
+        description
+          "Sets the statistics cycle to 1 minute.";
+      }
+      enum "5-minutes" {
+        value 5;
+        description
+          "Sets the statistics cycle to 5 minutes.";
+      }
+      enum "10-minutes" {
+        value 10;
+        description
+          "Sets the statistics cycle to 10 minutes.";
+      }
+      enum "15-minutes" {
+        value 15;
+        description
+          "Sets the statistics cycle to 15 minutes.";
+      }
+      enum "30-minutes" {
+        value 30;
+        description
+          "Sets the statistics cycle to 30 minutes.";
+      }
+      enum "60-minutes" {
+        value 60;
+        description
+          "Sets the statistics cycle to 60 minutes.";
+      }
+      enum "1440-minutes" {
+        value 1440;
+        description
+          "Sets the statistics cycle to 1440 minutes.";
+      }
+    }
+    description
+      "PM statistic cycle value.";
+  }
+  container pm {
+    description
+      "Performance management module.";
+    container global {
+      description
+        "Configure global PM configuration.";
+      leaf statistics-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the statistics function.";
+      }
+    }
+    container statistics-tasks {
+      description
+        "List of performance statistics task.";
+      list statistics-task {
+        key "task-name";
+        description
+          "Configure performance statistics task.";
+        leaf task-name {
+          type pm-task-name-type;
+          description
+            "Name of a statistics task.";
+        }
+        leaf statistic-cycle {
+          type pm-statistic-cycle-type;
+          default "15-minutes";
+          description
+            "Sets a statistics cycle.";
+        }
+        leaf record-interval {
+          type uint32 {
+            range "1..16";
+          }
+          default "4";
+          description
+            "Specify the interval for recording data.";
+        }
+        container task-instances {
+          description
+            "List of statistical task instances.";
+          list task-instance {
+            key "instance-type-name instance-name";
+            description
+              "Configure statistical task instance.";
+            leaf instance-type-name {
+              type pm-instance-type-name-type;
+              description
+                "Instance type name.";
+            }
+            leaf instance-name {
+              type pm-instance-name-type;
+              description
+                "Statistical instance name.";
+            }
+          }
+        }
+      }
+    }
+    container servers {
+      description
+        "List of server to upload files.";
+      list server {
+        key "name";
+        description
+          "Configure server to upload files.";
+        leaf name {
+          type pm-file-server-name-type;
+          description
+            "Name of a server.";
+        }
+        leaf transfer-protocol {
+          type pm-transfer-protocol-type;
+          default "sftp";
+          description
+            "Protocol to upload files.";
+        }
+        leaf host-address {
+          type inet:ipv4-address-no-zone;
+          default "0.0.0.0";
+          description
+            "IP address.";
+        }
+        leaf user-name {
+          type string {
+            length "1..255";
+          }
+          must "../password";
+          description
+            "User name of a server.";
+        }
+        leaf password {
+          type pub-type:password-extend {
+            length "1..268";
+          }
+          must "../user-name";
+          description
+            "Password of a server.";
+        }
+        leaf dest-path {
+          type string {
+            length "1..63";
+          }
+          description
+            "Destination path to upload files.";
+        }
+        leaf vpn-type {
+          type pm-vpn-type;
+          must "(../vpn-type='vpn-instance' and ../vpn-name) or (../vpn-type!='vpn-instance')";
+          default "none";
+          description
+            "VPN type used to upload a file.";
+        }
+        leaf vpn-name {
+          type string {
+            length "1..31";
+          }
+          must "../vpn-type='vpn-instance'";
+          description
+            "VPN instance name.";
+        }
+      }
+    }
+    container uploads {
+      description
+        "List of upload file channel to this server.";
+      list upload {
+        key "request-name";
+        description
+          "Configure upload file channel to this server.";
+        leaf request-name {
+          type pm-upload-request-name-type;
+          description
+            "Upload request name.";
+        }
+        leaf server-name {
+          type leafref {
+            path "../../../servers/server/name";
+          }
+          mandatory true;
+          description
+            "Server name used by the channel along which a file is uploaded.";
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,111 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l3vpn-mpls {
+  namespace "urn:huawei:yang:huawei-l3vpn-mpls";
+  prefix l3vpn-mpls;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-routing {
+    prefix rt;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "This YANG module contains structural data definitions for L3VPN label tack information.";
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "l3vpn";
+  grouping l3vpn-label-stacks-type {
+    description
+      "Label stack information.";
+    leaf stack {
+      type uint32 {
+        range "1..4294967295";
+      }
+      description
+        "Label stack.";
+    }
+    leaf level {
+      type uint32 {
+        range "1..4294967295";
+      }
+      description
+        "Level.";
+    }
+    leaf out-interface {
+      type string {
+        length "1..63";
+      }
+      description
+        "Outbound interface name.";
+    }
+    leaf type {
+      type string {
+        length "0..50";
+      }
+      description
+        "Label Type.";
+    }
+    leaf label {
+      type string {
+        length "0..15";
+      }
+      description
+        "Label.";
+    }
+  }
+  grouping base-route-key-type {
+    description
+      "Base route key information.";
+    leaf prefix {
+      type inet:ip-address-no-zone;
+      description
+        "Destination IP address.";
+    }
+    leaf mask-length {
+      type uint8 {
+        range "0..32";
+      }
+      description
+        "Mask length of an IP address.";
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/rt:routing/rt:routing-manage/rt:topologys/rt:topology/rt:routes" {
+    description
+      "Label stack information.";
+    container ipv4-vpn-label-stacks {
+      config false;
+      description
+        "Label stack information.";
+      list ipv4-vpn-label-stack {
+        key "prefix mask-length stack level out-interface";
+        description
+          "Label stack information.";
+        uses base-route-key-type;
+        uses l3vpn-label-stacks-type;
+      }
+    }
+  }
+}

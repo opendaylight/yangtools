@@ -1,0 +1,33 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ipv6-nd-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-ipv6-nd-deviations-CH-NE-X3";
+  prefix ipv6-nd-devs-CH-NE-X3;
+
+  import huawei-ipv6-nd {
+    prefix ipv6-nd;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "ND management.";
+
+  revision 2019-11-24 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/ipv6-nd:ipv6-nd/ipv6-nd:ipv6-neighbors/ipv6-nd:ipv6-neighbor/ipv6-nd:nickname" {
+    deviate not-supported;
+  }
+}

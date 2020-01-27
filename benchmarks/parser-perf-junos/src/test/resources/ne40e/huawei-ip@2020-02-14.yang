@@ -1,0 +1,544 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ip {
+  namespace "urn:huawei:yang:huawei-ip";
+  prefix ip;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This module contains a collection of YANG definitions for
+     configuring IP implementations.
+     Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.";
+  revision 2020-02-14 {
+    description
+      "Modify the description of nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-11-10 {
+    description
+      "Modify the must statements of IPv4 and IPv6 containers.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-04-15 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "interface-mgr";
+ /*
+  * Typedefs
+  */
+  typedef ipv4-address-config-type {
+    type enumeration {
+      enum main {
+        value 1;
+        description
+          "Primary address of an interface.";
+      }
+      enum sub {
+        value 32;
+        description
+          "Secondary address of an interface.";
+      }
+    }
+    description
+      "IPv4 address type.";
+  }
+
+  typedef ipv4-address-state-type {
+    type enumeration {
+      enum main {
+        value 1;
+        description
+          "Primary address of an interface.";
+      }
+      enum sub {
+        value 32;
+        description
+          "Secondary address of an interface.";
+      }
+      enum neg {
+        value 4;
+        description
+          "Negotiated address of an interface.";
+      }
+      enum unnumber {
+        value 2;
+        description
+          "Unnumbered address of an interface.";
+      }
+      enum dhcp {
+        value 256;
+        description
+          "Unnumbered address of an interface.";
+      }
+    }
+    description
+      "IPv4 address type.";
+  }
+
+  typedef ipv4-netmask {
+    type string {
+      length "9..15";
+      pattern '((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))';
+    }
+    description
+      "IPv4 mask support mask format.";
+  }
+
+  typedef negotiation-type {
+    type enumeration {
+      enum ppp-negotiate {
+        value 0;
+        description
+          "PPP negotiation type.";
+      }
+    }
+    description
+      "Negotiation address type.";
+  }
+
+  typedef ipv6-address-config-type {
+    type enumeration {
+      enum global {
+        value 1;
+        description
+          "Global unicast address.";
+      }
+      enum link-local {
+        value 2;
+        description
+          "Link local address.";
+      }
+      enum anycast {
+        value 6;
+        description
+          "Anycast address.";
+      }
+    }
+    description
+      "IPv6 address type.";
+  }
+
+  typedef ipv6-address-state-type {
+    type enumeration {
+      enum global {
+        value 1;
+        description
+          "Global unicast address.";
+      }
+      enum link-local {
+        value 2;
+        description
+          "Link local address.";
+      }
+      enum auto-link-local {
+        value 3;
+        description
+          "Auto link local address.";
+      }
+      enum anycast {
+        value 6;
+        description
+          "Anycast address.";
+      }
+    }
+    description
+      "IPv6 address type.";
+  }
+
+  typedef ipv6-address-algorithm-type {
+    type enumeration {
+      enum none {
+        value 0;
+        description
+          "None.";
+      }
+      enum cga {
+        value 1;
+        description
+          "Cga type.";
+      }
+      enum eui64 {
+        value 2;
+        description
+          "EUI-64 type.";
+      }
+    }
+    description
+      "IPv6 address algorithm type.";
+  }
+
+  typedef ipv6-status-type {
+    type enumeration {
+      enum preferred {
+        value 1;
+        description
+          "This is a valid address that can appear as the destination or source address of a packet.";
+      }
+      enum inaccessible {
+        value 4;
+        description
+          "The address is not accessible because the interface to which this address is assigned is not operational.";
+      }
+      enum unknown {
+        value 5;
+        description
+          "The status cannot be determined for some reason.";
+      }
+      enum tentative {
+        value 6;
+        description
+          "The uniqueness of the address on the link is being verified. Addresses in this state should not be used for general communication and should only be used to determine the uniqueness of the address.";
+      }
+      enum duplicate {
+        value 7;
+        description
+          "The address has been determined to be non-unique on the link and so must not be used.";
+      }
+    }
+    description
+      "The status of an address.";
+  }
+
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Policies for selecting source and destination IPv6 addresses and parameters for configuring IP on interfaces.";
+    container ipv4 {
+      must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()/../ifm:vrf-name]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']";
+      description
+        "Configure IPv4 addresses.";
+      choice address {
+        description
+          "The IPv4 address can be specified as negotiated or unnumbered or ordinarily address.";
+        case common-address {
+          description
+            "Configure address.";
+          container addresses {
+            description
+              "List of common addresses. The IPv4 address of the DCN interface cannot be created, modified, or deleted.";
+            list address {
+              key "ip";
+              description
+                "Configure IPv4 address.";
+              leaf ip {
+                type inet:ipv4-address-no-zone;
+                description
+                  "IPv4 address.";
+              }
+              leaf mask {
+                type ipv4-netmask;
+                mandatory true;
+                description
+                  "IPv4 address mask.";
+              }
+              leaf type {
+                type ipv4-address-config-type;
+                must "../ip:type='sub' and /ifm:ifm/ifm:global/ifm:ipv4-ignore-primary-sub='false' or ../ip:type='main'";
+                mandatory true;
+                description
+                  "IPv4 address type.";
+              }
+            }
+          }
+        }
+        case unnumbered-address {
+          description
+            "Unnumbered address.";
+          container unnumbered-address {
+            description
+              "Configure unnumbered interface. The address borrowing relationship of the DCN interface cannot be created, modified, or deleted.";
+            leaf unnumbered-if-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              mandatory true;
+              description
+                "Name of an unnumbered interface.";
+            }
+          }
+        }
+        case negotiate-address {
+          description
+            "Negotiate address.";
+          container negotiation-address {
+            description
+              "Configure Negotiate address.";
+            leaf negotiation-type {
+              type negotiation-type;
+              mandatory true;
+              description
+                "Enable negotiation address on interface.";
+            }
+          }
+        }
+      }
+      container state {
+        config false;
+        description
+          "Operational state of IPv4 addresses.";
+        container addresses {
+          description
+            "List of addresses.";
+          list address {
+            key "ip";
+            description
+              "Operational state of IPv4 address.";
+            leaf ip {
+              type inet:ipv4-address-no-zone;
+              description
+                "IPv4 address.";
+            }
+            leaf mask {
+              type ipv4-netmask;
+              description
+                "IPv4 address mask.";
+            }
+            leaf type {
+              type ipv4-address-state-type;
+              description
+                "IPv4 address type.";
+            }
+            leaf is-block {
+              type boolean;
+              description
+                "IPv4 address is blocked or not.";
+            }
+          }
+        }
+        container gateways {
+          config false;
+          description
+            "List of gateway addresses.";
+          list gateway {
+            key "gateway";
+            description
+              "Operational state of gateway addresses.";
+            leaf gateway {
+              type inet:ipv4-address;
+              description
+                "Gateway of interface.";
+            }
+          }
+        }
+      }
+    }
+    container ipv6 {
+      presence "Enable/disable the IPv6 capability on an interface.";
+      description
+        "Enable/disable the IPv6 capability on an interface.";
+      leaf mtu6 {
+        type uint32 {
+          range "0..50000";
+        }
+        ext:dynamic-default;
+        description
+          "IPv6 maximum transmission unit of an interface.
+           Special explanation:
+           Range: The server may restrict the allowed values for this leaf, depending on the interface's type.";
+      }
+      leaf spread-mtu-flag {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the function of spreading the IPv6 MTU of main interface to subinterface.";
+      }
+      leaf auto-link-local {
+        type boolean;
+        must "../auto-link-local='false' or (../auto-link-local='true' and /ni:network-instance/ni:instances/ni:instance[ni:name=current()/../../ifm:vrf-name]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast'])";
+        default "false";
+        description
+          "Enable/disable an interface with the auto linklocal address function.";
+      }
+      choice address {
+        description
+          "IPv6 address configurations.";
+        case common-address {
+          description
+            "Configure address.";
+          container addresses {
+            must "/ni:network-instance/ni:instances/ni:instance[ni:name=current()/../../ifm:vrf-name]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";
+            description
+              "List of IPv6 addresses.";
+            list address {
+              key "ip";
+              description
+                "Configure IPv6 address.";
+              leaf ip {
+                type inet:ipv6-address-no-zone;
+                description
+                  "IPv6 address.";
+              }
+              leaf prefix-length {
+                type uint32 {
+                  range "1..128";
+                }
+                mandatory true;
+                description
+                  "Length of the IPv6 address prefix.";
+              }
+              leaf type {
+                type ipv6-address-config-type;
+                mandatory true;
+                description
+                  "IPv6 address type.";
+              }
+              leaf algorithm-type {
+                type ipv6-address-algorithm-type;
+                must "(../type='global' and (../algorithm-type='none' or ../algorithm-type='cga' or ../algorithm-type='eui64') ) or (../type='link-local' and (../algorithm-type='none' or ../algorithm-type='cga') ) or (../type='anycast' and ../algorithm-type='none')";
+                default "none";
+                description
+                  "Address algorithm type.";
+              }
+            }
+          }
+        }
+      }
+      container nd-prefixs {
+        must "(count(nd-prefix)> 0 and /ni:network-instance/ni:instances/ni:instance[ni:name=current()/../../ifm:vrf-name]/l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']) or (count(nd-prefix)= 0)";
+        description
+          "List of nd prefix.";
+        list nd-prefix {
+          key "prefix";
+          description
+            "Configure nd prefix.";
+          leaf prefix {
+            type inet:ipv6-address-no-zone;
+            description
+              "IPv6 address of the prefix.";
+          }
+          leaf prefix-len {
+            type int32 {
+              range "0..128";
+            }
+            mandatory true;
+            description
+              "Length of the prefix address.";
+          }
+          leaf valid-lifetime {
+            type uint32 {
+              range "0..4294967295";
+            }
+            units "s";
+            must "(../valid-lifetime>=../preferred-lifetime)";
+            mandatory true;
+            description
+              "Valid life time.";
+          }
+          leaf preferred-lifetime {
+            type uint32 {
+              range "0..4294967295";
+            }
+            units "s";
+            must "(../preferred-lifetime<=../valid-lifetime)";
+            mandatory true;
+            description
+              "Preferred life time.";
+          }
+          leaf auto-flag {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the autonomous address-configuration.";
+          }
+          leaf on-link-flag {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable the on-link flag.";
+          }
+        }
+      }
+      container state {
+        config false;
+        description
+          "Operational state of IPv6 addresses.";
+        leaf mtu6 {
+          type uint32 {
+            range "0..50000";
+          }
+          description
+            "IPv6 maximum transmission unit of an interface.
+             Special explanation:
+             Range: The server may restrict the allowed values for this leaf, depending on the interface's type.";
+        }
+        container addresses {
+          description
+            "List of IPv6 addresses.";
+          list address {
+            key "ip";
+            description
+              "Operational state of IPv6 addresses.";
+            leaf ip {
+              type inet:ipv6-address-no-zone;
+              description
+                "IPv6 address.";
+            }
+            leaf prefix-length {
+              type uint32 {
+                range "1..128";
+              }
+              description
+                "Length of the IPv6 address prefix.";
+            }
+            leaf type {
+              type ipv6-address-state-type;
+              description
+                "IPv6 address type.";
+            }
+            leaf algorithm-type {
+              type ipv6-address-algorithm-type;
+              description
+                "Address algorithm type.";
+            }
+            leaf collision-count {
+              type uint8 {
+                range "0..3";
+              }
+              description
+                "Number of IPv6 address collisions.";
+            }
+            leaf is-block {
+              type boolean;
+              description
+                "IPv6 address is blocked or not.";
+            }
+            leaf status {
+              type ipv6-status-type;
+              description
+                "IPv6 address status.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

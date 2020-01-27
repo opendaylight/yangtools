@@ -1,0 +1,4780 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-isis {
+  namespace "urn:huawei:yang:huawei-isis";
+  prefix isis;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-routing-policy {
+    prefix rtp;
+  }
+  import huawei-routing {
+    prefix rt;
+  }
+  import huawei-acl {
+    prefix acl;
+  }
+  import huawei-xpl {
+    prefix xpl;
+  }
+  import huawei-mpls {
+    prefix mpls;
+  }
+  import huawei-mpls-ldp {
+    prefix mpls-ldp;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  include huawei-isis-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "ISIS management.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "isis";
+  grouping multi-topology-type {
+    description
+      "Multi topology feature summary.";
+    container route-statisticss {
+      config false;
+      status deprecated;
+      description
+        "List of route statistics. The node route-statisticss is deprecated. You are advised to use the node route-counts.";
+      list route-statistics {
+        key "level";
+        status deprecated;
+        description
+          "Statistics of route statistics. The node route-statistics is deprecated. You are advised to use the node route-count.";
+        leaf level {
+          type level-type;
+          status deprecated;
+          description
+            "Level type. The node level is deprecated. You are advised to use the node level.";
+        }
+        leaf v4-learnt-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of learned IPv4 routes. The node v4-learnt-num is deprecated. You are advised to use the node learnt-num.";
+        }
+        leaf v6-learnt-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of learned IPv6 routes. The node v6-learnt-num is deprecated. You are advised to use the node learnt-num.";
+        }
+        leaf v4-critical-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv4 routes with priority critical. The node v4-critical-num is deprecated. You are advised to use the node critical-num.";
+        }
+        leaf v4-high-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv4 routes with priority high. The node v4-high-num is deprecated. You are advised to use the node high-num.";
+        }
+        leaf v4-medium-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv4 routes with priority medium. The node v4-medium-num is deprecated. You are advised to use the node medium-num.";
+        }
+        leaf v4-low-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv4 routes with priority low. The node v4-low-num is deprecated. You are advised to use the node low-num.";
+        }
+        leaf v6-critical-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv6 routes with priority critical. The node v6-critical-num is deprecated. You are advised to use the node critical-num.";
+        }
+        leaf v6-high-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv4 routes with priority high. The node v6-high-num is deprecated. You are advised to use the node high-num.";
+        }
+        leaf v6-medium-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv6 routes with priority medium. The node v6-medium-num is deprecated. You are advised to use the node medium-num.";
+        }
+        leaf v6-low-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv6 routes with priority low. The node v6-low-num is deprecated. You are advised to use the node low-num.";
+        }
+        leaf v4-forward-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv4 routes. The node v4-forward-num is deprecated. You are advised to use the node forward-num.";
+        }
+        leaf v6-forward-num {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv6 routes. The node v6-forward-num is deprecated. You are advised to use the node forward-num.";
+        }
+        leaf v4-added2rm {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv4 routes added to the routing table. The node v4-added2rm is deprecated. You are advised to use the node added2rm.";
+        }
+        leaf v4-unadded2rm {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv4 Routes that are not added to the routing table. The node v4-unadded2rm is deprecated. You are advised to use the node unadded2rm.";
+        }
+        leaf v6-added2rm {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv6 routes added to the routing table. The node v6-added2rm is deprecated. You are advised to use the node added2rm.";
+        }
+        leaf v6-unadded2rm {
+          type uint32;
+          status deprecated;
+          description
+            "Number of IPv6 Routes that are not added to the routing table. The node v6-unadded2rm is deprecated. You are advised to use the node unadded2rm.";
+        }
+      }
+    }
+    container route-counts {
+      config false;
+      description
+        "List of routing statistics.";
+      list route-count {
+        key "level";
+        description
+          "Statistics of routing statistics.";
+        leaf level {
+          type level-type;
+          description
+            "Level type.";
+        }
+        leaf learnt-num {
+          type uint32;
+          description
+            "Number of learned routes.";
+        }
+        leaf critical-num {
+          type uint32;
+          description
+            "Number of routes with priority critical.";
+        }
+        leaf high-num {
+          type uint32;
+          description
+            "Number of routes with priority high.";
+        }
+        leaf medium-num {
+          type uint32;
+          description
+            "Number of routes with priority medium.";
+        }
+        leaf low-num {
+          type uint32;
+          description
+            "Number of routes with priority low.";
+        }
+        leaf forward-num {
+          type uint32;
+          description
+            "Number of routes.";
+        }
+        leaf added2rm {
+          type uint32;
+          description
+            "Number of routes added to the routing table.";
+        }
+        leaf unadded2rm {
+          type uint32;
+          description
+            "Number of Routes that are not added to the routing table.";
+        }
+      }
+    }
+  }
+  container isis {
+    description
+      "Intermediate System to Intermediate System (ISIS) routes.";
+    container global {
+      description
+        "Configure ISIS global config.";
+      leaf lsp-seq-over-flag {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable to recover ISIS system ID automatically when the sequence number of the local lsp overflowed.";
+      }
+      leaf sys-id-conflict-flag {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable to recover ISIS system ID automatically when the system ID conflicted.";
+      }
+      leaf purge-lsp-protect-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable automatic ISIS purge LSP protection.";
+      }
+      leaf purge-source-trace-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable purge LSP source tracing.";
+      }
+      leaf purge-source-trace-port {
+        type uint32 {
+          range "1025..65535";
+        }
+        default "50121";
+        description
+          "Configure the port of purge LSP source tracing allocated by huawei-pp4.The related CLI is 'display ip port info | inc UDP'.";
+      }
+      leaf suppress-flap-intf-disable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the ISIS interface flapping suppression function.";
+      }
+    }
+    container global-stat {
+      config false;
+      description
+        "Statistics of ISIS global state.";
+      leaf node-number {
+        type uint32 {
+          range "0..4294967295";
+        }
+        description
+          "Support to get ISIS area public nodes.";
+      }
+      leaf peer-number {
+        type uint32 {
+          range "0..4294967295";
+        }
+        description
+          "Support to get ISIS area public peers.";
+      }
+    }
+  }
+  rpc reset-isis-all {
+    description
+      "Reset ISIS Process.";
+    input {
+      leaf process-id {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Specify the ISIS process which needs to be reset.";
+      }
+    }
+  }
+  rpc reset-isis-peer {
+    description
+      "Reset an ISIS neighbor.";
+    input {
+      leaf system-id {
+        type string {
+          length "1..15";
+          pattern '((([0-9]|[a-f]|[A-F]){4}\.){2}([0-9]|[a-f]|[A-F]){4})';
+        }
+        mandatory "true";
+        description
+          "Set the system ID of the neighbor. The duration for the system to keep the overload bit is set according to the status of the neighbor specified by the system ID. The length of the value is 6 bytes, in the format of XXXX.XXXX.XXXX, in which X is a hexadecimal case-insensitive character.";
+      }
+      leaf process-id {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Specify the ISIS process which needs to be reset.";
+      }
+    }
+  }
+  rpc reset-suppress-flapping-peer {
+    description
+      "Reset neighbor flapping suppression.";
+    input {
+      leaf process-id {
+        type uint32 {
+          range "1..4294967295";
+        }
+        mandatory "true";
+        description
+          "Specify the ISIS process which needs to be reset.";
+      }
+      leaf interface {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+        }
+        description
+          "Set the interface name.";
+      }
+      leaf notify-peer {
+        type boolean;
+        default "false";
+        description
+          "Set whether the neighbor is notified.";
+      }
+    }
+  }
+  augment "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af" {
+    description
+      "ISIS augment to L3VPN.";
+    container isis-import-rts {
+      description
+        "List of import route information from another routing protocol.";
+      list isis-import-rt {
+        key "src-vrf process-id";
+        description
+          "Configure import route information from another routing protocol.";
+        leaf src-vrf {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          must "../src-vrf!=../../../../../ni:name";
+          description
+            "VPN instance route information.";
+        }
+        leaf process-id {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Process ID.";
+        }
+        leaf valid-route {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the valid routes.";
+        }
+        choice policy-type {
+          description
+            "Type of import route rule.";
+          case route-policy {
+            description
+              "Set a route policy name.";
+            leaf route-policy {
+              type leafref {
+                path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+              }
+              description
+                "Set a route policy name.";
+            }
+          }
+          case route-filter {
+            description
+              "Set a route filter name.";
+            leaf route-filter {
+              type leafref {
+                path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+              }
+              description
+                "Set a route filter name.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment /ni:network-instance/ni:instances/ni:instance {
+    description
+        "ISIS augment to L3VPN.";
+   container isis {
+    description
+        "Configure ISIS configurations.";
+    container sites {
+      description
+        "List of ISIS instance.";
+      list site {
+        must "../../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast'] or ../../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast']";
+        key "id";
+        description
+          "Configure ISIS instance.";
+        leaf id {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Set the process ID. If the process ID does not exist, you can create a process. Otherwise, the system fails to create a process.";
+        }
+        leaf description {
+          type string {
+            length "1..80";
+            pattern '([^?]*)';
+          }
+          description
+            "Set a description information text.";
+        }
+        leaf multi-iid {
+          type uint16 {
+            range "1..65535";
+          }
+          description
+            "Set the multi instance ID. The leafs of support iid only include p2pEnable, cost, incrCost, peerMaxCostIntv and tilfaDisable on interface.";
+        }
+        leaf level {
+          type level-type;
+          default "level-1-2";
+          description
+            "Set the level of a router.";
+        }
+        leaf shutdown {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable ISIS.";
+        }
+        leaf cost-style {
+          type cost-style;
+          default "narrow";
+          description
+            "Set the cost type for the ISIS router to receive and send routes.";
+        }
+        leaf relax-spf-limit {
+          when "(../cost-style='transition' or ../cost-style='ntransition')";
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the device to receive the routes with a cost greater than 1023.";
+        }
+        leaf is-name {
+          type string {
+            length "1..64";
+          }
+          description
+            "Set a dynamic host name for the local system.";
+        }
+        leaf direct-inherit {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable inherit the direct route property.";
+        }
+        leaf adv-one-intf-addr {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable advertise one interface address.";
+        }
+        container lsp-fragments-extend {
+          description
+            "Configure LSP fragment extension.";			
+          leaf enable-level1 {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the level 1 LSP fragment extension.";
+          }
+          leaf enable-level2 {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the level 2 LSP fragment extension.";
+          }
+        }
+        container poi-tlv {
+          description
+            "Configure purge originator identification TLV.";			
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable purge originator identification.";
+          }
+          leaf always {
+            when "../enable='true'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable purge originator identification always with POI TLV.";
+          }
+        }
+        container lsdb-limit {
+          description
+            "Configure LSDB Limit.";	
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable limit the number of the LSDBs.";
+          }
+          leaf max-number {
+            when "../enable='true'";
+            type uint32 {
+              range "1..100000";
+            }
+            default "100000";
+            description
+              "Maximum number of LSDBs.";
+          }
+          leaf threshold-upper {
+            when "../enable='true'";
+            type uint8 {
+              range "1..100";
+            }
+            must "(../threshold-lower<=../threshold-upper)";
+            default "80";
+            description
+              "Threshold upper percentage of the maximum number of LSDBs, used to trigger an alarm.";
+          }
+          leaf threshold-lower {
+            when "../enable='true'";
+            type uint8 {
+              range "1..100";
+            }
+            must "(../threshold-lower<=../threshold-upper)";
+            default "70";
+            description
+              "Threshold lower percentage of the maximum number of LSDBs, used to trigger a clear alarm.";
+          }
+        }
+        container suppress-flapping {
+          description
+            "Configure flapping suppression.";
+          container peer {
+            description
+              "Configure neighbor relationship flapping suppression.";
+            leaf enable {
+              type boolean;
+              default "true";
+              description
+                "Enable/disable the neighbor relationship flapping suppression function.";
+            }
+          }
+          container lsp-flood {
+            description
+              "Configure the delay timer for LSP flood.";
+            choice lsp-flood {
+              default timer;
+              description
+                "Set the delay timer for LSP flood.";
+              case disable {
+                description
+                  "Disable suppress flapping for LSP.";
+                leaf disable {
+                  type empty;
+                  description
+                    "Disable suppress flapping for LSP.";
+                }
+              }
+              case timer {
+                description
+                  "Set the ISIS suppress flapping timer.";
+                leaf interval {
+                 type uint32 {
+                   range "1..600";
+                 }
+                 units "s";
+                 default "10";
+                 description
+                   "Set the maximum interval of delay timer.";
+                }
+                leaf threshold {
+                 type uint16 {
+                   range "3..100";
+                 }
+                 default "30";
+                 description
+                   "Set the Threshold of LSPs to be suppressed.";
+                }
+              }
+            }
+          }
+          container route-calculate {
+            description
+              "Configure the delay timer for LSP process.";
+            choice route-calculate {
+              default timer;
+              description
+                "Set the delay timer for LSP process.";
+              case disable {
+                description
+                  "Disable suppress flapping for LSP.";
+                leaf disable {
+                  type empty;
+                  description
+                    "Disable suppress flapping for LSP.";
+                }
+              }
+              case timer {
+                description
+                  "Set the ISIS suppress flapping timer.";
+                leaf interval {
+                 type uint32 {
+                   range "1..600";
+                 }
+                 units "s";
+                 default "10";
+                 description
+                   "Set the maximum interval of delay timer.";
+                }
+                leaf threshold {
+                 type uint16 {
+                   range "3..100";
+                 }
+                 default "30";
+                 description
+                   "Set the Threshold of LSPs to be suppressed.";
+                }
+              }
+            }
+          }
+          container lsp-generation {
+            description
+              "Configure the delay timer for LSP generation.";
+            choice lsp-generation {
+              default timer;
+              description
+                "Set the delay timer for LSP generation.";
+              case disable {
+                description
+                  "Disable suppress flapping for LSP.";
+                leaf disable {
+                  type empty;
+                  description
+                    "Disable suppress flapping for LSP.";
+                }
+              }
+              case timer {
+                description
+                  "Set the ISIS suppress flapping timer.";
+                leaf interval {
+                 type uint32 {
+                   range "1..600";
+                 }
+                 units "s";
+                 default "10";
+                 description
+                   "Set the maximum interval of delay timer.";
+                }
+                leaf threshold {
+                 type uint16 {
+                   range "3..100";
+                 }
+                 default "30";
+                 description
+                   "Set the Threshold of LSPs to be suppressed.";
+                }
+              }
+            }
+          }
+        }
+        container timer {
+          description
+            "Configure the timer of LSP.";
+         leaf lsp-max {
+          type uint32 {
+            range "2..65535";
+          }
+          units "s";
+          must "(../lsp-max>../lsp-refresh)";
+          default "1200";
+          description
+            "Set the maximum validity period of the LSP generated by the current ISIS process.";
+         }
+         leaf lsp-refresh {
+          type uint32 {
+            range "1..65534";
+          }
+          units "s";
+          must "(../lsp-max>../lsp-refresh)";
+          default "900";
+          description
+            "Set the period for refreshing LSPs.";
+         }
+         leaf purge-lsp-delay {
+           type uint32 {
+             range "0..65535";
+           }
+           default "20";
+           description
+             "Set the delay time of routing calculation after receiving purge LSP.";
+         }
+         container spf {
+          description
+            "Configure time for route calculation.";
+          leaf max {
+            type uint32 {
+              range "1..120";
+            }
+            units "s";
+            default "5";
+            description
+              "Set the maximum delay time for route calculation.";
+          }
+          leaf init {
+            type uint32 {
+              range "1..60000";
+            }
+            units "ms";
+            must "(../init<../max*1000)";
+            default "50";
+            description
+              "Set the delay for the first route calculation.";
+          }
+          leaf incr {
+            type uint32 {
+              range "1..60000";
+            }
+            units "ms";
+            must "(../incr<../max*1000)";
+            default "200";
+            description
+              "Set the incremental delay between two route calculations. The delay doubles the previous one each time.";
+          }
+         }
+         container lsp-generation {
+          description
+            "Configure an intelligent timer to generate LSPs.";
+          leaf max-level1 {
+            type uint32 {
+              range "1..120";
+            }
+            units "s";
+            default "2";
+            description
+              "Set the maximum delay for generating level 1 LSPs with the same LSP ID.";
+          }
+          leaf max-level2 {
+            type uint32 {
+              range "1..120";
+            }
+            default "2";
+            description
+              "Set the maximum delay for generating level 2 LSPs with the same LSP ID.";
+          }
+          leaf init-level1 {
+            type uint32 {
+              range "1..60000";
+            }
+            must "(../init-level1<../max-level1*1000)";
+            description
+              "Set the delay for generating level 1 LSPs with the same LSP ID for the first time.";
+          }
+          leaf init-level2 {
+            type uint32 {
+              range "1..60000";
+            }
+            must "(../init-level2<../max-level2*1000)";
+            description
+              "Set the delay for generating level 2 LSPs with the same LSP ID for the first time.";
+          }
+          leaf incr-level1 {
+            when "../init-level1>0";
+            type uint32 {
+              range "1..60000";
+            }
+            must "(../incr-level1<../max-level1*1000)";
+            description
+              "Set the incremental delay for generating two level 1 LSPs with the same LSP ID. The interval doubles the previous one each time.";
+          }
+          leaf incr-level2 {
+            when "../init-level2>0";
+            type uint32 {
+              range "1..60000";
+            }
+            must "(../incr-level2<../max-level2*1000)";
+            description
+              "Set the incremental delay for generating two level 2 LSPs with the same LSP ID. The interval doubles the previous one each time.";
+          }
+         }
+        }
+        container lsp-length {
+          description
+            "Configure LSPs length.";
+          leaf originate-level1 {
+            type uint32 {
+              range "512..16384";
+            }
+            must "(../originate-level1<=../receive) and ((../originate-level1=../originate-level2))";
+            default "1497";
+            description
+              "Set the maximum size of the level 1 LSPs that are generated locally.";
+          }
+          leaf originate-level2 {
+            type uint32 {
+              range "512..16384";
+            }
+            must "(../originate-level2<=../receive) and (../originate-level1=../originate-level2)";
+            default "1497";
+            description
+              "Set the maximum size of the level 2 LSPs that are generated locally.";
+          }
+          leaf receive {
+            type uint32 {
+              range "512..16384";
+            }
+            must "(../originate-level1<=../receive) and (../originate-level2<=../receive)";
+            default "1497";
+            description
+              "Set the maximum size of the LSPs that can be received.";
+          }
+        }
+        container flash-flood {
+          description
+            "Configure immediate LSP flooding.";
+          leaf enable-level1 {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable level 1 LSP flooding.";
+          }
+          leaf enable-level2 {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable level 2 LSP flooding.";
+          }
+          leaf lsp-num-level1 {
+            when "../enable-level1='true'";
+            type uint32 {
+              range "1..15";
+            }
+            default "5";
+            description
+              "Set the maximum number of level 1 LSPs that can be flooded each time on each interface.";
+          }
+          leaf lsp-num-level2 {
+            when "../enable-level2='true'";
+            type uint32 {
+              range "1..15";
+            }
+            default "5";
+            description
+              "Set the maximum number of level 2 LSPs that can be flooded each time on each interface.";
+          }
+          leaf max-timer-level1 {
+            when "../enable-level1='true'";
+            type uint32 {
+              range "10..50000";
+            }
+            units "ms";
+            default "10";
+            description
+              "Set the maximum interval at which level 1 LSPs are flooded.";
+          }
+          leaf max-timer-level2 {
+            when "../enable-level2='true'";
+            type uint32 {
+              range "10..50000";
+            }
+            units "ms";
+            default "10";
+            description
+              "Set the maximum interval at which level 2 LSPs are flooded.";
+          }
+        }
+        container set-overload {
+          description
+            "Configure overload.";
+          leaf type {
+            type overload-type;
+            default "no-set";
+            description
+              "Set the router to notify others that it is overloaded.";
+          }
+          leaf wait-type {
+            when "../type='on-startup'";
+            type wait-type;
+            default "no-wait";
+            description
+              "Set the overload type.";
+          }
+          leaf nbr-system-id {
+            when "../wait-type='start-from-nbr'";
+            type string {
+              length "1..15";
+              pattern '((([0-9]|[a-f]|[A-F]){4}\.){2}([0-9]|[a-f]|[A-F]){4})';
+            }
+            mandatory "true";
+            description
+              "Set the system ID of the neighbor. The duration for the system to keep the overload bit is set according to the status of the neighbor specified by the system ID. The length of the value is 6 bytes, in the format of XXXX.XXXX.XXXX, in which X is a hexadecimal case-insensitive character.";
+          }
+          leaf timeout1 {
+            when "../wait-type='start-from-nbr'";
+            type uint32 {
+              range "5..86400";
+            }
+            units "s";
+            default "1200";
+            description
+              "If the specified neighbor does not become up before the neighbor holdtime expires, the holdtime of the system overload flag is the neighbor holdtime.";
+          }
+          leaf timeout2 {
+            when "../type='on-startup'";
+            type uint32 {
+              range "5..86400";
+            }
+            units "s";
+            default "600";
+            description
+              "If the specified neighbor becomes up before the neighbor holdtime expires, the system overload flag keeps the neighbor timeout period.";
+          }
+          leaf inter-level {
+            when "not(../type='no-set')";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable determine whether a device can advertise the IP address prefixes learned from the ISIS routes at different levels.";
+          }
+          leaf external {
+            when "not(../type='no-set')";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable determine whether a device can advertise the IP address prefixes learned from other protocols.";
+          }
+          leaf send-sa-bit {
+            when "../type='on-startup'";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the SA bit in Hello packets.";
+          }
+          leaf sa-bit-time {
+            when "../send-sa-bit='true'";
+            type uint32 {
+              range "5..600";
+            }
+            units "s";
+            default "30";
+            description
+              "The SA bit advertisement period is carried in Hello packet.";
+          }
+          leaf rt-delay-time {
+            when "../type='on-startup'";
+            type uint32 {
+              range "5..1000";
+            }
+            units "s";
+            must "../rt-delay-time<=../timeout2";
+            description
+              "The route delay distribute period.";
+            }	
+        }
+        container te-set-subtlv {
+          description
+            "Configure TE subtlv.";
+          leaf bw-constraint {
+            type uint8 {
+              range "19..254";
+            }
+            description
+              "Change the value of bandwidth constraints subtlv.";
+          }
+          leaf lo-multiplier {
+            type uint8 {
+              range "19..254";
+            }
+            description
+              "Change the value of local overbooking multipliers subtlv.";
+          }
+          leaf unresv-bw-sub-pool {
+            type uint8 {
+              range "19..254";
+            }
+            description
+              "Change the value of unreserved sub pool bandwidth subtlv.";
+          }
+        }
+        container lsp-lifetime {
+          description
+            "Configure refresh the remaining lifetime field of a LSP.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable refresh remaining lifetime field.";
+          }
+          choice refresh {
+            default max-age;
+            description
+              "Set remaining lifetime refresh value.";
+            case max-age {
+              description
+                "Use max age as remaining lifetime refresh value.";
+              leaf max-age {
+                when "../enable='true'";
+                type empty;
+                description
+                  "Use max age as remaining lifetime refresh value.";
+              }
+            }
+            case value {
+              description
+                "Set remaining lifetime refresh value.";
+              leaf value {
+                when "../enable='true'";
+                type uint16 {
+                  range "2..65535";
+                }
+                must "../value>=../../timer/lsp-max";
+                default "1200";
+                description
+                  "Set remaining lifetime refresh value.";
+              }
+            }
+          }
+        }
+        container bgp-ls {
+          when "../../../../ni:name='_public_'";
+          description
+            "Configure the BGP LS.";
+          leaf enable-level1 {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable Level 1 BGP LS.";
+          }
+          leaf enable-level2 {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable Level 2 BGP LS.";
+          }
+          leaf enable-ipv6-level1 {
+            type boolean;
+            must "../enable-ipv6-level1='false' or ../../afs/af[type='afipv6']";
+            default "false";
+            description
+              "Enable/disable IPv6 Level 1 BGP LS.";
+          }
+          leaf enable-ipv6-level2 {
+            type boolean;
+            must "../enable-ipv6-level2='false' or ../../afs/af[type='afipv6']";
+            default "false";
+            description
+              "Enable/disable IPv6 Level 2 BGP LS.";
+          }
+          leaf identifier {
+            type uint64 {
+              range "2..65535";
+            }
+            description
+              "Set BGP LS identifier.";
+          }
+        }
+        container bier {
+          when "../../../../ni:name='_public_'";
+          description
+            "Configure the bier.";
+          leaf enable {
+            type boolean;
+            must "../enable='false' or (../../cost-style='wide' or ../../cost-style='transition' or ../../cost-style='wtransition')";
+            default "false";
+            description
+              "Enable/disable bier.";
+          }
+        }
+        container extern-ability {
+          description
+            "Configure expansibility.";
+          leaf adj-strict-check {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable strict check on the neighbor.";
+          }
+          leaf ecmp-prefer {
+            type ecmp-prefer-type;
+            default "none";
+            description
+              "Configure whether the routes with a TE tunnel interface as the outbound interface or the routes with an IPv4 interface as the outbound interface are preferentially selected to load balance ISIS traffic.";
+          }
+          leaf opt-checksum {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable option checksum.";
+          }
+          leaf virtual-cluster {
+            type boolean;
+            must "../virtual-cluster='false'  or (../../bgp-ls/enable-level1='false' and ../../bgp-ls/enable-level2='false') and not(../../afs/af/traffic-eng) and not(../../lsp-auths) and not(../../circuits/circuit/hello-auths)";
+            default "false";
+            description
+              "Enable/disable virtual cluster on the system. Conflict with segment routing MPLS and virtual access.";
+          }
+          leaf virtual-access {
+            type boolean;
+            must "../virtual-access='false' or (../../cost-style='wide' or ../../cost-style='wtransition') and (../../bgp-ls/enable-level1='false' and ../../bgp-ls/enable-level2='false') and not(../../afs/af/traffic-eng) and not(../../lsp-auths) and not(../../circuits/circuit/hello-auths)";
+            default "false";
+            description
+              "Enable/disable virtual access on the system. Conflict with segment routing MPLS and virtual cluster.";
+          }
+        }
+          container local-mt {
+            when "../../../../ni:name='_public_'";
+            description
+              "Configure a local multicast topology.";
+            leaf enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable local multicast topology.";
+            }
+            choice policy-type {
+              description
+                "Mode of the policy used for local multicast topology.";
+              case basic-acl {
+                description
+                  "Apply basic ACL name or ACL number.";
+                leaf name-or-num {
+                  type leafref {
+                    path "/acl:acl/acl:groups/acl:group/acl:identity";
+                  }
+                  must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                  description
+                    "Apply basic ACL name or ACL number.";
+                }
+              }
+              case ip-prefix {
+                description
+                  "Set the name of an IP prefix list.";
+                leaf ip-prefix {
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                  }
+                  description
+                    "Set the name of an IP prefix list.";
+                }
+              }
+            }
+          }
+        container net-entitys {
+          description
+            "List of NET.";
+          list net-entity {
+            key "value";
+            max-elements  "3";
+            description
+              "Configure NET.";
+            leaf value {
+              type string {
+                length "0..83";
+                pattern '\s*((([0-9a-f]\.?){2}){7,19}0\.?0)\s*';
+              }
+              description
+                "Set a NET. The NET is in the format of X...X.XXXX.XXXX.XXXX.00, in which X...X indicates the area address, the 12 Xs in the middle indicate the system ID, and the last 00 indicates the SEL. When configure multiple NET, must ensure that system IDs are the same.";
+            }
+          }
+        }
+        container virtual-systems {
+          when "../net-entitys/net-entity/value";
+          description
+            "List of virtual system ID.";
+          list virtual-system {
+            key "id";
+            max-elements "99";
+            description
+              "Configure virtual system ID. Used to set the ISIS process. Without a system ID, extended LSPs are not generated.";
+            leaf id {
+              type string {
+                length "12..19";
+                pattern '((([0-9]|[a-f]){4}\.){2}([0-9]|[a-f]){4})';
+              }
+              description
+                "Set a virtual system ID for an ISIS process in the format of XXXX.XXXX.XXXX.";
+            }
+          }
+        }
+        container lsp-auths {
+          description
+            "List of routing packet authentication.";
+          list lsp-auth {
+            key "cmd-type";
+            max-elements  "2";
+            description
+              "Configure routing packet authentication. Authenticate received routing packets (LSPs or SNPs) based on the specified authentication mode and password in an ISIS area or domain.";
+            leaf cmd-type {
+              type auth-cmd-type;
+              description
+                "Set the command type.";
+            }
+            leaf pw-type {
+              type auth-type;
+              mandatory true;
+              description
+                "Set the authentication type.";
+            }
+            leaf simple {
+              when "../pw-type='simple'";
+              type pub-type:password;
+              mandatory true;
+              description
+                "Set the simple authentication. The password is a string ranging from 1 to 16 characters for a unencrypted password and 24 to 128 characters for a encrypted password.";
+            }
+            leaf md5 {
+              when "../pw-type='hmac-sha256' or ../pw-type='md5'";
+              type pub-type:password-extend;
+              mandatory true;
+              description
+                "Set the encrypted authentication password.";
+            }
+            leaf key-chain {
+              when "../pw-type='keychain'";
+              type string {
+                length "1..47";
+              }
+              ext:case-sensitivity lower-only;
+              mandatory true;
+              description
+                "Keychain name.";
+            }
+            leaf service {
+              when "../pw-type='md5' or ../pw-type='simple'";
+              type service-type;
+              default "osi";
+              description
+                "Set the authentication service type.";
+            }
+            leaf usage {
+              type auth-usage-type;
+              default "usage-default";
+              description
+                "Set the authentication mode. The available options are as follows: 
+authentication-avoid: In this mode, the authentication information is not encapsulated for the generated SNPs, and the received SNPs are not checked. The authentication information is encapsulated for only the generated LSPs, and the received LSPs are checked.
+send-only: In this mode, the authentication information is encapsulated for the generated LSPs and SNPs. Only the received LSPs are checked.
+all-send-only: In this mode, the authentication information is encapsulated for the generated LSPs and SNPS. The received LSPs and SNPs, however, are not checked.";
+            }
+            leaf key-id {
+              when "../pw-type='hmac-sha256'";
+              type uint16 {
+                range "0..65535";
+              }
+              default "0";
+              description
+                "Set a value for key ID.";
+            }
+          }
+        }
+        container host-names {
+          description
+            "List of name mapping information.";
+          list host-name {
+            key "system-id";
+            max-elements "500";
+            description
+              "Configure the ability to identify the host names in LSPs. On the local end, a mapping name (an alias) is configured for the ISIS system on the remote end. The mapping name is not advertised.";
+            leaf system-id {
+              type string {
+                length "12..31";
+                pattern "((([0-9]|[a-f]|[A-F]){4}\\.){2}([0-9]|[a-f]|[A-F]){4}(\\.([0-9]|[a-f]|[A-F]){2})?)";
+              }
+              ext:case-sensitivity lower-only;
+              description
+                "ID of the ISIS system on the remote end or the pseudo node ID. The value of a pseudo node cannot be 0.";
+            }
+            leaf value {
+              type string {
+                length "1..64";
+                pattern ".*\\S.*";
+              }
+              mandatory true;
+              description
+                "Name of the ISIS system on the remote end.";
+            }
+          }
+        }
+        container circuits {
+          description
+            "List of ISIS interface.";
+          list circuit {
+            key "name";
+            description
+              "Configure ISIS interface.";
+            leaf name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              must "../../../../../../ni:name=/ifm:ifm/ifm:interfaces/ifm:interface[ifm:name=current()]/ifm:vrf-name";
+              description
+                "Interface name.";
+            }
+            leaf level {
+              type level-type;
+              default "level-1-2";
+              description
+                "Set a level for an interface.";
+            }
+            leaf p2p-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable emulate an interface as a P2P interface. This command takes effect only when the interface is of the broadcast type. Loopback is P2P interface.";
+            }
+            leaf hello-mode {
+              type pad-type;
+              default "normal";
+              description
+                "Set the hello packet padding type.";
+            }
+            leaf peer-hold-max {
+              type uint32 {
+                range "100..1000000";
+              }
+              description
+                "Config peer hold max cost interval.";
+            }
+            leaf silent-enable {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable prevent an interface from receiving and sending ISIS packets.";
+            }
+            leaf purge-source-trace-block {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable block purge LSP source tracing on this interface.";
+            }
+            leaf silent-cost {
+              when "../silent-enable='true'";
+              type boolean;
+              default "false";
+              description
+                "Enable/disable advertise the silent cost.";
+            }
+            leaf dis-name {
+              type string {
+                length "1..64";
+              }
+              description
+                "Set a name for the DIS on the LAN.";
+            }
+            container srlgs {
+              description
+                "List of share risk link group.";
+              list srlg {  
+                key "group-id";
+                description
+                  "Configure share risk link group.";
+                leaf group-id {
+                  type uint32 {
+                    range "0..4294967295";
+                  }           
+                  description
+                    "Set the srlg group ID.";
+                }
+              }
+            }
+            container mesh-group {
+              description
+                "Configure mesh group state on an interface.";
+              leaf state {
+                type mesh-group-state;
+                default "inactive";
+                description
+                  "If the state is block, the interface cannot flood received LSPs.";
+              }
+              leaf number {
+                when "../state='set'";
+                type uint32 {
+                  range "1..4294967295";
+                }
+                mandatory "true";
+                description
+                  "Set an ID for a mesh group.";
+              }
+            }
+            container suppress-flapping {
+              description
+                "Configure flapping suppression.";
+              container peer {
+                description
+                  "Configure neighbor relationship flapping suppression.";
+                leaf enable {
+                  type boolean;
+                  default "true";
+                  description
+                    "Enable/disable the neighbor relationship flapping suppression function.";
+                }
+                leaf detect-interval {
+                  type uint32 {
+                    range "1..300";
+                  }
+		  units "s";
+                  must "../resume-interval>../detect-interval";
+                  default "60";
+                  description
+                    "Set the detection interval of neighbor relationship flapping suppression. If the neighbor relationship goes down twice within the interval, a flapping event is recorded.";
+                }
+                leaf threshold {
+                  type uint32 {
+                    range "1..1000";
+                  }
+                  default "10";
+                  description
+                    "Set the threshold of ISIS neighbor relationship flapping suppression. When the flapping count reaches or exceeds the threshold, flapping suppression takes effect.";
+                }
+                leaf resume-interval {
+                  type uint32 {
+                    range "2..1000";
+                  }
+		  units "s";
+                  must "../resume-interval>../detect-interval";
+                  default "120";
+                  description
+                    "Set the interval for exiting from ISIS neighbor relationship flapping suppression. If the interval between successive neighbor down events is greater than resume-interval, the flapping count is reset. In hold max cost mode, if the neighbor relationship does not go down within two successive resume intervals or the interval between successive neighbor Down events is greater than resume interval, the interface exits from hold max cost mode.";
+                }
+                leaf hold-down {
+                  type uint32 {
+                    range "1..600";
+                  }
+		  units "s";
+                  description
+                    "Set the duration of the hold down mode.";
+                }
+                leaf hold-max-cost {
+                  type boolean;
+                  default "true";
+                  description
+                    "Enable/disable hold max cost mode.";
+                }
+              }
+            }
+            container timer {
+              description
+                "Configure timer.";
+              leaf csnp-interval-level1 {
+                type uint32 {
+                  range "1..65535";
+                }
+		units "s";
+                default "10";
+                description
+                  "Set the interval at which level 1 CSNPs are sent.";
+              }
+              leaf csnp-interval-level2 {
+                type uint32 {
+                  range "1..65535";
+                }
+		units "s";
+                default "10";
+                description
+                  "Set the interval at which level 2 CSNPs are sent.";
+              }
+              leaf throttle-interval {
+                type uint32 {
+                  range "1..10000";
+                }
+		units "ms";
+                default "50";
+                description
+                  "Set the minimum interval at which LSPs are sent.";
+              }
+              leaf throttle-count {
+                type uint32 {
+                  range "1..1000";
+                }
+                default "10";
+                description
+                  "Set the maximum number of LSPs that are sent during the interval.";
+              }
+            }
+            container broadcast {          
+              when "../p2p-enable='false'";
+              description
+                "Configure broadcast.";
+              leaf dis-priority-level1 {
+                type uint32 {
+                  range "0..127";
+                }
+                default "64";
+                description
+                  "Set a priority for level 1 DIS election. The greater the value, the higher the priority.";
+              }
+              leaf dis-priority-level2 {
+                type uint32 {
+                  range "0..127";
+                }
+                default "64";
+                description
+                  "Set a priority for level 2 DIS election. The greater the value, the higher the priority.";
+              }
+              leaf hello-timer-level1 {
+                type uint32 {
+                  range "3..255";
+                }
+		units "s";
+                default "10";
+                description
+                  "Set the interval at which level 1 hello packets are sent.";
+              }
+              leaf hello-timer-level2 {
+                type uint32 {
+                  range "3..255";
+                }
+		units "s";
+                default "10";
+                description
+                  "To set the interval for sending level 2 hello packets.";
+              }
+              leaf hold-multiplier-level1 {
+                type uint32 {
+                  range "3..1000";
+                }
+                default "3";
+                description
+                  "Set the number of hello packets that the local ISIS router fails to receive from a level 1 neighbor before the local router declares the neighbor down.";
+              }
+              leaf hold-multiplier-level2 {
+                type uint32 {
+                  range "3..1000";
+                }
+                default "3";
+                description
+                  "Set the number of hello packets that the local ISIS router fails to receive from a level 2 neighbor before the local router declares the neighbor down.";
+              }
+              leaf conser-level1 {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable level1 hello interval conservative flag.";
+              }
+              leaf conser-level2 {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable level2 hello interval conservative flag.";
+              }
+            }
+            container p2p {           
+              when "../p2p-enable='true'";
+              description
+                "Configure P2P.";
+                leaf snpa-check {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable the SNPA check of LSP and SNP.";
+                }
+                leaf peer-ip-ignore {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable ignore the IP address check when P2P hello packets are received.";
+                }
+                leaf ppp-negotiation {
+                  type p2p-negotiation;
+                  default "3-way";
+                  description
+                    "Set the P2P neighbor negotiation type.";
+                }
+                leaf hello-timer {
+                  type uint32 {
+                    range "3..255";
+                  }
+		  units "s";
+                  default "10";
+                  description
+                    "Set the interval at which P2P hello packets are sent.";
+                }
+                leaf hold-multiplier {
+                  type uint32 {
+                    range "3..1000";
+                  }
+                  default "3";
+                  description
+                    "Set the number of P2P hello packets that the local ISIS router fails to receive from a P2P neighbor before the local router declares the neighbor down.";
+                }
+                leaf lsp-retransmit-interval {
+                  type uint32 {
+                    range "1..300";
+                  }
+		  units "s";
+                  default "5";
+                  description
+                    "Set the interval for retransmitting LSPs on the P2P link.";
+                }
+                leaf ppp-osicp-check {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable check the OSICP negotiation status on the interfaces with PPP link protocols. The negotiation status affects the status of the interfaces in ISIS.";
+                }
+                leaf conser {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable p2p hello interval conservative flag.";
+                }
+            }
+            container hello-auths {
+              description
+                "List of hello packet authentication.";
+              list hello-auth {
+                key "level";
+                max-elements  "2";
+                description
+                  "Configure hello packet authentication.";
+                leaf level {
+                  type level-type-two;
+                  description
+                    "Set the level type for authentication. This field is not required for P2P interfaces. Display may according to the interface level for P2P.";
+                }
+                leaf pw-type {
+                  type auth-type;
+                  mandatory true;
+                  description
+                    "Set the authentication password type of hello packets.";
+                }
+                leaf simple {
+                  when "../pw-type='simple'";
+                  type pub-type:password;
+                  mandatory true;
+                  description
+                    "Set the authentication password. The password is a string ranging from 1 to 16 characters for a unencrypted password and 24 to 128 characters for a encrypted password.";
+                }
+                leaf key-chain {
+                  when "../pw-type='keychain'";
+                  type string {
+                    length "1..47";
+                  }
+                  ext:case-sensitivity lower-only;
+                  mandatory true;
+                  description
+                    "Keychain name.";
+                }
+                leaf md5 {
+                  when "../pw-type='hmac-sha256' or ../pw-type='md5'";
+                  type pub-type:password-extend;
+                  mandatory true;
+                  description
+                    "Set the encrypted authentication password.";
+                }
+                leaf service {
+                  when "../pw-type='md5' or ../pw-type='simple'";
+                  type service-type;
+                  default "osi";
+                  description
+                    "Set the authentication service type.";
+                }
+                leaf send-only {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable encapsulate the authentication information in only the hello packets to be sent.";
+                }
+                leaf key-id {
+                  when "../pw-type='hmac-sha256'";
+                  type uint16 {
+                    range "0..65535";
+                  }
+                  default "0";
+                  description
+                    "Set a value for key ID.";
+                }
+              }
+            }
+            container afs {
+              description
+                "List of interface address family of IPv4 and IPv6.";
+              list af {
+                key "type";
+                min-elements  "1";
+                max-elements  "2";
+                description
+                  "Configure interface address family of IPv4 and IPv6.";
+                leaf type {
+                  type af-type;
+                  must "../../../../../afs/af[isis:type=current()]";
+                  description
+                    "Address family type of the multi topology.";
+                }
+                leaf cost-level1 {
+                  type uint32 {
+                    range "1..16777215";
+                  }
+                  must "(../cost-level1<=63) or (not(../../../../../cost-style!='wide' and ../../../../../cost-style!='wtransition') and ../cost-level1<=16777215)";
+                  description
+                    "Link cost of an interface used for the level 1 SPF calculation.";
+                }
+                leaf cost-level2 {
+                  type uint32 {
+                    range "1..16777215";
+                  }
+                  must "(../cost-level2<=63) or (not(../../../../../cost-style!='wide' and ../../../../../cost-style!='wtransition') and ../cost-level2<=16777215)";
+                  description
+                    "Link cost of an interface used for the level 2 SPF calculation.";
+                }
+                leaf tag-level1 {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  default "0";
+                  description
+                    "Set the level 1 tag value for direct routes on the interface. A value of 0 indicates disable.";
+                }
+                leaf tag-level2 {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  default "0";
+                  description
+                    "Set the level 2 tag value for direct routes on the interface. A value of 0 indicates disable.";
+                }
+                leaf suppress-reach {
+                  type level-type-zero;
+                  default "no-set";
+                  description
+                    "Suppress the advertisement of direct route.";
+                }
+                leaf incr-cost {
+                  when "../type='afipv4'";
+                  type uint32 {
+                    range "1..16777214";
+                  }
+                  description
+                    "Set the cost to be added if the link quality is low.";
+                }
+                leaf bfd-bit-error {
+                  type bfd-bit-err-type;
+                  must "../bfd-bit-error='no-set' or ../type='afipv4'";
+                  default "no-set";
+                  description
+                    "Enable or block BFD bit error on an interface. Not support Loopback and tunnel.";
+                }
+                container mpls-ldp {
+                  description
+                    "Configure MPLS LDP configuration.";
+                  leaf auto-flag-block {
+                    when "../../type='afipv4'";
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable automatic MPLS LDP configuration on an interface.";
+                  }
+                }
+                container frr {
+                  description
+                    "Configure ISIS FRR on interface.";					
+                  leaf lfa-block-level1 {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable prevent an interface from participating Level 1 LFA backup interface calculation in an IPv4 base topology.";
+                  }
+                  leaf lfa-block-level2 {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable prevent an interface from participating Level 2 LFA backup interface calculation in an IPv4 base topology.";
+                  }
+                  leaf rlfa-disable-level1 {
+                    type boolean;
+                    must "../rlfa-disable-level1='false' or ../../type='afipv4'";
+                    default "false";
+                    description
+                      "Enable/disable level 1 RLFA of the interface.";
+                  }
+                  leaf rlfa-disable-level2 {
+                    type boolean;
+                    must "../rlfa-disable-level2='false' or ../../type='afipv4'";
+                    default "false";
+                    description
+                      "Enable/disable level 2 RLFA of the interface.";
+                  }
+                  leaf tilfa-disable-level1 {
+                    type boolean;
+                    must "../tilfa-disable-level1='false' or (../../type='afipv4' or ../../../../../../../../../ni:name='_public_')";
+                    default "false";
+                    description
+                      "Enable/disable an interface is prevented from being calculated as a valid backup interface during level 1 LFA calculation.";
+                  }
+                  leaf tilfa-disable-level2 {
+                    type boolean;
+                    must "../tilfa-disable-level2='false' or (../../type='afipv4' or ../../../../../../../../../ni:name='_public_')";
+                    default "false";
+                    description
+                      "Enable/disable an interface is prevented from being calculated as a valid backup interface during level 2 LFA calculation.";
+                  }
+                }
+                container bfd {
+                  description
+                    "Configure ISIS BFD parameters on interface. Not support Loopback and tunnel.";
+                  choice type {
+                    description
+                      "Set BFD type.";
+                    case enable {
+                      description
+                        "Type is enable.";
+                      leaf enable {
+                        type empty;
+                        description
+                          "Enable dynamic BFD on an interface.";
+                      }
+                    }
+                    case static {
+                      description
+                        "Type is static.";
+                      leaf static {
+                        type empty;
+                        description
+                          "Enable static BFD on an interface.";
+                      }
+                    }
+                    case block {
+                      description
+                        "Type is block.";
+                      leaf block {
+                        type empty;
+                        description
+                          "Disable dynamic BFD from an interface.";
+                      }
+                    }
+                  }
+                  leaf min-rx {
+                    type uint32 {
+                      range "3..20000";
+                    }
+                    units "ms";
+                    default "10";
+                    description
+                      "Set the minimum interval at which BFD packets are received.";
+                  }
+                  leaf min-tx {
+                    type uint32 {
+                      range "3..20000";
+                    }
+                    units "ms";
+                    default "10";
+                    description
+                      "Set the minimum interval at which BFD packets are sent.";
+                  }
+                  leaf detect-multiplier {
+                    type uint32 {
+                      range "3..50";
+                    }
+                    default "3";
+                    description
+                      "Set the detection multiplier of a BFD session.";
+                  }
+                    leaf tos-exp {
+                      type uint8 {
+                        range "0..7";
+                      }
+                      description
+                        "Set the priority of BFD packets.";
+                    }				
+                  leaf frr-binding {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable bind the BFD status to the link status of an interface.";
+                  }
+                }
+                container ldp-sync {
+                  when "../type='afipv4'";
+                  description
+                    "Configure LDP and ISIS synchronization state on an interface.";
+                  leaf enable {
+                    type ldp-sync-state;
+                    default "none";
+                    description
+                      "LDP and ISIS synchronization state on an interface.";
+                  }
+                  leaf hold-down-timer {
+                    type uint32 {
+                      range "0..65535";
+                    }
+                    units "s";
+                    description
+                      "Set a value for the LDP and ISIS synchronization holddown timer.";
+                  }
+                  choice hold-cost-max {
+                    description
+                      "Set a value for the LDP and ISIS synchronization timer.";
+                    case timer {
+                      description
+                        "Set a value for the LDP and ISIS synchronization timer.";
+                      leaf timer {
+                        type uint32 {
+                          range "0..65535";
+                        }
+                        units "s";
+                        description
+                          "Set a value for the LDP and ISIS synchronization timer.";
+                      }
+                    }
+                    case infinite {
+                      description
+                        "Enable infinite LDP and ISIS synchronization.";
+                      leaf infinite {
+                        type empty;
+                        description
+                          "Enable infinite LDP and ISIS synchronization. The LDP and ISIS synchronization is kept before the LDP session goes up.";
+                      }
+                    }
+                  }
+                }
+                container link-group-ports {
+                  description
+                    "List of link-group interface.";
+                  list link-group-port {
+                    key "name level-type";
+                    description
+                      "Configure link-group interface.";
+                    leaf name {
+                      type string {
+                        length "0..32";
+                        pattern ".*\\S.*";
+                      }
+                      description
+                        "To set link-group name.";
+                    }
+                    leaf level-type {
+                      type level-type-two;
+                      description
+                        "Level type.";
+                    }
+                  }
+                }
+                container topologys {
+                  description
+                    "List of interface multi topology.";
+                  list topology {
+                    key "mt-id";
+                    description
+                      "Configure interface multi topology.";
+                    leaf mt-id {
+                      type leafref {
+                        path "/ni:network-instance/ni:instances/ni:instance/isis:isis/isis:sites/isis:site/isis:afs/isis:af/isis:topologys/isis:topology/isis:mt-id";
+                      }
+                      description
+                        "ISIS multi topology ID.";
+                      }
+                      leaf cost-level1 {
+                        type uint32 {
+                          range "1..16777215";
+                        }
+                        must "(../cost-level1<=63) or ((../../../../../../../cost-style='wide' or ../../../../../../../cost-style='wtransition') and ../cost-level1<=16777215)";
+                        description
+                          "Link cost of an interface used for the level 1 SPF calculation.";
+                      }
+                      leaf cost-level2 {
+                        type uint32 {
+                          range "1..16777215";
+                        }
+                        must "(../cost-level2<=63) or ((../../../../../../../cost-style='wide' or ../../../../../../../cost-style='wtransition') and ../cost-level2<=16777215)";
+                        description
+                          "Link cost of an interface used for the level 2 SPF calculation.";
+                      }
+                    leaf tag-level1 {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      default "0";
+                      description
+                        "Set the level 1 tag value for direct routes on the interface. A value of 0 indicates disable.";
+                    }
+                    leaf tag-level2 {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      default "0";
+                      description
+                        "Set the level 2 tag value for direct routes on the interface. A value of 0 indicates disable.";
+                    }
+                    leaf incr-cost {
+                      when "../../../type='afipv4'";
+                      type uint32 {
+                        range "1..16777214";
+                      }
+                      description
+                        "Set the cost to be added if the link quality is low.";
+                    }
+                    container link-group-ports {
+                      description
+                        "List of link-group interface.";
+                      list link-group-port {
+                        key "name level-type";
+                        description
+                          "Configure link-group interface.";
+                        leaf name {
+                          type string {
+                            length "0..32";
+                            pattern ".*\\S.*";
+                          }
+                          description
+                            "To set link-group name.";
+                        }
+                        leaf level-type {
+                          type level-type-two;
+                          description
+                            "Level type.";
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            container disp-data {
+              config false;
+              description
+                "Statistics of interface data.";
+              leaf index {
+                type uint8;
+                description
+                  "Circuit ID of an interface.";
+              }
+              leaf mtu {
+                type uint32;
+                description
+                  "MTU value of an interface.";
+              }
+              leaf dis-level1 {
+                type boolean;
+                description
+                  "Determine whether the interface is a level 1 DIS.";
+              }
+              leaf dis-level2 {
+                type boolean;
+                description
+                  "Determine whether the interface is a level 2 DIS.";
+              }
+              leaf v4-status {
+                type string {
+                  length "1..40";
+                  ext:value-meaning {
+                    ext:item UP{
+                      ext:meaning UP;
+                    }
+                  } 
+                }
+                description
+                  "IPv4 status of the interface, up or down.";
+              }
+              leaf mtu-state {
+                type boolean;
+                description
+                  "MTU status of an interface, up or down.";
+              }
+              leaf link-state {
+                type boolean;
+                description
+                  "Link status of an interface, up or down.";
+              }
+              leaf ip-state {
+                type boolean;
+                description
+                  "IPv4 address status of an interface, up or down.";
+              }
+              leaf v6-status {
+                type string {
+                  length "1..40";
+                  ext:value-meaning {
+                    ext:item UP{
+                      ext:meaning UP;
+                    }
+                  }
+                }
+                description
+                  "ISIS IPv6 status of an interface, up or down.";
+              }
+              leaf mtu-v6-state {
+                type boolean;
+                description
+                  "MTU IPv6 status of an interface, up or down.";
+              }
+              leaf link-v6-state {
+                type boolean;
+                description
+                  "Link IPv6 status of an interface, up or down.";
+              }
+              leaf ip-v6-state {
+                type boolean;
+                description
+                  "IPv6 address status of an interface, up or down.";
+              }
+              leaf vc-state {
+                type boolean;
+                description
+                  "Virtual cluster status of an interface, up or down.";
+              }
+              leaf peer-flap-status {
+                type peer-flap-status-type;
+                description
+                  "Display the neighbor relationship flapping suppression status.";
+              }
+              leaf peer-flap-count {
+                type uint32;
+                description
+                  "Display the current flapping count.";
+              }
+              leaf peer-flap-threshold {
+                type uint32;
+                description
+                  "Display threshold of neighbor relationship flapping suppression.";
+              }
+              leaf peer-flap-timer {
+                type string {
+                  length "1..40";
+                }
+                description
+                  "Display the time when neighbor relationship flapping suppression took effect.";
+              }
+              leaf peer-flap-remain-timer {
+                type uint32;
+                description
+                  "Display the remaining time of neighbor relationship flapping suppression.";
+              }
+            }
+          }
+        }
+        container afs {
+          description
+            "List of address family of IPv4 and IPv6.";
+          list af {
+            key "type";
+            max-elements  "2";
+            ext:generated-by system {
+              ext:filter "type='afipv4'";
+            }
+            ext:operation-exclude delete {
+              ext:filter "type='afipv4'";
+            }
+            description
+              "Configure address family of IPv4 and IPv6. IPv4 base topo is generated by the ISIS process, which is not allowed to be deleted and created separately.";
+            leaf type {
+              type af-type;
+              must "(../type='afipv4' and ../../../../../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv4-unicast']) or (../type='afipv6' and ../../../../../../l3vpn:afs/l3vpn:af[l3vpn:type='ipv6-unicast'])";
+              description
+                "Address family type of the multi topology.";
+            }
+            leaf ipv6-base-topo {
+              when "../type='afipv6'";
+              type base-topo-v6;
+              default "standard";
+              description
+                "Type of IPv6 enabling.";
+            }
+            leaf apply-qppb {
+              type boolean;
+              must "../apply-qppb='false' or ../type='afipv6'";
+              default "false";
+              description
+                "Enable/disable IPv6 qppb.";
+            }
+            leaf max-load-balancing {
+              type uint32 {
+                range "1..128";
+              }
+              default "64";
+              description
+                "Set the maximum number of equal cost routes for load balancing. The range of values is controlled by PAF.";
+            }
+            leaf auto-cost {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable automatic cost calculation for the system.";
+            }
+            leaf bandwidth {
+              type uint32 {
+                range "1..2147483648";
+              }
+              default "100";
+              description
+                "Set the bandwidth reference used for the automatic cost calculation on an interface.";
+            }
+            leaf cost-level1 {
+              type uint32 {
+                range "1..16777215";
+              }
+              description
+                "Set the level 1 cost for an interface. If the ISIS cost type is narrow, narrow compatible, or compatible, the value ranges from 1 to 63. If the ISIS cost type is wide or wide compatible, the value ranges from 1 to 16777215.";
+            }
+            leaf cost-level2 {
+              type uint32 {
+                range "1..16777215";
+              }
+              description
+                "Set the level 2 cost for an interface. If the ISIS cost type is narrow, narrow compatible, or compatible, the value ranges from 1 to 63. If the ISIS cost type is wide or wide compatible, the value ranges from 1 to 16777215.";
+            }
+            leaf bfd-bit-error {
+              type boolean;
+              must "../bfd-bit-error='false' or ../type='afipv4'";
+              default "false";
+              description
+                "Enable/disable BFD bit error on all interfaces.";
+            }
+            container attach-bit {
+              when "../type!='afipv6'";
+              description
+                "Configure LSPs with the ATT bit.";
+              leaf adv-control {
+                type att-adv-mode;
+                default "no-type";
+                description
+                  "Control to advertise the ATT bit.";
+              }
+              leaf avoid-learn {
+                type boolean;
+                must "../avoid-learn='false' or ../../type='afipv4'";
+                default "false";
+                description
+                  "Enable/disable prevent the device from learning the LSPs with the ATT bit.";
+              }
+            }
+            container preference {
+              description
+                "Configure a priority for ISIS.";
+              leaf value {
+                type uint32 {
+                  range "1..255";
+                }
+                default "15";
+                description
+                  "Set the priority for protocols. The smaller the value, the higher the priority.";
+              }
+              choice policy-type {
+                description
+                  "Type of preference rule.";
+                case route-policy {
+                  description
+                    "Set a route policy name.";
+                  leaf route-policy {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                    }
+                    description
+                      "Set a route policy name.";
+                  }
+                }
+                case route-filter {
+                  description
+                    "Set a route filter name.";
+                  leaf route-filter {
+                    type leafref {
+                      path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                    }
+                    description
+                      "Set a route filter name.";
+                  }
+                }
+              }
+            }
+            container default-route {
+              presence "Enable default routes.";
+              description
+                "Configure the level 1 and level 2 routers to generate default routes.";
+              leaf mode {
+                type default-mode;
+                must "../mode!='match-any' or ../mode='match-any' and (../route-policy-name)";
+                default "always";
+                description
+                  "Set the default routes mode. When the mode is not match any, route policy name and route filter name cannot be configured.";
+              }
+              choice policy-type {
+                description
+                  "Mode of the policy used for default route.";
+                case route-policy-name {
+                  description
+                    "Name of a routing policy.";
+                  leaf route-policy-name {
+                    when "../mode='match-any'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                    }
+                    description
+                      "Set a route policy name for default routes.";
+                  }
+                }
+                case route-filter-name {
+                  description
+                    "Name of a routing filter.";
+                  leaf route-filter-name {
+                    when "../mode='match-any'";
+                    type leafref {
+                      path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                    }
+                    description
+                      "Set a xpl route policy name entity for default routes.";
+                  }
+                }
+              }
+              leaf cost {
+                type uint32 {
+                  range "0..4261412864";
+                }
+                must "../cost<=63 or ../../type='afipv4' and (../../../../cost-style='wide' or ../../../../cost-style='wtransition')";
+                default "0";
+                description
+                  "Set a cost for default routes.";
+              }
+              leaf tag {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                default "0";
+                description
+                  "Set a tag for default routes.";
+              }
+              leaf level-type {
+                type level-type;
+                default "level-2";
+                description
+                  "Set a level for default routes.";
+              }
+              leaf avoid-learning {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable to prevent ISIS processes from learning default routes and adding the default routes to the routing table. If the default routes that already exist in the routing table are active, the status of the route is set to inactive.";
+              }
+            }
+            container import-routes {
+              description
+                "List of import route of other routing protocols.";
+              list import-route {
+                key "protocol process-id";
+                description
+                  "Configure import route of other routing protocols.";
+                leaf protocol {
+                  type import-protocol;
+                  must "not(../protocol='ospfv3' or ../protocol='ripng') or ../../../type='afipv6' and (../protocol='ospfv3' or ../protocol='ripng')";
+                  description
+                    "Set the routing protocol from which routes are imported.";
+                }
+                leaf process-id {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  must "../process-id=0 and (../protocol='direct' or ../protocol='static' or ../protocol='bgp' or ../protocol='unr') or ../process-id>0 and (../protocol='ospf' or ../protocol='isis' or ../protocol='rip')";
+                  description
+                    "Set the process ID. The process ID is required when the routing protocol is RIP, OSPF, or ISIS.";
+                }
+                leaf cost-type {
+                  when "../../../type='afipv4' and ../inherit-cost='false'";
+                  type is-import-cost;
+                  default "external";
+                  description
+                    "Set the cost type for imported routes.";
+                }
+                leaf cost {
+                  when "../inherit-cost='false'";
+                  type uint32 {
+                    range "0..4261412864";
+                  }
+                  default "0";
+                  description
+                    "Set a cost for imported routes. If the ISIS cost type is narrow, narrow compatible, or compatible, the value ranges from 1 to 63.";
+                }
+                leaf tag {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  default "0";
+                  description
+                    "Set a tag for imported routes. A value of 0 indicates disable.";
+                }
+                choice policy-type {
+                  description
+                    "Mode of the policy used for import route.";
+                  case route-policy-name {
+                    description
+                      "Set a route policy name.";
+                    leaf route-policy-name {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                      }
+                      description
+                        "Set a route policy name.";
+                    }
+                  }
+                }
+                leaf level-type {
+                  type level-type;
+                  default "level-2";
+                  description
+                    "Import routes to the level 1 or (and) level 2 routing table.";
+                }
+                leaf inherit-cost {
+                  type boolean;
+                  must "(../inherit-cost='false') or (../protocol!='static' and not(../cost-type))";
+                  default "false";
+                  description
+                    "Enable/disable keep the original cost of a route when importing the route to ISIS.";
+                }
+                leaf permit-ibgp {
+                  type boolean;
+                  must "../permit-ibgp='false' or ../protocol='bgp'";
+                  default "false";
+                  description
+                    "Enable/disable the device to import IBGP routes.";
+                }
+                leaf nosidflag {
+                  type boolean;
+                  must "../nosidflag='false' or (../protocol='isis' or ../protocol='ospf')";
+                  default "false";
+                  description
+                    "Enable/disable prohibit sid when import other process or protocol routes.";
+                }
+              }
+            }
+            container nexthop-weights {
+              when "../type='afipv4'";
+              description
+                "List of next hop weight.";
+              list nexthop-weight {
+                key "ip-address";
+                max-elements  "131072";
+                description
+                  "Configure next hop weight.";
+                leaf ip-address {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "Set a next hop address.";
+                }
+                leaf weight {
+                  type uint32 {
+                    range "1..254";
+                  }
+                  mandatory true;
+                  description
+                    "Set a weight value for the next hop.";
+                }
+              }
+            }
+            container leak-route-level2-to-level1 {
+                description
+                  "Configure to control ISIS to perform route leaking from level 2 to level 1. This command needs to be set on the level 1 2 router connected to the external areas.";
+                leaf tag {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  default "0";
+                  description
+                    "Management label value assigned for imported routes. The label value is the name of route filtering during route leaking. A value of 0 indicates disable.";
+                }
+                choice policy-type {
+                  description
+                    "Mode of the policy used for route leaking.";
+                  case basic-acl4 {
+                    description
+                      "Apply basic ACL name or ACL number.";
+                    leaf name-or-num-v4 {
+                      when "../../type='afipv4'";
+                      type leafref {
+                        path "/acl:acl/acl:groups/acl:group/acl:identity";
+                      }
+                      must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Apply basic ACL name or ACL number.";
+                    }
+                  }
+                  case basic-acl6 {
+                    description
+                      "Apply basic ACL6 name or ACL6 number.";
+                    leaf name-or-num-v6 {
+                      when "../../type='afipv6'";
+                      type leafref {
+                        path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                      }
+                      must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Apply basic ACL6 name or ACL6 number.";
+                    }
+                  }
+                  case ipv4-prefix {
+                    description
+                      "Set the name of an IP prefix list.";
+                    leaf ipv4-prefix {
+                      when "../../type='afipv4'";
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Set the name of an IP prefix list.";
+                    }
+                  }
+                  case ipv6-prefix {
+                    description
+                      "Set the name of an IPv6 prefix list.";
+                    leaf ipv6-prefix {
+                      when "../../type='afipv6'";
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Set the name of an IPv6 prefix list.";
+                    }
+                  }
+                  case route-policy-name {
+                    description
+                      "Set a route policy name.";
+                    leaf route-policy-name {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                      }
+                      description
+                        "Name of the route filtering policy used during route leaking.";
+                    }
+                  }
+                  case route-filter-name {
+                    description
+                      "Set a route filter name.";
+                    leaf route-filter-name {
+                      type leafref {
+                        path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                      }
+                      description
+                        "Set a route filter name.";
+                    }
+                  }
+                }
+                leaf allow-filter {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable the name of a route policy which filters routes based on the tag or other protocol parameters.";
+                }
+                leaf allow-updown {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable the Up/Down bit for routes.";
+                }
+                leaf nosidflag {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable prohibit sid when leak routes from level 2 to level 1.";
+                }
+            }
+            container leak-route-level1-to-level2 {
+                description
+                  "Configure the leaking of the routes from a level 1 area to a level 2 area. This is convenient for route management. This command needs to be configured on the level 1 2 router connected to external areas.";
+                leaf enable {
+                  type boolean;
+                  default "true";
+                  description
+                    "Enable/disable level 1 to level 2 route filtering.";
+                }
+                choice policy-type {
+                  description
+                    "Type of filter policy rule.";
+                  case basic-acl4 {
+                    description
+                      "Apply basic ACL name or ACL number.";
+                    leaf name-or-num-v4 {
+                      when "../enable='true' and ../../type='afipv4'";
+                      type leafref {
+                        path "/acl:acl/acl:groups/acl:group/acl:identity";
+                      }
+                      must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Apply basic ACL name or ACL number.";
+                    }
+                  }
+                  case basic-acl6 {
+                    description
+                      "Apply basic ACL6 name or ACL6 number.";
+                    leaf name-or-num-v6 {
+                      when "../enable='true' and ../../type='afipv6'";
+                      type leafref {
+                        path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                      }
+                      must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Apply basic ACL6 name or ACL6 number.";
+                    }
+                  }
+                  case ipv4-prefix {
+                    description
+                      "Set the name of an IP prefix list.";
+                    leaf ipv4-prefix {
+                      when "../enable='true' and ../../type='afipv4'";
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Set the name of an IP prefix list.";
+                    }
+                  }
+                  case ipv6-prefix {
+                    description
+                      "Set the name of an IPv6 prefix list.";
+                    leaf ipv6-prefix {
+                      when "../enable='true' and ../../type='afipv6'";
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Set the name of an IPv6 prefix list.";
+                    }
+                  }
+                  case route-policy {
+                    description
+                      "Set a route policy name.";
+                    leaf route-policy {
+                      when "../enable='true'";
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                      }
+                      description
+                        "Set a route policy name.";
+                    }
+                  }
+                  case route-filter {
+                    description
+                      "Set a route filter name.";
+                    leaf route-filter {
+                      when "../enable='true'";
+                      type leafref {
+                        path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                      }
+                      description
+                        "Set a route filter name.";
+                    }
+                  }
+                }
+                leaf tag {
+                  when "../enable='true'";
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  default "0";
+                  description
+                    "Administrative tag assigned for imported routes. A value of 0 indicates disable.";
+                }
+                leaf allow-filter {
+                  when "../enable='true'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable the name of a route policy which filters routes based on the tag or other protocol parameters.";
+                }
+                leaf nosidflag {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable prohibit sid when leak routes from level 1 to level 2.";
+                }
+            }
+            container summary-prefixs {
+              description
+                "List of summary routes.";
+              list summary-prefix {
+                key "prefix network-mask";
+                description
+                  "Configure summary route.";
+                leaf prefix {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Set a summary address. Prefix is the address after mask.";
+                }
+                leaf network-mask {
+                  type uint8 {
+                    range "0..128";
+                  }
+                  description
+                    "Set the summary address mask. If summary address is the type of IPv4, the max value is 32. If summary address is the type of IPv6, the max value is 128.";
+                }
+                leaf level-type {
+                  type level-type;
+                  default "level-2";
+                  description
+                    "Set the level for summary routes.";
+                }
+                leaf tag {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  default "0";
+                  description
+                    "Set a tag for summary routes.";
+                }
+                leaf gen-null0-route {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable generate a Null 0 route to prevent routing loops.";
+                }
+                leaf avoid-feadback {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable avoid learning summary routes.";
+                }
+                leaf cost {
+                  type uint32 {
+                    range "1..16777215";
+                  }
+                  description
+                    "Set a cost for summarized routes. If the ISIS cost type is narrow, narrow-compatible, or compatible, the value ranges from 1 to 63. If the ISIS cost type is wide or wide-compatible, the value ranges from 1 to 16777215.";
+                }
+              }
+            }
+            container traffic-eng {
+              description
+                "Configure ISIS level enabled with the TE capability.";
+              leaf enable-level1 {
+                type boolean;
+                must "../enable-level1='false' or ../../../../cost-style='wide' or ../../../../cost-style='wtransition' or ../../../../cost-style='transition'";
+                default "false";
+                description
+                  "Enable/disable traffic eng enable level 1.";
+              }
+              leaf enable-level2 {
+                type boolean;
+                must "../enable-level2='false' or ../../../../cost-style='wide' or ../../../../cost-style='wtransition' or ../../../../cost-style='transition'";
+                default "false";
+                description
+                  "Enable/disable traffic eng enable level 2.";
+              }
+              container metric-delay {
+                when "../../type='afipv4' and (../enable-level1='true' or ../enable-level2='true')";
+                description
+                  "Configure metric delay in a ISIS process.";
+                leaf adv-level1 {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable metric delay advertisement.";
+                }
+                leaf adv-level2 {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable metric delay advertisement.";
+                }
+                leaf suppress-timer {
+                  type uint32 {
+                    range "0..600";
+                  }
+                  units "s";
+                  default "120";
+                  description
+                    "Metric delay suppress timer.";
+                }
+                leaf suppress-percent {
+                  type uint8 {
+                    range "0..100";
+                  }
+                  default "10";
+                  description
+                    "Metric delay suppress percent threshold.";
+                }
+                leaf suppress-absolute {
+                  type uint32 {
+                    range "0..10000";
+                  }
+                  default "1000";
+                  description
+                    "Metric delay suppress absolute threshold.";
+                }
+              }
+            }
+            container bfd {
+              description
+                "Configure ISIS BFD parameters.";
+              leaf enable {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable BFD on all interfaces.";
+              }
+              leaf frr-binding {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable bind the BFD status to the link status of an interface.";
+              }
+              leaf min-rx {
+                type uint32 {
+                range "3..20000";
+                }
+                units "ms";
+                description
+                  "Set the minimum interval at which BFD packets are received. The default value and range controlled by PAF.";
+              }
+              leaf min-tx {
+                type uint32 {
+                  range "3..20000";
+                }
+                units "ms";
+                description
+                  "Set the minimum interval at which BFD packets are sent. The default value and range controlled by PAF.";
+              }
+              leaf detect-multiplier {
+                type uint32 {
+                  range "3..50";
+                }
+                default "3";
+                description
+                  "Set the detection multiplier of a BFD session.";
+              }
+            }
+            container ldp-sync {
+              when "../type='afipv4'";
+              description
+                "Configure LDP and ISIS synchronization.";
+              leaf enable {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable LDP and ISIS synchronization on an interface.";
+              }
+              leaf mpls-binding {
+                when "../enable='true'";
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable MPLS LDP association.";
+              }
+              leaf hold-down-timer {
+                type uint32 {
+                  range "0..65535";
+                }
+                units "s";
+                description
+                  "Set a value for the LDP and ISIS synchronization holddown timer.";
+              }
+              choice hold-cost-max {
+                default infinite;
+                description
+                  "Set a value for the LDP and ISIS synchronization timer.";
+                case timer {
+                  description
+                    "Set a value for the LDP and ISIS synchronization timer.";
+                  leaf timer {
+                    type uint32 {
+                      range "0..65535";
+                    }
+                    units "s";
+                    description
+                      "Set a value for the LDP and ISIS synchronization timer.";
+                  }
+                }
+                case infinite {
+                  description
+                    "Enable infinite LDP and ISIS synchronization.";
+                  leaf infinite {
+                    type empty;
+                    description
+                      "Enable infinite LDP and ISIS synchronization. The LDP and ISIS synchronization is kept before the LDP session goes up.";
+                  }
+                }
+              }
+            }
+            container mpls-ldp-global {
+              description
+                "Configure MPLS LDP configuration.";
+              leaf auto-flag {
+                when "../../type='afipv4'";
+                type boolean;
+                must "../auto-flag='false' or (../../../../../../../ni:name='_public_' and /mpls:mpls/mpls-ldp:ldp/mpls-ldp:enable='true')";
+                default "false";
+                description
+                  "Enable/disable auto MPLS LDP configuration on an interface.";
+              }
+            }
+            container advertise-link-attributes {
+              description
+                "Configure ISIS advertise attribute configuration.";
+              leaf enable {
+                type boolean;
+                must "../enable='false' or ../../../../cost-style='wide' or ../../../../cost-style='transition' or ../../../../cost-style='wtransition'";
+                default "false";
+                description
+                  "Enable/disable the ISIS process to advertise link attribute related TLVs on the LSP.";
+              }
+            }
+            container prefix-prioritys {
+              description
+                "List of route priority.";
+              list prefix-priority {
+                key "level priority";
+                description
+                  "Configure route priority.";
+                leaf level {
+                  type level-type-two;
+                  description
+                    "Set a level type for the route priority.";
+                }
+                leaf priority {
+                  type priority-type;
+                  description
+                    "Set a route priority.";
+                }
+                choice policy-flag {
+                  mandatory true;
+                  description
+                    "Set a filtering policy for the route priority.";
+                case tag {
+                  description
+                      "Set a tag for the route priority.";
+                  leaf tag {
+                    type uint32 {
+                      range "1..4294967295";
+                    }
+                    description
+                      "Set a tag for the route priority.";
+                  }
+                }
+                case ip-prefix {
+                  description
+                    "Set the name of an IP prefix list.";
+                  leaf ip-prefix {
+                    when "../../../type='afipv4'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    description
+                      "Set the name of an IP prefix list.";
+                  }
+                }
+                case ipv6-prefix {
+                  description
+                    "Set the name of an IPv6 prefix list.";
+                  leaf ipv6-prefix {
+                    when "../../../type='afipv6'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                    }
+                    description
+                      "Set the name of an IPv6 prefix list.";
+                  }
+                }
+                }
+              }
+            }
+            container frr {
+              description
+                "Configure FRR.";
+              leaf enable {
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable FRR.";
+              }
+              choice policy-type {
+                description
+                  "Type of frr policy route.";
+                case route-policy {
+                  description
+                    "Set a route policy name.";
+                  leaf route-policy {
+                    when "../enable='true'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                    }
+                    description
+                      "Set a route policy name.";
+                  }
+                }
+                case route-filter {
+                  description
+                    "Set a route filter name.";
+                  leaf route-filter {
+                    when "../enable='true'";
+                    type leafref {
+                      path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                    }
+                    description
+                      "Set a route filter name.";
+                  }
+                }
+              }
+              leaf lfa-level1 {
+                when "../enable='true'";
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable ISIS auto FRR of Level 1 and calculate loop free alternate routes using the LFA arithmetic.";
+              }
+              leaf lfa-level2 {
+                when "../enable='true'";
+                type boolean;
+                default "false";
+                description
+                  "Enable/disable ISIS auto FRR of Level 2 and calculate loop free alternate routes using the LFA arithmetic.";
+              }
+              leaf ecmp-level1 {
+                when "../enable='true'";
+                type boolean;
+                default "true";
+                description
+                  "Enable/disable Level 1 ECMP FRR and calculate backup paths for load sharing paths.";
+              }
+              leaf ecmp-level2 {
+                when "../enable='true'";
+                type boolean;
+                default "true";
+                description
+                  "Enable/disable Level 2 ECMP FRR and calculate backup paths for load sharing paths.";
+              }
+              container remote-lfa {
+                when "../../../../../../../ni:name='_public_'"; 
+                description
+                  "Configure RLFA.";
+                leaf rlfa-level1 {
+                  type boolean;
+                   must "../rlfa-level1='false' or (../../../type='afipv6' and ../../../../../afs/af[type='afipv4']/frr/remote-lfa/rlfa-level1='true') or (../../../type='afipv4' and ../../lfa-level1='true')";
+                  default "false";
+                  description
+                    "Enable/disable level 1 remote LFA.";
+                }
+                leaf rlfa-level2 {
+                  type boolean;
+                  must "../rlfa-level2='false' or (../../../type='afipv6' and ../../../../../afs/af[type='afipv4']/frr/remote-lfa/rlfa-level2='true') or (../../../type='afipv4' and ../../lfa-level2='true')";
+                  default "false";
+                  description
+                    "Enable/disable level 2 remote LFA.";
+                }
+                leaf max-cost-level1 {
+                  when "../../../type='afipv4' and ../rlfa-level1='true'";
+                  type uint32 {
+                    range "1..4261412864";
+                  }
+                  default "4261412864";
+                  description
+                    "Remote-lfa tunnel ldp maximum-reachable-cost level-1.";
+                }
+                leaf max-cost-level2 {
+                  when "../../../type='afipv4' and ../rlfa-level2='true'";
+                  type uint32 {
+                    range "1..4261412864";
+                  }
+                  default "4261412864";
+                  description
+                    "Remote-lfa tunnel ldp maximum-reachable-cost level-2.";
+                }
+                leaf ip-prefix-level1 {
+                  when "../../../type='afipv4' and ../../enable='true'";
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                  }
+                  description
+                    "Filter PQ node. Those nodes which don't pass filter can't be PQ node.";
+                }
+                leaf ip-prefix-level2 {
+                  when "../../../type='afipv4' and ../../enable='true'";
+                  type leafref {
+                    path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                  }
+                  description
+                    "Filter PQ node. Those nodes which don't pass filter can't be PQ node.";
+                }
+              }
+              container tiebreaker {
+                description
+                  "Configure a Rule of Selecting a Backup Path for IS-IS Auto FRR.";
+                leaf node-protect-level1 {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  must "../../lfa-level1='true' or ../node-protect-level1=40";
+                  default "40";
+                  description
+                    "Set the value of level1 node protect prefer, the default vale is 40.";
+                }
+                leaf node-protect-level2 {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  must "../../lfa-level2='true' or ../node-protect-level2=40";
+                  default "40";
+                  description
+                    "Set the value of level2 node protect prefer, the default vale is 40.";
+                }
+                leaf lowest-cost-level1 {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  must "../../lfa-level1='true' or ../lowest-cost-level1=20";
+                  default "20";
+                  description
+                    "Set the value of level1 lowcost prefer, the default vale is 20.";
+                }
+                leaf lowest-cost-level2 {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  must "../../lfa-level2='true' or ../lowest-cost-level2=20";
+                  default "20";
+                  description
+                    "Set the value of level2 lowcost prefer, the default vale is 20.";
+                }
+                leaf non-ecmp-level1 {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  must "../../lfa-level1='true' or ../non-ecmp-level1=10";
+                  default "10";
+                  description
+                    "Set the value of level1 non ecmp path prefer, the default vale is 10.";
+                }
+                leaf non-ecmp-level2 {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  must "../../lfa-level2='true' or ../non-ecmp-level2=10";
+                  default "10";
+                  description
+                    "Set the value of level2 non ecmp path prefer, the default vale is 10.";
+                }
+                leaf srlg-disjoint-level1 {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  must "../../lfa-level1='true' or ../srlg-disjoint-level1=5";
+                  default "5";
+                  description
+                    "Set the value of level1 srlg-disjoint path prefer, the default vale is 5.";
+                }
+                leaf srlg-disjoint-level2 {
+                  type uint8 {
+                    range "1..255";
+                  }
+                  must "../../lfa-level2='true' or ../srlg-disjoint-level2=5";
+                  default "5";
+                  description
+                    "Set the value of level2 srlg-disjoint path prefer, the default vale is 5.";
+                }
+              }
+              container tilfa {
+                description
+                  "Configure TILFA.";
+                leaf enable-level1 {
+                  type boolean;
+                  must "../../lfa-level1='true' or ../enable-level1='false'";
+                  default "false";
+                  description
+                    "Enable/disable Level 1 TILFA.";
+                }
+                leaf enable-level2 {
+                  type boolean;
+                  must "../../lfa-level2='true' or ../enable-level2='false'";
+                  default "false";
+                  description
+                    "Enable/disable Level 2 TILFA.";
+                }
+              }
+            }
+            container filter-import {
+              presence "filter policy import";
+              description
+                "Configure filter incoming routing updates.";
+              choice policy-type {
+                mandatory "true";
+                description
+                  "Mode of the policy used for filter import.";
+                case basic-acl4 {
+                  description
+                    "Apply basic ACL name or ACL number.";
+                  leaf name-or-num-v4 {
+                    when "../../type='afipv4'";
+                    type leafref {
+                      path "/acl:acl/acl:groups/acl:group/acl:identity";
+                    }
+                    must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                    description
+                      "Apply basic ACL name or ACL number.";
+                  }
+                }
+                case basic-acl6 {
+                  description
+                    "Apply basic ACL6 name or ACL6 number.";
+                  leaf name-or-num-v6 {
+                    when "../../type='afipv6'";
+                    type leafref {
+                      path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                    }
+                    must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+                    description
+                      "Apply basic ACL6 name or ACL6 number.";
+                  }
+                }
+                case ipv4-prefix {
+                  description
+                    "Set the name of an IP prefix list.";
+                  leaf ipv4-prefix {
+                    when "../../type='afipv4'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                    }
+                    description
+                      "Set the name of an IP prefix list.";
+                  }
+                }
+                case ipv6-prefix {
+                  description
+                    "Set the name of an IPv6 prefix list.";
+                  leaf ipv6-prefix {
+                    when "../../type='afipv6'";
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                    }
+                    description
+                      "Set the name of an IPv6 prefix list.";
+                  }
+                }
+                case route-policy {
+                  description
+                    "Set a route policy name.";
+                  leaf route-policy {
+                    type leafref {
+                      path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                    }
+                    description
+                      "Name of the route filtering policy used during route leaking.";
+                  }
+                }
+                case route-filter {
+                  description
+                    "Set a route filter name.";
+                  leaf route-filter {
+                    type leafref {
+                      path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                    }
+                    description
+                      "Set a route filter name.";
+                  }
+                }
+              }
+            }
+            container filter-exports {
+              description
+                "List of filter outgoing routing update.";
+              list filter-export {
+                key "protocol protocol-id";
+                description
+                  "Configure filter outgoing routing update.";
+                leaf protocol {
+                  type filter-export-type;
+                  must "not(../protocol='ospfv3' or ../protocol='ripng') or ../../../type='afipv6' and (../protocol='ospfv3' or ../protocol='ripng')";
+                  description
+                    "Protocol that advertises routes.";
+                }
+                leaf protocol-id {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  must "../protocol-id=0 and (../protocol='direct' or ../protocol='static' or ../protocol='bgp' or ../protocol='all' or ../protocol='unr') or ../protocol-id>0 and (../protocol='ospf' or ../protocol='rip' or ../protocol='ospfv3' or ../protocol='ripng' or (../protocol='isis' and ../protocol-id!=../../../../../id))";
+                  description
+                    "Process ID when the advertised protocol is RIP, ISIS, or OSPF.";
+                }
+                choice policy-type {
+                  mandatory "true";
+                  description
+                    "Mode of the policy used for filter export.";
+                  case basic-acl4 {
+                    description
+                      "Apply basic ACL name or ACL number.";
+                    leaf name-or-num-v4 {
+                      when "../../../type='afipv4'";
+                      type leafref {
+                        path "/acl:acl/acl:groups/acl:group/acl:identity";
+                      }
+                      must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Apply basic ACL name or ACL number.";
+                    }
+                  }
+                  case basic-acl6 {
+                    description
+                      "Apply basic ACL6 name or ACL6 number.";
+                    leaf name-or-num-v6 {
+                      when "../../../type='afipv6'";
+                      type leafref {
+                        path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                      }
+                      must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+                      description
+                        "Apply basic ACL6 name or ACL6 number.";
+                    }
+                  }
+                  case ipv4-prefix {
+                    description
+                      "Set the name of an IP prefix list.";
+                    leaf ipv4-prefix {
+                      when "../../../type='afipv4'";
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Set the name of an IP prefix list.";
+                    }
+                  }
+                  case ipv6-prefix {
+                    description
+                      "Set the name of an IPv6 prefix list.";
+                    leaf ipv6-prefix {
+                      when "../../../type='afipv6'";
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                      }
+                      description
+                        "Set the name of an IPv6 prefix list.";
+                    }
+                  }
+                  case route-policy {
+                    description
+                      "Set a route policy name.";
+                    leaf route-policy {
+                      type leafref {
+                        path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                      }
+                      description
+                        "Name of the route filtering policy used during route leaking.";
+                    }
+                  }
+                  case route-filter {
+                    description
+                      "Set a route filter name.";
+                    leaf route-filter {
+                      type leafref {
+                        path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                      }
+                      description
+                        "Set a route filter name.";
+                    }
+                  }
+                }
+              }
+            }
+            container topologys {
+              description
+                "List of multi topology for an ISIS process.";
+              list topology {
+                key "mt-id";
+                max-elements  "62";
+                description
+                  "Configure multi topology for an ISIS process.";
+                leaf mt-id {
+                  type uint32 {
+                    range "3..4095";
+                  }
+                  must "(../../../type='afipv4' and (../mt-id=3 and ../topo-name='multicast')) or (../../../type='afipv6' and (../mt-id=4 and ../topo-name='multicast')) or (../mt-id>=6 and ../topo-name)";
+                  must "(../../../../../cost-style='wide' or ../../../../../cost-style='wtransition')";
+                  description
+                    "ISIS Multi topology ID.Mid values do not include 5.";
+                }
+                leaf topo-name {
+                  type leafref {
+                    path "/ni:network-instance/ni:instances/ni:instance/l3vpn:afs/l3vpn:af/rt:routing/rt:routing-manage/rt:topologys/rt:topology/rt:name";
+                  }
+                  must "((../mt-id=3 or ../mt-id=4) and ../topo-name='multicast') or (../mt-id>=6 and ../topo-name!='base' and ../topo-name!='multicast')";
+                  mandatory true;
+                  description
+                    "Multi topology name.";
+                }
+                leaf max-load-balancing {
+                  type uint32 {
+                    range "1..128";
+                  }
+                  default "64";
+                  description
+                    "Set the maximum number of equal cost routes for load balancing. The range of values is controlled by PAF.";
+                }
+                leaf auto-cost {
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable/disable automatic cost calculation for the system.";
+                }
+                leaf bandwidth {
+                  type uint32 {
+                    range "1..2147483648";
+                  }
+                  default "100";
+                  description
+                    "Set the bandwidth reference used for the automatic cost calculation on an interface.";
+                }
+                container attach-bit {
+                  description
+                    "Configure LSPs with the ATT bit.";
+                  leaf adv-control {
+                    type att-adv-mode;
+                    default "no-type";
+                    description
+                      "Control to advertise the ATT bit.";
+                  }
+                  leaf avoid-learn {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable prevent the device from learning the LSPs with the ATT bit.";
+                  }
+                }
+                container preference {
+                  description
+                    "Configure a priority for ISIS.";
+                  leaf value {
+                    type uint32 {
+                      range "1..255";
+                    }
+                    default "15";
+                    description
+                      "Set the priority for protocols. The smaller the value, the higher the priority.";
+                  }
+                  choice policy-type {
+                    description
+                      "Type of preference rule.";
+                    case route-policy {
+                      description
+                        "Set a route policy name.";
+                      leaf route-policy {
+                        type leafref {
+                          path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                        }
+                        description
+                          "Set a route policy name.";
+                      }
+                    }
+                    case route-filter {
+                      description
+                        "Set a route filter name.";
+                      leaf route-filter {
+                        type leafref {
+                          path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                        }
+                        description
+                          "Set a route filter name.";
+                      }
+                    }
+                  }
+                }
+                container default-route {
+                  presence "Enable default routes.";
+                  description
+                    "Configure the level 1 and level 2 routers to generate default routes.";
+                  leaf mode {
+                    type default-mode;
+                    must "../mode!='match-any' or ../mode='match-any' and (../route-policy-name)";
+                    default "always";
+                    description
+                      "Set the default routes mode. When the mode is not match any, route policy name and route filter name cannot be configured.";
+                  }
+                  choice policy-type {
+                    description
+                      "Mode of the policy used for default route.";
+                    case route-policy-name {
+                      description
+                        "Name of a routing policy.";
+                      leaf route-policy-name {
+                        when "../mode='match-any'";
+                        type leafref {
+                          path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                        }
+                        description
+                          "Set a route policy name for default routes.";
+                      }
+                    }
+                    case route-filter-name {
+                      description
+                        "Name of a routing Filter.";
+                      leaf route-filter-name {
+                        when "../mode='match-any'";
+                        type leafref {
+                          path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                        }
+                        description
+                          "Set a xpl route policy name entity for default routes.";
+                      }
+                    }
+                  }
+                  leaf cost {
+                    type uint32 {
+                      range "0..4261412864";
+                    }
+                    default "0";
+                    description
+                      "Set a cost for default routes. If the ISIS cost type is narrow, narrow-compatible, or compatible, the value ranges from 1 to 63.";
+                  }
+                  leaf tag {
+                    type uint32 {
+                      range "0..4294967295";
+                    }
+                    default "0";
+                    description
+                      "Set a tag for default routes.";
+                  }
+                  leaf level-type {
+                    type level-type;
+                    default "level-2";
+                    description
+                      "Set a level for default routes.";
+                  }
+                  leaf avoid-learning {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enable/disable to prevent ISIS processes from learning default routes and adding the default routes to the routing table. If the default routes that already exist in the routing table are active, the status of the route is set to inactive.";
+                  }
+                }
+                container import-routes {
+                  description
+                    "List of import route of other routing protocols.";
+                  list import-route {
+                    key "protocol process-id";
+                    description
+                      "Configure import route of other routing protocols.";
+                    leaf protocol {
+                      type import-protocol;
+                      must "../protocol='direct' or ../protocol='isis' or ../protocol='static'";
+                      description
+                        "Set the routing protocol from which routes are imported.";
+                    }
+                    leaf process-id {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      must "../process-id=0 and (../protocol='direct' or ../protocol='static') or ../process-id>0 and (../protocol='isis')";
+                      description
+                        "Set the process ID. The process ID is required when the routing protocol is ISIS.";
+                    }
+                    leaf cost {
+                      when "../inherit-cost='false'";
+                      type uint32 {
+                        range "0..4261412864";
+                      }
+                      default "0";
+                      description
+                        "Set a cost for imported routes. If the ISIS cost type is narrow, narrow-compatible, or compatible, the value ranges from 1 to 63.";
+                    }
+                    leaf tag {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      default "0";
+                      description
+                        "Set a tag for imported routes. A value of 0 indicates disable.";
+                    }
+                    choice policy-type {
+                      description
+                        "Mode of the policy used for import route.";
+                      case route-policy-name {
+                        description
+                          "Set a route policy name.";
+                        leaf route-policy-name {
+                          type leafref {
+                            path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                          }
+                          description
+                            "Set a route policy name.";
+                        }
+                      }
+                    }
+                    leaf level-type {
+                      type level-type;
+                      default "level-2";
+                      description
+                        "Import routes to the level 1 or (and) level 2 routing table.";
+                    }
+                    leaf inherit-cost {
+                      type boolean;
+                      must "../inherit-cost='false' or ../protocol!='static'";
+                      default "false";
+                      description
+                        "Enable/disable keep the original cost of a route when importing the route to ISIS.";
+                    }
+                  }
+                }
+                container leak-route-level2-to-level1 {
+                    description
+                      "Configure to control ISIS to perform route leaking from level 2 to level 1. This command needs to be set on the level 1 2 router connected to the external areas.";
+                    leaf tag {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      default "0";
+                      description
+                        "Management label value assigned for imported routes. The label value is the name of route filtering during route leaking. A value of 0 indicates disable.";
+                    }
+                    choice policy-type {
+                      description
+                        "Mode of the policy used for route leaking.";
+                      case basic-acl4 {
+                        description
+                          "Apply basic ACL name or ACL number.";
+                        leaf name-or-num-v4 {
+                          when "../../../../type='afipv4'";
+                          type leafref {
+                            path "/acl:acl/acl:groups/acl:group/acl:identity";
+                          }
+                          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                          description
+                            "Apply basic ACL name or ACL number.";
+                        }
+                      }
+                      case basic-acl6 {
+                        description
+                          "Apply basic ACL6 name or ACL6 number.";
+                        leaf name-or-num-v6 {
+                          when "../../../../type='afipv6'";
+                          type leafref {
+                            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                          }
+                          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+                          description
+                            "Apply basic ACL6 name or ACL6 number.";
+                        }
+                      }
+                      case ipv4-prefix {
+                        description
+                          "Set the name of an IP prefix list.";
+                        leaf ipv4-prefix {
+                          when "../../../../type='afipv4'";
+                          type leafref {
+                            path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                          }
+                          description
+                            "Set the name of an IP prefix list.";
+                        }
+                      }
+                      case ipv6-prefix {
+                        description
+                          "Set the name of an IPv6 prefix list.";
+                        leaf ipv6-prefix {
+                          when "../../../../type='afipv6'";
+                          type leafref {
+                            path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                          }
+                          description
+                            "Set the name of an IPv6 prefix list.";
+                        }
+                      }
+                      case route-policy-name {
+                        description
+                          "Set a route policy name.";
+                        leaf route-policy-name {
+                          type leafref {
+                            path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                          }
+                          description
+                            "Name of the route filtering policy used during route leaking.";
+                        }
+                      }
+                      case route-filter-name {
+                        description
+                          "Set a route filter name.";
+                        leaf route-filter-name {
+                          type leafref {
+                            path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                          }
+                          description
+                            "Set a route filter name.";
+                        }
+                      }
+                    }
+                    leaf allow-filter {
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable the name of a route policy which filters routes based on the tag or other protocol parameters.";
+                    }
+                    leaf allow-updown {
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable the Up/Down bit for routes.";
+                    }
+                }
+                container leak-route-level1-to-level2 {
+                    description
+                      "Configure the leaking of the routes from a level 1 area to a level 2 area. This is convenient for route management. This command needs to be configured on the level 1 2 router connected to external areas.";
+                    leaf enable {
+                      type boolean;
+                      default "true";
+                      description
+                        "Enable/disable level 1 to level 2 route filtering.";
+                    }
+                    choice policy-type {
+                      description
+                        "Type of filter policy rule.";
+                      case basic-acl4 {
+                        description
+                          "Apply basic ACL name or ACL number.";
+                        leaf name-or-num-v4 {
+                          when "../enable='true' and ../../../../type='afipv4'";
+                          type leafref {
+                            path "/acl:acl/acl:groups/acl:group/acl:identity";
+                          }
+                          must "/acl:acl/acl:groups/acl:group[acl:identity=current()]/acl:type='basic'";
+                          description
+                            "Apply basic ACL name or ACL number.";
+                        }
+                      }
+                      case basic-acl6 {
+                        description
+                          "Apply basic ACL6 name or ACL6 number.";
+                        leaf name-or-num-v6 {
+                          when "../enable='true' and ../../../../type='afipv6'";
+                          type leafref {
+                            path "/acl:acl/acl:group6s/acl:group6/acl:identity";
+                          }
+                          must "/acl:acl/acl:group6s/acl:group6[acl:identity=current()]/acl:type='basic'";
+                          description
+                            "Apply basic ACL6 name or ACL6 number.";
+                        }
+                      }
+                      case ipv4-prefix {
+                        description
+                          "Set the name of an IP prefix list.";
+                        leaf ipv4-prefix {
+                          when "../enable='true' and ../../../../type='afipv4'";
+                          type leafref {
+                            path "/rtp:routing-policy/rtp:ipv4-prefix-filters/rtp:ipv4-prefix-filter/rtp:name";
+                          }
+                          description
+                            "Set the name of an IP prefix list.";
+                        }
+                      }
+                      case ipv6-prefix {
+                        description
+                          "Set the name of an IPv6 prefix list.";
+                        leaf ipv6-prefix {
+                          when "../enable='true' and ../../../../type='afipv6'";
+                          type leafref {
+                            path "/rtp:routing-policy/rtp:ipv6-prefix-filters/rtp:ipv6-prefix-filter/rtp:name";
+                          }
+                          description
+                            "Set the name of an IPv6 prefix list.";
+                        }
+                      }
+                      case route-policy {
+                        description
+                          "Set a route policy name.";
+                        leaf route-policy {
+                          when "../enable='true'";
+                          type leafref {
+                            path "/rtp:routing-policy/rtp:policy-definitions/rtp:policy-definition/rtp:name";
+                          }
+                          description
+                            "Set a route policy name.";
+                        }
+                      }
+                      case route-filter {
+                        description
+                          "Set a route filter name.";
+                        leaf route-filter {
+                          when "../enable='true'";
+                          type leafref {
+                            path "/xpl:xpl/xpl:route-filters/xpl:route-filter/xpl:name";
+                          }
+                          description
+                            "Set a route filter name.";
+                        }
+                      }
+                    }
+                    leaf tag {
+                      when "../enable='true'";
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      default "0";
+                      description
+                        "Administrative tag assigned for imported routes. A value of 0 indicates disable.";
+                    }
+                    leaf allow-filter {
+                      when "../enable='true'";
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable the name of a route policy which filters routes based on the tag or other protocol parameters.";
+                  }
+                }
+                container summary-prefixs {
+                  description
+                    "List of summary routes.";
+                  list summary-prefix {
+                    key "prefix network-mask";
+                    description
+                      "Configure summary route.";
+                    leaf prefix {
+                      type inet:ip-address-no-zone;
+                      description
+                        "Set a summary address. Prefix is the address after mask.";
+                    }
+                    leaf network-mask {
+                      type uint8 {
+                        range "0..128";
+                      }
+                      description
+                        "Set the summary address mask. If summary address is the type of IPv4, the max value is 32. If summary address is the type of IPv6, the max value is 128.";
+                    }
+                    leaf level-type {
+                      type level-type;
+                      default "level-2";
+                      description
+                        "Set the level for summary routes.";
+                    }
+                    leaf tag {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      default "0";
+                      description
+                        "Set a tag for summary routes.";
+                    }
+                    leaf gen-null0-route {
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable generate a Null 0 route to prevent routing loops.";
+                    }
+                    leaf avoid-feadback {
+                      type boolean;
+                      default "false";
+                      description
+                        "Enable/disable avoid learning summary routes.";
+                    }
+                    leaf cost {
+                      type uint32 {
+                        range "1..16777215";
+                      }
+                      description
+                        "Set a cost for summarized routes. If the ISIS cost type is narrow, narrow-compatible, or compatible, the value ranges from 1 to 63. If the ISIS cost type is wide or wide-compatible, the value ranges from 1 to 16777215.";
+                    }
+                  }
+                }                
+                container ipv4-import-routes {
+                  when "../../../type='afipv4'";
+                  config false;
+                  description
+                    "List of the imported IPv4 route.";
+                  list ipv4-import-route {
+                    key "level protocol address mask";
+                    description
+                      "Statistics of the imported IPv4 route.";
+                    leaf level {
+                      type level-type;
+                      description
+                        "Level type.";
+                    }
+                    leaf protocol {
+                      type string {
+                        length "1..4";
+                        ext:value-meaning {
+                          ext:item D {
+                            ext:meaning Direct;
+                          }
+                          ext:item I {
+                            ext:meaning ISIS;
+                          }
+                          ext:item O {
+                            ext:meaning OSPF;
+                          }
+                          ext:item B {
+                            ext:meaning BGP;
+                          }
+                          ext:item R {
+                            ext:meaning RIP;
+                          }
+                          ext:item U {
+                            ext:meaning UNR;
+                          }
+                        }  
+                      }
+                      description
+                        "Protocol type of the imported routes.";
+                    }
+                    leaf address {
+                      type inet:ip-address-no-zone;
+                      description
+                        "IPv4 address prefix of the imported routes.";
+                    }
+                    leaf mask {
+                      type uint32;
+                      description
+                        "IPv4 mask of the imported routes.";
+                    }
+                    leaf internal-cost {
+                      type uint32;
+                      description
+                        "IPv4 internal cost value of the imported routes.";
+                    }
+                    leaf external-cost {
+                      type string {
+                        length "1..12";
+                      }
+                      description
+                        "IPv4 external cost value of the imported routes.";
+                    }
+                    leaf tag {
+                      type string {
+                        length "1..12";
+                      }
+                      description
+                        "Tag value of the imported routes.";
+                    }
+                  }
+                }
+                uses multi-topology-type;
+                container ipv4-routes {
+                    when "../../../type='afipv4'";
+                    config false;
+                    description
+                      "List of routing information.";
+                    list ipv4-route {
+                      key "level address mask next-hop";
+                      description
+                        "Statistics of routing information.";
+                      leaf level {
+                        type level-type;
+                        description
+                          "Level type.";
+                      }
+                      leaf address {
+                        type inet:ip-address-no-zone;
+                        description
+                          "IPv4 address prefix.";
+                      }
+                      leaf mask {
+                        type uint32;
+                        description
+                          "IPv4 address mask.";
+                      }
+                      leaf next-hop {
+                        type string {
+                          length "1..20";
+                        }
+                        description
+                          "Next hop of a route.";
+                      }
+                      leaf internal-cost {
+                        type uint32;
+                        description
+                          "Internal cost value of IPv4 routes.";
+                      }
+                      leaf external-cost {
+                        type string {
+                          length "1..8";
+                        }
+                        description
+                          "External cost value of IPv4 routes.";
+                      }
+                      leaf interface-name {
+                        type string {
+                          length "1..64";
+                        }
+                        description
+                          "Outbound interface name of a route.";
+                      }
+                      leaf flags {
+                        type string {
+                          length "1..12";
+                        }
+                        description
+                          "Route Flags: 
+                           D: Direct
+                           A: Added to URT
+                           L: Advertised in LSPs
+                           S: IGP Shortcut
+                           U: Up/Down Bit Set.";
+                      }
+                      leaf priority {
+                        type string {
+                          length "1..31";
+                        }
+                        description
+                          "Route priority: Critical, High, Medium, or Low.";
+                      }
+                      leaf tag {
+                        type string {
+                          length "1..31";
+                        }
+                        description
+                          "Tag of a route.";
+                      }
+                    }
+                  }
+                  container ipv6-routes {
+                    when "../../../type='afipv6'";
+                    config false;
+                    description
+                      "List of IPv6 route.";
+                    list ipv6-route {
+                      key "level address mask next-hop";
+                      description
+                        "Statistics of IPv6 route.";
+                      leaf level {
+                        type level-type;
+                        description
+                          "Level type.";
+                      }
+                      leaf address {
+                        type inet:ipv6-address-no-zone;
+                        description
+                          "IPv6 address prefix of a route.";
+                      }
+                      leaf mask {
+                        type uint32;
+                        description
+                          "IPv6 address mask of a route.";
+                      }
+                      leaf next-hop {
+                        type string {
+                          length "1..60";
+                        }
+                        description
+                          "Next hop of a route.";
+                      }
+                      leaf interface-name {
+                        type string {
+                          length "1..64";
+                        }
+                        description
+                          "Outbound interface name of a route.";
+                      }
+                      leaf cost {
+                        type uint32;
+                        description
+                          "Cost value of IPv6 routes.";
+                      }
+                      leaf flags {
+                        type string {
+                          length "1..12";
+                        }
+                        description
+                          "Route type.";
+                      }
+                      leaf priority {
+                        type string {
+                          length "1..31";
+                        }
+                        description
+                          "Route priority: Critical, High, Medium, or Low.";
+                      }
+                      leaf tag {
+                        type string {
+                          length "1..31";
+                        }
+                        description
+                          "Tag of a route.";
+                      }
+                    }
+                  }
+                }
+              }
+              container ipv4-import-routes {
+                when "../type='afipv4'";
+                config false;
+                description
+                  "List of information about the imported IPv4 route.";
+                list ipv4-import-route {
+                  key "level protocol address mask";
+                  description
+                    "Statistics of information about the imported IPv4 route.";
+                  leaf level {
+                    type level-type;
+                    description
+                      "Level type.";
+                  }
+                  leaf protocol {
+                    type string {
+                      length "1..4";
+                      ext:value-meaning {
+                        ext:item D {
+                          ext:meaning Direct;
+                        }
+                        ext:item I {
+                          ext:meaning ISIS;
+                        }
+                        ext:item O {
+                          ext:meaning OSPF;
+                        }
+                        ext:item B {
+                          ext:meaning BGP;
+                        }
+                        ext:item R {
+                          ext:meaning RIP;
+                        }
+                        ext:item U {
+                          ext:meaning UNR;
+                        }
+                      }  
+                    }
+                    description
+                      "Protocol type of the imported routes.";
+                  }
+                  leaf address {
+                    type inet:ip-address-no-zone;
+                    description
+                      "IPv4 address prefix of the imported routes.";
+                  }
+                  leaf mask {
+                    type uint32;
+                    description
+                      "IPv4 mask of the imported routes.";
+                  }
+                  leaf internal-cost {
+                    type uint32;
+                    description
+                      "IPv4 internal cost value of the imported routes.";
+                  }
+                  leaf external-cost {
+                    type string {
+                      length "1..12";
+                    }
+                    description
+                      "IPv4 external cost value of the imported routes.";
+                  }
+                  leaf tag {
+                    type string {
+                      length "1..12";
+                    }
+                    description
+                      "Tag value of the imported routes.";
+                  }
+                }
+              }
+              uses multi-topology-type;
+              container ipv4-routes {
+                when "../type='afipv4'";
+                config false;
+                description
+                  "List of routing information.";
+                list ipv4-route {
+                  key "level address mask next-hop";
+                  description
+                    "Statistics of routing information.";
+                  leaf level {
+                    type level-type;
+                    description
+                      "Level type.";
+                  }
+                  leaf address {
+                    type inet:ip-address-no-zone;
+                    description
+                      "IPv4 address prefix.";
+                  }
+                  leaf mask {
+                    type uint32;
+                    description
+                      "IPv4 address mask.";
+                  }
+                  leaf next-hop {
+                    type string {
+                      length "1..20";
+                    }
+                    description
+                      "Next hop of a route.";
+                  }
+                  leaf internal-cost {
+                    type uint32;
+                    description
+                      "Internal cost value of IPv4 routes.";
+                  }
+                  leaf external-cost {
+                    type string {
+                      length "1..8";
+                    }
+                    description
+                      "External cost value of IPv4 routes.";
+                  }
+                  leaf interface-name {
+                    type string {
+                      length "1..64";
+                    }
+                    description
+                      "Outbound interface name of a route.";
+                  }
+                  leaf flags {
+                    type string {
+                      length "1..12";
+                    }
+                    description
+                      "Route Flags: 
+                       D: Direct
+                       A: Added to URT
+                       L: Advertised in LSPs
+                       S: IGP Shortcut
+                       U: Up/Down Bit Set.";
+                  }
+                  leaf priority {
+                    type string {
+                      length "1..31";
+                    }
+                    description
+                      "Route priority: Critical, High, Medium, or Low.";
+                  }
+                  leaf tag {
+                    type string {
+                      length "1..31";
+                    }
+                    description
+                      "Tag of a route.";
+                  }
+                }
+              }
+              container ipv6-routes {
+                when "../type='afipv6'";
+                config false;
+                description
+                  "List of IPv6 route.";
+                list ipv6-route {
+                  key "level address mask next-hop";
+                  description
+                    "Statistics of IPv6 route.";
+                  leaf level {
+                    type level-type;
+                    description
+                      "Level type.";
+                  }
+                  leaf address {
+                    type inet:ipv6-address-no-zone;
+                    description
+                      "IPv6 address prefix of a route.";
+                  }
+                  leaf mask {
+                    type uint32;
+                    description
+                      "IPv6 address mask of a route.";
+                  }
+                  leaf next-hop {
+                    type string {
+                      length "1..60";
+                    }
+                    description
+                      "Next hop of a route.";
+                  }
+                  leaf interface-name {
+                    type string {
+                      length "1..64";
+                    }
+                    description
+                      "Outbound interface name of a route.";
+                  }
+                  leaf cost {
+                    type uint32;
+                    description
+                      "Cost value of IPv6 routes.";
+                  }
+                  leaf flags {
+                    type string {
+                      length "1..12";
+                    }
+                    description
+                      "Route type.";
+                  }
+                  leaf priority {
+                    type string {
+                      length "1..31";
+                    }
+                    description
+                      "Route priority: Critical, High, Medium, or Low.";
+                  }
+                  leaf tag {
+                    type string {
+                      length "1..31";
+                    }
+                    description
+                      "Tag of a route.";
+                  }
+              }
+            }
+          }
+        }
+        container avoid-micro-loop {
+          description
+            "Configure ISIS avoid microloop.";
+          leaf frr-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable FRR avoid microloop.";
+          }
+          leaf frr-rib-update-delay {
+            type uint32 {
+              range "100..5000";
+            }
+            units "ms";
+            default "100";
+            description
+              "Set the route delivery delay for FRR avoid microloop.";
+          }
+          leaf sr-enable {
+            type boolean;
+            default "false";
+            status deprecated;
+            description
+              "Enable/disable SR avoid microloop. Depend on segment routing MPLS.The node sr-enable is deprecated. You are advised to use the node sr-enable-flag.";
+          }
+          leaf sr-rib-update-delay {
+            type uint16 {
+              range "1000..60000";
+            }
+            units "ms";
+            default "5000";
+            status deprecated;
+            description
+            "Set the route delivery delay for SR avoid microloop. Depend on segment routing MPLS.The node sr-rib-update-delay is deprecated. You are advised to use the node sr-new-update-delay.";
+          }
+          leaf te-tunnel-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable TE tunnel convergence delay.";
+          }
+          leaf te-tunnel-delay {
+            type uint16 {
+              range "100..30000";
+            }
+            units "ms";
+            default "1000";
+            description
+              "Set the route which out interface is TE tunnel convergence delay time.";
+          }
+        }
+        container link-groups {
+          description
+            "List of link group.";
+          list link-group {
+            key "name";
+            description
+              "Configure link group.";
+            leaf name {
+              type string {
+                length "1..32";
+                pattern ".*\\S.*";
+              }
+              description
+                "Group Name.";
+            }
+            leaf min-members {
+              type uint8 {
+                range "2..64";
+              }
+              must "(../min-members<=../revert-members)";
+              default "2";
+              description
+                "Min members of link group.";
+            }
+            leaf revert-members {
+              type uint8 {
+                range "2..64";
+              }
+              must "(../min-members<=../revert-members)";
+              default "2";
+              description
+                "Members of revert cost.";
+            }
+            leaf cost-offset {
+              type uint32 {
+                range "1..16777215";
+              }
+              default "1";
+              description
+                "OffSet of cost.";
+            }
+          }
+        }
+        container circ-datas {
+          config false;
+          description
+            "List of circuit information.";
+          list circ-data {
+            key "if-name";
+            description
+              "Statistics of circuit information.";
+            leaf if-name {
+              type string {
+                length "1..64";
+              }
+              description
+                "Name of the circuit.";
+            }
+            leaf v4-cost-level-1 {
+              type uint32 {
+                range "0..16777215";
+              }
+              description
+                "Level1 cost of IPv4.";
+            }
+            leaf v4-cost-level-2 {
+              type uint32 {
+                range "0..16777215";
+              }
+              description
+                "Level2 cost of IPv4.";
+            }
+            leaf v6-cost-level-1 {
+              type uint32 {
+                range "0..16777215";
+              }
+              description
+                "Level1 cost of IPv6.";
+            }
+            leaf v6-cost-level-2 {
+              type uint32 {
+                range "0..16777215";
+              }
+              description
+                "Level2 cost of IPv6.";
+            }
+          }
+        }
+        container bfd-sessions {
+          config false;
+          description
+            "List of BFD session information.";
+          list bfd-session {
+            key "peer-level peer-ip local-ip";
+            description
+              "Statistics of BFD session information.";
+            leaf peer-level {
+              type level-type;
+              description
+                "Level type of the neighbor.";
+            }
+            leaf peer-ip {
+              type inet:ip-address-no-zone;
+              description
+                "IP address of the neighbor interface.";
+            }
+            leaf local-ip {
+              type inet:ip-address-no-zone;
+              description
+                "IP address of the local interface.";
+            }
+            leaf state {
+              type bfd-state-type;
+              description
+                "BFD status of a session.";
+            }
+            leaf min-tx {
+              type uint32;
+              description
+                "Minimum interval at which BFD packets are sent after negotiation.";
+            }
+            leaf min-rx {
+              type uint32;
+              description
+                "Minimum interval at which BFD packets are received after negotiation.";
+            }
+            leaf mul-number {
+              type uint32;
+              description
+                "Remote BFD detection multiplier.";
+            }
+            leaf system-id {
+              type string {
+                length "1..16";
+              }
+              description
+                "System ID of the neighbor.";
+            }
+            leaf circuit-name {
+              type string {
+                length "1..64";
+              }
+              description
+                "Interface name.";
+            }
+          }
+        }
+        container peers {
+          config false;
+          description
+            "List of neighbor information.";
+          list peer {
+            key "system-id level circuit-id interface-name";
+            description
+              "Statistics of neighbor information.";
+            leaf system-id {
+              type string {
+                length "1..256";
+              }
+              description
+                "Neighbor system ID.";
+            }
+            leaf level {
+              type level-type;
+              description
+                "Level type of a neighbor.";
+            }
+            leaf circuit-id {
+              type string {
+                length "1..260";
+              }
+              description
+                "Interface ID of a neighbor.";
+            }
+            leaf interface-name {
+              type string {
+                length "1..64";
+              }
+              description
+                "Interface name of a neighbor.";
+            }
+            leaf host-name {
+              type string {
+                length "1..256";
+              }
+              description
+                "System name of a neighbor.";
+              ext:support-filter "true";
+            }
+            leaf status {
+              type adj-status;
+              description
+                "Status of a neighbor.";
+            }
+            leaf hold-time {
+              type uint32;
+              units "s";
+              description
+                "Holdtime of a neighbor.";
+            }
+            leaf priority {
+              type string {
+                length "1..4";
+              }
+              description
+                "Priority of a neighbor.";
+            }
+            leaf area-addr {
+              type string {
+                length "1..120";
+              }
+              description
+                "Area address of a neighbor.";
+            }
+            leaf up-time {
+              type string {
+                length "1..30";
+              }
+              units "s";
+              description
+                "Up time of a neighbor.";
+            }
+            leaf up-time-stamp {
+              type yang:date-and-time;
+              units "s";
+              description
+                "Up time stamp of a neighbor.";
+            }
+            leaf adj-mt-id {
+              type string {
+                length "1..512";
+              }
+              description
+                "Neighbor MT ID.";
+            }
+            leaf local-mt-id {
+              type string {
+                length "1..200";
+              }
+              description
+                "Local MT ID.";
+            }
+            leaf protocol {
+              type peer-protocol;
+              description
+                "Neighbor's supported IP protocols.";
+            }
+            leaf restart-capable {
+              type string {
+                length "1..5";
+              }
+              description
+                "Restart setting.";
+            }
+            leaf suppressed-adj {
+              type string {
+                length "1..5";
+              }
+              description
+                "Suppress advertise adjacency setting.";
+            }
+            leaf adj-sid {
+              type string {
+                length "1..512";
+              }
+              description
+                "Neighbor SID.";
+            }
+            leaf ipv6-link-local-addr {
+              type string {
+                length "1..60";
+              }
+              description
+                "Neighbor IPv6 link local address.";
+            }
+            container ipv4-addrs {
+              config false;
+              description
+                "List of neighbor IPv4 address.";
+              list ipv4-addr {
+                key "addr";
+                description
+                  "Statistics of neighbor IPv4 address.";
+                leaf addr {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "IPv4 address of a neighbor.";
+                }
+              }
+            }
+            container ipv6-global-addrs {
+              config false;
+              description
+                "List of neighbor IPv6 global address.";
+              list ipv6-global-addr {
+                key "addr";
+                description
+                  "Statistics of neighbor IPv6 global address.";
+                leaf addr {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "IPv6 global address of a neighbor.";
+                }
+              }
+            }
+            container endxs {
+              config false;
+              description
+                "List of neighbor End.X Sid information.";
+              list endx {
+                key "sid mask-length type";
+                description
+                  "Statistics of neighbor End.X Sid information.";
+                leaf sid {
+                  type inet:ipv6-address-no-zone;
+                  description
+                    "End.X Sid of a neighbor.";
+                }
+                leaf mask-length {
+                  type uint16 {
+                    range "1..128";
+                  }
+                  description
+                    "End.X Sid mask length of a neighbor.";
+                }
+                leaf type {
+                  type endx-sid-type;
+                  description
+                    "End.X Sid type of a neighbor.";
+                }
+              }
+            }
+          }
+        }
+        container lsdbs {
+          config false;
+          description
+            "List of LSDB information.";
+          list lsdb {
+            key "lsp-level lsp-id";
+            description
+              "Statistics of LSDB information.";
+            leaf lsp-level {
+              type level-type;
+              description
+                "Level type.";
+            }
+            leaf lsp-id {
+              type string {
+                length "1..512";
+              }
+              description
+                "ID of an LSP.";
+            }
+            leaf seqence-number {
+              type string {
+                length "1..16";
+              }
+              description
+                "Serial number of an LSP.";
+            }
+            leaf check-sum {
+              type string {
+                length "1..16";
+              }
+              description
+                "Checksum of an LSP.";
+            }
+            leaf lsp-length {
+              type uint32 {
+                range "0..2000";
+              }
+              description
+                "Length of an LSP.";
+            }
+            leaf att {
+              type enable-flag;
+              description
+                "ATT flag of an LSP.";
+            }
+            leaf partition {
+              type enable-flag;
+              description
+                "Split flag of an LSP.";
+            }
+            leaf overload {
+              type enable-flag;
+              description
+                "Overload flag of an LSP.";
+            }
+            leaf hold-time {
+              type string {
+                length "1..16";
+              }
+              units "s";
+              description
+                "Holdtime of an LSP.";
+            }
+            leaf local-lsp {
+              type boolean;
+              description
+                "Local LSP flag.";
+            }
+          }
+        }
+      }
+    }
+   }
+  }
+}

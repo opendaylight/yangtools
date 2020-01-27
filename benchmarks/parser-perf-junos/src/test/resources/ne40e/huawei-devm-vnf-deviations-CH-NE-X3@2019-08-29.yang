@@ -1,0 +1,33 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-devm-vnf-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-devm-vnf-deviations-CH-NE-X3";
+  prefix devm-vnf-devs-CH-NE-X3;
+
+  import huawei-devm-vnf {
+    prefix devm-vnf;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global Configuration.";
+
+  revision 2019-08-29 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/devm-vnf:devm-vnf" {
+    deviate not-supported;
+  }
+}

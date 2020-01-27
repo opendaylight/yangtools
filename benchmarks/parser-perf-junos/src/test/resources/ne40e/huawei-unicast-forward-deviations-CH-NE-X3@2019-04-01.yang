@@ -1,0 +1,90 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-unicast-forward-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-unicast-forward-deviations-CH-NE-X3";
+  prefix "unicast-forward-devs-CH-NE-X3";
+  import huawei-devm {
+    prefix "devm";
+  }
+  import huawei-qos {
+    prefix "qos";
+  }
+  import huawei-license {
+    prefix "lcs";
+  }
+  import huawei-devm-vnf {
+    prefix devm-vnf;
+  }
+  import huawei-unicast-forward {
+    prefix "unicast-forward";
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Load balance.";
+  revision 2019-04-01 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  deviation "/unicast-forward:unicast-forward/unicast-forward:global-uc-attribute/unicast-forward:ipv4-force-frag" {
+    deviate not-supported;
+  }
+  deviation "/unicast-forward:unicast-forward/unicast-forward:global-uc-attribute/unicast-forward:mtu-force-frag" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:mpu-boards/devm:mpu-board/unicast-forward:unicast-forward" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:lpu-boards/devm:lpu-board/unicast-forward:unicast-forward/unicast-forward:vxlan-rdr-trunks" {
+    deviate not-supported;
+  }
+  deviation "/devm:devm/devm:lpu-boards/devm:lpu-board/unicast-forward:unicast-forward/unicast-forward:l3-lcs-capacitys" {
+    deviate not-supported;
+  }
+  deviation "/qos:qos/qos:classifier-template/qos:traffic-behaviors/qos:traffic-behavior/unicast-forward:act-redirect-vxlantnl" {
+    deviate not-supported;
+  }
+  deviation "/lcs:license/lcs:license-items/lcs:license-item/unicast-forward:port-l3vpn-evpns" {
+    deviate not-supported;
+  }
+  deviation "/lcs:license/lcs:resource-usages/lcs:resource-usage/unicast-forward:port-l3vpn-evpns" {
+    deviate not-supported;
+  }
+  deviation "/lcs:license/lcs:license-items/lcs:license-item/unicast-forward:port-service-enhances" {
+    deviate not-supported;
+  }  
+  deviation "/lcs:license/lcs:resource-usages/lcs:resource-usage/unicast-forward:port-service-enhances" {
+    deviate not-supported;
+  }  
+  deviation "/lcs:license/lcs:license-items/lcs:license-item/unicast-forward:port-aggregations" {
+    deviate not-supported;
+  }
+  deviation "/lcs:license/lcs:resource-usages/lcs:resource-usage/unicast-forward:port-aggregations" {
+    deviate not-supported;
+  }
+  deviation "/lcs:license/lcs:license-items/lcs:license-item/unicast-forward:port-core-aggregations" {
+    deviate not-supported;
+  }
+  deviation "/lcs:license/lcs:resource-usages/lcs:resource-usage/unicast-forward:port-core-aggregations" {
+    deviate not-supported;
+  }
+  deviation "/lcs:license/lcs:license-items/lcs:license-item/unicast-forward:port-peerings" {
+    deviate not-supported;
+  }
+  deviation "/lcs:license/lcs:resource-usages/lcs:resource-usage/unicast-forward:port-peerings" {
+    deviate not-supported;
+  }
+  deviation "/devm-vnf:devm-vnf/devm-vnf:vnf-boards/devm-vnf:vnf-board/unicast-forward:unicast-forward" {
+    deviate not-supported;
+  }
+}

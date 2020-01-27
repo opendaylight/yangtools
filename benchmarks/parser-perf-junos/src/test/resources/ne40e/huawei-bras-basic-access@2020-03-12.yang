@@ -1,0 +1,2489 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-basic-access {
+  namespace urn:huawei:yang:huawei-bras-basic-access;
+  prefix bras-basic-access;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-radius {
+    prefix radius;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-time-range {
+    prefix timerange;
+  }
+  import huawei-bras-ipv6-address-manage {
+    prefix bras-ipv6-address-manage;
+  }
+  import huawei-bras-ipv4-address-manage {
+    prefix bras-ipv4-address-manage;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Bras basic access.";
+  revision 2020-03-12 {
+    description
+      "Modify description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-26 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "bras-control";
+
+  typedef bras-basic-access-vendor-class-type {
+    type enumeration {
+      enum "option60" {
+        value 1;
+        description
+          "Option60.";
+      }
+      enum "vendor-class" {
+        value 2;
+        description
+          "Vendor class.";
+      }
+    }
+    description
+      "Description of vendor class type.";
+  }
+
+  typedef bras-basic-access-default-domain-type {
+    type enumeration {
+      enum "force" {
+        value 1;
+        description
+          "Force.";
+      }
+      enum "replace" {
+        value 2;
+        description
+          "Replace.";
+      }
+    }
+    description
+      "Indicates the default domain type.";
+  }
+
+
+  typedef bras-basic-access-annex-position-type {
+    type enumeration {
+      enum "right" {
+        value 0;
+        description
+          "Adds string information to the right side.";
+      }
+      enum "left" {
+        value 1;
+        description
+          "Adds string information to the left side.";
+      }
+    }
+    description
+      "Adds string information to the left or right side.";
+  }
+  typedef bras-basic-access-access-line-id-type {
+    type enumeration {
+      enum "option82" {
+        value 1;
+        description
+          "Option82.";
+      }
+      enum "access-line-id" {
+        value 2;
+        description
+          "Access line id.";
+      }
+    }
+    description
+      "Configures the router to trust the access-line-id information sent from the DHCP client.";
+  }
+  typedef bras-basic-access-trust-access-line-id-insert-version {
+    type enumeration {
+      enum "cn-telecom" {
+        value 1;
+        description
+          "China telecom format.";
+      }
+      enum "client-version1" {
+        value 2;
+        description
+          "Version1 format.";
+      }
+      enum "client-version3" {
+        value 3;
+        description
+          "Version3 format.";
+      }
+    }
+    description
+      "Configures the router to trust the access-line-id information sent from the DHCP client.";
+  }
+  typedef bras-basic-access-distrust-access-line-id-insert-version {
+    type enumeration {
+      enum "cn-telecom" {
+        value 1;
+        description
+          "Client-option82.";
+      }
+      enum "client-version2" {
+        value 2;
+        description
+          "Client-version2.";
+      }
+    }
+    description
+      "Configures the router to trust the access-line-id information sent from the DHCP client.";
+  }
+  typedef bras-basic-access-nas-port-type {
+    type enumeration {
+      enum "async" {
+        value 0;
+        description
+          "Async.";
+      }
+      enum "sync" {
+        value 1;
+        description
+          "Sync.";
+      }
+      enum "isdn-sync" {
+        value 2;
+        description
+          "Isdn-sync.";
+      }
+      enum "isdn-async-v120" {
+        value 3;
+        description
+          "Isdn-async-v120.";
+      }
+      enum "isdn-async-v110" {
+        value 4;
+        description
+          "Isdn-async-v110.";
+      }
+      enum "virtual" {
+        value 5;
+        description
+          "Virtual.";
+      }
+      enum "piafs" {
+        value 6;
+        description
+          "Piafs.";
+      }
+      enum "hdlc" {
+        value 7;
+        description
+          "Hdlc.";
+      }
+      enum "x.25" {
+        value 8;
+        description
+          "X.25.";
+      }
+      enum "x.75" {
+        value 9;
+        description
+          "X.75.";
+      }
+      enum "g.3-fax" {
+        value 10;
+        description
+          "G.3-fax.";
+      }
+      enum "sdsl" {
+        value 11;
+        description
+          "Sdsl.";
+      }
+      enum "adsl-cap" {
+        value 12;
+        description
+          "Adsl-cap.";
+      }
+      enum "adsl-dmt" {
+        value 13;
+        description
+          "Adsl-dmt.";
+      }
+      enum "idsl" {
+        value 14;
+        description
+          "Idsl.";
+      }
+      enum "ethernet" {
+        value 15;
+        description
+          "Ethernet.";
+      }
+      enum "xdsl" {
+        value 16;
+        description
+          "Xdsl.";
+      }
+      enum "cable" {
+        value 17;
+        description
+          "Cable.";
+      }
+      enum "wireless-other" {
+        value 18;
+        description
+          "Wireless other.";
+      }
+      enum "802.11" {
+        value 19;
+        description
+          "802.11.";
+      }
+    }
+    description
+      "The type of the interface that accesses a BAS interface.";
+  }
+
+  typedef bras-basic-access-password-type {
+    type enumeration {
+      enum "simple" {
+        value 4;
+        description
+          "Simple.";
+      }
+      enum "cipher" {
+        value 5;
+        description
+          "Cipher.";
+      }
+    }
+    description
+      "Indicates the password Type.";
+  }
+
+  typedef bras-basic-access-access-limit-user-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "ipoe" {
+        value 1;
+        description
+          "Ipoe.";
+      }
+      enum "pppoe" {
+        value 2;
+        description
+          "Pppoe.";
+      }
+      enum "ipv4" {
+        value 3;
+        description
+          "IPv4.";
+      }
+      enum "ipv6" {
+        value 4;
+        description
+          "IPv6.";
+      }
+    }
+    description
+      "Description of user type.";
+  }
+
+  typedef access-limit-user-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "ipoe" {
+        value 1;
+        description
+          "Ipoe.";
+      }
+      enum "pppoe" {
+        value 2;
+        description
+          "Pppoe.";
+      }
+    }
+    description
+      "Specify the user-type to limit the maximum number of access users.";
+  }
+
+  typedef ip-pool-priority-layer2 {
+    type enumeration {
+      enum "local" {
+        value 1;
+        description
+          "Indicates that a local IP address pool of Users takes precedence during address pool allocation.";
+      }
+      enum "remote" {
+        value 2;
+        description
+          "Indicates that a remote IP address pool of Users takes precedence during address pool allocation.";
+      }
+    }
+    description
+      "The users priority in which an IP address pool assigns IP addresses.";
+  }
+  
+  typedef ip-pool-priority-layer3 {
+    type enumeration {
+      enum "based-on-gateway-address" {
+        value 0;
+        description
+          "Selects an IP address pool based on its gateway address.";
+      }
+      enum "local" {
+        value 1;
+        description
+          "Indicates that a local IP address pool of Users takes precedence during address pool allocation.";
+      }
+      enum "remote" {
+        value 2;
+        description
+          "Indicates that a remote IP address pool of Users takes precedence during address pool allocation.";
+      }
+    }
+    description
+      "The users priority in which an IP address pool assigns IP addresses.";
+  }
+
+  
+  typedef bras-basic-access-access-line-id-transmit-mode {
+    type enumeration {
+      enum "hex" {
+        value 1;
+        description
+          "Configure suboption relay mode is hex to string.";
+      }
+      enum "string" {
+        value 2;
+        description
+          "Configure suboption relay mode is string.";
+      }
+    }
+    description
+      "Access line id parse mode.";
+  }
+
+  grouping subscriber-base {
+    description
+      "Subscriber base.";
+    leaf default-domain-type {
+      when "../default-domain-name";
+      type bras-basic-access-default-domain-type;
+      description
+        "Default domain type.";
+    }
+    leaf default-domain-name {
+      type leafref {
+        path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+      }
+      description
+        "Default domain name.";
+    }
+    leaf pre-domain-name {
+      type leafref {
+        path "/aaa:aaa/aaa:domains/aaa:domain/aaa:name";
+      }
+      description
+        "Pre domain name.";
+    }
+  }
+
+  grouping accounting-radius-server {
+    description
+      "Accounting radius server.";
+    leaf radius-server-name {
+      type leafref {
+        path "/radius:radius/radius:radius-server-groups/radius:radius-server-group/radius:name";
+      }
+      description
+        "RADIUS server name.";
+    }
+  }
+
+  grouping bas-interface-name {
+    description
+      "Bas interface name.";
+    leaf bas-interface-name {
+      type string {
+        length "1..32";
+        pattern '([^A-Z]{1,32})';
+      }
+      description
+        "Bas interface name.";
+      ext:case-sensitivity lower-only;
+    }
+  }
+
+  grouping leaseline-base {
+    description
+      "Leaseline base.";
+    uses bas-interface-name;
+    uses accounting-radius-server;
+  }
+  grouping nas-port-type {
+    description
+      "Configures the type of the interface that accesses a BAS interface.";
+    container nas-port-type {
+      description
+        "Configure the type of the interface that accesses a BAS interface.";
+      leaf type {
+        type bras-basic-access-nas-port-type;
+        default "ethernet";
+        description
+          "Nas port type.";
+      }
+    }
+  }
+  grouping trust-access-line-id-insert {
+    description
+      "Trust access line id insert.";
+    container trust-access-line-id-insert {
+      description
+        "Configure the the access-line-id information, including the following commands:basinfo-insert, client-access-line-id and client-option82.";
+      leaf insert-type {
+        type bras-basic-access-access-line-id-type;
+        description
+          "Inserts information about the BAS interface in the telecom format.";
+      }
+      leaf insert-version {
+        type bras-basic-access-trust-access-line-id-insert-version;
+        description
+          "Specifies encapsulating the access-line-id information into a DHCP packet in version2 format.";
+      }
+    }
+  }
+
+  grouping access-line-id-insert {
+    description
+      "Access line id insert grouping.";
+    container access-line-id-insert {
+      description
+        "Configure the access line ID.";
+      choice access-line-id-insert {
+        description
+          "Access line ID insert choice.";
+        case trust {
+          description
+            "Configures the the access-line-id information, including the following commands:basinfo-insert, client-access-line-id and client-option82.";
+          leaf trust-insert-type {
+            type bras-basic-access-access-line-id-type;
+            description
+              "Inserts information about the BAS interface in the telecom format.";
+          }
+          leaf trust-insert-version {
+            when "../trust-insert-type";
+            type bras-basic-access-trust-access-line-id-insert-version;
+            description
+              "Specifies encapsulating the access-line-id information into a DHCP packet.";
+          }
+        }
+        case distrust {
+          description
+            "Configures the the access-line-id information, including the following commands:basinfo-insert, client-access-line-id and client-option82.";
+          leaf distrust-insert-version {
+            type bras-basic-access-distrust-access-line-id-insert-version;
+            description
+              "Specifies encapsulating the access-line-id information into a DHCP packet.";
+          }
+        }
+      }
+    }
+  }
+
+  grouping access-delay {
+    description
+      "Access delay grouping.";
+    container access-delay {
+      description
+        "Configure a response delay policy for access users on the BAS interface.";
+      choice access-delay {
+        description
+          "Access delay choice.";
+        case global {
+          description
+            "Access delay global.";
+          leaf delay-time {
+            type uint32 {
+              range "1..2550";
+            }
+            description
+              "Specifies encapsulating the access-line-id information into a DHCP packet in version3 format.";
+          }
+        }
+        case mac {
+          description
+            "Access delay by mac.";
+          leaf odd-delay-time {
+            type uint32 {
+              range "1..2550";
+            }
+            description
+              "Specifies encapsulating the access-line-id information into a DHCP packet in version3 format.";
+          }
+          leaf even-delay-time {
+            type uint32 {
+              range "1..2550";
+            }
+            description
+              "Specifies encapsulating the access-line-id information into a DHCP packet in version3 format.";
+          }
+        }
+        case circuit-id {
+          description
+            "Access delay by circuit id.";
+          leaf circuit-id-delay-time {
+            type uint32 {
+              range "1..2550";
+            }
+            mandatory true;
+            description
+              "Specifies the response delay for access users.";
+          }
+          leaf circuit-id {
+            type string {
+              length "1..200";
+            }
+            mandatory true;
+            description
+              "Specifies the ID of an access node.";
+          }
+        }
+        case load-balance-group {
+          description
+            "Configures a response delay policy for access users on a Broadband Access Server (BAS) interface.";
+          leaf load-balance-group-delay-time {
+            type uint32 {
+              range "1..2550";
+            }
+            mandatory true;
+            description
+            "Specifies the response delay for access users.";
+          }
+          leaf load-balance-group {
+            type string {
+              length "1..31";
+            }
+            mandatory true;
+            description
+              "Specifies a name for a load balancing group.";
+          }
+        }
+      }
+    }
+  }
+
+  grouping client-vendor-class {
+    description
+      "Client vendor class grouping.";
+    container client-option60 {
+      description
+        "Configure the client-option60 or vendor-class identifier of Option 60.";
+      leaf client-vendor-class {
+        type bras-basic-access-vendor-class-type;
+        description
+          "Specifies the client-option60 or vendor-class identifier of Option 60.";
+      }
+    }
+  }
+   
+  grouping client-option18 {
+    description
+      "Client option18 grouping.";
+    container client-option18 {
+      description
+        "Configure the client option18.";
+      leaf option18-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the server to trust the information in the Option 18 field of DHCPv6 messages sent by the client.";
+      }
+    }
+  }
+   
+  grouping client-option37 {
+    description
+      "Client option37 grouping.";
+    container client-option37 {
+      description
+        "Configure the client option37.";
+      leaf option37-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable server to trust the information in the Option 37 field of DHCPv6 messages sent by the client.";
+      }
+      leaf ft-telecom-enable {
+        when "../option37-enable='true'";
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the option 37 information encapsulates into a DHCP packet in ft telecom format.";
+      }
+    }
+  }
+
+  grouping access-limit {
+    description
+      "Access limit grouping.";
+    container access-limits {
+      description
+        "List of the maximum number of access users for each VLAN or the specified VLAN/PVC range on a BAS interface.";
+      list access-limit {
+        key "user-type";
+        description
+          "Configure the maximum number of access users for each VLAN or the specified VLAN/PVC range on a BAS interface.";
+        leaf user-type {
+          type access-limit-user-type;
+          description
+            "User type.";
+        }
+        leaf user-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          mandatory true;
+          description
+            "Specifies the maximum number of access users.";
+        }
+      }
+    }
+  }
+  grouping access-limit-for-vlan {
+    description
+      "Access limit VLAN grouping.";
+    container access-limit-vlans {
+      description
+        "List of the maximum number of access users for each VLAN or the specified VLAN/PVC range on a BAS interface.";
+      list access-limit-vlan {
+        key "start-vlan user-type";
+        description
+          "Configure the maximum number of access users for each VLAN or the specified VLAN/PVC range on a BAS interface.";
+        leaf start-vlan {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "Specifies the start VLAN ID.";
+        }
+        leaf user-type {
+          type bras-basic-access-access-limit-user-type;
+          description
+            "User type.";
+        }
+        leaf end-vlan {
+          type uint16 {
+            range "1..4094";
+          }
+          must "../end-vlan and ../end-vlan >= ../start-vlan";
+          description
+            "Specifies the end VLAN ID.";
+        }
+        leaf user-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          mandatory true;
+          description
+            "Specifies the maximum number of access users.";
+        }
+      }
+    }
+  }
+  grouping access-limit-for-qinq {
+    description
+      "Access limit qinq grouping.";
+    container access-limit-qinqs {
+      description
+        "List of the maximum number of access users for each QINQ or the specified QINQ/PVC range on a BAS interface.";
+      list access-limit-qinq {
+        key "start-vlan qinq-vlan user-type";
+        description
+          "Configure the maximum number of access users for each QINQ or the specified QINQ/PVC range on a BAS interface.";
+        leaf start-vlan {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "Specifies the start VLAN ID.";
+        }
+        leaf qinq-vlan {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "Specifies the QinQ VLAN ID.";
+        }
+        leaf user-type {
+          type bras-basic-access-access-limit-user-type;
+          description
+            "User type.";
+        }
+        leaf end-vlan {
+          type uint16 {
+            range "1..4094";
+          }
+          must "../end-vlan and ../end-vlan >= ../start-vlan";
+          description
+            "Specifies the end VLAN ID.";
+        }
+        leaf user-number {
+          type uint32 {
+            range "0..2147483647";
+          }
+          mandatory true;
+          description
+            "Specifies the maximum number of access users.";
+        }
+      }
+    }
+  }
+  grouping access-line-id-transmit-mode {
+    description
+      "Access line id parse info grouping.";
+    container access-line-id-transmit-mode {
+      must "./agent-circuit-id-transmit-mode or ./agent-remote-id-transmit-mode";
+      presence "Access line id transmit mode.";
+      description
+        "Configure the access-line-id information included in the RADIUS attributes.";
+      leaf access-line-id-type {
+        type bras-basic-access-access-line-id-type;
+        mandatory true;
+        description
+          "Access line id type.";
+      }
+      leaf agent-circuit-id-transmit-mode {
+        type bras-basic-access-access-line-id-transmit-mode;
+        description
+          "Transmit mode.";
+      }
+      leaf agent-remote-id-transmit-mode {
+        type bras-basic-access-access-line-id-transmit-mode;
+        description
+          "Transmit mode.";
+      }
+    }
+  }
+  grouping igmp-report-loose-check {
+    description
+      "Igmp report loose check grouping.";
+    container igmp-report-loose-check {
+      description
+        "Configure Igmp report loose check.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable IGMP report packet check loosely.";
+      }
+    }
+  }
+
+    grouping arp-proxy {
+    description
+      "Arp proxy grouping.";
+    container arp-proxy {
+      description
+        "Configure Arp proxy.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable ARP packet trigger on the BAS interface.";
+      }
+    }
+  }
+   grouping user-detect {
+    description
+      "User detect grouping.";
+    container user-detect {
+      description
+        "Configure user detect.";
+      leaf no-data-check-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable trigger on the BAS interface.";
+      }
+      leaf retransmit-time {
+        type uint32 {
+          range "2..120";
+        }
+        default "5";
+        description
+          "Specifies the number of times for detecting users by sending ARP probe packets.";
+      }
+      leaf interval {
+        type uint32 {
+          range "0..1800";
+        }
+        units s;
+        must "(../interval) = 0 or (../interval >=20 and ../interval <=1800 )";
+        default "30";
+        description
+          "Specifies the interval for detecting users by sending ARP probe packets.";
+      }
+    }
+  }
+  
+  grouping user-policy-interface-down {
+    description
+      "User policy interface down grouping.";
+    container user-policy-interface-down {
+      description
+        "Configure user policy interface down grouping.";
+      leaf policy {
+        type enumeration {
+          enum "online" {
+            value 0;
+            description
+              "The policy can be keeping the users online.";
+          }
+          enum "offline" {
+            value 1;
+            description
+              "The policy can be forcibly logging out the users.";
+          }
+        }
+        description
+          "The policy can be forcibly logging out the users or keeping the users online.";
+      }
+    }
+  }
+
+  grouping link-account-resolve {
+    description
+      "Link account resolve grouping.";
+    container link-account-resolve {
+      description
+        "Configure link account resolving.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable link-account resolving.";
+      }
+    }
+  }
+
+
+  grouping wlan-switch {
+    description
+      "Wlan switch grouping.";
+    container wlan-switch {
+      description
+        "Configure wlan switch.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable trigger on the BAS interface.";
+      }
+      leaf group-name {
+        when "../enable='true'";
+        type string {
+          length "1..15";
+        }
+        description
+          "Specifies the switch-group-name of the BAS interface.";
+      }
+    }
+  }
+
+  grouping bas-nas-logic {
+    description
+      "Nas logic grouping.";
+    container nas-logic {
+      description
+        "Configure the logical information.";
+      leaf system-name {
+        type string {
+          length "1..30";
+        }
+        description
+          "Specifies the logical host name.";
+      }
+      leaf ip-address {
+        type inet:ipv4-address-no-zone;
+        description
+          "Specifies the logical IP address, and the dotted decimal notation is adopted.";
+      }
+      leaf interface-name {
+        type string{
+          length "1..50";
+        }
+        description
+          "Configure a logical interface name in the format of logical interface type+slot ID/card ID/interface number,
+           such as GigabitEthernet0/3/1 on a physical device and GigabitEthernet1024/0/3/2 in a CU separation scenario. 
+           Note that the interface types Ethernet, GigabitEthernet, and Eth-Trunk are supported.";
+      }
+    }
+  }
+  grouping dhcp-proxy {
+    description
+      "Dhcp proxy grouping.";
+    container dhcp-proxy {
+      description
+        "Configure the dhcp proxy.";
+      leaf enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable the dhcp proxy.";
+      }
+    }
+  }
+  
+  grouping trigger {
+    description
+      "Trigger grouping.";
+    container trigger {
+      description
+        "Configure trigger packet.";
+      leaf arp {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable ARP packet trigger on the BAS interface.";
+      }
+      leaf ip {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable IP packet trigger on the BAS interface.";
+      }
+    }
+  }
+
+  grouping flow-statistic-frequency {
+    description
+      "Specifies the frequency to collect traffic statistics on a specific board.";
+    container flow-statistic-frequency {
+      description
+        "Configure the frequency to collect traffic statistics on a specific board.";
+      leaf type {
+        type enumeration {
+          enum "fast" {
+            value 1;
+            description
+              "Fast.";
+          }
+          enum "normal" {
+            value 2;
+            description
+              "Normal.";
+          }
+          enum "slow" {
+            value 3;
+            description
+              "Slow.";
+          }
+          enum "default" {
+            value 4;
+            description
+              "Default.";
+          }
+        }
+        default "default";
+        description
+          "Specifies the frequency.";
+      }
+    }
+  }
+  
+  container bras-basic-access {
+    description
+      "Bras basic access.";
+    container user-groups {
+      description
+        "List of the user group.";
+      list user-group {
+        key "name";
+        description
+          "Configure a user group.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern "[!-~]{1,32}";
+            pattern "[^\"*?']{1,32}";
+          }
+          must "../name != '-' and ../name != '--' and ../name != 'a' and ../name != 'A' and ../name != 'an' and ../name != 'aN' and ../name != 'AN' and ../name != 'An' and ../name != 'Any' and ../name != 'AnY' and ../name != 'ANY' and ../name != 'ANy' and ../name != 'aNy' and ../name != 'aNY' and ../name != 'anY' and ../name != 'any'";
+          description
+            "Specifies the name of a user group. When the node of user-group-case-sensitive is enabled, the user group name is case-sensitive. When the node of user-group-case-sensitive is disabled, the user group name cannot contain uppercase letters.";
+        }
+        container traffic-policy-statistics {
+          config false;
+          description
+            "List of the specified user group or all user groups.";
+          list traffic-policy-statistic {
+            key "policy-name up-group";
+            description
+              "Statistics of a specified user group or all user groups.";
+            leaf policy-name {
+              type string {
+                length "1..127";
+              }
+              description
+                "Name of a traffic policy.";
+            }
+            leaf up-group {
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "ID of a up group.";
+            }
+            leaf user-group-type {
+              type enumeration {
+                enum "local" {
+                  value 1;
+                  description
+                    "The type of the user group is local.";
+                }
+                enum "remote" {
+                  value 2;
+                  description
+                    "The type of the user group is remote.";
+                }
+                enum "dynamic" {
+                  value 3;
+                  description
+                    "The type of the user group is dynamic.";
+                }
+                enum "combined" {
+                  value 4;
+                  description
+                    "The type of the user group is combined.";
+                }
+              }
+              description
+                "Type of a user group.";
+            }
+            leaf is-mib-locked {
+              type boolean;
+              default "false";
+              description
+                "Whether the MIB is locked.";
+            }
+            leaf is-nat-instance-valid {
+              type boolean;
+              default "false";
+              description
+                "Whether an NAT instance is valid. By default, the value 0 indicates that an NAT instance is valid and the value 1 indicates that an NAT instance is invalid.";
+            }
+            leaf instance {
+              type uint8;
+              description
+                "Instance bound to a domain.";
+            }
+            leaf instance-type {
+              type enumeration {
+                enum "nat" {
+                  value 0;
+                  description
+                    "NAT instance bound to a domain.";
+                }
+                enum "ds-lite" {
+                  value 1;
+                  description
+                    "DS-Lite instance bound to a domain.";
+                }
+              }
+              description
+                "Type of the instance bound to a domain.";
+            }
+            leaf bind-domain-number {
+              type uint16;
+              description
+                "Number of times that a user group is bound to a domain.";
+            }
+            leaf bind-daa-number {
+              type uint32;
+              description
+                "Number of times that a user group is bound to a DAA value-added-service policy template.";
+            }
+            leaf used-user-number {
+              type uint32;
+              description
+                "Number of users in a user group.";
+            }
+            leaf reference-cb-count {
+              type uint16;
+              description
+                "Number of times that combined user groups are bound to CB pairs in traffic policies.";
+            }
+            leaf is-wait-delete  {
+              type boolean;
+              default "false";
+              description
+                "WaitDelWhether the system waits for deleting a combined user group.";
+            }
+            leaf aging-time {
+              type uint8;
+              description
+                "Time after which the delete state of the combined user group will age.";
+            }
+          }
+        }
+      }
+    }
+    container dhcp-multiple-sessions {
+      must "not(./enable='true' and /bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-prefixs/bras-ipv6-address-manage:ipv6-prefix/bras-ipv6-address-manage:local/bras-ipv6-address-manage:reserved-ipv6[bras-ipv6-address-manage:reserved-type='mac'])";
+      must "not(./enable='true' and /bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-prefixs/bras-ipv6-address-manage:ipv6-prefix/bras-ipv6-address-manage:delegation/bras-ipv6-address-manage:reserved-ipv6[bras-ipv6-address-manage:reserved-type='mac'])";
+      must "not(./enable='true' and /bras-ipv6-address-manage:bras-ipv6-address-manage/bras-ipv6-address-manage:ipv6-prefixs/bras-ipv6-address-manage:ipv6-prefix/bras-ipv6-address-manage:remote/bras-ipv6-address-manage:reserved-ipv6[bras-ipv6-address-manage:reserved-type='mac'])";
+      description
+        "Configure one-to-many mapping between one MAC address and many sessions.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable one-to-many mapping between one MAC address and many sessions, after one-to-many mapping between one MAC address and multiple sessions is enabled, the reserved type of an IPv6 prefix or address cannot be set to mac.";
+      }
+    }
+    container user-group-lists {
+      description
+        "List of the access user-group.";
+      list user-group-list {
+        key "name";
+        max-elements "8";
+        description
+          "Configure the access user-group list.";
+        leaf name {
+          type string {
+            length "1..32";
+            pattern "[a-zA-Z0-9_]{1,32}";
+          }
+          description
+            "Configures the name of an access user-group list.";
+        }
+        container user-groups {
+          description
+            "List of the user-group.";
+          list user-group {
+            key "name";
+            max-elements  "8";
+            description
+              "Configure the user groups of an access user-group list.";
+            leaf name {
+              type leafref {
+                path "/bras-basic-access:bras-basic-access/bras-basic-access:user-groups/bras-basic-access:user-group/bras-basic-access:name";
+              }
+              description
+                "Configures the name of a user-group.";
+            }
+            leaf weight {
+              type uint8 {
+                range "1..100";
+              }
+              default "1";
+              description
+                "Configures the weight of a user-group.";
+            }
+          }
+        }
+      }
+    }
+    container user-group-out-bound {
+      description
+        "Configure user group out bound.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable downstream packets to carry the source user's user-group ID in upstream packets.";
+      }
+    }
+    container user-group-case-sensitive {
+      description
+        "Configure user group case sensitive.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the router to support case-sensitive user group names.";
+      }
+    }
+    container frame-ip-conflict-recycle {
+      description
+        "Configure the frame ip conflict recycle.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the framed-ip conflict auto-recycle.";
+      }
+    }
+    container access-delay-all {
+      must "minimum <= maximum";
+      presence "Enables the access response delay function globally.";
+      description
+        "Configure the access response delay function globally, and set the maximum and minimum access response delays on the specified board.";
+        leaf step {  
+          type uint32 {
+            range "1..262144";
+          }
+          mandatory true;
+          description
+            "Indicates the step of the number of access users. Each time the number of access users on the router increases by the number specified by step value, the response delay is prolonged. The response delay for the access users within the step range is the same.";
+        }
+        leaf minimum {
+          type uint16 {
+            range "0..2550";
+          }
+          mandatory true;
+          description
+            "Indicates the minimum response delay for access users on the minimum-time specifies the minimum response delay.";
+        }
+        leaf maximum { 
+          type uint16 {
+            range "1..2550";
+          }
+          mandatory true;
+          description
+            "Indicates the maximum response delay for access users on the maximum-time specifies the maximum response delay.";
+        }
+    }
+    container access-delay-slots {
+      description
+        "List of the access response delay function globally, and set the maximum and minimum access response delays on the specified board.";
+      list access-delay-slot {
+        must "minimum <= maximum";
+        key "slot";
+        description
+          "Configure the access response delay function globally, and set the maximum and minimum access response delays on the specified board.";
+        leaf slot {
+          type leafref {
+            path "/devm:devm/devm:lpu-boards/devm:lpu-board/devm:position";
+          }
+          description
+            "Indicates the access response delay function for access users on the specified board.";
+        }
+        leaf step {
+          type uint32 {
+            range "1..262144";
+          }
+          mandatory true;
+          description
+            "Indicates the step of the number of access users. Each time the number of access users on the router increases by the number specified by step value, the response delay is prolonged. The response delay for the access users within the step range is the same.";
+        }
+        leaf minimum {
+          type uint16 {
+            range "0..2550";
+          }
+          mandatory true;
+          description
+            "Indicates the minimum response delay for access users on the minimum-time specifies the minimum response delay.";
+        }
+        leaf maximum {
+          type uint16 {
+            range "1..2550";
+          }
+          mandatory true;
+          description
+            "Indicates the maximum response delay for access users on the maximum-time specifies the maximum response delay.";
+        }
+      }
+    }
+    container pppuser-offline-standardize {
+      description
+        "Configure a PPP user to preferentially get online when the PPP user and a DHCP user with the same MAC address attempt to get online.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable a PPP user to preferentially get online.";
+      }
+    }
+    container nas-port-id-format {
+      description
+        "Configure nas port id format.";
+      choice format {
+        default "version20";
+        description
+          "Configure format.";
+        case standard {
+          description
+            "Configure standard format.";
+          leaf standard {
+            type enumeration {
+              enum "standard" {
+                value 0;
+                description
+                  "Indicates the standard format conforming to the VBAS protocol.";
+              }
+              enum "standard-ignore" {
+                value 1;
+                description
+                  "Indicates that the RID field in the Nas-Port-Id attribute carried by Option 82 is removed when indicates the standard format conforming to the VBAS protocol.";
+              }
+              enum "trust-outer-vlan" {
+                value 2;
+                description
+                  "Indicates the standard format conforming to the VBAS protocol when trusts the outer VLAN tag value.";
+              }
+              enum "trust-outer-vlan-ignore" {
+                value 3;
+                description
+                  "Indicates that the RID field in the Nas-Port-Id attribute carried by Option 82 is removed when trusts the outer VLAN tag value.";
+              }
+              enum "trust-inner-vlan" {
+                value 4;
+                description
+                  "Indicates the standard format conforming to the VBAS protocol when trusts the inner VLAN tag value.";
+              }
+              enum "trust-inner-vlan-ignore" {
+                value 5;
+                description
+                  "Indicates that the RID field in the Nas-Port-Id attribute carried by Option 82 is removed when trusts the inner VLAN tag value.";
+              }
+            }
+            description
+              "Configure the type of standard format.";
+          }
+        }
+        case turkey {
+          description
+            "Configure turkey format.";
+          leaf turkey {
+            type empty;
+            description
+              "Indicates the format of Turkey version.";
+          }
+        }
+        case version10 {
+          description
+            "Configure version10 format.";
+          leaf version10 {
+            type empty;
+            description
+              "Indicates the format of version 1.0.";
+          }
+        }
+        case version20 {
+          description
+            "Configure version20 format.";
+          leaf version20 {
+            type empty;
+            description
+              "Indicates the format of version 2.0, by default, the format of version 2.0 is adopted.";
+          }
+        }
+      }
+    }
+    container packet-strict-check {
+      description
+        "Configure the router to strictly check user packets of a specific type.";
+      leaf nd {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the strict ND packets check function.";
+      }
+      leaf dhcpv6 {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the strict DHCPv6 packets check function.";
+      }
+      leaf dhcp {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the strict DHCP packets check function.";
+      }
+      leaf ppp {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the strict PPP packets check function.";
+      }
+      leaf l2tp {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the strict L2TP packets check function.";
+      }
+      leaf dot1x {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the strict dot1x packets check function.";
+      }
+    }
+    container protocol-statistics {
+      description
+        "Configure statistics about user protocol packets.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable flag.";
+      }
+    }
+    container ui-mode {
+      description
+        "Configure the command output in the user-defined format.";
+      leaf type {
+        type enumeration {
+          enum "type1" {
+            value 1;
+            description
+              "User-defined Type 1 mode.";
+          }
+          enum "type2" {
+            value 2;
+            description
+              "User-defined Type 2 mode.";
+          }
+        }
+        description
+          "Enable the user-defined format.";
+      }
+    }
+    container user-flow-statistics {
+      description
+        "Configure user flow statistics.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable user flow statistics.";
+      }
+    }
+    container load-balance-enhance-algorithm {
+      description
+        "Configure the enhanced load balancing algorithm.";
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable the enhanced load balancing algorithm.";
+      }
+      leaf update-frequency {
+        type uint32 {
+          range "1..1000";
+        }
+        default "1";
+        description
+          "Specifies the frequency for triggering load balancing. It is the change of the number of users on an interface.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Bas interface configurations.";
+    container bas {
+      when "../ifm:type='Ethernet' or 
+            ../ifm:type='GigabitEthernet' or 
+            ../ifm:type='Eth-Trunk' or 
+            ../ifm:type='100GE' or 
+            ../ifm:type='10GE' or 
+            ../ifm:type='Virtual-Ethernet' or 
+            ../ifm:type='Global-VE' or 
+            ../ifm:type='4x10GE' or 
+            ../ifm:type='10x10GE' or 
+            ../ifm:type='3x40GE' or 
+            ../ifm:type='4x25GE' or 
+            ../ifm:type='25GE' or 
+            ../ifm:type='XGigabitEthernet' or 
+            ../ifm:type='FlexE' or 
+            ../ifm:type='PW-VE'";
+      presence "Create bas.";
+      description
+        "Configure bas interface.";
+      choice access-type {
+        description
+          "Configure the access type of a bas interface.";
+        case layer2-subscriber {
+          description
+            "Configure layer2 subscriber access type.";
+          container layer2-subscriber {
+            presence "layer2-subscriber.";
+            description
+              "Configure layer2 subscriber access type.";
+            container subscriber-base {
+              description
+                "Configure layer2 subscriber base.";
+              uses subscriber-base;
+              uses bas-interface-name;
+              uses accounting-radius-server;
+            }
+            uses nas-port-type;
+            container authentication-method {
+              must "bind-authentication or (dot1x-authentication or ppp-authentication or (fast-authentication or web-authentication))";
+              description
+                "Configure layer2 subscriber authentication method.";
+              choice authentication-method {
+                default unbind;
+                description
+                  "Layer2 subscriber authentication method choice.";
+                case bind {
+                  description
+                    "Layer2 subscriber bind authentication method.";
+                  leaf bind-authentication {
+                    type empty;
+                    description
+                      "Indicates binding authentication.";
+                  }
+                }
+                case unbind {
+                  description
+                    "Layer2 subscriber unbind authentication method.";
+                  leaf dot1x-authentication {
+                    type empty;
+                    description
+                      "Indicates 802.1x authentication.";
+                  }
+                  leaf ppp-authentication {
+                    type empty;
+                    description
+                      "Indicates PPP authentication (default authentication method).";
+                  }
+                  choice fast-web {
+                    description
+                      "Layer2 subscriber fast or web authentication method.";
+                    case fast {
+                      description
+                        "Layer2 subscriber fast authentication method.";
+                      leaf fast-authentication {
+                        type empty;
+                        description
+                          "Indicates fast authentication.";
+                      }
+                    }
+                    case web {
+                      description
+                        "Layer2 subscriber web authentication method.";
+                      leaf web-authentication {
+                        type empty;
+                        description
+                          "Indicates web authentication.";
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            uses access-line-id-insert;
+            uses access-delay;
+            uses client-vendor-class;
+            uses client-option18;
+            uses client-option37;
+            uses access-limit;
+            uses access-limit-for-vlan {
+              when "../../ifm:class='sub-interface'";
+            }
+            uses access-limit-for-qinq {
+              when "../../ifm:class='sub-interface'";
+            }
+            uses access-line-id-transmit-mode;
+            uses igmp-report-loose-check;
+            uses user-policy-interface-down;
+            uses arp-proxy;
+            uses user-detect;
+            uses link-account-resolve;
+            uses wlan-switch;
+            uses bas-nas-logic;
+            uses dhcp-proxy;
+            uses trigger;
+          }
+        }
+        case layer2-leaseline {
+          description
+            "Configure layer2 leaseline access type.";
+          container layer2-leaseline {
+            ext:operation-exclude update;
+            presence "layer2-leaseline.";
+            description
+              "Configure layer2 leaseline access type.";
+            leaf user-name {
+              type string {
+                length "1..253";
+              }
+              mandatory true;
+              description
+                "Lease line user name.";
+            }
+            leaf password {
+              type pub-type:password-extend {
+                length "1..255";
+              }
+              mandatory true;
+              description
+                "Password.";
+            }
+            leaf password-type {
+              type bras-basic-access-password-type;
+              mandatory true;
+              description
+                "Password type.";
+            }
+            container leaseline-base {
+              description
+                "Configure layer2 leaseline base.";
+              uses leaseline-base;
+            }
+            uses nas-port-type;
+            uses access-line-id-transmit-mode;
+            uses igmp-report-loose-check;
+            uses arp-proxy;
+            uses user-detect;
+            uses dhcp-proxy;
+            uses trigger;
+          }
+        }
+      }
+      container eap-authentication-domain-individual {
+        description
+          "Configure the EAP-authentication-based RADIUS proxy authentication domain name does not depend on the DHCP user name.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable the EAP-authentication-based RADIUS proxy authentication domain name does not depend on the DHCP user name.";
+        }
+      }
+      container bas-interface {
+        config false;
+        description
+          "Bas interface statistics.";
+        container information{
+          config false;
+          description
+          "Statistics of a specified BAS interface.";
+          leaf is-static-user-exist {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "Whether the static user is exist.";
+          }
+          leaf is-selected {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "Is selected interface.";
+          }
+          leaf increased-user-num {
+            type int32 {
+              range "-1000..1000";
+            }
+            config false;
+            description
+              "Increase user number since last update prior interface.";
+          }
+        }
+        container access-users{
+          config false;
+          description
+            "List of the number of access users on a specified BAS interface.";
+          list access-user{
+            key "pe-vlan ce-vlan";
+            config false;
+            description
+              "Statistics of the number of access users on a specified BAS interface.";
+            leaf pe-vlan {
+              type uint16 {
+                range "0..4094";
+              }
+              config false;
+              description
+              "Outer VLAN ID of an interface.";
+            }
+            leaf ce-vlan {
+              type uint16 {
+                range "0..4094";
+              }
+              config false;
+              description
+              "Inner VLAN ID of an interface.";
+            }
+            leaf user-number {
+              type uint32;
+              config false;
+              description
+                "Number of access users on a BAS interface.";
+            }
+            leaf ipoe-user-number {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Number of IPoE users on an interface.";
+            }
+            leaf pppoe-user-number {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Number of PPPoE users on an interface.";
+            }
+          }
+        }
+        container statistics{
+          config false;
+          description
+            "Statistics of a specified BAS interface.";
+          leaf last-statistics-time {
+            type string {
+              length "1..32";
+            }
+            config false;
+            description
+              "Time of a specified interface statistics collected and displayed.";
+          }
+          leaf input-rate {
+            type uint32;
+            units Mbit/s;
+            config false;
+            description
+              "Interface uplink traffic rate, Unit Mbit/s.";
+          }
+          leaf output-rate {
+            type uint32;
+            units Mbit/s;
+            config false;
+            description
+              "Interface downlink traffic rate, Unit Mbit/s.";
+          }
+        }
+      }
+    }
+    container bras {
+      description
+        "Configure the bras interface.";
+      container load-balance-mode {
+        when "../../ifm:type='Eth-Trunk'";
+        description
+          "Configure Eth-Trunk interfaces in load-balancing mode, and configures load balancing based on traffic volume, the actual traffic volume, and the number of access users.";
+        leaf mode {
+          type enumeration {
+            enum "user-mode" {
+              value 0;
+              description
+                "Indicates load balancing based on the number of access users.";
+            }
+            enum "flow-mode" {
+              value 1;
+              description
+                "Indicates that load balancing is performed based on the allocated bandwidth.";
+            }
+            enum "real-flow-mode" {
+              value 2;
+              description
+                "Indicates load balancing based on the actual traffic volume.";
+            }
+          }
+          default "user-mode";
+          description
+            "Configures Eth-Trunk interfaces in load-balancing mode.";
+        }
+      }
+    }
+  }
+
+  augment "/aaa:aaa/aaa:domains/aaa:domain" {
+    description
+      "Bas domain configuration.";
+    container bas {
+      description
+        "Configure the bas domain.";
+      container ipv4-basic-access {
+        description
+          "Configure the IPv4 basic access domain.";
+        container max-user-reauth-time {
+          description
+            "Configure the maximum reauthentication time of a domain.";
+          leaf time {
+            type uint16;
+            units s;
+            default "300";
+            description
+              "Sets the maximum reauthentication time of a domain.";
+          }
+        }
+        container ip-pools {
+          description
+            "List of ip pools bound to the domain.";
+          list ip-pool {
+            key "name";
+            max-elements "1024";
+            description
+              "Configure the list of IP address pools bound to the domain.";
+            leaf name {
+              type leafref {
+                path "/bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:ipv4-pools/bras-ipv4-address-manage:ipv4-pool/bras-ipv4-address-manage:name";
+              }
+              must "(/bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:ipv4-pools/bras-ipv4-address-manage:ipv4-pool[bras-ipv4-address-manage:name=current()]/bras-ipv4-address-manage:type = 'dynamic' or
+              (/bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:ipv4-pools/bras-ipv4-address-manage:ipv4-pool[bras-ipv4-address-manage:name=current()]/bras-ipv4-address-manage:local/bras-ipv4-address-manage:gateway/bras-ipv4-address-manage:gate-ip or
+              /bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:ipv4-pools/bras-ipv4-address-manage:ipv4-pool[bras-ipv4-address-manage:name=current()]/bras-ipv4-address-manage:remote/bras-ipv4-address-manage:gateway/bras-ipv4-address-manage:gate-ip))";
+              //ordered-by user;
+              description
+                "Specifies the name of a ip pool.";
+            }
+          }
+        }
+        container accounting-copy-radius {
+          description
+            "Configure RADIUS server group to send accounting packets of a domain.";
+          leaf name {
+            type leafref {
+              path "/radius:radius/radius:radius-server-groups/radius:radius-server-group/radius:name";
+            }
+            description
+              "Enables the system to send accounting packets of a domain to a configured RADIUS server group.";
+          }
+        }
+        container dns-server {
+          description
+            "Configure the IP address of the DNS server.";
+          leaf primary-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Specifies the IP address of the primary DNS server.";
+          }
+          leaf secondary-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Specifies the IP address of the secondary DNS server.";
+          }
+        }
+        container nbns-server {
+          description
+            "Configure the IP address of the nbns server.";
+          leaf primary-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Specifies the IP address of the primary DNS server.";
+          }
+          leaf secondary-ip {
+            type inet:ipv4-address-no-zone;
+            description
+              "Specifies the IP address of the secondary DNS server.";
+          }
+        }
+        container user-group {
+          description
+            "Configure the name of the user group bound to the domain.";
+          leaf name {
+            type leafref {
+              path "/bras-basic-access:bras-basic-access/bras-basic-access:user-groups/bras-basic-access:user-group/bras-basic-access:name";
+            }
+            description
+              "Specifies the name of the user group bound to the domain.";
+          }
+        }
+        container policy-route {
+          description
+            "Configure the next-hop of the policy-based route for all users in a domain.";
+          leaf ipv4-address {
+            type inet:ipv4-address-no-zone;
+            description
+              "Specifies the next-hop IP address of the policy-based route for all users in a domain.";
+          }
+          leaf ipv6-address {
+            type inet:ipv6-address-no-zone;
+            description
+              "Specifies the next-hop IPv6 address of the policy-based route for all users in a domain.";
+          }
+        }
+        container user-max-session {
+          description
+            "Configure the maximum number of users.";
+          leaf number {
+            type uint32 {
+              range "0..3145728";
+            }
+            description
+              "Specifies the maximum number of users that can use the same user account.";
+          }
+          leaf local-user-name-case-insensitive {
+            when "../number";
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the local user account is case-insensitive.";
+          }
+        }
+        container ip-unr-route-tag {
+          description
+            "Configure a route tag for host routes of IPv4 users and network segment routes generated based on the Framed-Route attribute delivered by the RADIUS server.";
+          leaf value {
+            type uint32;
+            default "0";
+            description
+              "Specify a route tag.";
+          }
+        }
+        container user-detect {
+          must "(retransmit-time and interval) or (not(retransmit-time) and not(interval))";
+          description
+            "Configure a user group in the domain.";
+          leaf retransmit-time {
+            type uint32 {
+              range "2..120";
+            }
+            description
+              "Indicates the number of times for detecting users by sending ARP packets.";
+          }
+          leaf interval {
+            type uint32 {
+              range "0..1800";
+            }
+            units s;
+            description
+              "Indicates the interval for detecting users by sending ARP packets.";
+          }
+        }
+        container user-basic-service-ip-type {
+          description
+            "Configure the user basic service type.";
+          leaf ipv4 {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the user basic service type is IPv4.";
+          }
+          leaf ipv6 {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the user basic service type is IPv6.";
+          }
+          leaf ipv6-pd {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable the user basic service type is IPv6 PD.";
+          }
+        }
+        container cui {
+          description
+            "Configure users in a domain to apply to the RADIUS server for the CUI attribute when requesting to get online, and then adds the CUI attribute to the subsequent user accounting packets.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable users in a domain to apply to the RADIUS server for the CUI attribute when requesting to get online, and then adds the CUI attribute to the subsequent user accounting packets.";
+          }
+        }
+        container ip-pool-mode {
+          description
+            "Configure ip pool mode.";
+          leaf layer2-user-priority {
+            type ip-pool-priority-layer2;
+            default "local";
+            description
+              "The layer 2 users priority in which an IP address pool assigns IP addresses.";
+          }
+          leaf layer3-user-priority {
+            type ip-pool-priority-layer3;
+            default "based-on-gateway-address";
+            description
+              "The layer 3 users priority in which an IP address pool assigns IP addresses.";
+          }
+          leaf user-type {
+            when "../layer2-user-priority='remote'";
+            type enumeration {
+              enum "ipoe" {
+                value 1;
+                description
+                  "Ipoe.";
+              }
+              enum "pppoe" {
+                value 2;
+                description
+                  "Pppoe.";
+              }
+            }
+            description
+              "Specifies the type of a user.";
+          }
+        }
+        container accounting-exclude-vlan {
+          description
+            "Configure the router to exclude VLAN header length from packet length when collecting statistics about user packet bytes. This command applies to both IPv4 and IPv6 packet statistics.";
+          leaf ipoe {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable IPoE user.";
+          }
+          leaf pppoe {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable PPPoE user.";
+          }
+        }
+        container annex {
+          must "(direction and string) or (not(direction) and not(string))";
+          description
+            "Configure string information to the left/right side of a domain name when the BRAS sends authentication and accounting request packets to the RADIUS server.";
+          leaf direction {
+            type enumeration {
+              enum "left" {
+                value 1;
+                description
+                  "Adds string information to the left side.";
+              }
+              enum "right" {
+                value 2;
+                description
+                  "Adds string information to the right side.";
+              }
+            }
+            description
+              "Adds string information to the left or right side.";
+          }
+          leaf string {
+            when "../direction";
+            type string {
+              length "1..31";
+            }
+            description
+              "Specifies the string added to the DHCP option 125 attribute.";
+          }
+        }
+        container mac-authentication {
+          description
+            "Configure MAC address authentication.";
+          leaf enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable MAC address authentication.";
+          }
+        }
+        container ip-pool-groups {
+          description
+            "List of the address pool group in a domain.";
+          list ip-pool-group {
+            key "name";
+            max-elements "8";
+            description
+              "Configure an address pool group.";
+            leaf name {
+              type leafref {
+                path "/bras-ipv4-address-manage:bras-ipv4-address-manage/bras-ipv4-address-manage:pool-groups/bras-ipv4-address-manage:pool-group/bras-ipv4-address-manage:name";
+              }
+              //ordered-by user;
+              description
+                "Specifies the name of a ip pool.";
+            }
+          }
+        }
+        container framed-ip-urpf {
+          description
+            "Configure URPF when IP addresses are delivered by the RADIUS server.";
+          leaf enable {
+            type boolean;
+            default "true";
+            description
+              "Enable/disable URPF when IP addresses are delivered by the radius server.";
+          }
+        }
+        container map-priority {
+          description
+            "Configure a device to preferentially assign MAP-T prefixes to users.";
+          leaf map-t-priority {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable MAP priority in a domain.";
+          }
+        }
+        container idle-user-control-policy {
+          description
+            "Configure idle user control policy.";
+          leaf cut-time {
+            type uint32 {
+              range "0..1440";
+            }
+            units min;
+            default "0";
+            description
+              "Specifies the period after which the user connection is torn down.";
+          }
+          choice cut-rate {
+            description
+              "Config cut rate.";
+            case rate {
+              description
+                "Cut rate.";
+              leaf rate {
+                type uint32 {
+                  range "0..76800000";
+                }
+                units "1/60 kB/s";
+                default "60";
+                description
+                  "Specifies the amount of user traffic rate. If the user traffic rate is less than the amount, the user is considered idle.";
+              }
+            }
+            case zero-rate {
+              description
+                "Zero cut rate.";
+              leaf zero-rate {
+                type empty;
+                description
+                  "Indicates that if the time when the user traffic rate is less than 1Kbyte/min reaches the idle-time value, the system will disconnect the idle user.";
+              }
+            }
+          }
+          leaf cut-flow-direction {
+            type enumeration {
+              enum "inbound" {
+                value 1;
+                description
+                  "Indicates that the parameter idle takes effect only on the upstream traffic.";
+              }
+              enum "outbound" {
+                value 2;
+                description
+                  "Indicates that the parameter idle takes effect only on the downstream traffic.";
+              }
+            }
+            description
+              "Indicates that the parameter idle takes effect on the upstream or downstream traffic.";
+          }
+        }
+        container quota-out {
+          description
+            "Configure quota out.";
+          choice policy {
+            default "offline";
+            description
+              "Quota out policy.";
+            case offline {
+              description
+                "Quota out offline policy.";
+              leaf offline {
+                type empty;
+                description
+                  "Forces the users to go offline.";
+              }
+            }
+            case online {
+              description
+                "Quota out online policy.";
+              leaf online {
+                type empty;
+                description
+                  "Allows the users to remain online.";
+              }
+            }
+            case redirect {
+              description
+                "Quota out redirect policy.";
+              leaf url {
+                type string {
+                  length "1..200";
+                }
+                description
+                  "Specifies the URL for forcible redirection.";
+              }
+              leaf stop-accounting {
+                when "../url";
+                type empty;
+                description
+                  "Indicates that a user sends an accounting-stop packet after the user is redirected because the quota of the user is used up.";
+              }
+            }
+            case realtime-accounting {
+              description
+                "Quota out realtime accounting policy.";
+              leaf enable {
+                type empty;
+                description
+                  "Indicates that a user sends real-time accounting packets after the quota of the user is used up.";
+              }
+            }
+          }
+        }
+        container any-address-release {
+          description
+            "Configure a device to forcibly log out a dual-stack user if the user releases any IP address.";
+          leaf offline {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable a device to forcibly log out a dual-stack user if the user releases any IP address.";
+          }
+        }
+        container public-ip-address-pool-usage-threshold {
+          must "(lower and upper) or (not(lower) and not(upper) and both-cgn = 'false')";
+          description
+            "Configure threshold for public IP address pool usage in an AAA domain.";
+          leaf lower {
+            type uint32 {
+              range "0..99";
+            }
+            description
+              "Lower threshold for public IP address pool usage in an AAA domain. The value is an integer that ranges from 0 to 99, in percentage.";
+          }
+          leaf upper {
+            when "../lower";
+            type uint32 {
+              range "1..100";
+            }
+            must "../upper > ../lower";
+            description
+              "Upper threshold for public IP address pool usage in an AAA domain. The value is an integer that ranges from 1 to 100, in percentage.";
+          }
+          leaf both-cgn {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable threshold in an AAA domain. The public IP address pool status is determined by the address pool usage in both CGN and non-CGN scenarios. By default, the public IP address pool status is safe in non-CGN scenarios.";
+          }
+        }
+        container user-volume-quato {
+          description
+            "Configure a user traffic volume quota to upstream or downstream traffic.";
+          leaf direction {
+            type enumeration {
+              enum "both" {
+                value 0;
+                description
+                  "Both inbound and outbound direction.";
+              }
+              enum "inbound" {
+                value 1;
+                description
+                  "Inbound direction.";
+              }
+              enum "outbound" {
+                value 2;
+                description
+                  "Outbound direction.";
+              }
+            }
+            default "both";
+            description
+              "User flow quota applying direction. By default, the user traffic volume quota applies to both upstream and downstream traffic.";
+          }
+        }
+        container accounting-start-delay {
+          description
+            "Configure a device to send an accounting-start packet about a dual-stack user after a specified delay.";
+          leaf ipv4-immediately {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable accounting immediately when the IPv4 stack is online.";
+          }
+          container delay-policy {
+            presence "Delay policy.";
+            description
+              "Configure a device to send an accounting-start packet about a dual-stack user after a specified delay for user.";
+            leaf time {
+              type uint32 {
+                range "1..300";
+              }
+              units s;
+              mandatory true;
+              description
+                "Specifies a delay in sending accounting-start packets.";
+            }
+            leaf method {
+              type enumeration {
+                enum "online" {
+                  value 1;
+                  description
+                    "The user stays online and the device sends accounting-start packets after the specified delay.";
+                }
+                enum "offline" {
+                  value 2;
+                  description
+                    "The device forcibly logs out the user after the specified delay.";
+                }
+              }
+              mandatory true;
+              description
+                "User delay process method.";
+            }
+            choice user-type {
+              mandatory true;
+              description
+                "User type for enable a device to send an accounting-start packet about a dual-stack user after a specified delay.";
+              case all {
+                description
+                  "Enable a device to send an accounting-start packet about a dual-stack user after a specified delay all user type.";
+                leaf all {
+                  when "../method='offline'";
+                  type empty;
+                  description
+                    "Delay process for All user type.";
+                }
+              }
+              case spec {
+                description
+                  "Enable a device to send an accounting-start packet about a dual-stack user after a specified delay special user type.";
+                leaf ppp {
+                  type empty;
+                  description
+                    "Delay process for PPP access user.";
+                }
+                leaf ipoe {
+                  type empty;
+                  description
+                    "Delay process for IPoE access user.";
+                }
+                leaf l2tp {
+                  type empty;
+                  description
+                    "Delay process for L2TP access user.";
+                }
+                leaf static {
+                  type empty;
+                  description
+                    "Delay process for Static access user.";
+                }
+              }
+            }
+          }
+          container traffic {
+            description
+              "Configure a device to send an accounting-start packet about a dual-stack user after a specified delay for traffic.";
+            leaf forward-before-start-accounting {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable users to access the network before starting accounting message.";
+            }
+            leaf statistics-before-start-accounting {
+              type boolean;
+              default "false";
+              description
+                "Enable/disable the traffic of ueser accessing to network before starting accounting message.";
+            }
+          }
+        }
+        container radius-no-response {
+          description
+            "Configure the lease time of the users of an unresponsive RADIUS server.";
+          leaf lease-time {
+            type uint32 {
+              range "60..65535";
+            }
+            units s;
+            description
+              "Specifies the lease time of the users of an unresponsive RADIUS server.";
+          }
+        }
+        container ip-usage-threshold {
+          must "not(upper) or not(lower) or upper >= lower";
+          description
+            "Configure alarm threshold for the IP address usage.";
+          leaf lower {
+            type uint32 {
+              range "0..99";
+            }
+            description
+              "Specifies a lower alarm threshold for the IP address usage.";
+          }
+          leaf upper {
+            type uint32 {
+              range "1..100";
+            }
+            description
+              "Specifies an upper alarm threshold for the IP address usage.";
+          }
+        }
+        container nas-logic {
+          description
+            "Configure the logical.";
+          leaf system-name {
+            type string {
+              length "1..30";
+            }
+            description
+              "Specifies the logical host name.";
+          }
+        }
+        container llid-first-authentication-radius-server-group {
+          description
+            "Configure RADIUS server group name of LLID first authentication.";
+          leaf name {
+             type leafref {
+              path "/aaa:aaa/aaa:domains/aaa:domain/aaa:radius-server-template";
+            }
+            description
+              "RADIUS server group name.";
+          }
+        }
+        container non-accouting-time-range {
+          description
+            "Configure the name of a time range for non-accounting.";
+          leaf name {
+           type leafref {
+              path "/timerange:time-range/timerange:time-range-instances/timerange:time-range-instance/timerange:name";
+            }
+            description
+              "Specifies the name of a time range.";
+          }
+        }
+      }
+    }
+  }
+ 
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+      "Augment bras slot configurations.";
+    container bras {
+      description
+        "Configure the bras slot.";
+      uses flow-statistic-frequency;
+    }
+  }
+
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "Augment bras slot configurations.";
+    container bras {
+      description
+        "Configure the bras slot.";
+      uses flow-statistic-frequency;
+    }
+  }
+
+}

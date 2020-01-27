@@ -1,0 +1,343 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ospfv3-type {
+  belongs-to huawei-ospfv3 {
+    prefix ospfv3;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "OSPFv3 type.";
+  revision 2019-04-04 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef domain-id-type {
+    type enumeration {
+      enum "0x0005" {
+        value 1; 
+        description
+          "Domain id type is 0x0005.";
+      }
+      enum "0x0105" {
+        value 2; 
+        description
+          "Domain id type is 0x0105.";
+      }
+      enum "0x0205" {
+        value 3; 
+        description
+          "Domain id type is 0x0205.";
+      }
+      enum "0x8005" {
+        value 4; 
+        description
+          "Domain id type is 0x8005.";
+      }
+    }
+    description
+      "OSPFv3 domain id type.";
+  }
+  typedef import-rt-protocol {
+    type enumeration {
+      enum "direct" {
+        value 1;
+        description
+          "Direct route.";
+      }
+      enum "ospfv3" {
+        value 7;
+        description
+          "OSPFv3 router.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "ISIS protocol.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Static route.";
+      }
+      enum "ripng" {
+        value 8;
+        description
+          "RIPng routes.";
+      }
+      enum "bgp" {
+        value 6;
+        description
+          "BGP protocol.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "User Network routes.";
+      }
+    }
+    description
+      "OSPFv3 import route protocol.";
+  }
+  typedef prefix-priority {
+    type enumeration {
+      enum "critical" {
+        value 1;
+        description
+          "Critical.";
+      }
+      enum "high" {
+        value 2;
+        description
+          "High.";
+      }
+      enum "medium" {
+        value 3;
+        description
+          "Medium.";
+      }
+      enum "very-low" {
+        value 5;
+        description
+          "Very low.";
+      }
+    }
+    description
+      "OSPFv3 prefix priority.";
+  }
+  typedef area-type {
+    type enumeration {
+      enum "normal" {
+        value 1;
+        description
+          "Normal area.";
+      }
+      enum "stub" {
+        value 2;
+        description
+          "Stub area.";
+      }
+      enum "nssa" {
+        value 3;
+        description
+          "Nssa area.";
+      }
+    }
+    description
+      "OSPFv3 area type.";
+  }
+  typedef forwarding-address-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable mode.";
+      }	
+      enum "standard" {
+        value 1;
+        description
+          "Standard mode.";
+      }
+      enum "zero-translate" {
+        value 2;
+        description
+          "Zero translate mode.";
+      }      
+    }
+    description
+      "OSPFv3 forwarding address mode.";
+  }  
+  typedef area-filter-mode {
+    type enumeration {
+      enum "filter-import" {
+        value 0;
+        description
+          "Filter incoming summary LSAs.";
+      }
+      enum "filter-export" {
+        value 1;
+        description
+          "Filter outgoing summary LSAs.";
+      }
+    }
+    description
+      "OSPFv3 area filter mode.";
+  }  
+  typedef external-route-type {
+    type enumeration {
+      enum "type1" {
+        value 1;
+        description
+          "External route type 1.";
+      }
+      enum "type2" {
+        value 2;
+        description
+          "External route type 2.";
+      }
+    }
+    description
+      "OSPFv3 external route type.";
+  }
+  typedef network-type {
+    type enumeration {
+      enum "broadcast" {
+        value 1;
+        description
+          "The network type of an interface is set to broadcast.";
+      }
+      enum "nbma" {
+        value 2;
+        description
+          "The network type of an interface is set to NBMA.";
+      }
+      enum "p2mp" {
+        value 5;
+        description
+          "The network type of an interface is set to P2MP.";
+      }
+      enum "p2p" {
+        value 3;
+        description
+          "The network type of an interface is set to P2P.";
+      }
+      enum "p2mp-nonbroadcast" {
+        value 7;
+        description
+          "The network type of an interface is set to p2mp-nonbroadcast.";
+      }
+      enum "loopback" {
+        value 22;
+        description
+          "The network type of an interface is set to Loopback.";
+      }
+    }
+    description
+      "OSPFv3 network type.";
+  }
+  typedef stub-router-flag {
+    type enumeration {
+      enum "no-config" {
+        value 0;
+        description
+          "No config.";
+      }
+      enum "stub-on-hand" {
+        value 1;
+        description
+          "To configure a stub router.";
+      }
+      enum "stub-on-boot" {
+        value 2;
+        description
+          "To remain as the stub router during the active/standby switchover of a router.";
+      }
+    }
+    description
+      "OSPFv3 stub router flag.";
+  }
+  typedef ospf-route-type {
+    type enumeration {
+      enum "default" {
+        value 1;
+        description
+          "Intra and inter route.";
+      }
+      enum "ase" {
+        value 2;
+        description
+          "AS external route.";
+      }
+    }
+    description
+      "OSPFv3 ospf route type.";
+  }
+  typedef authen-mode {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "To cancel authentication.";
+      }
+      enum "hmac-sha256" {
+        value 2;
+        description
+          "Cipher text authentication mode.";
+      }
+    }
+    description
+      "OSPFv3 authencation mode.";
+  }
+  typedef filter-rt-protocol {
+    type enumeration {
+      enum "default" {
+        value 9;
+        description
+          "None config.";
+      }
+      enum "direct" {
+        value 1;
+        description
+          "Direct route.";
+      }
+      enum "ospfv3" {
+        value 7;
+        description
+          "OSPFv3 protocol.";
+      }
+      enum "isis" {
+        value 3;
+        description
+          "ISIS protocol.";
+      }
+      enum "static" {
+        value 4;
+        description
+          "Static route.";
+      }
+      enum "ripng" {
+        value 8;
+        description
+          "RIPng protocol.";
+      }
+      enum "bgp" {
+        value 6;
+        description
+          "BGP protocol.";
+      }
+      enum "unr" {
+        value 11;
+        description
+          "User Network Routes.";
+      }
+    }
+    description
+      "OSPFv3 filter router protocol.";
+  }
+  typedef spf-timer-type {
+    type enumeration {
+      enum "normal" {
+        value 3;
+        description
+          "SPF normal timer.";
+      }
+      enum "intelligent" {
+        value 4;
+        description
+          "SPF intelligent timer.";
+      }
+    }
+    description
+      "OSPFv3 SPF timer type.";
+  }
+}

@@ -1,0 +1,36 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-host-defend-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-host-defend-deviations-CH-NE-X3";
+  prefix host-defend-devs-CH-NE-X3;
+
+  import huawei-host-defend {
+    prefix host-defend;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Host Defend.";
+
+  revision 2020-02-04 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/devm:devm/devm:mpu-boards/devm:mpu-board/host-defend:management-plane-defend-slot" {
+    deviate not-supported;
+  }
+}

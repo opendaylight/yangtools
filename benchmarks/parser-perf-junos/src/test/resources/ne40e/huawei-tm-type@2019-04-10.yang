@@ -1,0 +1,525 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-tm-type {
+  belongs-to huawei-tm {
+    prefix tm;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This table is used to set Dst information.";
+  revision 2019-04-10 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef tm-timezone-option {
+    type enumeration {
+      enum "add" {
+        value 1;
+        description
+          "Indicate that the offset is added to the value of the specified time zone, and the result is equal to the Universal Time Coordinated (UTC) time. Conversely, the default UTC time minus the offset is equal to the time of the specified time zone.";
+      }
+      enum "minus" {
+        value 2;
+        description
+          "Indicate that the time of the specified time zone minus the offset is equal to the UTC time. Conversely, the sum of the default UTC time and offset is equal to the time of the specified time zone.";
+      }
+    }
+    description
+      "The option of timezone.";
+  }
+  typedef tm-dst-type {
+    type enumeration {
+      enum "OneYear" {
+        value 1;
+        description
+          "Indicate that the DST type is one-year. It specifies the summer time for a certain year.";
+      }
+      enum "Repeat-date" {
+        value 2;
+        description
+          "Indicate that the DST type is Repeat-date. It specifies the summer time for several years.";
+      }
+      enum "Repeat-week" {
+        value 3;
+        description
+          "Indicate that the DST type is repeat-week. It specifies the summer time for several years.";
+      }
+    }
+    description
+      "The type of Dst.";
+  }
+  typedef tm-weeknum {
+    type enumeration {
+      enum "first" {
+        value 1;
+        description
+          "Indicate that the week number is first.";
+      }
+      enum "second" {
+        value 2;
+        description
+          "Indicate that the week number is second.";
+      }
+      enum "third" {
+        value 3;
+        description
+          "Indicate that the week number is third.";
+      }
+      enum "fourth" {
+        value 4;
+        description
+          "Indicate that the week number is fourth.";
+      }
+      enum "last" {
+        value 5;
+        description
+          "Indicate that the week number is last.";
+      }
+    }
+    description
+      "The number of week.";
+  }
+  typedef tm-start-weekday {
+    type enumeration {
+      enum "Sun" {
+        value 0;
+        description
+          "Indicate that the weekday is Sunday.";
+      }
+      enum "Mon" {
+        value 1;
+        description
+          "Indicate that the weekday is Monday.";
+      }
+      enum "Tue" {
+        value 2;
+        description
+          "Indicate that the weekday is Tuesday.";
+      }
+      enum "Wed" {
+        value 3;
+        description
+          "Indicate that the weekday is Wednesday.";
+      }
+      enum "Thu" {
+        value 4;
+        description
+          "Indicate that the weekday is Thursday.";
+      }
+      enum "Fri" {
+        value 5;
+        description
+          "Indicate that the weekday is Friday.";
+      }
+      enum "Sat" {
+        value 6;
+        description
+          "Indicate that the weekday is Saturday.";
+      }
+    }
+    description
+      "The start week day of Dst.";
+  }
+  typedef tm-start-month {
+    type enumeration {
+      enum "Jan" {
+        value 1;
+        description
+          "Indicate that the month is January.";
+      }
+      enum "Feb" {
+        value 2;
+        description
+          "Indicate that the month is February.";
+      }
+      enum "Mar" {
+        value 3;
+        description
+          "Indicate that the month is March.";
+      }
+      enum "Apr" {
+        value 4;
+        description
+          "Indicate that the month is April.";
+      }
+      enum "May" {
+        value 5;
+        description
+          "Indicate that the month is May.";
+      }
+      enum "Jun" {
+        value 6;
+        description
+          "Indicate that the month is June.";
+      }
+      enum "Jul" {
+        value 7;
+        description
+          "Indicate that the month is July.";
+      }
+      enum "Aug" {
+        value 8;
+        description
+          "Indicate that the month is August.";
+      }
+      enum "Sep" {
+        value 9;
+        description
+          "Indicate that the month is September.";
+      }
+      enum "Oct" {
+        value 10;
+        description
+          "Indicate that the month is October.";
+      }
+      enum "Nov" {
+        value 11;
+        description
+          "Indicate that the month is November.";
+      }
+      enum "Dec" {
+        value 12;
+        description
+          "Indicate that the month is December.";
+      }
+    }
+    description
+      "The start month of Dst.";
+  }
+  typedef tm-day-week {
+    type enumeration {
+      enum "Sunday" {
+        value 0;
+        description
+          "Indicate that the weekday is Sunday.";
+      }
+      enum "Monday" {
+        value 1;
+        description
+          "Indicate that the weekday is Monday.";
+      }
+      enum "Tuesday" {
+        value 2;
+        description
+          "Indicate that the weekday is Tuesday.";
+      }
+      enum "Wednesday" {
+        value 3;
+        description
+          "Indicate that the weekday is Wednesday.";
+      }
+      enum "Thursday" {
+        value 4;
+        description
+          "Indicate that the weekday is Thursday.";
+      }
+      enum "Friday" {
+        value 5;
+        description
+          "Indicate that the weekday is Friday.";
+      }
+      enum "Saturday" {
+        value 6;
+        description
+          "Indicate that the weekday is Saturday.";
+      }
+    }
+    description
+      "The enum of week day.";
+  }
+  typedef tm-date {
+    type enumeration {
+      enum "1" {
+        value 1;
+        description
+          "Indicate that it is the 1st day of the month.";
+      }
+      enum "2" {
+        value 2;
+        description
+          "Indicate that it is the 2nd day of the month.";
+      }
+      enum "3" {
+        value 3;
+        description
+          "Indicate that it is the 3rd day of the month.";
+      }
+      enum "4" {
+        value 4;
+        description
+          "Indicate that it is the 4th day of the month.";
+      }
+      enum "5" {
+        value 5;
+        description
+          "Indicate that it is the 5th day of the month.";
+      }
+      enum "6" {
+        value 6;
+        description
+          "Indicate that it is the 6th day of the month.";
+      }
+      enum "7" {
+        value 7;
+        description
+          "Indicate that it is the 7th day of the month.";
+      }
+      enum "8" {
+        value 8;
+        description
+          "Indicate that it is the 8th day of the month.";
+      }
+      enum "9" {
+        value 9;
+        description
+          "Indicate that it is the 9th day of the month.";
+      }
+      enum "10" {
+        value 10;
+        description
+          "Indicate that it is the 10th day of the month.";
+      }
+      enum "11" {
+        value 11;
+        description
+          "Indicate that it is the 11st day of the month.";
+      }
+      enum "12" {
+        value 12;
+        description
+          "Indicate that it is the 12nd day of the month.";
+      }
+      enum "13" {
+        value 13;
+        description
+          "Indicate that it is the 13rd day of the month.";
+      }
+      enum "14" {
+        value 14;
+        description
+          "Indicate that it is the 14th day of the month.";
+      }
+      enum "15" {
+        value 15;
+        description
+          "Indicate that it is the 15th day of the month.";
+      }
+      enum "16" {
+        value 16;
+        description
+          "Indicate that it is the 16th day of the month.";
+      }
+      enum "17" {
+        value 17;
+        description
+          "Indicate that it is the 17th day of the month.";
+      }
+      enum "18" {
+        value 18;
+        description
+          "Indicate that it is the 18th day of the month.";
+      }
+      enum "19" {
+        value 19;
+        description
+          "Indicate that it is the 19th day of the month.";
+      }
+      enum "20" {
+        value 20;
+        description
+          "Indicate that it is the 20th day of the month.";
+      }
+      enum "21" {
+        value 21;
+        description
+          "Indicate that it is the 21st day of the month.";
+      }
+      enum "22" {
+        value 22;
+        description
+          "Indicate that it is the 22nd day of the month.";
+      }
+      enum "23" {
+        value 23;
+        description
+          "Indicate that it is the 23rd day of the month.";
+      }
+      enum "24" {
+        value 24;
+        description
+          "Indicate that it is the 24th day of the month.";
+      }
+      enum "25" {
+        value 25;
+        description
+          "Indicate that it is the 25th day of the month.";
+      }
+      enum "26" {
+        value 26;
+        description
+          "Indicate that it is the 26th day of the month.";
+      }
+      enum "27" {
+        value 27;
+        description
+          "Indicate that it is the 27th day of the month.";
+      }
+      enum "28" {
+        value 28;
+        description
+          "Indicate that it is the 28th day of the month.";
+      }
+      enum "29" {
+        value 29;
+        description
+          "Indicate that it is the 29th day of the month.";
+      }
+      enum "30" {
+        value 30;
+        description
+          "Indicate that it is the 30th day of the month.";
+      }
+      enum "31" {
+        value 31;
+        description
+          "Indicate that it is the 31st day of the month.";
+      }
+    }
+    description
+      "The date enum.";
+  }
+  typedef tm-end-weekday {
+    type enumeration {
+      enum "Sun" {
+        value 0;
+        description
+          "Indicate that the weekday is Sunday.";
+      }
+      enum "Mon" {
+        value 1;
+        description
+          "Indicate that the weekday is Monday.";
+      }
+      enum "Tue" {
+        value 2;
+        description
+          "Indicate that the weekday is Tuesday.";
+      }
+      enum "Wed" {
+        value 3;
+        description
+          "Indicate that the weekday is Wednesday.";
+      }
+      enum "Thu" {
+        value 4;
+        description
+          "Indicate that the weekday is Thursday.";
+      }
+      enum "Fri" {
+        value 5;
+        description
+          "Indicate that the weekday is Friday.";
+      }
+      enum "Sat" {
+        value 6;
+        description
+          "Indicate that the weekday is Saturday.";
+      }
+    }
+    description
+      "The end week day of Dst.";
+  }
+  typedef tm-end-month {
+    type enumeration {
+      enum "Jan" {
+        value 1;
+        description
+          "Indicate that the month is January.";
+      }
+      enum "Feb" {
+        value 2;
+        description
+          "Indicate that the month is February.";
+      }
+      enum "Mar" {
+        value 3;
+        description
+          "Indicate that the month is March.";
+      }
+      enum "Apr" {
+        value 4;
+        description
+          "Indicate that the month is April.";
+      }
+      enum "May" {
+        value 5;
+        description
+          "Indicate that the month is May.";
+      }
+      enum "Jun" {
+        value 6;
+        description
+          "Indicate that the month is June.";
+      }
+      enum "Jul" {
+        value 7;
+        description
+          "Indicate that the month is July.";
+      }
+      enum "Aug" {
+        value 8;
+        description
+          "Indicate that the month is August.";
+      }
+      enum "Sep" {
+        value 9;
+        description
+          "Indicate that the month is September.";
+      }
+      enum "Oct" {
+        value 10;
+        description
+          "Indicate that the month is October.";
+      }
+      enum "Nov" {
+        value 11;
+        description
+          "Indicate that the month is November.";
+      }
+      enum "Dec" {
+        value 12;
+        description
+          "Indicate that the month is December.";
+      }
+    }
+    description
+      "The end month of Dst.";
+  }
+  typedef tm-hhmm {
+    type string {
+      length "3..5";
+      pattern '(([0-1][0-9])|(2[0-3])|[0-9]):([0-5][0-9]|[0-9])';
+    }
+    description
+      "The type tm-hhmm is like string.";
+  }
+  typedef tm-time {
+    type string {
+      pattern '\d{1,2}:\d{1,2}:\d{1,2}';
+    }
+    description
+      "XSD time string type.";
+  }
+}

@@ -1,0 +1,65 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-pppox-access-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-bras-pppox-access-deviations-CH-NE-X3";
+  prefix bras-pppox-access-devs-CH-NE-X3;
+
+  import huawei-bras-pppox-access {
+    prefix bras-pppox-access;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Global Configuration.";
+
+  revision 2019-06-25 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/devm:devm/devm:mpu-boards/devm:mpu-board/bras-pppox-access:bras-pppox" {
+    deviate not-supported;
+  }
+  deviation "/bras-pppox-access:bras-pppox-access/bras-pppox-access:ppp-user-infos/bras-pppox-access:ppp-user-info/bras-pppox-access:user-id" {
+    deviate replace {
+      type uint32 {
+        range "0..3145727";
+      }
+    }
+  }
+  deviation "/devm:devm/devm:lpu-boards/devm:lpu-board/bras-pppox-access:bras-pppox/bras-pppox-access:max-sessions/bras-pppox-access:max-session-number" {
+    deviate replace {
+      type uint32 {
+        range "0..131072";
+      }
+    }
+  }
+  ext:deviation-ext "/devm:devm/devm:lpu-boards/devm:lpu-board/bras-pppox-access:bras-pppox/bras-pppox-access:max-sessions/bras-pppox-access:max-session-number" {
+    ext:deviate-ext add {
+      ext:dynamic-default {
+        ext:default-value "131072" {
+          description "The default value for LPU240/LPU480 boards is 131072.";
+        }
+        ext:default-value "65534" {
+          description "The default value for LPU50/LPU120 and other boards is 65534.";
+        }
+      }
+    }
+  }
+}

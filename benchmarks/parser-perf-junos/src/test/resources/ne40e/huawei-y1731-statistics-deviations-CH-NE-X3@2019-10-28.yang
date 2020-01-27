@@ -1,0 +1,46 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-y1731-statistics-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-y1731-statistics-deviations-CH-NE-X3";
+  prefix "y1731-statistics-devs-CH-NE-X3";
+
+  import huawei-y1731 {
+    prefix y1731;
+  }
+  import huawei-devm {
+    prefix "devm";
+  }
+  import huawei-y1731-statistics {
+    prefix "y1731-statistics";
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Carrier Grade NAT.";
+  revision 2019-10-28 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  
+  deviation /devm:devm/devm:mpu-boards/devm:mpu-board/y1731-statistics:cfm-mac-level-enable-mpu {
+    deviate not-supported;
+  }
+  
+  deviation /y1731:y1731/y1731-statistics:inner-priority {
+    deviate not-supported;
+  }
+  deviation /y1731:y1731/y1731-statistics:cfm-level-check {
+    deviate not-supported;
+  }
+}

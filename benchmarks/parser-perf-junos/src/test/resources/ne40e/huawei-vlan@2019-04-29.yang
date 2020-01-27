@@ -1,0 +1,371 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-vlan {
+  namespace "urn:huawei:yang:huawei-vlan";
+  prefix vlan; 
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "VLAN management.";
+  revision 2019-04-29 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "vlan";
+  typedef vlan-id {
+    type uint16 {
+      range "1..4094";
+    }
+    description
+      "VLAN ID.";
+  }
+  typedef vlan-type {
+    type enumeration {
+      enum "common" {
+        value 1;
+        description
+          "VLAN type is common VLAN.";
+      }
+      enum "super" {
+        value 2;
+        description
+          "VLAN type is super-VLAN.";
+      }
+      enum "sub" {
+        value 3;
+        description
+          "VLAN type is sub-VLAN.";
+      }
+    }
+    description
+      "VLAN type.";
+  }
+  typedef admin-status {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "Administratively up.";
+      }
+      enum "down" {
+        value 0;
+        description
+          "Administratively down.";
+      }
+    }
+    description
+      "VLAN administrative.";
+  }
+  typedef oper-status {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "Status is up.";
+      }
+      enum "down" {
+        value 0;
+        description
+          "Status is down.";
+      }
+    }
+    description
+      "State.";
+  }
+  typedef enable-status {
+    type enumeration {
+      enum "enable" {
+        value 1;
+        description
+          "VLAN enable status is enable.";
+      }
+      enum "disable" {
+        value 0;
+        description
+          "VLAN enable status is disable.";
+      }
+    }
+    description
+      "VLAN enable status.";
+  }
+  typedef access-type {
+    type enumeration {
+      enum "access" {
+        value 1;
+        description
+          "Access port that accepts packets without VLAN tags.";
+      }
+      enum "trunk" {
+        value 2;
+        description
+          "Trunk port that accepts packets with VLAN tags.";
+      }
+      enum "hybrid" {
+        value 3;
+        description
+          "Hybrid port that accepts packets with or without VLAN tags.";
+      }
+      enum "dot1qtunnel" {
+        value 4;
+        description
+          "Dot1q tunnel interface that allows packet with double VLAN tags to pass.";
+      }
+    }
+    description
+      "VLAN access type.";
+  }
+  container vlan {
+    description
+      "VLAN management.";
+    container vlans {
+      description
+        "List of VLAN.";
+      list vlan {
+        key "id";
+        max-elements 4094;
+        description
+          "Configure VLAN information.";
+        leaf id {
+          type vlan-id;
+          description
+            "VLAN ID.";
+        }
+        leaf name {
+          type string {
+            length "1..31";
+          }
+          description
+            "VLAN name.";
+        }
+        leaf description {
+          type string {
+            length "1..80";
+          }
+          description
+            "VLAN description.";
+        }
+        leaf type {
+          type vlan-type;
+          default "common";
+          description
+            "VLAN type, such as common VLANs, super-VLANs, and sub-VLANs.";
+        }
+        leaf admin-status {
+          type admin-status;
+          default "up";
+          description
+            "Administrative status of a VLAN.";
+        }
+        leaf broadcast-discard {
+          type enable-status;
+          default "disable";
+          description
+            "Discard broadcast packets.";
+        }
+        leaf unknown-multicast-discard {
+          type enable-status;
+          default "disable";
+          description
+            "Discard unknown multicast packets.";
+        }
+        leaf mac-learning {
+          type enable-status;
+          default "enable";
+          description
+            "Whether MAC address leaning is enabled in a VLAN.";
+        }
+        leaf statistic-enable {
+          type enable-status;
+          default "disable";
+          description
+            "Whether VLAN statistics collection is enabled.";
+        }
+        leaf statistic-discard {
+          when "../statistic-enable='enable'";
+          type enable-status;
+          default "disable";
+          description
+            "Whether BUM discard statistics collection is enabled.";
+        }
+        leaf mac-aging-time {
+          when "not(../type='super')";
+          type uint32 {
+            range "0|60..1000000";
+          }
+          units s;
+          description
+            "MAC address aging time, 0 indicates that MAC addresses do not age.";
+        }
+        leaf super-vlan {
+          when "../type='sub'";
+          type leafref {
+              path "/vlan:vlan/vlan:vlans/vlan:vlan/vlan:id";
+          }
+          must "/vlan:vlan/vlan:vlans/vlan:vlan[id=current()]/vlan:type = 'super'";
+          mandatory true;
+          description
+            "The corresponding super-VLAN ID when the VLAN is a sub-VLAN.";
+        }
+        container unkown-unicast-discard {
+          description
+            "Configure drop unknown unicast.";
+          leaf discard {
+            type enable-status;
+            default "disable";
+            description
+              "Discard unknown unicast packets.";
+          }
+          leaf mac-learning-enable {
+            when "../discard='enable'";
+            type enable-status;
+            default "disable";
+            description
+              "Enable unknown unicast MAC address learning.";
+          }
+        }
+        container suppression {
+          description
+            "Configure traffic suppression.";
+          leaf inbound {
+            type enable-status;
+            default "disable";
+            description
+              "Whether inbound suppression is enable.";
+          }
+          leaf outbound {
+            type enable-status;
+            default "disable";
+            description
+              "Whether outbound suppression is enable.";
+          }
+        }
+        container member-ports {
+          when "not(../type='super')";
+          config false;
+          description
+            "List of ports in a VLAN.";
+          list member-port {
+            key "interface-name";
+            description
+              "Statistics of port in a VLAN.";
+            leaf interface-name {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+              }
+              description
+                "Names of ports in a VLAN.";
+            }
+            leaf access-type {
+              type access-type;
+              description
+                "Port link type.";
+            }
+            leaf state {
+              type oper-status;
+              description
+                "Port state.";
+            }
+          }
+        }
+      }
+    }
+    container instances {
+      description
+        "List of VLAN instances.";
+      list instance {
+        key "id";
+        description
+          "Configure instances.";
+        leaf id {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "Instance ID.";
+        }
+        leaf vlan-list {
+          type pub-type:vlan-range;
+          mandatory true;
+          description
+            "VLAN list.";
+        }
+      }
+    }
+    container default-instance {
+      config false;
+      description
+        "Statistics of default instance VLANs.";
+      leaf vlan-list {
+        type pub-type:vlan-range;
+        description
+          "VLAN list.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    when "ifm:type='Vlanif'";
+    description "Extend interface attribute.";
+      container vlanif-attribute {
+        description
+          "Configure VLANIF attribute.";
+        choice band-width-type {
+          default band-width-mbps;
+          description
+            "VLANIF interface bandwidth.";
+          case band-width-mbps {
+            description
+              "VLANIF interface bandwidth with mbps.";
+            leaf band-width {
+              type uint32 {
+                range "1..1000000";
+              }
+              units Mbit/s;
+              default "1000";
+                description
+                "VLANIF interface bandwidth.";
+            }
+          }
+          case band-width-kbps {
+            description
+              "VLANIF interface bandwidth with kbps.";
+            leaf band-width-kbps {
+              type uint32 {
+                range "1..1000000";
+              }
+              units kbit/s;
+              description
+                "VLANIF interface bandwidth with kbps.";
+            }
+          }
+        }
+        leaf damping-time {
+          type uint16 {
+            range "0..20";
+          }
+          units s;
+          default "0";
+          description
+            "Delay time after which a VLANIF interface goes down.";
+        }
+      }
+  }
+}

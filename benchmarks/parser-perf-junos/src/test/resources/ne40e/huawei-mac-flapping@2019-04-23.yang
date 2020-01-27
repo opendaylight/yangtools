@@ -1,0 +1,170 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mac-flapping {
+  namespace "urn:huawei:yang:huawei-mac-flapping";
+  prefix mac-flapping;
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+  import huawei-extension {
+    prefix ext;
+  }  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "MAC flapping-based loop detection.";
+  revision 2019-04-23 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name  "mflp"; 
+  typedef alarm-enable {
+    type enumeration {
+      enum "block" {
+        value 1;	  
+        description
+          "Disable the loop detection alarm function.";
+      }
+      enum "alarm" {
+        value 2;	  
+        description
+          "Enable the loop detection alarm function.";
+      }
+    }
+    description
+      "Alarm Enable.";
+  } 
+  typedef mflp-enable {
+    type enumeration {
+      enum "disable" {
+        value 1;
+        description
+          "Disable type.";
+      }
+      enum "enable" {
+        value 2;
+        description
+          "Enable type.";
+      }
+    }
+    description
+      "MFLP enable type.";
+  }  
+  container mac-flapping {
+    description
+      "MAC flapping-based loop detection.";
+    container global-attribute {
+      description
+        "Configure global attribute of MFLP.";
+      leaf precise-block-policy {
+        type mflp-enable;
+        default "disable";
+        description
+          "Global blocking policy.";
+      }
+      leaf generate-time {
+        type uint32 {
+          range "60..2000000";
+        }
+        units s;
+        default "600";
+        description
+          "Trust interface generation time.";
+      }
+      leaf assist-stp {
+        type mflp-enable;
+        default "disable";
+        description
+          "MAC flapping assist flag.";
+      }
+      leaf traffic-suppression {
+        type mflp-enable;
+        default "enable";
+        description
+          "Global traffic suppress state.";
+      }
+      leaf traffic-suppression-threshold {
+        type uint16 {
+          range "10..50";
+        }
+        units %;
+        default "10";
+        description
+          "Traffic suppress threshold.";
+      }    
+    }
+  }
+  augment "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls" {
+    description
+      "MAC flapping patameters on VSI.";  
+    container mac-flapping {
+      description
+        "Configure MAC flapping VSI table.";
+      container loop-detect{
+        presence "Loop detect configuration.";
+        description
+          "Configure VSI MAC flapping entry.";
+        leaf loop-times {
+          type uint32 {
+            range "3..1000";
+          }
+          mandatory true;
+          description
+            "Number of MAC address flappings.";
+        }
+        leaf detect-cycle {
+          type uint32 {
+            range "3..30";
+          }
+          units s;
+          mandatory true;
+          description
+            "Detection cycle.";
+        }
+        leaf cycles {
+          type uint32 {
+            range "1..15";
+          }
+          mandatory true;
+          description
+            "Number of cycles.";
+        }
+        leaf action {
+          type alarm-enable;
+          mandatory true;
+          description
+            "Action taken after a loop occurs. The action can be reporting an alarm or blocking an interface.";
+        }		
+        leaf retry-times {
+          when "../action='block'";
+          type uint32 {
+            range "0..5";
+          }
+          must "(../retry-times and ../block-time) or (not(../retry-times) and not(../block-time))";
+          description
+            "Retry times.";
+        }
+        leaf block-time {
+          when "../action='block'";
+          type uint32 {
+            range "10..65535";
+          }
+          units s;
+          must "(../retry-times and ../block-time) or (not(../retry-times) and not(../block-time))";
+          description
+            "Blocking time.";
+        }
+      }
+    }  
+  }
+}

@@ -1,0 +1,88 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2-multicast-forward {
+  namespace urn:huawei:yang:huawei-l2-multicast-forward;
+  prefix l2-multicast-forward;
+  
+  import huawei-vlan {
+    prefix vlan;
+  }
+  import huawei-extension {
+    prefix ext;
+  }  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "L2 multicast VLAN fwroding.";
+  revision 2019-07-01 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "l2mc";
+  typedef l2mc-forward-mode {
+    type enumeration {
+      enum "ip" {
+	    value 1;
+        description
+          "Forwarding based on IP addresses.";
+      }
+      enum "mac" {
+	    value 2;	  
+        description
+          "Forwarding based on MAC addresses.";
+      }
+    }
+    description
+      "Forwarding mode.";
+  }
+  typedef sg-type {
+    type enumeration {
+      enum "SG" {
+        value 1;
+        description
+          "Multicast entry in which both group and source addresses are specified.";
+      }
+      enum "source-wildcard" {
+        value 2;	  
+        description
+          "Multicast entry in which only a group address is specified.";
+      }
+      enum "rt-port" {
+        value 3;	  
+        description
+          "Router port.";
+      }
+    }
+    description
+      "Port type.";
+  } 
+  
+  augment "/vlan:vlan/vlan:vlans/vlan:vlan" { 
+    description
+	"Multicast forward configuration to the VLAN module.";
+    container multicast-forward {
+      description
+        "Configure multicast load splitting trunks in a VLAN.";
+      container port-isolate-state {	  
+        description
+          "Configure the isolation of non-multicast traffic in a VLAN.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable isolate non-multicast traffic.";
+        }
+      }
+    }
+  }
+}

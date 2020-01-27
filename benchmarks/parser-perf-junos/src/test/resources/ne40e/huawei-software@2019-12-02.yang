@@ -1,0 +1,228 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-software {
+  namespace "urn:huawei:yang:huawei-software";
+  prefix software;
+
+  import huawei-extension {
+    prefix ext;
+  } 
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specify software package upgrade management.";
+
+  revision 2019-12-02 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "upgrade";
+  typedef startup-mode {
+    type enumeration {
+      enum "primary" {
+        value 1;
+        description
+          "Upgrade the software package on the master MPU.";
+      }
+      enum "slave" {
+        value 2;
+        description
+          "Upgrade the software package on the slave MPU.";
+      }
+      enum "all" {
+        value 3;
+        description
+          "Upgrade the software package on all MPUs.";
+      }
+    }
+    description
+      "Startup mode.";
+  }
+  typedef package-type {
+    type enumeration {
+      enum "system" {
+        value 1;
+        description
+          "The type of a software package on the device is a system software package.";
+      }
+      enum "feature" {
+        value 2;
+        description
+          "The type of a software package on the device is a feature software package.";
+      }
+    }
+    description
+      "Specify the type of a software package on the device.";
+  }
+
+  container software {
+    config false;
+    description
+      "Specify software package upgrade management.";
+    container versions {
+      status deprecated;
+      description
+        "List of operational state of software package versions. This container is not recommended for use.";
+      list version {
+        key "base";
+        status deprecated;
+        description
+          "Operational state of a software package version.";
+        leaf base {
+          type string {
+            length "1..63";
+          }
+          status deprecated;
+          description
+            "Current software package version.";
+        }
+        leaf patch {
+          type string {
+            length "1..63";
+          }
+          status deprecated;
+          description
+            "Current patch package version.";
+        }
+      }
+    }
+    container startup-packages {
+      description
+        "List of operational state of startup software packages.";
+      list startup-package {
+        key "slot-id";
+        description
+          "Operational state of startup software package.";
+        leaf slot-id {
+          type string {
+            length "1..31";
+          }
+          description
+            "Slot ID.";
+        }
+        leaf current-package {
+          type string {
+            length "4..255";
+          }
+          description
+            "The name of a software package used at the current startup.";
+        }
+        leaf next-package {
+          type string {
+            length "4..255";
+          }
+          description
+            "The name of a software package used at the next startup.";
+        }
+      }
+    }
+    container packages {
+      description
+        "List of operational state of software packages on the device.";
+      list package {
+        key "name";
+        description
+          "Operational state of a software package on the device.";
+        leaf name {
+          type string {
+            length "4..255";
+          }
+          description
+            "The name of a software package on the device. There may exist user-created software packages with names longer than 127 on the device, however, such packages cannot be used for the next startup.";
+        }
+        leaf package-type {
+          type package-type;
+          description
+            "The type of a software package on the device.";
+        }
+      }
+    }
+    container upgrade-rollback-timer {
+      description
+        "Operational data of upgrade rollback timer.";
+      leaf timer-enable {
+        type boolean;
+        description
+          "When the rollback timer is closed, the time leaf will not be shown.";
+      }
+      leaf time {
+        when "../timer-enable != 'false'";
+        type uint32;
+        units min;
+        description
+          "Rollback time.";
+      }
+    }
+  }
+  rpc startup-by-mode {
+    description
+      "Specify the mode-based upgrade for software packages.";
+    ext:node-ref "/software/packages/package"; 
+    input {
+      leaf name {
+        type string {
+          length "4..127";
+        }
+        mandatory true;
+        description
+          "Specify the name of a software package that needs to be upgraded.";
+      }
+      leaf mode {
+        type startup-mode;
+        description
+          "Specify a software package upgrade mode.";
+      }
+    }
+  }
+  rpc startup-by-slot-id {
+    description
+      "Specify the slot ID-based upgrade for software packages.";
+    input {
+      leaf name {
+        type string {
+          length "4..127";
+        }
+        mandatory true;
+        description
+          "Specify the name of a software package that needs to be upgraded.";
+      }
+      leaf slot-id {
+        type string {
+          length "1..31";
+        }
+        description
+          "Specify the slot ID of a board on which a software package needs to be upgraded.";
+      }
+    }
+  }
+  rpc enable-upgrade-rollback {
+    description
+      "Specify the rollback time when upgrade software package.";
+    input {
+      leaf rollback-time {
+        type uint32 {
+          range "10..360";
+        }
+        mandatory true;
+        description
+          "Specify the rollback time.";
+      }
+    }
+  }
+  rpc undo-upgrade-rollback {
+    description
+      "Delete the rollback time when upgrade software package.";
+  }
+
+}

@@ -1,0 +1,76 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mpls-res {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-mpls-res";
+  prefix mpls-res;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "This YANG module defines essential components for the management of labels.";
+  revision 2019-04-27 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "system";
+
+  container mpls-res {
+    description
+      "Query and configuration of labels.";
+    container static-label-segments {
+      config false;
+      description
+        "List of idle static label segments.";
+      list static-label-segment {
+        key "index";
+        description
+          "Operational data of a idle static label segment.";
+        leaf index {
+          type uint32;
+          description
+            "Specifies the index of label segment.";
+        }
+        leaf query-begin {
+          type uint32;
+          ext:support-filter true;
+          description
+            "Beginning of a label query segment.";
+        }
+        leaf query-length {
+          type uint32;
+          ext:support-filter true;
+          description
+            "Specifies the length of label query segment.";
+        }
+        leaf label-begin {
+          type uint32;
+          description
+            "Specifies the first idle label of a idle static label segment.";
+        }
+        leaf label-end {
+          type uint32;
+          description
+            "Specifies the last idle label of a idle static label segment.";
+        }
+        leaf label-length {
+          type uint32;
+          description
+            "Specifies the idle label length of a idle static label segment.";
+        }
+      }
+    }
+  }
+}

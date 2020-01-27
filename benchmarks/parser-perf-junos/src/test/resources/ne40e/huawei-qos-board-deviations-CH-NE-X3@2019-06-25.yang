@@ -1,0 +1,64 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-qos-board-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-qos-board-deviations-CH-NE-X3";
+  prefix "qos-board-devs-CH-NE-X3";
+
+  import huawei-qos-board{
+    prefix qos-board;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-devm-vnf {
+    prefix devm-vnf;
+  }
+  import huawei-license {
+    prefix lcs;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Quality of service for board.";
+  revision 2019-06-25 {
+    description
+      "The modifications in the schema file are synchronized to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+
+  deviation /devm:devm/devm:mpu-boards/devm:mpu-board/qos-board:qos {
+    deviate not-supported;
+  }
+
+  deviation /devm:devm/devm:lpu-boards/devm:lpu-board/qos-board:qos/qos-board:multicast-shapers {
+    deviate not-supported;
+  }
+
+  deviation /devm:devm/devm:lpu-boards/devm:lpu-board/qos-board:qos/qos-board:traffic-policy-matchs/qos-board:traffic-policy-match {
+    deviate add {
+      must "(((qos-board:type='ip-layer-push' or qos-board:type='ip-layer-pop' or qos-board:type='rule-packet') and not(../qos-board:traffic-policy-match[qos-board:type='mpls-layer-push']) and not(../qos-board:traffic-policy-match[qos-board:type='mpls-layer-pop'])) or ((qos-board:type='mpls-layer-push' or qos-board:type='mpls-layer-pop') and not(../qos-board:traffic-policy-match[qos-board:type='ip-layer-push']) and not(../qos-board:traffic-policy-match[qos-board:type='ip-layer-pop']) and not(../qos-board:traffic-policy-match[qos-board:type='rule-packet'])) or (qos-board:type='mpls-layer-l2-inbound' or qos-board:type='ipv6-address-rule-mask' or qos-board:type='protocol-mc-reserved'))";
+    }
+  }
+
+
+  deviation /devm:devm/devm:lpu-boards/devm:lpu-board/qos-board:qos/qos-board:convergent-precedence-highs {
+    deviate not-supported;
+  }
+
+  deviation /lcs:license/qos-board:vm-bandwidths {
+    deviate not-supported;
+  }
+
+  deviation /devm-vnf:devm-vnf/devm-vnf:vnf-boards/devm-vnf:vnf-board/qos-board:qos {
+    deviate not-supported;
+  }
+}

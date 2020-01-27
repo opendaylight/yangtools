@@ -1,0 +1,1972 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-mpls-te-type {
+  belongs-to huawei-mpls-te {
+    prefix mpls-te;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Specifies the multi-protocol label switching protocol.";
+  revision 2020-04-09 {
+    description
+      "Delete an unused type.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-03-17 {
+    description
+      "Fixed some descriptions.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-28 {
+    description
+      "Add enum definitions for associate-tunnel-group-state node.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-20 {
+    description
+      "Fix some descriptions.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-17 {
+    description
+      "Add type definitions for associate-groups.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-02-14 {
+    description
+      "Add type definitions for self-ping enabling state.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-03 {
+    description
+      "Add type definitions for tedb and srdb nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-17 {
+    description
+      "Adjusting path-type definitions for some nodes.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-07 {
+    description
+      "Add type definitions for reverse LSP type.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-12 {
+    description
+      "Add type definitions for ds-te and aps protection.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-08 {
+    description
+      "Add type definitions for the rsvp-te neighbor.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-03-27 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  /*
+   * typedef-stmt
+   */
+  typedef active-lsp-type {
+    type enumeration {
+      enum "primary-lsp" {
+        value 0;
+        description
+          "Primary LSP.";
+      }
+      enum "hot-standby-lsp" {
+        value 1;
+        description
+          "Hot-standby LSP.";
+      }
+      enum "ordinary-lsp" {
+        value 2;
+        description
+          "Ordinary LSP.";
+      }
+      enum "best-effort-lsp" {
+        value 3;
+        description
+          "Best-effort LSP.";
+      }
+    }
+    description
+      "Active LSP type.";
+  }
+  typedef associate-tunnel-group-state {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "The tunnel state is up.";
+      }
+      enum "down" {
+        value 2;
+        description
+          "The tunnel state is down.";
+      }
+      enum "frr-inuse" {
+        value 4;
+        description
+          "The tunnel state is Frr-inuse.";
+      }
+    }
+    description
+      "Associate tunnel group tunnel state.";
+  }
+  typedef auto-bandwidth-type {
+    type enumeration {
+      enum "adjustment" {
+        value 2;
+        description
+          "Adjustment mode: a lsp will be created, if all of the conditions are satisfied.";
+      }
+      enum "collect-bw" {
+        value 1;
+        description
+          "Collect mode: only collect bandwidth in this mode.";
+      }
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+    }
+    description
+      "Auto bandwith type.";
+  }
+  typedef auto-sr-te-tunnel-type {
+    type enumeration {
+      enum "bypass" {
+        value 1;
+        description
+          "Bypass tunnel.";
+      }
+      enum "ip-prefix" {
+        value 2;
+        description
+          "IP-prefix tunnel.";
+      }
+      enum "init" {
+        value 3;
+        description
+          "Init tunnel.";
+      }
+    }
+    description
+      "Auto SR-TE tunnel type.";
+  }
+  typedef auto-tunnel-type {
+    type enumeration {
+      enum "bypass" {
+        value 1;
+        description
+          "Bypass tunnel.";
+      }
+      enum "ip-prefix" {
+        value 2;
+        description
+          "IP-prefix tunnel.";
+      }
+      enum "init" {
+        value 3;
+        description
+          "Init tunnel.";
+      }
+    }
+    description
+      "Auto tunnel type.";
+  }
+  typedef backup-type {
+    type enumeration {
+      enum "load-balance" {
+        value 0;
+        description
+          "Load balancing mode as the backup type of a tunnel association group.";
+      }
+      enum "backup" {
+        value 1;
+        description
+          "Active/standby mode as the backup type of a tunnel association group.";
+      }     
+    }
+    description
+      "Backup type of a tunnel association group.";
+  }
+  typedef bearer-type {
+    type enumeration {
+      enum "interface" {
+        value 1;
+        description
+          "Interface.";
+      }
+      enum "ring" {
+        value 2;
+        description
+          "MPLS-TP shared protection ring.";
+      }
+      enum "tunnel" {
+        value 3;
+        description
+          "MPLS tunnel with stackable capability.";
+      }
+    }
+    description
+      "Bearer type.";
+  }
+  typedef bfd-for-lsp-mode {
+    type enumeration {
+      enum "one-arm-echo" {
+        value 1;
+        description
+          "BFD one arm echo.";
+      }
+    }
+    description
+      "Bfd for lsp type.";
+  }
+  typedef bfd-for-tunnel-mode {
+    type enumeration {
+      enum "one-arm-echo" {
+        value 1;
+        description
+          "BFD one arm echo.";
+      }
+    }
+    description
+      "Bfd for tunnel type.";
+  }
+  typedef bfd-signal-protocol-type {
+    type enumeration {
+      enum "rsvp-te" {
+        value 2;
+        description
+          "RSVP-TE.";
+      }
+      enum "segment-routing" {
+        value 6;
+        description
+          "SR-TE.";
+      }
+    }
+    description
+      "Bfd signal protocol type.";
+  }
+  typedef bfd-state-type {
+    type enumeration {
+      enum "admin-down" {
+        value 0;
+        description
+          "The TE BFD session is in the admin down state.";
+      }
+      enum "down" {
+        value 1;
+        description
+          "The TE BFD session is in the down state.";
+      }
+      enum "init" {
+        value 2;
+        description
+          "The TE BFD session is in the initial state.";
+      }
+      enum "up" {
+        value 3;
+        description
+          "The TE BFD session is in the up state.";
+      }
+    }
+    description
+      "Bfd state type.";
+  }
+  typedef bfd-status-type {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+        description
+          "Unknown.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "Up.";
+      }
+      enum "down" {
+        value 2;
+        description
+          "Down.";
+      }
+    }
+    description
+      "Bfd status type.";
+  }
+  typedef bingding-sid-tunnel-type {
+    type enumeration {
+      enum "sr-te" {
+        value 0;
+        description
+          "The tunnel type is SR-TE.";
+      }
+    }
+    description
+      "Bingding sid tunnel type.";
+  }
+  typedef bit-error-switch-mode {
+    type enumeration {
+      enum "unidirectional" {
+        value 1;
+        description
+          "Unidirectional switch mode.";
+      }
+      enum "bidirectional" {
+        value 2;
+        description
+          "Bidirectional switch mode.";
+      }
+    }
+    description
+      "Bit error switch mode.";
+  }
+  typedef chop-address-type {
+    type enumeration {
+      enum "link" {
+        value 0;
+        description
+          "Link address.";
+      }
+      enum "lsrid" {
+        value 1;
+        description
+          "LSR ID.";
+      }
+    }
+    description
+      "Chop address type.";
+  }
+  typedef chop-reach-ability {
+    type enumeration {
+      enum "reachable" {
+        value 1;
+        description
+          "Hop is reachable.";
+      }
+      enum "unreachable" {
+        value 2;
+        description
+          "Hop is unreachable.";
+      }
+    }
+    description
+      "Chop reach ability.";
+  }
+  typedef chop-type {
+    type enumeration {
+      enum "include" {
+        value 2;
+        description
+          "Include a hop.";
+      }
+      enum "exclude" {
+        value 1;
+        description
+          "Exclude a hop.";
+      }
+    }
+    description
+      "Chop type.";
+  }
+  typedef crc-state {
+    type enumeration {
+      enum "stop" {
+        value 0;
+        description
+          "Stop bit error detection state.";
+      }
+      enum "start" {
+        value 1;
+        description
+          "Start bit error detection state.";
+      }
+      enum "invalid" {
+        value 2;
+        description
+          "Invalid bit error detection state.";
+      }
+    }
+    description
+      "Crc state.";
+  }
+  typedef cspf-igp-type {
+    type enumeration {
+      enum "ospf" {
+        value 1;
+        description
+          "CSPF preferred IGP protocol OSPF.";
+      }
+      enum "isis" {
+        value 2;
+        description
+          "CSPF preferred IGP protocol ISIS.";
+      }
+    }
+    description
+      "CSPF IGP type.";
+  }
+  typedef cspf-isis-level-type {
+    type enumeration {
+      enum "invalid" {
+        value 0;
+        description
+          "Clear CSPF preferred IGP protocol IS-IS Level.";
+      }
+      enum "level1" {
+        value 1;
+        description
+          "CSPF preferred IGP protocol IS-IS Level-1.";
+      }
+      enum "level2" {
+        value 2;
+        description
+          "CSPF preferred IGP protocol IS-IS Level-2.";
+      }
+    }
+    description
+      "CSPF ISIS level type.";
+  }
+  typedef cspf-multiple-area-shortpath-mode {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable multiple IGP instances shortest path mode.";
+      }
+      enum "all-igp" {
+        value 1;
+        description
+          "All IGP multiple IGP instances Shortest path mode.";
+      }
+      enum "preferred-igp" {
+        value 2;
+        description
+          "Preferred IGP multiple IGP instances shortest path mode.";
+      }
+    }
+    description
+      "MPLS TE CSPF multiple area short path mode.";
+  }
+  typedef delegate-type {
+    type enumeration {
+      enum "active" {
+        value 1;
+        description
+          "The type of PCE delegation is active.";
+      }
+      enum "only-status-report" {
+        value 2;
+        description
+          "The type of PCE delegation is only report.";
+      }
+      enum "no" {
+        value 0;
+        description
+          "The type of PCE delegation is non-delegation.";
+      }
+    }
+    description
+      "Delegate type.";
+  }
+  typedef ds-te-bcm-type {
+    type enumeration {
+      enum "rdm" {
+        value 1;
+        description
+          "Russian dolls bandwidth constraints model.";
+      }
+      enum "mam" {
+        value 2;
+        description
+          "Maximum allocation bandwidth constraints model.";
+      }
+    }
+    description
+      "DS-TE bandwidth constraints model type.";
+  }
+  typedef ds-te-mode-type {
+    type enumeration {
+      enum "non-ietf" {
+        value 0;
+        description
+          "Non-IETF mode.";
+      }
+      enum "ietf" {
+        value 1;
+        description
+          "IETF mode.";
+      }
+    }
+    description
+      "DS-TE mode.";
+  }
+  typedef egress-rro-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "incoming" {
+        value 1;
+        description
+          "Inbound interface on the egress.";
+      }
+      enum "incoming-with-label" {
+        value 2;
+        description
+          "Inbound interface and label on the egress.";
+      }
+      enum "router-id" {
+        value 5;
+        description
+          "Router ID of the egress.";
+      }
+      enum "router-id-with-label" {
+        value 6;
+        description
+          "Router ID and label on the egress.";
+      }
+    }
+    description
+      "Egress RRO type.";
+  }
+  typedef entropy-label-enable {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Entropy label default configuration.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Entropy label enable configuration.";
+      }
+      enum "block" {
+        value 2;
+        description
+          "Entropy label block configuration.";
+      }
+    }
+    description
+      "TE tunnel entropy label enable.";
+  }
+  typedef fast-reroute-inuse-state {
+    type enumeration {
+      enum "frr-not-exist" {
+        value 0;
+        description
+          "FRR not exist state.";
+      }
+      enum "frr-avilable" {
+        value 1;
+        description
+          "FRR available state.";
+      }
+      enum "frr-inused" {
+        value 2;
+        description
+          "FRR in used state.";
+      }
+    }
+    description
+      "TE FRR in used state.";
+  }
+  typedef global-path-metric-type {
+    type enumeration {
+      enum "igp" {
+        value 2;
+        description
+          "IGP metric type.";
+      }
+      enum "te" {
+        value 3;
+        description
+          "TE metric type.";
+      }
+    }
+    description
+      "Global path metric type.";
+  }
+  typedef hop-address-type {
+    type enumeration {
+      enum "ipv4" {
+        value 1;
+        description
+          "IPv4.";
+      }
+    }
+    description
+      "TE hop address type.";
+  }
+  typedef hop-strict-type {
+    type enumeration {
+      enum "strict" {
+        value 1;
+        description
+          "Strictly included.";
+      }
+      enum "loose" {
+        value 2;
+        description
+          "Loosely included.";
+      }
+    }
+    description
+      "TE hop strict type.";
+  }
+  typedef hotstandby-switch-mode {
+    type enumeration {
+      enum "primary-to-hot-standby" {
+        value 1;
+        description
+          "Traffic is switched from the primary LSP to the hot-standby LSP.";
+      }
+      enum "hot-standby-to-primary" {
+        value 2;
+        description
+          "Traffic is switched from the hot-standby LSP to the primary LSP.";
+      }
+    }
+    description
+      "Hot-standby switch mode.";
+  }
+  typedef hotstandby-switch-reason {
+    type enumeration {
+      enum "force" {
+        value 1;
+        description
+          "Force the traffic to hot-standby LSP.";
+      }
+      enum "signal-fail" {
+        value 2;
+        description
+          "The break of hot-standby LSP.";
+      }
+      enum "do-not-revert" {
+        value 3;
+        description
+          "Traffic do not switch to primary LSP when primary LSP is up.";
+      }
+      enum "wait-to-restore" {
+        value 4;
+        description
+          "Traffic wait for switch to primay LSP.";
+      }
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "bfd-down" {
+        value 5;
+        description
+          "Bfd state of primary LSP was down.";
+      }
+      enum "signal-degrade" {
+        value 6;
+        description
+          "A signal indicating that a degraded defect condition is active.";
+      }
+      enum "frr-inuse" {
+        value 7;
+        description
+          "Primay LSP was in frr in use state.";
+      }
+      enum "bfd-crc" {
+        value 9;
+        description
+          "Primay LSP was in bfd crc state.";
+      }
+    }
+    description
+      "Hot standby switch reason.";
+  }
+  typedef hotstandby-switch-result {
+    type enumeration {
+      enum "main-lsp" {
+        value 0;
+        description
+          "Traffic is switched to the primary CR-LSP.";
+      }
+      enum "hsb-lsp" {
+        value 1;
+        description
+          "Traffic is switched to the HSB CR-LSP.";
+      }
+      enum "best-effort-lsp" {
+        value 2;
+        description
+          "Traffic is switched to the best-effort LSP.";
+      }
+    }
+    description
+      "Hot standby switch result.";
+  }
+  typedef hotstandby-switch-state {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "wait-to-restore" {
+        value 1;
+        description
+          "Wait to restore.";
+      }
+    }
+    description
+      "Hot standby switch state.";
+  }
+  typedef interface-status {
+    type enumeration {
+      enum "down" {
+        value 1;
+        description
+          "The interface is in the down state.";
+      }
+      enum "up" {
+        value 2;
+        description
+          "The interface state is up.";
+      }
+    }
+    description
+      "Interface status.";
+  }
+  typedef line-protocol-status {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "The interface is in down state.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "The interface is in up state.";
+      }
+    }
+    description
+      "Interface line protocol type.";
+  }
+  typedef local-protect-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "link" {
+        value 1;
+        description
+          "Link Protection Mode.";
+      }
+      enum "node" {
+        value 2;
+        description
+          "Node Protection Mode.";
+      }
+    }
+    description
+      "TE local protect type.";
+  }
+  typedef lsp-control-status-type {
+    type enumeration {
+      enum "local-control" {
+        value 0;
+        description
+          "Local control.";
+      }
+      enum "pce-control" {
+        value 1;
+        description
+          "PCE control.";
+      }
+    }
+    description
+      "LSP control status type.";
+  }
+  typedef lsp-path-type {
+    type enumeration {
+      enum "primary" {
+        value 0;
+        description
+          "Primary path.";
+      }
+      enum "hot-standby" {
+        value 1;
+        description
+          "Hot standby path.";
+      }
+      enum "ordinary" {
+        value 2;
+        description
+          "Ordinary backup path.";
+      }
+      enum "best-effort" {
+        value 3;
+        description
+          "Best-effort path.";
+      }
+    }
+    description
+      "LSP path type for p2p-template or tunnel-last-error.";
+  }
+  typedef lsp-status-type {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "Down state of LSP.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "Up state of LSP.";
+      }
+      enum "none" {
+        value 2;
+        description
+          "None.";
+      }
+    }
+    description
+      "MPLS TE LSP status type.";
+  }
+  typedef lsr-role {
+    type enumeration {
+      enum "ingress" {
+        value 1;
+        description
+          "Ingress node.";
+      }
+      enum "transit" {
+        value 2;
+        description
+          "Transit node.";
+      }
+      enum "egress" {
+        value 3;
+        description
+          "Egress node.";
+      }
+    }
+    description
+      "LSR role.";
+  }
+  typedef mpls-p2mp-te-frr-mbb-type {
+    type enumeration {
+      enum "sub-lsp" {
+        value 1;
+        description
+          "MBB mode of sub-lsp.";
+      }
+      enum "lsp" {
+        value 2;
+        description
+          "MBB mode of lsp.";
+      }
+      enum "both" {
+        value 4;
+        description
+          "MBB mode of sub-lsp and tree.";
+      }
+    }
+    description
+      "P2MP-TE FRR MBB type.";
+  }
+  typedef mpls-pipe-service-class {
+    type enumeration {
+      enum "be" {
+        value 0;
+        description
+          "Best effort (EF) service-class.";
+      }
+      enum "af1" {
+        value 1;
+        description
+          "Assured forwarding 1 (AF1) service-class.";
+      }
+      enum "af2" {
+        value 2;
+        description
+          "Assured forwarding 2 (AF2) service-class.";
+      }
+      enum "af3" {
+        value 3;
+        description
+          "Assured forwarding 3 (AF3) service-class.";
+      }
+      enum "af4" {
+        value 4;
+        description
+          "Assured forwarding 4 (AF4) service-class.";
+      }
+      enum "ef" {
+        value 5;
+        description
+          "Expedited forwarding (EF) service-class.";
+      }
+      enum "cs6" {
+        value 6;
+        description
+          "Class selector 6 (CS6) service-class.";
+      }
+      enum "cs7" {
+        value 7;
+        description
+          "Class selector 7 (CS7) service-class.";
+      }
+      enum "none" {
+        value 8;
+        description
+          "None service-class.";
+      }
+    }
+    description
+      "TE pipe service class.";
+  }
+  typedef mpls-rsvp-te-lsp-type {
+    type enumeration {
+      enum "primary" {
+        value 1;
+        description
+          "Primary LSP type.";
+      }
+      enum "hot-standby" {
+        value 2;
+        description
+          "Hot-Standby LSP type.";
+      }
+    }
+    description
+      "MPLS RSVP-TE LSP type.";
+  }
+  typedef mpls-te-cspf-srlg-path-calculation-mode {
+    type enumeration {
+      enum "default" {
+        value 0;
+        description
+          "Don't care SRLG when calculte path.";
+      }
+      enum "strict" {
+        value 1;
+        description
+          "Never use link in same SRLG with exclude path.";
+      }
+      enum "preferred" {
+        value 2;
+        description
+          "Try to exclude link in the same SRLG with excluded path.";
+      }
+    }
+    description
+      "CSPF SRLG path calculating mode.";
+  }
+  typedef mpls-te-lsp-status-type {
+    type enumeration {
+      enum "down" {
+        value 0;
+        description
+          "Down state of LSP.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "Up state of LSP.";
+      }
+      enum "none" {
+        value 2;
+        description
+          "None.";
+      }
+    }
+    description
+      "MPLS-TE LSP status type.";
+  }
+  typedef mpls-te-revert-type {
+    type enumeration {
+      enum "norevertive" {
+        value 0;
+        description
+          "Traffic does not switch to the primary LSP after the primary LSP is Up.";
+      }
+      enum "revertive" {
+        value 1;
+        description
+          "Traffic switches to the primary LSP after the primary LSP is Up.";
+      }
+    }
+    description
+      "MPLS-TE tunnel hot standby revert mode.";
+  }
+  typedef neighbor-address-type {
+    type enumeration {
+      enum "node-id" {
+        value 0;
+        description
+          "Remote node id neighbor.";
+      }
+      enum "normal" {
+        value 1;
+        description
+          "Normal neighbor.";
+      }
+      enum "config" {
+        value 2;
+        description
+          "Config neighbor.";
+      }
+    }
+    description
+      "MPLS RSVP-TE neighbor address type.";
+  }
+  typedef neighbor-authentication-type {
+    type enumeration {
+      enum "HMAC-MD5" {
+        value 1;
+        description
+          "Neighbor authentication type is MD5.";
+      }
+      enum "KEYCHAIN" {
+        value 2;
+        description
+          "Neighbor authentication type is KEYCHAIN.";
+      }
+    }
+    description
+      "MPLS RSVP-TE neighbor authentication type.";
+  }
+  typedef neighbor-hello-sent-type {
+    type enumeration {
+      enum "NONE" {
+        value 0;
+        description
+          "No hello config.";
+      }
+      enum "REQ" {
+        value 1;
+        description
+          "The type of the Hello sent by the rsvp-te neighbor is REQ.";
+      }
+      enum "ACK" {
+        value 2;
+        description
+          "The type of the Hello sent by the rsvp-te neighbor is ACK.";
+      }
+    }
+    description
+      "MPLS RSVP-TE neighbor hello sent type.";
+  }
+  typedef oam-status-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "up" {
+        value 1;
+        description
+          "Up in OAM detection.";
+      }
+      enum "down" {
+        value 2;
+        description
+          "Down in OAM detection.";
+      }
+    }
+    description
+      "OAM status type.";
+  }
+  typedef overlap-type {
+    type enumeration {
+      enum "different-path" {
+        value 0;
+        description
+          "The primary and HSB LSPs do not overlap.";
+      }
+      enum "partial-link-same" {
+        value 1;
+        description
+          "The primary LSP shares a link with the HSB LSP.";
+      }
+      enum "not-compare" {
+        value 2;
+        description
+          "The device cannot check whether the primary and HSB LSPs overlap.";
+      }
+      enum "exactly-same-path" {
+        value 3;
+        description
+          "The primary and HSB LSPs are exactly the same.";
+      }
+    }
+    description
+      "MPLS-TE aps protocol type.";
+  }
+  typedef p2mp-leaf-state {
+    type enumeration {
+      enum "down" {
+        value 1;
+        description
+          "The leaf state is down.";
+      }
+      enum "setting" {
+        value 2;
+        description
+          "The leaf state is setting.";
+      }
+      enum "up" {
+        value 3;
+        description
+          "The leaf state is up.";
+      }
+    }
+    description
+      "P2MP leaf state.";
+  }
+  typedef p2p-tunnel-tie-breaking {
+    type enumeration {
+      enum "least-fill" {
+        value 1;
+        description
+          "The link with the smallest bandwidth occupation ratio is selected in the case of equal conditions.";
+      }
+      enum "most-fill" {
+        value 2;
+        description
+          "The link with the largest bandwidth occupation ratio is selected in the case of equal conditions.";
+      }
+      enum "random" {
+        value 3;
+        description
+          "Links are selected randomly.";
+      }
+      enum "default" {
+        value 4;
+        description
+          "Inherit from global configuration.";
+      }
+    }
+    description
+      "P2P tunnel tie breaking.";
+  }
+  typedef path-selection-mode {
+    type enumeration {
+      enum "overload" {
+        value 1;
+        description
+          "Path selection overload mode.";
+      }
+    }
+    description
+      "Path selection mode.";
+  }
+  typedef path-verify-type {
+    type enumeration {
+      enum "inherit" {
+        value 0;
+        description
+          "Use global configuration.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        value 2;
+        description
+          "Disable.";
+      }
+    }
+    description
+      "MPLS-TE path verify type.";
+  }
+  typedef record-route-mode {
+    type enumeration {
+      enum "disable" {
+        value 1;
+        description
+          "The LSP does not record any route.";
+      }
+      enum "record-route-only" {
+        value 2;
+        description
+          "The LSP records routes only.";
+      }
+      enum "record-label" {
+        value 3;
+        description
+          "The LSP records both routes and labels.";
+      }
+    }
+    description
+      "TE record route mode.";
+  }
+  typedef resource-reservation-style {
+    type enumeration {
+      enum "se" {
+        value 1;
+        description
+          "SE style among the resource reservation styles.";
+      }
+      enum "ff" {
+        value 2;
+        description
+          "FF style among the resource reservation styles.";
+      }
+    }
+    description
+      "Resv style.";
+  }
+  typedef ring-direction-type {
+    type enumeration {
+      enum "east" {
+        value 1;
+        description
+          "East.";
+      }
+      enum "west" {
+        value 2;
+        description
+          "West.";
+      }
+    }
+    description
+      "Ring direction type.";
+  }
+  typedef rsvp-authentication-type {
+    type enumeration {
+      enum "md5" {
+        value 0;
+        description
+          "Set ciphertext MD5.";
+      }
+      enum "md5-plain" {
+        value 1;
+        description
+          "Set simple text MD5.";
+      }
+      enum "keychain" {
+        value 2;
+        description
+          "Keychain authentication.";
+      }
+    }
+    description
+      "TE authentication type.";
+  }
+  typedef signal-protocol-type {
+    type enumeration {
+      enum "rsvp-te" {
+        value 2;
+        description
+          "Dynamic signaling.";
+      }
+      enum "cr-static" {
+        value 4;
+        description
+          "Static signaling.";
+      }
+      enum "segment-routing" {
+        value 6;
+        description
+          "Segment routing.";
+      }
+    }
+    description
+      "Signal protocol type.";
+  }
+  typedef sr-te-label-type {
+    type enumeration {
+      enum "link" {
+        value 0;
+        description
+          "The type of label is link.";
+      }
+      enum "node" {
+        value 1;
+        description
+          "The type of label is Node.";
+      }
+      enum "binding" {
+        value 2;
+        description
+          "The type of label is binding.";
+      }
+    }
+    description
+      "SR-TE label type.";
+  }
+  typedef sr-te-tunnel-path-type {
+    type enumeration {
+      enum "primary" {
+        value 1;
+        description
+          "Primary path.";
+      }
+      enum "hot-standby" {
+        value 2;
+        description
+          "Hot standby path.";
+      }
+    }
+    description
+      "SR-TE tunnel path type.";
+  }
+  typedef switch-action-type {
+    type enumeration {
+      enum "primary-to-hot-standby" {
+        value 1;
+        description
+          "Traffic is switched from the primary LSP to the hot-standby LSP.";
+      }
+      enum "hot-standby-to-primary" {
+        value 2;
+        description
+          "Traffic is switched from the hot-standby LSP to the primary LSP.";
+      }
+      enum "primary-to-ordinary" {
+        value 3;
+        description
+          "Traffic is switched from the primary LSP to the ordinary LSP.";
+      }
+      enum "ordinary-to-primary" {
+        value 4;
+        description
+          "Traffic is switched from the ordinary LSP to the primary LSP.";
+      }
+      enum "primary-to-best-effort" {
+        value 5;
+        description
+          "Traffic is switched from the primary LSP to the best-effort LSP.";
+      }
+      enum "best-effort-to-primary" {
+        value 6;
+        description
+          "Traffic is switched from the best-effort LSP to the primary LSP.";
+      }
+      enum "hot-standby-to-ordinary" {
+        value 7;
+        description
+          "Traffic is switched from the hot-standby LSP to the ordinary LSP.";
+      }
+      enum "ordinary-to-hot-standby" {
+        value 8;
+        description
+          "Traffic is switched from the ordinary LSP to the hot-standby LSP.";
+      }
+      enum "hot-standby-to-best-effort" {
+        value 9;
+        description
+          "Traffic is switched from the hot-standby LSP to the best-effort LSP.";
+      }
+      enum "best-effort-to-hot-standby" {
+        value 10;
+        description
+          "Traffic is switched from the best-effort LSP to the hot-standby LSP.";
+      }
+      enum "ordinary-to-best-effort" {
+        value 11;
+        description
+          "Traffic is switched from the ordinary LSP to best-effort LSP.";
+      }
+      enum "best-effort-to-ordinary" {
+        value 12;
+        description
+          "Traffic is switched from the best-Effort LSP to the ordinary LSP.";
+      }
+    }
+    description
+      "Switch action type.";
+  }
+  typedef tebase-tie-breaking {
+    type enumeration {
+      enum "least-fill" {
+        value 1;
+        description
+          "The link with the smallest bandwidth occupation ratio is selected in the case of equal conditions.";
+      }
+      enum "most-fill" {
+        value 2;
+        description
+          "The link with the largest bandwidth occupation ratio is selected in the case of equal conditions.";
+      }
+      enum "random" {
+        value 3;
+        description
+          "Links are selected randomly.";
+      }
+    }
+    description
+      "Tebase tie breaking.";
+  }
+  typedef tedb-srdb-igp-type {
+    type enumeration {
+      enum "OSPF" {
+        value 1;
+        description
+          "CSPF preferred IGP protocol OSPF.";
+      }
+      enum "ISIS" {
+        value 2;
+        description
+          "CSPF preferred IGP protocol ISIS.";
+      }
+    }
+    description
+      "CSPF TEDB and SRDB IGP type.";
+  }
+  typedef te-class-mode-type {
+    type enumeration {
+      enum "te-class0" {
+        value 0;
+        description
+          "TE-Class 0.";
+      }
+      enum "te-class1" {
+        value 1;
+        description
+          "TE-Class 1.";
+      }
+      enum "te-class2" {
+        value 2;
+        description
+          "TE-Class 2.";
+      }
+      enum "te-class3" {
+        value 3;
+        description
+          "TE-Class 3.";
+      }
+      enum "te-class4" {
+        value 4;
+        description
+          "TE-Class 4.";
+      }
+      enum "te-class5" {
+        value 5;
+        description
+          "TE-Class 5.";
+      }
+      enum "te-class6" {
+        value 6;
+        description
+          "TE-Class 6.";
+      }
+      enum "te-class7" {
+        value 7;
+        description
+          "TE-Class 7.";
+      }
+    }
+    description
+      "Set TE class mode.";
+  }
+  typedef te-class-type {
+    type enumeration {
+      enum "ct0" {
+        value 0;
+        description
+          "Ct0.";
+      }
+      enum "ct1" {
+        value 1;
+        description
+          "Ct1.";
+      }
+      enum "ct2" {
+        value 2;
+        description
+          "Ct2.";
+      }
+      enum "ct3" {
+        value 3;
+        description
+          "Ct3.";
+      }
+      enum "ct4" {
+        value 4;
+        description
+          "Ct4.";
+      }
+      enum "ct5" {
+        value 5;
+        description
+          "Ct5.";
+      }
+      enum "ct6" {
+        value 6;
+        description
+          "Ct6.";
+      }
+      enum "ct7" {
+        value 7;
+        description
+          "Ct7.";
+      }
+    }
+    description
+      "Class type.";
+  }
+  typedef te-tunnel-bfd-for-lsp-mode {
+    type enumeration {
+      enum "one-arm-echo" {
+        value 1;
+        description
+          "BFD one arm echo.";
+      }
+      enum "seamless" {
+        value 3;
+        description
+          "BFD seamless.";
+      }
+      enum "option-tlv" {
+        value 2;
+        description
+          "BFD detection with options.";
+      }
+    }
+    description
+      "Bfd all mode.";
+  }
+  typedef te-tunnel-bfd-for-tunnel-mode {
+    type enumeration {
+      enum "one-arm-echo" {
+        value 1;
+        description
+          "BFD one arm echo.";
+      }
+      enum "seamless" {
+        value 3;
+        description
+          "BFD seamless.";
+      }
+    }
+    description
+      "Bfd for tunnel type.";
+  }
+  typedef te-tunnel-path-type {
+    type enumeration {
+      enum "primary" {
+        value 1;
+        description
+          "Primary path.";
+      }
+      enum "hot-standby" {
+        value 2;
+        description
+          "Hot standby path.";
+      }
+      enum "ordinary" {
+        value 3;
+        description
+          "Ordinary backup path.";
+      }
+      enum "best-effort" {
+        value 4;
+        description
+          "Best-effort path.";
+      }
+    }
+    description
+      "TE tunnel path type.";
+  }
+  typedef te-tunnel-role {
+    type enumeration {
+      enum "head" {
+        value 1;
+        description
+          "Head node.";
+      }
+      enum "transit" {
+        value 2;
+        description
+          "Transit node.";
+      }
+      enum "tail" {
+        value 3;
+        description
+          "Tail node.";
+      }
+      enum "head-and-tail" {
+        value 4;
+        description
+          "Head and tail nodes.";
+      }
+    }
+    description
+      "TE tunnel role.";
+  }
+  typedef te-tunnel-signal-protocol {
+    type enumeration {
+      enum "rsvp-te" {
+        value 2;
+        description
+          "RSVP-TE signal protocol.";
+      }
+      enum "cr-static" {
+        value 4;
+        description
+          " CR-STATIC signal protocol.";
+      }
+      enum "segment-routing" {
+        value 6;
+        description
+          "SEGMENT-ROUTING signal protocol.";
+      }
+    }
+    description
+      "Te tunnel signalling protocol type.";
+  }
+  typedef threshold-logic-type {
+    type enumeration {
+      enum "and" {
+        value 0;
+        description
+          "Threshold bandwidth percent or threshold bandwidth.";
+      }
+      enum "or" {
+        value 1;
+        description
+          "Threshold bandwidth percent and threshold bandwidth.";
+      }
+    }
+    description
+      "Threshold logic type.";
+  }
+  typedef transit-rro-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Disable.";
+      }
+      enum "incoming" {
+        value 1;
+        description
+          "Inbound interface on a transit node.";
+      }
+      enum "incoming-with-label" {
+        value 2;
+        description
+          "Inbound interface and a label on a transit node.";
+      }
+      enum "router-id" {
+        value 5;
+        description
+          "Router ID on a transit node.";
+      }
+      enum "router-id-with-label" {
+        value 6;
+        description
+          "Router ID and label on a transit node.";
+      }
+      enum "outgoing" {
+        value 3;
+        description
+          "Outbound interface on a transit node.";
+      }
+      enum "outgoing-with-label" {
+        value 4;
+        description
+          "Outbound interface and label on a transit node.";
+      }
+    }
+    description
+      "Transit RRO type.";
+  }
+  typedef tunnel-backup-lsp-type {
+    type enumeration {
+      enum "primary" {
+        value 0;
+        description
+          "Primary.";
+      }
+      enum "hot-standby" {
+        value 1;
+        description
+          "Hot-standby.";
+      }
+      enum "ordinary" {
+        value 2;
+        description
+          "Ordinary.";
+      }
+      enum "best-effort" {
+        value 3;
+        description
+          "Best-effort.";
+      }
+      enum "none" {
+        value 4;
+        description
+          "None.";
+      }
+    }
+    description
+      "Backup CR-LSP type.";
+  }
+  typedef tunnel-direction {
+    type enumeration {
+      enum "unidirectional" {
+        value 1;
+        description
+          "Unidirectional.";
+      }
+      enum "bidirectional" {
+        value 2;
+        description
+          "Bidirectional.";
+      }
+    }
+    description
+      "Tunnel direction.";
+  }
+  typedef tunnel-fast-reroute-type {
+    type enumeration {
+      enum "facility-backup" {
+        value 1;
+        description
+          "Facility backup.";
+      }
+      enum "detour-backup" {
+        value 2;
+        description
+          "Detour backup.";
+      }
+    }
+    description
+      "Tunnel FRR type.";
+  }
+  typedef tunnel-hotstandby-revert-mode {
+    type enumeration {
+      enum "non-revertive" {
+        value 0;
+        description
+          "Traffic does not switch to the primary LSP after the primary LSP is Up.";
+      }
+      enum "revertive" {
+        value 1;
+        description
+          "Traffic switches to the primary LSP after the primary LSP is Up.";
+      }
+    }
+    description
+      "MPLS-TE tunnel hot standby revert mode.";
+  }
+  typedef tunnel-path-metric-type {
+    type enumeration {
+      enum "none" {
+        value 1;
+        description
+          "Inherit from global configuration.";
+      }
+      enum "igp" {
+        value 2;
+        description
+          "IGP metric type.";
+      }
+      enum "te" {
+        value 3;
+        description
+          "TE metric type.";
+      }
+    }
+    description
+      "Tunnel path metric type.";
+  }
+  typedef tunnel-protect-switch-type {
+    type enumeration {
+      enum "clear" {
+        value 1;
+        description
+          "Clear all of the externally initiated switch commands.";
+      }
+      enum "lock" {
+        value 2;
+        description
+          "Traffic is locked on the working path (LOCK-P).";
+      }
+      enum "force" {
+        value 3;
+        description
+          "Forcible switch from the working path to the protection path.";
+      }
+      enum "manual" {
+        value 4;
+        description
+          "Manual switch from the working path to the protection path.";
+      }
+      enum "manual-work" {
+        value 5;
+        description
+          "Traffic is locked on the working path.";
+      }
+      enum "exercise" {
+        value 6;
+        description
+          "Exercise switching.";
+      }
+    }
+    description
+      "Tunnel protect switch type.";
+  }
+  typedef tunnel-state {
+    type enumeration {
+      enum "up" {
+        value 1;
+        description
+          "The tunnel state is Up.";
+      }
+      enum "down" {
+        value 2;
+        description
+          "The tunnel state is Down.";
+      }
+      enum "setting" {
+        value 3;
+        description
+          "The tunnel state is establishing.";
+      }
+      enum "mbb-wait-for-deleting" {
+        value 4;
+        description
+          "MBB deletion delay.";
+      }
+      enum "mbb-wait-for-switch" {
+        value 5;
+        description
+          "MBB switch delay.";
+      }
+      enum "all-path-ready" {
+        value 6;
+        description
+          "All paths are Up.";
+      }
+      enum "primary-ready-backup-setting" {
+        value 7;
+        description
+          "The primary path is Up and the backup path is being established.";
+      }
+      enum "primary-down-backup-setting" {
+        value 8;
+        description
+          "The primary path is Down and the backup path is being established.";
+      }
+      enum "backup-inuse-primary-setting" {
+        value 9;
+        description
+          "The backup path is Up and the primary path is being established.";
+      }
+    }
+    description
+      "Tunnel state.";
+  }
+  typedef tunnel-state-description-type {
+    type enumeration {
+      enum "cr-lsp-down" {
+        value 1;
+        description
+          "CR-LSP is Down.";
+      }
+      enum "cr-lsp-failed" {
+        value 2;
+        description
+          "A CR-LSP fails to be established.";
+      }
+      enum "cr-lsp-up" {
+        value 3;
+        description
+          "A CR-LSP is in use.";
+      }
+      enum "cr-lsp-setting-up" {
+        value 4;
+        description
+          "CR-LSP is being established.";
+      }
+      enum "modify-waiting-deleting" {
+        value 5;
+        description
+          "The modified CR-LSP is waiting for being deleted.";
+      }
+      enum "modify-waiting-switching" {
+        value 6;
+        description
+          "The modified CR-LSP is waiting for being switched.";
+      }
+      enum "cr-lsp-modify" {
+        value 7;
+        description
+          "The modified CR-LSP is being established.";
+      }
+      enum "backup-inuse-primary-setting-up" {
+        value 8;
+        description
+          "CR-LSP hot standby or ordinary backup is configured, and the primary CR-LSP fails. The backup LSP (also including the best-effort path if HSB is used) is established and takes over traffic.";
+      }
+      enum "primary-up-hot-backup-up" {
+        value 9;
+        description
+          "CR-LSP hot standby is configured, and both the primary and HSB CR-LSPs are successfully established.";
+      }
+      enum "primary-up-hot-backup-setting-up" {
+        value 10;
+        description
+          "CR-LSP hot standby is configured, and the primary CR-LSP is successfully established. The HSB CR-LSP failed.";
+      }
+      enum "primary-down-backup-setting-up" {
+        value 11;
+        description
+          "CR-LSP hot standby and a best-effort path are configured. Both the primary and HSB CR-LSPs fail. An attempt is made to establish the backup CR-LSP or best-effort paths.";
+      }
+      enum "backup-inuse-primary-up" {
+        value 14;
+        description
+          "CR-LSP hot standby or ordinary backup is configured, and the primary CR-LSP is successfully established.";
+      }
+      enum "modify-up" {
+        value 15;
+        description
+          "The modified CR-LSP is successfully established.";
+      }
+    }
+    description
+      "Tunnel state description type.";
+  }
+}

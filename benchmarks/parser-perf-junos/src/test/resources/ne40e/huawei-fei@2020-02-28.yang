@@ -1,0 +1,142 @@
+/******************************************************
+* Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+* Module description & tree structure
+***************************************************/
+module huawei-fei {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-fei";
+  prefix fei;
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com
+    ";
+  description
+    "System hardware difference specifications.";
+  revision 2020-02-28 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "forward-system";
+  container fei {
+    config false;
+    description
+      "Global configuration.";
+    container hard-diffs {
+      config false;
+      description
+        "List of hard rule tables.";
+      list hard-diff {
+        key "op-mode entity-para parent-para schema-spec element-xpath bind-type bind-node-xpath bind-parent-xpath board-type board-version subcard-type interface-type if-main-sub-type";
+        description
+          "Statistics of hard rule table.";
+        leaf op-mode {
+          type uint32;
+          description
+            "Operate mode.";
+        }
+        leaf entity-para {
+          type string {
+            length "1..256";
+          }
+          description
+            "Entity parameter.";
+        }
+        leaf parent-para {
+          type string {
+            length "1..256";
+          }
+          description
+            "Entity parent parameter.";
+        }
+        leaf schema-spec {
+          type string {
+            length "1..256";
+          }
+          description
+            "Schema name.";
+        }
+        leaf element-xpath {
+          type string {
+            length "1..256";
+          }
+          description
+            "The xpath of element.";
+        }
+        leaf bind-type {
+          type uint32;
+          description
+            "Bind type.";
+        }
+        leaf bind-node-xpath {
+          type string {
+            length "1..256";
+          }
+          description
+            "The xpath of bind node.";
+        }
+        leaf bind-parent-xpath {
+          type string {
+            length "1..256";
+          }
+          description
+            "The xpath of bind parent node.";
+        }
+        leaf board-type {
+          type uint32;
+          description
+            "Board type.";
+        }
+        leaf board-version {
+          type uint32;
+          description
+            "Board version.";
+        }
+        leaf subcard-type {
+          type uint32;
+          description
+            "Subcard type.";
+        }
+        leaf interface-type {
+          type uint32;
+          description
+            "Interface type.";
+        }
+        leaf if-main-sub-type {
+          type uint32;
+          description
+            "Main or sub type.";
+        }
+        leaf is-support {
+          type uint32;
+          description
+            "Support or not.";
+        }
+        leaf range {
+          type string {
+            length "1..1024";
+          }
+          description
+            "Range of record.";
+        }
+        leaf default {
+          type string {
+            length "1..256";
+          }
+          description
+            "Default vaule of record.";
+        }
+      }
+    }
+  }
+}

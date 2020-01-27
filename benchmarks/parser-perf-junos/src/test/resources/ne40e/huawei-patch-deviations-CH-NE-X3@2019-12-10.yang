@@ -1,0 +1,39 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-patch-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-patch-deviations-CH-NE-X3";
+  prefix patch-devs-CH-NE-X3;
+
+  import huawei-patch {
+    prefix patch;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Patch deviations.";
+
+  revision 2019-12-10 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/patch:patch/patch:operation-schedules/patch:operation-schedule/patch:name" {
+    deviate not-supported;
+  }
+  deviation "/patch:delete-patch/patch:input/patch:name" {
+    deviate not-supported;
+  }
+  deviation "/patch:reset-startup-patch/patch:input/patch:name" {
+    deviate not-supported;
+  }
+}

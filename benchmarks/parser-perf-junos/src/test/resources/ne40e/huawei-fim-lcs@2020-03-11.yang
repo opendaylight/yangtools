@@ -1,0 +1,109 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-fim-lcs {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-fim-lcs";
+  prefix fim-lcs;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-license {
+    prefix lcs;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Global Configuration.";
+  revision 2020-03-11 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef lcs-active-type {
+    type enumeration {
+      enum "deactive" {
+        value 0;
+        description
+          "Deactivate.";
+      }
+      enum "active" {
+        value 1;
+        description
+          "Activate.";
+      }
+    }
+    description
+      "Lcsense active type.";
+  }
+  typedef lcs-active-status-type {
+    type enumeration {
+      enum "unallocated" {
+        value 0;
+        description
+          "Unallocated.";
+      }
+      enum "allocated" {
+        value 1;
+        description
+          "Allocated.";
+      }
+      enum "activated" {
+        value 2;
+        description
+          "Activated.";
+      }
+    }
+    description
+      "Liscense active status type.";
+  }
+  
+  augment /lcs:license/lcs:license-items/lcs:license-item {
+    description
+      "Channelized sub-interface license information list.";
+    container port-mode-channels {
+      when "(../lcs:name ='LCR5S0FCHAN91' or ../lcs:name ='LCR5S0FCHAN92' or ../lcs:name ='LCR5S0FCHAN93' or ../lcs:name ='LCR5S0FCHAN94' or ../lcs:name ='LCR5S03SUBC93' or ../lcs:name ='LCR5S03SUBC94' or ../lcs:name ='LCR5S03SUBC95' or ../lcs:name ='LCR5S03SUBC92' or ../lcs:name ='LCR5S42CHAN70' or ../lcs:name ='LCR5S42CHAN71' or ../lcs:name ='LCR5S42CHAN72' or ../lcs:name ='LCR5S42CHAN73' or ../lcs:name ='LCR5S42CHAN90' or ../lcs:name ='LCR5S42CHAN91' or ../lcs:name ='LCR5S42CHAN92' or ../lcs:name ='LCR5S42CHAN93' or ../lcs:name ='LCR5S40CHIN00' or ../lcs:name ='LCR5S40CHIN01' or ../lcs:name ='LCR5S40CHIN02' or ../lcs:name ='LCX6S40CHIN00' or ../lcs:name ='LCX6S40CHIN01' or ../lcs:name ='LCX6S40CHIN02' or ../lcs:name ='LTNRS69CHIN00' or ../lcs:name ='LTNRS69CHIN01' or ../lcs:name ='LTNRS69CHIN02' or ../lcs:name ='LCR9S9KXCSF80' or ../lcs:name ='LCR9S9KXCSF81')";
+      description
+        "List of channelized sub-interface license information.";
+      list port-mode-channel {
+        key "position";
+        description
+          "Configure channelized sub-interface license information.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+      }
+    }
+
+    container port-slicings {
+      when "(../lcs:name ='LCR8S00VSLIC0' or ../lcs:name ='LCR8S00XSLIC0' or ../lcs:name ='LCR8S00VSLIC3' or ../lcs:name ='LCR8S00XSLIC3' or ../lcs:name ='LCR8S00SLC0C2' or ../lcs:name ='LCR8S00SLC0C4' or ../lcs:name ='LCR8S00SLC0C2' or ../lcs:name ='LCR8S00SLC0C4' or ../lcs:name ='LCR8SF0SLC0C4' or ../lcs:name ='LCR8SF0SLC0C5' or ../lcs:name ='LTNRS00SLC0C2' or ../lcs:name ='LTNRS00SLC0C4' or ../lcs:name ='LTNRS00SLC0C2' or ../lcs:name ='LTNRS00SLC0C4' or ../lcs:name ='LCR5S00SLC0C2' or ../lcs:name ='LCR5S00SLC0C4')";
+      description
+        "List of port slicing license information.";
+      list port-slicing {
+        key "position";
+        description
+          "Configure port slicing license information.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+      }
+    }
+  }
+  ext:task-name "forwarding";
+}

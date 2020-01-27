@@ -1,0 +1,380 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-macm {
+  namespace "urn:huawei:yang:huawei-macm";
+  prefix macm;
+  import huawei-evpn {
+    prefix evpn;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "MAC routing management module that stores and selects the optimal MAC.";
+  revision 2020-03-30 {
+    description
+      "Add container macm.";
+    reference
+      "Huawei private.";
+  }
+  revision 2020-01-10 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+/*****************************************************************
+* type definitions
+*****************************************************************/
+  typedef limit-action {
+    type enumeration {
+      enum "mac-unchanged" {
+        value 0;
+        description
+          "When the number of EVPN MAC routes reach the upper limit, the MAC routes remain unchanged and the system generates an alarm.";
+      }
+      enum "simply-alert" {
+        value 1;
+        description
+          "When the number of EVPN MAC routes reach the upper limit, the subsequent routes can be added to replace the existing routes and the system only generates an alarm.";
+      }
+    }
+    description
+      "The action of MAC routing limit.";
+  }
+
+  typedef route-flag {
+    type enumeration {
+      enum "download" {
+        value 1;
+        description
+          "Download to FIB.";
+      }
+      enum "no-download" {
+        value 2;
+        description
+          "Not download to FIB.";
+      }
+    }
+    description
+      "MAC route flag.";
+  }
+  typedef route-status {
+    type enumeration {
+      enum "active" {
+        value 1;
+        description
+          "Active route.";
+      }
+       enum "inactive" {
+        value 2;
+        description
+          "Inactive route.";
+      }
+      enum "invalid" {
+        value 3;
+        description
+          "Invalid route.";
+      }
+    }
+    description
+      "MAC route status.";
+  }
+  typedef route-source {
+    type enumeration {
+      enum "local" {
+        value 1;
+        description
+          "From Local.";
+      }
+      enum "BGP" {
+        value 2;
+        description
+          "From BGP.";
+      }
+      enum "total" {
+        value 3;
+        description
+          "Learn from local and via BGP.";
+      }
+    }
+    description
+      "MAC route source.";
+  }
+  typedef route-type {
+    type enumeration {
+      enum "dynamic" {
+        value 1;
+        description
+          "Dynamic.";
+      }
+      enum "static" {
+        value 2;
+        description
+          "Static.";
+      }
+      enum "dynamic-black-hole" {
+        value 3;
+        description
+          "Dynamic black-hole.";
+      }
+      enum "dynamic-leaf" {
+        value 4;
+        description
+          "Dynamic E-tree leaf.";
+      }
+      enum "static-leaf" {
+        value 5;
+        description
+          "Static E-tree leaf.";
+      }
+    }
+    description
+      "MAC route type.";
+  }
+
+  grouping mac-statistics-collection {
+    description
+      "MAC route statistics collection.";
+    leaf protocol {
+      type route-source;
+      description
+        "MAC route source.";
+    }
+    leaf total {
+      type uint32;
+      description
+        "Number of MAC routes in total.";
+    }
+    leaf active {
+      type uint32;
+      description
+        "Number of active MAC routes.";
+    }
+    leaf added {
+      type uint32;
+      description
+        "Number of active and inactive MAC routes added to the MAC table.";
+    }
+    leaf deleted {
+      type uint32;
+      description
+        "Number of MAC routes deleted from the MAC table.";
+    }
+    leaf freed {
+      type uint32;
+      description
+        "Number of MAC routes that are permanently deleted from the MAC table.";
+    }
+  }
+
+  container macm {
+    config false;
+    description
+      "MAC route management that stores and selects the optimal MAC.";
+    container evpn-global {
+      description
+        "Statistics of global attributes.";
+      container statistics {
+        description
+          "List of EVPN instance MAC route statistics.";
+        list statistic {
+          key "protocol";
+          description
+            "Statistics of MAC Route collection.";
+           uses mac-statistics-collection;
+        }
+      }
+    }
+    container evpn-instances {
+      description
+        "List of attributes in EVPN instances.";
+      list evpn-instance {
+        key "name";
+        description
+          "Operational data of attributes in an EVPN instance.";
+        leaf name {
+          type leafref {
+            path "/evpn:evpn/evpn:instances/evpn:instance/evpn:name";
+          }
+          description
+            "The name of EVPN instance.";
+        }
+        container statistics {
+          description
+            "List of MAC route statistics in an EVPN instance.";
+          list statistic {
+            key "protocol";
+            description
+              "Statistics of MAC routes.";
+            uses mac-statistics-collection;
+          }
+        }
+        container routes {
+          description
+            "List of EVPN MAC routes.";
+          list route {
+            key "mac";
+            description
+              "Operational data of EVPN MAC route table.";
+            leaf mac {
+              type pub-type:mac-address {
+                length "0..255";
+              }
+              description
+                "MAC address.";
+            }
+            leaf protocol {
+              type route-source;
+              description
+                "Mac route source.";
+            }
+            leaf domain-id {
+              type uint32;
+              description
+                "Bridge domain ID.";
+            }
+            leaf peer {
+              type inet:ip-address-no-zone;
+              description
+                "The address of Remote for Mac route.";
+            }
+            leaf interface {
+              type pub-type:if-name;
+              description
+                "Outbound interface to reach the next hop. If the outbound interface is a tunnel interface, the tunnel interface name is displayed.";
+            }
+            leaf flag {
+              type route-flag;
+              description
+                "MAC route flag.";
+            }
+            leaf label {
+              type uint32;
+              description
+                "Label that is allocated by MPLS and used for traffic forwarding via tunnel.";
+            }
+            leaf indirect-id {
+              type pub-type:hex-binary;
+              description
+                "Indirect ID for a MAC route.";
+            }
+            leaf status {
+              type route-status;
+              description
+                "MAC route status.";
+            }
+            leaf type {
+              type route-type;
+              description
+                "MAC route type.";
+            }
+            leaf age {
+              type string {
+                length "0..20";
+              }
+              description
+                "Keep alive time.";
+            }
+            leaf tunnel {
+              type string {
+                length "0..21";
+              }
+              description
+                "Tunnel information.";
+            }
+            leaf ce-vlan {
+              type uint32;
+              description
+                "Inner VLAN tag.";
+            }
+            leaf pe-vlan {
+              type uint32;
+              description
+                "Outer VLAN tag.";
+            }
+            leaf vtep-ip {
+              type inet:ip-address-no-zone;
+              description
+                "The address of VTEP.";
+            }
+          }
+        }
+      }
+    }
+  }
+    
+/*****************************************************************
+* augment extension 
+*****************************************************************/
+  augment "/evpn:evpn/evpn:instances/evpn:instance" {
+    description
+        "MAC routing configuration for an evpn instance.";
+    container mac-limit {
+      when "../evpn:type='normal' or ../evpn:type='bd-evpn'";
+      description
+        "Configure MAC routing limit for an evpn instance.";
+      container rule {
+        description
+          "Configure rule of MAC routes limit.";
+        leaf maximum {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Maximum number of MAC routes supported by an EVPN instance.";
+        }
+        leaf action {
+          when "../maximum";
+          type limit-action;
+          default "mac-unchanged";
+          description
+            "The action of MAC limit when the number of EVPN MAC routes exceeds the specified number.";
+        }
+      }
+      container alarm-threshold {
+        description
+          "Configure alarm threshold of MAC routing limit in percentage.";
+        leaf lower {
+          type uint8 {
+            range "1..100";
+          }
+          units %;
+          must "../upper > ../lower";
+          default "70";
+          description
+            "The lower limit in percentage for MAC routes.";
+        }
+        leaf upper {
+          type uint8 {
+            range "1..100";
+          }
+          units %;
+          must "../upper > ../lower";
+          default "80";
+          description
+            "The upper limit in percentage for MAC routes.";
+        }
+      }
+    }
+  }
+  
+  ext:task-name "vstm";
+}

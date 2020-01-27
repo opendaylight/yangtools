@@ -1,0 +1,39 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-radius-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-radius-deviations-CH-NE-X3";
+  prefix "radius-devs-CH-NE-X3";
+
+  import huawei-radius {
+    prefix "radius";
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "RADIUS.";
+  revision 2019-04-02 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+
+  deviation /radius:radius/radius:server-speed-limits {
+    deviate not-supported;
+  }
+  deviation /radius:radius/radius:radius-server-groups/radius:radius-server-group/radius:authen-account-attribute/radius:cmcc-up-identifier {
+    deviate not-supported;
+  }
+  deviation /radius:radius/radius:radius-server-groups/radius:radius-server-group/radius:authen-account-attribute/radius:cmcc-up-ip {
+    deviate not-supported;
+  }
+}

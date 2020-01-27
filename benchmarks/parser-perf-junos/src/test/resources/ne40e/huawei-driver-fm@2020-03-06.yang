@@ -1,0 +1,135 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-driver-fm {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-driver-fm";
+  
+  prefix driver-fm;
+  import huawei-extension {
+    prefix ext;
+  }
+  import huawei-fm {
+    prefix fm;
+  }
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Fault management of driver module.";
+  revision 2020-03-06 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "device-mgr";
+
+  augment "/fm:fm" {
+    description
+      "Adds driver configuration to fm model.";
+    container driver {
+      description
+        "Configure driver apply."; 
+      container slot-alarm-masks {
+        description
+          "List of masking slot alarm.";
+        list slot-alarm-mask {
+          key "slot-id";
+          description
+            "Configure masking slot alarm.";
+          leaf slot-id {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot ID. The slot-id is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+          }
+        }
+      }
+
+      container card-alarm-masks {
+        description
+          "List of masking card alarm.";
+        list card-alarm-mask {
+          key "slot-id card-id";
+          description
+            "Configure masking card alarm.";
+          leaf slot-id {
+            type string {
+              length "1..32";
+            }
+            description
+              "Slot ID. The slot-id is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+          }
+          leaf card-id {
+            type string {
+              length "1..32";
+            }
+            description
+              "Card ID. The card-id is expressed in the format of cardID. For example, 1. Here 1 is an example. The value may vary with devices.";
+          }
+        }
+      }
+
+      container hardware-alarm-error-codes {
+        description
+          "List of configuring the alarm code to be associated with the board reset function. When trigger the alarm code, the board will be reset.";
+        list hardware-alarm-error-code {
+          key "error-code";
+          description
+            "Configure the alarm code to be associated with the board reset function. When trigger the alarm code, the board will be reset.";
+          leaf error-code  {
+            type string {
+              length "1..32";
+              pattern '[1-9a-f][0-9a-f]{4,7}';
+            }
+            description
+              "Alarm error code which be associated with the board reset.";
+          }
+          choice slot {
+            mandatory true;
+            description
+              "Slot.";
+            case all {
+              description
+                "All slots.";
+              leaf all {
+                type empty;
+                description
+                  "All slots.";
+              }
+            }
+            case slot {
+              description
+                "Slot.";
+              container slots {
+                description
+                  "List of slots.";
+                list slot {
+                  key "slot-id";
+                  description
+                    "Configure slot ID.";
+                  leaf slot-id {
+                    type string {
+                      length "1..32";
+                    }
+                    description
+                      "Slot ID. The slot-id is expressed in the format of slotID. For example, 1. Here 1 is an example. The value may vary with devices.";
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } 
+  }
+}

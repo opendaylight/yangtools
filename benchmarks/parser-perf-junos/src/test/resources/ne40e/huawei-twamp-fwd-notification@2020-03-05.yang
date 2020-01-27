@@ -1,0 +1,62 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-twamp-fwd-notification {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-twamp-fwd-notification";
+  prefix twamp-fwd-notification;
+  import huawei-twamp-responder {
+    prefix twamp-responder;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Notification of twamp-fwd-notification.";
+  revision 2020-03-05 {
+    description
+      "Add task-name and import huawei-extension.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-07-08 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  
+  ext:task-name  "twamp";
+  
+  notification twamp-nonsupport-serv {
+    description
+      "TWAMP does not support services on the bound interface.";
+    leaf session-id {
+      type leafref {
+        path "/twamp-responder:twamp-responder/twamp-responder:responder/twamp-responder:test-sessions/twamp-responder:test-session/twamp-responder:session-id";
+      }
+      description
+        "Session ID.";
+    }
+  }
+  notification twamp-nonsupport-serv-resume {
+    description
+      "TWAMP does not support service alarm clearing on the bound interface.";
+    leaf session-id {
+      type leafref {
+        path "/twamp-responder:twamp-responder/twamp-responder:responder/twamp-responder:test-sessions/twamp-responder:test-session/twamp-responder:session-id";
+      }
+      description
+        "Session ID.";
+    }
+  }
+}

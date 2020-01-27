@@ -1,0 +1,33 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-notifications-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-notifications-deviations-CH-NE-X3";
+  prefix ncEvent-devs-CH-NE-X3;
+
+  import notifications {
+    prefix ncEvent;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Notifications deviation file.";
+
+  revision 2019-06-17 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/ncEvent:notification" {
+    deviate not-supported;
+  }
+}

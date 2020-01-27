@@ -1,0 +1,288 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-tm {
+  namespace "urn:huawei:yang:huawei-tm";
+  prefix tm;
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-tm-type;
+  
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Time management (TM) component.";
+  revision 2019-04-10 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "system";
+  container tm {
+    description
+      "Time management (TM) component.";
+    container timezone-configuration {
+      description
+        "Configure time zone.";
+      leaf timezone-name {
+        type string {
+          length "1..32";
+        }
+        default "DefaultZoneName";
+        description
+          "Specify the name of a time zone. The length of string is from 1 to 32 characters.";
+      }
+      leaf option {
+        type tm-timezone-option;
+        default "add";
+        description
+          "Indicate whether to add or subtract the offset.";
+      }
+      leaf timezone-offset {
+        type tm-time;
+        default "00:00:00";
+        description
+          "Specify the offset between the time of the specified time zone and the UTC time. It is in the format of HH:MM:SS. HH indicates hours and its value ranges from 0 to 18. MM and SS indicate minutes and seconds and their value ranges from 0 to 59.";
+      }
+    }
+    container dst-configuration {
+      must "((type='OneYear' and start-year and start-month and start-day and start-time and end-year and end-month and end-day and end-time and dst-offset)
+            or(type='Repeat-date' and start-month and start-day and start-time and end-month and end-day and end-time and dst-offset)
+            or(type='Repeat-week' and start-month and start-weeknum and start-weekday and start-time and end-month and end-weeknum and end-weekday and end-time and dst-offset)
+            or not(dst-name))";
+      description
+        "Configure daylight saving time (DST). The end date must be later than the start date.
+         If the type is OneYear, the start date and end date must be within one year. If the start-year and end-year are in the same year, end-month and start-month must be different.
+         If the type is Repeat-date, the end-month and start-month must be different, and the dates cannot be set to February 29. 
+         If the type is Repeat-week, end-month and start-month must be different.
+         The dst-offset must be less than the time difference between the end time and the start time.";
+      leaf dst-name {
+        type string {
+          length "1..32";
+        }
+        description
+          "Specify a DST name. The length of string is from 1 to 32 characters.";
+      }
+      leaf type {
+        when "../dst-name";
+        type tm-dst-type;
+        description
+          "Specify whether this setting is for one year or repeating.";
+      }
+      leaf start-year {
+        when "../dst-name";
+        type uint16 {
+          range "2000..2037";
+        }
+        ext:dynamic-default {
+          ext:default-value "2000" {
+            when "../type='Repeat-date' or ../type='Repeat-week'";
+            description "The start year default value is 2000 in repeat dst type.";
+          }
+        }
+        description
+          "Specify the daylight saving start year. It is in the format of YYYY. The value of YYYY ranges from 2000 to 2037.";
+      }
+      leaf start-month {
+        when "../dst-name";
+        type tm-start-month;
+        description
+          "Specify the daylight saving start month. The value can be January, February, March, April, May, June, July, August, September, October, November, or December.";
+      }
+      leaf start-day {
+        when "../type='OneYear' and ../dst-name or ../type='Repeat-date' and ../dst-name";
+        type tm-date;
+        description
+          "Specify the daylight saving start date. It is in the format of DD. The value of DD ranges from 1 to 31.";
+      }
+      leaf start-weeknum {
+        when "../type='Repeat-week' and ../dst-name";
+        type tm-weeknum;
+        description
+          "Specify the start week number in the specified month. The value can be first, second, third, fourth, or last.";
+      }
+      leaf start-weekday {
+        when "../type='Repeat-week' and ../dst-name";
+        type tm-start-weekday;
+        description
+          "Specify the start weekday. The value can be Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday.";
+      }
+      leaf start-time {
+        when "../dst-name";
+        type tm-hhmm{
+          pattern '(([0-1][0-9])|(2[0-3])|[0-9]):([0-5][0-9]|[0-9])';
+        }
+        description
+          "Specify the daylight saving start time. It is in the format of HH:MM. The value of HH ranges from 0 to 23, and the values of MM and SS range from 0 to 59.";
+      }
+      leaf end-year {
+        when "../dst-name";
+        type uint16 {
+          range "2000..2037";
+        }
+        ext:dynamic-default {
+          ext:default-value "2037" {
+            when "../type='Repeat-date' or ../type='Repeat-week'";
+            description "The start year default value is 2037 in repeat dst type.";
+          }
+        }
+        description
+          "Specify the daylight saving end year. It is in the format of YYYY. The value of YYYY ranges from 2000 to 2037.";
+      }
+      leaf end-month {
+        when "../dst-name";
+        type tm-end-month;
+        description
+          "Specify the daylight saving end month. The value can be January, February, March, April, May, June, July, August, September, October, November, or December.";
+      }
+      leaf end-day {
+        when "../type='OneYear' and ../dst-name or ../type='Repeat-date' and ../dst-name";
+        type tm-date;
+        description
+          "Specify the daylight saving end date. It is in the format of DD. The value of DD ranges from 1 to 31.";
+      }
+      leaf end-weeknum {
+        when "../type='Repeat-week' and ../dst-name";
+        type tm-weeknum;
+        description
+          "Specify the end week number in the specified month. The value can be first, second, third, fourth, or last.";
+      }
+      leaf end-weekday {
+        when "../type='Repeat-week' and ../dst-name";
+        type tm-end-weekday;
+        description
+          "Specify the end weekday. The value can be Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday.";
+      }
+      leaf end-time {
+        when "../dst-name";
+        type tm-hhmm{
+          pattern '(([0-1][0-9])|(2[0-3])|[0-9]):([0-5][0-9]|[0-9])';
+        }
+        description
+          "Specify the daylight saving end time. It is in the format of HH:MM. The value of HH ranges from 0 to 23, and the values of MM and SS range from 0 to 59.";
+      }
+      leaf dst-offset {
+        when "../dst-name";
+        type tm-hhmm{
+          pattern '(([0-1][0-9])|(2[0-3])|[0-9]):([0-5][0-9]|[0-9])';
+        }
+        description
+          "Specify the time added to the summer time. It is in the format of HH:MM. The value should be less than 02:00 (two hours), and cannot be 00:00.";
+      }
+    }
+    container dst-configuration-ias {
+      must "((start-month and start-day and end-month and end-day and dst-offset and not(start-weeknum) and not(start-weekday) and not(end-weeknum) and not(end-weekday))
+            or(start-month and start-day and end-month and end-weeknum and end-weekday and dst-offset and not(start-weeknum) and not(start-weekday) and not(end-day))
+            or(start-month and start-weeknum and start-weekday and end-month and end-day and dst-offset and not(start-day) and not(end-weeknum) and not(end-weekday))
+            or(start-month and start-weeknum and start-weekday and end-month and end-weeknum and end-weekday and dst-offset and not(start-day) and not(end-day))
+            or(not(start-month) and not(start-day) and not(start-weeknum) and not(start-weekday) and not(end-month) and not(end-day) and not(end-weeknum) and not(end-weekday) and not(dst-offset)))";
+      description
+        "Configure daylight saving time (DST).
+         The start date and start week cannot be configurated at the save time.
+         The end date and end week can not be configurated at the save time either.
+         The dst-offset must be less than the time difference between the end time and the start time.";
+      leaf start-month {
+        type tm-start-month;
+        description
+          "Specify the daylight saving start month. The value can be January, February, March, April, May, June, July, August, September, October, November, or December.";
+      }
+      leaf start-day {
+        type tm-date;
+        description
+          "Specify the daylight saving start date. It is in the format of DD. The value of DD ranges from 1 to 31.";
+      }
+      leaf start-weeknum {
+        type tm-weeknum;
+        description
+          "Specify the start week number in the specified month. The value can be first, second, third, fourth, or last.";
+      }
+      leaf start-weekday {
+        type tm-start-weekday;
+        description
+          "Specify the start weekday. The value can be Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday.";
+      }
+      leaf start-time {
+        type tm-time {
+          pattern '\d{1,2}:\d{1,2}:\d{1,2}';
+        }
+        description
+          "Specify the daylight saving start time. It is in the format of HH:MM. The value of HH ranges from 0 to 23, and the values of MM and SS range from 0 to 59.";
+      }
+      leaf end-month {
+        type tm-end-month;
+        description
+          "Specify the daylight saving end month. The value can be January, February, March, April, May, June, July, August, September, October, November, or December.";
+      }
+      leaf end-day {
+        type tm-date;
+        description
+          "Specify the daylight saving end date. It is in the format of DD. The value of DD ranges from 1 to 31.";
+      }
+      leaf end-weeknum {
+        type tm-weeknum;
+        description
+          "Specify the end week number in the specified month. The value can be first, second, third, fourth, or last.";
+      }
+      leaf end-weekday {
+        type tm-end-weekday;
+        description
+          "Specify the end weekday. The value can be Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday.";
+      }
+      leaf end-time {
+        type tm-time {
+          pattern '\d{1,2}:\d{1,2}:\d{1,2}';
+        }
+        description
+          "Specify the daylight saving end time. It is in the format of HH:MM. The value of HH ranges from 0 to 23, and the values of MM and SS range from 0 to 59.";
+      }
+      leaf dst-offset {
+        type tm-hhmm {
+          pattern '(([0-1][0-9])|(2[0-3])|[0-9]):([0-5][0-9]|[0-9])';
+        }
+        description
+          "Specify the time added to the summer time. It is in the format of HH:MM. The value should be less than 03:00 (three hours), and cannot be 00:00.";
+      }
+    }
+    container date-and-time {
+      config false;
+      description
+        "Statistics of date and time.";
+      leaf current-time {
+        type yang:date-and-time;
+        config false;
+        description
+          "Specify the current date and time.";
+      }
+      leaf weekday {
+        type tm-day-week;
+        config false;
+        description
+          "Specify the day of a week.";
+      }
+    }
+  }
+  rpc date-time {
+    description
+      "Date and time information.";
+    input {
+      leaf date-time {
+        type yang:date-and-time;
+        mandatory true;
+        description
+          "Date and time to be set, the year from 2000 to 2037.";
+      }
+    }
+  }
+}

@@ -1,0 +1,538 @@
+/*
+Copyright (C) 2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ops {
+  namespace "urn:huawei:yang:huawei-ops";
+  prefix ops;
+  import huawei-extension {
+    prefix ext;
+  } 
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "The open programmability system.";
+  revision 2020-01-10 {
+    description
+      "Init revision.";
+    reference
+      "Huawei private.";
+  }
+  ext:task-name "ops";  
+  typedef ops-execution-type {
+    type enumeration {
+      enum "command" {
+        value 0;
+        description
+          "The command line.";
+      }
+      enum "python" {
+        value 1;
+        description
+          "Python scripts.";
+      }
+      enum "batch-file" {
+        value 2;
+        description
+          "The batch.";
+      }
+    }
+    description
+      "Ops assistant action type.";
+  }
+
+  typedef ops-operation-type {
+    type enumeration {
+      enum "eq" {
+        value 0;
+        description
+          "Equate.";
+      }
+      enum "ne" {
+        value 1;
+        description
+          "No equate.";
+      }
+      enum "gt" {
+        value 2;
+        description
+          "Greater than.";
+      }
+      enum "ge" {
+        value 3;
+        description
+          "Greater equate.";
+      }
+      enum "lt" {
+        value 4;
+        description
+          "Less than.";
+      }
+      enum "le" {
+        value 5;
+        description
+          "Less equate.";
+      }
+    }
+    description
+      "Ops operation type.";
+  }
+
+  typedef ops-process-state {
+    type enumeration {
+      enum "init" {
+        value 0;
+        description
+          "Init.";
+      }
+      enum "running" {
+        value 1;
+        description
+          "Running.";
+      }
+      enum "input" {
+        value 2;
+        description
+          "Input.";
+      }
+      enum "stop" {
+        value 3;
+        description
+          "Stop.";
+      }
+      enum "exit" {
+        value 4;
+        description
+          "Exit.";
+      }
+    }
+    description
+      "Ops process state.";
+  }
+
+  typedef ops-alarm-type {
+    type enumeration {
+      enum "start" {
+        value 0;
+        description
+          "Start.";
+      }
+      enum "end" {
+        value 1;
+        description
+          "End.";
+      }
+    }
+    description
+      "State of alarm type.";
+  }
+
+  typedef ops-severity-level {
+    type enumeration {
+      enum "critical" {
+        value 0;
+        description
+          "Critical.";
+      }
+      enum "major" {
+        value 1;
+        description
+          "Major.";
+      }
+      enum "minor" {
+        value 2;
+        description
+          "Minor.";
+      }
+      enum "warning" {
+        value 3;
+        description
+          "Warning.";
+      }
+    }
+    description
+      "Severity of alarm level.";
+  }
+
+  typedef ops-access-type {
+    type enumeration {
+      enum "save" {
+        value 0;   
+        description
+          "Save.";
+      }
+      enum "retrieve" {
+        value 1;
+        description
+          "Retrieve.";
+      }
+    }
+    description
+      "Ops access type.";
+  }
+
+  typedef ops-assistant-state-type {
+    type enumeration {
+      enum "init" {
+        value 0;
+        description
+          "Init.";
+      }
+      enum "ready" {
+        value 1;
+        description
+          "Ready.";
+      }
+      enum "pending" {
+        value 2;
+        description
+          "Pending.";
+      }
+      enum "running" {
+        value 3;
+        description
+          "Running.";
+      }
+      enum "shutdown" {
+        value 4;
+        description
+          "Shutdown.";
+      }
+      enum "suspend" {
+        value 5;
+        description
+          "Suspend.";
+      }
+    }
+    description
+      "Ops asst state type.";
+  }
+
+  typedef ops-assistant-cond-type {
+    type enumeration {
+      enum "timer" {
+        value 0;
+        description
+          "Timer.";
+      }
+      enum "event" {
+        value 1;
+        description
+          "Event.";
+      }
+      enum "startup" {
+        value 2;
+        description
+          "Startup.";
+      }
+      enum "alarm" {
+        value 3;
+        description
+          "Alarm.";
+      }
+      enum "syslog" {
+        value 4;
+        description
+          "Syslog.";
+      }
+      enum "snmp-notification" {
+        value 5;
+        description
+          "Snmp-notification.";
+      }
+      enum "auto" {
+        value 6;
+        description
+          "Auto.";
+      }
+      enum "cli" {
+        value 7;
+        description
+          "Cli.";
+      }
+      enum "relative" {
+        value 8;
+        description
+          "Relative.";
+      }
+      enum "absolute" {
+        value 9;
+        description
+          "Absolute.";
+      }
+      enum "countdown" {
+        value 10;
+        description
+          "Countdown.";
+      }
+      enum "multiple" {
+        value 11;
+        description
+          "Multiple.";
+      }
+      enum "subscribe" {
+        value 12;
+        description
+          "Subscribe.";
+      }
+      enum "unsubscribe" {
+        value 13;
+        description
+          "Unsubscribe.";
+      }
+      enum "null" {
+        value 14;
+        description
+          "Failed.";
+      }
+    }
+    description
+      "Ops assistant condition type.";
+  }
+
+  typedef ops-assistant-type {
+    type enumeration {
+      enum "command" {
+        value 0;
+        description
+          "Command.";
+      }
+      enum "script" {
+        value 1;
+        description
+          "Script.";
+      }
+    }
+    description
+      "Ops assistant type.";
+  }
+
+  typedef ops-owner-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "assistant" {
+        value 1;
+        description
+          "Assistant.";
+      }
+      enum "user" {
+        value 2;
+        description
+          "User.";
+      }
+      enum "auto" {
+        value 3;
+        description
+          "Auto.";
+      }
+    }
+    description
+      "Ops process owner type.";
+  }
+
+  typedef ops-assistant-condition-type {
+    type enumeration {
+      enum "none" {
+        value 0;
+        description
+          "None.";
+      }
+      enum "alarm" {
+        value 1;
+        description
+          "The alarm.";
+      }
+      enum "event" {
+        value 2;
+        description
+          "The event.";
+      }
+      enum "snmp-notification" {
+        value 3;
+        description
+          "Snmp notification.";
+      }
+      enum "syslog" {
+        value 4;
+        description
+          "The system log.";
+      }
+      enum "timer" {
+        value 5;
+        description
+          "The timer.";
+      }
+      enum "alarmlevel" {
+        value 6;
+        description
+          "The alarm level.";
+      }
+    }
+    description
+      "Ops cli assistant condition type.";
+  }
+
+  typedef ops-assistant-state-return-type {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal.";
+      }
+      enum "abnormal" {
+        value 1;
+        description
+          "Abnormal.";
+      }
+      enum "usercancel" {
+        value 2;
+        description
+          "UserCancel.";
+      }
+    }
+    description
+      "Ops assistant history result.";
+  }
+
+  typedef ops-assistant-sub-state-type {
+    type enumeration {
+      enum "success" {
+        value 0;
+        description
+          "Success.";
+      }
+      enum "failure" {
+        value 1;
+        description
+          "Failure.";
+      }
+      enum "cancel" {
+        value 2;
+        description
+          "Cancel.";
+      }
+    }
+    description
+      "Ops assistant subscript state.";
+  }
+
+  typedef ops-process-state-return-type {
+    type enumeration {
+      enum "normal" {
+        value 0;
+        description
+          "Normal.";
+      }
+      enum "cancel" {
+        value 1;
+        description
+          "Cancel.";
+      }
+      enum "disconnect" {
+        value 2;
+        description
+          "Disconnect.";
+      }
+      enum "timeout" {
+        value 3;
+        description
+          "Timeout.";
+      }
+      enum "script-exception" {
+        value 4;
+        description
+          "Script Exception.";
+      }
+      enum "user-stop" {
+        value 5;
+        description
+          "User Stop.";
+      }
+      enum "delete-vs" {
+        value 6;
+        description
+          "Delete VS.";
+      }
+      enum "init-failed" {
+        value 7;
+        description
+          "Init Failed.";
+      }
+    }
+    description
+      "Ops processing state result.";
+  }
+  typedef ops-python-version-type {
+    type enumeration {
+      enum "python3" {
+        value 1;
+        description
+          "Type python version 3.";
+      }
+    }
+    description
+      "Ops python version type.";
+  }
+  
+  container ops {
+    description
+      "The open programmability system.";
+    container global-switch {
+      description
+        "Configure OPS global switch.";
+      leaf enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable OPS global switch.";
+      }
+    }
+    container python-version {
+      config false;
+      description
+        "Operational data of Python version.";
+      leaf version {
+        type ops-python-version-type;
+        config false;
+        description
+          "Ops python version.";
+      }
+    }
+
+    container assistant {
+      description
+        "Configure OPS assistant node.";
+	  container mtp-status-switch {
+	    description
+		  "Configure assistant maintain probe.";
+	    leaf enable {
+		  type boolean;
+		  default "true";
+		  description
+		    "Enable/disable assistant maintain probe.";
+	    }
+	  }
+
+	  container total-status-switch {
+	    description
+		  "Configure assistant total switch.";
+	    leaf suspend {
+		  type boolean;
+		  default "false";
+		  description
+		    "Enable/disable assistant total switch.";
+	    }
+	  }
+    }
+  }
+}

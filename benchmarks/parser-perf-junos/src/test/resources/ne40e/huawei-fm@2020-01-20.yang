@@ -1,0 +1,555 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-fm {
+  namespace "urn:huawei:yang:huawei-fm";
+  prefix fm;
+  
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-snmp {
+    prefix snmp;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Fault management module.";
+  revision 2020-01-20 {
+    description
+      "Modity fm.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-10 {
+    description
+      "Add host.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-10-26 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef severity-level {
+    type enumeration {
+      enum "critical" {
+        value 1;
+        description
+          "Critical alarm.";
+      }
+      enum "major" {
+        value 2;
+        description
+          "Major alarm.";
+      }
+      enum "minor" {
+        value 3;
+        description
+          "Minor alarm.";
+      }
+      enum "warning" {
+        value 4;
+        description
+          "Warning alarm.";
+      }
+      enum "default" {
+        value 8;
+        description
+          "Default value.";
+      }
+    }
+    description
+      "The type of severity level.";
+  }
+  typedef enable-flag {
+    type enumeration {
+      enum "false" {
+        value 2;
+        description
+          "Disabled status.";
+      }
+      enum "true" {
+        value 1;
+        description
+          "Enabled status.";
+      }
+    }
+    description
+      "Enable or disable.";
+  }
+  typedef trap-status {
+    type enumeration {
+      enum "on" {
+        value 1;
+        description
+          "Whether traps are enabled.";
+      }
+      enum "off" {
+        value 0;
+        description
+          "Whether traps are disabled.";
+      }
+    }
+    description
+      "The type of trap status.";
+  }
+  typedef rootcause-indication {
+    type enumeration {
+      enum "independent" {
+        value 3;
+        description
+          "Independent alarm.";
+      }
+      enum "root-cause" {
+        value 2;
+        description
+          "Root alarm.";
+      }
+      enum "non-root-cause" {
+        value 1;
+        description
+          "Correlative alarm.";
+      }
+    }
+    description
+      "The type of root cause indication.";
+  }
+  typedef inverse-mode-type {
+    type enumeration {
+      enum "forbid-reverse" {
+        value 0;
+        description
+          "Forbid reversion.";
+      }
+      enum "auto-resume" {
+        value 1;
+        description
+          "Automatic reversion resumption.";
+      }
+      enum "manual-resume" {
+        value 2;
+        description
+          "Manual reversion resumption.";
+      }
+    }
+    description
+      "The type of inverse mode.";
+  }
+  typedef inverse-status {
+    type enumeration {
+      enum "on" {
+        value 1;
+        description
+          "Inverse status is on.";
+      }
+      enum "off" {
+        value 0;
+        description
+          "Inverse status is off.";
+      }
+    }
+    description
+      "The type of inverse status.";
+  }
+  typedef devm-mask-type {
+    type enumeration {
+      enum "board" {
+        value 1;
+        description
+          "Mask type is board.";
+      }
+      enum "card" {
+        value 2;
+        description
+          "Mask type is card.";
+      }
+    }
+    description
+      "The type of device.";
+  }
+  typedef addres-type {
+    type enumeration {
+      enum "ipv4" {
+        value 1;
+        description
+          "The address type is IPv4.";
+      }
+      enum "ipv6" {
+        value 2;
+        description
+          "The address type is IPv6.";
+      }
+    }
+    description
+      "The type of IP address.";
+  }
+  typedef global-trapstatus-type {
+    type enumeration {
+      enum "disable" {
+        value 0;
+        description
+          "Trap status is disable.";
+      }
+      enum "enable" {
+        value 1;
+        description
+          "Trap status is enable.";
+      }
+      enum "default" {
+        value 2;
+        description
+          "Default value.";
+      }
+    }
+    description
+      "The type of trap status.";
+  }
+  typedef host-enable-flag {
+    type enumeration {
+      enum "false" {
+        value 2;
+        description
+          "Off.";
+      }
+      enum "true" {
+        value 1;
+        description
+          "On.";
+      }
+    }
+    description
+      "The type of trap status.";
+  }
+  typedef auxiliary-type {
+    type enumeration {
+      enum "normal" {
+        value 1;
+        description
+          "Normal Alarm.";
+      }
+      enum "reversed" {
+        value 2;
+        description
+          "Reversed Alarm.";
+      }
+      enum "non-report" {
+        value 3;
+        description
+          "NonReport Alarm.";
+      }
+      enum "non-root" {
+        value 4;
+        description
+          "NonRoot Alarm.";
+      }
+    }
+    description
+      "The type of auxiliary.";
+  }
+  ext:task-name  "fault-mgr";
+  container fm {
+    description
+      "Fault management module.";
+    container global {
+      description
+        "Configure the global parameters.";
+      leaf correlation-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable alarm correlation analysis.";
+      }
+      leaf inverse-mode {
+        type inverse-mode-type;
+        default "forbid-reverse";
+        description
+          "Alarm reversion mode, which can be Forbid Reversion, Auto Resume, or Manual Resume.";
+      }
+      leaf history-record-mode {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable wrap historical alarm records.";
+      }
+      leaf trap-switch {
+        type global-trapstatus-type;
+        default "default";
+        description
+          "Trap switch.";
+      }
+      leaf suppress-enable {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable alarm suppression.";
+      }
+    }
+    container inverse-ports {
+      description
+        "List of alarm reversion ports.";
+      list inverse-port {
+        key "port-position";
+        description
+          "Configure the alarm reversion port.";
+        leaf port-position {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:name";
+          }
+          must "((../../../global/inverse-mode='forbid-reverse' and ../state='off') or (../../../global/inverse-mode!='forbid-reverse') )";
+          description
+            "Name of a physical port.";
+        }
+        leaf state {
+          type inverse-status;
+          default "off";
+          description
+            "Reversion status.";
+        }
+      }
+    }
+    container traps {
+      description
+        "List of the settings of the NMS host.";
+      list trap {
+        ext:generated-by "system";
+        key "trap-name feature-name";
+        description
+          "Configure the trap.";
+        ext:operation-exclude create|delete;
+        leaf trap-name {
+          type string {
+            length "1..63";
+          }
+          description
+            "Name of a trap.";
+        }
+        leaf feature-name {
+          type string {
+            length "1..32";
+          }
+          description
+            "Module to which a trap belongs.";
+        }
+          leaf trap-cfg-status {
+          type trap-status;
+          ext:dynamic-default;
+          description
+            "Configured trap enabling status.";
+        }
+      }
+    }
+    container alarms {
+      description
+        "List of alarm configuration query.";
+      list alarm {
+	ext:generated-by "system";
+        key "alarm-name";
+        description
+          "Configure the alarm."; 
+        ext:operation-exclude create|delete;		  
+        leaf alarm-name {
+          type string {
+            length "1..63";
+          }
+          description
+            "Name of an alarm, it is case sensitive.";
+        }
+        leaf level {
+          type severity-level;
+          description
+            "Severity of an alarm.";
+          ext:support-filter "true";
+	  ext:dynamic-default;
+        }
+        leaf clear-suppress-time {
+          type uint32 {
+            range "0..600";
+          }
+          units s;
+          description
+            "Suppression period after which an alarm is cleared.";
+        }
+        leaf cause-suppress-time {
+          type uint32 {
+            range "0..600";
+          }
+          units s;
+          description
+            "Suppression period after which an alarm is generated.";
+        }
+        leaf module-name {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Module to which an alarm belongs.";
+          ext:support-filter "true";
+        }
+      }
+    }
+    container active-alarms {
+      config false;
+      description
+        "List of active alarms.";
+      list active-alarm {
+        key "sequence";
+        config false;
+        description
+          "Statistics of information about an active alarm.";
+        leaf sequence {
+          type uint32;
+          config false;
+          description
+            "Sequence number of an active alarm.";
+        }
+        leaf alarm-name {
+          ext:support-filter "true";
+          type leafref {
+            path "../../../alarms/alarm/alarm-name";
+          }
+          config false;
+          description
+            "Name of an active alarm.";
+        }
+        leaf alarm-id {
+          type uint32;
+          config false;
+          description
+            "ID of an active alarm.";
+        }
+        leaf level {
+          type severity-level;
+          config false;
+          description
+            "Severity of an active alarm.";
+          ext:support-filter "true";
+        }
+        leaf generated-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Time when an active alarm is generated.";
+        }
+        leaf rootkind-flag {
+          type rootcause-indication;
+          config false;
+          description
+            "Flag indicating a root or correlative alarm.";
+          ext:support-filter "true";
+        }
+        leaf rootalarm-sequence {
+          type uint32;
+          config false;
+          description
+            "Sequence number of a root alarm.";
+        }
+        leaf vsname {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Name of the source VS where an active alarm resides.";
+          ext:support-filter "true";
+        }
+      }
+    }
+    container history-alarms {
+      config false;
+      description
+        "List of historical alarms.";
+      list history-alarm {
+        key "alarm-sequence";
+        config false;
+        description
+          "Statistics of information about a historical alarm.";
+        leaf alarm-sequence {
+          type uint32;
+          config false;
+          description
+            "Sequence number of a historical alarm.";
+        }
+        leaf alarm-name {
+          ext:support-filter "true";
+          type leafref {
+            path "../../../alarms/alarm/alarm-name";
+          }
+          config false;
+          description
+            "Name of a historical alarm.";
+        }
+        leaf alarm-id {
+          type uint32;
+          config false;
+          description
+            "ID of a historical alarm.";
+        }
+        leaf level {
+          type severity-level;
+          config false;
+          description
+            "Severity of a historical alarm.";
+          ext:support-filter "true";
+        }
+        leaf generated-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Time when a historical alarm is generated.";
+        }
+        leaf cleared-time {
+          type yang:date-and-time;
+          config false;
+          description
+            "Time when a historical alarm is cleared.";
+        }
+        leaf reason {
+          type uint32;
+          config false;
+          description
+            "Reason ID of a historical alarm.";
+        }
+        leaf vsname {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Name of the source VS where a historical alarm resides.";
+          ext:support-filter "true";
+        }
+      }
+    }
+  }
+  augment "/snmp:snmp/snmp:target-hosts/snmp:target-host" {
+    description
+      "The NMS host for configuration.";
+        container host-alarm {
+            description
+             "Configure of the NMS host.";
+            leaf enable-alarm {
+                type host-enable-flag;
+                default "true";                      
+                description
+                "Report alarms to a host.";
+            }
+        }
+    }
+}

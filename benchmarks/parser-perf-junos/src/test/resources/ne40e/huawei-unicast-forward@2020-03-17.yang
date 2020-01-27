@@ -1,0 +1,878 @@
+/*
+Copyright (C) 2019-2020 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-unicast-forward {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-unicast-forward";
+  prefix unicast-forward;
+  import huawei-extension {
+    prefix ext;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-qos {
+    prefix qos;
+  }
+  import huawei-license {
+    prefix lcs;
+  }
+  import huawei-network-instance {
+    prefix ni;
+  }
+  import huawei-devm-vnf {
+    prefix devm-vnf;
+  }
+  import huawei-said-frame {
+    prefix sf;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+    Bantian, Longgang
+    Shenzhen 518129
+    People's Republic of China
+    Website: http://www.huawei.com
+    Email: support@huawei.com";
+  description
+    "Unicast forward.";
+  revision 2020-03-17 {
+    description
+      "Update description.";
+    reference
+      "Huawei private.";
+  }
+  revision 2019-12-21 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  typedef ttl-mode-type {
+    type enumeration {
+      enum "pipe" {
+        value 0;
+        description
+          "Pipe mode.";
+      }
+      enum "uniform" {
+        value 1;
+        description
+          "Uniform mode.";
+      }
+    }
+    description
+      "GRE ttl mode type.";
+  }
+  typedef vxlan-redirect-type {
+    type enumeration {
+      enum "vxlan" {
+        value 1;
+        description
+          "VXLAN.";
+      }
+      enum "bdif" {
+        value 2;
+        description
+          "BDIF.";
+      }
+      enum "vxlanbdif" {
+        value 3;
+        description
+          "VXLAN BDIF.";
+      }
+    }
+    description
+      "Information of enum type vxlanRedirectType.";
+  }
+  typedef l3-lcs-service-type {
+    type enumeration {
+      enum "fib" {
+        value 0;
+        description
+          "Fib service.";
+      }
+      enum "l3vpn" {
+        value 1;
+        description
+          "L3vpn service.";
+      }
+    }
+    description
+      "L3 license service type.";
+  }
+  typedef global-gre-mode {
+    type enumeration {
+      enum "through" {
+        value 1;
+        description
+          "Through mode.";
+      }
+      enum "loopback" {
+        value 0;
+        description
+          "Loopback mode.";
+      }
+    }
+    description
+      "Type of global GRE mode.";
+  }
+  typedef lcs-act-status-type {
+    type enumeration {
+      enum "unallocated" {
+        value 0;
+        description
+          "The license status is unallocated.";
+      }
+      enum "allocated" {
+        value 1;
+        description
+          "The license status is allocated.";
+      }
+      enum "activated" {
+        value 2;
+        description
+          "The license status is activated.";
+      }
+    }
+    description
+      "License active status type.";
+  }
+  ext:task-name "forwarding";
+  container unicast-forward {
+    description
+      "Unicast forward.";
+    container global-uc-attribute {
+      description
+        "Configure global atrributes.";
+      leaf fib-miss {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable fib miss.";
+      }
+      leaf icmp-reply-fast {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable ICMP reply fast.";
+      }
+      leaf nexthop-spt {
+        type boolean;
+        default "true";
+        description
+          "Enable/disable single-nexthop BGP fast-refresh.";
+      }
+      leaf ipv4-force-frag {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable IPv4 force fragment.";
+      }
+      leaf mtu-force-frag {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable IPv4 MTU force fragment.";
+      }
+    }
+    container high-re-modes {
+      description
+        "List of LPUF50A High-RE-Mode.";
+      list high-re-mode {
+        key "position";
+        description
+          "Configure LPUF50A High-RE-Mode.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Slot ID.";
+        }
+      }
+    } 
+    container global-nexthop-spt {
+      config false;
+      description
+        "Statistics of single-next hop BGP route fast update.";
+      leaf state {
+        type string {
+          length "1..127";
+        }
+        config false;
+        description
+          "The state statistics for single-next hop BGP route fast update.";
+      }
+    }
+    container na-anti-attack-statistics {
+      config false;
+      description
+        "List of na anti-attack message statistic on a specified board.";
+      list na-anti-attack-statistic {
+        key "slot-id";
+        config false;
+        description
+          "Statistics of NA anti-attack message for a specified board.";
+        leaf slot-id {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Slot ID of an interface board. The value range varies according to router hardware. NULL is for board on atn.";
+        }
+        leaf na-tocpu-count {
+          type uint64;
+          config false;
+          description
+            "Na message statistic of sending to cpu.";
+        }
+        leaf na-drop-count {
+          type uint64;
+          config false;
+          description
+            "Na message statistic of dropping.";
+        }
+      }
+    }
+    container vxlan-central-reassemble {
+      presence "Enable centralized inter-board reassembly on VXLAN tunnels.";
+      description
+        "Enable/disable centralized inter-board reassembly on VXLAN tunnels.";
+    }
+    container global-gre {
+      description
+        "Configure global unicast attributes.";
+      leaf forward-mode {
+        type global-gre-mode;
+        default "through";
+        description
+          "Global GRE forward mode.";
+      }
+    }
+  }
+  rpc reset-na-anti-attack-statistic {
+    description
+      "Reset na anti-attack message statistic information.";
+    input {
+      leaf slot-id {
+          type string {
+            length "1..32";
+          }
+          mandatory true;
+          description
+            "Slot ID of an interface board. The value range varies according to router hardware. NULL is for board on ATN.";
+      }
+    }
+  }
+  augment "/ifm:ifm/ifm:interfaces/ifm:interface" {
+    description
+      "Unicast forward configuration to the ifm module.";
+    container unicast-forward {
+      description
+        "Configure unicast forward.";
+      container poison-reverse {
+        when "../../ifm:type = 'GigabitEthernet' or ../../ifm:type = 'XGigabitEthernet' or ../../ifm:type = 'Ip-Trunk' or ../../ifm:type = 'Eth-Trunk' or ../../ifm:type = 'Ethernet' or ../../ifm:type = 'Pos' or ../../ifm:type = '100GE' or ../../ifm:type = '400GE' or ../../ifm:type = '40GE'";
+        presence "Enable poison reverse on an interface";
+        description
+          "Enable/disable poison reverse.";
+        }
+      container ipv6-redirect {
+        when "../../ifm:type = 'GigabitEthernet' or ../../ifm:type = 'XGigabitEthernet' or ../../ifm:type = 'Ip-Trunk' or ../../ifm:type = 'Eth-Trunk' or ../../ifm:type = 'Ethernet' or ../../ifm:type = 'Pos' or ../../ifm:type = '100GE' or ../../ifm:type = '400GE' or ../../ifm:type = '40GE'";
+        presence "Enable ipv6 redirect on an interface";
+        description
+          "Enable/disable IPv6 redirect.";
+        }
+      container ipv6-na-anti-attack {
+        when "../../ifm:type = 'GigabitEthernet' or ../../ifm:type = 'XGigabitEthernet' or ../../ifm:type = 'Ip-Trunk' or ../../ifm:type = 'Eth-Trunk' or ../../ifm:type = 'Ethernet' or ../../ifm:type = '100GE' or ../../ifm:type = '400GE' or ../../ifm:type = '40GE' or ../../ifm:type = 'Vlanif'";
+        presence "Enable ipv6 nd na anti-attack on an interface";
+        description
+          "Enable/disable IPv6 ND NA anti-attack.";
+
+      }
+      container ip-priority-select {
+        when "../../ifm:type = 'Vlanif'";
+        description
+          "Configure unicast VLANIF priority port.";
+        leaf if-name {
+          type leafref {
+            path "../../../ifm:name";
+          }
+          must "../../../ifm:type = 'GigabitEthernet' or ../../../ifm:type = '50|100GE' or ../../../ifm:type = '50GE' or ../../../ifm:type = '400GE' or ../../../ifm:type = '25GE' or ../../../ifm:type = '100GE' or ../../../ifm:type = '200GE' or ../../../ifm:type = '10GE' or ../../../ifm:type = 'XGigabitEthernet' or ../../../ifm:type = 'Eth-Trunk' or ../../../ifm:type = 'FlexE' or ../../../ifm:type = 'FlexE-50G' or ../../../ifm:type = 'FlexE-200GE' or ../../../ifm:type = 'FlexE-100G' or ../../../ifm:type = 'FlexE-50|100G' or ../../../ifm:type = '4x10GE' or ../../../ifm:type = '10x10GE' or ../../../ifm:type = '3x40GE' or ../../../ifm:type = '4x25GE'";
+          description
+            "Priority port.";
+        }
+      }
+      container mac-change-notify-arp {
+        when "../../ifm:type = 'Vlanif'";
+        description
+          "Configure ARP-MAC association function.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable ARP-MAC association.";
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:lpu-boards/devm:lpu-board" {
+    description
+      "Configure Unicast forward to the devm module.";
+    container unicast-forward {
+      description
+        "Configure unicast forward.";
+      container ipv4-uc {
+        description
+          "Configure slot unicast forwarding.";
+        leaf force-frag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable slot IPv4 force fragment.";
+        }
+        leaf icmp-reply-fast {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable slot ICMP replay fast.";
+        }
+      }
+      container vxlan-rdr-trunks {
+        status deprecated;
+        description
+          "List of VXLAN traffic diversion.";
+        list vxlan-rdr-trunk {
+          key "redirect-type";
+          status deprecated;
+          description
+            "Configure VXLAN traffic diversion.";
+          leaf redirect-type {
+            type vxlan-redirect-type;
+            status deprecated;
+            description
+              "Diversion type.";
+          }
+          leaf dest-slot-id1 {
+            type string {
+              length "0..50";
+            }
+            mandatory true;
+            status deprecated;
+            description
+              "Specifies the first board for VXLAN traffic diversion.";
+            ext:support-filter "true";
+          }
+          leaf dest-slot-id2 {
+            type string {
+              length "0..50";
+            }
+            status deprecated;
+            description
+              "Specifies the second board for VXLAN traffic diversion.";
+            ext:support-filter "true";
+          }
+        }
+      }
+      container arp-fast-reply {
+        description
+          "Configure slot ARP reply.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable slot ARP reply fast.";
+        }
+      }
+      container gre-ttl-mode {
+        description
+          "Configure GRE ttl mode configuration.";
+        leaf ttl-mode {
+          type ttl-mode-type;
+          default "pipe";
+          description
+            "Set GRE tunnel-encapsulated mode.";
+        }
+      }
+      container l3-lcs-capacitys {
+        description
+          "List of slot L3 forwarding capacity configurations.";
+        list slot-l3-lcs-capacity {
+          key "service-type";
+          description
+            "Configure slot L3 forwarding capacity.";
+          leaf service-type {
+            type l3-lcs-service-type;
+            description
+              "Service type.";
+          }
+          leaf capacity-enable {
+            type boolean;
+            default "false";
+            description
+              "Enable/disable slot L3 forwarding capacity enhance.";
+            ext:support-filter "true";
+          }
+        }
+      }
+      container nd-fast-reply {
+        description
+          "Configure ND fast-reply enable.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable slot ND fast-reply.";
+        }
+      }
+    }
+  }
+  augment "/devm:devm/devm:mpu-boards/devm:mpu-board" {
+    description
+      "Unicast forward configuration to the devm module.";
+    container unicast-forward {
+      description
+        "Configure unicast forward.";
+      container ipv4-uc {
+        description
+          "Configure slot unicast Forwarding.";
+        leaf force-frag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable slot IPv4 force fragment.";
+        }
+        leaf icmp-reply-fast {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable slot ICMP replay fast.";
+        }
+      }
+      container arp-fast-reply {
+        description
+          "Configure slot ARP reply.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable slot ARP reply fast.";
+        }
+      }
+      container gre-ttl-mode {
+        description
+          "Configure slot GRE ttl mode.";
+        leaf ttl-mode {
+          type ttl-mode-type;
+          default "pipe";
+          description
+            "Set GRE tunnel-encapsulated mode.";
+        }
+      }
+      container nd-fast-reply {
+        description
+          "Configure ND fast-reply enable.";
+        leaf enable {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable slot ND fast-reply.";
+        }
+      }
+    }
+  }
+  augment "/qos:qos/qos:classifier-template/qos:traffic-behaviors/qos:traffic-behavior" {
+    description
+      "Unicast forward configuration to the qos module.";
+    container act-redirect-vxlantnl {
+      description
+      "Configure traffic redirection to a VXLAN tunnel.";
+      leaf enable {
+        type boolean;
+        status deprecated;
+        description
+          "Enable/disable action for traffic redirection to a VXLAN tunnel.";
+      }
+    }
+  }
+  augment "/lcs:license/lcs:license-items/lcs:license-item" {
+    description
+      "Unicast forward configuration to the license module.";
+    container port-l3vpns {
+      when "../lcs:name='LCR5S40NL3V0P' or ../lcs:name='LCR5S40XL3V0P' or ../lcs:name='LCR5S40GL3V0P' or ../lcs:name='LCX6S00NL3V0P' or ../lcs:name='LCX6S00XL3V0P' or ../lcs:name='LCX6S00GL3V0P' or ../lcs:name='LTNRS69NL3V0P' or ../lcs:name='LTNRS69XL3V0P' or ../lcs:name='LTNRS69GL3V0P' or ../lcs:name='LCR5S5KNL3V0P' or ../lcs:name='LCR5S5KXL3V0P' or ../lcs:name='LCR9S9KNL3V0P' or ../lcs:name='LCR9S9KXL3V0P' or ../lcs:name='LCX6S00NL3VAP' or ../lcs:name='LCX6S00XL3VAP' or ../lcs:name='LCR6S00NL3VAQ' or ../lcs:name='LCR9S9KNL3V0L' or ../lcs:name='LCR9S9KXL3V0L' or ../lcs:name='LCR5S40VL3V0P' or ../lcs:name='LCR5S40YL3V0P' or ../lcs:name='LCX6S00VL3V0P' or ../lcs:name='LCX6S00YL3V0P' or ../lcs:name='LTNRS00VL3V0P' or ../lcs:name='LTNRS00YL3V0P' or ../lcs:name='LCR9S9KNL3V0Q' or ../lcs:name='LCR8S00L3VPC2' or ../lcs:name='LCR8S00L3VPC4' or ../lcs:name='LCR8SF0L3VPC4' or ../lcs:name='LCR8SF0L3VPC1' or ../lcs:name='LTNRS00L3VPC2' or ../lcs:name='LTNRS00L3VPC4' or ../lcs:name='LCR5S00L3VPC2' or ../lcs:name='LCR5S00L3VPC4' or ../lcs:name='LCR8S0VL3VNC3' or ../lcs:name='LCR8S0XL3VNC3' or ../lcs:name='LCR8S0VL3VNC0' or ../lcs:name='LCR8S0XL3VNC0' or ../lcs:name='LCR5S5KKL3V0P'";
+      description
+        "List of L3VPN port license.";
+      list port-l3vpn {
+        key "position";
+        description
+          "Configure L3VPN port license.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+      }
+    }
+    container port-l3vpn-evpns {
+      when "../lcs:name='LCR5S03L3VP12' or ../lcs:name='LCR5S03L3VP13' or ../lcs:name='LCR5S03L3VP14' or ../lcs:name='LCR5S03L3VP15' or ../lcs:name='LCR6S62L3VP12' or ../lcs:name='LCR6S62L3VP13' or ../lcs:name='LCR6S62L3VP14' or ../lcs:name='LCR5S0M1L3V13' or ../lcs:name='LCX6S6M1L3V13'";
+      description
+        "List of port license entries for the L3VPN and EVPN functions.";
+      list port-l3vpn-evpn {
+        key "position";
+        description
+          "Configure a port license entry for the L3VPN and EVPN functions.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+      }
+    }
+    container port-service-enhances {
+      when "../lcs:name='LCR5S0M1SEN13' or ../lcs:name='LCX6S6M1SEN13' or ../lcs:name='LANNS0AVAND01' or ../lcs:name='LANNS0AVAND02' or ../lcs:name='LANNS0AVAND03' or ../lcs:name='LANNS0AVAND04'";
+      description
+        "List of port license entries in the service enhance scenario.";
+      list port-service-enhance {
+        key "position";
+        description
+          "Configure a port license entry in the service enhance scenario.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+      }
+    }
+    container port-aggregations {
+      when "../lcs:name='LCR5S03CRAG12' or ../lcs:name='LCR5S03CRAG13' or ../lcs:name='LCR5S03CRAG14' or ../lcs:name='LCR6S62CRAG12' or ../lcs:name='LCR6S62CRAG13' or ../lcs:name='LCR6S62CRAG14'";
+      description
+        "List of port license entries in the aggregation scenario.";
+      list port-aggregation {
+        key "position";
+        description
+          "Configure a port license entry in the aggregation scenario.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+      }
+    }
+    container port-core-aggregations {
+      when "../lcs:name='LCX6S60NPCAAP' or ../lcs:name='LCX6S60XPCAAP' or ../lcs:name='LCX6S60NPCAAQ' or ../lcs:name='LCR8S00CRAGC4' or ../lcs:name='LCR8S00CRAGC2' or ../lcs:name='LCR8SF0CRAGC4' or ../lcs:name='LCR8SF0CRAGC1' or ../lcs:name='LCR5S00CRAGC2' or ../lcs:name='LCR5S00CRAGC4' or ../lcs:name='LTNRS00CRAGC2' or ../lcs:name='LTNRS00CRAGC4'";
+      description
+        "List of port license entries in the core and aggregation scenario.";
+      list port-core-aggregation {
+        key "position";
+        description
+          "Configure a port license entry in the core and aggregation scenario.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+      }
+    }
+    container port-peerings {
+      when "../lcs:name='LCX6S60NPEEAP' or ../lcs:name='LCX6S60XPEEAP' or ../lcs:name='LCR5S03PEER12' or ../lcs:name='LCR5S03PEER13' or ../lcs:name='LCR5S03PEER14' or ../lcs:name='LCR6S62PEER12' or ../lcs:name='LCR6S62PEER13' or ../lcs:name='LCR6S62PEER14' or ../lcs:name='LCR8S0VCIGWC3' or ../lcs:name='LCR8S0XCIGWC3' or ../lcs:name='LCR8S0VCIGWC0' or ../lcs:name='LCR8S0XCIGWC0'";
+      description
+        "List of port license entries in the peering scenario.";
+      list port-peering {
+        key "position";
+        description
+          "Configure a port license entry in the peering scenario.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+      }
+    }
+    container port-srv6s {
+      when "../lcs:name='LCR9S9KKSR680' or ../lcs:name='LCR9S9KNSR680' or ../lcs:name='LCR9S9KXSR680' or ../lcs:name='LCR9S9KNSR68L' or ../lcs:name='LCR9S9KXSR68L' or ../lcs:name='LANNS00SRV621' or ../lcs:name='LANNS00SRV622' or ../lcs:name='LANNS00SRV623' or ../lcs:name='LANNS00SRV624' or ../lcs:name='LANNS00SRV625' or ../lcs:name='LCR5S40SRV601' or ../lcs:name='LCR5S40SRV602' or ../lcs:name='LCR5S40SRV603' or ../lcs:name='LCR5S40SRV604' or ../lcs:name='LCX6S00SRV601' or ../lcs:name='LCX6S00SRV602' or ../lcs:name='LCX6S00SRV603' or ../lcs:name='LCX6S00SRV604' or ../lcs:name='LTNRS69SRV601' or ../lcs:name='LTNRS69SRV602' or ../lcs:name='LTNRS69SRV603' or ../lcs:name='LTNRS69SRV604' or ../lcs:name='LCR5S42SRV611' or ../lcs:name='LCR5S42SRV612' or ../lcs:name='LCR5S42SRV613' or ../lcs:name='LCR5S42SRV614' or ../lcs:name='LCR5S0M1SR613' or ../lcs:name='LCR8SF0SRV6C1' or ../lcs:name='LCR8SF0SRV6C4' or ../lcs:name='LCR8S00SRV6C2' or ../lcs:name='LCR8S00SRV6C4' or ../lcs:name='LTNRS00SRV6C2' or ../lcs:name='LTNRS00SRV6C4' or ../lcs:name='LCR5S00SRV6C2' or ../lcs:name='LCR5S00SRV6C4' or ../lcs:name='LCR8S0VSRV6C3' or ../lcs:name='LCR8S0XSRV6C3' or ../lcs:name='LCR8S0VSRV6C0' or ../lcs:name='LCR8S0XSRV6C0'";
+      description
+        "List of port license entries in the SRv6.";
+      list port-srv6 {
+        key "position";
+        description
+          "Configure a port license entry in the SRv6.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+      }
+    }
+  }
+  augment "/lcs:license/lcs:resource-usages/lcs:resource-usage" {
+    description
+      "Display port license resource usage of unicast forward.";
+    container port-l3vpns {
+      when "../lcs:name='LCR5S40NL3V0P' or ../lcs:name='LCR5S40XL3V0P' or ../lcs:name='LCR5S40GL3V0P' or ../lcs:name='LCX6S00NL3V0P' or ../lcs:name='LCX6S00XL3V0P' or ../lcs:name='LCX6S00GL3V0P' or ../lcs:name='LTNRS69NL3V0P' or ../lcs:name='LTNRS69XL3V0P' or ../lcs:name='LTNRS69GL3V0P' or ../lcs:name='LCR5S5KNL3V0P' or ../lcs:name='LCR5S5KXL3V0P' or ../lcs:name='LCR9S9KNL3V0P' or ../lcs:name='LCR9S9KXL3V0P' or ../lcs:name='LCX6S00NL3VAP' or ../lcs:name='LCX6S00XL3VAP' or ../lcs:name='LCR6S00NL3VAQ' or ../lcs:name='LCR9S9KNL3V0L' or ../lcs:name='LCR9S9KXL3V0L' or ../lcs:name='LCR5S40VL3V0P' or ../lcs:name='LCR5S40YL3V0P' or ../lcs:name='LCX6S00VL3V0P' or ../lcs:name='LCX6S00YL3V0P' or ../lcs:name='LTNRS00VL3V0P' or ../lcs:name='LTNRS00YL3V0P' or ../lcs:name='LCR9S9KNL3V0Q' or ../lcs:name='LCR8S00L3VPC2' or ../lcs:name='LCR8S00L3VPC4' or ../lcs:name='LCR8SF0L3VPC4' or ../lcs:name='LCR8SF0L3VPC1' or ../lcs:name='LTNRS00L3VPC2' or ../lcs:name='LTNRS00L3VPC4' or ../lcs:name='LCR5S00L3VPC2' or ../lcs:name='LCR5S00L3VPC4' or ../lcs:name='LCR8S0VL3VNC3' or ../lcs:name='LCR8S0XL3VNC3' or ../lcs:name='LCR8S0VL3VNC0' or ../lcs:name='LCR8S0XL3VNC0' or ../lcs:name='LCR5S5KKL3V0P'";
+      config false;
+      description
+        "List of L3VPN port license resource usage.";
+      list port-l3vpn {
+        key "position";
+        description
+          "Statistics of L3VPN port license resource usage for specified position.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+        leaf active-status {
+          type lcs-act-status-type;
+          description
+            "Activated State.";
+        }
+      }
+    }
+    container port-l3vpn-evpns {
+      when "../lcs:name='LCR5S03L3VP12' or ../lcs:name='LCR5S03L3VP13' or ../lcs:name='LCR5S03L3VP14' or ../lcs:name='LCR5S03L3VP15' or ../lcs:name='LCR6S62L3VP12' or ../lcs:name='LCR6S62L3VP13' or ../lcs:name='LCR6S62L3VP14' or ../lcs:name='LCR5S0M1L3V13' or ../lcs:name='LCX6S6M1L3V13'";
+      config false;
+      description
+        "List of port license resource usage for the L3VPN and EVPN functions.";
+      list port-l3vpn-evpn {  
+        key "position";
+        description
+          "Statistics of port license resource usage for the L3VPN and EVPN functions.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+        leaf active-status {
+          type lcs-act-status-type;
+          description
+            "Activated State.";
+        }
+      }
+    }
+    container port-service-enhances {
+      when "../lcs:name='LCR5S0M1SEN13' or ../lcs:name='LCX6S6M1SEN13' or ../lcs:name='LANNS0AVAND01' or ../lcs:name='LANNS0AVAND02' or ../lcs:name='LANNS0AVAND03' or ../lcs:name='LANNS0AVAND04'";
+      config false;
+      description
+        "List of port license resource usage in the service enhance scenario.";
+      list port-service-enhance {    
+        key "position";
+        description
+          "Statistics of port license resource usage in the service enhance scenario.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+        leaf active-status {
+          type lcs-act-status-type;
+          description
+            "Activated State.";
+        }
+      }
+    }
+    container port-aggregations {
+      when "../lcs:name='LCR5S03CRAG12' or ../lcs:name='LCR5S03CRAG13' or ../lcs:name='LCR5S03CRAG14' or ../lcs:name='LCR6S62CRAG12' or ../lcs:name='LCR6S62CRAG13' or ../lcs:name='LCR6S62CRAG14'";
+      config false;
+      description
+        "List of port license resource usage in the aggregation scenario.";
+      list port-aggregation {        
+        key "position";
+        description
+          "Statistics of port license resource usage in the aggregation scenario.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+        leaf active-status {
+          type lcs-act-status-type;
+          description
+            "Activated State.";
+        }
+      }
+    }
+    container port-core-aggregations {
+      when "../lcs:name='LCX6S60NPCAAP' or ../lcs:name='LCX6S60XPCAAP' or ../lcs:name='LCX6S60NPCAAQ' or ../lcs:name='LCR8S00CRAGC4' or ../lcs:name='LCR8S00CRAGC2' or ../lcs:name='LCR8SF0CRAGC4' or ../lcs:name='LCR8SF0CRAGC1' or ../lcs:name='LCR5S00CRAGC2' or ../lcs:name='LCR5S00CRAGC4' or ../lcs:name='LTNRS00CRAGC2' or ../lcs:name='LTNRS00CRAGC4'";
+      config false;
+      description
+        "List of port license resource usage in the core and aggregation scenario.";
+      list port-core-aggregation {       
+        key "position";
+        description
+          "Statistics of port license resource usage in the core and aggregation scenario.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+        leaf active-status {
+          type lcs-act-status-type;
+          description
+            "Activated State.";
+        }
+      }
+    }
+    container port-peerings {
+      when "../lcs:name='LCX6S60NPEEAP' or ../lcs:name='LCX6S60XPEEAP' or ../lcs:name='LCR5S03PEER12' or ../lcs:name='LCR5S03PEER13' or ../lcs:name='LCR5S03PEER14' or ../lcs:name='LCR6S62PEER12' or ../lcs:name='LCR6S62PEER13' or ../lcs:name='LCR6S62PEER14' or ../lcs:name='LCR8S0VCIGWC3' or ../lcs:name='LCR8S0XCIGWC3' or ../lcs:name='LCR8S0VCIGWC0' or ../lcs:name='LCR8S0XCIGWC0'";
+      config false;
+      description
+        "List of port license resource usage in the peering scenario.";
+      list port-peering {
+        key "position";
+        description
+          "Statistics of L3VPN port license resource usage for specified position.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+        leaf active-status {
+          type lcs-act-status-type;
+          description
+            "Activated State.";
+        }
+      }
+    }
+    container port-srv6s {
+      when "../lcs:name='LCR9S9KKSR680' or ../lcs:name='LCR9S9KNSR680' or ../lcs:name='LCR9S9KXSR680' or ../lcs:name='LCR9S9KNSR68L' or ../lcs:name='LCR9S9KXSR68L' or ../lcs:name='LANNS00SRV621' or ../lcs:name='LANNS00SRV622' or ../lcs:name='LANNS00SRV623' or ../lcs:name='LANNS00SRV624' or ../lcs:name='LANNS00SRV625' or ../lcs:name='LCR5S40SRV601' or ../lcs:name='LCR5S40SRV602' or ../lcs:name='LCR5S40SRV603' or ../lcs:name='LCR5S40SRV604' or ../lcs:name='LCX6S00SRV601' or ../lcs:name='LCX6S00SRV602' or ../lcs:name='LCX6S00SRV603' or ../lcs:name='LCX6S00SRV604' or ../lcs:name='LTNRS69SRV601' or ../lcs:name='LTNRS69SRV602' or ../lcs:name='LTNRS69SRV603' or ../lcs:name='LTNRS69SRV604' or ../lcs:name='LCR5S42SRV611' or ../lcs:name='LCR5S42SRV612' or ../lcs:name='LCR5S42SRV613' or ../lcs:name='LCR5S42SRV614' or ../lcs:name='LCR5S0M1SR613' or ../lcs:name='LCR8SF0SRV6C1' or ../lcs:name='LCR8SF0SRV6C4' or ../lcs:name='LCR8S00SRV6C2' or ../lcs:name='LCR8S00SRV6C4' or ../lcs:name='LTNRS00SRV6C2' or ../lcs:name='LTNRS00SRV6C4' or ../lcs:name='LCR5S00SRV6C2' or ../lcs:name='LCR5S00SRV6C4' or ../lcs:name='LCR8S0VSRV6C3' or ../lcs:name='LCR8S0XSRV6C3' or ../lcs:name='LCR8S0VSRV6C0' or ../lcs:name='LCR8S0XSRV6C0'";
+      config false;
+      description
+        "List of port license resource usage in the SRv6.";
+      list port-srv6 {        
+        key "position";
+        description
+          "Statistics of port license resource usage for specified position in the SRv6.";
+        leaf position {
+          type string {
+            length "1..32";
+          }
+          description
+            "Port position.";
+        }
+        leaf active-status {
+          type lcs-act-status-type;
+          description
+            "Activated State.";
+        }
+      }
+    }
+  }
+  augment "/sf:said-frame" {
+    description
+      "Unicast forward configuration to the said frame.";
+    container ip-nices {
+      description
+        "List of service-stream table infomations.";
+      list ip-nice {
+        key "source-ip dest-ip vpn-name";
+        description
+          "Configure service-stream table infomation.";
+        leaf source-ip {
+          type inet:ipv4-address-no-zone;
+          description
+            "Source IP address.";
+        }
+        leaf dest-ip {
+          type inet:ipv4-address-no-zone;
+          description
+            "Destination IP address.";
+        }
+        leaf vpn-name {
+          type leafref {
+            path "/ni:network-instance/ni:instances/ni:instance/ni:name";
+          }
+          description
+            "VPN instance.";
+        }
+      }
+    }
+    container global-uc-attribute {
+      description
+        "Configure global unicast attributes.";
+      leaf ipv4-route-recovery-enable {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable fault recovery for inconsistent IPv4 unicast entries.";  
+      }
+    }
+  }
+   augment "/devm-vnf:devm-vnf/devm-vnf:vnf-boards/devm-vnf:vnf-board"{
+    description
+      "Configure unicast forward configuration to the devm module.";
+    container unicast-forward {
+      description
+        "Configure unicast forward.";
+      container ipv4-uc {
+        description
+          "Configure slot unicast forwarding.";
+        leaf force-frag {
+          type boolean;
+          default "false";
+          description
+            "Enable/disable slot IPv4 force fragment.";
+        }
+        leaf icmp-reply-fast {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable slot ICMP replay fast.";
+        }
+      }
+      container arp-fast-reply {
+        description
+          "Configure slot ARP reply.";
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+            "Enable/disable slot ARP reply fast.";
+        }
+      }
+      container gre-ttl-mode {
+        description
+          "Configure slot GRE TTL mode.";
+        leaf ttl-mode {
+          type ttl-mode-type;
+          default "pipe";
+          description
+            "Set GRE tunnel-encapsulated mode.";
+        }
+      }
+    }
+  }
+}

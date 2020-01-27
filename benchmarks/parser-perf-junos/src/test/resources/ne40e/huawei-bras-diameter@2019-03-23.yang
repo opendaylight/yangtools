@@ -1,0 +1,38 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bras-diameter {
+  namespace "urn:huawei:yang:huawei-bras-diameter";
+  prefix bras-diameter;
+  import huawei-extension {
+    prefix ext;
+  }
+  ext:task-name "diameter";
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Diameter.";
+  revision 2019-03-23 {
+    description
+      "The YANG file refactoring.";
+    reference
+      "Huawei private.";
+  }
+
+  container bras-diameter {
+    description
+      "Diameter.";
+    container diameter {
+      presence "Enables the Diameter protocol.";
+      description
+        "Configure the Diameter protocol.";
+    }
+  }
+}

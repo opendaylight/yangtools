@@ -1,0 +1,39 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-system-event-management-deviations-CH-NE-X3 {
+  namespace "urn:huawei:yang:huawei-system-event-management-deviations-CH-NE-X3";
+  prefix sem-devs-CH-NE-X3;
+
+  import huawei-system-event-management {
+    prefix sem;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This module defines deviation statements for huawei-system-event-management module.";
+
+  revision 2019-11-06 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/sem:system-event-management/sem:multi-chassis-slave-switch" {
+    deviate not-supported;
+  }
+  deviation "/sem:system-event-management/sem:chassis-batch-backup-timeouts" {
+    deviate not-supported;
+  }
+  deviation "/sem:switch-over/sem:input/sem:chassis-name" {
+    deviate not-supported;
+  }
+}

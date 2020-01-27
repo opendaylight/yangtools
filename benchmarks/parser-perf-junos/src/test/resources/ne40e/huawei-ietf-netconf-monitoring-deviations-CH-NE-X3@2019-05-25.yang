@@ -1,0 +1,37 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ietf-netconf-monitoring-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-ietf-netconf-monitoring-deviations-CH-NE-X3";
+  prefix ncm-devs-CH-NE-X3;
+
+  import ietf-netconf-monitoring {
+    prefix ncm;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This module contains a set of deviations of IETF netconf monitoring data
+     model set for Huawei-ne40e.
+     Copyright (c) 2016 by Huawei Systems.
+     All rights reserved.";
+
+  revision 2019-05-25 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/ncm:netconf-state/ncm:datastores/ncm:datastore/ncm:locks/ncm:lock-type/ncm:partial-lock" {
+    deviate not-supported;
+  }
+}

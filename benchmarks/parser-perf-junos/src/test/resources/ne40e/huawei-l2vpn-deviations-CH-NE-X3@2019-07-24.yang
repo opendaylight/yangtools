@@ -1,0 +1,334 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2vpn-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-l2vpn-deviations-CH-NE-X3";
+  prefix l2vpn-devs-CH-NE-X3;
+
+  import huawei-l2vpn {
+    prefix l2vpn;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "L2 virtual private network.";
+
+  revision 2019-07-24 {
+    description
+      "Init revision.";
+    reference "Huawei private.";
+  }
+
+  typedef ac-oam-mapping-type-deviations {
+    type enumeration {
+      enum default {
+        value 1;
+        description
+          "The AC OAM mapping type is default.";
+      }
+      enum 1ag {
+        value 2;
+        description
+          "The AC OAM mapping type is 1ag.";
+      }
+    }
+    description
+      "L2VPN AC OAM mapping type.";
+  }
+
+  typedef l2vpn-vpls-unknow-frame-act-deviations {
+    type enumeration {
+      enum broadcast {
+        value 0;
+        description
+          "Broadcast unknown frames.";
+      }
+      enum drop {
+        value 1;
+        description
+          "Drop unknown frames.";
+      }
+      enum drop-learn {
+        value 3;
+        description
+          "Drop unknown frames but learn the MAC addresses of these frames.";
+      }
+    }
+    description
+      "L2VPN VPLS unknown frame act.";
+  }
+
+  typedef vsi-work-mode-deviations {
+    type enumeration {
+      enum normal {
+        value 0;
+        description
+          "The VSI work mode is normal.";
+      }
+      enum bd-mode {
+        value 1;
+        description
+          "The VSI work mode is bd-mode.";
+      }
+      enum b-vsi {
+        value 3;
+        description
+          "Used to process B-MAC addresses and determine a PW's remote PE based on the configured peer address.";
+      }
+      enum i-vsi {
+        value 4;
+        description
+          "I-VSI with no service type specified.";
+      }
+      enum i-vsi-p2p {
+        value 5;
+        description
+          "The VSI work mode is P2P I-VSI.";
+      }
+      enum i-vsi-b-evpn-interworking {
+        value 7;
+        description
+          "The VSI work mode is I-VSI accessing B-EVPN.";
+      }
+    }
+    description
+      "L2VPN VPLS VSI work mode.";
+  }
+
+  typedef encapsulation-type-deviations {
+    type enumeration {
+      enum fr {
+        value 1;
+        description
+          "The encapsulation type is FR.";
+      }
+      enum atm-aal5-sdu {
+        value 2;
+        description
+          "The encapsulation type is ATM-AAL5-SDU.";
+      }
+      enum atm-trans-cell {
+        value 3;
+        description
+          "The encapsulation type is ATM-TRANS-CELL.";
+      }
+      enum vlan {
+        value 4;
+        description
+          "The encapsulation type is VLAN.";
+      }
+      enum ethernet {
+        value 5;
+        description
+          "The encapsulation type is ethernet.";
+      }
+      enum hdlc {
+        value 6;
+        description
+          "The encapsulation type is HDLC.";
+      }
+      enum ppp {
+        value 7;
+        description
+          "The encapsulation type is PPP.";
+      }
+      enum cem {
+        value 8;
+        description
+          "The encapsulation type is CEM.";
+      }
+      enum atm-nto1-vcc {
+        value 9;
+        description
+          "The encapsulation type is ATM-Nto1-VCC.";
+      }
+      enum atm-nto1-vpc {
+        value 10;
+        description
+          "The encapsulation type is ATM-Nto1-VPC.";
+      }
+      enum ip-layer2 {
+        value 11;
+        description
+          "The encapsulation type is IP-Layer2.";
+      }
+      enum atm-1to1-vcc {
+        value 12;
+        description
+          "The encapsulation type is ATM-1to1-VCC.";
+      }
+      enum atm-1to1-vpc {
+        value 13;
+        description
+          "The encapsulation type is ATM-1to1-VPC.";
+      }
+      enum atm-aal5-pdu {
+        value 14;
+        description
+          "The encapsulation type is ATM-AAL5-PDU.";
+      }
+      enum cep {
+        value 16;
+        description
+          "The encapsulation type is CEP.";
+      }
+      enum satop-e1 {
+        value 17;
+        description
+          "The encapsulation type is SAToP-E1.";
+      }
+      enum satop-t1 {
+        value 18;
+        description
+          "The encapsulation type is SAToP-T1.";
+      }
+      enum satop-e3 {
+        value 19;
+        description
+          "The encapsulation type is SAToP-E3.";
+      }
+      enum satop-t3 {
+        value 20;
+        description
+          "The encapsulation type is SAToP-T3.";
+      }
+      enum cesopsn-basic {
+        value 21;
+        description
+          "The encapsulation type is CESoPSN-BASIC.";
+      }
+      enum tdmoip-aal1 {
+        value 22;
+        description
+          "The encapsulation type is TDMoIP-AAL1.";
+      }
+      enum cesopsn-tdm {
+        value 23;
+        description
+          "The encapsulation type is CESoPSN-TDM.";
+      }
+      enum tdmoip-aal2 {
+        value 24;
+        description
+          "The encapsulation type is TDMoIP-AAL2.";
+      }
+      enum ip-interworking {
+        value 64;
+        description
+          "The encapsulation type is IP interworking.";
+      }
+      enum unsupport {
+        value 255;
+        description
+          "This encapsulation type is used when the encapsulation types of AC interfaces at the two ends of a local CCC are different, or the ATM bundle interfaces do not have any member, or the VPLS LDP PW on a router inherits the encapsulation type of a VSI.";
+      }
+    }
+    description
+      "L2VPN encapsulate type.";
+  }
+
+  typedef l2vpn-rtp-header-type-deviations {
+    type enumeration {
+      enum false {
+        value 0;
+        description
+          "The function to add RTP headers to packets is disabled.";
+      }
+      enum standard {
+        value 1;
+        description
+          "Add standard RTP headers to packets.";
+      }
+    }
+    description
+      "L2VPN RT header type.";
+  }
+
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-ldp/l2vpn:ac-oam-mapping/l2vpn:type" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:ac-oam-mapping-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-bgp/l2vpn:oam-mapping/l2vpn:type" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:ac-oam-mapping-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:work-mode" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:vsi-work-mode-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:unknown-unicast-action" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:l2vpn-vpls-unknow-frame-act-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:unknown-multicast-action" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:l2vpn-vpls-unknow-frame-act-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:common/l2vpn:pw-apss/l2vpn:pw-aps/l2vpn:aps-vpws-instances/l2vpn:aps-vpws-instance/l2vpn:encapsulation-type" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:encapsulation-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:common/l2vpn:pw-apss/l2vpn:pw-aps/l2vpn:aps-vpws-instances/l2vpn:aps-vpws-instance/l2vpn:aps-vpws-pws/l2vpn:aps-vpws-pw/l2vpn:encapsulation-type" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:encapsulation-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:common/l2vpn:not-match-remote-ldps/l2vpn:not-match-remote-ldp/l2vpn:encapsulation-type" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:encapsulation-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:common/l2vpn:vpws-statistic/l2vpn:vpws-vrrps/l2vpn:vpws-vrrp/l2vpn:pw-infos/l2vpn:pw-info/l2vpn:encapsulation-type" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:encapsulation-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-ldp/l2vpn:encapsulation-type" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:encapsulation-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-ldp/l2vpn:pws/l2vpn:pw/l2vpn:pw-info/l2vpn:encapsulation-type" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:encapsulation-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-switch/l2vpn:encapsulation-type" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:encapsulation-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpls/l2vpn:ldp-signaling/l2vpn:redundancy-protect-groups/l2vpn:redundancy-protect-group/l2vpn:pw-members/l2vpn:pw-member/l2vpn:encapsulation-type" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:encapsulation-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-ldp/l2vpn:pws/l2vpn:pw/l2vpn:pw-info/l2vpn:local-rtp-header-enable" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:l2vpn-rtp-header-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-ldp/l2vpn:pws/l2vpn:pw/l2vpn:pw-info/l2vpn:remote-rtp-header-enable" {
+    deviate replace {
+      type l2vpn-devs-CH-NE-X3:l2vpn-rtp-header-type-deviations;
+    }
+  }
+  deviation "/l2vpn:l2vpn/l2vpn:instances/l2vpn:instance/l2vpn:vpws-ldp/l2vpn:reliability/l2vpn:dual-send" {
+    deviate not-supported;
+  }
+}

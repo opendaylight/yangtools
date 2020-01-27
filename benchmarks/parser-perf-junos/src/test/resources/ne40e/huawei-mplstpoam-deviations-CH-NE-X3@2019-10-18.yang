@@ -1,0 +1,49 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mplstpoam-deviations-CH-NE-X3 {
+  yang-version 1;
+  namespace "urn:huawei:yang:huawei-mplstpoam-deviations-CH-NE-X3";
+  prefix mplstpoam-devs-CH-NE-X3;
+
+  import huawei-mplstpoam {
+    prefix mplstpoam;
+  }
+
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "Multiprotocol Label Switching-Transport Profile (MPLS-TP), operations, administration and maintenance (OAM), mainly provides functions: fault management, performance monitoring, and protection switching.";
+
+  revision 2019-10-18 {
+    description
+      "Initial revision.";
+    reference "Huawei private.";
+  }
+
+  deviation "/mplstpoam:mplstpoam/mplstpoam:global/mplstpoam:oam-standard" {
+    deviate not-supported;
+  }
+  deviation "/mplstpoam:mplstpoam/mplstpoam:global/mplstpoam:icc-string" {
+    deviate not-supported;
+  }
+  deviation "/mplstpoam:mplstpoam/mplstpoam:global/mplstpoam:csf-enable" {
+    deviate not-supported;
+  }
+  deviation "/mplstpoam:mplstpoam/mplstpoam:global/mplstpoam:gal-mode" {
+    deviate not-supported;
+  }
+  deviation "/mplstpoam:mplstpoam/mplstpoam:global/mplstpoam:protocol-status" {
+    deviate not-supported;
+  }
+  deviation "/mplstpoam:mplstpoam/mplstpoam:global/mplstpoam:oam-num" {
+    deviate not-supported;
+  }
+}

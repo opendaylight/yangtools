@@ -1,0 +1,82 @@
+/*
+Copyright (C) 2019 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-dhcpv6-relay {
+  yang-version 1;
+  belongs-to huawei-dhcpv6 {
+    prefix dhcpv6;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  organization
+    "Huawei Technologies Co., Ltd.";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "This module contains a collection of YANG definitions for managing DHCPv6 relay.";
+  revision 2019-04-29 {
+    description
+      "Initial revision.";
+    reference
+      "Huawei private.";
+  }
+  grouping dhcpv6-relay-type {
+    description
+      "DHCPv6 relay.";
+    container pd-route {
+      description
+        "Configure DHCPv6 PD route.";
+      leaf export {
+        type boolean;
+        default "false";
+        description
+          "Enable/disable DHCPv6 export PD route.";
+      }
+      leaf save-file-name {
+        type string {
+          length "1..69";
+        }
+        description
+          "Name of the file for saving PD routes. For example, the name can be in the format of cfcard:/dhcp/xxx.pd or home:/dhcp/xxx.pd.";
+      }
+    }
+    container server-groups {
+      description
+        "List of DHCPv6 relay server groups.";
+      list server-group {
+        key "name";
+        max-elements  "10";
+        description
+          "Configure a DHCPv6 relay server group.";
+        leaf name {
+          type string {
+            length "1..32";
+          }
+          description
+            "DHCPv6 relay server group name.";
+        }
+        container server-addresses {
+          description
+            "List of DHCPv6 relay destination servers in a server group.";
+          list server-address {
+            key "server";
+            max-elements  "20";
+            description
+              "Configure a DHCPv6 relay destination server in a server group.";
+            leaf server {
+              type inet:ipv6-address-no-zone;
+              description
+                "DHCPv6 relay destination server address in a server group.";
+            }
+          }
+        }
+      }
+    }
+  }
+}
