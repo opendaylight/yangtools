@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
@@ -49,54 +50,31 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         // NOOP
     }
 
-    /**
-     * Return a value associated with specified key within a namespace.
-     *
-     * @param type Namespace type
-     * @param key Key
-     * @param <K> namespace key type
-     * @param <V> namespace value type
-     * @param <N> namespace type
-     * @param <T> key type
-     * @return Value, or null if there is no element
-     * @throws NamespaceNotAvailableException when the namespace is not available.
-     */
-    public final <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type,
-            final T key) {
-        return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
-    }
-
     public final <K, V, N extends IdentifierNamespace<K, V>> Optional<Entry<K, V>> getFromNamespace(
             final Class<N> type, final NamespaceKeyCriterion<K> criterion) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, criterion);
     }
 
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(final Class<N> type) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getNamespace(final Class<N> type) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getAllFrom(this);
     }
 
     @SuppressWarnings("unchecked")
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(
-            final Class<N> type) {
+    final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getLocalNamespace(final Class<N> type) {
         return (Map<K, V>) namespaces.get(type);
     }
 
-    /**
-     * Associate a value with a key within a namespace.
-     *
-     * @param type Namespace type
-     * @param key Key
-     * @param value value
-     * @param <K> namespace key type
-     * @param <V> namespace value type
-     * @param <N> namespace type
-     * @param <T> key type
-     * @param <U> value type
-     * @throws NamespaceNotAvailableException when the namespace is not available.
-     */
-    public final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNs(
+    final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNamespace(
             final Class<N> type, final T key, final U value) {
-        getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this,key,value);
+        getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this, key, value);
+    }
+
+    final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNamespace(
+            final Class<N> type, final Map<T, U> map) {
+        final NamespaceBehaviour<K, V, N> behavior = getBehaviourRegistry().getNamespaceBehaviour(type);
+        for (final Entry<T, U> validationBundle : map.entrySet()) {
+            behavior.addTo(this, validationBundle.getKey(), validationBundle.getValue());
+        }
     }
 
     /**
