@@ -30,7 +30,7 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
         super(ctx);
         argument = ctx.getStatementArgument();
         statementSource = ctx.getStatementSource();
-        declaredInstance = BaseStatementSupport.buildDeclared(ctx);
+        declaredInstance = ctx.buildDeclared();
     }
 
     @Override
