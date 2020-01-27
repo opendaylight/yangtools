@@ -429,7 +429,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
 
         // We need to any and all extension statements which have been declared in the context
-        final Map<QName, StatementSupport<?, ?, ?>> extensions = currentContext.getAllFromNamespace(
+        final Map<QName, StatementSupport<?, ?, ?>> extensions = currentContext.getNamespace(
                 StatementDefinitionNamespace.class);
         if (extensions != null) {
             extensions.forEach((qname, support) -> {
