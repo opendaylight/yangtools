@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.config;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
 
-public final class ConfigEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Boolean, ConfigStatement>
+abstract class AbstractConfigEffectiveStatement
+        extends AbstractDeclaredEffectiveStatement.DefaultArgument<Boolean, ConfigStatement>
         implements ConfigEffectiveStatement {
-    public ConfigEffectiveStatementImpl(final StmtContext<Boolean, ConfigStatement, ?> ctx) {
-        super(ctx);
+    AbstractConfigEffectiveStatement(final ConfigStatement declared) {
+        super(declared);
     }
 }

@@ -8,11 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean> implements YinElementStatement {
-    YinElementStatementImpl(final StmtContext<Boolean, YinElementStatement, ?> context) {
-        super(context);
+final class EmptyYinElementEffectiveStatement extends AbstractYinElementEffectiveStatement {
+    EmptyYinElementEffectiveStatement(final YinElementStatement declared) {
+        super(declared);
     }
 }

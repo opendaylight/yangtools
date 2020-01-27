@@ -7,22 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseBooleanStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class YinElementStatementSupport
-        extends AbstractStatementSupport<Boolean, YinElementStatement, YinElementEffectiveStatement> {
+        extends BaseBooleanStatementSupport<YinElementStatement, YinElementEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.YIN_ELEMENT).build();
     private static final YinElementStatementSupport INSTANCE = new YinElementStatementSupport();
 
     private YinElementStatementSupport() {
-        super(YangStmtMapping.YIN_ELEMENT);
+        super(YangStmtMapping.YIN_ELEMENT,
+            new EmptyYinElementEffectiveStatement(new EmptyYinElementStatement(Boolean.FALSE)),
+            new EmptyYinElementEffectiveStatement(new EmptyYinElementStatement(Boolean.TRUE)));
     }
 
     public static YinElementStatementSupport getInstance() {
@@ -30,28 +34,25 @@ public final class YinElementStatementSupport
     }
 
     @Override
-    public Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ArgumentUtils.parseBoolean(ctx, value);
-    }
-
-    @Override
-    public YinElementStatement createDeclared(final StmtContext<Boolean, YinElementStatement, ?> ctx) {
-        return new YinElementStatementImpl(ctx);
-    }
-
-    @Override
-    public YinElementEffectiveStatement createEffective(
-            final StmtContext<Boolean, YinElementStatement, YinElementEffectiveStatement> ctx) {
-        return new YinElementEffectiveStatementImpl(ctx);
-    }
-
-    @Override
-    public String internArgument(final String rawArgument) {
-        return ArgumentUtils.internBoolean(rawArgument);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected YinElementStatement createDeclared(final StmtContext<Boolean, YinElementStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularYinElementStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected YinElementEffectiveStatement createEffective(
+            final StmtContext<Boolean, YinElementStatement, YinElementEffectiveStatement> ctx,
+            final YinElementStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularYinElementEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected YinElementEffectiveStatement createEmptyEffective(final YinElementStatement declared) {
+        return new EmptyYinElementEffectiveStatement(declared);
     }
 }

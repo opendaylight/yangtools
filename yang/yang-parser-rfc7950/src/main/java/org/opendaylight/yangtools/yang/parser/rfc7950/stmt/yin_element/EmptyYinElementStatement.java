@@ -5,10 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
 
-final class EmptyMandatoryStatement extends AbstractMandatoryStatement {
-    EmptyMandatoryStatement(final Boolean argument) {
+final class EmptyYinElementStatement extends AbstractYinElementStatement {
+    EmptyYinElementStatement(final Boolean argument) {
         super(argument);
     }
 }

@@ -8,12 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.require_instance;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RequireInstanceStatementImpl extends AbstractDeclaredStatement<Boolean>
-        implements RequireInstanceStatement {
-    RequireInstanceStatementImpl(final StmtContext<Boolean, RequireInstanceStatement, ?> context) {
-        super(context);
+final class EmptyRequireInstanceEffectiveStatement extends AbstractRequireInstanceEffectiveStatement {
+    EmptyRequireInstanceEffectiveStatement(final RequireInstanceStatement declared) {
+        super(declared);
     }
 }

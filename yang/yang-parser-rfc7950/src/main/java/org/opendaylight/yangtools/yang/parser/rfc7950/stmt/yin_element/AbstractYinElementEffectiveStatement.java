@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
 
-final class YinElementEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Boolean, YinElementStatement>
+abstract class AbstractYinElementEffectiveStatement
+        extends AbstractDeclaredEffectiveStatement.DefaultArgument<Boolean, YinElementStatement>
         implements YinElementEffectiveStatement {
-    YinElementEffectiveStatementImpl(final StmtContext<Boolean, YinElementStatement, ?> ctx) {
-        super(ctx);
+    AbstractYinElementEffectiveStatement(final YinElementStatement declared) {
+        super(declared);
     }
 }
