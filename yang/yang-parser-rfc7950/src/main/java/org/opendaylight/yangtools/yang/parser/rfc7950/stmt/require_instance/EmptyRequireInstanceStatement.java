@@ -5,10 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.require_instance;
 
-final class EmptyMandatoryStatement extends AbstractMandatoryStatement {
-    EmptyMandatoryStatement(final Boolean argument) {
+final class EmptyRequireInstanceStatement extends AbstractRequireInstanceStatement {
+    EmptyRequireInstanceStatement(final Boolean argument) {
         super(argument);
     }
 }
