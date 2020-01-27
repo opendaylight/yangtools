@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -104,9 +103,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
                 throw new IllegalArgumentException("Unhandled parser mode " + statementParserMode);
         }
 
-        for (final Entry<ValidationBundleType, Collection<?>> validationBundle : supportedValidation.entrySet()) {
-            addToNs(ValidationBundlesNamespace.class, validationBundle.getKey(), validationBundle.getValue());
-        }
+        addToNamespace(ValidationBundlesNamespace.class, supportedValidation);
 
         this.supportedVersions = ImmutableSet.copyOf(supports.get(ModelProcessingPhase.INIT).getSupportedVersions());
     }
@@ -132,12 +129,12 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     void setSupportedFeatures(final Set<QName> supportedFeatures) {
-        addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
+        addToNamespace(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
                     ImmutableSet.copyOf(supportedFeatures));
     }
 
     void setModulesDeviatedByModules(final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
-        addToNs(ModulesDeviatedByModules.class, SupportedModules.SUPPORTED_MODULES,
+        addToNamespace(ModulesDeviatedByModules.class, SupportedModules.SUPPORTED_MODULES,
                     ImmutableSetMultimap.copyOf(modulesDeviatedByModules));
     }
 

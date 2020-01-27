@@ -28,6 +28,7 @@ import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,6 +61,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -309,7 +311,55 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(
+            final Class<N> type) {
+        return getLocalNamespace(type);
+    }
+
+    @Override
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(final Class<N> type) {
+        return getNamespace(type);
+    }
+
+    /**
+     * Associate a value with a key within a namespace.
+     *
+     * @param type Namespace type
+     * @param key Key
+     * @param value value
+     * @param <K> namespace key type
+     * @param <V> namespace value type
+     * @param <N> namespace type
+     * @param <T> key type
+     * @param <U> value type
+     * @throws NamespaceNotAvailableException when the namespace is not available.
+     */
+    @Override
+    public final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNs(
+            final Class<N> type, final T key, final U value) {
+        addToNamespace(type, key, value);
+    }
+
+    @Override
     public abstract Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements();
+
+    /**
+     * Return a value associated with specified key within a namespace.
+     *
+     * @param type Namespace type
+     * @param key Key
+     * @param <K> namespace key type
+     * @param <V> namespace value type
+     * @param <N> namespace type
+     * @param <T> key type
+     * @return Value, or null if there is no element
+     * @throws NamespaceNotAvailableException when the namespace is not available.
+     */
+    @Override
+    public final <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type,
+            final T key) {
+        return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
+    }
 
     @Override
     public Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
