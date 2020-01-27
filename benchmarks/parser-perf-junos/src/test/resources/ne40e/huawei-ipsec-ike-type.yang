@@ -1,0 +1,834 @@
+submodule huawei-ipsec-ike-type {
+  belongs-to huawei-ipsec {
+    prefix ipsec;
+  }
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "submodule ipsec-ike-type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference "Huawei private.";
+  }
+
+  typedef ikeipsecDhModeType {
+    type enumeration {
+      enum "None" {
+        description
+          "None";
+      }
+      enum "dh-group1" {
+        description
+          "dh-group1";
+      }
+      enum "dh-group2" {
+        description
+          "dh-group2";
+      }
+      enum "dh-group5" {
+        description
+          "dh-group5";
+      }
+      enum "dh-group14" {
+        description
+          "dh-group14";
+      }
+    }
+    description
+      "type of ike ipsec Diffie-Hellman mode";
+  }
+
+  typedef ikeProposalDhModeType {
+    type enumeration {
+      enum "dh-group1" {
+        description
+          "dh-group1";
+      }
+      enum "dh-group2" {
+        description
+          "dh-group2";
+      }
+      enum "dh-group5" {
+        description
+          "dh-group5 (DH Group 5 will calculate slow.)";
+      }
+      enum "dh-group14" {
+        description
+          "dh-group14 (DH Group 14 will calculate slow.)";
+      }
+    }
+    description
+      "type of ike proposal Diffie-Hellman mode";
+  }
+
+  typedef ikeipsecDhModeDispType {
+    type enumeration {
+      enum "None" {
+        description
+          "None";
+      }
+      enum "MODP_768" {
+        description
+          "MODP_768";
+      }
+      enum "MODP_1024" {
+        description
+          "MODP_1024";
+      }
+      enum "MODP_1536" {
+        description
+          "MODP_1536";
+      }
+      enum "MODP_2048" {
+        description
+          "MODP_2048";
+      }
+    }
+    description
+      "type of ike ipsec Diffie-Hellman display";
+  }
+
+  typedef ikeipsecWindowSizeType {
+    type enumeration {
+      enum "None" {
+        description
+          "Window size is not configured";
+      }
+      enum "32" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+      enum "64" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+      enum "128" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+      enum "256" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+      enum "512" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+      enum "1024" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+    }
+    description
+      "type of ike ipsec window size";
+  }
+
+  typedef ikeipsecGlbWindowSizeType {
+    type enumeration {
+      enum "32" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+      enum "64" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+      enum "128" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+      enum "256" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+      enum "512" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+      enum "1024" {
+        description
+          "Value of anti-replay window size, default value is 1024";
+      }
+    }
+    description
+      "type of ike ipsec global window size";
+  }
+
+  typedef ikeipsecPolicyModeType {
+    type enumeration {
+      enum "isakmp" {
+        description
+          "Indicates use of IKE to establish the IPsec SA";
+      }
+    }
+    description
+      "type of ike ipsec policy mode";
+  }
+
+  typedef ikeipsecPolicyTempModeType {
+    type enumeration {
+      enum "dynamic" {
+        description
+          "Configure IPsec policy template";
+      }
+    }
+    description
+      "type of ike ipsec policy template mode";
+  }
+
+  typedef ikeipsecDynaTempMode {
+    type enumeration {
+      enum "none" {
+        description
+          "None";
+      }
+      enum "dynaTemplate" {
+        description
+          "Template";
+      }
+    }
+    description
+      "type of ike ipsec dynamical template mode";
+  }
+
+  typedef ikeipsecAuthAlgoType {
+    type enumeration {
+      enum "md5" {
+        description
+          "md5 (Configured authentication algorithm is insecure. SHA2-256 is recommended.)";
+      }
+      enum "sha1" {
+        description
+          "sha1 (Configured authentication algorithm is insecure. SHA2-256 is recommended.)";
+      }
+      enum "sha2-256" {
+        description
+          "sha2-256";
+      }
+      enum "sha2-384" {
+        description
+          "sha2-384";
+      }
+      enum "sha2-512" {
+        description
+          "sha2-512";
+      }
+      enum "sm3" {
+        description
+          "sm3";
+      }
+    }
+    description
+      "type of ike ipsec authentication algorithm";
+  }
+
+  typedef ikeipsecEncrAlgoType {
+    type enumeration {
+      enum "des-cbc" {
+        description
+          "des-cbc (Configured encryption algorithm is insecure. AES256-CBC is recommended.)";
+      }
+      enum "aes-cbc-128" {
+        description
+          "aes-cbc-128 (Configured encryption algorithm is insecure. AES256-CBC is recommended.)";
+      }
+      enum "aes-cbc-192" {
+        description
+          "aes-cbc-192 (Configured encryption algorithm is insecure. AES256-CBC is recommended.)";
+      }
+      enum "aes-cbc-256" {
+        description
+          "aes-cbc-256";
+      }
+      enum "3des-cbc" {
+        description
+          "3des-cbc";
+      }
+      enum "sm4-cbc" {
+        description
+          "sm4-cbc";
+      }
+    }
+    description
+      "type of ike ipsec encryption algorithm";
+  }
+
+  typedef ikeipsecIntegAlgoType {
+    type enumeration {
+      enum "hmac-md5-96" {
+        description
+          "hmac-md5-96 (Configured integrity algorithm is insecure. HMAC-SHA2-256 is recommended.)";
+      }
+      enum "hmac-sha1-96" {
+        description
+          "hmac-sha1-96 (Configured integrity algorithm is insecure. HMAC-SHA2-256 is recommended.)";
+      }
+      enum "hmac-sha2-256" {
+        description
+          "hmac-sha2-256";
+      }
+      enum "aes-xcbc-96" {
+        description
+          "aes-xcbc-96 (Configured integrity algorithm is insecure. HMAC-SHA2-256 is recommended.)";
+      }
+    }
+    description
+      "type of ike ipsec integriy algorithm";
+  }
+
+  typedef ikeipsecAuthMethodType {
+    type enumeration {
+      enum "pre-share" {
+        description
+          "pre-share";
+      }
+      enum "rsa-signature" {
+        description
+          "rsa-signature";
+      }
+      enum "digital-envelope" {
+        description
+          "digital-envelope";
+      }
+    }
+    description
+      "type of ike ipsec authentication method";
+  }
+
+  typedef ikeipsecExchangeModeType {
+    type enumeration {
+      enum "main" {
+        description
+          "Main mode";
+      }
+      enum "aggressive" {
+        description
+          "Aggressive mode";
+      }
+    }
+    description
+      "type of ike ipsec exchange mode";
+  }
+
+  typedef ikeipsecLocalIdType {
+    type enumeration {
+      enum "ip" {
+        description
+          "IP address";
+      }
+      enum "fqdn" {
+        description
+          "Fully Qualifed Domain name";
+      }
+      enum "user-fqdn" {
+        description
+          "user fqdn";
+      }
+      enum "dn" {
+        description
+          "Distinguished Name";
+      }
+    }
+    description
+      "type of ike ipsec local id";
+  }
+
+  typedef ikeipsecIkeVersionType {
+    type enumeration {
+      enum "v1" {
+        description
+          "Version 1";
+      }
+      enum "v2" {
+        description
+          "Version 2";
+      }
+      enum "v1v2" {
+        description
+          "Version v1/v2";
+      }
+    }
+    description
+      "type of ike ipsec ike version";
+  }
+
+  typedef ikeipsecDpdType {
+    type enumeration {
+      enum "none" {
+        description
+          "None";
+      }
+      enum "periodic" {
+        description
+          "Periodic";
+      }
+      enum "ondemand" {
+        description
+          "Ondemand";
+      }
+    }
+    description
+      "type of ike ipsec dpd";
+  }
+
+  typedef ikeipsecEncapsulationModeType {
+    type enumeration {
+      enum "transport" {
+        description
+          "transport";
+      }
+      enum "tunnel" {
+        description
+          "tunnel";
+      }
+    }
+    description
+      "type of ike ipsec encapsulation mode";
+  }
+
+  typedef ikeipsecDscpValueType {
+    type enumeration {
+      enum "None" {
+        description
+          "DSCP not configured";
+      }
+      enum "EnterDSCPCode" {
+        description
+          "DSCP (DiffServ CodePoint) value";
+      }
+      enum "af11" {
+        description
+          "AF11 DSCP (001010)";
+      }
+      enum "af12" {
+        description
+          "AF12 DSCP (001100)";
+      }
+      enum "af13" {
+        description
+          "AF13 DSCP (001110)";
+      }
+      enum "af21" {
+        description
+          "AF21 DSCP (010010)";
+      }
+      enum "af22" {
+        description
+          "AF22 DSCP (010100)";
+      }
+      enum "af23" {
+        description
+          "AF23 DSCP (010110)";
+      }
+      enum "af31" {
+        description
+          "AF31 DSCP (011010)";
+      }
+      enum "af32" {
+        description
+          "AF32 DSCP (011100)";
+      }
+      enum "af33" {
+        description
+          "AF33 DSCP (011110)";
+      }
+      enum "af41" {
+        description
+          "AF41 DSCP (100010)";
+      }
+      enum "af42" {
+        description
+          "AF42 DSCP (100100)";
+      }
+      enum "af43" {
+        description
+          "AF43 DSCP (100110)";
+      }
+      enum "cs1" {
+        description
+          "CS1 (IP Precedence 1) DSCP (001000)";
+      }
+      enum "cs2" {
+        description
+          "CS2 (IP Precedence 2) DSCP (010000)";
+      }
+      enum "cs3" {
+        description
+          "CS3 (IP Precedence 3) DSCP (011000)";
+      }
+      enum "cs4" {
+        description
+          "CS4 (IP Precedence 4) DSCP (100000)";
+      }
+      enum "cs5" {
+        description
+          "CS5 (IP Precedence 5) DSCP (101000)";
+      }
+      enum "cs6" {
+        description
+          "CS6 (IP Precedence 6) DSCP (110000)";
+      }
+      enum "cs7" {
+        description
+          "CS7 (IP Precedence 7) DSCP (111000)";
+      }
+      enum "default" {
+        description
+          "Default DSCP (000000)";
+      }
+      enum "ef" {
+        description
+          "EF DSCP (101110)";
+      }
+    }
+    description
+      "type of ike ipsec dscp value";
+  }
+
+  typedef ikeipsecExpValueType {
+    type enumeration {
+      enum "af1" {
+        description
+          "AF1";
+      }
+      enum "af2" {
+        description
+          "AF2";
+      }
+      enum "af3" {
+        description
+          "AF3";
+      }
+      enum "af4" {
+        description
+          "AF4";
+      }
+      enum "be" {
+        description
+          "BE";
+      }
+      enum "cs6" {
+        description
+          "CS6";
+      }
+      enum "cs7" {
+        description
+          "CS7";
+      }
+      enum "ef" {
+        description
+          "EF";
+      }
+      enum "none" {
+        description
+          "None";
+      }
+    }
+    description
+      "type of ike ipsec exp value";
+  }
+
+  typedef ikeipsecResetStatType {
+    type enumeration {
+      enum "all" {
+        description
+          "All statistics information";
+      }
+      enum "msg" {
+        description
+          "IKE message statistics";
+      }
+    }
+    description
+      "type of ike ipsec reset statistics";
+  }
+
+  typedef ikeipsecSaType {
+    type enumeration {
+      enum "AH" {
+        description
+          "AH";
+      }
+      enum "ESP" {
+        description
+          "ESP";
+      }
+    }
+    description
+      "type of ike ipsec sa";
+  }
+
+  typedef ikeipsecAntiReplay {
+    type enumeration {
+      enum "NotConfigured" {
+        description
+          "Not Configured";
+      }
+      enum "Enable" {
+        description
+          "Enable function";
+      }
+      enum "Disable" {
+        description
+          "Disable function";
+      }
+    }
+    description
+      "type of ike ipsec anti-replay";
+  }
+
+  typedef ikeipsecPolicyModeDispType {
+    type enumeration {
+      enum "isakmp" {
+        description
+          "Indicates use of IKE to establish the IPsec SA";
+      }
+      enum "dynamic" {
+        description
+          "Template";
+      }
+      enum "dynaTemplate" {
+        description
+          "Template";
+      }
+    }
+    description
+      "type of ike ipsec policy mode display";
+  }
+
+  typedef ikeRstIpsecSaType {
+    type enumeration {
+      enum "ah" {
+        description
+          "ah";
+      }
+      enum "esp" {
+        description
+          "esp";
+      }
+      enum "policy" {
+        description
+          "policy";
+      }
+      enum "policyseq" {
+        description
+          "policyseq";
+      }
+      enum "remoteaddr" {
+        description
+          "remoteaddr";
+      }
+    }
+    description
+      "type of ike rst ipsec sa";
+  }
+
+  typedef SpdUnitType {
+    type enumeration {
+      enum "kbps" {
+        description
+          "kbps";
+      }
+      enum "bps" {
+        description
+          "bps";
+      }
+    }
+    description
+      "type of spd unit";
+  }
+
+  typedef ikeEnableType {
+    type enumeration {
+      enum "disable" {
+        description
+          "disable.";
+      }
+      enum "enable" {
+        description
+          "enable.";
+      }
+    }
+    description
+      "type of ike enable";
+  }
+
+  typedef ikePeerWhiteListEnType {
+    type enumeration {
+      enum "unconfig" {
+        description
+          "Ike peer white list state type";
+      }
+      enum "enable" {
+        description
+          "Enable";
+      }
+      enum "disable" {
+        description
+          "Disable";
+      }
+    }
+    description
+      "type of ike peer whiteList enable";
+  }
+
+  typedef ikeSubSlotType {
+    type enumeration {
+      enum "onboard" {
+        description
+          "On-board Engine";
+      }
+      enum "engine" {
+        description
+          "VSUF Engine";
+      }
+      enum "card" {
+        description
+          "VSUF Card";
+      }
+    }
+    description
+      "type of ike sub slot";
+  }
+
+  typedef ikeipsecSM4VersionType {
+    type enumeration {
+      enum "none" {
+        description
+          "None";
+      }
+      enum "draft-standard" {
+        description
+          "Follow draft standard GM/T XXXX-2013 with SM4 Alg value 127";
+      }
+      enum "standard" {
+        description
+          "Follow standard GM/T 0022-2014 with SM4 Alg value 129";
+      }
+    }
+    description
+      "type of ike ipsec SM4 version";
+  }
+
+  typedef ikeipsecGlobalSM4VersionType {
+    type enumeration {
+      enum "draft-standard" {
+        description
+          "Follow draft standard GM/T XXXX-2013 with SM4 Alg value 127";
+      }
+      enum "standard" {
+        description
+          "Follow standard GM/T 0022-2014 with SM4 Alg value 129";
+      }
+    }
+    description
+      "type of ike ipsec global SM4 version";
+  }
+
+  typedef hashArithmeticType {
+    type enumeration {
+      enum "arithmetic1" {
+        description
+          "arithmetic1";
+      }
+      enum "arithmetic2" {
+        description
+          "arithmetic2";
+      }
+      enum "arithmetic3" {
+        description
+          "arithmetic3";
+      }
+    }
+    description
+      "type of hash arithmetic";
+  }
+
+  typedef ikeVrrpStateType {
+    type enumeration {
+      enum "master" {
+        description
+          "Master";
+      }
+      enum "slave" {
+        description
+          "Slave";
+      }
+      enum "invalid" {
+        description
+          "Invalid";
+      }
+    }
+    description
+      "type of ike vrrp state";
+  }
+
+  typedef ikeHAChannelStateType {
+    type enumeration {
+      enum "invalid" {
+        description
+          "Invalid";
+      }
+      enum "up" {
+        description
+          "Up";
+      }
+      enum "down" {
+        description
+          "Down";
+      }
+    }
+    description
+      "type of ike HA channel state";
+  }
+
+  typedef ikeHAFsmStateType {
+    type enumeration {
+      enum "init" {
+        description
+          "Init";
+      }
+      enum "batchbackup" {
+        description
+          "BatchBackup";
+      }
+      enum "realupdate" {
+        description
+          "RealUpdate";
+      }
+    }
+    description
+      "type of ike HA fsm state";
+  }
+
+  typedef ikeSaHaType {
+    type enumeration {
+      enum "single-homing" {
+        description
+          "Single-homed";
+      }
+      enum "multi-homing-master" {
+        description
+          "Multi-homed master";
+      }
+      enum "multi-homing-slave" {
+        description
+          "Multi-homed slave";
+      }
+    }
+    description
+      "ikeSaHaType";
+  }
+}

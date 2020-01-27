@@ -1,0 +1,39 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-netconf-notification-type {
+  belongs-to huawei-netconf {
+    prefix netconf;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Netconf authorization type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef netconfEventStream {
+    type enumeration {
+      enum "NETCONF" {
+        description
+          "netconf event stream";
+      }
+    }
+    description
+      "Netconf event stream";
+  }
+}

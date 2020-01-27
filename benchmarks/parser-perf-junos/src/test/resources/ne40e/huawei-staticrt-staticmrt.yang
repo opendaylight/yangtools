@@ -1,0 +1,159 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-staticrt-staticmrt {
+  belongs-to huawei-staticrt {
+    prefix staticrt;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-staticrt-staticmrt-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "staticmrt";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping staticrt_staticmrt_type {
+    description
+      "";
+    container srMRoutes {
+      description
+        "List of multicast static routes.";
+      list srMRoute {
+        key "vrfName prefix maskLength nexthop ifName";
+        description
+          "Configure a multicast static route. The RPF check is performed based on multicast static routes. An RPF interface and an RPF neighbor can be specified for a packet source on the local device by configuring a multicast static route. Multicast static routes can provide two functions in different scenarios:
+1. Changing an RPF route: When the multicast topology is the same as the unicast topology on a network, the paths for transmitting multicast data are consistent with that for transmitting unicast data. The RPF route can be configured as a multicast route to work as a transmission path different from unicast transmission paths. 
+2. Connecting an RPF route: This method is used on a network where unicast routes are blocked, no multicast static route is configured, and therefore no RFP route can be used to forward packets. An RPF multicast static route can be configured after an RPF check, and then can be used to forward packets.";
+        leaf vrfName {
+          type pub-type:vrfName;
+          description
+            "Name of the VPN instance associated with a multicast static route.";
+        }
+        leaf prefix {
+          type inet:ipv4-address-no-zone;
+          description
+            "Destination IP address.";
+        }
+        leaf maskLength {
+          type uint32 {
+            range "0..32";
+          }
+          description
+            "Mask length of the destination IP address.";
+        }
+        leaf nexthop {
+          type inet:ipv4-address-no-zone;
+          description
+            "Next hop IP address of a route.";
+        }
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "Transmission interface of a route. If the next hop interface is a P2P interface, a next hop interface can be configured for a multicast static route. If the next hop interface is not a P2P interface, configure a next hop address for the multicast static route.";
+        }
+        leaf preference {
+          type uint32 {
+            range "1..255";
+          }
+          description
+            "Priority of a route. The greater the value, the lower the priority.";
+          ext:allowDelete "true";
+        }
+        leaf InterfaceState {
+          type string {
+            length "1..8";
+          }
+          config false;
+          description
+            "Interface status. ";
+        }
+        leaf BfdDetect {
+          type string {
+            length "1..36";
+          }
+          config false;
+          description
+            "Establishment status of a BFD session:
+Disable: indicates that the BFD session is not enabled.
+Up: indicates that the BFD session is established successfully.
+Down: indicates that the BFD session fails to be established.";
+        }
+        leaf State {
+          type string {
+            length "1..20";
+          }
+          config false;
+          description
+            "Route selection result:
+Active Primary: indicates an active primary route.
+Active Backup: indicates an active backup route.
+Inactive Valid: indicates a route that takes part in the route selection but is not preferred.
+Inactive Invalid: indicates a route that cannot take part in the route selection.
+";
+        }
+        leaf IndirectID {
+          type pub-type:hexBinary;
+          config false;
+          description
+            "Keyword of indirect next hop.";
+        }
+        leaf LocalAddress {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "IP address of the local interface. If no IP address is configured for the local interface, this item is displayed as 0.0.0.0. ";
+        }
+        leaf RemoteIp {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "IP address of the remote P2P interface. If no IP address is configured for the remote P2P interface, this item is displayed as 0.0.0.0. ";
+        }
+        leaf RelayNextHop {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "Next hop address to which a static route is iterated. If the static route is iterated to a tunnel, this item is displayed as 0.0.0.0. ";
+        }
+        leaf RelayInterface {
+          type pub-type:ifName;
+          config false;
+          description
+            "Name of an iteration outbound interface. If the static route is iterated to a tunnel, this item is displayed as a tunnel name. ";
+        }
+        leaf TunnelID {
+          type string {
+            length "1..21";
+          }
+          config false;
+          description
+            "ID of a tunnel.";
+        }
+      }
+    }
+  }
+}

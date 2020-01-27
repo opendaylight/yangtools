@@ -1,0 +1,264 @@
+submodule huawei-y1731-dtools-action {
+  belongs-to huawei-y1731 {
+    prefix y1731;
+  }
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-y1731-dtools;
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "y1731_dtools_action";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference "Huawei private.";
+  }
+
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference "Huawei private.";
+  }
+
+  rpc createLBTest {
+    description
+      "";
+    input {
+      leaf testName {
+        type string {
+          length "1..32";
+          pattern "^[^\\?]*$";
+        }
+        description
+          "Specify the name of a test case. ";
+      }
+      leaf mdName {
+        type string {
+          length "1..43";
+          pattern "^[^\\?]*$";
+        }
+        mandatory true;
+        description
+          "Specify the name of a maintenance domain.";
+      }
+      leaf maName {
+        type string {
+          length "1..43";
+          pattern "^[^\\?]*$";
+        }
+        mandatory true;
+        description
+          "Specify the name of a maintenance association.";
+      }
+      leaf mepId {
+        type uint16 {
+          range "1..8191";
+        }
+        mandatory true;
+        description
+          "Configure a MEP ID.";
+      }
+      leaf rmepId {
+        type uint16 {
+          range "1..8191";
+        }
+        description
+          "Specify the ID of an RMEP.";
+        ext:allowDelete "true";
+      }
+      leaf rmepMAC {
+        type pub-type:macAddress;
+        description
+          "Specify the MAC address of an RMEP.";
+        ext:allowDelete "true";
+      }
+      leaf priority {
+        type uint8 {
+          range "0..7";
+        }
+        default "7";
+        description
+          "Specify the priority of packets.";
+        ext:allowDelete "true";
+      }
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Specify the name of the interface where the test packets are sent.";
+        ext:allowDelete "true";
+      }
+      leaf packetSize {
+        type uint32 {
+          range "64..2000";
+        }
+        default "64";
+        description
+          "Specify the number of Bytes of the sent test packets. ";
+        ext:allowDelete "true";
+      }
+      leaf packetCount {
+        type uint32 {
+          range "1..4294967295";
+        }
+        default "5";
+        description
+          "Specify the number of sent test packets.";
+        ext:allowDelete "true";
+      }
+      leaf timeout {
+        type uint32 {
+          range "1..65535";
+        }
+        default "2000";
+        description
+          "Specify the time taken to wait for the response packets after detection packets are sent. The value is expressed in milliseconds. If no response packet is received within the timeout duration, the system considers the packets as timed out.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc createLTTest {
+    description
+      "";
+    input {
+      leaf testName {
+        type string {
+          length "1..32";
+          pattern "^[^\\?]*$";
+        }
+        description
+          "Specify the name of a test case. ";
+      }
+      leaf mdName {
+        type string {
+          length "1..43";
+          pattern "^[^\\?]*$";
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance domain (MD).";
+      }
+      leaf maName {
+        type string {
+          length "1..43";
+          pattern "^[^\\?]*$";
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance association (MA).";
+      }
+      leaf mepId {
+        type uint16 {
+          range "1..8191";
+        }
+        mandatory true;
+        description
+          "Configure a MEP ID.";
+      }
+      leaf rmepId {
+        type uint16 {
+          range "1..8191";
+        }
+        description
+          "Specify the ID of an RMEP.";
+        ext:allowDelete "true";
+      }
+      leaf rmepMAC {
+        type pub-type:macAddress;
+        description
+          "Specify the MAC address of an RMEP.";
+        ext:allowDelete "true";
+      }
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Specify the name of the interface where the test packets are sent.";
+        ext:allowDelete "true";
+      }
+      leaf ttl {
+        type uint8 {
+          range "1..255";
+        }
+        default "64";
+        description
+          "Specify the maximum TTL value of test packets.";
+        ext:allowDelete "true";
+      }
+      leaf timeout {
+        type uint32 {
+          range "1..65535";
+        }
+        default "2000";
+        description
+          "Specify the time taken to wait for the response packets after detection packets are sent. The value is expressed in milliseconds. If no response packet is received within the timeout duration, the system considers the packets as timed out.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc deleteLBTest {
+    description
+      "";
+    input {
+      leaf testName {
+        type string {
+          length "1..32";
+          pattern "^[^\\?]*$";
+        }
+        description
+          "Specify the name of a test case. ";
+      }
+    }
+  }
+  rpc deleteLTTest {
+    description
+      "";
+    input {
+      leaf testName {
+        type string {
+          length "1..32";
+          pattern "^[^\\?]*$";
+        }
+        description
+          "Specify the name of a test case. ";
+      }
+    }
+  }
+  rpc stopLBTest {
+    description
+      "";
+    input {
+      leaf testName {
+        type string {
+          length "1..32";
+          pattern "^[^\\?]*$";
+        }
+        description
+          "Specify the name of a test case. ";
+      }
+    }
+  }
+  rpc stopLTTest {
+    description
+      "";
+    input {
+      leaf testName {
+        type string {
+          length "1..32";
+          pattern "^[^\\?]*$";
+        }
+        description
+          "Specify the name of a test case. ";
+      }
+    }
+  }
+}

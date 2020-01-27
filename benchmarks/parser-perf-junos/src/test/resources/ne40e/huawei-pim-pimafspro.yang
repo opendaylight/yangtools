@@ -1,0 +1,661 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-pim-pimafspro {
+  belongs-to huawei-pim {
+    prefix pim;
+  }
+  import huawei-mcastbase {
+    prefix mcastbase;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-pim-type;
+  include huawei-pim-pimafspro-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "pim feature";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  grouping pimafspro_pimafspro_type {
+    description
+      "";
+    container pimAfsSiteCfgs {
+      description
+        "List of PIM configurations.";
+      list pimAfsSiteCfg {
+        key "vrfName addressFamily";
+        description
+          "PIM configurations.";
+        leaf vrfName {
+          type leafref {
+            path "/mcastbase:mcastbase/mcastbase:mcastAfsEnables/mcastbase:mcastAfsEnable/mcastbase:vrfName";
+          }
+          description
+            "Name of a VPN instance.";
+        }
+        leaf addressFamily {
+          type leafref {
+            path "/mcastbase:mcastbase/mcastbase:mcastAfsEnables/mcastbase:mcastAfsEnable/mcastbase:addressFamily";
+          }
+          description
+            "Address family, which determines whether an address belongs to IPv4 or IPv6.";
+        }
+        leaf assertHoldTime {
+          type uint32 {
+            range "7..65535";
+          }
+          default "180";
+          description
+            "Timeout period during which PIM interfaces wait to receive Assert messages from the forwarder. The value is an integer ranging from 7 to 65535, in seconds. The default value is 180. 
+";
+        }
+        leaf jpHoldTime {
+          type uint32 {
+            range "1..65535";
+          }
+          default "210";
+          description
+            "Holdtime for a Join/Prune message sent by a PIM interface. The value is an integer ranging from 1 to 65535, in seconds. The default value is 210. Commonly, the holdtime is 3.5 times longer than the interval for all the interfaces to send Join/Prune messages.
+";
+        }
+        leaf probeInterval {
+          type uint32 {
+            range "1..1799";
+          }
+          must "(../probeInterval<../regSuppInterval*0.5)";
+          default "5";
+          description
+            "Interval at which Probe messages are sent to an RP. The value is an integer ranging from 1 to 1799, in seconds. The default value is 5.
+";
+        }
+        leaf jpTimerInterval {
+          type uint32 {
+            range "1..18000";
+          }
+          default "60";
+          description
+            "Interval at which Join/Prune messages are sent. The value is an integer ranging from 1 to 2147483647, in seconds. It must be shorter than the holdtime of Join/Prune messages. The default value is 60. 
+
+";
+        }
+        leaf drPriority {
+          type uint32 {
+            range "0..4294967295";
+          }
+          default "1";
+          description
+            "DR election priority for a router. The greater the value, the higher the priority. The value is an integer ranging from 0 to 4294967295. The default value is 1.";
+        }
+        leaf helloHoldtime {
+          type uint16 {
+            range "1..65535";
+          }
+          default "105";
+          description
+            "Timeout period during which a PIM interface waits to receive Hello messages from its neighbors. The value is an integer that ranging from 1 to 65535, in seconds. It must be longer than the interval for PIM neighbors to send Hello messages. The default value is 105. 
+";
+        }
+        leaf helloLandelay {
+          type uint16 {
+            range "1..32767";
+          }
+          default "500";
+          description
+            "Delay for transmitting Prune messages on a shared network segment. The value is an integer ranging from 1 to 32767, in milliseconds. The default value is 500.
+";
+        }
+        leaf helloInterval {
+          type uint32 {
+            range "1..18000";
+          }
+          default "30";
+          description
+            "Specifies the interval at which Hello messages are sent. The value is an integer ranging from 1 to 2147483647, in seconds. It must be shorter than the timeout period of PIM neighbors. The default value is 30.";
+        }
+        leaf helloOverride {
+          type uint16 {
+            range "1..65535";
+          }
+          default "2500";
+          description
+            "Interval at which the prune action in a Hello message is overridden. The value is an integer ranging from 1 to 65535, in milliseconds. The default value is 2500.";
+        }
+        leaf regCheckSum {
+          when "../addressFamily='ipv4unicast'";
+          type boolean;
+          default "false";
+          description
+            "Configure a router to calculate the checksum based on all contents of a Register message. By default, the checksum is calculated based on the header of a Register message only.";
+        }
+        leaf regSuppInterval {
+          type uint32 {
+            range "11..3600";
+          }
+          default "60";
+          description
+            "Timeout period during which a router remains in the registration suppression state. The value is an integer ranging from 11 to 3600, in seconds. The default value is 60.";
+        }
+        leaf embeddedRp {
+          when "not(../addressFamily='ipv4unicast')";
+          type boolean;
+          default "true";
+          description
+            "Enable the embedded RP function. By default, the embedded RP function is enabled.";
+        }
+        leaf nbrCheckRecv {
+          type boolean;
+          default "false";
+          description
+            "Enable the PIM neighbor check function to check whether received Join/Prune and Assert messages are sent from a PIM neighbor. If not, these messages are discarded.
+By default, the PIM neighbor check function is disabled.";
+        }
+        leaf nbrCheckSend {
+          type boolean;
+          default "false";
+          description
+            "Enable the PIM neighbor check function to check whether Join/Prune and Assert messages are to be sent to an IPv4/v6 PIM neighbor. If not, these messages are not sent. By default, the PIM neighbor check function is disabled for Join/Prune and Assert messages to be sent.
+";
+        }
+        leaf regPlyName {
+          when "../addressFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          description
+            "Policy for filtering Register messages. The value is an integer ranging from 3000 to 3999, or a string.
+
+";
+          ext:allowDelete "true";
+        }
+        leaf regPlyIpv6 {
+          when "not(../addressFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          description
+            "Policy for filtering Register messages. The value is an integer ranging from 3000 to 3999, or a string.
+
+";
+          ext:allowDelete "true";
+        }
+        leaf ssmPlyName {
+          when "../addressFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          description
+            "Policy for limiting the range of valid SSM group addresses. The value is an integer ranging from 2000 to 2999, or a string.
+
+
+";
+          ext:allowDelete "true";
+        }
+        leaf ssmPlyIpv6 {
+          when "not(../addressFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          description
+            "Range of SSM group addresses. The value is an integer ranging from 2000 to 2999, or a string.
+
+
+";
+          ext:allowDelete "true";
+        }
+        leaf srcPlyName {
+          when "../addressFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          description
+            "Policy for filtering multicast entries based on source addresses or based on both source and group addresses. The value is an integer ranging from 2000 to 3999, or a string.";
+          ext:allowDelete "true";
+        }
+        leaf srcPlyIpv6 {
+          when "not(../addressFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          description
+            "Policy for filtering multicast entries based on source addresses or based on both source and group addresses. The value is an integer ranging from 2000 to 3999, or a string.";
+          ext:allowDelete "true";
+        }
+        leaf bsrPlyName {
+          when "../addressFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          description
+            "Policy for limiting the range of valid BSR addresses so that a router discards the messages received from the BSRs not in the specified address range. The value is an integer ranging from 2000 to 2999, or a string. By default, the range of valid BSR addresses is not limited.";
+          ext:allowDelete "true";
+        }
+        leaf bsrPlyIpv6 {
+          when "not(../addressFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          description
+            "Policy for limiting the range of valid BSR addresses so that a router discards the messages received from the BSRs not in the specified address range. The value is an integer ranging from 2000 to 2999, or a string. By default, the range of valid BSR addresses is not limited.";
+          ext:allowDelete "true";
+        }
+        leaf embRpPlyName {
+          when "not(../addressFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          must "not(../embeddedRp='false') or (../embeddedRp='false' and not(../embRpPlyName))";
+          description
+            "Policy for limiting the range of multicast groups to which an embedded-RP applies. The value is an integer ranging from 2000 to 2999, or a string.
+";
+          ext:allowDelete "true";
+        }
+        leaf sourceLifeTime {
+          type uint32 {
+            range "60..65535";
+          }
+          default "210";
+          description
+            "Timeout period for (S, G) entries on a router. The value is an integer ranging from 60 to 65535, in seconds. The default value is 210.";
+        }
+        leaf sptDetInterval {
+          type uint32 {
+            range "15..65535";
+          }
+          default "15";
+          description
+            "Interval for checking the multicast message rate is configured. When the multicast message rate reaches the specified threshold, a switchover from the RPT to the SPT is performed. The value is an integer ranging from 15 to 65535, in seconds.";
+        }
+        leaf jpTrigCacheDisable {
+          type boolean;
+          default "false";
+          description
+            "Disable the Join/Prune message packaging function. The efficiency for sending PIM Join/Prune messages in a package is higher than that for separately sending a large number of PIM Join/Prune messages. By default, a device sends PIM Join/Prune messages in a package. ";
+        }
+        leaf ipsecName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Description of an SA. The value is a string of 1 to 15 characters.";
+          ext:allowDelete "true";
+        }
+        leaf ipsecType {
+          when "not(not(../ipsecName))";
+          type pimproIpsecType;
+          must "not(../ipsecName) or (not(not(../ipsecName)) and (../ipsecType='forAll' or ../ipsecType='forHello') )";
+          default "forAll";
+          description
+            "Hello options based on the IPsec type.";
+        }
+        leaf uniIpsecName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Description of an SA. The value is a string of 1 to 15 characters.";
+          ext:allowDelete "true";
+        }
+        leaf regSrcIfName {
+          when "../addressFamily='ipv4unicast'";
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Name of a S-DR interface on which register packets are sent.";
+          ext:allowDelete "true";
+        }
+        leaf regSrcAddr {
+          when "../addressFamily='ipv6unicast'";
+          type inet:ipv6-address-no-zone;
+          description
+            "IPv6 global address of register packets.";
+          ext:allowDelete "true";
+        }
+        leaf pimFrr {
+          when "../addressFamily='ipv4unicast'";
+          type boolean;
+          default "false";
+          description
+            "Enable PIM fast reroute.";
+        }
+        container pimAfsStaticRps {
+          description
+            "List of static RPs.";
+          list pimAfsStaticRp {
+            key "staticRpAddr";
+            description
+              "Static RP.";
+            leaf staticRpAddr {
+              type inet:ip-address-no-zone;
+              description
+                "Address of a static RP. This address must be a valid unicast IP address.
+In IPv4, the value is in dotted decimal notation. This address cannot be an address on the network segment 127.0.0.0/8.
+In IPv6, the value is in hexadecimal notation and in the format of FFxx:xxxx:xxxx::xxxx.
+
+ 
+
+";
+            }
+            leaf staticRpPlyName {
+              when "../../../addressFamily='ipv4unicast'";
+              type string {
+                length "0..64";
+              }
+              description
+                "Static RP policy. The value is an integer ranging from 2000 to 2999, or a string.
+";
+              ext:allowDelete "true";
+            }
+            leaf staticRpPlyNameIpv6 {
+              when "not(../../../addressFamily='ipv4unicast')";
+              type string {
+                length "0..64";
+              }
+              description
+                "Static RP policy. The value is an integer ranging from 2000 to 2999, or a string.
+";
+              ext:allowDelete "true";
+            }
+            leaf preference {
+              type pimproPimRPPre;
+              default "NotPrefer";
+              description
+                "Whether the static RP is preferred. The value can be:
+0: the static RP is not preferred.
+1: the static RP is preferred.
+The default value is 0.";
+            }
+          }
+        }
+      }
+    }
+    container pimAfsIfCfgs {
+      description
+        "List of interface configurations.";
+      list pimAfsIfCfg {
+        key "vrfName addressFamily ifName";
+        description
+          "Interface configurations.";
+        leaf vrfName {
+          type leafref {
+            path "/mcastbase:mcastbase/mcastbase:mcastAfsEnables/mcastbase:mcastAfsEnable/mcastbase:vrfName";
+          }
+          description
+            "Name of a VPN instance.";
+        }
+        leaf addressFamily {
+          type leafref {
+            path "/mcastbase:mcastbase/mcastbase:mcastAfsEnables/mcastbase:mcastAfsEnable/mcastbase:addressFamily";
+          }
+          description
+            "Address family, which determines whether an address belongs to IPv4 or IPv6.";
+        }
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Interface name.";
+        }
+        leaf pimsmEnable {
+          type boolean;
+          must "(../pimsmEnable='true') or not(../pimsmEnable='true')";
+          default "false";
+          description
+            "Enable PIM on an interface.";
+        }
+        leaf drPriority {
+          type uint32 {
+            range "0..4294967295";
+          }
+          default "1";
+          description
+            "DR priority. The greater the value, the higher the priority. The value is an integer ranging from 0 to 4294967295. The default value is 1.
+";
+        }
+        leaf helloInterval {
+          type uint32 {
+            range "1..18000";
+          }
+          default "30";
+          description
+            "Interval at which Hello messages are sent. The value is an integer ranging from 1 to 2147483647, in seconds. It must be shorter than the timeout period of PIM neighbors. The default value is 30.
+";
+        }
+        leaf helloHoldtime {
+          type uint16 {
+            range "1..65535";
+          }
+          default "105";
+          description
+            "Timeout period during which a router waits for Hello messages sent from its PIM neighbors. The value is an integer ranging from 1 to 65535, in seconds. It must be longer than the interval for PIM neighbors to send Hello messages. The default value is 105.";
+        }
+        leaf helloOverride {
+          type uint16 {
+            range "1..65535";
+          }
+          default "2500";
+          description
+            "Interval at which the prune action in a Hello message is overridden. The value is an integer ranging from 1 to 65535, in milliseconds. The default value is 2500.";
+        }
+        leaf helloLanDelay {
+          type uint16 {
+            range "1..32767";
+          }
+          default "500";
+          description
+            "Period from the time when a router receives a Prune message from a downstream device to the time when the router performs the prune action. The value is an integer ranging from 1 to 32767, in milliseconds. The default value is 500.";
+        }
+        leaf jpTimerInterval {
+          type uint32 {
+            range "1..18000";
+          }
+          default "60";
+          description
+            "Interval at which Join/Prune messages are sent. The value is an integer ranging from 1 to 2147483647, in seconds. The default value is 60. The interval must be shorter than the holdtime of Join/Prune messages.";
+        }
+        leaf jpHoldtime {
+          type uint32 {
+            range "1..65535";
+          }
+          default "210";
+          description
+            "Holdtime for Join/Prune messages sent by a router. The value is an integer ranging from 1 to 65535, in seconds. The default value is 210. The holdtime must be longer than the interval at which Join/Prune messages are sent.
+";
+        }
+        leaf jpPlyName {
+          when "../addressFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          description
+            "Policy for filtering Join/Prune messages. The value is an integer ranging from 2000 to 2999, or a string. By default, no policy is configured to filter Join/Prune messages.";
+          ext:allowDelete "true";
+        }
+        leaf jpPlyIpv6 {
+          when "not(../addressFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          description
+            "Policy for filtering Join/Prune messages. The value is an integer ranging from 2000 to 2999, or a string. By default, no policy is configured to filter Join/Prune messages.";
+          ext:allowDelete "true";
+        }
+        leaf jpAsmPlyName {
+          when "../addressFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          must "not(../jpPlyName) or (../jpPlyName and not(../jpAsmPlyName))";
+          description
+            "Policy for filtering ASM Join/Prune messages. The value is an integer ranging from 2000 to 2999, or a string. By default, no policy is configured to filter ASM Join/Prune messages.";
+          ext:allowDelete "true";
+        }
+        leaf jpAsmPlyIpv6 {
+          when "not(../addressFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          must "not(../jpPlyIpv6) or (../jpPlyIpv6 and not(../jpAsmPlyIpv6))";
+          description
+            "Policy for filtering ASM Join/Prune messages. The value is an integer ranging from 2000 to 2999, or a string. By default, no policy is configured to filter ASM Join/Prune messages.";
+          ext:allowDelete "true";
+        }
+        leaf jpSsmPlyName {
+          when "../addressFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          must "not(../jpPlyName) or (../jpPlyName and not(../jpSsmPlyName))";
+          description
+            "Policy for filtering SSM Join/Prune messages. The value is an integer ranging from 3000 to 3999, or a string. By default, no policy is configured to filter SSM Join/Prune messages.";
+          ext:allowDelete "true";
+        }
+        leaf jpSsmPlyIpv6 {
+          when "not(../addressFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          must "not(../jpPlyIpv6) or (../jpPlyIpv6 and not(../jpSsmPlyIpv6))";
+          description
+            "Policy for filtering SSM Join/Prune messages. The value is an integer ranging from 3000 to 3999, or a string. By default, no policy is configured to filter SSM Join/Prune messages.";
+          ext:allowDelete "true";
+        }
+        leaf nbrPlyName {
+          when "../addressFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          description
+            "Policy for filtering PIM neighbors. The value is an integer ranging from 2000 to 2999, or a string. By default, no policy is configured to filter PIM neighbors.";
+          ext:allowDelete "true";
+        }
+        leaf nbrPlyIpv6 {
+          when "not(../addressFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          description
+            "Policy for filtering PIM neighbors. The value is an integer ranging from 2000 to 2999, or a string. By default, no policy is configured to filter PIM neighbors.";
+          ext:allowDelete "true";
+        }
+        leaf assertHoldtime {
+          type uint32 {
+            range "7..65535";
+          }
+          default "180";
+          description
+            "Timeout period during which PIM interfaces wait to receive Assert messages from the forwarder. The value is an integer ranging from 7 to 65535, in seconds. The default value is 180.";
+        }
+        leaf requireGenId {
+          type boolean;
+          default "false";
+          description
+            "Configure a PIM interface to deny Hello messages that do not carry generation IDs. By default, a PIM interface receives Hello messages that do not carry generation IDs.";
+        }
+        leaf pimBsrBoundary {
+          type pimproBsrBoundary;
+          must "(../addressFamily='ipv6unicast' and (../pimBsrBoundary='None' or ../pimBsrBoundary='Both') ) or ((not(../addressFamily='ipv6unicast') and (../pimBsrBoundary='None' or ../pimBsrBoundary='Both' or ../pimBsrBoundary='Incoming') ))";
+          default "None";
+          description
+            "Boundary for a PIM domain. The value can be:
+0: no boundary; 1: bidirectional domain boundary; 2: inbound unidirectional domain boundary.";
+        }
+        leaf bfdEnable {
+          type boolean;
+          default "false";
+          description
+            "Enable PIM BFD on an interface. By default, PIM BFD is not enabled on an interface.";
+        }
+        leaf bfdMinTx {
+          type uint32 {
+            range "3..1000";
+          }
+          must "(../bfdMinTx!=0 and ../bfdMinTx<=1000) and ((../bfdMinTx!=0 and ../bfdMinTx>=3)) or ((not(../bfdMinTx!=0) and ../bfdMinTx=0))";
+          description
+            "Minimum interval at which BFD messages are sent. ";
+          ext:allowDelete "true";
+        }
+        leaf bfdMinRx {
+          type uint32 {
+            range "3..1000";
+          }
+          must "(../bfdMinRx!=0 and ../bfdMinRx<=1000) and ((../bfdMinRx!=0 and ../bfdMinRx>=3)) or ((not(../bfdMinRx!=0) and ../bfdMinRx=0))";
+          description
+            "Minimum interval at which BFD messages are received.";
+          ext:allowDelete "true";
+        }
+        leaf bfdMultiplier {
+          type uint16 {
+            range "3..50";
+          }
+          default "3";
+          description
+            "Local detect multiplier for BFD messages. The value is an integer ranging from 3 to 50. The default value is 3.";
+          ext:allowDelete "true";
+        }
+        leaf isSilent {
+          type boolean;
+          default "false";
+          description
+            "Enable the PIM silent function on an interface. By default, PIM silent is disabled on an interface. ";
+        }
+        leaf isDrSwtDelay {
+          type boolean;
+          default "false";
+          description
+            "Enable DR switchover delay on an interface. By default, this function is disabled on an interface.";
+        }
+        leaf drSwtDelayInterval {
+          when "not(../isSilent='true') or ../isDrSwtDelay='true'";
+          type uint32 {
+            range "10..3600";
+          }
+          description
+            "Delay for a DR switchover. The value is an integer ranging from 10 to 3600. The default value is 10. The setting is ineffective if the DR switchover delay function is not enabled.";
+        }
+        leaf ipsecName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Description of an SA. The value is a string of 1 to 15 characters.";
+          ext:allowDelete "true";
+        }
+        leaf ipsecType {
+          when "not(not(../ipsecName))";
+          type pimproIpsecType;
+          must "not(../ipsecName) or (not(not(../ipsecName)) and (../ipsecType='forAll' or ../ipsecType='forHello') )";
+          default "forAll";
+          description
+            "Hello options based on the IPsec type.";
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,83 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifmbundle {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-ifmbundle";
+  prefix ifmbundle;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  include huawei-ifmbundle-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Define the interface that bundles multiple ATM sub-interfaces into a logical interface.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  container ifmbundle {
+    description
+      "Define the interface that bundles multiple ATM sub-interfaces into a logical interface.";
+    container bundleIfs {
+      description
+        "Define the ATM-Bundle interface list.";
+      list bundleIf {
+        key "ifName";
+        description
+          "Define the interface that bundles multiple ATM sub-interfaces into a logical interface.";
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "ATM-Bundle interface name.";
+        }
+        leaf upMemberIfNum {
+          type uint32;
+          config false;
+          description
+            "Display the number of ATM-Bundle member interfaces in the Up state.";
+        }
+        container bundleMembers {
+          description
+            "ATM-Bundle member interface list.";
+          list bundleMember {
+            key "memberIfName";
+            description
+              "ATM-Bundle member interface.";
+            leaf memberIfName {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Name of an ATM-Bundle member interface.";
+            }
+            leaf portStatus {
+              type ifmbundleAbstractState;
+              config false;
+              mandatory true;
+              description
+                "Display the status of an ATM-Bundle member interface.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

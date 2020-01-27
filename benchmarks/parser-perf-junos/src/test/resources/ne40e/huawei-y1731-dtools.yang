@@ -1,0 +1,242 @@
+submodule huawei-y1731-dtools {
+  belongs-to huawei-y1731 {
+    prefix y1731;
+  }
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  include huawei-y1731-dtools-type;
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "y1731_dtools";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference "Huawei private.";
+  }
+
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference "Huawei private.";
+  }
+
+  grouping y1731_lbResults_type {
+    description
+      "";
+    list lbResult {
+      key "testName";
+      config false;
+      description
+        "LB test results.";
+      leaf testName {
+        type string {
+          length "1..32";
+          pattern "^[^\\?]*$";
+        }
+        config false;
+        description
+          "Name of a test case. ";
+      }
+      leaf packetRecv {
+        type uint32;
+        config false;
+        description
+          "Total number of received packets.";
+      }
+      leaf packetSend {
+        type uint32;
+        config false;
+        description
+          "Total number of sent packets.";
+      }
+      leaf lossRatio {
+        type pub-type:percent;
+        config false;
+        description
+          "Packet loss ratio of a test.";
+      }
+      leaf rttMin {
+        type uint32;
+        config false;
+        description
+          "Minimum RTT value of all test packets. The value is expressed in milliseconds. ";
+      }
+      leaf rttMax {
+        type uint32;
+        config false;
+        description
+          "Maximum RTT value of all test packets. The value is expressed in milliseconds. ";
+      }
+      leaf averageRtt {
+        type uint32;
+        config false;
+        description
+          "Average RTT value of all test packets. The value is expressed in milliseconds. ";
+      }
+      leaf status {
+        type DtoolsTestStatusType;
+        config false;
+        description
+          "Test result status.";
+      }
+      leaf errorType {
+        type Dtools1agErrorType;
+        config false;
+        description
+          "Test operation status";
+      }
+      container lbResultDetails {
+        config false;
+        description
+          "Detailed results.";
+        list lbResultDetail {
+          key "index";
+          config false;
+          description
+            "Result of a single packet in a test.";
+          leaf index {
+            type uint32;
+            config false;
+            description
+              "Number of test packets.";
+          }
+          leaf rmepMAC {
+            type pub-type:macAddress;
+            config false;
+            description
+              "MAC address of an RMEP.";
+          }
+          leaf bytes {
+            type uint32;
+            config false;
+            description
+              "Number of Bytes of received response packets.";
+          }
+          leaf rtt {
+            type uint32;
+            config false;
+            description
+              "RTT value of the test packet. The value is expressed in milliseconds.";
+          }
+          leaf resultType {
+            type DtoolsLbDetailResultType;
+            config false;
+            description
+              "Result of packet sending, which is either successful or timed out.";
+          }
+        }
+      }
+    }
+  }
+
+  grouping y1731_ltResults_type {
+    description
+      "";
+    list ltResult {
+      key "testName";
+      config false;
+      description
+        "LT test result.";
+      leaf testName {
+        type string {
+          length "1..32";
+          pattern "^[^\\?]*$";
+        }
+        config false;
+        description
+          "Name of a test case. ";
+      }
+      leaf status {
+        type DtoolsTestStatusType;
+        config false;
+        description
+          "Test result status.";
+      }
+      leaf errorType {
+        type Dtools1agErrorType;
+        config false;
+        description
+          "Test operation status";
+      }
+      container ltResultDetails {
+        config false;
+        description
+          "Detailed results.";
+        list ltResultDetail {
+          key "hopIndex";
+          config false;
+          description
+            "Result of a single packet in a test.";
+          leaf hopIndex {
+            type uint32;
+            config false;
+            description
+              "Serial number of a hop in the test path. ";
+          }
+          leaf ingressMAC {
+            type pub-type:macAddress;
+            default "0000-0000-0000";
+            config false;
+            description
+              "MEP of a MIP or MEP configured on the ingress port.";
+          }
+          leaf ingressPort {
+            type string {
+              length "0..64";
+            }
+            config false;
+            description
+              "Ingress port name.";
+          }
+          leaf ingressAction {
+            type DtoolsLtIngressActionType;
+            config false;
+            description
+              "Ingress port action.";
+          }
+          leaf egressMAC {
+            type pub-type:macAddress;
+            default "0000-0000-0000";
+            config false;
+            description
+              "MEP of a MIP or MEP configured on the egress port.";
+          }
+          leaf egressPort {
+            type string {
+              length "0..64";
+            }
+            config false;
+            description
+              "Egress port name.";
+          }
+          leaf egressAction {
+            type DtoolsLtEgressActionType;
+            config false;
+            description
+              "Ingress port action.";
+          }
+          leaf relayAction {
+            type DtoolsRelayActionType;
+            config false;
+            description
+              "Action of relay equipment.";
+          }
+          leaf isMep {
+            type DtoolsLtMepType;
+            config false;
+            description
+              "Whether a relay equipment MEP is used.";
+          }
+        }
+      }
+    }
+  }
+}

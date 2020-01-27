@@ -1,0 +1,247 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-vlan-type {
+  belongs-to huawei-vlan {
+    prefix vlan;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description FOR submodule";
+  revision 2017-03-23 {
+	description
+	"Functions supported by the schema are added to the YANG file.";
+	reference
+	"Huawei private.";
+	}
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference    "Huawei private.";
+  }
+  typedef vlanId {
+    type uint16 {
+      range "1..4094";
+    }
+    description
+      "VLAN ID";
+  }
+  typedef vlanType {
+    type enumeration {
+      enum "common" {
+        description
+          "Common VLAN.";
+      }
+      enum "super" {
+        description
+          "Super-VLAN.";
+      }
+      enum "sub" {
+        description
+          "Sub-VLAN.";
+      }
+      enum "principal" {
+        description
+          "Principal VLAN.";
+      }
+      enum "group" {
+        description
+          "Group VLAN.";
+      }
+      enum "seperate" {
+        description
+          "Separate VLAN.";
+      }
+      enum "manage" {
+        description
+          "Management VLAN.";
+      }
+      enum "carrier" {
+        description
+          "Carrier VLAN.";
+      }
+      enum "fcoe" {
+        description
+          "FCOE VLAN.";
+      }
+      enum "dynamic" {
+        description
+          "Dynamic VLAN.";
+      }
+    }
+    description
+      "VLAN Type";
+  }
+  typedef vlanAssignType {
+    type enumeration {
+      enum "global" {
+        description
+          "Global VLAN.";
+      }
+      enum "local" {
+        description
+          "Local VLAN.";
+      }
+    }
+    description
+      "Vlan Assign Type";
+  }
+  typedef vlanAdmin {
+    type enumeration {
+      enum "up" {
+        description
+          "Administratively UP.";
+      }
+      enum "down" {
+        description
+          "Administratively DOWN.";
+      }
+    }
+    description
+      "Vlan Admin";
+  }
+  typedef vlanEnableStatus {
+    type enumeration {
+      enum "enable" {
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Vlan Enable Status";
+  }
+  typedef vlanAccessType {
+    type enumeration {
+      enum "access" {
+        description
+          "Access port that accepts packets without VLAN tags.";
+      }
+      enum "trunk" {
+        description
+          "Trunk port that accepts packets with VLAN tags. ";
+      }
+      enum "hybrid" {
+        description
+          "Hybrid port that accepts packets with or without VLAN tags. ";
+      }
+      enum "dot1qtunnel" {
+        description
+          "Dot1q tunnel interface that allows packet with double VLAN tags to pass. ";
+      }
+    }
+    description
+      "Vlan Access Type";
+  }
+  typedef protocolVlanType {
+    type enumeration {
+      enum "at" {
+        description
+          "at.";
+      }
+      enum "ipv4" {
+        description
+          "ipv4.";
+      }
+      enum "ipv6" {
+        description
+          "ipv6.";
+      }
+      enum "ipx_ethernetii" {
+        description
+          "ipx_ethernetii.";
+      }
+      enum "ipx_llc" {
+        description
+          "ipx_llc.";
+      }
+      enum "ipx_raw" {
+        description
+          "ipx_raw.";
+      }
+      enum "ipx_snap" {
+        description
+          "ipx_snap.";
+      }
+      enum "mode" {
+        description
+          "mode.";
+      }
+    }
+    description
+      "Protocol Vlan Type";
+  }
+  typedef encapType {
+    type enumeration {
+      enum "ethernetii" {
+        description
+          "ethernetii.";
+      }
+      enum "llc" {
+        description
+          "llc.";
+      }
+      enum "snap" {
+        description
+          "snap.";
+      }
+    }
+    description
+      "Encapsulation Type";
+  }
+  typedef vlanMuxVlanRole {
+    type enumeration {
+      enum "groupVlan" {
+        description
+          "";
+      }
+      enum "separateVlan" {
+        description
+          "";
+      }
+    }
+    description
+      "VLAN MuxVlan Role";
+  }
+  typedef tagMode {
+    type enumeration {
+      enum "untag" {
+        description
+          "Untag.";
+      }
+      enum "tag" {
+        description
+          "Tag.";
+      }
+    }
+    description
+      "Tag Mode";
+  }
+  typedef instanceType {
+    type enumeration {
+      enum "dynamic" {
+        description
+          "dynamic.";
+      }
+      enum "static" {
+        description
+          "static.";
+      }
+      enum "default" {
+        description
+          "default.";
+      }
+    }
+    description
+      "Instance Type";
+  }
+}

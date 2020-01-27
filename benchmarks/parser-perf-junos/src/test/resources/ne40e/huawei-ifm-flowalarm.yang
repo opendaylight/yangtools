@@ -1,0 +1,44 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifm-flowalarm {
+  belongs-to huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "flow alarm";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  grouping alarm_type {
+    description
+      "";
+    leaf unknownUnicastAlarm {
+      type uint32 {
+        range "1..100";
+      }
+      description
+        "Unknown-unicast alarm threshold, which can be disabled.";
+      ext:allowDelete "true";
+    }
+  }
+}

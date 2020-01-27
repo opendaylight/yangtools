@@ -1,0 +1,1089 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-dhcpv6-relay {
+  belongs-to huawei-dhcpv6 {
+    prefix dhcpv6;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-dhcpv6-relay-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "test.Description FOR submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping dhcpv6Relay_type {
+    description
+      "DHCPv6 Relay";
+    container dhcpv6RelayIfCfgs {
+      description
+        "DHCPv6 relay interface configuration.";
+      list dhcpv6RelayIfCfg {
+        key "ifName";
+        description
+          "DHCPv6 relay interface configuration.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Interface name.";
+        }
+        leaf sourceAddr {
+          type inet:ipv6-address-no-zone;
+          description
+            "Source address.";
+        }
+        leaf linkAddress {
+          type inet:ipv6-address-no-zone;
+          description
+            "Link address.";
+        }
+        leaf strictCheck {
+          type boolean;
+          default "false";
+          description
+            "Strict check on interfaces.";
+        }
+        leaf serverGroupName {
+          type string {
+            length "0..32";
+          }
+          description
+            "DHCPv6 Relay Server Group Name.";
+        }
+        container dhcpv6RelayDestAddrs {
+          description
+            "DHCPv6 relay destination interfaces.";
+          list dhcpv6RelayDestAddr {
+            key "destinationAddress";
+            max-elements  "8";
+            description
+              "DHCPv6 relay destination interface.";
+            leaf destinationAddress {
+              type inet:ipv6-address-no-zone;
+              description
+                "Destination address.";
+            }
+          }
+        }
+        container dhcpv6RelayDestIntfs {
+          description
+            "DHCPv6 relay destination interfaces.";
+          list dhcpv6RelayDestIntf {
+            key "destinationIfName";
+            max-elements  "8";
+            description
+              "DHCPv6 relay destination interface.";
+            leaf destinationIfName {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Destination interface name.";
+            }
+          }
+        }
+        container dhcpv6RelayOptCfg {
+          description
+            "DHCPv6 relay option configuration.";
+          leaf interfaceIdMode {
+            type dhcpv6RelayInterfaceIdOptCfg;
+            mandatory true;
+            description
+              "Interface-Id mode.";
+          }
+          leaf interfaceIdSelfDefineText {
+            when "../interfaceIdMode='self-define'";
+            type string {
+              length "1..255";
+              pattern '([^\t]{0,})';
+            }
+            description
+              "DHCPv6 Interface-Id format defined by users.";
+            ext:allowDelete "true";
+          }
+          leaf isInsertRemoteId {
+            type boolean;
+            default "false";
+            description
+              "Insert the Remote-Id option.";
+          }
+          leaf remoteIdMode {
+            when "../isInsertRemoteId='true'";
+            type dhcpv6RelayRemoteIdOptCfg;
+            must "not(../isInsertRemoteId='true') or (../isInsertRemoteId='true' and (../remoteIdMode='duid' or ../remoteIdMode='self-define') )";
+            description
+              "Remote-Id mode.";
+          }
+          leaf remoteIdSelfDefineText {
+            when "../remoteIdMode='self-define' and ../isInsertRemoteId='true'";
+            type string {
+              length "1..255";
+              pattern '([^\t]{0,})';
+            }
+            description
+              "Insert the Remote-Id option.";
+            ext:allowDelete "true";
+          }
+          leaf isInsertSubscriberId {
+            type boolean;
+            default "false";
+            description
+              "Insert the Subscriber-Id option.";
+          }
+        }
+        container dhcpv6RelayAccess {
+          description
+            "Maximum number of access users on an interface.";
+          leaf accessLimit {
+            type uint32 {
+              range "0..65536";
+            }
+            description
+              "Maximum number of access users on interfaces.";
+            ext:allowDelete "true";
+          }
+          leaf anyAccessLimit {
+            type uint32 {
+              range "0..65536";
+            }
+            description
+              "Maximum number of access users in any VLAN.";
+            ext:allowDelete "true";
+          }
+        }
+        container dhcpv6RelayAcsVlans {
+          config false;
+          description
+            "Maximum number of access users that send VLAN tagged packets.";
+          list dhcpv6RelayAcsVlan {
+            key "accessLimit peVlan ifAnyCeVlan";
+            config false;
+            max-elements  "8";
+            description
+              "Maximum number of access users that send VLAN tagged packets.";
+            leaf accessLimit {
+              type uint32 {
+                range "0..65536";
+              }
+              config false;
+              description
+                "Maximum number of access users.";
+            }
+            leaf peVlan {
+              type uint16;
+              config false;
+              description
+                "PE-VLAN ID in QinQ.";
+            }
+            leaf ifAnyCeVlan {
+              type boolean;
+              config false;
+              description
+                "Permit packets with any inner VLAN IDs.";
+            }
+            leaf vlanBatch {
+              type pub-type:VLAN_RANGE {
+                length "0..4094";
+              }
+              config false;
+              description
+                "VLAN list.";
+            }
+          }
+        }
+      }
+    }
+    container dhcpv6RelayStatistics {
+      config false;
+      description
+        "DHCPv6 relay statistics.";
+      leaf solicitPktsRcvFromClients {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Solicit packets received from clients.";
+      }
+      leaf requestPktsRcvFromClients {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Request packets received from clients.";
+      }
+      leaf confirmPktsRcvFromClients {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Confirm packets received from clients.";
+      }
+      leaf renewPktsRcvFromClients {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Renew packets received from clients.";
+      }
+      leaf rebindPktsRcvFromClients {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Rebind packets received from clients.";
+      }
+      leaf declinePktsRcvFromClients {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Decline packets received from clients.";
+      }
+      leaf releasePktsRcvFromClients {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Release packets received from clients.";
+      }
+      leaf informPktsRcvFromClients {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Information-Request packets received from clients.";
+      }
+      leaf relayFwdPktsRcvFromSvrs {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Relay-Forward packets received from relay agents or servers.";
+      }
+      leaf relayReplyPktsRcvFromSvrs {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Relay-Reply packets received from relay agents or servers.";
+      }
+      leaf advertisePktsSendToClients {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Advertise packets sent to clients.";
+      }
+      leaf replyPktsSendToClients {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Reply packets sent to clients.";
+      }
+      leaf reconfigPktsSendToClients {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Reconfigure packets sent to clients.";
+      }
+      leaf relayFwdPktsSendToSvrs {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Relay-Forward Packets sent to relay agents or servers.";
+      }
+      leaf relayReplyPktsSendToSvrs {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Relay-Reply Packets sent to relay agents or servers.";
+      }
+      leaf badPktsRcv {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Error packets received.";
+      }
+      leaf dropPktsForTableFull {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Packets discarded because the table is full.";
+      }
+      leaf dropPktsForGenError {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Packets discarded due to general errors.";
+      }
+      leaf dropPktsForIpsecAuthFail {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "Packets discarded due to IPsec authentication failures.";
+      }
+    }
+    container dhcpv6RelayPdrouteCfg {
+      description
+        "DHCPv6 PD route.";
+      leaf dhcpv6ExportPdRoute {
+        type boolean;
+        default "false";
+        description
+          "DHCPv6 PD route.";
+      }
+      leaf pdRouteAutoSaveFileName {
+        type string {
+          length "0..64";
+        }
+        description
+          "File Name for Saving PD Route.";
+      }
+    }
+    container dhcpv6RelayUserInfos {
+      config false;
+      description
+        "User information.";
+      list dhcpv6RelayUserInfo {
+        key "index";
+        config false;
+        description
+          "User information.";
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "Index.";
+        }
+        leaf clientDuid {
+          type string {
+            length "1..256";
+          }
+          config false;
+          description
+            "Client DUID.";
+        }
+        leaf iaId {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Identity association identifier.";
+        }
+        leaf iaType {
+          type dhcpv6RelayIaType;
+          config false;
+          description
+            "Identity association type.";
+        }
+        leaf serverDuid {
+          type string {
+            length "1..256";
+          }
+          config false;
+          description
+            "Server DUID.";
+        }
+        leaf serverAddr {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "Server IPv6 address.";
+        }
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "Interface name.";
+        }
+        leaf peVlan {
+          type uint16;
+          default "1";
+          config false;
+          description
+            "PE-VLAN ID.";
+        }
+        leaf cevlan {
+          type uint16;
+          config false;
+          description
+            "CE-VLAN ID.";
+        }
+        leaf vpnName {
+          type pub-type:vrfName {
+            length "1..31";
+          }
+          config false;
+          description
+            "VPN name.";
+        }
+        leaf clientMac {
+          type pub-type:macAddress {
+            length "0..255";
+          }
+          config false;
+          description
+            "Client MAC address.";
+        }
+        leaf rapidCommit {
+          type dhcpv6RelayRapidCommit;
+          config false;
+          description
+            "Rapid Commit option.";
+        }
+        leaf transactionId {
+          type uint32;
+          config false;
+          description
+            "Transaction ID.";
+        }
+        leaf infoTransactionId {
+          type uint32;
+          config false;
+          description
+            "Info transaction ID.";
+        }
+        container iaNas {
+          config false;
+          description
+            "Identity Association for Non-temporary Addresses.";
+          list iaNa {
+            key "ipAddr";
+            config false;
+            description
+              "Identity Association for Non-temporary Addresses.";
+            leaf ipAddr {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "IP address.";
+            }
+            leaf serverDuid {
+              type string {
+                length "1..256";
+              }
+              config false;
+              description
+                "Server DUID.";
+            }
+            leaf serverAddr {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "Server IPv6 address.";
+            }
+            leaf validTime {
+              type string {
+                length "0..30";
+              }
+              config false;
+              description
+                "Valid time (days-hours-minutes).";
+            }
+            leaf lease {
+              type uint32;
+              config false;
+              description
+                "Lease (seconds).";
+            }
+            leaf remainLease {
+              type uint32;
+              config false;
+              description
+                "Remaining lease (seconds).";
+            }
+            leaf status {
+              type dhcpv6RelayTblStatus;
+              config false;
+              description
+                "Status.";
+            }
+          }
+        }
+        container iaPds {
+          config false;
+          description
+            "Identity Association for Prefix Delegation.";
+          list iaPd {
+            key "ipAddr";
+            config false;
+            description
+              "Identity Association for Prefix Delegation.";
+            leaf ipAddr {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "IP address.";
+            }
+            leaf prefix {
+              type uint32;
+              config false;
+              description
+                "Prefix.";
+            }
+            leaf serverDuid {
+              type string {
+                length "1..256";
+              }
+              config false;
+              description
+                "Server DUID.";
+            }
+            leaf serverAddr {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "Server IPv6 address.";
+            }
+            leaf validTime {
+              type string {
+                length "0..30";
+              }
+              config false;
+              description
+                "Valid time (days-hours-minutes).";
+            }
+            leaf lease {
+              type uint32;
+              config false;
+              description
+                "Lease (seconds).";
+            }
+            leaf remainLease {
+              type uint32;
+              config false;
+              description
+                "Remaining lease (seconds).";
+            }
+            leaf status {
+              type dhcpv6RelayTblStatus;
+              config false;
+              description
+                "Status.";
+            }
+          }
+        }
+      }
+    }
+    container dhcpv6RelayClientInfos {
+      config false;
+      description
+        "Client logout information.";
+      list dhcpv6RelayClientInfo {
+        key "index";
+        config false;
+        description
+          "Client logout information.";
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "Index.";
+        }
+        leaf clientDuid {
+          type string {
+            length "1..256";
+          }
+          config false;
+          description
+            "Client DUID.";
+        }
+        leaf iaType {
+          type dhcpv6RelayIaType;
+          config false;
+          description
+            "Identity association type.";
+        }
+        leaf iaId {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Identity association identifier.";
+        }
+        leaf ifName {
+          type pub-type:ifName;
+          config false;
+          description
+            "Interface name.";
+        }
+        leaf peVlan {
+          type uint16 {
+            range "1..4094";
+          }
+          default "1";
+          config false;
+          description
+            "PE-VLAN ID.";
+        }
+        leaf cevlan {
+          type uint16 {
+            range "1..4094";
+          }
+          config false;
+          description
+            "CE-VLAN ID.";
+        }
+        leaf vpnName {
+          type pub-type:vrfName {
+            length "1..31";
+          }
+          config false;
+          description
+            "VPN name.";
+        }
+        leaf clientMac {
+          type pub-type:macAddress {
+            length "0..255";
+          }
+          config false;
+          description
+            "Client MAC address.";
+        }
+        container iaNas {
+          config false;
+          description
+            "Identity Association for Non-temporary Addresses.";
+          list iaNa {
+            key "ipAddr";
+            config false;
+            description
+              "Identity Association for Non-temporary Addresses.";
+            leaf ipAddr {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "IP address.";
+            }
+            leaf releasecause {
+              type dhcpFailCause;
+              config false;
+              description
+                "Release cause.";
+            }
+            leaf releasestatus {
+              type dhcpv6RelayAddrState;
+              config false;
+              description
+                "Release status.";
+            }
+            leaf releasetime {
+              type yang:date-and-time;
+              config false;
+              description
+                "Release time.";
+            }
+          }
+        }
+        container iaPds {
+          config false;
+          description
+            "Identity Association for Prefix Delegation.";
+          list iaPd {
+            key "ipAddr";
+            config false;
+            description
+              "Identity Association for Prefix Delegation.";
+            leaf ipAddr {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "IP address.";
+            }
+            leaf prefix {
+              type uint32;
+              config false;
+              description
+                "IP prefix.";
+            }
+            leaf releasecause {
+              type dhcpFailCause;
+              config false;
+              description
+                "Release cause.";
+            }
+            leaf releasestatus {
+              type dhcpv6RelayAddrState;
+              config false;
+              description
+                "Release status.";
+            }
+            leaf releasetime {
+              type yang:date-and-time;
+              config false;
+              description
+                "Release time.";
+            }
+          }
+        }
+      }
+    }
+    container dhcpv6RelayClientfails {
+      config false;
+      description
+        "Client login failure information.";
+      list dhcpv6RelayClientfail {
+        key "index";
+        config false;
+        description
+          "Client login failure information.";
+        leaf index {
+          type uint32;
+          config false;
+          description
+            "Index.";
+        }
+        leaf clientDuid {
+          type string {
+            length "1..256";
+          }
+          config false;
+          description
+            "Client DUID.";
+        }
+        leaf iaType {
+          type dhcpv6RelayIaType;
+          config false;
+          description
+            "IA type.";
+        }
+        leaf iaId {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "IAID.";
+        }
+        leaf ifName {
+          type pub-type:ifName;
+          config false;
+          description
+            "Interface name.";
+        }
+        leaf peVlan {
+          type uint16 {
+            range "1..4094";
+          }
+          default "1";
+          config false;
+          description
+            "PE-VLAN ID.";
+        }
+        leaf cevlan {
+          type uint16 {
+            range "1..4094";
+          }
+          config false;
+          description
+            "CE-VLAN ID.";
+        }
+        leaf vpnName {
+          type pub-type:vrfName {
+            length "1..31";
+          }
+          config false;
+          description
+            "VPN name.";
+        }
+        leaf clientMac {
+          type pub-type:macAddress {
+            length "0..255";
+          }
+          config false;
+          description
+            "Client MAC address.";
+        }
+        container iaNas {
+          config false;
+          description
+            "Identity Association for Non-temporary Addresses.";
+          list iaNa {
+            key "ipAddr";
+            config false;
+            description
+              "Identity Association for Non-temporary Addresses.";
+            leaf ipAddr {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "IP address.";
+            }
+            leaf failcause {
+              type dhcpFailCause;
+              config false;
+              description
+                "Login failure cause.";
+            }
+            leaf failtime {
+              type yang:date-and-time;
+              config false;
+              description
+                "Login failure time.";
+            }
+          }
+        }
+        container iaPds {
+          config false;
+          description
+            "Identity Association for Prefix Delegation.";
+          list iaPd {
+            key "ipAddr prefix";
+            config false;
+            description
+              "Identity Association for Prefix Delegation.";
+            leaf ipAddr {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "IP address.";
+            }
+            leaf prefix {
+              type uint32;
+              config false;
+              description
+                "IP prefix.";
+            }
+            leaf failcause {
+              type dhcpFailCause;
+              config false;
+              description
+                "Login failure cause.";
+            }
+            leaf failtime {
+              type yang:date-and-time;
+              config false;
+              description
+                "Login failure time.";
+            }
+          }
+        }
+      }
+    }
+    container dhcpv6RelayIfStats {
+      config false;
+      description
+        "DHCPv6 relay interface packet statistics.";
+      list dhcpv6RelayIfStat {
+        key "ifName";
+        config false;
+        description
+          "DHCPv6 relay interface packet statistics.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "DHCPv6 relay interface name.";
+        }
+        leaf solicitPktsRcvFromClients {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Solicit packets received from clients.";
+        }
+        leaf requestPktsRcvFromClients {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Request packets received from clients.";
+        }
+        leaf confirmPktsRcvFromClients {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Confirm packets received from clients.";
+        }
+        leaf renewPktsRcvFromClients {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Renew packets received from clients.";
+        }
+        leaf rebindPktsRcvFromClients {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Rebind packets received from clients.";
+        }
+        leaf declinePktsRcvFromClients {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Decline packets received from clients.";
+        }
+        leaf releasePktsRcvFromClients {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Release packets received from clients.";
+        }
+        leaf informPktsRcvFromClients {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Information-Request packets received from clients.";
+        }
+        leaf relayFwdPktsRcvFromSvrs {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Relay-Forward packets received from relay agents or servers.";
+        }
+        leaf relayReplyPktsRcvFromSvrs {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Relay-Reply packets received from relay agents or servers.";
+        }
+        leaf advertisePktsSendToClients {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Advertise packets sent to clients.";
+        }
+        leaf replyPktsSendToClients {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Reply packets sent to clients.";
+        }
+        leaf reconfigPktsSendToClients {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Reconfigure packets sent to clients.";
+        }
+        leaf relayFwdPktsSendToSvrs {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Relay-Forward packets sent to relay agents or servers.";
+        }
+        leaf relayReplyPktsSendToSvrs {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Relay-Reply packets sent to relay agents or servers.";
+        }
+        leaf badPktsRcv {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Error packets received.";
+        }
+        leaf dropPktsForTableFull {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Packets discarded because the table is full.";
+        }
+        leaf dropPktsForGenError {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Packets discarded due to general errors.";
+        }
+        leaf dropPktsForIpsecAuthFail {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "Packets discarded due to IPsec authentication failures.";
+        }
+      }
+    }
+    container dhcpv6RelaySvrGroups {
+      description
+        "DHCPv6 Relay Server Groups.";
+      list dhcpv6RelaySvrGroup {
+        key "serverGroupName";
+        max-elements  "10";
+        description
+          "DHCPv6 Relay Server Group.";
+        leaf serverGroupName {
+          type string {
+            length "0..32";
+          }
+          description
+            "DHCPv6 Relay Server Group Name.";
+        }
+        container dhcpv6RelayServers {
+          description
+            "DHCPv6 Relay Destination Servers in Server Group.";
+          list dhcpv6RelayServer {
+            key "server";
+            max-elements  "20";
+            description
+              "DHCPv6 Relay Destination Server in Server Group.";
+            leaf server {
+              type inet:ipv6-address-no-zone;
+              description
+                "DHCPv6 Relay Destination Server Address in Server Group.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,162 @@
+submodule huawei-y1731-dtools-type {
+  belongs-to huawei-y1731 {
+    prefix y1731;
+  }
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "y1731_dtools_type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference "Huawei private.";
+  }
+
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference "Huawei private.";
+  }
+
+  typedef DtoolsTestStatusType {
+    type enumeration {
+      enum "testing" {
+        description
+          "The test is testing.";
+      }
+      enum "finished" {
+        description
+          "The test is complete.";
+      }
+      enum "stopped" {
+        description
+          "The test is stopped.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef Dtools1agErrorType {
+    type enumeration {
+      enum "success" {
+        description
+          "The test is successful.";
+      }
+      enum "timeout" {
+        description
+          "The test times out.";
+      }
+      enum "failed" {
+        description
+          "The test failed.";
+      }
+      enum "localmac" {
+        description
+          "The destination address cannot be a local address.";
+      }
+      enum "nomacforrmep" {
+        description
+          "No MAC address is specified for an RMEP.";
+      }
+      enum "nomdorma" {
+        description
+          "No specified MD or MA exists.";
+      }
+      enum "macoutiferr" {
+        description
+          "Failed to find a matching MAC forwarding entry.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef DtoolsLbDetailResultType {
+    type enumeration {
+      enum "success" {
+        description
+          "The test packets are successfully received.";
+      }
+      enum "timeout" {
+        description
+          "The receiving of test packets times out.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef DtoolsLtIngressActionType {
+    type enumeration {
+      enum "IngOK" {
+        description
+          "Ingress port transmits packet successfully.";
+      }
+      enum "IngDown" {
+        description
+          "Ingress port failed to transmit packets.";
+      }
+      enum "Invalid" {
+        description
+          "No action.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef DtoolsLtEgressActionType {
+    type enumeration {
+      enum "EgrOK" {
+        description
+          "Egress port transmits packet successfully.";
+      }
+      enum "EgrDown" {
+        description
+          "Egress port failed to transmit packets.";
+      }
+      enum "Invalid" {
+        description
+          "No action.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef DtoolsRelayActionType {
+    type enumeration {
+      enum "RlyFDB" {
+        description
+          "The relay equipment transmits LT packet.";
+      }
+      enum "RlyHit" {
+        description
+          "The relay equipment is hit.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef DtoolsLtMepType {
+    type enumeration {
+      enum "NoMep" {
+        description
+          "The relay point is MEP.";
+      }
+      enum "IsMep" {
+        description
+          "The relay point is not MEP.";
+      }
+    }
+    description
+      "";
+  }
+}

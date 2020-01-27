@@ -1,0 +1,526 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ethernet-type {
+  belongs-to huawei-ethernet {
+    prefix ethernet;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description FOR submodule";
+  revision 2017-03-23 {
+	description
+	"Functions supported by the schema are added to the YANG file.";
+	reference
+	"Huawei private.";
+	}
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference    "Huawei private.";
+  }
+  typedef ethernetMacLearnPriority {
+    type uint8 {
+      range "0..3";
+    }
+    description
+      "Ethernet Mac Learn Priority";
+  }
+  typedef ethernetIsolateGroupId {
+    type uint8 {
+      range "0..32";
+    }
+    description
+      "Ethernet Isolate Group Id";
+  }
+  typedef ethernetportPriority {
+    type uint8 {
+      range "0..7";
+    }
+    description
+      "Ethernet Port Priority";
+  }
+  typedef ethernetEnableStatus {
+    type enumeration {
+      enum "enable" {
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Ethernet Enable Status";
+  }
+  typedef ethernetVlanId {
+    type uint16 {
+      range "1..4094";
+    }
+    description
+      "Ethernet Vlan Id";
+  }
+  typedef ethernetLinkType {
+    type enumeration {
+      enum "access" {
+        description
+          "Access port that accepts packets without VLAN tags.";
+      }
+      enum "trunk" {
+        description
+          "Trunk port that accepts packets with VLAN tags.";
+      }
+      enum "hybrid" {
+        description
+          "Hybrid port that accepts packets with or without VLAN tags.";
+      }
+      enum "dot1qtunnel" {
+        description
+          "Dot1q tunnel port that accepts packets with double tags.";
+      }
+    }
+    description
+      "Ethernet Link Type";
+  }
+  typedef ethernetMacSecurityType {
+    type enumeration {
+      enum "common" {
+        description
+          "Common MAC.";
+      }
+      enum "security" {
+        description
+          "Security MAC.";
+      }
+      enum "sticky" {
+        description
+          "Sticky MAC.";
+      }
+    }
+    description
+      "Ethernet Mac Security Type";
+  }
+  typedef ethernetMacSecurityActionType {
+    type enumeration {
+      enum "protect" {
+        description
+          "Configure the security action as protect.";
+      }
+      enum "restrict" {
+        description
+          "Configure the security action as restrict.";
+      }
+      enum "shutdown" {
+        description
+          "Configure the security action as shutdown.";
+      }
+    }
+    description
+      "Ethernet Mac Security Action Type";
+  }
+  typedef ethernetIsolateMode {
+    type enumeration {
+      enum "l2" {
+        description
+          "Acess";
+      }
+      enum "all" {
+        description
+          "Trunk";
+      }
+    }
+    description
+      "Ethernet Isolate Mode";
+  }
+  typedef flowType {
+    type enumeration {
+      enum "VlanType" {
+        description
+          "VLAN sub-interface.";
+      }
+      enum "Dot1qTerm" {
+        description
+          "Dot1q VLAN tag termination sub-interface.";
+      }
+      enum "QinQTerm" {
+        description
+          "QinQ VLAN tag termination sub-interface.";
+      }
+      enum "Stacking" {
+        description
+          "QinQ stacking sub-interface.";
+      }
+      enum "Mapping1to1" {
+        description
+          "QinQ mapping 1 to 1 sub-interface.";
+      }
+      enum "VlanTypePolicy" {
+        description
+          "VLAN policy sub-interface.";
+      }
+      enum "StackingPolicy" {
+        description
+          "Stacking policy sub-interface.";
+      }
+      enum "Dot1qTermPolicy" {
+        description
+          "Dot1q termination policy sub-interface.";
+      }
+      enum "UntaggedPolicy" {
+        description
+          "Untagged policy sub-interface.";
+      }
+      enum "QinQLink" {
+        description
+          "Indicates that the type of the sub-interface is QinQ Link";
+      }
+      enum "EthChannel" {
+        description
+          "Indicates that the type of the sub-interface is ethernet channel";
+      }
+    }
+    description
+      "Flow Type";
+  }
+  typedef encapType {
+    type enumeration {
+      enum "Null" {
+        description
+          "Null type.";
+      }
+      enum "8021q" {
+        description
+          "802.1q type.";
+      }
+      enum "QinQ" {
+        description
+          "QinQ type.";
+      }
+      enum "8021Q-QinQ" {
+        description
+          "8021QQINQ type.";
+      }
+    }
+    description
+      "Encapsulation Type";
+  }
+  typedef remarkType {
+    type enumeration {
+      enum "TrustPe8021p" {
+        description
+          "Trust the 802.1p in the outer VLAN tag.";
+      }
+      enum "TrustCe8021p" {
+        description
+          "Trust the 802.1p in the inner VLAN tag.";
+      }
+      enum "Precedence" {
+        description
+          "The remark type is the user-defined precedence.";
+      }
+    }
+    description
+      "Remark Type";
+  }
+  typedef tagType {
+    type enumeration {
+      enum "None" {
+        description
+          "None.";
+      }
+      enum "LocalSwitch" {
+        description
+          "Enable local switching on a sub-interface for QinQ VLAN tag termination.";
+      }
+      enum "RtProtocol" {
+        description
+          "Enable the termination sub-interface to support routing protocols.";
+      }
+      enum "Dynamic" {
+        description
+          "Dynamic QinQ.";
+      }
+    }
+    description
+      "Tag Type";
+  }
+  typedef suppressType {
+    type enumeration {
+      enum "broadcast" {
+        description
+          "Broadcast.";
+      }
+      enum "multicast" {
+        description
+          "Multicast.";
+      }
+      enum "unknown" {
+        description
+          "Unknown unicast.";
+      }
+    }
+    description
+      "Suppress Type";
+  }
+  typedef groupModeType {
+    type enumeration {
+      enum "single" {
+        description
+          "Users of a VLAN group are considered one user.";
+      }
+      enum "multiple" {
+        description
+          "Users of a VLAN group are considered as multiple users.";
+      }
+    }
+    description
+      "Group Mode Type";
+  }
+  typedef symmetryType {
+    type enumeration {
+      enum "Symmetry" {
+        description
+          "Symmetry.";
+      }
+      enum "Asymmetry" {
+        description
+          "Asymmetry.";
+      }
+      enum "Transparent" {
+        description
+          "Transparent.";
+      }
+      enum "Invalid" {
+        description
+          "Invalid value of the symmetry mode.";
+      }
+    }
+    description
+      "Symmetry Type";
+  }
+  typedef userModeEnable {
+    type enumeration {
+      enum "Enable" {
+        description
+          "Enable the user mode.";
+      }
+      enum "Disable" {
+        description
+          "Disable the user mode.";
+      }
+      enum "Invalid" {
+        description
+          "Invalid value of the user mode.";
+      }
+    }
+    description
+      "User Mode Enable";
+  }
+  typedef directionType {
+    type enumeration {
+      enum "inbound" {
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "Direction Type";
+  }
+  typedef l2TransType {
+    type enumeration {
+      enum "Stacking" {
+        description
+          "Stacking.";
+      }
+      enum "Mapping" {
+        description
+          "Mapping.";
+      }
+    }
+    description
+      "L2 Trans Type";
+  }
+  typedef policyType {
+    type enumeration {
+      enum "Dscp" {
+        description
+          "DSCP type.";
+      }
+      enum "8021p" {
+        description
+          "802.1p type.";
+      }
+      enum "PPPoE" {
+        description
+          "Ethernet encapsulation type PPPoE.";
+      }
+      enum "Default" {
+        description
+          "Default type.";
+      }
+    }
+    description
+      "Policy Type";
+  }
+  typedef l2MapType {
+    type enumeration {
+      enum "Mapping1to1" {
+        description
+          "1 to 1 mapping.";
+      }
+      enum "Mapping2to1" {
+        description
+          "2 to 1 mapping.";
+      }
+    }
+    description
+      "L2 Map Type";
+  }
+  typedef subifTagMode {
+    type enumeration {
+      enum "cTagMode" {
+        description
+          "Customer mode.";
+      }
+      enum "sTagMode" {
+        description
+          "Service mode.";
+      }
+    }
+    description
+      "Sub Interface Tag Mode";
+  }
+  typedef l2StackType {
+    type enumeration {
+      enum "Stacking" {
+        description
+          "Stacking.";
+      }
+    }
+    description
+      "L2 Stack Type";
+  }
+  typedef fpMatchType {
+    type enumeration {
+      enum "untag" {
+        description
+          "Untagged encapsulation.";
+      }
+      enum "dot1q" {
+        description
+          "Dot1q VLAN encapsulation.";
+      }
+      enum "qinq" {
+        description
+          "QinQ encapsulation.";
+      }
+      enum "default" {
+        description
+          "Default encapsulation.";
+      }
+      enum "none" {
+        description
+          "Do not match any encapsulation.";
+      }
+    }
+    description
+      "FP Match Type";
+  }
+  typedef fpActionType {
+    type enumeration {
+      enum "popOuter" {
+        description
+          "Pop the outer VLAN tag.";
+      }
+      enum "push1Layer" {
+        description
+          "Push one VLAN tag.";
+      }
+      enum "swap" {
+        description
+          "Swap the inner and outer VLAN tags.";
+      }
+      enum "map_offset_increase" {
+        description
+          "Offset increasing.";
+      }
+      enum "map_1_to_1" {
+        description
+          "Map one VLAN tag to a specified VLAN tag.";
+      }
+      enum "map_2_to_1" {
+        description
+          "Map two VLAN tags to a specified VLAN tag.";
+      }
+      enum "map_1_to_2" {
+        description
+          "Map one VLAN tag to two VLAN tags.";
+      }
+      enum "map_2_to_2" {
+        description
+          "Map two VLAN tags to two VLAN tags.";
+      }
+      enum "popDouble" {
+        description
+          "Pop Double VLAN tags.";
+      }
+      enum "push2Layer" {
+        description
+          "Push Two VLAN tags.";
+      }
+      enum "map_offset_decrease" {
+        description
+          "Offset decreasing.";
+      }
+      enum "noaction" {
+        description
+          "Do not modify encapsulation.";
+      }
+    }
+    description
+      "FP Action Type";
+  }
+  typedef ifFilterState {
+    type enumeration {
+      enum "enable" {
+        description
+          "Enable strict filter.";
+      }
+      enum "disable" {
+        description
+          "Disable strict filter.";
+      }
+      enum "invalid" {
+        description
+          "Strict filter is valid.";
+      }
+    }
+    description
+      "Interface Filter State";
+  }
+  typedef outerVlanOnlyType {
+    type enumeration {
+      enum "enable" {
+        description
+          "Not Modify One Tag Ethernet Type.";
+      }
+      enum "disable" {
+        description
+          "Modify One Tag Ethernet Type.";
+      }
+    }
+    description
+      "Enable Disable Protocol outervlanonly command";
+  }
+}

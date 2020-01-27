@@ -1,0 +1,1728 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-qos-type {
+  belongs-to huawei-qos {
+    prefix qos;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "QOS_type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef qosfourfqServiceClass {
+    type enumeration {
+      enum "cos0" {
+        description
+          "cos0.";
+      }
+      enum "cos1" {
+        description
+          "cos1.";
+      }
+      enum "cos2" {
+        description
+          "cos2.";
+      }
+      enum "cos3" {
+        description
+          "cos3.";
+      }
+    }
+    description
+      "cos0/cos1/cos2/cos3";
+  }
+  typedef qosServiceClass {
+    type enumeration {
+      enum "be" {
+        description
+          "be service-class.";
+      }
+      enum "af1" {
+        description
+          "af1 service-class.";
+      }
+      enum "af2" {
+        description
+          "af2 service-class.";
+      }
+      enum "af3" {
+        description
+          "af3 service-class.";
+      }
+      enum "af4" {
+        description
+          "af4 service-class.";
+      }
+      enum "ef" {
+        description
+          "ef service-class.";
+      }
+      enum "cs6" {
+        description
+          "cs6 service-class.";
+      }
+      enum "cs7" {
+        description
+          "cs7 service-class.";
+      }
+      enum "notConfig" {
+        description
+          "notConfig service-class.";
+      }
+    }
+    description
+      "be/af1/af2/af3/af4/ef/cs6/cs7/notConfig";
+  }
+  typedef qoscosval {
+    type enumeration {
+      enum "cos0" {
+        description
+          "Cos0 service-class.";
+      }
+      enum "cos1" {
+        description
+          "Cos1 service-class.";
+      }
+      enum "cos2" {
+        description
+          "Cos2 service-class.";
+      }
+      enum "cos3" {
+        description
+          "Cos3 service-class.";
+      }
+    }
+    description
+      "cos0/cos1/cos2/cos3/notConfig";
+  }
+  typedef HqosServiceClass {
+    type enumeration {
+      enum "be" {
+        description
+          "be service-class.";
+      }
+      enum "af1" {
+        description
+          "af1 service-class.";
+      }
+      enum "af2" {
+        description
+          "af2 service-class.";
+      }
+      enum "af3" {
+        description
+          "af3 service-class.";
+      }
+      enum "af4" {
+        description
+          "af4 service-class.";
+      }
+      enum "ef" {
+        description
+          "ef service-class.";
+      }
+      enum "cs6" {
+        description
+          "cs6 service-class.";
+      }
+      enum "cs7" {
+        description
+          "cs7 service-class.";
+      }
+      enum "total" {
+        description
+          "total.";
+      }
+    }
+    description
+      "be/af1/af2/af3/af4/ef/cs6/cs7/total";
+  }
+  typedef qosColor {
+    type enumeration {
+      enum "green" {
+        description
+          "Green.";
+      }
+      enum "yellow" {
+        description
+          "Yellow.";
+      }
+      enum "red" {
+        description
+          "Red.";
+      }
+    }
+    description
+      "green/yellow/red";
+  }
+  typedef qosBaType {
+    type enumeration {
+      enum "8021p" {
+        description
+          "802.1p priority.";
+      }
+      enum "ipDscp" {
+        description
+          "DSCP priority.";
+      }
+      enum "mplsExp" {
+        description
+          "MPLS-EXP priority.";
+      }
+      enum "userPriority" {
+        description
+          "User priority.";
+      }
+    }
+    description
+      "8021p/ipDscp/mplsExp/userPriority";
+  }
+  typedef qosSpeedType {
+    type enumeration {
+      enum "bothSpeed" {
+        description
+          "Default.";
+      }
+      enum "lowSpeed" {
+        description
+          "Low speed.";
+      }
+      enum "highSpeed" {
+        description
+          "High speed.";
+      }
+    }
+    description
+      "bothSpeed/lowSpeed/highSpeed";
+  }
+  typedef qosDirectionType {
+    type enumeration {
+      enum "inbound" {
+        description
+          "inbound.";
+      }
+      enum "outbound" {
+        description
+          "outbound.";
+      }
+    }
+    description
+      "inbound/outbound";
+  }
+  typedef qosDomLnkAdType {
+    type enumeration {
+      enum "frame" {
+        description
+          "frame";
+      }
+      enum "cell" {
+        description
+          "cell";
+      }
+    }
+    description
+      "frame/cell";
+  }
+  typedef qosDirectionTypeOut {
+    type enumeration {
+      enum "outbound" {
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "outbound";
+  }
+  typedef qosPrecisionType {
+    type enumeration {
+      enum "up" {
+        description
+          "up.";
+      }
+      enum "down" {
+        description
+          "down.";
+      }
+    }
+    description
+      "up/down";
+  }
+  typedef qosVxlanDirectionType {
+    type enumeration {
+      enum "outbound" {
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "outbound";
+  }
+  typedef qosMatchMode {
+    type enumeration {
+      enum "mask" {
+        description
+          "Mask Mode.";
+      }
+    }
+    description
+      "mask";
+  }
+  typedef qosMcMatchMode {
+    type enumeration {
+      enum "enable" {
+        description
+          "Enable.";
+      }
+    }
+    description
+      "enable";
+  }
+  typedef qosPolicyMatchMpls {
+    type enumeration {
+      enum "enable" {
+        description
+          "";
+      }
+    }
+    description
+      "enable";
+  }
+  typedef qosPolicyMatchMplsL2 {
+    type enumeration {
+      enum "enable" {
+        description
+          "";
+      }
+    }
+    description
+      "enable";
+  }
+  typedef qosQppbLocalidBehaviorState {
+    type enumeration {
+      enum "Active" {
+        description
+          "All active.";
+      }
+      enum "Active(P)" {
+        description
+          "Part active. ";
+      }
+      enum "Inactive" {
+        description
+          "Inactive.";
+      }
+    }
+    description
+      "QPPB behavior state";
+  }
+  typedef qosPolicyApplyLayer {
+    type enumeration {
+      enum "none" {
+        description
+          "Default classification.";
+      }
+      enum "link" {
+        description
+          "Classification based on Layer 2 information.";
+      }
+      enum "mpls" {
+        description
+          "Classification based on MPLS information.";
+      }
+      enum "all" {
+        description
+          "Classification based on ALL information.";
+      }
+    }
+    description
+      "none/link/mpls/all";
+  }
+  typedef qosSwitchFlag {
+    type enumeration {
+      enum "disable" {
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        description
+          "Enable.";
+      }
+    }
+    description
+      "disable/enable";
+  }
+  typedef qosIfQppbMode {
+    type enumeration {
+      enum "ipPrecedence" {
+        description
+          "IP precedence.";
+      }
+      enum "inbound" {
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        description
+          "Outbound.";
+      }
+    }
+    description
+      "QPPB mode";
+  }
+  typedef qosIfQppbValue {
+    type enumeration {
+      enum "source" {
+        description
+          "Source address.";
+      }
+      enum "destination" {
+        description
+          "Destination address.";
+      }
+    }
+    description
+      "QPPB value";
+  }
+  typedef qosDsName {
+    type string {
+      length "1..31";
+    }
+    description
+      "now qosDsName is like string";
+  }
+  typedef qosPolicyName {
+    type string {
+      length "1..31";
+    }
+    description
+      "now qosPolicyName is like string";
+  }
+  typedef qosQueuePriority {
+    type enumeration {
+      enum "pq" {
+        description
+          "Priority Queue.";
+      }
+      enum "wfq" {
+        description
+          "Weighted Fair Queuing.";
+      }
+      enum "lpq" {
+        description
+          "Low priority queuing.";
+      }
+    }
+    description
+      "pq/wfq/lpq";
+  }
+  typedef qosCarGreenActionType {
+    type enumeration {
+      enum "pass" {
+        description
+          "Pass.";
+      }
+    }
+    description
+      "pass";
+  }
+  typedef qosCarLimitType {
+    type enumeration {
+      enum "bps" {
+        description
+          "KBit per second.";
+      }
+      enum "pps" {
+        description
+          "Packets per second.";
+      }
+    }
+    description
+      "bps/pps";
+  }
+  typedef qosCarRedActionType {
+    type enumeration {
+      enum "pass" {
+        description
+          "Pass.";
+      }
+      enum "discard" {
+        description
+          "Discard.";
+      }
+    }
+    description
+      "pass/discard";
+  }
+  typedef qosSlotPath {
+    type string {
+      length "1..127";
+      pattern '^(c[cl]c\d+/)?\d+$';
+    }
+    description
+      "slotPath is like 3, clc1/3 or ccc1/3";
+  }
+  typedef qosPacketType {
+    type enumeration {
+      enum "broadcast-suppression" {
+        description
+          "Broadcast.";
+      }
+      enum "unknown-unicast-suppression" {
+        description
+          "Unknown-unicast.";
+      }
+      enum "multicast-suppression" {
+        description
+          "Multicast.";
+      }
+    }
+    description
+      "broadcast-suppression/unknown-unicast-suppression/multicast-suppression";
+  }
+  typedef qosTrustType {
+    type enumeration {
+      enum "8021p" {
+        description
+          "Trust 8021p.";
+      }
+      enum "ds" {
+        description
+          "Trust DS domain.";
+      }
+      enum "inner-8021p" {
+        description
+          "Trust inner-8021p.";
+      }
+      enum "outer-8021p" {
+        description
+          "trust outer-8021p.";
+      }
+    }
+    description
+      "8021p/ds/inner-8021p/outer-8021p";
+  }
+  typedef qosvxlanTrustType {
+    type enumeration {
+      enum "8021p" {
+        description
+          "Trust 8021p.";
+      }
+      enum "ds" {
+        description
+          "Trust DS domain.";
+      }
+    }
+    description
+      "8021p/ds";
+  }
+  typedef qosExpType {
+    type enumeration {
+      enum "vll" {
+        description
+          "Vll.";
+      }
+    }
+    description
+      "vll";
+  }
+  typedef qosCarToSQType {
+    type enumeration {
+      enum "disable" {
+        description
+          "disable.";
+      }
+    }
+    description
+      "disable";
+  }
+  typedef qosVOQEnableType {
+    type enumeration {
+      enum "enable" {
+        description
+          "Enable.";
+      }
+    }
+    description
+      "enable";
+  }
+  typedef qosVoqFlagType {
+    type enumeration {
+      enum "multicast" {
+        description
+          "multicast.";
+      }
+      enum "unicast" {
+        description
+          "unicast.";
+      }
+    }
+    description
+      "multicast/unicast";
+  }
+  typedef qosCosType {
+    type enumeration {
+      enum "one" {
+        description
+          "be.";
+      }
+      enum "two" {
+        description
+          "af1 af2.";
+      }
+      enum "three" {
+        description
+          "af3  af4.";
+      }
+      enum "four" {
+        description
+          "ef cs6 cs7.";
+      }
+    }
+    description
+      "one/two/three/four";
+  }
+  typedef qosPriorityLevelType {
+    type enumeration {
+      enum "low" {
+        description
+          "Low.";
+      }
+      enum "high" {
+        description
+          "High.";
+      }
+    }
+    description
+      "low/high";
+  }
+  typedef qosPhbOperateType {
+    type enumeration {
+      enum "enable" {
+        description
+          "PHB enable.";
+      }
+      enum "disable" {
+        description
+          "PHB disable.";
+      }
+    }
+    description
+      "enable/disable";
+  }
+  typedef qosColorAwareType {
+    type enumeration {
+      enum "true" {
+        description
+          "Enable.";
+      }
+      enum "false" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "true/false";
+  }
+  typedef qosPortShapingType {
+    type enumeration {
+      enum "256K" {
+        description
+          "256K.";
+      }
+      enum "512K" {
+        description
+          "512K.";
+      }
+      enum "other" {
+        description
+          "Other(Mbit/s).";
+      }
+    }
+    description
+      "256K/512K/other";
+  }
+  typedef qosIdentifyType {
+    type enumeration {
+      enum "none" {
+        description
+          "None.";
+      }
+      enum "vlan" {
+        description
+          "Vlan.";
+      }
+      enum "pe-vid" {
+        description
+          "Pe Vlan Id.";
+      }
+      enum "ce-vid" {
+        description
+          "Ce Vlan Id.";
+      }
+      enum "pe-ce-vid" {
+        description
+          "Pe-Ce Vlan Id.";
+      }
+      enum "vid" {
+        description
+          "Vid.";
+      }
+      enum "evc-ce-vid" {
+        description
+          "Ce-vid.";
+      }
+      enum "vid-ce-vid" {
+        description
+          "Vid-ce-vid.";
+      }
+    }
+    description
+      "none/vlan/pe-vid/ce-vid/pe-ce-vid/vid/evc-ce-vid/vid-ce-vid";
+  }
+  typedef qosLsPortQueueOperateType {
+    type enumeration {
+      enum "new-configure" {
+        description
+          "NEW CONFIG";
+      }
+      enum "reset-shaping" {
+        description
+          "RESET CONFIG";
+      }
+      enum "reset-queuelimit" {
+        description
+          "RESET QUEUELIMIT";
+      }
+    }
+    description
+      "new-configure/reset-shaping/reset-queuelimit";
+  }
+  typedef qosLsPortQueueScheuleModeType {
+    type enumeration {
+      enum "pq" {
+        description
+          "PQ";
+      }
+      enum "wfq" {
+        description
+          "WFQ";
+      }
+    }
+    description
+      "pq/wfq";
+  }
+  typedef qosLsPortQueueCirModeType {
+    type enumeration {
+      enum "cir-value" {
+        description
+          "CIR VALUE";
+      }
+      enum "cir-percent" {
+        description
+          "CIR Percent";
+      }
+      enum "not-config" {
+        description
+          "NOT CONFIG";
+      }
+    }
+    description
+      "cir-value/cir-percent/not-config";
+  }
+  typedef qosLsPortQueuePirModeType {
+    type enumeration {
+      enum "pir-value" {
+        description
+          "PIR VALUE";
+      }
+      enum "pir-percent" {
+        description
+          "PIR PERCENT";
+      }
+      enum "not-config" {
+        description
+          "NOT CONFIG";
+      }
+    }
+    description
+      "pir-value/pir-percent/not-config";
+  }
+  typedef l2vpnPipeMode {
+    type enumeration {
+      enum "pipe" {
+        description
+          "Specify the L2VPN pipe mode as pipe.";
+      }
+      enum "shortPipe" {
+        description
+          "Specify the L2VPN pipe mode as short pipe.";
+      }
+      enum "uniform" {
+        description
+          "Specify the L2VPN pipe mode as uniform.";
+      }
+    }
+    description
+      "pipe/shortPipe/uniform";
+  }
+  typedef l2vpnDsName {
+    type string {
+      length "1..8";
+    }
+    description
+      "now qosDsName is like string";
+  }
+  typedef l2vpnServiceClass {
+    type enumeration {
+      enum "be" {
+        description
+          "Specify the L2VPN CoS as BE.";
+      }
+      enum "af1" {
+        description
+          "Specify the L2VPN CoS as AF1.";
+      }
+      enum "af2" {
+        description
+          "Specify the L2VPN CoS as AF2.";
+      }
+      enum "af3" {
+        description
+          "Specify the L2VPN CoS as AF3.";
+      }
+      enum "af4" {
+        description
+          "Specify the L2VPN CoS as AF4.";
+      }
+      enum "ef" {
+        description
+          "Specify the L2VPN CoS as EF.";
+      }
+      enum "cs6" {
+        description
+          "Specify the L2VPN CoS as CS6.";
+      }
+      enum "cs7" {
+        description
+          "Specify the L2VPN CoS as CS7.";
+      }
+    }
+    description
+      "be/af1/af2/af3/af4/ef/cs6/cs7";
+  }
+  typedef l2vpnColor {
+    type enumeration {
+      enum "green" {
+        description
+          "Specify the packet color as green.";
+      }
+      enum "yellow" {
+        description
+          "Specify the packet color as yellow.";
+      }
+      enum "red" {
+        description
+          "Specify the packet color as red.";
+      }
+    }
+    description
+      "green/yellow/red";
+  }
+  typedef l2vpnTrustType {
+    type enumeration {
+      enum "outpri" {
+        description
+          " .";
+      }
+      enum "inpri" {
+        description
+          "Specify the trustType as inner-vlan-8021p.";
+      }
+      enum "ipdscp" {
+        description
+          "Specify the trustType as ip-dscp.";
+      }
+    }
+    description
+      "outpri/inpri/ipdscp";
+  }
+  typedef qosCosValue {
+    type enumeration {
+      enum "0" {
+        description
+          "Value of cos is 0.";
+      }
+      enum "1" {
+        description
+          "Value of cos is 1.";
+      }
+      enum "2" {
+        description
+          "Value of cos is 2.";
+      }
+      enum "3" {
+        description
+          "Value of cos is 3.";
+      }
+      enum "4" {
+        description
+          "Value of cos is 4.";
+      }
+    }
+    description
+      "0/1/2/3/4";
+  }
+  typedef qosConvergentPrecedence {
+    type enumeration {
+      enum "high" {
+        description
+          "High.";
+      }
+    }
+    description
+      "high";
+  }
+  typedef qosPackEnableType {
+    type enumeration {
+      enum "enable" {
+        description
+          "Enable.";
+      }
+      enum "disable" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "enable/disable";
+  }
+  typedef qosScheModeType {
+    type enumeration {
+      enum "mode2" {
+        description
+          "Mode 2.";
+      }
+      enum "mode3" {
+        description
+          "Mode 3.";
+      }
+    }
+    description
+      "mode2/mode3";
+  }
+  typedef qosMapType {
+    type enumeration {
+      enum "none" {
+        description
+          "notConfig maptype.";
+      }
+      enum "inner-8021p" {
+        description
+          "Inner 802.1p Priority.";
+      }
+      enum "outer-8021p" {
+        description
+          "Outer 802.1p Priority.";
+      }
+      enum "dscp" {
+        description
+          "Dscp Type.";
+      }
+      enum "mpls-exp" {
+        description
+          "Mpls-eXP Type.";
+      }
+    }
+    description
+      "none/inner-8021p/outer-8021p/dscp/mpls-exp";
+  }
+  typedef qosDirectType {
+    type enumeration {
+      enum "inbound" {
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        description
+          "Outbound.";
+      }
+      enum "in-outbound" {
+        description
+          "notConfig.";
+      }
+    }
+    description
+      "inbound/outbound/in-outbound";
+  }
+  typedef qosAbilityType {
+    type enumeration {
+      enum "S" {
+        description
+          "S.";
+      }
+      enum "N" {
+        description
+          "N.";
+      }
+      enum "U" {
+        description
+          "U.";
+      }
+      enum "M" {
+        description
+          "M.";
+      }
+      enum "E" {
+        description
+          "E.";
+      }
+    }
+    description
+      "S/N/U/M/E";
+  }
+  typedef qosIdentifierType {
+    type enumeration {
+      enum "no" {
+        description
+          "notConfig.";
+      }
+      enum "none" {
+        description
+          "notConfig Vlan.";
+      }
+      enum "vid" {
+        description
+          "Vid.";
+      }
+      enum "ce-vid" {
+        description
+          "Ce-vid.";
+      }
+      enum "vid-ce-vid" {
+        description
+          "Vid-ce-vid.";
+      }
+    }
+    description
+      "no/none/vid/ce-vid/vid-ce-vid";
+  }
+  typedef qosIfGqIdentifier {
+    type enumeration {
+      enum "none" {
+        description
+          "notConfig Vlan.";
+      }
+    }
+    description
+      "notConfig Vlan.";
+  }
+  typedef qosfilterIPFamily {
+    type enumeration {
+      enum "ipv4" {
+        description
+          "IPv4.";
+      }
+      enum "ipv6" {
+        description
+          "IPv6.";
+      }
+      enum "ipv4ipv6" {
+        description
+          "IPv4IPv6.";
+      }
+    }
+    description
+      "ipv4/ipv6/ipv4ipv6";
+  }
+  typedef qosBEType {
+    type enumeration {
+      enum "true" {
+        description
+          "Enable.";
+      }
+      enum "false" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "true/false";
+  }
+  typedef qosAF1Type {
+    type enumeration {
+      enum "true" {
+        description
+          "Enable.";
+      }
+      enum "false" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "true/false";
+  }
+  typedef qosAF2Type {
+    type enumeration {
+      enum "true" {
+        description
+          "Enable.";
+      }
+      enum "false" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "true/false";
+  }
+  typedef qosAF3Type {
+    type enumeration {
+      enum "true" {
+        description
+          "Enable.";
+      }
+      enum "false" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "true/false";
+  }
+  typedef qosAF4Type {
+    type enumeration {
+      enum "true" {
+        description
+          "Enable.";
+      }
+      enum "false" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "true/false";
+  }
+  typedef qosEFType {
+    type enumeration {
+      enum "true" {
+        description
+          "Enable.";
+      }
+      enum "false" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "true/false";
+  }
+  typedef qosCS6Type {
+    type enumeration {
+      enum "true" {
+        description
+          "Enable.";
+      }
+      enum "false" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "true/false";
+  }
+  typedef qosCS7Type {
+    type enumeration {
+      enum "true" {
+        description
+          "Enable.";
+      }
+      enum "false" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "true/false";
+  }
+  typedef qosFQPirType {
+    type enumeration {
+      enum "off" {
+        description
+          "Off.";
+      }
+    }
+    description
+      "off";
+  }
+  typedef qosTimeRangeType {
+    type enumeration {
+      enum "nottimerange" {
+        description
+          "Not Time Range.";
+      }
+      enum "istimerange" {
+        description
+          "Time Range.";
+      }
+    }
+    description
+      "nottimerange/istimerange";
+  }
+  typedef qosTimeRangeName {
+    type string {
+      length "1..32";
+      pattern '(^[a-zA-Z]([^\s]*$))';
+    }
+    description
+      "now qosTimeRangeName is like string";
+  }
+  typedef qosDiscardType {
+    type enumeration {
+      enum "dropPkts" {
+        description
+          "Discard Packets";
+      }
+      enum "dropBytes" {
+        description
+          "Discard Bytes";
+      }
+      enum "dropPktsRatio" {
+        description
+          "Discard Ratio";
+      }
+    }
+    description
+      "dropPkts/dropBytes/dropPktsRatio";
+  }
+  typedef qosMulPriorityType {
+    type enumeration {
+      enum "both" {
+        description
+          "Both.";
+      }
+      enum "hp" {
+        description
+          "Hp.";
+      }
+      enum "lp" {
+        description
+          "Lp.";
+      }
+    }
+    description
+      "both/hp/lp";
+  }
+  typedef qosChannelAlrmType {
+    type enumeration {
+      enum "bandwidth" {
+        description
+          "Bandwidth.";
+      }
+      enum "quantity" {
+        description
+          "Quantity.";
+      }
+    }
+    description
+      "bandwidth/quantity";
+  }
+  typedef qosType {
+    type enumeration {
+      enum "trafficCar" {
+        description
+          "Traffic Car.";
+      }
+      enum "qosCar" {
+        description
+          "Qos Car.";
+      }
+      enum "portShaping" {
+        description
+          "Port Shaping.";
+      }
+    }
+    description
+      "trafficCar/qosCar/portShaping";
+  }
+  typedef carMode {
+    type enumeration {
+      enum "distribute" {
+        description
+          "distribute.";
+      }
+    }
+    description
+      "distribute";
+  }
+  typedef qosChannelAlrmPoolType {
+    type enumeration {
+      enum "pool-0" {
+        description
+          "Pool-0.";
+      }
+      enum "pool-1" {
+        description
+          "Pool-1.";
+      }
+      enum "All" {
+        description
+          "All.";
+      }
+    }
+    description
+      "pool-0/pool-1/All";
+  }
+  typedef qosLsPortQueueWeightSpecMode {
+    type enumeration {
+      enum "disable" {
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        description
+          "Enable.";
+      }
+    }
+    description
+      "disable/enable";
+  }
+  typedef lspicIfPhyType {
+    type enumeration {
+      enum "Serial" {
+        description
+          "Serial interface.";
+      }
+      enum "ATM" {
+        description
+          "ATM interface.";
+      }
+      enum "Mp-group" {
+        description
+          "MP-group interface.";
+      }
+      enum "Trunk-Serial" {
+        description
+          "Trunk-Serial interface.";
+      }
+      enum "Global-Mp-Group" {
+        description
+          "Global-Mp-Group interface.";
+      }
+    }
+    description
+      "Serial/ATM/Mp-group/Trunk-Serial/Global-Mp-Group";
+  }
+  typedef qosLsTrafficQModeType {
+    type enumeration {
+      enum "disable" {
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        description
+          "Enable.";
+      }
+    }
+    description
+      "disable/enable";
+  }
+  typedef qosTrafficType {
+    type enumeration {
+      enum "UCL" {
+        description
+          "UCL.";
+      }
+      enum "ACL" {
+        description
+          "ACL.";
+      }
+    }
+    description
+      "UCL/ACL";
+  }
+  typedef qoshardPipeModeType {
+    type enumeration {
+      enum "share-mode" {
+        description
+          "Share-mode.";
+      }
+      enum "exclusive-mode" {
+        description
+          "Exclusive-mode.";
+      }
+    }
+    description
+      "share-mode/exclusive-mode";
+  }
+  typedef qosOffLoad {
+    type enumeration {
+      enum "disable" {
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        description
+          "Enable.";
+      }
+    }
+    description
+      "disable/enable";
+  }
+  typedef qosServiceGroupType {
+    type enumeration {
+      enum "service-group" {
+        description
+          "source service group.";
+      }
+    }
+    description
+      "service-group";
+  }
+  typedef qosUserGroupType {
+    type enumeration {
+      enum "user-group" {
+        description
+          "source user group.";
+      }
+    }
+    description
+      "user-group";
+  }
+  typedef qostraffictype {
+    type enumeration {
+      enum "ldp-traffic" {
+        description
+          "Ldp-traffic.";
+      }
+    }
+    description
+      "ldp-traffic";
+  }
+  typedef qosPolicypriorityType {
+    type enumeration {
+      enum "notpriority" {
+        description
+          "Notpriority Mode.";
+      }
+      enum "ispriority" {
+        description
+          "Ispriority Mode.";
+      }
+      enum "is4cos" {
+        description
+          "Is4cos Mode.";
+      }
+    }
+    description
+      "notpriority/ispriority/is4cos";
+  }
+  typedef qosPolicypriorityName {
+    type string {
+      length "1..32";
+    }
+    description
+      "now qosPolicypriorityName is like string";
+  }
+  typedef qosPQmodeType {
+    type enumeration {
+      enum "high" {
+        description
+          "high.";
+      }
+      enum "low" {
+        description
+          "low.";
+      }
+    }
+    description
+      "high/low";
+  }
+  typedef hqospriorityType {
+    type enumeration {
+      enum "prio0" {
+        description
+          "priority Mode 0.";
+      }
+      enum "prio1" {
+        description
+          "priority Mode 1.";
+      }
+      enum "prio2" {
+        description
+          "priority Mode 2.";
+      }
+      enum "noprio" {
+        description
+          "No Priority.";
+      }
+    }
+    description
+      "prio0/prio1/prio2/noprio";
+  }
+  typedef qosPolicy4cosName {
+    type string {
+      length "1..32";
+    }
+    description
+      "now qosPolicy4cosName is like string";
+  }
+  typedef qosUclMatchType {
+    type enumeration {
+      enum "destUser" {
+        description
+          "Destination user.";
+      }
+      enum "interfaceAcl" {
+        description
+          "Interface ACL.";
+      }
+    }
+    description
+      "destUser/interfaceAcl";
+  }
+  typedef qosAccessBordType {
+    type enumeration {
+      enum "enable" {
+        description
+          "enable.";
+      }
+    }
+    description
+      "enable";
+  }
+  typedef enableType {
+    type enumeration {
+      enum "enable" {
+        description
+          "enable";
+      }
+      enum "disable" {
+        description
+          "disable";
+      }
+    }
+    description
+      "enable/disable";
+  }
+  typedef qosExcLayeType {
+    type enumeration {
+      enum "link-layer-exclude" {
+        description
+          "link-layer-exclude";
+      }
+      enum "l2tp-layer-exclude" {
+        description
+          "l2tp-layer-exclude";
+      }
+    }
+    description
+      "link-layer-exclude/l2tp-layer-exclude";
+  }
+  typedef qosAccessType {
+    type enumeration {
+      enum "leased-line-access" {
+        description
+          "leased-line-access";
+      }
+      enum "notConfig" {
+        description
+          "notConfig";
+      }
+    }
+    description
+      "leased-line-access/notConfig";
+  }
+  typedef ResType {
+    type enumeration {
+      enum "null" {
+        description
+          "null";
+      }
+      enum "SQ" {
+        description
+          "SQ";
+      }
+      enum "CAR" {
+        description
+          "CAR";
+      }
+      enum "SQCAR" {
+        description
+          "SQCAR";
+      }
+      enum "L2CAR" {
+        description
+          "L2CAR";
+      }
+      enum "L2L3CAR" {
+        description
+          "L2L3CAR";
+      }
+      enum "L3CAR" {
+        description
+          "L3CAR";
+      }
+    }
+    description
+      "";
+  }
+  typedef qosSrvClass {
+    type enumeration {
+      enum "be" {
+        description
+          "Specify the qos CoS as BE.";
+      }
+      enum "af1" {
+        description
+          "Specify the qos CoS as AF1.";
+      }
+      enum "af2" {
+        description
+          "Specify the qos CoS as AF2.";
+      }
+      enum "af3" {
+        description
+          "Specify the qos CoS as AF3.";
+      }
+      enum "af4" {
+        description
+          "Specify the qos CoS as AF4.";
+      }
+      enum "ef" {
+        description
+          "Specify the qos CoS as EF.";
+      }
+      enum "cs6" {
+        description
+          "Specify the qos CoS as CS6.";
+      }
+      enum "cs7" {
+        description
+          "Specify the qos CoS as CS7.";
+      }
+    }
+    description
+      "be/af1/af2/af3/af4/ef/cs6/cs7";
+  }
+  typedef IsOnboard {
+    type enumeration {
+      enum "yes" {
+        description
+          "yes.";
+      }
+      enum "no" {
+        description
+          "no.";
+      }
+    }
+    description
+      "yes/no";
+  }
+  typedef qosTcpBitMatch {
+    type enumeration {
+      enum "notConfig" {
+        description
+          "NotConfig.";
+      }
+      enum "established" {
+        description
+          "Established.";
+      }
+      enum "fin" {
+        description
+          "Fin.";
+      }
+      enum "syn" {
+        description
+          "Syn.";
+      }
+      enum "rst" {
+        description
+          "Rst.";
+      }
+      enum "psh" {
+        description
+          "Psh.";
+      }
+      enum "ack" {
+        description
+          "Ack.";
+      }
+      enum "urg" {
+        description
+          "Urg.";
+      }
+      enum "ece" {
+        description
+          "Ece.";
+      }
+      enum "cwr" {
+        description
+          "Cwr.";
+      }
+      enum "ns" {
+        description
+          "Ns.";
+      }
+    }
+    description
+      "now qosTcpBitMatch is like string";
+  }
+  typedef SystemRestype {
+    type enumeration {
+      enum "systemview" {
+        description
+          "systemview";
+      }
+    }
+    description
+      "systemview";
+  }
+  typedef qosCarDisableExcludeType {
+    type enumeration {
+      enum "non-exclude" {
+        description
+          "Non-exclude Mode.";
+      }
+      enum "exclude" {
+        description
+          "Exclude Mode.";
+      }
+    }
+    description
+      "non-exclude/exclude";
+  }
+  typedef qosPolicyApplyVxLayer {
+    type enumeration {
+      enum "none" {
+        description
+          "Default classification.";
+      }
+      enum "link" {
+        description
+          "Classification based on Layer 2 information.";
+      }
+    }
+    description
+      "none/link";
+  }
+}

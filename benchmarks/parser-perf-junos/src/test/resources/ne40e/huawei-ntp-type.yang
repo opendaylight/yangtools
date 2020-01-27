@@ -1,0 +1,228 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ntp-type {
+  belongs-to huawei-ntp {
+    prefix ntp;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Network Time Protocol";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef tmNtpDbgType {
+    type string;
+    description
+      "It is bit flag used for enabling and disabling ntp debug.";
+  }
+  typedef tmNtpAuthType {
+    type enumeration {
+      enum "MD5" {
+        description
+          "The NTP authentication mode is MD5.";
+      }
+      enum "HMAC-SHA256" {
+        description
+          "The NTP authentication mode is HMAC-SHA256.";
+      }
+    }
+    description
+      "Used to identify which mode of authentication, Md5 or Hmac.";
+  }
+  typedef tmNtpAclLevel {
+    type enumeration {
+      enum "Peer" {
+        description
+          "Indicates the NTP Access Level is Peer. It sets the fully access authority. Both time request and control query can be performed on the local NTP service, and the local clock can be synchronized to the remote server.";
+      }
+      enum "Query" {
+        description
+          "Indicates the NTP Access Level is Query. It sets the maximum access limitation. Only control query can be performed on the local NTP service.";
+      }
+      enum "Server" {
+        description
+          "Indicates the NTP Access Level is Server. It enables the server access and query. Both time requests and control query can be performed on the local NTP service, but the local clock cannot be synchronized to the remote server.";
+      }
+      enum "Synchronization" {
+        description
+          "Indicates the NTP Access Level is Synchronization. It enables the server to access. Only time request can be performed on the local NTP service.";
+      }
+      enum "Limited" {
+        description
+          "Indicates the NTP Access Level is Limited.";
+      }
+    }
+    description
+      "NTP has 5 ACL level, it identify NTP acl level.";
+  }
+  typedef tmNtpCastMode {
+    type enumeration {
+      enum "Client" {
+        description
+          "Indicates that the current mode is client.";
+      }
+      enum "Server" {
+        description
+          "Indicates that the current mode is server.";
+      }
+    }
+    description
+      "It defines NTP server client mode.";
+  }
+  typedef tmNtpProtVer {
+    type enumeration {
+      enum "Version1" {
+        description
+          "Version1:";
+      }
+      enum "Version2" {
+        description
+          "Version2:";
+      }
+      enum "Version3" {
+        description
+          "Version3:";
+      }
+    }
+    description
+      "It identifies version of NTP.";
+  }
+  typedef tmNtpPeerType {
+    type enumeration {
+      enum "Peer" {
+        description
+          "Indicates that the system's current configuration type is peer.";
+      }
+      enum "Server" {
+        description
+          "Indicates that the system's current configuration type is server.";
+      }
+    }
+    description
+      "It defines NTP server or peer mode.";
+  }
+  typedef tmNtpSyncState {
+    type enumeration {
+      enum "clock is not set" {
+        description
+          "Indicates that the clock is not set.";
+      }
+      enum "frequency is set" {
+        description
+          "Indicates that the frequency is set.";
+      }
+      enum "time is set" {
+        description
+          "Indicates that the time is set.";
+      }
+      enum "mode is frequency" {
+        description
+          "Indicates that the mode is frequency.";
+      }
+      enum "clock is synchronized" {
+        description
+          "Indicates that the clock is synchronized.";
+      }
+      enum "spike is detected." {
+        description
+          "Indicates that the spike is detected.";
+      }
+    }
+    description
+      "It defines NTP clock sync state.";
+  }
+  typedef tmClockStatus {
+    type enumeration {
+      enum "Unsynchronized" {
+        description
+          "Indicates that the clock is unsynchronized.";
+      }
+      enum "Synchronized" {
+        description
+          "Indicates that the clock is synchronized.";
+      }
+    }
+    description
+      "It defines NTP clock sync status.";
+  }
+  typedef tmNtpConfigured {
+    type enumeration {
+      enum "No" {
+        description
+          "NTP is not configured.";
+      }
+      enum "Yes" {
+        description
+          "NTP is configured.";
+      }
+    }
+    description
+      "It tells weather current source is configured source or not.";
+  }
+  typedef tmNtpAddrFmly {
+    type enumeration {
+      enum "IPv4" {
+        description
+          "IPv4 address family.";
+      }
+      enum "IPv6" {
+        description
+          "IPv6 address family.";
+      }
+      enum "DCN" {
+        description
+          "DCN address family.";
+      }
+    }
+    description
+      "It defines address family supported by NTP.";
+  }
+  typedef tmNtpExtAddrFmly {
+    type enumeration {
+      enum "IPv4" {
+        description
+          "IPv4 address family.";
+      }
+      enum "IPv6" {
+        description
+          "IPv6 address family.";
+      }
+      enum "IPv4 AND IPv6" {
+        description
+          "IPv4 and IPv6 address family.";
+      }
+    }
+    description
+      "It defines extended address family supported by NTP.";
+  }
+  typedef tmNtpDisAddrFmly {
+    type enumeration {
+      enum "IPv4" {
+        description
+          "IPv4 address family.";
+      }
+      enum "IPv6" {
+        description
+          "IPv6 address family.";
+      }
+    }
+    description
+      "It defines address family supported by NTP server and service Disable.";
+  }
+}

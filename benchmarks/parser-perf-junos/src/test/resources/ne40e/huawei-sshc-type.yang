@@ -1,0 +1,318 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-sshc-type {
+  belongs-to huawei-sshc {
+    prefix sshc;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of ssh client type submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference    "Huawei private.";
+  }
+  typedef sshcSshcSrvcType {
+    type enumeration {
+      enum "STelnetIPv4" {
+        description
+          "STelnetIPv4:";
+      }
+      enum "STelnetIPv6" {
+        description
+          "STelnetIPv6:";
+      }
+      enum "SftpIPv4" {
+        description
+          "SftpIPv4:";
+      }
+      enum "SftpIPv6" {
+        description
+          "SftpIPv6:";
+      }
+      enum "ScpIPv4" {
+        description
+          "ScpIPv4:";
+      }
+      enum "ScpIPv6" {
+        description
+          "ScpIPv6:";
+      }
+    }
+    description
+      "SSH client service type list";
+  }
+  typedef sshcSshcCipherList {
+    type enumeration {
+      enum "DES" {
+        description
+          "DES cipher Algorithm.";
+      }
+      enum "TripleDES" {
+        description
+          "TripleDES cipher Algorithm.";
+      }
+      enum "AES128" {
+        description
+          "AES128 cipher Algorithm.";
+      }
+      enum "AES192" {
+        description
+          "AES192 cipher Algorithm.";
+      }
+      enum "AES256" {
+        description
+          "AES256 cipher Algorithm.";
+      }
+      enum "ARCFOUR128" {
+        description
+          "ARCFOUR128 cipher algorithm.";
+      }
+      enum "ARCFOUR256" {
+        description
+          "ARCFOUR256 cipher algorithm.";
+      }
+      enum "AES128_CTR" {
+        description
+          "AES128_CTR cipher algorithm.";
+      }
+      enum "AES192_CTR" {
+        description
+          "AES192_CTR cipher algorithm.";
+      }
+      enum "AES256_CTR" {
+        description
+          "AES256_CTR cipher algorithm.";
+      }
+      enum "AES128_GCM" {
+        description
+          "AES128_GCM cipher algorithm.";
+      }
+      enum "AES256_GCM" {
+        description
+          "AES256_GCM cipher algorithm.";
+      }
+    }
+    description
+      "SSH client cipher method list";
+  }
+  typedef sshcSshcComprsList {
+    type enumeration {
+      enum "zlib" {
+        description
+          "zlib compression algorithm";
+      }
+    }
+    description
+      "SSH client Compress Method List";
+  }
+  typedef sshcSshcHmacList {
+    type enumeration {
+      enum "SHA1" {
+        description
+          "SHA1 Hmac Algorithm";
+      }
+      enum "SHA1_96" {
+        description
+          "SHA1_96 Hmac Algorithm";
+      }
+      enum "MD5" {
+        description
+          "MD5 Hmac Algorithm";
+      }
+      enum "MD5_96" {
+        description
+          "MD5_96 Hmac Algorithm";
+      }
+      enum "SHA2_256" {
+        description
+          "SHA2_256 Hmac Algorithm";
+      }
+      enum "SHA2_256_96" {
+        description
+          "SHA2_256_96 Hmac Algorithm";
+      }
+      enum "SHA2_512" {
+        description
+          "SHA2_512 Hmac Algorithm";
+      }
+    }
+    description
+      "SSH client Hashed-Base Message Authentication Code(HAMC) method list";
+  }
+  typedef sshcSshcKeyExList {
+    type enumeration {
+      enum "DH_Group1_SHA1" {
+        description
+          "DH_Group1_SHA1 Key Exchange algotithm";
+      }
+      enum "DH_GroupEx_SHA1" {
+        description
+          "DH_GroupEx_SHA1 Key Exchange algotithm";
+      }
+      enum "SM2_KEP" {
+        description
+          "SM2_KEP Key Exchange algotithm";
+      }
+      enum "DH_GroupEx_SHA256" {
+        description
+          "DH_GroupEx_SHA2 Key Exchange algotithm ";
+      }
+      enum "ECDH_SHA2_NISTP256" {
+        description
+          "ECDH 256 Key Exchange algotithm";
+      }
+      enum "ECDH_SHA2_NISTP384" {
+        description
+          "ECDH 384 Key Exchange algotithm";
+      }
+      enum "ECDH_SHA2_NISTP521" {
+        description
+          "ECDH 521 Key Exchange algotithm";
+      }
+      enum "DH_Group14_SHA1" {
+        description
+          "DH_Group14_SHA1 Key Exchange algotithm";
+      }
+    }
+    description
+      "SSH client algorithm list";
+  }
+  typedef sshcSshcEntityList {
+    type enumeration {
+      enum "ssh-rsa" {
+        description
+          "RSA host key connection.";
+      }
+      enum "ssh-dsa" {
+        description
+          "DSA host key connection.";
+      }
+      enum "ssh-ecc" {
+        description
+          "ECC host key connection.";
+      }
+    }
+    description
+      "SSH client entity list";
+  }
+  typedef sshcSshcConnState {
+    type enumeration {
+      enum "Stop" {
+        description
+          "Stop:";
+      }
+      enum "Started" {
+        description
+          "Started:";
+      }
+    }
+    description
+      "SSH client connection state list";
+  }
+  typedef sshcBoolType {
+    type enumeration {
+      enum "Enable" {
+        description
+          "Accept connection request from unknown or unauthentic clients.";
+      }
+      enum "Disable" {
+        description
+          "Do not accept connection request from unknown or unauthentic clients.";
+      }
+    }
+    description
+      "SSH client bool switch";
+  }
+  typedef sshcScpBool {
+    type enumeration {
+      enum "Enable" {
+        description
+          "Enable";
+      }
+      enum "Disable" {
+        description
+          "Disable";
+      }
+      enum "NotSet" {
+        description
+          "NotSet";
+      }
+    }
+    description
+      "SSH client bool option for SCP";
+  }
+  typedef sshcTransCmdType {
+    type enumeration {
+      enum "put" {
+        description
+          "File put operation.";
+      }
+      enum "get" {
+        description
+          "File get operation.";
+      }
+    }
+    description
+      "SSH client transmission command type list";
+  }
+  typedef sshcPubKeyType {
+    type enumeration {
+      enum "RSA" {
+        description
+          "RSA";
+      }
+      enum "DSA" {
+        description
+          "DSA";
+      }
+      enum "ECC" {
+        description
+          "ECC";
+      }
+    }
+    description
+      "SSH client public key encryption type list";
+  }
+  typedef sshcMapKeyState {
+    type enumeration {
+      enum "CONFIGURE" {
+        description
+          "CONFIGURE";
+      }
+      enum "DYNAMIC" {
+        description
+          "DYNAMIC";
+      }
+    }
+    description
+      "SSH client mapkey state list";
+  }
+  typedef sshcSshcTransferType {
+    type enumeration {
+      enum "SFTP" {
+        description
+          "SFTP Transfer";
+      }
+      enum "SCP" {
+        description
+          "SCP Transfer";
+      }
+    }
+    description
+      "SSH client file fransfer type list";
+  }
+}

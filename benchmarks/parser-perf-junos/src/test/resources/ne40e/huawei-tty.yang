@@ -1,0 +1,259 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-tty {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-tty";
+  prefix tty;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-tty-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "TTY Component";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container tty {
+    description
+      "TTY Component";
+    container userInterfaces {
+      config false;
+      description
+        "Terminal user interfaces.";
+      list userInterface {
+        key "lineIndex";
+        config false;
+        description
+          "Terminal user interface status and configuration information.";
+        leaf lineIndex {
+          type uint32 {
+            range "0..104";
+          }
+          config false;
+          description
+            "Absolute index of UIs.";
+        }
+        leaf lineType {
+          type ttyCamlLineType;
+          config false;
+          description
+            "Type and relative index of UIs.";
+        }
+        leaf relativeIndex {
+          type uint32;
+          config false;
+          description
+            "Relative index for the line type.";
+        }
+        leaf privileage {
+          type uint32;
+          config false;
+          description
+            "The privilege of UIs.";
+        }
+        leaf modemstatus {
+          type string {
+            length "0..8";
+          }
+          config false;
+          description
+            "Status of the modem connected.";
+        }
+        leaf uiLocation {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The physical location of UIs.";
+        }
+        leaf speed {
+          type string {
+            length "0..7";
+          }
+          config false;
+          description
+            "Speed of the interface terminal.";
+        }
+        leaf connectStatus {
+          type ttyCamlConnState;
+          config false;
+          description
+            "Current UI is active.";
+        }
+        leaf authMode {
+          type string {
+            length "0..2";
+          }
+          config false;
+          description
+            "The authentication mode of UIs.";
+        }
+        leaf actualPrivileage {
+          type string {
+            length "0..5";
+          }
+          config false;
+          description
+            "The actual privilege of user-interface.";
+        }
+      }
+    }
+    container lineCfgs {
+      description
+        "TTY UI configuration container.";
+      list lineCfg {
+        key "lineIndex";
+        description
+          "TTY UI configurations.";
+        leaf lineIndex {
+          type uint16 {
+            range "0..20";
+          }
+          description
+            "Terminal line-index.";
+        }
+        leaf uiType {
+          type ttyTtyPortType;
+          config false;
+          mandatory true;
+          description
+            "Terminal type.";
+        }
+        leaf uiNumber {
+          type uint32 {
+            range "0..1";
+          }
+          config false;
+          mandatory true;
+          description
+            "Terminal index.";
+        }
+        leaf idleTimeOutMin {
+          type uint16 {
+            range "1..1440";
+          }
+          default "5";
+          description
+            "To set the idle timeout minute.";
+          ext:allowDelete "true";
+        }
+        leaf idleTimeOutSec {
+          type uint16 {
+            range "0..59";
+          }
+          description
+            "To set the idle timeout seconds.";
+          ext:allowDelete "true";
+        }
+        leaf authMode {
+          type ttyTtyAuthModeType;
+          description
+            "Sets the authentication mode.";
+          ext:allowDelete "true";
+        }
+        leaf authPassword {
+          type pub-type:password {
+            length "8..16";
+          }
+          description
+            "Sets the password.";
+          ext:allowDelete "true";
+        }
+        leaf privilegeLevel {
+          type uint32 {
+            range "0..15";
+          }
+          description
+            "To set the privilege level.";
+          ext:allowDelete "true";
+        }
+        leaf historyCmdSize {
+          type uint32 {
+            range "0..256";
+          }
+          description
+            "History command buffer size. Describes the number of commands will be stored in history.";
+          ext:allowDelete "true";
+        }
+        leaf scrLength {
+          type uint32 {
+            range "0..512";
+          }
+          description
+            "Sets the screen length.";
+          ext:allowDelete "true";
+        }
+        leaf scrWidth {
+          type uint32 {
+            range "80..500";
+          }
+          description
+            "Sets the screen width.";
+          ext:allowDelete "true";
+        }
+        leaf shellEnable {
+          type boolean;
+          description
+            "Shell (Enable/Disable)";
+        }
+        leaf speed {
+          type uint64 {
+            range "300..115200";
+          }
+          description
+            "Speed for the tty device. Supported speeds are 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600 and 115200.";
+          ext:allowDelete "true";
+        }
+        leaf flowControl {
+          type ttyTtyFlwCntrlType;
+          default "none";
+          description
+            "To set the flow control of the TTY device.";
+        }
+        leaf stopBits {
+          type ttyTtyStpBitsType;
+          default "1";
+          description
+            "To set the stop bits of the TTY devices.";
+        }
+        leaf dataBits {
+          type ttyTtyDataBitsType;
+          default "8";
+          description
+            "Set the databits of the TTY devices.";
+        }
+        leaf parity {
+          type ttyTtyParityType;
+          default "none";
+          description
+            "Parity of the TTY devices.";
+        }
+        leaf isShutdown {
+          type boolean;
+          description
+            "Shutdown the specified user-interface(s)";
+        }
+      }
+    }
+  }
+}

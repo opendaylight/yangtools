@@ -1,0 +1,89 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifmpostrunk {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-ifmpostrunk";
+  prefix ifmpostrunk;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  include huawei-ifmpostrunk-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Defines the Pos-Trunk bundling technology, which bundles multiple physical interfaces into a logical interface.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  container ifmpostrunk {
+    description
+      "Defines the Pos-Trunk bundling technology, which bundles multiple physical interfaces into a logical interface.";
+    container posTrunkIfs {
+      description
+        "Specifies the list of Pos-Trunk interfaces.";
+      list posTrunkIf {
+        key "ifName";
+        description
+          "Defines the Pos-Trunk interface, which is a logical interface with multiple physical interfaces being bundled.";
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "Specifies the name of a Pos-Trunk interface. For example, Pos-Trunk0.";
+        }
+        leaf upMemberIfNum {
+          type uint32;
+          config false;
+          description
+            "Specifies the number of member interfaces in the Up state.";
+        }
+        container trunkMembers {
+          description
+            "Configures a list of pos-trunk member interfaces.";
+          list trunkMember {
+            key "memberIfName";
+            max-elements 2;
+            description
+              "Configures pos-trunk member interfaces.";
+            leaf memberIfName {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Configures a name for a pos-trunk member interface.";
+            }
+            leaf portStatus {
+              type ifmpostrunkAbstractState;
+              config false;
+              description
+                "Displays the status of a pos-trunk member interface.";
+            }
+            leaf portActiveStatus {
+              type ifmpostrunkMemActiveState;
+              config false;
+              description
+                "Displays the active status of a pos-trunk member interface.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

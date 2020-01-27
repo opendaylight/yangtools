@@ -1,0 +1,2563 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-bgp-bgpmultiinstcomm {
+  belongs-to huawei-bgp {
+    prefix bgp;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-bgp-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of submodule bgp_bgpmultiinstcomm";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping bgp_bgpmultiinstcomm_bgpmultiinstcomm_type {
+    description
+      "";
+    container bgpMultiSites {
+      description
+        "List of BGP site.";
+      list bgpMultiSite {
+        key "bgpMultiSiteName";
+        max-elements 8;
+        description
+          "Site containing the global BGP information, such as the protocol version, AS number, and system identifier.";
+        leaf bgpMultiSiteName {
+          type string {
+            length "1..31";
+          }
+          description
+            "Name of BGP Site.";
+        }
+        leaf bgpVersion {
+          type uint8;
+          config false;
+          description
+            "BGP version, which is BGP-4 at present. BGP-4 provides a new mechanism to support Classless Inter-Domain Routing (CIDR). In this case, the network prefix-based advertisement is supported and the concept of class for a BGP network is canceled in the network prefix-supported advertisements. Another mechanism is also introduced to support route summarization, including the summarization of AS paths.";
+        }
+        leaf asNumber {
+          when "not(not(../bgpMultiSiteName))";
+          type asNumberValidate {
+            length "1..11";
+          pattern '((([1-9]\d{0,8})|([1-3]\d{9})|(4[0-1]\d{8})|(42[0-8]\d{7})|(429[0-3]\d{6})|(4294[0-8]\d{5})|(42949[0-5]\d{4})|(429496[0-6]\d{3})|(4294967[0-1]\d{2})|(42949672[0-8]\d{1})|(429496729[0-5]))|((([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))(\.)(([0-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))))';
+          }
+          description
+            "Local AS number, which can be in either of the two formats:
+The two-byte format is X. X is an integer ranging from 1 to 65535.
+The four-byte format is X.Y and X. When the format is X.Y, X and Y are both integers, with the value of X ranging from 1 to 65535, and the value of Y ranging from 0 to 65535; when the format is X, X is an interger, with the value ranging from 1 to 4294967295.
+An AS consists of multiple routers managed based on the same techniques. Interior Gateway Protocol (IGP) and universal routing metric packets are used inside an AS, and Exterior Gateway Protocol (EGP) is used outside to send packets to other ASs. With the development of this definition, one AS usually uses multiple IGPs and metrics. Even though multiple IGPs and metrics are used, the routing plan and destination reachability of an AS are consistent with those of another AS.";
+          ext:allowDelete "true";
+        }
+        leaf gracefulRestart {
+          type boolean;
+          must "not(not(../bgpMultiSiteName))";
+          default "false";
+          description
+            "Enable GR of the BGP speaker in the specified address family, peer address, or peer group. When GR is enabled, the BGP speaker enabled with GR keeps the forwarding state and sends the End-Of-RIB flag during the restart. In this case, however, the BGP speaker may not maintain the forwarding table. Enabling or disabling GR may delete and re-establish all sessions and instances.";
+        }
+        leaf timeWaitForRib {
+          when "../gracefulRestart='true'";
+          type uint32 {
+            range "3..3000";
+          }
+          default "600";
+          description
+            "Period of waiting for the End-Of-RIB flag. The value is an integer in seconds. The default value is 600. When a BGP session is established or re-established, the router enabled with GR should receive the End-Of-RIB flag in this period. If the router does not receive the End-Of-RIB flag in this period, ensure that the router can exit from the GR process.";
+          ext:allowDelete "true";
+        }
+        leaf asPathLimit {
+          type uint16 {
+            range "1..2000";
+          }
+          must "not(not(../bgpMultiSiteName))";
+          description
+            "Maximum number of AS numbers in the AS_Path attribute. The default value is 255.";
+          ext:allowDelete "true";
+        }
+        leaf checkFirstAs {
+          type boolean;
+          must "not(not(../bgpMultiSiteName))";
+          default "true";
+          description
+            "Check the first AS in the AS_Path of the update messages from EBGP peers. By default, this function is enabled.";
+        }
+        leaf confedIdNumber {
+          type asNumberValidate {
+            length "1..11";
+          pattern '((([1-9]\d{0,8})|([1-3]\d{9})|(4[0-1]\d{8})|(42[0-8]\d{7})|(429[0-3]\d{6})|(4294[0-8]\d{5})|(42949[0-5]\d{4})|(429496[0-6]\d{3})|(4294967[0-1]\d{2})|(42949672[0-8]\d{1})|(429496729[0-5]))|((([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))(\.)(([0-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))))';
+          }
+          must "not(not(../bgpMultiSiteName))";
+          description
+            "Confederation ID.";
+          ext:allowDelete "true";
+        }
+        leaf confedNonstanded {
+          type boolean;
+          must "not(not(../bgpMultiSiteName))";
+          default "false";
+          description
+            "Configure the device to be compatible with devices in a nonstandard confederation.";
+        }
+        leaf bgpRidAutoSel {
+          type boolean;
+          must "not(not(../bgpMultiSiteName))";
+          default "false";
+          description
+            "By default, a BGP VPN instance does not automatically select a router ID. If a BGP VPN instance is not enabled to select a router ID, a router ID can be configured for the BGP VPN instance. If no router ID is configured for the BGP VPN instance, the BGP VPN instance inherits the router ID of the public network instance. If a BGP VPN instance is enabled to select a router ID, it uses the address of an interface bound to a VPN as the router ID based on the following rules: 
+1. If Loopback interfaces configured with IP addresses exist, the largest IP address among the IP addresses of the Loopback interfaces is selected as the router ID. 
+2. If there is no Loopback interface configured with an IP address, the largest IP address among the IP addresses of other interfaces is selected as the router ID, regardless of whether the interface is Up.";
+        }
+        leaf keepAllRoutes {
+          type boolean;
+          must "not(not(../bgpMultiSiteName))";
+          default "false";
+          description
+            "Save all the updated information about BGP routes from a peer or peer group after a BGP connection is established, even though these BGP routes fail to match the routing policy on the ingress. By default, only the updated information about BGP routes from a specified peer is saved on condition that the routes match the routing policy on the ingress. If a router supports route refreshing, this option is not required.";
+        }
+        leaf memoryLimit {
+          type boolean;
+          must "not(not(../bgpMultiSiteName)) or (not(../bgpMultiSiteName) and ../memoryLimit='false')";
+          default "false";
+          description
+            "Support BGP RIB memory protection. By default, the function is not enabled. With BGP RIB memory protection, routes are no longer received after the RIB memory is overloaded.";
+        }
+        leaf grPeerReset {
+          when "../gracefulRestart='true'";
+          type boolean;
+          default "false";
+          description
+            "Peer disconnection through GR.";
+        }
+        leaf isShutdown {
+          type boolean;
+          default "false";
+          description
+            "Interrupt BGP all neighbor";
+        }
+        leaf suppressInterval {
+          type uint32 {
+            range "1..65535";
+          }
+          default "60";
+          description
+            "Specifies the reference period used to add penalty in case of next hop flapping in seconds. By default, the value is 60 seconds.";
+          ext:allowDelete "true";
+        }
+        leaf holdInterval {
+          type uint32 {
+            range "1..65535";
+          }
+          default "120";
+          description
+            "Specifies the reference period used to hold penalty in case of next hop flapping in seconds. By default, the value is 120 seconds.";
+          ext:allowDelete "true";
+        }
+        leaf clearInterval {
+          type uint32 {
+            range "1..65535";
+          }
+          default "600";
+          description
+            "Specifies the reference period used to clear penalty in case of next hop flapping in seconds. By default, the value is 600 seconds.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container bgpMultiVrfs {
+      description
+        "Configure the list of all BGP instances.";
+      list bgpMultiVrf {
+        key "bgpMultiSiteName vrfName";
+        max-elements 4096;
+        description
+          "Create a BGP instance.";
+        leaf bgpMultiSiteName {
+          type leafref {
+            path "/bgp/bgpmultiinstcomm/bgpMultiSites/bgpMultiSite/bgpMultiSiteName";
+          }
+          description
+            "Name of BGP Site.";
+        }
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "Name of a BGP instance. The name is a case-sensitive string of characters. The BGP instance can be used only after the corresponding VPN instance is created. ";
+        }
+        leaf vrfRidAutoSel {
+          when "../vrfName!='_public_'";
+          type boolean;
+          description
+            "By default, a BGP VPN instance does not automatically select a router ID. If a BGP VPN instance is not enabled to select a router ID, a router ID can be configured for the BGP VPN instance. If no router ID is configured for the BGP VPN instance, the BGP VPN instance inherits the router ID of the public network instance. If a BGP VPN instance is enabled to select a router ID, it uses the address of an interface bound to a VPN as the router ID based on the following rules: 
+1. If Loopback interfaces configured with IP addresses exist, the largest IP address among the IP addresses of the Loopback interfaces is selected as the router ID. 
+2. If there is no Loopback interface configured with an IP address, the largest IP address among the IP addresses of other interfaces is selected as the router ID, regardless of whether the interface is Up.";
+        }
+        leaf routerId {
+          type inet:ipv4-address-no-zone;
+          description
+            "ID of a router that is in IPv4 address format. Certain dynamic routing protocols require a router ID. If no router ID is specified for a router when these protocols are enabled, the router ID in the RM module is used by default. The default router ID in the RM module is 0.0.0.0 when the router is not configured with any interface. 
+The rules for selecting a router ID are as follows:
+1. If you set a router ID through this configuration, the set router ID is used. If the router ID is not set, you need to select a router ID according to the following rules:
+(1) If loopback interfaces configured with IP addresses exist, the largest IP address among the IP addresses of the loopback interfaces is selected as the router ID.
+(2) If no loopback interface configured with an IP address exists, the largest IP address among the IP addresses of other interfaces is selected as the router ID, regardless of whether the interface is Up.
+The router ID is reselected only when the interface address that is selected as the router ID is deleted or changed. The router ID is not reselected in any of the following cases:
+a. The interface is Down.
+b. A loopback interface is configured when the IP address of a non-loopback interface is selected as the router ID.
+c. A larger IP address of an interface is configured.
+2. Each VPN instance selects the router ID from the addresses of the interfaces of the VPN instance according to the preceding rules.
+3. When both the AMB and SMB exist on the router, the system backs up the router ID set through the related command and the router ID that is selected from IP addresses of the interfaces. After the active/standby switchover is performed, the system checks the validity of the router ID selected from the interface addresses. If the router ID is invalid, the system reselects a router ID.";
+          ext:allowDelete "true";
+        }
+        leaf effectRouterId {
+          type inet:ipv4-address-no-zone;
+          default "0.0.0.0";
+          config false;
+          description
+            "Router ID that takes effect.";
+        }
+        leaf keepaliveTime {
+          when "../vrfName='_public_'";
+          type uint32 {
+            range "0..21845";
+          }
+          default "60";
+          description
+            "If the value of a timer changes, the BGP peer relationship between the routers is disconnected. This is because the peers need to re-negotiate the Keepalive time and hold time. Therefore, confirm the action before you change the value of the timer. The Keepalive time should be at least three times of the hold time.";
+          ext:allowDelete "true";
+        }
+        leaf holdTime {
+          when "../vrfName='_public_'";
+          type uint32 {
+            range "0..65535";
+          }
+          must "(../holdTime!=1) or (../holdTime!=2) or (../holdTime>=../keepaliveTime*3) or (../holdTime>=../minHoldTime)";
+          default "180";
+          description
+            "Hold time, in seconds. The value of the hold time can be 0 or range from 3 to 65535. When setting keepalive-time and hold-time, note the following:
+1. The values of keepalive-time and hold-time cannot both be 0. Otherwise, the BGP timer becomes invalid. That is, BGP does not detect link faults according to the timer.
+2. The value of hold-time is much greater than that of keepalive-time, such as, keepalive 1 and hold 65535. If the value of hold-time is too large, BGP cannot detect link faults timely.
+The priority of a timer is lower than that of a peer timer.
+After a connection is established between peers, the values of keepalive-time and hold-time are negotiated by the peers. The smaller value of hold-time contained in Open packets of both peers is taken as the value of hold-time. The smaller value of the locally set value of keepalive-time and one third of the value of hold-time is taken as the value of keepalive-time.";
+          ext:allowDelete "true";
+        }
+        leaf minHoldTime {
+          when "../vrfName='_public_'";
+          type uint32 {
+            range "0..65535";
+          }
+          default "0";
+          description
+            "The minimum hold time is either 0 or an integer ranging from 20 to 65535, in seconds. If the value is changed, the new value takes effect since the next peer relationship establishment. During the peer relationship establishment, the local device checks the hold time of the remote end. If the hold time is less than the minimum hold time, the local device sends an error packet with error code 02 and subcode 06, and the peer relationship fails to be established.";
+          ext:allowDelete "true";
+        }
+        leaf connRetryTime {
+          when "../vrfName='_public_'";
+          type uint16 {
+            range "1..65535";
+          }
+          default "32";
+          description
+            "ConnectRetry interval. The value is an integer, in seconds. The default value is 32s.";
+          ext:allowDelete "true";
+        }
+        leaf defaultAfType {
+          when "../vrfName!='_public_'";
+          type bgpmultiinstcommVrfPrefixType;
+          must "not(../vrfName!='_public_') or (../vrfName!='_public_')";
+          default "ipv4uni";
+          description
+            "Type of a created address family, which can be IPv4 unicast or IPv6 unicast. The default type is IPv4 unicast. This option takes effect only when a BGP instance is created for the first time. ";
+          ext:allowDelete "true";
+        }
+        container bgpMultiPeerGroups {
+          description
+            "List of BGP peer groups. The BGP peer groups can help you simplify the configurations. If you want to perform the same configuration for several peers, you can create a peer group and then configure the peer group. After you add these peers to the peer group, all these peers will have the same configurations as the peer group. ";
+          list bgpMultiPeerGroup {
+            key "afType groupName groupType";
+            description
+              "Information about a BGP peer group.";
+            leaf afType {
+              type bgpmultiinstcommGroupAddrFamily;
+              description
+                "Address family type of a peer group. For a public instance, this value cannot be modified. Since a VPN instance is related to its address family, you need to specify the address family type when creating a peer group in the VPN instance. For example, if you want to create an address family in a VPN instance of IPv4 unicast, choose IPv4 unicast as the address family type.";
+            }
+            leaf groupName {
+              type string {
+                length "1..47";
+                pattern '(^[^\? ]+$)';
+              }
+              description
+                "Specify the name of a peer group. The value is a string of characters, spaces not supported.";
+            }
+            leaf groupType {
+              type bgpcommPeerType;
+              description
+                "Specify the type of a peer group. The value can be IBGP or EBGP. The default value is IBGP.";
+            }
+            leaf groupAs {
+              when "not(../groupType='ibgp')";
+              type string {
+                length "1..11";
+              }
+              description
+                "Specify the AS number of a peer group. The AS number is in either a 2-byte or 4-byte format. 
+The two-byte format is X. X is an integer ranging from 1 to 65535.
+The four-byte format is X.Y and X. When the format is X.Y, X and Y are both integers, with the value of X ranging from 1 to 65535, and the value of Y ranging from 0 to 65535; when the format is X, X is an interger, with the value of X ranging from 1 to 4294967295.";
+              ext:allowDelete "true";
+            }
+            leaf description {
+              type string {
+                length "1..80";
+                pattern '([^?]*)';
+              }
+              description
+                "Specify the description of a peer group. The value is a string, which can be letters or digits, spaces supported. By default, no description is configured.";
+              ext:allowDelete "true";
+            }
+            leaf fakeAs {
+              when "not(../groupType='ibgp')";
+              type string {
+                length "1..11";
+              }
+              description
+                "Fake AS number that is specified for a local peer. By default, a peer uses the actual AS number of the local end.
+An AS number can be in either two-byte format or four-byte format:
+The two-byte format is X. X is an integer ranging from 1 to 65535.
+The four-byte format is X.Y and X. When the format is X.Y, X and Y are both integers, with the value of X ranging from 1 to 65535, and the value of Y ranging from 0 to 65535; when the format is X, X is an interger, with the value of X ranging from 1 to 4294967295.";
+              ext:allowDelete "true";
+            }
+            leaf dualAs {
+              when "not(../fakeAs)";
+              type boolean;
+              default "false";
+              description
+                "By default, dual AS is not enabled, and the remote EBGP peer uses the fake AS number when specifying the AS number for a local peer. 
+After dual AS is enabled, the remote EBGP peer can use the actual or fake AS number when specifying the AS number for a local peer. The local peer uses the fake and actual AS numbers to establish a BGP peer relationship with the remote end and identifies the AS number configured by the remote end through the error code (OPEN Message Error) and sub-error code (Bad Peer AS) of the Notification message from the remote end.";
+            }
+            leaf conventional {
+              when "not(../../../vrfName!='_public_' and ../afType='ipv6uni')";
+              type boolean;
+              default "false";
+              description
+                "Enable general router functions on peers. In conventional mode, not all the extended router functions, such as, route refreshing, GR, and multi-address family negotiation, are available. Therefore, the router of a new version can be compatible with the routers of earlier versions.";
+            }
+            leaf routeRefresh {
+              type boolean;
+              default "true";
+              description
+                "Enable BGP to advertise Refresh messages to peers. By default, this function is enabled.";
+            }
+            leaf fourByteAs {
+              type boolean;
+              default "true";
+              description
+                "Enables BGP to advertise routes carrying 4-byte AS numbers to peers. By default, the function is enabled. After the 4-byte AS number function is disabled, Open packets will not carry 4-byte AS number capability flag, and peer ends will not know that local ends have the 4-byte AS number function. The 4-byte AS number function cannot be disabled from peers (peer groups) if a 4-byte AS number, fake AS number, or confederation ID is configured on a router and the AS number of a peer is 4-byte.  If the 4-byte AS number function is disabled in such a situation, BGP sessions may fail to be established, and route transmission may be affected.";
+            }
+            leaf isIgnore {
+              type boolean;
+              default "false";
+              description
+                "Tear down sessions between peers and clear all related routing information. By default, this function is disabled.";
+            }
+            leaf localIfName {
+              type pub-type:ifName;
+              description
+                "Name of a source interface that sends BGP packets. By default, the outbound interface of a BGP packet serves as the source interface of a BGP packet. To ensure that a router can send BGP packets when a physical interface fails, you can configure the source interface that sends BGP packets as a loopback interface. When using the loopback interface as the source interface, note the following points:
+1. The address of the loopback interface of the BGP peer must be reachable.
+2. For an EBGP connection, configure the maximum number of hops and allow EBGP peer relationships to be established in indirect mode.";
+              ext:allowDelete "true";
+            }
+            leaf localIfAddress {
+              type inet:ip-address-no-zone;
+              description
+                "Name of a source interface that sends BGP packets. By default, the outbound interface of a BGP packet serves as the source interface of a BGP packet. To ensure that a router can send BGP packets when a physical interface fails, you can configure the source interface that sends BGP packets as a loopback interface. When using the loopback interface as the source interface, note the following points:
+1. The address of the loopback interface of the BGP peer must be reachable.
+2. For an EBGP connection, configure the maximum number of hops and allow EBGP peer relationships to be established in indirect mode.";
+            }
+            leaf ebgpMaxHop {
+              when "not(../groupType='ibgp')";
+              type uint32 {
+                range "1..255";
+              }
+              must "not(../validTtlHops) and ../groupType='ebgp'";
+              default "1";
+              description
+                "Maximum number of hops in an indirect EBGP connection. By default, EBGP connections can be established only between directly connected peers. The function must be configured on both ends.";
+              ext:allowDelete "true";
+            }
+            leaf validTtlHops {
+              type uint16 {
+                range "1..255";
+              }
+              must "not(../ebgpMaxHop and ../ebgpMaxHop>1 and ../ebgpMaxHop<=255)";
+              description
+                "";
+              ext:allowDelete "true";
+            }
+            leaf connectMode {
+              type bgpcommPeerConnectMode;
+              description
+                "The value can be Connect-only, Listen-only, or Both. If the value is Connect-only, the specified peer or peer group only initiatively sends connection requests, instead of listening to connection requests. If the value is Listen-only, the specified peer or peer group only listens to connection requests, instead of initiatively sending connection requests. If the value is Both, the specified peer or peer group not only initiatively sends connection requests, but also listens to connection requests. The default value is Both.";
+              ext:allowDelete "true";
+            }
+            leaf isLogChange {
+              type boolean;
+              default "true";
+              description
+                "Enable BGP to record the session status and events of the specified peer or peer group. By default, the function is enabled.";
+            }
+            leaf pswdType {
+              type bgpcommPasswordType;
+              must "not(../keyChainName)";
+              default "null";
+              description
+                "Enable BGP peers to establish a TCP connection and perform the Message Digest 5 (MD5) authentication for BGP messages. Plaintexts and ciphertexts are supported.";
+              ext:allowDelete "true";
+            }
+            leaf pswdCipherText {
+              when "not(not(../pswdType))";
+              type pub-type:passwordExtend {
+                length "1..255";
+              }
+              description
+                "Enable BGP peers to establish a TCP connection and perform the Message Digest 5 (MD5) authentication for BGP messages. The character string in a password identifies the contents of the password, spaces not supported. The TCP connection can be established only when the same MD5 authentication password is set on both ends. If a plaintext is used, the maximum password length is 255. If a ciphertext is used, the maximum password length is 392. If the length is set to 0, no password is set.";
+              ext:allowDelete "true";
+            }
+            leaf keepAliveTime {
+              type uint32 {
+                range "0..21845";
+              }
+              default "60";
+              description
+                "Specify the Keepalive time of a peer or peer group. The value is an integer, in seconds. If the value of a timer changes, the peers need to re-negotiate the interval value for the keepalive-time and hold-time. This disconnects the BGP peer relationship between the routers. Therefore, you need to double check whether it is a must to change the value of the timer. Ensure that the hold time is at least three times longer than the keepalive time when you configure the BGP timer.";
+              ext:allowDelete "true";
+            }
+            leaf holdTime {
+              type uint32 {
+                range "0..65535";
+              }
+              must "(../holdTime!=1) or (../holdTime!=2) or (../holdTime>=../keepAliveTime*3) or (../holdTime>=../minHoldTime)";
+              default "180";
+              description
+                "Specify the Hold time of a peer or peer group. The value is either 0 or an integer ranging from 0 to 65535, in seconds. When setting the timer values of keepalive-time and hold-time, avoid the following settings: 1.The interval values of keepalive-time and hold-time are both set to 0. This will cause BGP timer to become invalid, and BGP will not detect link faults based on the timer. 
+2. The interval value of hold-time is much greater than that of keepalive-time. For example, the interval value of keepalive-time is 1, and that of hold-time is 65535. If the interval value of hold-time is too large, BGP will not be able to detect link faults in time. The priority of the timer configured here is lower than that of timer configured with interval values of keepalive-time and hold-time of a peer. After a connection is established between peers, the interval values of keepalive-time and hold-time are negotiated by the peers. The smaller interval value of hold-time contained in Open packets of both peers is taken as the interval value of hold-time. The smaller interval value of one third of the interval value of hold-time and the locally set interval value of keepalive-time is taken as the interval value of keepalive-time.";
+              ext:allowDelete "true";
+            }
+            leaf minHoldTime {
+              type uint32 {
+                range "0..65535";
+              }
+              default "0";
+              description
+                "The minimum hold time is either 0 or an integer ranging from 20 to 65535, in seconds. If the value is changed, the new value takes effect since the next peer relationship establishment. During the peer relationship establishment, the local device checks the hold time of the remote end. If the hold time is less than the minimum hold time, the local device sends an error packet with error code 02 and subcode 06, and the peer relationship fails to be established.";
+              ext:allowDelete "true";
+            }
+            leaf keyChainName {
+              type string {
+                length "1..47";
+              }
+              must "not(not(../pswdType))";
+              description
+                "Specify the Keychain authentication name used when BGP peers establish a TCP connection. The value is a string, spaces not supported. By default, the Keychain authentication is not configured. Keychain authentication mode and password authentication mode are mutually exclusive. Configuring Keychain authentication can enhance the security of the TCP connections between BGP peers. Keychain authentication using the same encryption algorithm and password must be configured on the two ends of BGP peers to establish a TCP connection and exchange BGP packets. Before configuring BGP Keychain authentication, you need to configure Keychain according to keychain name. Otherwise, the TCP connections between the BGP peers cannot be established.";
+              ext:allowDelete "true";
+            }
+            leaf trackingEnable {
+              type boolean;
+              default "true";
+              description
+                "Enable peer tracking, After peer tracking is enabled, the device can fast detect the unreachability of a peer and reset the session.";
+              ext:allowDelete "true";
+            }
+            leaf trackDelayTime {
+              when "../trackingEnable='true'";
+              type uint16 {
+                range "0..65535";
+              }
+              default "9";
+              description
+                "Specify the delay to reset the session, in seconds.";
+              ext:allowDelete "true";
+            }
+            leaf connRetryTime {
+              type uint16 {
+                range "1..65535";
+              }
+              default "32";
+              description
+                "ConnectRetry interval. The value is an integer, in seconds. The default value is 32s.";
+              ext:allowDelete "true";
+            }
+            leaf tcpMSS {
+              type uint16 {
+                range "176..4096";
+              }
+              description
+                "Maximum TCP MSS value used for TCP connection establishment for a peer group. ";
+              ext:allowDelete "true";
+            }
+            leaf mplsLocalIfnetDisable {
+              when "../../../vrfName='_public_' and ../groupType='ebgp'";
+              type boolean;
+              default "false";
+              description
+                "Disable MPLS local IFNET tunnel creation. By default, MPLS local IFNET tunnels can be created.";
+              ext:allowDelete "true";
+            }
+            leaf prependGlobalAs {
+              when "not(../groupType='ibgp' or not(../fakeAs))";
+              type boolean;
+              default "false";
+              description
+                "Add the global AS number to the Update packets to be advertised.";
+            }
+            leaf prependFakeAs {
+              when "not(../groupType='ibgp' or not(../fakeAs))";
+              type boolean;
+              default "false";
+              description
+                "Add the Fake AS number to received Update packets.";
+            }
+            leaf pathAttrDiscardIdMap {
+              type pub-type:bitMap {
+                length "1..65535";
+              }
+              description
+                "";
+              ext:allowDelete "true";
+            }
+            leaf pathAttrWithdrawIdMap {
+              type pub-type:bitMap {
+                length "1..65535";
+              }
+              description
+                "";
+              ext:allowDelete "true";
+            }
+            container peerGroupBfd {
+              description
+                "Configure BFD.";
+              leaf multiplier {
+                type uint32 {
+                  range "3..50";
+                }
+                default "3";
+                description
+                  "Specify the detection multiplier. The default value is 3.";
+                ext:allowDelete "true";
+              }
+              leaf isBfdEnable {
+                type boolean;
+                default "false";
+                description
+                  "Configure BFD.";
+              }
+              leaf rxInterval {
+                type uint32 {
+                  range "3..1000";
+                }
+                description
+                  "Specify the minimum interval at which BFD packets are received. By default, the value is determined by the PAF file.";
+                ext:allowDelete "true";
+              }
+              leaf txInterval {
+                type uint32 {
+                  range "3..1000";
+                }
+                description
+                  "Specify the minimum interval at which BFD packets are sent. By default, the value is determined by the PAF file.";
+                ext:allowDelete "true";
+              }
+              leaf isSingleHop {
+                type boolean;
+                must "not(../isBfdEnable='false') or (../isBfdEnable='false' and ../isSingleHop='false')";
+                default "false";
+                description
+                  "The single hop mode is preferred during the BFD session establishment between IBGP peers.";
+              }
+            }
+          }
+        }
+        container bgpMultiPeers {
+          description
+            "List of BGP peers.";
+          list bgpMultiPeer {
+            key "peerAddr";
+            description
+              "Configurations of a single BGP peer.";
+            leaf peerAddr {
+              type inet:ip-address-no-zone;
+              description
+                "Connection address of a peer, which can be an IPv4 or IPv6 address.";
+            }
+            leaf groupName {
+              type leafref {
+                path "/bgp/bgpmultiinstcomm/bgpMultiVrfs/bgpMultiVrf/bgpMultiPeerGroups/bgpMultiPeerGroup/groupName";
+              }
+              description
+                "Specify the name of a peer group that BGP peers need to join. The value is a string, spaces not supported. By default, BGP peers join no peer group. BGP peers distinguish the peer group type when joining a peer group. IBGP peers cannot join an EBGP peer group.  BGP peers will be deleted when they leave a peer group. ";
+              ext:allowDelete "true";
+            }
+            leaf remoteAs {
+              type string {
+                length "1..11";
+              }
+              description
+                "AS number of a peer, which can be in either two-byte format or four-byte format:
+The two-byte format is X. X is an integer ranging from 1 to 65535.
+The four-byte format is X.Y and X. When the format is X.Y, X and Y are both integers, with the value of X ranging from 1 to 65535, and the value of Y ranging from 0 to 65535; when the format is X, X is an interger, with the value of X ranging from 1 to 4294967295.";
+              ext:allowDelete "true";
+            }
+            leaf description {
+              type string {
+                length "1..80";
+                pattern '([^?]*)';
+              }
+              description
+                "Description of a peer, which can be letters or digits. The description is a string of 1 to 80 characters, with spaces supported. By default, no description is configured for a peer.";
+              ext:allowDelete "true";
+            }
+            leaf fakeAs {
+              type asNumberValidate {
+                length "1..11";
+          pattern '((([1-9]\d{0,8})|([1-3]\d{9})|(4[0-1]\d{8})|(42[0-8]\d{7})|(429[0-3]\d{6})|(4294[0-8]\d{5})|(42949[0-5]\d{4})|(429496[0-6]\d{3})|(4294967[0-1]\d{2})|(42949672[0-8]\d{1})|(429496729[0-5]))|((([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))(\.)(([0-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))))';
+              }
+              description
+                "Fake AS number that is specified for a local peer. By default, a peer uses the actual AS number of the local end.
+An AS number can be in either two-byte format or four-byte format:
+The two-byte format is X. X is an integer ranging from 1 to 65535.
+The four-byte format is X.Y and X. When the format is X.Y, X and Y are both integers, with the value of X ranging from 1 to 65535, and the value of Y ranging from 0 to 65535; when the format is X, X is an interger, with the value of X ranging from 1 to 4294967295.";
+              ext:allowDelete "true";
+            }
+            leaf dualAs {
+              when "not(../fakeAs)";
+              type boolean;
+              default "false";
+              description
+                "By default, dual AS is not enabled, and the remote EBGP peer uses the fake AS number when specifying the AS number for a local peer. 
+After dual AS is enabled, the remote EBGP peer can use the actual or fake AS number when specifying the AS number for a local peer. The local peer uses the fake and actual AS numbers to establish a BGP peer relationship with the remote end and identifies the AS number configured by the remote end through the error code (OPEN Message Error) and sub-error code (Bad Peer AS) of the Notification message from the remote end.";
+            }
+            leaf conventional {
+              type boolean;
+              default "false";
+              description
+                "Enable general router functions on peers. In conventional mode, not all the extended router functions, such as, route refreshing, GR, and multi-address family negotiation, are available. Therefore, the router of a new version can be compatible with the routers of earlier versions.";
+            }
+            leaf routeRefresh {
+              type boolean;
+              default "true";
+              description
+                "Enable BGP to advertise Refresh messages to peers. By default, this function is enabled.";
+            }
+            leaf fourByteAs {
+              type boolean;
+              default "true";
+              description
+                "Enables BGP to advertise routes carrying 4-byte AS numbers to peers. By default, the function is enabled. After the 4-byte AS number function is disabled, Open packets will not carry 4-byte AS number capability flag, and peer ends will not know that local ends have the 4-byte AS number function. The 4-byte AS number function cannot be disabled from peers (peer groups) if a 4-byte AS number, fake AS number, or confederation ID is configured on a router and the AS number of a peer is 4-byte.  If the 4-byte AS number function is disabled in such a situation, BGP sessions may fail to be established, and route transmission may be affected.";
+            }
+            leaf isIgnore {
+              type boolean;
+              default "false";
+              description
+                "Tear down sessions between peers and clear all related routing information. By default, this function is disabled.";
+            }
+            leaf localIfName {
+              type pub-type:ifName;
+              description
+                "Name of a source interface that sends BGP packets. By default, the outbound interface of a BGP packet serves as the source interface of a BGP packet. To ensure that a router can send BGP packets when a physical interface fails, you can configure the source interface that sends BGP packets as a loopback interface. When using the loopback interface as the source interface, note the following points:
+1. The address of the loopback interface of the BGP peer must be reachable.
+2. For an EBGP connection, configure the maximum number of hops and allow EBGP peer relationships to be established in indirect mode.";
+              ext:allowDelete "true";
+            }
+            leaf localIfAddress {
+              type inet:ip-address-no-zone;
+              description
+                "Name of a source interface that sends BGP packets. By default, the outbound interface of a BGP packet serves as the source interface of a BGP packet. To ensure that a router can send BGP packets when a physical interface fails, you can configure the source interface that sends BGP packets as a loopback interface. When using the loopback interface as the source interface, note the following points:
+1. The address of the loopback interface of the BGP peer must be reachable.
+2. For an EBGP connection, configure the maximum number of hops and allow EBGP peer relationships to be established in indirect mode.";
+            }
+            leaf ebgpMaxHop {
+              type uint32 {
+                range "1..255";
+              }
+              must "not(../validTtlHops>=1 and ../validTtlHops<=255) or (../validTtlHops>=1 and ../validTtlHops<=255 and ../ebgpMaxHop=1)";
+              description
+                "Maximum number of hops in an indirect EBGP connection. By default, EBGP connections can be established only between directly connected peers. The function must be configured on both ends.";
+              ext:allowDelete "true";
+            }
+            leaf validTtlHops {
+              type uint16 {
+                range "1..255";
+              }
+              must "not(../ebgpMaxHop and ../ebgpMaxHop>1 and ../ebgpMaxHop<=255)";
+              description
+                "";
+              ext:allowDelete "true";
+            }
+            leaf connectMode {
+              type bgpcommPeerConnectMode;
+              description
+                "The value can be Connect-only, Listen-only, or Both. If the value is Connect-only, the specified peer or peer group only initiatively sends connection requests, instead of listening to connection requests. If the value is Listen-only, the specified peer or peer group only listens to connection requests, instead of initiatively sending connection requests. If the value is Both, the specified peer or peer group not only initiatively sends connection requests, but also listens to connection requests. The default value is Both.";
+              ext:allowDelete "true";
+            }
+            leaf isLogChange {
+              type boolean;
+              default "true";
+              description
+                "Enable BGP to record the session status and events of the specified peer or peer group. By default, the function is enabled.";
+            }
+            leaf pswdType {
+              type bgpcommPasswordType;
+              must "not(../keyChainName)";
+              default "null";
+              description
+                "Enable BGP peers to establish a TCP connection and perform the Message Digest 5 (MD5) authentication for BGP messages. Plaintexts and ciphertexts are supported.";
+              ext:allowDelete "true";
+            }
+            leaf pswdCipherText {
+              when "not(not(../pswdType))";
+              type pub-type:passwordExtend {
+                length "1..255";
+              }
+              description
+                "Enable BGP peers to establish a TCP connection and perform the Message Digest 5 (MD5) authentication for BGP messages. The character string in a password identifies the contents of the password, spaces not supported. The TCP connection can be established only when the same MD5 authentication password is set on both ends. If a plaintext is used, the maximum password length is 255. If a ciphertext is used, the maximum password length is 392. If the length is set to 0, no password is set.";
+              ext:allowDelete "true";
+            }
+            leaf keepAliveTime {
+              type uint32 {
+                range "0..21845";
+              }
+              default "60";
+              description
+                "Specify the Keepalive time of a peer or peer group. The value is an integer, in seconds. If the value of a timer changes, the peers need to re-negotiate the interval value for the keepalive-time and hold-time. This disconnects the BGP peer relationship between the routers. Therefore, you need to double check whether it is a must to change the value of the timer. Ensure that the hold time is at least three times longer than the keepalive time when you configure the BGP timer.";
+              ext:allowDelete "true";
+            }
+            leaf holdTime {
+              type uint32 {
+                range "0..65535";
+              }
+              must "(../holdTime!=1) or (../holdTime!=2) or (../holdTime>=../keepAliveTime*3) or (../holdTime>=../minHoldTime)";
+              default "180";
+              description
+                "Specify the Hold time of a peer or peer group. The value is either 0 or an integer ranging from 0 to 65535, in seconds. When setting the timer values of keepalive-time and hold-time, avoid the following settings: 1.The interval values of keepalive-time and hold-time are both set to 0. This will cause BGP timer to become invalid, and BGP will not detect link faults based on the timer. 
+2. The interval value of hold-time is much greater than that of keepalive-time. For example, the interval value of keepalive-time is 1, and that of hold-time is 65535. If the interval value of hold-time is too large, BGP will not be able to detect link faults in time. The priority of the timer configured here is lower than that of timer configured with interval values of keepalive-time and hold-time of a peer. After a connection is established between peers, the interval values of keepalive-time and hold-time are negotiated by the peers. The smaller interval value of hold-time contained in Open packets of both peers is taken as the interval value of hold-time. The smaller interval value of one third of the interval value of hold-time and the locally set interval value of keepalive-time is taken as the interval value of keepalive-time.";
+              ext:allowDelete "true";
+            }
+            leaf minHoldTime {
+              type uint32 {
+                range "0..65535";
+              }
+              default "0";
+              description
+                "The minimum hold time is either 0 or an integer ranging from 20 to 65535, in seconds. If the value is changed, the new value takes effect since the next peer relationship establishment. During the peer relationship establishment, the local device checks the hold time of the remote end. If the hold time is less than the minimum hold time, the local device sends an error packet with error code 02 and subcode 06, and the peer relationship fails to be established.
+
+";
+              ext:allowDelete "true";
+            }
+            leaf keyChainName {
+              type string {
+                length "1..47";
+              }
+              must "not(not(../pswdType))";
+              description
+                "Specify the Keychain authentication name used when BGP peers establish a TCP connection. The value is a string, spaces not supported. By default, the Keychain authentication is not configured. Keychain authentication mode and password authentication mode are mutually exclusive. Configuring Keychain authentication can enhance the security of the TCP connections between BGP peers. Keychain authentication using the same encryption algorithm and password must be configured on the two ends of BGP peers to establish a TCP connection and exchange BGP packets. Before configuring BGP Keychain authentication, you need to configure Keychain according to keychain name. Otherwise, the TCP connections between the BGP peers cannot be established.";
+              ext:allowDelete "true";
+            }
+            leaf trackingEnable {
+              type boolean;
+              default "true";
+              description
+                "Enable peer tracking, After peer tracking is enabled, the device can fast detect the unreachability of a peer and reset the session.";
+              ext:allowDelete "true";
+            }
+            leaf trackDelayTime {
+              when "../trackingEnable='true'";
+              type uint16 {
+                range "0..65535";
+              }
+              default "9";
+              description
+                "Specify the delay to reset the session, in seconds.";
+              ext:allowDelete "true";
+            }
+            leaf connRetryTime {
+              type uint16 {
+                range "1..65535";
+              }
+              default "32";
+              description
+                "ConnectRetry interval. The value is an integer, in seconds. The default value is 32s.";
+              ext:allowDelete "true";
+            }
+            leaf tcpMSS {
+              type uint16 {
+                range "176..4096";
+              }
+              description
+                "Maximum TCP MSS value used for TCP connection establishment for a peer. ";
+              ext:allowDelete "true";
+            }
+            leaf mplsLocalIfnetDisable {
+              when "../../../vrfName='_public_'";
+              type boolean;
+              default "false";
+              description
+                "Disable MPLS local IFNET tunnel creation. By default, MPLS local IFNET tunnels can be created.";
+              ext:allowDelete "true";
+            }
+            leaf prependGlobalAs {
+              when "not(not(../fakeAs))";
+              type boolean;
+              default "false";
+              description
+                "Add the global AS number to the Update packets to be advertised.";
+            }
+            leaf prependFakeAs {
+              when "not(not(../fakeAs))";
+              type boolean;
+              default "false";
+              description
+                "Add the Fake AS number to received Update packets.";
+            }
+            container peerBfd {
+              description
+                "Configure BFD.";
+              leaf isBfdBlock {
+                type boolean;
+                default "false";
+                description
+                  "Prevent  a BGP peer from inheriting the BFD configuration of the BGP peer group.";
+              }
+              leaf multiplier {
+                type uint32 {
+                  range "3..50";
+                }
+                default "3";
+                description
+                  "Specify the detection multiplier. The default value is 3.";
+                ext:allowDelete "true";
+              }
+              leaf isBfdEnable {
+                type boolean;
+                default "false";
+                description
+                  "Enable BFD.";
+              }
+              leaf rxInterval {
+                type uint32 {
+                  range "3..1000";
+                }
+                description
+                  "Specify the minimum interval at which BFD packets are received. By default, the value is determined by the PAF file.";
+                ext:allowDelete "true";
+              }
+              leaf txInterval {
+                type uint32 {
+                  range "3..1000";
+                }
+                description
+                  "Specify the minimum interval at which BFD packets are sent. By default, the value is determined by the PAF file.";
+                ext:allowDelete "true";
+              }
+              leaf isSingleHop {
+                type boolean;
+                must "not(../isBfdEnable='false') or (../isBfdEnable='false' and ../isSingleHop='false')";
+                default "false";
+                description
+                  "The single hop mode is preferred during the BFD session establishment between IBGP peers.";
+              }
+            }
+          }
+        }
+        container bgpMultiVrfAFs {
+          description
+            "List of BGP address family instances.";
+          list bgpMultiVrfAF {
+            key "afType";
+            description
+              "BGP address family instance.";
+            leaf afType {
+              type bgpmultiinstcommPrefixType;
+              description
+                "Address family type of a BGP instance. ";
+            }
+            leaf vrfAsNum {
+              when "not(../../../vrfName='_public_')";
+              type asNumberValidate {
+                length "1..11";
+          pattern '((([1-9]\d{0,8})|([1-3]\d{9})|(4[0-1]\d{8})|(42[0-8]\d{7})|(429[0-3]\d{6})|(4294[0-8]\d{5})|(42949[0-5]\d{4})|(429496[0-6]\d{3})|(4294967[0-1]\d{2})|(42949672[0-8]\d{1})|(429496729[0-5]))|((([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))(\.)(([0-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))))';
+              }
+              description
+                "Specify the unique AS number for the vpn instance";
+              ext:allowDelete "true";
+            }
+            leaf maxLoadIbgpNum {
+              when "not(../afType='evpn' or ../afType='ipv4flow' or ../afType='ipv4vpn' or ../afType='ipv4vpnmcast' or ../afType='ipv6vpn' or ../afType='l2vpnad' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../afType='mvpn') or ../afType='ipv4uni' or ../afType='ipv6uni'";
+              type uint16 {
+                range "1..65535";
+              }
+              default "1";
+              description
+                "Specify the maximum number of equal-cost IBGP routes. By default, the value is 1. ";
+              ext:allowDelete "true";
+            }
+            leaf ibgpEcmpNexthopChanged {
+              when "not(../../../vrfName='_public_' and ../afType='l2vpnad' or ../afType='evpn' or ../afType='ipv4flow' or ../afType='ipv4vpn' or ../afType='ipv4vpnmcast' or ../afType='ipv6vpn' or ../afType='l2vpnad' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../afType='mvpn') or ../afType='ipv4uni' or ../afType='ipv6uni'";
+              type boolean;
+              must "../maxLoadIbgpNum and ../maxLoadIbgpNum>1 or (not(../maxLoadIbgpNum and ../maxLoadIbgpNum>1) and ../ibgpEcmpNexthopChanged='false')";
+              default "false";
+              description
+                "When equal-cost IBGP routes are load-balancing traffic, the next hop of these routes is changed to a local interface before these routes are advertised. By default, this function is not enabled. This function can be enabled only when the maximum number of equal-cost IBGP routes is greater than 1.";
+            }
+            leaf maxLoadEbgpNum {
+              when "not(../afType='evpn' or ../afType='ipv4flow' or ../afType='ipv4vpn' or ../afType='ipv4vpnmcast' or ../afType='ipv6vpn' or ../afType='l2vpnad' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../afType='mvpn') or ../afType='ipv4uni' or ../afType='ipv6uni'";
+              type uint16 {
+                range "1..65535";
+              }
+              default "1";
+              description
+                "Specify the maximum number of equal-cost EBGP routes. By default, the value is 1.";
+              ext:allowDelete "true";
+            }
+            leaf ebgpEcmpNexthopChanged {
+              when "not(../../../vrfName='_public_' and ../afType='l2vpnad' or ../afType='evpn' or ../afType='ipv4flow' or ../afType='ipv4vpn' or ../afType='ipv4vpnmcast' or ../afType='ipv6vpn' or ../afType='l2vpnad' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../afType='mvpn') or ../afType='ipv4uni' or ../afType='ipv6uni'";
+              type boolean;
+              must "../maxLoadEbgpNum and ../maxLoadEbgpNum>1 or (not(../maxLoadEbgpNum and ../maxLoadEbgpNum>1) and ../ebgpEcmpNexthopChanged='false')";
+              default "false";
+              description
+                "When equal-cost EBGP routes are load-balancing traffic, the next hop of these routes is changed to a local interface before these routes are advertised. By default, this function is not enabled. This function can be enabled only when the maximum number of equal-cost EBGP routes is greater than 1.";
+            }
+            leaf maximumLoadBalance {
+              when "not(../afType!='ipv4uni' and ../afType!='ipv4multi' and ../afType!='ipv6uni' or ../afType='ipv4flow' or ../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_')";
+              type uint16 {
+                range "1..65535";
+              }
+              default "1";
+              description
+                "Specify the maximum number of equal-cost routes in the BGP routing table. The value can be 1 or an integer greater than 1. The value depends on the associated license. By default, the maximum number of equal-cost routes is 1. Equal-cost BGP routes can be generated for load balancing only when the BGP routes meet the first nine rules of the route-selection policy and have the same AS-Path attribute.";
+              ext:allowDelete "true";
+            }
+            leaf ecmpNexthopChanged {
+              when "not(../../../vrfName='_public_' and ../afType='l2vpnad' or ../afType='evpn' or ../afType='ipv4flow' or ../afType='ipv4vpn' or ../afType='ipv4vpnmcast' or ../afType='ipv6vpn' or ../afType='l2vpnad' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../afType='mvpn') or ../afType='ipv4uni' or ../afType='ipv6uni'";
+              type boolean;
+              must "../maximumLoadBalance and ../maximumLoadBalance>1 or (not(../maximumLoadBalance and ../maximumLoadBalance>1) and ../ecmpNexthopChanged='false')";
+              default "false";
+              description
+                "When equal-cost BGP routes are load-balancing traffic, the next hop of these routes is changed to a local interface before these routes are advertised. By default, this function is not enabled. This function can be enabled only when the maximum number of equal-cost BGP routes is greater than 1.";
+            }
+            leaf eibgpLoadBalan {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../../../vrfName!='_public_'";
+              type uint16 {
+                range "1..65535";
+              }
+              description
+                "Specify the maximum number of equal-cost EBGP routes and IBGP routes. After the attribute is set, load balancing is performed among equal-cost BGP VPN routes, regardless of the route type, EBGP or IBGP. By default, the maximum number of equal-cost EBGP routes and IBGP routes is 0.";
+              ext:allowDelete "true";
+            }
+            leaf eibgpEcmpNexthopChanged {
+              when "not(../afType='ls' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../../../vrfName!='_public_'";
+              type boolean;
+              must "../eibgpLoadBalan and ../eibgpLoadBalan>0 or (not(../eibgpLoadBalan and ../eibgpLoadBalan>0) and ../eibgpEcmpNexthopChanged='false')";
+              default "false";
+              description
+                "When equal-cost EBGP and IBGP routes are load-balancing traffic, the next hop of these routes is changed to a local interface before these routes are advertised. By default, this function is not enabled. ";
+            }
+            leaf defaultLocalPref {
+              when "not(../afType='evpn' or ../afType='ipv4flow' or ../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../afType='mvpn')";
+              type uint32 {
+                range "0..4294967295";
+              }
+              default "100";
+              description
+                "Set the Local-Preference attribute. The value is an integer. The greater the value, the higher the priority. By default, the Local-Preference for BGP is 100. Setting different Local-Preferences affects BGP route selection. When a router that runs BGP has multiple routes to the same destination, the router selects the route with the highest Local-Preference. The Local-Preference is exchanged only between IBGP peers and is not advertised to other ASs.";
+              ext:allowDelete "true";
+            }
+            leaf defaultMed {
+              when "not(../afType='evpn' or ../afType='ipv4flow' or ../afType='ipv4vpnmcast' or ../afType='l2vpnad' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../afType='mvpn')";
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "Specify the Multi-Exit-Discriminator (MED) of BGP routes. The value is an integer. By default, the MED is 0. This value is valid only for the imported routes and BGP summarized routes on the local router.
+";
+              ext:allowDelete "true";
+            }
+            leaf defaultRtImportEnable {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='ipv6vpn' and ../afType!='ipv4vpn' and ../afType!='ipv4flow' and ../afType!='mvpn' and ../afType!='l2vpnad' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "Import default routes into the BGP routing table. By default, BGP does not add default routes to the BGP routing table. default-route-imported must be used with import-routes so that default routes can be imported to the BGP routing table. If only import-routes is used, no default routes can be added to the BGP routing table. In addition, default-route-imported can only import the default routes in the routing table into the BGP routing table.";
+            }
+            leaf routerId {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../../../vrfName!='_public_'";
+              type inet:ipv4-address-no-zone;
+              must "../vrfRidAutoSel!='true'";
+              description
+                "ID of a router that is in IPv4 address format. Certain dynamic routing protocols require a router ID. If no router ID is specified for a router when these protocols are enabled, the router ID in the RM module is used by default. The default router ID in the RM module is 0.0.0.0 when the router is not configured with any interface. 
+The rules for selecting a router ID are as follows:
+1. If you set a router ID through this configuration, the set router ID is used. If the router ID is not set, you need to select a router ID according to the following rules:
+(1) If loopback interfaces configured with IP addresses exist, the largest IP address among the IP addresses of the loopback interfaces is selected as the router ID.
+(2) If no loopback interface configured with an IP address exists, the largest IP address among the IP addresses of other interfaces is selected as the router ID, regardless of whether the interface is Up.
+The router ID is reselected only when the interface address that is selected as the router ID is deleted or changed. The router ID is not reselected in any of the following cases:
+a. The interface is Down.
+b. A loopback interface is configured when the IP address of a non-loopback interface is selected as the router ID.
+c. A larger IP address of an interface is configured.
+2. Each VPN instance selects the router ID from the addresses of the interfaces of the VPN instance according to the preceding rules.
+3. When both the AMB and SMB exist on the router, the system backs up the router ID set through the related command and the router ID that is selected from IP addresses of the interfaces. After the active/standby switchover is performed, the system checks the validity of the router ID selected from the interface addresses. If the router ID is invalid, the system reselects a router ID.";
+              ext:allowDelete "true";
+            }
+            leaf vrfRidAutoSel {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../../../vrfName!='_public_'";
+              type boolean;
+              must "not(../routerId)";
+              description
+                "By default, a BGP VPN instance does not automatically select a router ID. If a BGP VPN instance is not enabled to select a router ID, a router ID can be configured for the BGP VPN instance. If no router ID is configured for the BGP VPN instance, the BGP VPN instance inherits the router ID of the public network instance. If a BGP VPN instance is enabled to select a router ID, it uses the address of an interface bound to a VPN as the router ID based on the following rules: 
+1. If Loopback interfaces configured with IP addresses exist, the largest IP address among the IP addresses of the Loopback interfaces is selected as the router ID. 
+2. If there is no Loopback interface configured with an IP address, the largest IP address among the IP addresses of other interfaces is selected as the router ID, regardless of whether the interface is Up.";
+            }
+            leaf nexthopThirdParty {
+              when "not(../afType='ipv4vpnmcast' or ../afType='mdt') or ../afType='ipv4uni'";
+              type boolean;
+              default "false";
+              description
+                "Enable BGP third-party next hop.";
+            }
+            leaf summaryAutomatic {
+              when "not(../afType!='ipv4uni' and ../afType!='ipv4multi' or ../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_')";
+              type boolean;
+              default "false";
+              description
+                "Enable automatic summarization for imported routes. By default, the locally imported routes are not summarized automatically. Manual summarization takes precedence over automatic summarization. After automatic summarization is enabled, BGP summarizes routes based on the natural network segment (for example, 10.1.1.1/24 and 10.2.1.1/24 are summarized into 10.0.0.0/8, a Class A address), and sends only the summarized route to peers. This reduces the number of routes.";
+            }
+            leaf autoFrrEnable {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='ipv4multi' and ../afType!='ipv4flow' and ../afType!='ipv6vpn' and ../afType!='l2vpnad' and ../afType!='mvpn' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "Enable BGP Auto FRR. By default, BGP Auto FRR is disabled. If IP FRR, VPN FRR, and Auto FRR are all enabled, IP FRR and VPN FRR take precedence over Auto FRR. If a route fails to match the routing policy of IP FRR or VPN FRR, Auto FRR takes effect.";
+            }
+            leaf loadBalancingAsPathIgnore {
+              when "not(../afType='ls' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../asPathNeglect='true') or ../afType!='ipv6vpn' and ../afType!='ipv4vpn' and ../afType!='ipv4flow' and ../afType!='mvpn' and ../afType!='l2vpnad' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls' or ../asPathNeglect!='true' and ../afType!='ipv6vpn' and ../afType!='ipv4vpn' and ../afType!='ipv4flow' and ../afType!='mvpn' and ../afType!='l2vpnad' and ../afType!='evpn' and ../afType!='mdt' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "Configure BGP to ignore the AS_Path of each BGP route to the next hop when selecting routes for load balancing. By default, only the routes with the same AS_Path can participate in load balancing.";
+            }
+            leaf ribOnlyEnable {
+              when "not(../../../vrfName!='_public_' or ../../../vrfName='_public_' and ../afType!='ipv4uni' and ../afType!='ipv6uni' and ../afType!='ipv4flow' or ../afType='ipv4vpnmcast' or ../afType='mdt')";
+              type boolean;
+              must "not(../activeRouteAdvertise='true')";
+              default "false";
+              description
+                "Prevent BGP routes from being added to the IP routing table. By default, preferred BGP routes are added to the IP routing table.";
+            }
+            leaf ribOnlyPolicyName {
+              when "not(../../../vrfName!='_public_' or ../../../vrfName='_public_' and ../afType!='ipv4multi' and ../afType!='ipv4vpn' and ../afType!='ipv6vpn' and ../afType!='l2vpnad' and ../afType!='mvpn' and ../afType!='evpn' and ../afType!='ls' and ../ribOnlyEnable='false' or ../../../vrfName='_public_' and ../afType!='ipv4uni' and ../afType!='ipv6uni' and ../afType!='ipv4flow' or ../afType='ipv4vpnmcast' or ../afType='mdt') or ../../../vrfName='_public_' and ../afType!='ipv4multi' and ../afType!='ipv4vpn' and ../afType!='ipv6vpn' and ../afType!='l2vpnad' and ../afType!='mvpn' and ../afType!='evpn' and ../afType!='mdt' and ../afType!='ls' and ../ribOnlyEnable='true'";
+              type policyName {
+                length "1..200";
+                pattern '([^\? ]+)';
+              }
+              description
+                "Specify the name of a routing policy. When both rib-only-enable and rib-only-policy-name are used, the routes that match the routing policy are not added to the IP routing table. Conversely, the routes that do not match the routing policy are added to the IP routing table, and the attributes of these routes are not modified.";
+              ext:allowDelete "true";
+            }
+            leaf activeRouteAdvertise {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='ipv4multi' and ../afType!='ipv4vpn' and ../afType!='ipv6vpn' and ../afType!='ipv4flow' and ../afType!='l2vpnad' and ../afType!='mvpn' and ../afType!='evpn' and ../afType!='ls'";
+              type boolean;
+              must "not(../ribOnlyEnable='true')";
+              default "false";
+              description
+                "Advertise the optimal routes in the RM module to peers.";
+            }
+            leaf asPathNeglect {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../loadBalancingAsPathIgnore='true') or ../afType!='ipv6vpn' and ../afType!='ipv4vpn' and ../afType!='ipv4flow' and ../afType!='mvpn' and ../afType!='l2vpnad' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls' or ../loadBalancingAsPathIgnore!='true' and ../afType!='ipv6vpn' and ../afType!='ipv4vpn' and ../afType!='ipv4flow' and ../afType!='mvpn' and ../afType!='l2vpnad' and ../afType!='evpn' and ../afType!='mdt' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "Configure BGP to ignore the AS_Path attribute when selecting the optimal route. By default, BGP uses the AS_Path attribute as one of route selection rules, and a route with a shorter AS_Path is preferred. After as-path-neglect is selected, BGP does not compare the AS_Path length.";
+            }
+            leaf medNoneAsMaximum {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='ipv6vpn' and ../afType!='ipv4vpn' and ../afType!='ipv4flow' and ../afType!='mvpn' and ../afType!='l2vpnad' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "If a route does not carry MED, BGP considers its MED as the default value (0) during route selection. After med-none-as-maximum is selected, BGP considers its MED as the largest MED value (4294967295).";
+            }
+            leaf routerIdNeglect {
+              when "../afType!='ipv6vpn' and ../afType!='ipv4vpn' and ../afType!='ipv4flow' and ../afType!='mvpn' and ../afType!='l2vpnad' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "Configure BGP to ignore router IDs when selecting the optimal route. Comparing router IDs is the last resort in route selection. This means that if one optimal route must be selected and no other parameters can be used to break the tie, router IDs can be used. If this option is selected, the first received route will be selected as the optimal route, and BGP will ignore the router ID and peer address in route selection.";
+            }
+            leaf igpMetricIgnore {
+              when "not(../afType='ls' or ../afType='mvpn' and ../../../vrfName!='_public_')";
+              type boolean;
+              default "false";
+              description
+                "Configure BGP to ignore the IGP cost of each BGP route to the next hop in route selection. By default, a BGP route with a smaller IGP cost to the next hop is preferred.";
+            }
+            leaf alwaysCompareMed {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='ipv6vpn' and ../afType!='ipv4vpn' and ../afType!='ipv4flow' and ../afType!='mvpn' and ../afType!='l2vpnad' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "Configure BGP to compare the MEDs of routes from peers in different ASs in route selection. By default, BGP does not compare the MEDs of routes from peers in different ASs. If there are multiple reachable routes to the same destination, the route with the smallest MED is preferred. Do not use this option unless different ASs use the same IGP and route selection mode.";
+            }
+            leaf determinMed {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='ipv6vpn' and ../afType!='ipv4vpn' and ../afType!='ipv4flow' and ../afType!='mvpn' and ../afType!='l2vpnad' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "Enable deterministic MED so that the route selection result is relevant to the sequence in which routes are received.";
+            }
+            leaf preferenceExternal {
+              when "not(../afType!='ipv4uni' and ../afType!='ipv4multi' and ../afType!='ipv6uni' or ../afType='ipv4vpnmcast' or ../afType='mdt')";
+              type uint8 {
+                range "1..255";
+              }
+              default "255";
+              description
+                "Set the protocol priority of EBGP routes. The value is an integer. An EBGP route is the optimal route learned from a peer outside the local AS.";
+              ext:allowDelete "true";
+            }
+            leaf preferenceInternal {
+              when "not(../afType!='ipv4uni' and ../afType!='ipv4multi' and ../afType!='ipv6uni' or ../afType='ipv4vpnmcast' or ../afType='mdt')";
+              type uint8 {
+                range "1..255";
+              }
+              default "255";
+              description
+                "Set the protocol priority of IBGP routes. The value is an integer. An IBGP route is a route learned from a peer inside the local AS.";
+              ext:allowDelete "true";
+            }
+            leaf preferenceLocal {
+              when "not(../afType!='ipv4uni' and ../afType!='ipv4multi' and ../afType!='ipv6uni' or ../afType='ipv4vpnmcast' or ../afType='mdt')";
+              type uint8 {
+                range "1..255";
+              }
+              default "255";
+              description
+                "Set the protocol priority of a local BGP route. The value is an integer. A local route refers to an automatically or manually summarized route.";
+              ext:allowDelete "true";
+            }
+            leaf prefrencePolicyName {
+              when "not(../afType!='ipv4uni' and ../afType!='ipv4multi' and ../afType!='ipv6uni' or ../afType='ipv4vpnmcast' or ../afType='mdt')";
+              type policyName {
+                length "1..200";
+                pattern '([^\? ]+)';
+              }
+              description
+                "Set a routing policy to filter routes so that a configured priority is applied to the routes that match the specified policy. The routes that do not meet the policy rules use the default priority.";
+              ext:allowDelete "true";
+            }
+            leaf reflectBetweenClient {
+              when "not(../afType='mvpn' and ../../../vrfName!='_public_') or ../afType='ls'";
+              type boolean;
+              default "true";
+              description
+                "Enable route reflection between clients. By default, route reflection is enabled between clients. If clients of a route reflector (RR) are fully meshed, you can disable route reflection among clients to reduce the cost.";
+            }
+            leaf reflectorClusterId {
+              when "not(../afType='mvpn' and ../../../vrfName!='_public_') or ../afType='ls'";
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Set a cluster ID. Configuring multiple RRs in a cluster can enhance the stability of the network. If a cluster has more than one RR, select this option to set the same cluster ID for all the RRs to avoid routing loops. To allow clients to receive routes from RRs, ensure that the cluster ID of the RRs is different from the router ID of any client. If the cluster ID of the RRs is the same as the router ID of a client, the client will discard received routes.";
+              ext:allowDelete "true";
+            }
+            leaf reflectorClusterIpv4 {
+              when "not(../afType='mvpn' and ../../../vrfName!='_public_') or ../afType='ls'";
+              type inet:ipv4-address-no-zone;
+              description
+                "Set a cluster ID. The value is expressed in the format of an IPv4 address. Configuring multiple RRs in a cluster can enhance the stability of the network. If a cluster has more than one RR, select this option to set the same cluster ID for all the RRs to avoid routing loops. To allow clients to receive routes from RRs, ensure that the cluster ID of the RRs is different from the router ID of any client. If the cluster ID of the RRs is the same as the router ID of a client, the client will discard received routes.";
+              ext:allowDelete "true";
+            }
+            leaf rrFilterNumber {
+              when "not(../../../vrfName!='_public_' or ../afType!='ipv4vpn' and ../afType!='ipv6vpn' and ../afType!='l2vpnad' and ../afType!='mvpn' and ../../../vrfName='_public_' and ../afType!='mdt' or ../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mvpn' and ../../../vrfName!='_public_')";
+              type string {
+                length "1..51";
+              }
+              description
+                "Set the number of the extended community filter supported by an RR group. For the purpose of load balancing, only the IBGP route whose route-target extended community attribute meets the matching rules can be reflected. The name of an extended community filter can be a numeral or a character string. The ID of an extended community filter is an integer ranging from 1 to 399. The name of an extended community filter is a string of 1 to 51 characters. The string cannot contain only numerals.";
+              ext:allowDelete "true";
+            }
+            leaf policyVpnTarget {
+              when "not(../../../vrfName!='_public_' and ../afType='ipv4uni' or ../../../vrfName!='_public_' and ../afType='ipv6uni' or ../../../vrfName!='_public_' or ../afType!='ipv4vpn' and ../afType!='ipv6vpn' and ../afType!='l2vpnad' and ../afType!='mvpn' and ../../../vrfName='_public_' and ../afType!='mdt' or ../afType='ls' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../../../vrfName='_public_' and ../afType='ipv4vpnmcast' or ../../../vrfName='_public_' and ../afType='mdt'";
+              type boolean;
+              default "true";
+              description
+                "Enable VPN target-based filtering for the received VPN routes. By default, VPN target-based filtering is enabled. Only the VPN route whose Export RT attribute matches the local Import RT attribute can be added to the routing table.  This option can be used in the inter-AS VPN Option B solution and the ASBR MP-EBGP inter-AS L2VPN solution in Kompella mode.";
+            }
+            leaf nextHopSelDependType {
+              when "not(../../../vrfName!='_public_' or ../../../vrfName='_public_' and ../afType='ipv4multi' or ../../../vrfName='_public_' and ../afType='l2vpnad' or ../../../vrfName='_public_' and ../afType='mdt' or ../afType='evpn' or ../afType='ipv4flow' or ../afType='l2vpnad' or ../afType='ls' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../afType='mvpn') or ../../../vrfName='_public_' and ../afType='ipv4uni' or ../../../vrfName='_public_' and ../afType='ipv4vpn' or ../../../vrfName='_public_' and ../afType='ipv4vpnmcast' or ../../../vrfName='_public_' and ../afType='ipv6uni' or ../../../vrfName='_public_' and ../afType='ipv6vpn'";
+              type bgpcommSelDependType;
+              must "(../../../vrfName='_public_' and ../afType='ipv4uni' and (../nextHopSelDependType='dependTunnel' or ../nextHopSelDependType='dependIp') ) or (../../../vrfName='_public_' and ../afType='ipv4vpn' and (../nextHopSelDependType='dependTunnel' or ../nextHopSelDependType='dependIp') ) or (../../../vrfName='_public_' and ../afType='ipv4vpnmcast' and (../nextHopSelDependType='dependTunnel' or ../nextHopSelDependType='dependIp') ) or (../../../vrfName='_public_' and ../afType='ipv6uni' and (../nextHopSelDependType='dependTunnel' or ../nextHopSelDependType='dependIp') ) or (../../../vrfName='_public_' and ../afType='ipv6vpn' and (../nextHopSelDependType='dependTunnel' or ../nextHopSelDependType='dependIp') ) or not(../../../vrfName='_public_' and ../afType='ipv4uni' or ../../../vrfName='_public_' and ../afType='ipv4vpn' or ../../../vrfName='_public_' and ../afType='ipv4vpnmcast' or ../../../vrfName='_public_' and ../afType='ipv6uni' or ../../../vrfName='_public_' and ../afType='ipv6vpn')";
+              default "dependIp";
+              description
+                "Specify the route iteration mode: IP or tunnel. In tunnel mode, the labeled BGP IPv4 route can participate in route selection only after its next hop is iterated to an LSP. In IP mode, the labeled BGP IPv4 route can participate in route selection only after its next hop is iterated to an IP address. By default, the labeled BGP IPv4 route can participate in route selection if its next hop can be iterated to an IP address, regardless of whether the LSP of the next hop exists. This allows the RR that is not enabled with MPLS to forward labeled routes. In non-RR networking or RR networking where the BGP next hop is changed, BGP needs to check whether there is an LSP destined for the next hop. If such an LSP is not found, BGP needs to establish an LSP in advance. If the default setting is adopted, a labeled BGP IPv4 unicast route may be selected prior to LSP establishment. As a result, services are incorrectly switched before LSP establishment and service stability is affected. Therefore, allow route selection only after the labeled BGP IPv4 route is iterated to an LSP.";
+              ext:allowDelete "true";
+            }
+            leaf nhpRelayRoutePolicyName {
+              when "not(../afType='evpn' or ../afType='ipv4flow' or ../afType='ipv4vpnmcast' or ../afType='l2vpnad' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../afType='mvpn')";
+              type policyName {
+                length "1..200";
+                pattern '([^\? ]+)';
+              }
+              description
+                "Specify the name of a route-policy for route iteration.";
+              ext:allowDelete "true";
+            }
+            leaf ebgpIfSensitive {
+              when "not(../afType!='ipv4uni' and ../afType!='ipv6uni' or ../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_')";
+              type boolean;
+              default "true";
+              description
+                "After the function of EBGP interface fast sensing is enabled, the sessions of directly connected EBGP peers are immediately cleared from the associated interface when the interface becomes Down. By default, this function is enabled.";
+            }
+            leaf reflectChgPath {
+              when "not(../afType='evpn' or ../afType='ipv4flow' or ../afType='ls' or ../afType='mvpn' and ../../../vrfName!='_public_')";
+              type boolean;
+              default "false";
+              description
+                "Enable an RR to use an export policy to change route AS_Path. By default, this function is not enabled.";
+            }
+            leaf slowPeerDet {
+              when "not(../afType='ipv4flow')";
+              type boolean;
+              default "false";
+              description
+                "Detect slow peers";
+            }
+            leaf slowPeerThVal {
+              when "not(../afType='ipv4flow')";
+              type uint16 {
+                range "120..3600";
+              }
+              description
+                "Specify the time in seconds lagging behind average when a peer is determined to be a slow peer, default is 300";
+              ext:allowDelete "true";
+            }
+            leaf addPathSelNum {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../../../vrfName='_public_' and ../afType!='ipv4multi' and ../afType!='ipv4flow' and ../afType!='l2vpnad' and ../afType!='mvpn' and ../afType!='evpn' and ../afType!='ls'";
+              type uint8 {
+                range "2..64";
+              }
+              must "not(../determinMed='true')";
+              description
+                "Number of Add-Path routes.";
+              ext:allowDelete "true";
+            }
+            leaf routeSelDelay {
+              when "not(../afType='evpn' or ../afType='ipv4flow' or ../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='mvpn' and ../afType!='evpn' and ../afType!='ipv4flow' and ../afType!='ls' or ../afType='mvpn' and ../../../vrfName='_public_'";
+              type uint16 {
+                range "0..3600";
+              }
+              default "0";
+              description
+                "Route selection delay. ";
+              ext:allowDelete "true";
+            }
+            leaf originAsValidEnable {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='ipv4multi' and ../afType!='ipv4vpn' and ../afType!='ipv6vpn' and ../afType!='ipv4flow' and ../afType!='l2vpnad' and ../afType!='mvpn' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "Enable BGP origin AS validation.";
+            }
+            leaf originAsValid {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='ipv4multi' and ../afType!='ipv4vpn' and ../afType!='ipv6vpn' and ../afType!='ipv4flow' and ../afType!='l2vpnad' and ../afType!='mvpn' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls' or ../originAsValidEnable='true'";
+              type boolean;
+              default "false";
+              description
+                "Apply the BGP origin AS validation result to route selection.";
+            }
+            leaf allowInvalidAs {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='ipv4multi' and ../afType!='ipv4vpn' and ../afType!='ipv6vpn' and ../afType!='ipv4flow' and ../afType!='l2vpnad' and ../afType!='mvpn' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls' or ../originAsValid='true'";
+              type boolean;
+              default "false";
+              description
+                "Allow routes with BGP origin AS validation result Invalid to be selected.";
+            }
+            leaf policyExtCommEnable {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='ipv6vpn' and ../afType!='ipv4vpn' and ../afType!='ipv4flow' and ../afType!='mvpn' and ../afType!='l2vpnad' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "Change the extended community attribute.";
+            }
+            leaf policyQPPBEnable {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../../../vrfName='_public_' and ../afType='ipv6uni'";
+              type boolean;
+              default "false";
+              description
+                "Enable QPPB.";
+            }
+            leaf supernetUniAdv {
+              when "not(../afType='evpn' or ../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_' or ../afType='mvpn') or ../afType!='ipv4multi' and ../afType!='ipv4vpn' and ../afType!='ipv6vpn' and ../afType!='ipv4flow' and ../afType!='l2vpnad' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "Advertise supernet unicast routes.";
+            }
+            leaf supernetLabelAdv {
+              when "../afType='ipv4uni'";
+              type boolean;
+              default "true";
+              description
+                "Advertise supernet labeled routes.";
+            }
+            leaf ingressLspPolicyName {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../../../vrfName='_public_' and ../afType='ipv4uni'";
+              type policyName {
+                length "1..200";
+                pattern '([^\? ]+)';
+              }
+              description
+                "Name of a route-policy. An ingress LSP is created for only the routes that match the route-policy.";
+              ext:allowDelete "true";
+            }
+            leaf originatorPrior {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt' or ../afType='mvpn' and ../../../vrfName!='_public_') or ../afType!='ipv4flow' and ../afType!='mvpn' and ../afType!='evpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls'";
+              type boolean;
+              default "false";
+              description
+                "Configure BGP to compare originator before clusterlist in route selection.";
+            }
+            leaf lowestPriority {
+              when "not(../afType='ipv4vpnmcast' or ../afType='mdt') or ../../../vrfName='_public_' and ../afType!='ipv4multi' and ../afType!='ipv4vpn' and ../afType!='ipv6vpn' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls' and ../afType!='evpn'";
+              type boolean;
+              default "false";
+              description
+                "Reduce route priority to lowest.";
+            }
+            leaf relayDelayEnable {
+              when "not(../afType!='ipv4uni' and ../afType!='ipv6uni' and ../afType!='ipv4vpn' and ../afType!='ipv6vpn')";
+              type boolean;
+              default "true";
+              description
+                "Enable relay delay processing.";
+              ext:allowDelete "true";
+            }
+            container peerGroupAFs {
+              description
+                "List of all peer groups that are enabled in a specified address family.";
+              list peerGroupAF {
+                when "not(../../afType='ipv4flow' or ../../afType='mvpn' and ../../../../vrfName!='_public_')";
+                key "groupName groupType";
+                description
+                  "Peer group enabled in a specified address family.";
+                leaf groupName {
+                  type leafref {
+                    path "/bgp/bgpmultiinstcomm/bgpMultiVrfs/bgpMultiVrf/bgpMultiPeerGroups/bgpMultiPeerGroup/groupName";
+                  }
+                  description
+                    "Configure a name for a peer group. The value is a string, spaces not supported.";
+                }
+                leaf groupType {
+                  type bgpcommPeerType;
+                  description
+                    "Configure a peer group type: IBGP or EBGP. The type must be consistent with the peer group type.";
+                }
+                leaf advertiseRemoteNexthop {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType='ipv4vpn'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Advertise the remote nexthop to a peer or a peer group. By default, the remote nexthop attribute is not advertised to any peer.";
+                }
+                leaf advertiseCommunity {
+                  when "../../../afType!='evpn' and ../../../afType!='ls' or ../../../afType='ipv4vpnmcast'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Advertise the community attribute to a peer or a peer group. By default, the community attribute is not advertised to any peer.";
+                }
+                leaf advertiseExtCommunity {
+                  when "not(../../../afType='evpn' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt' or ../../../afType='mvpn') or ../../../afType!='ipv6vpn' and ../../../afType!='ipv4vpn' and ../../../afType!='l2vpnad' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Advertise the extended community attribute to a peer or a peer group. By default, the extended community attribute is not advertised to any peer.";
+                }
+                leaf discardExtCommunity {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' or ../../../afType!='ipv6vpn' and ../../../afType!='ipv4vpn' and ../../../afType!='l2vpnad' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Discard the extended community attribute in the routes learned from a specified peer. By default, the extended community attribute is not discarded. ";
+                }
+                leaf allowAsLoopEnable {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt' or ../../../afType='mvpn') or ../../../afType!='ipv4flow' and ../../../afType!='mvpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../../../afType!='evpn'";
+                  type boolean;
+                  mandatory true;
+                  description
+                    "Allow the repetitive local AS numbers. By default, local AS numbers cannot be repeated.";
+                }
+                leaf allowAsLoopLimit {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4flow' and ../../../afType!='mvpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../../../afType!='evpn' or ../allowAsLoopEnable='true'";
+                  type uint32 {
+                    range "1..10";
+                  }
+                  description
+                    "Configure the number of allowed AS number repetition times. The value is an integer. The default value is 1.";
+                  ext:allowDelete "true";
+                }
+                leaf keepAllRoutes {
+                  when "not(../../../afType='evpn' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt' or ../../../afType='mvpn') or ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Save all the updated information about BGP routes from a specified peer or peer group after a BGP connection is established, even though these BGP routes fail to match the routing policy on the ingress. By default, the updated information about BGP routes from a specified peer is saved only when the routes match the routing policy on the ingress. If a router supports route refreshing, this option is not required.";
+                }
+                leaf nextHopConfigure {
+                  when "not(../../../afType='ipv4vpnmcast') or ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='ls'";
+                  type bgpcommNextHopCfg;
+                  must "(../../../afType!='ipv4uni' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='l2vpnad' and (../nextHopConfigure='null' or ../nextHopConfigure='local') ) or ((not(../../../afType!='ipv4uni' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='l2vpnad') and (../nextHopConfigure='null' or ../nextHopConfigure='local' or ../nextHopConfigure='invariable') ))";
+                  default "null";
+                  description
+                    "Both the next-hop-local mode and next-hop-invariable mode are available when the peer address family is the VPNv4/VPNV6/L2VPN AD address family. Only the next-hop-local mode is available when the peer address family is not VPNv4/VPNV6/L2VPN AD address family. In next-hop-local mode, you can configure a BGP speaker to set its IP address of as the next hop of the routes to be advertised to IBGP peers or IBGP peer groups. In next-hop-invariable mode, you can configure PEs in different ASs not to change the next hop of routes when the PEs advertise the routes to their EBGP peers and use the next hop addresses of IGP routes to advertise imported IGP routes to IBGP peers. By default, when a BGP speaker advertises routes to EBGP peers and imported IGP routes to IBGP peers, the BGP speaker changes the next hop to its interface address. ";
+                  ext:allowDelete "true";
+                }
+                leaf preferredValue {
+                  when "not(../../../afType='evpn' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt' or ../../../afType='mvpn') or ../../../afType!='ipv6vpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  default "0";
+                  description
+                    "Assign a preferred value for the routes learned from a specified peer. The value is an integer. By default, the preferred value of the route learnt from BGP peers is 0. After a preferred value is configured for the routes learned from a specified peer, all the routes that learnt from this peer will use this preferred value. When multiple routes reach the same address prefix, the route with the largest preferred value will be selected.";
+                  ext:allowDelete "true";
+                }
+                leaf publicAsOnly {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4flow' and ../../../afType!='ipv4multi' and ../../../afType!='mvpn' and ../groupType!='ibgp' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' or ../../../afType!='ipv4flow' and ../../../afType!='mvpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../../../afType!='evpn'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Configure BGP to send Update packets carrying only public AS numbers. By default, private AS numbers can be carried in BGP Update packets.";
+                }
+                leaf publicAsOnlyForce {
+                  when "../publicAsOnly='true' and ../publicAsOnlyLimited='false'";
+                  type boolean;
+                  must "(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../publicAsOnlyForce='false') and (not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls')) or (../publicAsOnlyLimited='true' and ../publicAsOnlyForce='false') or not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' or ../publicAsOnlyLimited='true')";
+                  default "false";
+                  description
+                    "Configures BGP to carry only the public AS number instead of the private AS number when BGP sends Update packets. By default, BGP can carry the private AS number when BGP sends Update packets.";
+                  ext:allowDelete "true";
+                }
+                leaf publicAsOnlyLimited {
+                  when "../publicAsOnly='true' and ../publicAsOnlyForce='false'";
+                  type boolean;
+                  must "(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../publicAsOnlyLimited='false') and (not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls')) or (../publicAsOnlyForce='true' and ../publicAsOnlyLimited='false') or not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' or ../publicAsOnly='true' and ../publicAsOnlyForce='false' or ../publicAsOnlyForce='true')";
+                  default "false";
+                  description
+                    "When the BGP sends update packets, the left ends of both the local AS and public AS do not carry the private AS. By default, BGP can carry the private AS number when BGP sends Update packets.";
+                  ext:allowDelete "true";
+                }
+                leaf publicAsOnlyReplace {
+                  when "../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='true' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  must "not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls') or (../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../publicAsOnlyReplace='false') and (not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'))";
+                  default "false";
+                  description
+                    "When the BGP sends update packets, the private AS is replaced by the local AS. By default, BGP can carry the private AS number when BGP sends Update packets.";
+                  ext:allowDelete "true";
+                }
+                leaf publicAsOnlySkipPeerAs {
+                  when "../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='true' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  must "not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls') or (../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../publicAsOnlySkipPeerAs='false') and (not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'))";
+                  default "false";
+                  description
+                    "When the BGP sends update packets, the neigbour AS is not processed. By default, BGP can carry the private AS number when BGP sends Update packets.";
+                  ext:allowDelete "true";
+                }
+                leaf routeLimit {
+                  type uint32 {
+                    range "1..4294967295";
+                  }
+                  mandatory true;
+                  description
+                    "Configure the maximum number of routes that can be accepted from a peer. ";
+                  ext:allowDelete "true";
+                }
+                leaf routeLimitPercent {
+                  when "../routeLimit";
+                  type uint8 {
+                    range "1..100";
+                  }
+                  default "75";
+                  description
+                    "Specify the percentage of routes when a router starts to generate an alarm. The default value is 75.";
+                  ext:allowDelete "true";
+                }
+                leaf routeLimitType {
+                  when "../routeLimit";
+                  type bgpcommRouteLmtType;
+                  default "noparameter";
+                  description
+                    "Set the processing method as alert-only, idle-forever, or idle-timeout when the number of routes exceeds the set threshold. When alert-only is used, only an alarm is generated when the number of routes exceeds the threshold. In this case, new routes are no longer accepted. When idle-forever is used, connections are not automatically reestablished after being cut off until BGP connections are reset if the number of routes exceeds the set threshold. When idle-timeout is used and the idle-timeout timer is specified, the connections are automatically reestablished after being cut off if the number of routes exceeds the set threshold. You can reset BGP connections to reestablish the connections before the idle-timeout times expires.";
+                  ext:allowDelete "true";
+                }
+                leaf routeLimitIdleTimeout {
+                  when "../routeLimitType='idleTimeout'";
+                  type uint16 {
+                    range "1..1200";
+                  }
+                  default "1";
+                  description
+                    "Specify the value of the idle-timeout timer to automatically reestablish the connections after they are cut off when the number of routes exceeds the set threshold.";
+                  ext:allowDelete "true";
+                }
+                leaf rtUpdtInterval {
+                  when "not(../../../afType='ipv4vpnmcast') or ../../../afType!='ipv6vpn' and ../../../afType!='ipv4vpn' and ../../../afType!='l2vpnad' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast'";
+                  type uint16 {
+                    range "0..600";
+                  }
+                  description
+                    "Specify the minimum interval at which Update packets are sent. The value is an integer, in seconds. By default, the interval at which Update packets are sent to IBGP peers is 15s, and the interval at which Update packets are sent to EBGP peers is 30s. When routes change, a router will send Update packets to notify its peers. If a route changes frequently, you can set an interval at which Update packets are sent to prevent the router from sending Update packets each time the route changes. This configuration is valid only to the routes learned from peers. ";
+                  ext:allowDelete "true";
+                }
+                leaf reflectClient {
+                  when "not(../groupType='ebgp')";
+                  type boolean;
+                  default "false";
+                  description
+                    "Configure the local device as a route reflector (RR) and a peer or peer group as its client. By default, the RR and its client are not configured. This configuration is applicable between IBGP peers only. The configurations of RRs and its clients in an address family are valid only in this address family. Therefore, it is recommended to configure RRs and its clients in the specified address family that is required.";
+                }
+                leaf substituteAsEnable {
+                  when "../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Replace the AS number of a specified peer in the AS_Path attribute with the local AS number. By default, the AS number replacement is disabled. On a PE where AS number replacement is enabled, if an AS number in the AS_Path attribute of a route is same as that of the CE to which the PE advertises the route, the PE replaces the AS number with its own AS number before advertising the route.";
+                }
+                leaf importRtPolicyName {
+                  when "../../../afType='ipv4vpnmcast'";
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the filtering policy applied to the routes learned from a peer. By default, no such policy is specified.";
+                  ext:allowDelete "true";
+                }
+                leaf exportRtPolicyName {
+                  when "../../../afType='ipv4vpnmcast'";
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the filtering policy applied to the routes to be advertised to a peer. By default, no such policy is specified.";
+                  ext:allowDelete "true";
+                }
+                leaf importPrefFiltName {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='mdt' or ../../../afType='evpn' or ../../../afType='ipv4vpnmcast' or ../../../afType='mvpn') or ../../../afType='mdt'";
+                  type ipPrefix {
+                    length "1..169";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the IPv4 filtering policy applied to the routes received from a specified peer. By default, no such policy is specified.";
+                  ext:allowDelete "true";
+                }
+                leaf exportPrefFiltName {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='mdt' or ../../../afType='evpn' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt' or ../../../afType='mvpn')";
+                  type ipPrefix {
+                    length "1..169";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the IPv4 filtering policy applied to the routes to be advertised to a specified peer. By default, no such policy is specified.";
+                  ext:allowDelete "true";
+                }
+                leaf importAsPathNameOrNum {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='ls'";
+                  type string {
+                    length "1..51";
+                  }
+                  description
+                    "Apply an AS_Path-based filtering policy to the routes received from a specified peer. The policy can be identified with a name or number, and the number ranges from 1 to 256. By default, no such policy is specified. Therefore, all BGP routes can be accepted.";
+                  ext:allowDelete "true";
+                }
+                leaf exportAsPathNameOrNum {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='ls'";
+                  type string {
+                    length "1..51";
+                  }
+                  description
+                    "Apply an AS_Path-based filtering policy to the routes to be advertised to a specified peer. The policy can be identified with a name or number, and the number ranges from 1 to 256. By default, no such policy is specified. Therefore, all BGP routes can be advertised.";
+                  ext:allowDelete "true";
+                }
+                leaf importAclNameOrNum {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='mdt' or ../../../afType='ipv4vpnmcast') or ../../../afType='mdt'";
+                  type aclNumOrName {
+                    length "1..32";
+                    pattern '([1-5]\d{3})|(10[0-9]{3})|(23[0-9]{3})|(^99999)|([a-zA-Z]([^\s]*))';
+                  }
+                  description
+                    "Apply an IPv4 ACL-based filtering policy to the routes received from a specified peer. The ACL number ranges from 2000 to 2999, and the name must start with a letter. By default, no such policy is specified. Therefore, all BGP routes can be accepted.";
+                  ext:allowDelete "true";
+                }
+                leaf exportAclNameOrNum {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='mdt' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt')";
+                  type aclNumOrName {
+                    length "1..32";
+                    pattern '([1-5]\d{3})|(10[0-9]{3})|(23[0-9]{3})|(^99999)|([a-zA-Z]([^\s]*))';
+                  }
+                  description
+                    "Apply an IPv4 ACL-based filtering policy to the routes to be advertised to a specified peer. The ACL number ranges from 2000 to 2999, and the name must start with a letter. By default, no such policy is specified. Therefore, all BGP routes can be advertised.";
+                  ext:allowDelete "true";
+                }
+                leaf ipprefixOrfEnable {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType='ipv4uni'";
+                  type boolean;
+                  must "not(../isNonstdIpprefixMod='true')";
+                  default "false";
+                  description
+                    "Enable Prefix-based BGP outbound route filtering (ORF). By default, this function is not enabled. ORF enables a BGP device to use the import policy of a peer as the local export policy so that unwanted routes are filtered out during route advertisement.";
+                  ext:allowDelete "true";
+                }
+                leaf isNonstdIpprefixMod {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType='ipv4uni'";
+                  type boolean;
+                  must "not(../ipprefixOrfEnable='true')";
+                  default "false";
+                  description
+                    "Enable Huawei routers to be compatible with Nonstandard routers. The ORF capability codes supported by Nonstandard devices are different from that defined by the associated RFC standard. After the option is selected, Huawei devices and Nonstandard devices negotiate ORF capability based on the ORF capability code supported by Nonstandard devices. If the option is not selected, Huawei devices and Nonstandard devices negotiate ORF capability based on the ORF capability code specified by the RFC standard.";
+                  ext:allowDelete "true";
+                }
+                leaf orftype {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType='ipv4uni'";
+                  type uint16;
+                  description
+                    "ORF Type.";
+                  ext:allowDelete "true";
+                }
+                leaf orfMode {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType='ipv4uni'";
+                  type bgpcommonOrfMode;
+                  must "(../ipprefixOrfEnable!='true' and ../isNonstdIpprefixMod!='true' and (../orfMode='null') or ((not(../ipprefixOrfEnable!='true' and ../isNonstdIpprefixMod!='true') and (../orfMode='receive' or ../orfMode='send' or ../orfMode='both') )))";
+                  default "null";
+                  description
+                    "Configure an outbound route filtering (ORF) mode, which can be Receive, Send, or Both, and the default ORF mode is Both. ";
+                  ext:allowDelete "true";
+                }
+                leaf soostring {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../../../vrfName!='_public_' or ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' or ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='mdt' and ../../../afType!='ls' and ../../../../../vrfName!='_public_' or ../../../afType='ipv4uni' and ../../../../../vrfName!='_public_' or ../../../afType='ipv6uni' and ../../../../../vrfName!='_public_'";
+                  type string {
+                    length "3..21";
+                  }
+                  description
+                    "Configure the Site-of-Origin (SoO) extended community attribute. This attribute can be expressed in the following formats: X.X.X.X:number<0-65535>, number<0-65535>:number<0-4294967295>, or number<0-65535>.number<0-65535>:number<0-65535>  or <65536-4294967295>:<0-65535>. 0:0 or 0.0:0 is not supported. 
+Two CEs are in the same site and can advertise routes to each other, and they are connected to a VPN through PEs. If the local routes of a CE are advertised to the other CE over the VPN, a routing loop may occur. 
+The SoO feature can prevent a route advertised by a site from being sent back to the site, preventing routing loops. After SoO is enabled and a PE receives a route from a CE, the specified SoO attribute will be added to the route. Before advertising the route to the other CE, the PE checks the SoO attribute. If the SoO attribute is the same as the locally configured SoO attribute, the PE does not advertise the route, preventing routing loops. ";
+                  ext:allowDelete "true";
+                }
+                leaf defaultRtAdvEnable {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv6uni' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt')";
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable a device to advertise the default route to its peers. By default, the device does not advertise the default route to any peer or peer group. This option enables a device to send a default route with the device as the next hop address to its peers, regardless of whether there is a default route in the local routing table.";
+                }
+                leaf defaultRtAdvPolicy {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv6uni' or ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../defaultRtAdvEnable='false' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../defaultRtAdvEnable='true'";
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the name of a used policy. The value is a string.";
+                  ext:allowDelete "true";
+                }
+                leaf defaultRtMatchMode {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType='ipv4uni' and ../defaultRtAdvEnable='true'";
+                  type bgpcommonCraMatchMode;
+                  default "null";
+                  description
+                    "Configure the matching mode of default route advertisement, which can be disabling of route advertisement conditions, enabling of all route advertisement conditions, and enabling of part route advertisement conditions. Enabling of all route advertisement conditions indicates that a default route can be advertised only when it matches all the conditions. Enabling of part route advertisement conditions indicates that a default route can be advertised only when it matches one condition.";
+                  ext:allowDelete "true";
+                }
+                leaf labelRouteCapability {
+                  when "not(../../../afType='evpn' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' or ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ls' and ../../../afType!='ipv4vpnmcast'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable a device to exchange labeled routes";
+                  ext:allowDelete "true";
+                }
+                leaf addPathMode {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4multi' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type bgpcommAddPathCapType;
+                  default "null";
+                  description
+                    "Enable Add-Path route advertisement to a peer group.";
+                  ext:allowDelete "true";
+                }
+                leaf advAddPathNum {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4multi' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type uint8 {
+                    range "2..64";
+                  }
+                  description
+                    "Number of Add-Path routes that can be advertised to a peer group.";
+                  ext:allowDelete "true";
+                }
+                leaf originAsValid {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../advertiseExtCommunity='true' and ../../../afType!='ipv4multi' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Advertises the BGP origin AS validation result to the specified BGP peer or peer group.";
+                  ext:allowDelete "true";
+                }
+                leaf updatePktStandardCompatible {
+                  when "../../../afType='ipv4vpnmcast'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Compatible Standard update packet";
+                  ext:allowDelete "true";
+                }
+                leaf advertiseIrb {
+                  when "../../../afType='evpn'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Adervertise IRB Route when its value is true.  The default value is false.";
+                }
+                leaf advertiseArp {
+                  when "../../../afType='evpn'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Adervertise ARP Route when its value is true.  The default value is false.";
+                }
+                container peerGroupAFCraPres {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt')";
+                  must "not(not(../defaultRtMatchMode)) or (not(../defaultRtMatchMode) and count(peerGroupAFCraPre)>=1)";
+                  description
+                    "Configure the matching conditions for default route advertisement. (Only the default routes that match the conditions can be advertised.)";
+                  list peerGroupAFCraPre {
+                    when "not(../../defaultRtMatchMode) and ../../../../afType='ipv4uni'";
+                    key "defaultRtAddress defaultRtMask";
+                    max-elements 4;
+                    description
+                      "Configure the matching condition for default route advertisement.";
+                    leaf defaultRtAddress {
+                      type inet:ipv4-address-no-zone;
+                      description
+                        "Configure a prefix that is used to match default routes.";
+                    }
+                    leaf defaultRtMask {
+                      type uint32 {
+                        range "0..32";
+                      }
+                      description
+                        "Configure a mask that is used to match default routes.";
+                    }
+                  }
+                }
+                container peerAFMembers {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt')";
+                  config false;
+                  description
+                    "List of peers in the peer address family.";
+                  list peerAFMember {
+                    key "peer";
+                    config false;
+                    description
+                      "Peer in the peer address family.";
+                    leaf peer {
+                      type string {
+                        length "1..512";
+                      }
+                      config false;
+                      description
+                        "Peer address in the peer address family.";
+                    }
+                  }
+                }
+              }
+            }
+            container peerAFs {
+              description
+                "Peers in a specified address family.";
+              list peerAF {
+                when "not(../../afType='mvpn' and ../../../../vrfName!='_public_')";
+                key "remoteAddress";
+                description
+                  "Peer in a specified address family.";
+                leaf remoteAddress {
+                  type leafref {
+                    path "/bgp/bgpmultiinstcomm/bgpMultiVrfs/bgpMultiVrf/bgpMultiPeers/bgpMultiPeer/peerAddr";
+                  }
+                  description
+                    "IPv4 or IPv6 peer connection address.";
+                }
+                leaf peerGroupName {
+                  when "not(../../../afType='ipv4flow')";
+                  type leafref {
+                    path "/bgp/bgpmultiinstcomm/bgpMultiVrfs/bgpMultiVrf/bgpMultiVrfAFs/bgpMultiVrfAF/peerGroupAFs/peerGroupAF/groupName";
+                  }
+                  description
+                    "Configure a name for a peer group. After a peer is deleted from the peer group, the peer is disabled from the address family.";
+                  ext:allowDelete "true";
+                }
+                leaf labelRouteCapability {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='ls' or ../../../afType='mdt') or ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' or ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ls' and ../../../afType!='ipv4vpnmcast'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable a device to exchange labeled routes";
+                  ext:allowDelete "true";
+                }
+                leaf advertiseIrb {
+                  when "../../../afType='evpn'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Adervertise IRB Route when its value is true.  The default value is false.";
+                }
+                leaf advertiseArp {
+                  when "../../../afType='evpn'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Adervertise ARP Route when its value is true.  The default value is false.";
+                }
+                leaf advertiseRemoteNexthop {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='ls' or ../../../afType='mdt') or ../../../afType='ipv4vpn'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Advertise the remote nexthop to a peer or peer group. By default, the remote nexthop attribute is not advertised to any peer or peer group.";
+                }
+                leaf advertiseCommunity {
+                  when "not(../../../afType='evpn') or ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='ls' or ../../../afType!='evpn' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Advertise the community attribute to a peer or peer group. By default, the community attribute is not advertised to any peer or peer group.";
+                  ext:allowDelete "true";
+                }
+                leaf advertiseExtCommunity {
+                  when "not(../../../afType='evpn' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt' or ../../../afType='mvpn') or ../../../afType!='ipv6vpn' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='evpn' and ../../../afType!='mvpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Advertise the extended community attribute to a peer or peer group. By default, the extended community attribute is not advertised to any peer or peer group.";
+                  ext:allowDelete "true";
+                }
+                leaf discardExtCommunity {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Discard the extended community attribute in the routing information about a specified peer. By default, the extended community attribute in the routing information about a specified peer is not discarded.";
+                  ext:allowDelete "true";
+                }
+                leaf allowAsLoopEnable {
+                  when "not(../../../afType='ipv4flow' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt' or ../../../afType='mvpn') or ../../../afType!='ipv4flow' and ../../../afType!='mvpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  mandatory true;
+                  description
+                    "Allow repetitive local AS numbers. By default, repetitive local AS numbers are not allowed.";
+                  ext:allowDelete "true";
+                }
+                leaf allowAsLoopLimit {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4flow' and ../../../afType!='mvpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' or ../allowAsLoopEnable='true'";
+                  type uint32 {
+                    range "1..10";
+                  }
+                  description
+                    "Set the maximum number of repetitive local AS number. The default value is 1.";
+                  ext:allowDelete "true";
+                }
+                leaf keepAllRoutes {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Save all the updated information about BGP routes from a specified peer or peer group after a BGP connection is established, even though these BGP routes fail to match the routing policy on the ingress. By default, the updated information about BGP routes from a specified peer is saved only when the routes match the routing policy on the ingress. If a router supports route refreshing, this option is not required.";
+                  ext:allowDelete "true";
+                }
+                leaf nextHopConfigure {
+                  when "not(../../../afType='evpn' or ../../../afType='ipv4flow' or ../../../afType='ipv4vpnmcast' or ../../../afType='ls') or ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../../../afType!='ls'";
+                  type bgpcommNextHopCfg;
+                  must "(../../../afType!='ipv4uni' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='l2vpnad' and (../nextHopConfigure='null' or ../nextHopConfigure='local') ) or ((not(../../../afType!='ipv4uni' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='l2vpnad') and (../nextHopConfigure='null' or ../nextHopConfigure='local' or ../nextHopConfigure='invariable') ))";
+                  description
+                    "Both the next-hop-local mode and next-hop-invariable mode are available when the peer address family is the VPNv4/VPNV6/L2VPN AD address family. Only the next-hop-local mode is available when the peer address family is not VPNv4/VPNV6/L2VPN AD address family. In next-hop-local mode, you can configure a BGP speaker to set its IP address of as the next hop of the routes to be advertised to IBGP peers or IBGP peer groups. In next-hop-invariable mode, you can configure PEs in different ASs not to change the next hop of routes when the PEs advertise the routes to their EBGP peers and use the next hop addresses of IGP routes to advertise imported IGP routes to IBGP peers. By default, when a BGP speaker advertises routes to EBGP peers and imported IGP routes to IBGP peers, the BGP speaker changes the next hop to its interface address. ";
+                  ext:allowDelete "true";
+                }
+                leaf preferredValue {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4flow' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  default "0";
+                  description
+                    "Assign a preferred value for the routes learned from a specified peer. The value is an integer. By default, the preferred value of the route learnt from BGP peers is 0. After a preferred value is configured for the routes learned from a specified peer, all the routes that learnt from this peer will use this preferred value. When multiple routes reach the same address prefix, the route with the largest preferred value will be selected.";
+                  ext:allowDelete "true";
+                }
+                leaf publicAsOnly {
+                  when "not(../../../afType='evpn' or ../../../afType='ipv4flow' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt' or ../../../afType='mvpn') or ../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Configure BGP to send Update packets carrying only public AS numbers. By default, private AS numbers can be carried in BGP Update packets.";
+                  ext:allowDelete "true";
+                }
+                leaf publicAsOnlyForce {
+                  when "../publicAsOnly='true' and ../publicAsOnlyLimited='false'";
+                  type boolean;
+                  must "(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../publicAsOnlyForce='false') or (../publicAsOnlyLimited='true' and ../publicAsOnlyForce='false') or not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' or ../publicAsOnlyLimited='true')";
+                  default "false";
+                  description
+                    "Configures BGP to carry only the public AS number instead of the private AS number when BGP sends Update packets. By default, BGP can carry the private AS number when BGP sends Update packets.";
+                  ext:allowDelete "true";
+                }
+                leaf publicAsOnlyLimited {
+                  when "../publicAsOnly='true' and ../publicAsOnlyForce='false'";
+                  type boolean;
+                  must "(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../publicAsOnlyLimited='false') or (../publicAsOnlyForce='true' and ../publicAsOnlyLimited='false') or not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' or ../publicAsOnlyForce='true')";
+                  default "false";
+                  description
+                    "When the BGP sends update packets, the left ends of both the local AS and public AS do not carry the private AS. By default, BGP can carry the private AS number when BGP sends Update packets.";
+                  ext:allowDelete "true";
+                }
+                leaf publicAsOnlyReplace {
+                  when "../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='true' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  must "not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls') or (../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../publicAsOnlyReplace='false')";
+                  default "false";
+                  description
+                    "When the BGP sends update packets, the private AS is replaced by the local AS. By default, BGP can carry the private AS number when BGP sends Update packets.";
+                  ext:allowDelete "true";
+                }
+                leaf publicAsOnlySkipPeerAs {
+                  when "../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='true' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  must "not(../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls') or (../../../afType!='mvpn' and ../../../afType!='ipv4flow' and ../../../afType!='evpn' and ../publicAsOnly='false' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../publicAsOnlySkipPeerAs='false')";
+                  default "false";
+                  description
+                    "When the BGP sends update packets, the neigbour AS is not processed. By default, BGP can carry the private AS number when BGP sends Update packets.";
+                  ext:allowDelete "true";
+                }
+                leaf routeLimit {
+                  type uint32 {
+                    range "1..4294967295";
+                  }
+                  mandatory true;
+                  description
+                    "Configure the maximum number of routes that can be accepted from a peer. ";
+                  ext:allowDelete "true";
+                }
+                leaf routeLimitPercent {
+                  when "../routeLimit";
+                  type uint8 {
+                    range "1..100";
+                  }
+                  default "75";
+                  description
+                    "Specify the percentage of routes when a router starts to generate an alarm. The default value is 75.";
+                  ext:allowDelete "true";
+                }
+                leaf routeLimitType {
+                  when "../routeLimit";
+                  type bgpcommRouteLmtType;
+                  default "noparameter";
+                  description
+                    "Set the processing method as alert-only, idle-forever, or idle-timeout when the number of routes exceeds the set threshold. When alert-only is used, only an alarm is generated when the number of routes exceeds the threshold. In this case, new routes are no longer accepted. When idle-forever is used, connections are not automatically reestablished after being cut off until BGP connections are reset if the number of routes exceeds the set threshold. When idle-timeout is used and the idle-timeout timer is specified, the connections are automatically reestablished after being cut off if the number of routes exceeds the set threshold. You can reset BGP connections to reestablish the connections before the idle-timeout times expires.";
+                  ext:allowDelete "true";
+                }
+                leaf routeLimitIdleTimeout {
+                  when "../routeLimitType='idleTimeout'";
+                  type uint16 {
+                    range "1..1200";
+                  }
+                  default "1";
+                  description
+                    "Specify the value of the idle-timeout timer to automatically reestablish the connections after they are cut off when the number of routes exceeds the set threshold.";
+                  ext:allowDelete "true";
+                }
+                leaf rtUpdtInterval {
+                  when "not(../../../afType='ipv4vpnmcast') or ../../../afType!='ipv6vpn' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='evpn' and ../../../afType!='mvpn' and ../../../afType!='ipv4vpnmcast'";
+                  type uint16 {
+                    range "0..600";
+                  }
+                  description
+                    "Specify the minimum interval at which Update packets are sent. The value is an integer, in seconds. By default, the interval at which Update packets are sent to IBGP peers is 15s, and the interval at which Update packets are sent to EBGP peers is 30s. When routes change, a router will send Update packets to notify its peers. If a route changes frequently, you can set an interval at which Update packets are sent to prevent the router from sending Update packets each time the route changes. This configuration is valid only to the routes learned from peers. ";
+                  ext:allowDelete "true";
+                }
+                leaf redirectIP {
+                  when "../../../afType='ipv4flow'";
+                  type boolean;
+                  default "false";
+                  description
+                    "After configuration commands, peer can handle the extended community attribute redirect-ip.";
+                  ext:allowDelete "true";
+                }
+                leaf redirectIPVaildation {
+                  when "../../../afType='ipv4flow'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Indicate whether validation redirect ip, and this command only support ipv4-family flow address family";
+                  ext:allowDelete "true";
+                }
+                leaf reflectClient {
+                  type boolean;
+                  default "false";
+                  description
+                    "Configure the local device as a route reflector (RR) and a peer or peer group as its client. By default, the RR and its client are not configured. This configuration is applicable between IBGP peers only. The configurations of RRs and its clients in an address family are valid only in this address family. Therefore, it is recommended to configure RRs and its clients in the specified address family that is required.";
+                  ext:allowDelete "true";
+                }
+                leaf substituteAsEnable {
+                  when "../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Replace the AS number of a specified peer in the AS_Path attribute with the local AS number. By default, the AS number replacement is disabled. On a PE where AS number replacement is enabled, if an AS number in the AS_Path attribute of a route is same as that of the CE to which the PE advertises the route, the PE replaces the AS number with its own AS number before advertising the route.";
+                  ext:allowDelete "true";
+                }
+                leaf importRtPolicyName {
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the filtering policy applied to the routes learned from a peer. By default, no such policy is specified.";
+                  ext:allowDelete "true";
+                }
+                leaf exportRtPolicyName {
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the filtering policy applied to the routes to be advertised to a peer. By default, no such policy is specified.";
+                  ext:allowDelete "true";
+                }
+                leaf importPrefFiltName {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='mdt' or ../../../afType='ipv4vpnmcast') or ../../../afType='mdt'";
+                  type ipPrefix {
+                    length "1..169";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the IPv4 filtering policy applied to the routes received from a specified peer. By default, no such policy is specified.";
+                  ext:allowDelete "true";
+                }
+                leaf exportPrefFiltName {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='mdt' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt')";
+                  type ipPrefix {
+                    length "1..169";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the IPv4 filtering policy applied to the routes to be advertised to a specified peer. By default, no such policy is specified.";
+                  ext:allowDelete "true";
+                }
+                leaf importAsPathNameOrNum {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='evpn' and ../../../afType!='ls'";
+                  type string {
+                    length "1..51";
+                  }
+                  description
+                    "Apply an AS_Path-based filtering policy to the routes received from a specified peer. The policy can be identified with a name or number, and the number ranges from 1 to 256. By default, no such policy is specified. Therefore, all BGP routes can be accepted.";
+                  ext:allowDelete "true";
+                }
+                leaf exportAsPathNameOrNum {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='evpn' and ../../../afType!='ls'";
+                  type string {
+                    length "1..51";
+                  }
+                  description
+                    "Apply an AS_Path-based filtering policy to the routes to be advertised to a specified peer. The policy can be identified with a name or number, and the number ranges from 1 to 256. By default, no such policy is specified. Therefore, all BGP routes can be advertised.";
+                  ext:allowDelete "true";
+                }
+                leaf importAclNameOrNum {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='mdt' or ../../../afType='ipv4vpnmcast') or ../../../afType='mdt'";
+                  type aclNumOrName {
+                    length "1..32";
+                    pattern '([1-5]\d{3})|(10[0-9]{3})|(23[0-9]{3})|(^99999)|([a-zA-Z]([^\s]*))';
+                  }
+                  description
+                    "Apply an IPv4 ACL-based filtering policy to the routes received from a specified peer. The ACL number ranges from 2000 to 2999, and the name must start with a letter. By default, no such policy is specified. Therefore, all BGP routes can be accepted.";
+                  ext:allowDelete "true";
+                }
+                leaf exportAclNameOrNum {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='mdt' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt')";
+                  type aclNumOrName {
+                    length "1..32";
+                    pattern '([1-5]\d{3})|(10[0-9]{3})|(23[0-9]{3})|(^99999)|([a-zA-Z]([^\s]*))';
+                  }
+                  description
+                    "Apply an IPv4 ACL-based filtering policy to the routes to be advertised to a specified peer. The ACL number ranges from 2000 to 2999, and the name must start with a letter. By default, no such policy is specified. Therefore, all BGP routes can be advertised.";
+                  ext:allowDelete "true";
+                }
+                leaf ipprefixOrfEnable {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType='ipv4uni'";
+                  type boolean;
+                  must "not(../isNonstdIpprefixMod='true')";
+                  default "false";
+                  description
+                    "Enable Prefix-based BGP outbound route filtering (ORF). By default, this function is not enabled. ORF enables a BGP device to use the import policy of a peer as the local export policy so that unwanted routes are filtered out during route advertisement.";
+                  ext:allowDelete "true";
+                }
+                leaf isNonstdIpprefixMod {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType='ipv4uni'";
+                  type boolean;
+                  must "not(../ipprefixOrfEnable='true')";
+                  default "false";
+                  description
+                    "Enable Huawei routers to be compatible with Nonstandard routers. The ORF capability codes supported by Nonstandard devices are different from that defined by the associated RFC standard. After the option is selected, Huawei devices and Nonstandard devices negotiate ORF capability based on the ORF capability code supported by Nonstandard devices. If the option is not selected, Huawei devices and Nonstandard devices negotiate ORF capability based on the ORF capability code specified by the RFC standard.";
+                  ext:allowDelete "true";
+                }
+                leaf orftype {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType='ipv4uni'";
+                  type uint16;
+                  description
+                    "ORF Type.";
+                  ext:allowDelete "true";
+                }
+                leaf orfMode {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType='ipv4uni'";
+                  type bgpcommonOrfMode;
+                  must "(../ipprefixOrfEnable!='true' and ../isNonstdIpprefixMod!='true' and (../orfMode='null') or ((not(../ipprefixOrfEnable!='true' and ../isNonstdIpprefixMod!='true') and (../orfMode='receive' or ../orfMode='send' or ../orfMode='both') )))";
+                  default "null";
+                  description
+                    "Configure an outbound route filtering (ORF) mode, which can be Receive, Send, or Both, and the default ORF mode is Both. ";
+                  ext:allowDelete "true";
+                }
+                leaf soostring {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../../../vrfName!='_public_' or ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../../../vrfName!='_public_' or ../../../afType!='ipv4multi' and ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type string {
+                    length "3..21";
+                  }
+                  description
+                    "Configure the Site-of-Origin (SoO) extended community attribute. This attribute can be expressed in the following formats: X.X.X.X:number<0-65535>, number<0-65535>:number<0-4294967295>, or number<0-65535>.number<0-65535>:number<0-65535>  or <65536-4294967295>:<0-65535>. 0:0 or 0.0:0 is not supported. 
+Two CEs are in the same site and can advertise routes to each other, and they are connected to a VPN through PEs. If the local routes of a CE are advertised to the other CE over the VPN, a routing loop may occur. 
+The SoO feature can prevent a route advertised by a site from being sent back to the site, preventing routing loops. After SoO is enabled and a PE receives a route from a CE, the specified SoO attribute will be added to the route. Before advertising the route to the other CE, the PE checks the SoO attribute. If the SoO attribute is the same as the locally configured SoO attribute, the PE does not advertise the route, preventing routing loops. ";
+                  ext:allowDelete "true";
+                }
+                leaf defaultRtAdvEnable {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv6uni' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt')";
+                  type boolean;
+                  default "false";
+                  description
+                    "Enable a device to advertise the default route to its peers. By default, the device does not advertise the default route to any peer or peer group. This option enables a device to send a default route with the device as the next hop address to its peers, regardless of whether there is a default route in the local routing table.";
+                  ext:allowDelete "true";
+                }
+                leaf defaultRtAdvPolicy {
+                  when "not(../../../afType!='ipv4uni' and ../../../afType!='ipv4multi' and ../../../afType!='ipv6uni' or ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../defaultRtAdvEnable='false' or ../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4vpn' and ../../../afType!='ipv6vpn' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' and ../defaultRtAdvEnable='true'";
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the name of a used policy. The value is a string.";
+                  ext:allowDelete "true";
+                }
+                leaf defaultRtMatchMode {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType='ipv4uni' and ../defaultRtAdvEnable='true'";
+                  type bgpcommonCraMatchMode;
+                  default "null";
+                  description
+                    "Configure the matching mode of default route advertisement, which can be disabling of route advertisement conditions, enabling of all route advertisement conditions, and enabling of part route advertisement conditions. Enabling of all route advertisement conditions indicates that a default route can be advertised only when it matches all the conditions. Enabling of part route advertisement conditions indicates that a default route can be advertised only when it matches one condition.";
+                  ext:allowDelete "true";
+                }
+                leaf addPathMode {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4multi' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type bgpcommAddPathCapType;
+                  default "null";
+                  description
+                    "Enable Add-Path route advertisement to a peer.";
+                  ext:allowDelete "true";
+                }
+                leaf advAddPathNum {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4multi' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type uint8 {
+                    range "2..64";
+                  }
+                  description
+                    "Number of Add-Path routes that can be advertised to a peer.";
+                  ext:allowDelete "true";
+                }
+                leaf originAsValid {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt') or ../../../afType!='ipv4multi' and ../../../afType!='ipv4flow' and ../../../afType!='l2vpnad' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls' or ../advertiseExtCommunity='true' and ../../../afType!='ipv4multi' and ../../../afType!='ipv4flow' and ../../../afType!='mvpn' and ../../../afType!='evpn' and ../../../afType!='ipv4vpnmcast' and ../../../afType!='mdt' and ../../../afType!='ls'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Advertises the BGP origin AS validation result to the specified BGP peer or peer group.";
+                  ext:allowDelete "true";
+                }
+                leaf updatePktStandardCompatible {
+                  when "../../../afType='ipv4vpnmcast'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Compatible Standard update packet";
+                  ext:allowDelete "true";
+                }
+                container peerAFCraPres {
+                  when "not(../../../afType='ipv4vpnmcast' or ../../../afType='mdt')";
+                  must "not(not(../defaultRtMatchMode)) or (not(../defaultRtMatchMode) and count(peerAFCraPre)>=1)";
+                  description
+                    "Configure the matching conditions for default route advertisement. (Only the default routes that match the conditions can be advertised.)";
+                  list peerAFCraPre {
+                    when "not(../../defaultRtMatchMode) and ../../../../afType='ipv4uni'";
+                    key "defaultRtAddress defaultRtMask";
+                    max-elements 4;
+                    description
+                      "Configure the matching condition for default route advertisement.";
+                    leaf defaultRtAddress {
+                      type inet:ipv4-address-no-zone;
+                      description
+                        "Configure a prefix that is used to match default routes.";
+                    }
+                    leaf defaultRtMask {
+                      type uint32 {
+                        range "0..32";
+                      }
+                      description
+                        "Configure a mask that is used to match default routes.";
+                    }
+                  }
+                }
+              }
+            }
+            container importRoutes {
+              when "not(../afType='ipv4vpnmcast' or ../afType='mdt')";
+              description
+                "List of imported routes.";
+              list importRoute {
+                when "../../afType!='ipv4vpn' and ../../afType!='ipv6vpn' and ../../afType!='ipv4flow' and ../../afType!='l2vpnad' and ../../afType!='mvpn' and ../../afType!='evpn' and ../../afType!='ipv4vpnmcast' and ../../afType!='mdt' and ../../afType!='ls'";
+                key "importProtocol importProcessId";
+                description
+                  "Route import. Routes of other protocol types can be imported by BGP. By default, BGP does not import routes of other protocol types.";
+                leaf importProtocol {
+                  type bgpcommImRouteProtocol;
+                  description
+                    "Routing protocol from which routes can be imported. The routing protocol can be IS-IS, OSPF, static, direct, or RIP for an IPv4 unicast address family or an IPv4 multicast address family. The routing protocol can be IS-IS, OSPFv3, static, direct, or RIPng for an IPv6 uincast address family.";
+                }
+                leaf importProcessId {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  description
+                    "Process ID of an imported routing protocol. The process ID must be specified if the imported routing protocol is RIP, OSPF, RIPng, or OSPFv3.";
+                }
+                leaf importRoutePolicy {
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "When routes are imported from other routing protocols, the route-policy filter can be used to filter the routes and change route attributes.";
+                  ext:allowDelete "true";
+                }
+                leaf medNew {
+                  type uint64 {
+                    range "0..4294967295";
+                  }
+                  description
+                    "Specify the MED of imported routes.";
+                  ext:allowDelete "true";
+                }
+              }
+            }
+            container networkRoutes {
+              when "not(../afType='ipv4vpnmcast' or ../afType='mdt')";
+              description
+                "List of advertised routes.";
+              list networkRoute {
+                when "../../afType!='ipv4vpn' and ../../afType!='ipv6vpn' and ../../afType!='ipv4flow' and ../../afType!='l2vpnad' and ../../afType!='mvpn' and ../../afType!='evpn' and ../../afType!='ipv4vpnmcast' and ../../afType!='mdt' and ../../afType!='ls'";
+                key "networkAddress maskLen";
+                description
+                  "Configure the local routes that can be advertised by BGP. That is, add the routes in the local routing table to the BGP routing table in static mode and send them to the peer end. By default, BGP does not advertise any local route.";
+                leaf networkAddress {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Specify the IP address advertised by BGP. An IPv4 address can be configured in the IPv4 address family, in dotted decimal notation, and an IPv6 routes can be configured in the IPv6 address family. Note: During the configuration of a network route, the IP address is adjusted based on the mask. It is recommended that you click Synchronize All after creating a network route.";
+                }
+                leaf maskLen {
+                  type uint8 {
+                    range "0..32";
+                  }
+                  description
+                    "Specify the mask length of an IP address. The mask length ranges from 0 to 32 for an IPv4 address, and ranges from 0 to 128 for an IPv6 address.";
+                }
+                leaf networkPolicy {
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the route-policy for route advertisement. The value is a string.";
+                  ext:allowDelete "true";
+                }
+              }
+            }
+            container aggregateRoutes {
+              when "not(../afType='ipv4vpnmcast' or ../afType='mdt')";
+              description
+                "List of summarized routes.";
+              list aggregateRoute {
+                when "../../afType!='ipv4vpn' and ../../afType!='ipv6vpn' and ../../afType!='ipv4flow' and ../../afType!='l2vpnad' and ../../afType!='mvpn' and ../../afType!='evpn' and ../../afType!='ipv4vpnmcast' and ../../afType!='mdt' and ../../afType!='ls'";
+                key "aggreAddress maskLength";
+                description
+                  "Create a summarized route in the BGP routing table. The local outbound interface of the summarized route is Null0. When another router receives the route, the route adds an outbound interface to the route. By default, route summarization is not performed. If the Origin attributes of the specific routes for the route summarization are different, the Origin attribute of the summarized route is that with the highest priority. Origin attributes are arranged in the priority order of  complete > egp > igp. A summarized route carries the community attribute of each specific route.";
+                leaf aggreAddress {
+                  type inet:ip-address-no-zone;
+                  description
+                    "Specify the IPv4 address or IPv6 address of a summarized route. Only IPv4 summarized routes can be configured in the IPv4 address family and only IPv6 summarized routes can be configured in the IPv6 address family.";
+                }
+                leaf maskLength {
+                  type uint8 {
+                    range "0..32";
+                  }
+                  description
+                    "Specify the mask length of a summarized address. The mask length ranges from 0 to 32 for an IPv4 address, and ranges from 0 to 128 for an IPv6 address.";
+                }
+                leaf asSetEnable {
+                  type boolean;
+                  default "false";
+                  description
+                    "Generate routes with the AS-SET attribute. This option can be used to create a summarized route. The AS_Path attribute of the summarized route contains the AS-Path attributes of the specific routes for the route summarization. Exercise caution when using this option if multiple AS_Paths need to be summarized to prevent route flapping. ";
+                }
+                leaf detailSuppressed {
+                  type boolean;
+                  default "false";
+                  description
+                    "Suppress the advertisement of specific routes for the route summarization. Only the summarized route is advertised.";
+                }
+                leaf attributePolicy {
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify an attribute of summarized routes. If apply as-path is used to configure the AS_Path attribute that is used in the route Summarization policy, and the as-set keyword is set, the AS_Path attribute in the policy does not take effect.";
+                  ext:allowDelete "true";
+                }
+                leaf originPolicy {
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the name of a policy for generating summarized routes. Summarized routes are generated only when the routes match route-policy.";
+                  ext:allowDelete "true";
+                }
+                leaf suppressPolicy {
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify a policy for suppressing the advertisement of specified routes. The routes matching the policy are not advertised, and other routes are advertised.";
+                  ext:allowDelete "true";
+                }
+              }
+            }
+            container dampRoutes {
+              when "not(../afType='ipv4vpnmcast' or ../afType='mdt')";
+              description
+                "List of route dampening.";
+              list dampRoute {
+                when "../../afType!='ipv4vpn' and ../../afType!='ipv6vpn' and ../../afType!='ipv4flow' and ../../afType!='l2vpnad' and ../../afType!='mvpn' and ../../afType!='evpn' and ../../afType!='ipv4vpnmcast' and ../../afType!='mdt' and ../../afType!='ls'";
+                key "halfLifeReachTime reuse suppress ceiling peerType";
+                description
+                  "Enable BGP route dampening or modify various BGP route dampening parameters. By default, route dampening is not configured. If a suppression policy for route dampening is configured, routes are preferentially matched against the suppression parameters defined in the suppression policy. If no parameter is configured, the default value of each parameter is used. The four route dampening parameters are mutually dependent. If you configure one of the parameters, the other parameters also need to be configured. When you configure BGP route dampening, the values of reuse threshold, suppress threshold, and penalty ceiling must meet the inequality of reuse threshold < suppress threshold < penalty ceiling. If Maximum suppression time obtained by using the formula of Maximum suppression time = Half life (of reachable routes) x 60 x (ln(Penalty ceiling/Reuse threshold)/ln(2)) is smaller than 1, suppression cannot be performed. Ensure that the value of the maximum suppression time is equal to or greater than 1. This means that the value of the penalty ceiling/reuse threshold must be great enough.";
+                leaf halfLifeReachTime {
+                  type uint16 {
+                    range "1..45";
+                  }
+                  description
+                    "Configure a half-life for reachable routes. The value is an integer, in minutes. The default value is 15.";
+                }
+                leaf reuse {
+                  type uint16 {
+                    range "1..20000";
+                  }
+                  description
+                    "Configure a threshold for a route to be unsuppressed. If the penalty value of the route falls below the threshold, the route is reused. The threshold value is an integer. The default value is 750.  ";
+                }
+                leaf suppress {
+                  type uint16 {
+                    range "1..20000";
+                  }
+                  description
+                    "Configure a threshold for a route to be suppressed.  When the penalty value of the route exceeds the suppression threshold, the route is suppressed.  The configured suppression threshold must be greater than the reuse threshold. The value of the suppression threshold is an integer. The default value is 2000.";
+                }
+                leaf ceiling {
+                  type uint16 {
+                    range "1001..20000";
+                  }
+                  description
+                    "Configure the penalty ceiling. The configured threshold must be greater than the suppression threshold. The value of the penalty ceiling is an integer. The default value is 16000.";
+                }
+                leaf dampPolicyName {
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Configure a suppression policy for route dampening. You can use a routing policy to select the routes to be suppressed.";
+                  ext:allowDelete "true";
+                }
+                leaf updateStandard {
+                  type boolean;
+                  description
+                    "Update Standard.";
+                }
+                leaf peerType {
+                  type uint8 {
+                    range "0..1";
+                  }
+                  description
+                    "Configure the peer type. The value of the penalty ceiling is an integer. The default value is 0(0:EBGP, 1:IBGP).";
+                }
+              }
+            }
+            container filterPolicys {
+              when "not(../afType='ipv4vpnmcast' or ../afType='ls' or ../afType='mdt') or ../afType!='l2vpnad' and ../afType!='ipv4vpnmcast' and ../afType!='mdt' and ../afType!='ls'";
+              description
+                "List of filtering policies.";
+              list filterPolicy {
+                when "not(../../afType='evpn' or ../../afType='ipv4vpnmcast' or ../../afType='l2vpnad' or ../../afType='ls' or ../../afType='mdt' or ../../afType='mvpn') or ../../afType!='l2vpnad' and ../../afType!='ipv4vpnmcast' and ../../afType!='mdt' and ../../afType!='ls'";
+                key "filterProtocol filterProcessId import export";
+                description
+                  "Specify a filtering policy. It is used to filter the routes received from a peer and the routes to be advertised to the peer. By default, routes are not filtered.";
+                leaf filterProtocol {
+                  type bgpcommFilterProtocol;
+                  description
+                    "Specify the name of a routing protocol. The routing protocol takes effect only on the routes to be advertised. The IPv4 address family supports the direct, IS-IS, OSPF, RIP, and static routing protocols. The IPv6 unicast address family of a public network instance supports the direct, IS-IS, OSPFv3, RIPng, and static routing protocols. The IPv6 address family of a VPNv6 instance supports the direct, IS-IS, RIPng, and static routing protocols.";
+                }
+                leaf filterProcessId {
+                  type uint32 {
+                    range "0..4294967295";
+                  }
+                  description
+                    "Specify the process ID required to be matched. The value is an integer ranging from 1 to 65535. If direct or static routes need to be filtered, no process ID is required.";
+                }
+                leaf import {
+                  type boolean;
+                  description
+                    "Filter received routes. Only the routes that match the policy can be added to the BGP routing table. When a rule is configured for a named ACL, only the source address range specified by the source parameter and the time period specified by the time-range parameter take effect.";
+                }
+                leaf export {
+                  type boolean;
+                  description
+                    "Filter routes to be advertised. Only the routes that match the policy can be advertised by BGP. After the filtering function is configured, routes are filtered before being imported by BGP. Only the routes that match the policy can be added to the local BGP routing table and advertised by BGP. If a routing protocol is specified, only the routes of this protocol are filtered, and the routes of other protocols are not filtered. If no routing protocol is specified, all protocol routes are filtered. When a rule is configured for a named ACL, only the source address range specified by the source parameter and the time period specified by the time-range parameter take effect.";
+                }
+                leaf aclNameOrNum {
+                  when "../../../afType!='ipv6uni' and ../../../afType!='ipv6vpn'";
+                  type aclNumOrName {
+                    length "1..32";
+                    pattern '([1-5]\d{3})|(10[0-9]{3})|(23[0-9]{3})|(^99999)|([a-zA-Z]([^\s]*))';
+                  }
+                  description
+                    "Specify the name or number of an ACL Rule. The number value ranges from 2000 to 2999 and is used by basic ACL rules. The name must start with a letter, and the name is case-sensitive.";
+                  ext:allowDelete "true";
+                }
+                leaf preFlt4Name {
+                  when "../../../afType!='ipv6uni' and ../../../afType!='ipv6vpn'";
+                  type ipPrefix {
+                    length "1..169";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Specify the IPv4 prefix list name.";
+                  ext:allowDelete "true";
+                }
+              }
+            }
+            container instanceImports {
+              when "not(../afType='ipv4vpnmcast' or ../afType='mdt')";
+              description
+                "List of Instance Imported Routes.";
+              list instanceImport {
+                when "../../afType!='ipv4vpn' and ../../afType!='ipv6vpn' and ../../afType!='ipv4flow' and ../../afType!='l2vpnad' and ../../afType!='mvpn' and ../../afType!='evpn' and ../../afType!='ipv4vpnmcast' and ../../afType!='ipv4multi' and ../../afType!='mdt' and ../../afType!='ls'";
+                key "srcVrfName";
+                description
+                  "Instance Imported Route.";
+                leaf srcVrfName {
+                  type leafref {
+                    path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+                  }
+                  description
+                    "Source VRF Name For Instance Imported Route.";
+                }
+                leaf policyName {
+                  type policyName {
+                    length "1..200";
+                    pattern '([^\? ]+)';
+                  }
+                  description
+                    "Policy for Route Import.";
+                  ext:allowDelete "true";
+                }
+                leaf validRtEnable {
+                  type boolean;
+                  default "false";
+                  description
+                    "Imported Valid Route.";
+                  ext:allowDelete "true";
+                }
+              }
+            }
+            container bgpAdvRoutes {
+              description
+                "List of Advertise Route Protocol.";
+              list bgpAdvRoute {
+                key "protocol";
+                description
+                  "Advertise Route Protocol.";
+                leaf protocol {
+                  type bgpcommAdvRouteProtocol;
+                  description
+                    "Route Protocol.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

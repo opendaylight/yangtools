@@ -1,0 +1,190 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-dgmp-type {
+  belongs-to huawei-dgmp {
+    prefix dgmp;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "dgmp type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  typedef commodelAfType {
+    type enumeration {
+      enum "ipv4unicast" {
+        description
+          "Specify IPv4 unicast.";
+      }
+      enum "ipv6unicast" {
+        description
+          "Specify IPv6 unicast.";
+      }
+    }
+    description
+      "Address Family";
+  }
+
+  typedef dgmpIpsecType {
+    type enumeration {
+      enum "forAll" {
+        description
+          "All packets are supported.";
+      }
+      enum "forQuery" {
+        description
+          "Only Query packets are supported.";
+      }
+    }
+    description
+      "Ipsec Type";
+  }
+
+  typedef dgmpIfState {
+    type enumeration {
+      enum "DOWN" {
+        description
+          "The interface is Down.";
+      }
+      enum "UP" {
+        description
+          "The interface is Up.";
+      }
+    }
+    description
+      "dgmp interface state";
+  }
+
+  typedef dgmpStartupQTState {
+    type enumeration {
+      enum "OFF" {
+        description
+          "Specify the Off state.";
+      }
+      enum "ON" {
+        description
+          "Specify the On state.";
+      }
+      enum "NA" {
+        description
+          "Specify the N/A state.";
+      }
+    }
+    description
+      "Startup-Query-Timer State";
+  }
+
+  typedef dgmpOtherQueTState {
+    type enumeration {
+      enum "OFF" {
+        description
+          "Specify the Off state.";
+      }
+      enum "ON" {
+        description
+          "Specify the On state.";
+      }
+    }
+    description
+      "Other Present-Timer Status";
+  }
+
+  typedef dgmpSrcFilterMode {
+    type enumeration {
+      enum "INCLUDE" {
+        description
+          "Specify the Include mode.";
+      }
+      enum "EXCLUDE" {
+        description
+          "Specify the Exclude mode.";
+      }
+      enum "NA" {
+        description
+          "N/A.";
+      }
+    }
+    description
+      "Source Filter Mode";
+  }
+
+  typedef dgmpQuerierLocal {
+    type enumeration {
+      enum "NA" {
+        description
+          "N/A.";
+      }
+      enum "NO_QUERIER" {
+        description
+          "Specify a non-querier.";
+      }
+      enum "THIS_ROUTER" {
+        description
+          "Specify a local querier.";
+      }
+      enum "OTHER_ROUTER" {
+        description
+          "Specify any querier instead of a local querier.";
+      }
+    }
+    description
+      "Local Query or Not";
+  }
+
+  typedef dgmpCompatMode {
+    type enumeration {
+      enum "V1" {
+        description
+          "Internet Group Management Protocol version 1 (IGMPv1).";
+      }
+      enum "V2" {
+        description
+          "Internet Group Management Protocol version 2 (IGMPv2).";
+      }
+      enum "V3" {
+        description
+          "Internet Group Management Protocol version 3 (IGMPv3).";
+      }
+    }
+    description
+      "Group Compatible Mode";
+  }
+
+  typedef dgmpExitOrNot {
+    type enumeration {
+      enum "Not-exist" {
+        description
+          "Not exist.";
+      }
+      enum "Exist" {
+        description
+          "Exist.";
+      }
+    }
+    description
+      "Host Present Timer";
+  }
+
+  typedef remBackUpType {
+    type string;
+    description
+      "Remote backup state";
+  }
+}

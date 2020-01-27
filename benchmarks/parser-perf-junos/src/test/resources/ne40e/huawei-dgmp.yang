@@ -1,0 +1,466 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-dgmp {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-dgmp";
+  prefix dgmp;
+
+  import huawei-mcastbase {
+    prefix mcastbase;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-dgmp-type;
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+      People's Republic of China                    
+      Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Specify MGMD.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  container dgmp {
+    description
+      "Specify MGMD.";
+    container dgmpIfCfgs {
+      description
+        "Configure and queries IGMP configurations on all interfaces.";
+      list dgmpIfCfg {
+        key "vrfName addrFamily ifName";
+        description
+          "Specify IGMP configurations on an interface.";
+        leaf vrfName {
+          type leafref {
+            path "/mcastbase:mcastbase/mcastbase:mcastAfsEnables/mcastbase:mcastAfsEnable/mcastbase:vrfName";
+          }
+          description
+            "Specify the name of a VPN instance.";
+        }
+        leaf addrFamily {
+          type leafref {
+            path "/mcastbase:mcastbase/mcastbase:mcastAfsEnables/mcastbase:mcastAfsEnable/mcastbase:addressFamily";
+          }
+          description
+            "Specify an address family, which determines whether an address is an IPv4 or IPv6 address.";
+        }
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Specify the type and number of an interface.";
+        }
+        leaf gmpEnable {
+          type boolean;
+          default "false";
+          description
+            "Enable protocols on an interface.";
+        }
+        leaf ipSourcePly {
+          type boolean;
+          default "false";
+          description
+            "Configure a policy for filtering IGMP Report messages based on host addresses. By default, no policy is configured for filtering IGMP Report messages based on host addresses.";
+        }
+        leaf ipSrcAclName {
+          when "../addrFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          must "not(../addrFamily='ipv4unicast' and ../ipSourcePly='false') or (../addrFamily='ipv4unicast' and ../ipSourcePly='false' and not(../ipSrcAclName))";
+          description
+            "Configure an ACL that defines a host addresses range. The value is an integer ranging from 2000 to 2999, or a case-sensitive string with a maximum of 32 characters. By default, the ACL is not configured.";
+          ext:allowDelete "true";
+        }
+        leaf ipSrcAclIpv6 {
+          when "not(../addrFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          must "(../ipSourcePly='true') or (../addrFamily='ipv6unicast' and ../ipSourcePly='false' and not(../ipSrcAclIpv6))";
+          description
+            "Configure an ACL that defines a host addresses range. The value is an integer ranging from 2000 to 2999, or a case-sensitive string with a maximum of 32 characters. By default, the ACL is not configured.";
+          ext:allowDelete "true";
+        }
+        leaf queryInterval {
+          type uint32 {
+            range "1..18000";
+          }
+          default "60";
+          description
+            "Specify the interval at which the router sends general query messages. The value is an integer ranging from 1 to 18000, in seconds. The default value for IPv4 is 60, and 125 for IPv6.";
+          ext:allowDelete "false";
+        }
+        leaf queryRspInterval {
+          type uint32 {
+            range "1..125";
+          }
+          default "10";
+          description
+            "Specify the maximum response time for a query message. This time is used to control the deadline of mainframe feed back the relation-ship of group members.";
+          ext:allowDelete "false";
+        }
+        leaf robustness {
+          type uint32 {
+            range "2..5";
+          }
+          default "2";
+          description
+            "Specify the number of times for retransmitting messages to avoid packet loss. The value is an integer ranging from 2 to 5. The default value is 2.";
+          ext:allowDelete "false";
+        }
+        leaf version {
+          type uint32 {
+            range "1..3";
+          }
+          default "2";
+          description
+            "Specify the version of IGMP or MLD running on an interface. By default, IGMPv2 or MLDv2 is used.";
+          ext:allowDelete "false";
+        }
+        leaf lastMemberQueryInterval {
+          type uint32 {
+            range "1..25";
+          }
+          default "1";
+          description
+            "Specify the interval at which the querier sends last-member query messages. This parameter makes sense only when the current querier runs IGMPv2, IGMPv3 or MLD.";
+          ext:allowDelete "false";
+        }
+        leaf requireRouterAlert {
+          type boolean;
+          default "false";
+          description
+            "Configure an interface to process only messages whose IP headers contain Router-Alert options. By default, the interface does not check whether the received messages contain Router-Alert options.";
+        }
+        leaf sendRouterAlert {
+          type boolean;
+          default "true";
+          description
+            "Configure an interface to send the messages with Router-Alert options in the IP headers. By default, the IP header contain Router-Alert options.";
+        }
+        leaf othQuerierPstTime {
+          type uint32 {
+            range "60..300";
+          }
+          description
+            "Set the Keepalive period for other queriers on an interface. The value ranges from 60 to 300, in second. By default, no Keepalive period is set for other queriers.";
+          ext:allowDelete "true";
+        }
+        leaf immediatelyLeave {
+          type boolean;
+          default "false";
+          description
+            "Configure an interface that receives a Leave message of a certain group to immediately delete the corresponding group records, without sending a last-member query message.";
+        }
+        leaf immLeaveAclName {
+          when "../addrFamily='ipv4unicast' and ../immediatelyLeave='true'";
+          type string {
+            length "0..64";
+          }
+          description
+            "Configure an ACL that defines a multicast group range. The basic ACL number ranges from 2000 to 2999, and the advanced ACL number ranges from 3000 to 3999. The name is a string with a maximum of 32 case-sensitive characters. By default, the ACL is not configured.";
+          ext:allowDelete "true";
+        }
+        leaf immLeaveAclIpv6 {
+          when "../addrFamily='ipv6unicast' and ../immediatelyLeave='true'";
+          type string {
+            length "0..64";
+          }
+          description
+            "Configure an ACL that defines a multicast group range. The basic ACL number ranges from 2000 to 2999, and the advanced ACL number ranges from 3000 to 3999. The name is a string with a maximum of 32 case-sensitive characters. By default, the ACL is not configured.";
+          ext:allowDelete "true";
+        }
+        leaf onDemandEnable {
+          type boolean;
+          default "false";
+          description
+            "Records about the groups that the interface joins never age. By default, the group records age periodically. 
+             1. This command is applicable to IGMPv2, IGMPv3, and MLD only.
+             2. This command can be used on the querier only.";
+        }
+        leaf gmpEntryLimit {
+          when "../addrFamily='ipv4unicast'";
+          type uint32 {
+            range "0..16384";
+          }
+          description
+            "Specify the maximum number of entries that the current interface can create. It is an integer ranging from 1 to 16384. The default value is 16384.";
+          ext:allowDelete "true";
+          ext:value-replace {
+            ext:item "0" {
+              ext:meaning "NULL";
+            }
+          }
+        }
+        leaf exceptAclName {
+          when "../addrFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          must "not(../gmpEntryLimit=0) or (../gmpEntryLimit=0 and not(../exceptAclName))";
+          description
+            "Specify the range of multicast groups, the number of IGMP entries corresponding to which needs not be limited. The basic ACL number ranges from 2000 to 2999. The basic ACL filters group addresses only, without distinguishing (*, G) entries and (S, G) entries; the advanced ACL number ranges from 3000 to 3999. The advanced ACL filters (S, G) entries of the interface only. The name is a case-sensitive string with a maximum of 32 characters.";
+          ext:allowDelete "true";
+        }
+        leaf ssmapEnable {
+          type boolean;
+          default "false";
+          description
+            "Enable SSM mapping on an interface.";
+        }
+        leaf groupAclName {
+          when "../addrFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          description
+            "Set a filter for multicast groups on an interface to control the range of multicast groups that hosts can join. The basic ACL number ranges from 2000 to 2999, and the advanced ACL number ranges from 3000 to 3999. The name is a string with a maximum of 32 case-sensitive characters.";
+          ext:allowDelete "true";
+        }
+        leaf groupAclIpv6 {
+          when "not(../addrFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          description
+            "Set a filter for multicast groups on an interface to control the range of multicast groups that hosts can join. The basic ACL number ranges from 2000 to 2999, and the advanced ACL number ranges from 3000 to 3999. The name is a string with a maximum of 32 case-sensitive characters.";
+          ext:allowDelete "true";
+        }
+        leaf groupAclGMPVer {
+          type uint32 {
+            range "1..3";
+          }
+          must "not(not(../groupAclIpv6) and ../addrFamily='ipv6unicast' or not(../groupAclName) and ../addrFamily='ipv4unicast')";
+          description
+            "Forbids hosts that use a specified version to join the multicast group. The version can be specified in this command only after a multicast filtering policy is configured.";
+          ext:allowDelete "true";
+        }
+        leaf queryAclName {
+          when "../addrFamily='ipv4unicast'";
+          type string {
+            length "0..64";
+          }
+          description
+            "Configure an ACL that defines a host addresses range. The value is an integer ranging from 2000 to 2999, or a case-sensitive string with a maximum of 32 characters. By default, the ACL is not configured.";
+          ext:allowDelete "true";
+        }
+        leaf queryAclIpv6 {
+          when "not(../addrFamily='ipv4unicast')";
+          type string {
+            length "0..64";
+          }
+          description
+            "Configure an ACL that defines a host addresses range. The value is an integer ranging from 2000 to 2999, or a case-sensitive string with a maximum of 32 characters. By default, the ACL is not configured.";
+          ext:allowDelete "true";
+        }
+        leaf ipsecName {
+          type string {
+            length "1..15";
+          }
+          description
+            "SA name. The value is a string of 1 to 15 characters.";
+          ext:allowDelete "true";
+        }
+        leaf ipsecType {
+          type dgmpIpsecType;
+          must "not(../ipsecName) or (../ipsecName and (../ipsecType='forAll' or ../ipsecType='forQuery') )";
+          default "forAll";
+          description
+            "IPsec type used as a query option.";
+        }
+      }
+    }
+    container dgmpSiteCfgs {
+      description
+        "Specify the list of global MGMD configurations.";
+      list dgmpSiteCfg {
+        key "vrfName addrFamily";
+        description
+          "Specify the global MGMD configures. ";
+        leaf vrfName {
+          type leafref {
+            path "/mcastbase:mcastbase/mcastbase:mcastAfsEnables/mcastbase:mcastAfsEnable/mcastbase:vrfName";
+          }
+          description
+            "Specify the name of a VPN instance.";
+        }
+        leaf addrFamily {
+          type leafref {
+            path "/mcastbase:mcastbase/mcastbase:mcastAfsEnables/mcastbase:mcastAfsEnable/mcastbase:addressFamily";
+          }
+          description
+            "Specify an address family, which determines whether an address is an IPv4 or IPv6 address.";
+        }
+        leaf queryInterval {
+          type uint32 {
+            range "1..18000";
+          }
+          default "60";
+          description
+            "Specify the interval at which the router sends general query messages. The value is an integer ranging from 1 to 18000, in seconds. The default value for IPv4 is 60, and 125 for IPv6.";
+          ext:allowDelete "false";
+        }
+        leaf queryRspInterval {
+          type uint32 {
+            range "1..125";
+          }
+          default "10";
+          description
+            "Specify the maximum response time for a query message. ";
+          ext:allowDelete "false";
+        }
+        leaf robustness {
+          type uint32 {
+            range "2..5";
+          }
+          default "2";
+          description
+            "Specify the number of times for retransmitting a message to avoid the packet loss. The value is an integer ranging from 2 to 5. The default value is 2.";
+          ext:allowDelete "false";
+        }
+        leaf lastMemberQueryInterval {
+          type uint32 {
+            range "1..25";
+          }
+          default "1";
+          description
+            "Specify the interval at which the querier sends last-member query messages. This parameter makes sense only when the current querier runs IGMPv2, IGMPv3 or MLD.";
+          ext:allowDelete "false";
+        }
+        leaf reqRouterAlert {
+          type boolean;
+          default "false";
+          description
+            "Configure the router to process only the messages whose IP headers contain Router-Alert options globally. By default, the router does not check whether the received IGMP messages contain Router-Alert options.";
+        }
+        leaf sendRouterAlert {
+          type boolean;
+          default "true";
+          description
+            "Configure the router to send the messages with Router-Alert options in the IP headers globally. By default, the IP headers contain Router-Alert options. ";
+        }
+        leaf othQuerierPstTime {
+          type uint32 {
+            range "60..300";
+          }
+          description
+            "Set the global Keepalive period for other queriers. ";
+          ext:allowDelete "true";
+        }
+        leaf ipsecName {
+          type string {
+            length "1..15";
+          }
+          description
+            "SA name. The value is a string of 1 to 15 characters.";
+          ext:allowDelete "true";
+        }
+        leaf ipsecType {
+          type dgmpIpsecType;
+          must "not(../ipsecName) or (../ipsecName and (../ipsecType='forAll' or ../ipsecType='forQuery') )";
+          default "forAll";
+          description
+            "IPsec type used as a query option.";
+        }
+      }
+    }
+    container dgmpStGRPCfgs {
+      description
+        "Specify the configuration list of static multicast groups.";
+      list dgmpStGRPCfg {
+        key "vrfName addrFamily ifName staticGrp isSourceAddr sourceAddr isStepGrpMask incStepGrpMask isMaskLen maskLen";
+        description
+          "Specify the configuration of a static multicast group.";
+        leaf vrfName {
+          type leafref {
+            path "/mcastbase:mcastbase/mcastbase:mcastAfsEnables/mcastbase:mcastAfsEnable/mcastbase:vrfName";
+          }
+          description
+            "Specify the name of a VPN instance.";
+        }
+        leaf addrFamily {
+          type leafref {
+            path "/mcastbase:mcastbase/mcastbase:mcastAfsEnables/mcastbase:mcastAfsEnable/mcastbase:addressFamily";
+          }
+          description
+            "Specify an address family, which determines whether an IPv4 or IPv6 address is used.";
+        }
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Specify the name of an interface.";
+        }
+        leaf staticGrp {
+          type inet:ip-address-no-zone;
+          description
+            "Specify the address of a multicast group. In batch configuration mode, this parameter specifies the start multicast group address. In the case of an IPv4 address, the value ranges from 224.0.1.0 to 239.255.255.255, in dotted decimal notation; in the case of an IPv6 address, the value is in hexadecimal notation and in the format of FFxA:xxxx:xxxx::xxxx, among which x ranges from 0 to F and A can be 0, or in the range of 3 to F.";
+        }
+        leaf isSourceAddr {
+          type boolean;
+          description
+            "Whether an address is configured for the multicast source.";
+        }
+        leaf sourceAddr {
+          type inet:ip-address-no-zone;
+          description
+            "Specify the address of a multicast source. In the case of an IPv4 address, the value is in dotted decimal notation. In the case of an IPv6 address, the value is in hexadecimal notation.";
+        }
+        leaf isStepGrpMask {
+          type boolean;
+          description
+            "Determine whether to specify the step mask in batch configuration mode.";
+        }
+        leaf incStepGrpMask {
+          type inet:ipv4-address-no-zone;
+          description
+            "Specify the step mask of a group address in batch configuration mode. The step mask refers to the distance between two multicast group addresses. The value is expressed in wildcard-mask mode and dotted decimal notation, and ranges from 0.0.0.1 to 15.255.255.255.";
+        }
+        leaf isMaskLen {
+          type boolean;
+          description
+            "Determine whether to set the length for the step mask of a multicast group address in batch configuration mode. ";
+        }
+        leaf maskLen {
+          type uint32 {
+            range "0..128";
+          }
+          description
+            "Specify the mask length of a multicast group address. In the case of an IPv4 address, the mask length ranges from 4 to 32. In the case of an IPv6 address, the mask length is 16/32/64/128.";
+        }
+        leaf totalNum {
+          when "not(../isStepGrpMask!='true' and ../isMaskLen!='true')";
+          type uint32 {
+            range "2..512";
+          }
+          default "2";
+          description
+            "Specify the number of multicast group addresses in batch configuration mode. It is an integer ranging from 2 to 512.";
+        }
+      }
+    }
+  }
+}

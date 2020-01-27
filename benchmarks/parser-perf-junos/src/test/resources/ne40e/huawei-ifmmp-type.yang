@@ -1,0 +1,238 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifmmp-type {
+  belongs-to huawei-ifmmp {
+    prefix ifmmp;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "type ifmmp";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+
+  typedef ifmmpPhyState {
+    type enumeration {
+      enum "Up" {
+        description
+          "The interface is in the Up state.";
+      }
+      enum "Down" {
+        description
+          "The interface is in the Down state.";
+      }
+      enum "AdminShutDown" {
+        description
+          "The interface is in the AdminShutDown state.";
+      }
+    }
+    description
+      "type of ifmmp phy state";
+  }
+
+  typedef ifmmpProtocalState {
+    type enumeration {
+      enum "Up" {
+        description
+          "The interface is in the Up state.";
+      }
+      enum "Down" {
+        description
+          "The interface is in the Down state.";
+      }
+      enum "Damp" {
+        description
+          "The interface is in the Damp state.";
+      }
+    }
+    description
+      "type of ifmmp protocal state";
+  }
+
+  typedef ifmmpTimeDlySwitch {
+    type enumeration {
+      enum "enable" {
+        description
+          "Enable the delay detect function.";
+      }
+      enum "disable" {
+        description
+          "Disable the delay detect function.";
+      }
+    }
+    description
+      "type of ifmmp time delay switch";
+  }
+
+  typedef ifmmpDynamicMode {
+    type enumeration {
+      enum "enable" {
+        description
+          "MP-group Dynamic BandWidth Mode enable.";
+      }
+      enum "disable" {
+        description
+          "MP-group Dynamic BandWidth Mode disable.";
+      }
+    }
+    description
+      "type of ifmmp dynamic mode";
+  }
+
+  typedef ifmmpLatencyMode {
+    type enumeration {
+      enum "enable" {
+        description
+          "MP-group Low Latency Mode enable.";
+      }
+      enum "disable" {
+        description
+          "MP-group Low Latency Mode disable.";
+      }
+    }
+    description
+      "type of ifmmp latency mode";
+  }
+
+  typedef ifmmpFragment {
+    type enumeration {
+      enum "fragment128" {
+        description
+          "Fragment size 128 bytes.";
+      }
+      enum "fragment256" {
+        description
+          "Fragment size 256 bytes.";
+      }
+      enum "fragment512" {
+        description
+          "Fragment size 512 bytes.";
+      }
+      enum "noFragment" {
+        description
+          "No Fragment.";
+      }
+      enum "fragment64" {
+        description
+          "Fragment size 64 bytes.";
+      }
+    }
+    description
+      "type of ifmmp fragment";
+  }
+
+  typedef ifmmpPhyType {
+    type enumeration {
+      enum "Mp-group" {
+        description
+          "Mp-group interface.";
+      }
+      enum "Global-Mp-Group" {
+        description
+          "Global-Mp-Group interface.";
+      }
+    }
+    description
+      "type of ifmmp phy";
+  }
+
+  typedef ifmmpcrcenable {
+    type enumeration {
+      enum "enable" {
+        description
+          "Enable CRC detect.";
+      }
+      enum "disable" {
+        description
+          "Disable CRC detect.";
+      }
+    }
+    description
+      "type of ifmmp crc enable";
+  }
+
+  typedef ifmmpcrcErrAlmTriggerService {
+    type enumeration {
+      enum "lsp" {
+        description
+          "Association mode LSP.";
+      }
+      enum "section" {
+        description
+          "Association mode section.";
+      }
+      enum "null" {
+        description
+          "No association.";
+      }
+    }
+    description
+      "type of ifmmp crc err alarm trigger service";
+  }
+
+  typedef ifmmpcrcerralmstatus {
+    type enumeration {
+      enum "yes" {
+        description
+          "CRC alarm.";
+      }
+      enum "no" {
+        description
+          "No CRC alarm. ";
+      }
+      enum "null" {
+        description
+          "Disable the CRC detect function.";
+      }
+    }
+    description
+      "type of ifmmp crc error alarm status";
+  }
+
+  typedef ifmmpcrcerralmenable {
+    type enumeration {
+      enum "yes" {
+        description
+          "Enable the CRC trap function.";
+      }
+      enum "no" {
+        description
+          "Disable the CRC trap function.";
+      }
+    }
+    description
+      "type of ifmmp crc error alarm enable";
+  }
+
+  typedef ifmmpPackPriority {
+    type enumeration {
+      enum "high" {
+        description
+          "MP-group Packet High Priority.";
+      }
+      enum "normal" {
+        description
+          "MP-group Packet Mormal Priority.";
+      }
+    }
+    description
+      "type of ifmmp pack priority";
+  }
+}

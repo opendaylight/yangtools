@@ -1,0 +1,326 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l2tpv3 {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-l2tpv3";
+  prefix l2tpv3;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-l2tpv3-action;
+  include huawei-l2tpv3-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "L2TPV3";
+  revision 2017-03-23 {
+	description
+	"Functions supported by the schema are added to the YANG file.";
+	reference
+	"Huawei private.";
+	}
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference      "Huawei private.";
+  }
+  container l2tpv3 {
+    description
+      "L2TPV3";
+    container globalAttribute {
+      description
+        "The global attribute of L2TPV3.";
+      leaf globalEnable {
+        type boolean;
+        default "false";
+        description
+          "To enable L2TPV3. By default, L2TPV3 is disabled.";
+      }
+    }
+    container l2tpv3PWInstances {
+      description
+        "All L2TPV3 Tunnels. ";
+      list l2tpv3PWInstance {
+        key "pwName";
+        description
+          "All L2TPV3 Tunnels. ";
+        leaf pwName {
+          type string {
+            length "1..19";
+          }
+          description
+            "Name of a Tunnel.";
+        }
+        leaf sourceIfName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Config The Source Interface Name Of Tunnel ";
+          ext:allowDelete "true";
+        }
+        leaf sourceIP {
+          type L2tpv3ipv6Address {
+            length "0..255";
+            pattern '\s*((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){4}(:[0-9A-Fa-f]{1,4}){0,1}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){3}(:[0-9A-Fa-f]{1,4}){0,2}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){2}(:[0-9A-Fa-f]{1,4}){0,3}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)(:[0-9A-Fa-f]{1,4}){0,4}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(:(:[0-9A-Fa-f]{1,4}){0,5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})))(%.+)?\s*';
+          }
+          description
+            "Source IPv6 Address Of Tunnel ";
+          ext:allowDelete "true";
+        }
+        leaf destIP {
+          type L2tpv3ipv6Address {
+            length "0..255";
+            pattern '\s*((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){4}(:[0-9A-Fa-f]{1,4}){0,1}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){3}(:[0-9A-Fa-f]{1,4}){0,2}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){2}(:[0-9A-Fa-f]{1,4}){0,3}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)(:[0-9A-Fa-f]{1,4}){0,4}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(:(:[0-9A-Fa-f]{1,4}){0,5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})))(%.+)?\s*';
+          }
+          description
+            "Config The Destination IPv6 Address of Tunnel";
+          ext:allowDelete "true";
+        }
+        leaf localSessionId {
+          type uint32 {
+            range "1..4294967295";
+          }
+          default "4294967295";
+          description
+            "Config The Local Session ID";
+        }
+        leaf remoteSessionId {
+          type uint32 {
+            range "1..4294967295";
+          }
+          default "4294967295";
+          description
+            "Config The Remote Session ID";
+        }
+        leaf localCookieAutoMode {
+          type cookieAuthMode;
+          mandatory true;
+          description
+            "Config the mode of the authentication of the local cookie field";
+        }
+        leaf localSecondaryCookieAutoMode {
+          type cookieAuthMode;
+          mandatory true;
+          description
+            "Config the mode of the authentication of the local secondary cookie field";
+        }
+        leaf remoteCookieAutoMode {
+          type cookieAuthMode;
+          mandatory true;
+          description
+            "Config the mode of the authentication of the remote cookie field";
+        }
+        leaf localCookieLength {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/localCookieAutoMode='authPlain'";
+          type cookieLength;
+          description
+            "Config the length of the local cookie field";
+          ext:allowDelete "true";
+        }
+        leaf localSecondaryCookieLength {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/localSecondaryCookieAutoMode='authPlain'";
+          type cookieLength;
+          default "4";
+          description
+            "Config the length of the local secondary cookie field";
+          ext:allowDelete "true";
+        }
+        leaf remoteCookieLength {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/remoteCookieAutoMode='authPlain'";
+          type cookieLength;
+          description
+            "Config the length of the remote cookie field";
+          ext:allowDelete "true";
+        }
+        leaf localHighCookie {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/localCookieLength='8'";
+          type pub-type:hexBinary;
+          description
+            "Config the value of the upper 4 bytes of the local cookie field";
+          ext:allowDelete "true";
+        }
+        leaf localSecondaryHighCookie {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/localSecondaryCookieLength='8'";
+          type pub-type:hexBinary;
+          description
+            "Config the value of the upper 4 bytes of the local secondary cookie field";
+          ext:allowDelete "true";
+        }
+        leaf localLowCookie {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/localCookieAutoMode='authPlain'";
+          type pub-type:hexBinary;
+          description
+            "Config the value of the lower 4 bytes of the local cookie field";
+          ext:allowDelete "true";
+        }
+        leaf localSecondaryLowCookie {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/localSecondaryCookieAutoMode='authPlain'";
+          type pub-type:hexBinary;
+          description
+            "Config the value of the lower 4 bytes of the local secondary cookie field";
+          ext:allowDelete "true";
+        }
+        leaf remoteHighCookie {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/remoteCookieLength='8'";
+          type pub-type:hexBinary;
+          description
+            "Config the value of the upper 4 bytes of the remote cookie field";
+          ext:allowDelete "true";
+        }
+        leaf remoteLowCookie {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/remoteCookieAutoMode='authPlain'";
+          type pub-type:hexBinary;
+          description
+            "Config the value of the lower 4 bytes of the remote cookie field";
+          ext:allowDelete "true";
+        }
+        leaf localCookieCipher {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/localCookieAutoMode='authCipher'";
+          type pub-type:password {
+            length "1..8";
+          }
+          description
+            "Config the value of the local cookie field";
+          ext:allowDelete "true";
+        }
+        leaf localSecondaryCookieCipher {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/localSecondaryCookieAutoMode='authCipher'";
+          type pub-type:password {
+            length "1..8";
+          }
+          description
+            "Config the value of the local secondary cookie field";
+          ext:allowDelete "true";
+        }
+        leaf remoteCookieCipher {
+          when "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/remoteCookieAutoMode='authCipher'";
+          type pub-type:password {
+            length "1..8";
+          }
+          description
+            "Config the value of the remote cookie field";
+          ext:allowDelete "true";
+        }
+        leaf sendPacket {
+          type uint64;
+          config false;
+          description
+            "Send Packets";
+        }
+        leaf sendByte {
+          type uint64;
+          config false;
+          description
+            "Send Bytes";
+        }
+        leaf rcvPacket {
+          type uint64;
+          config false;
+          description
+            "Receive Packets";
+        }
+        leaf receiveByte {
+          type uint64;
+          config false;
+          description
+            "Receive Bytes";
+        }
+        leaf recvDropPacket {
+          type uint64;
+          config false;
+          description
+            "Total Number Of dropped packets";
+        }
+        leaf cookieMisDropPacket {
+          type uint64;
+          config false;
+          description
+            "Receive Cookie Mismatch Packets Number";
+        }
+        leaf state {
+          type l2tpv3State;
+          config false;
+          description
+            "Tunnel State";
+        }
+      }
+    }
+    container l2tpv3Instances {
+      description
+        "All L2TPV3 instances. ";
+      list l2tpv3Instance {
+        key "instanceName instanceType";
+        description
+          "All L2TPV3 instances. ";
+        leaf instanceName {
+          type string {
+            length "1..31";
+          }
+          description
+            "A L2TPV3 instance.";
+        }
+        leaf instanceType {
+          type l2tpv3InstanceType;
+          description
+            "Type of a L2TPV3 instance. ";
+        }
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          must "not(../instanceType='localConnect' or ../instanceType='normal')";
+		  mandatory true;
+          description
+            "Name of an interface.";
+        }
+        leaf outIfName {
+          when "not(../instanceType='normal')";
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          must "not(../instanceType='localConnect')";
+          description
+            "Name of an out interface.";
+          ext:allowDelete "true";
+        }
+        container l2tpv3PWs {
+          must "not(../instanceType='normal') or (../instanceType='normal' and count(l2tpv3PW)<=2) and ((../instanceType='normal' and count(l2tpv3PW)>=0))";
+          description
+            "L2TPV3 Tunnel information.";
+          list l2tpv3PW {
+            when "not(../../instanceType='localConnect')";
+            key "pwName";
+            max-elements 2;
+            description
+              "L2TPV3 Tunnel information.";
+            leaf pwName {
+              type leafref {
+                path "/l2tpv3/l2tpv3PWInstances/l2tpv3PWInstance/pwName";
+              }
+              description
+                "Name of a Tunnel.";
+            }
+            leaf pwRole {
+              type l2tpv3PwRoleType;
+              default "primary";
+              description
+                "Whether the tunnel is a primary or injected tunnel.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

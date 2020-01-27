@@ -1,0 +1,42 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-syslog-action {
+  belongs-to huawei-syslog {
+    prefix syslog;
+  }
+  include huawei-syslog-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of syslog action submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc resetLogBuffer {
+    description
+      "Reset log buffer.";
+  }
+  rpc resetTrapBuffer {
+    description
+      "Reset trap buffer.";
+  }
+  rpc resetInfoStatistics {
+    description
+      "Reset info-center statistics.";
+  }
+}

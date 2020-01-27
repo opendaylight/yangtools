@@ -1,0 +1,290 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-dhcpv6-relay-action {
+  belongs-to huawei-dhcpv6 {
+    prefix dhcpv6;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-dhcpv6-relay-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "test.Description FOR submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc relay-resetDhcpv6RelayStatistics {
+    description
+      "Reset DHCPv6 relay statistics.";
+  }
+  rpc relay-resetDhcpv6RelayStatisticsByIf {
+    description
+      "Reset DHCPv6 relay statistics on an interface.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+    }
+  }
+  rpc relay-resetDhcpv6RelayUser {
+    description
+      "Reset all user information.";
+  }
+  rpc relay-resetDhcpv6RelayUserbyIfVlan {
+    description
+      "Reset user info by interface.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+      leaf peVlan {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "Start PE-VLAN ID.";
+        ext:allowDelete "true";
+      }
+      leaf endPeVlan {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End PE-VLAN ID.";
+        ext:allowDelete "true";
+      }
+      leaf ceVlan {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "Start CE-VLAN ID.";
+        ext:allowDelete "true";
+      }
+      leaf endCeVlan {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End CE-VLAN ID.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc relay-resetDhcpv6RelayUserbyMac {
+    description
+      "Reset user information by MAC address.";
+    input {
+      leaf macAddress {
+        type pub-type:macAddress;
+        description
+          "MAC address.";
+      }
+    }
+  }
+  rpc relay-resetDhcpv6RelayUserbyCltDuid {
+    description
+      "Reset user information by client DUID.";
+    input {
+      leaf clientDuidString {
+        type string {
+          length "1..260";
+        }
+        description
+          "Client DUID.";
+      }
+    }
+  }
+  rpc relay-resetDhcpv6RelayUserbySvrDuid {
+    description
+      "Reset user information by server DUID.";
+    input {
+      leaf serverDuidString {
+        type string {
+          length "1..260";
+        }
+        description
+          "Server DUID.";
+      }
+    }
+  }
+  rpc relay-resetDhcpv6RelayUserbyCltIp {
+    description
+      "Reset user information by client IP address.";
+    input {
+      leaf clientIpv6Addr {
+        type inet:ipv6-address-no-zone;
+        description
+          "Client IP address.";
+      }
+      leaf vrfName {
+        type pub-type:vrfName;
+        description
+          "VPN name.";
+        ext:allowDelete "false";
+      }
+    }
+  }
+  rpc relay-resetDhcpv6RelayUserbySvrIp {
+    description
+      "Reset user information by server IP address.";
+    input {
+      leaf serverIpv6Addr {
+        type inet:ipv6-address-no-zone;
+        description
+          "Server IP address.";
+        ext:allowDelete "false";
+      }
+      leaf vrfName {
+        type pub-type:vrfName;
+        description
+          "VPN name.";
+        ext:allowDelete "false";
+      }
+    }
+  }
+  rpc relay-resetDhcpv6RelayCltInfo {
+    description
+      "Reset all user logout and login failure records.";
+    input {
+      leaf online {
+        type boolean;
+        default "true";
+        description
+          "Reset login failure information.";
+      }
+      leaf offline {
+        type boolean;
+        description
+          "Reset logout information.";
+      }
+    }
+  }
+  rpc relay-resetDhcpv6RelayCltInfobyIfVlan {
+    description
+      "Reset client info by interface.";
+    input {
+      leaf online {
+        type boolean;
+        default "true";
+        description
+          "Reset login failure information.";
+      }
+      leaf offline {
+        type boolean;
+        description
+          "Reset logout information.";
+      }
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+      leaf peVlan {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "Start PE-VLAN ID.";
+        ext:allowDelete "true";
+      }
+      leaf endPeVlan {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End PE-VLAN ID.";
+        ext:allowDelete "true";
+      }
+      leaf ceVlan {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "Start CE-VLAN ID.";
+        ext:allowDelete "true";
+      }
+      leaf endCeVlan {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End CE-VLAN ID.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc relay-resetDhcpv6RelayCltInfobyMac {
+    description
+      "Reset client info by MAC.";
+    input {
+      leaf online {
+        type boolean;
+        default "true";
+        description
+          "Reset login failure information.";
+      }
+      leaf offline {
+        type boolean;
+        description
+          "Reset logout information.";
+      }
+      leaf macAddress {
+        type pub-type:macAddress;
+        description
+          "MAC address.";
+      }
+    }
+  }
+  rpc relay-resetDhcpv6RelayCltInfobyDuid {
+    description
+      "Reset client info by client DUID.";
+    input {
+      leaf online {
+        type boolean;
+        default "true";
+        description
+          "Reset login failure information.";
+      }
+      leaf offline {
+        type boolean;
+        description
+          "Reset logout information.";
+      }
+      leaf duidString {
+        type string {
+          length "1..260";
+        }
+        description
+          "DHCP unique identifier.";
+      }
+    }
+  }
+}

@@ -1,0 +1,960 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifm-type {
+  belongs-to huawei-ifm {
+    prefix ifm;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the ifm type submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  typedef ifmcommPhyType {
+    type enumeration {
+      enum "Ethernet" {
+        description
+          "Ethernet interface.";
+      }
+      enum "GigabitEthernet" {
+        description
+          "GigabitEthernet interface.";
+      }
+      enum "Eth-Trunk" {
+        description
+          "Eth-Trunk interface.";
+      }
+      enum "Ip-Trunk" {
+        description
+          "IP-Trunk interface.";
+      }
+      enum "Pos" {
+        description
+          "POS interface.";
+      }
+      enum "Tunnel" {
+        description
+          "Tunnel interface.";
+      }
+      enum "NULL" {
+        description
+          "Null interface.";
+      }
+      enum "LoopBack" {
+        description
+          "Loopback interface.";
+      }
+      enum "Vlanif" {
+        description
+          "VLANIF interface.";
+      }
+      enum "100GE" {
+        description
+          "100 GigabitEthernet interface.";
+      }
+      enum "200GE" {
+        description
+          "200 GigabitEthernet interface.";
+      }
+      enum "40GE" {
+        description
+          "40 GigabitEthernet interface.";
+      }
+      enum "MTunnel" {
+        description
+          "MTunnel interface.";
+      }
+      enum "10GE" {
+        description
+          "10 GigabitEthernet interface.";
+      }
+      enum "GEBrief" {
+        description
+          "GigabitEthernet interface.";
+      }
+      enum "MEth" {
+        description
+          "Management Ethernet interface.";
+      }
+      enum "Stack-Port" {
+        description
+          "Stack-port interface.";
+      }
+      enum "Sip" {
+        description
+          "System interconnect port.";
+      }
+      enum "Cpos" {
+        description
+          "CPOS controller.";
+      }
+      enum "E1" {
+        description
+          "E1 controller.";
+      }
+      enum "Serial" {
+        description
+          "Serial interface.";
+      }
+      enum "Mp-group" {
+        description
+          "MP-group interface.";
+      }
+      enum "Virtual-Ethernet" {
+        description
+          "Virtual-Ethernet interface.";
+      }
+      enum "VMEth" {
+        description
+          "Virtual management Ethernet interface.";
+      }
+      enum "Ima-group" {
+        description
+          "IMA-group interface.";
+      }
+      enum "Remote-Ap" {
+        description
+          "Virtual cluster access remote access point interface.";
+      }
+      enum "VBridge" {
+        description
+          "Virtual cluster access bridge interface.";
+      }
+      enum "Atm-Bundle" {
+        description
+          "ATM-Bundle interface.";
+      }
+      enum "Fiber-Channel" {
+        description
+          "Fiber-Channel interface.";
+      }
+      enum "Infiniband" {
+        description
+          "Infiniband interface.";
+      }
+      enum "Lmpif" {
+        description
+          "Lmpif interface.";
+      }
+      enum "T1" {
+        description
+          "T1 controller.";
+      }
+      enum "T3" {
+        description
+          "T3 controller.";
+      }
+      enum "Global-VE" {
+        description
+          "Global-VE interface.";
+      }
+      enum "VC4" {
+        description
+          "VC4 interface.";
+      }
+      enum "VC12" {
+        description
+          "VC12 interface.";
+      }
+      enum "Vbdif" {
+        description
+          "VBDIF interface.";
+      }
+      enum "Fabric-Port" {
+        description
+          "Fabric-Port interface.";
+      }
+      enum "E3" {
+        description
+          "E3 controller.";
+      }
+      enum "Otn" {
+        description
+          "OTN controller.";
+      }
+      enum "Vp" {
+        description
+          "VP interface.";
+      }
+      enum "DcnInterface" {
+        description
+          "DCN interface.";
+      }
+      enum "Cpos-Trunk" {
+        description
+          "Cpos-Trunk interface.";
+      }
+      enum "Pos-Trunk" {
+        description
+          "Pos-Trunk interface.";
+      }
+      enum "Trunk-Serial" {
+        description
+          "Trunk-Serial interface.";
+      }
+      enum "Global-Ima-Group" {
+        description
+          "Global-Ima-Group interface.";
+      }
+      enum "Global-Mp-Group" {
+        description
+          "Global-Mp-Group interface.";
+      }
+      enum "Gmpls-Uni" {
+        description
+          "Gmpls-Uni interface.";
+      }
+      enum "Wdm" {
+        description
+          "Wdm controller.";
+      }
+      enum "Nve" {
+        description
+          "NVE interface.";
+      }
+      enum "FCoE-Port" {
+        description
+          "FCoE-Port Interface.";
+      }
+      enum "Virtual-Template" {
+        description
+          "Virtual-Template Interface.";
+      }
+      enum "FC" {
+        description
+          "FC Interface.";
+      }
+      enum "4x10GE" {
+        description
+          "4x10 GigabitEthernet interface.";
+      }
+      enum "10x10GE" {
+        description
+          "10x10 GigabitEthernet interface.";
+      }
+      enum "3x40GE" {
+        description
+          "3x40 GigabitEthernet interface.";
+      }
+      enum "4x25GE" {
+        description
+          "4x25 GigabitEthernet interface.";
+      }
+      enum "25GE" {
+        description
+          "25 GigabitEthernet interface.";
+      }
+      enum "ATM" {
+        description
+          "Atm interface.";
+      }
+      enum "XGigabitEthernet" {
+        description
+          "XGigabitEthernet interface.";
+      }
+      enum "ServiceIf" {
+        description
+          "ServiceIf interface.";
+      }
+      enum "Virtual-ODUk" {
+        description
+          "Virtual-ODUk interface.";
+      }
+      enum "FlexE" {
+        description
+          "FlexE interface.";
+      }
+      enum "FlexE-200GE" {
+        description
+          "FlexE-200GE interface.";
+      }
+    }
+    description
+      "Interface Physical Type";
+  }
+  typedef ifmcommRouterType {
+    type enumeration {
+      enum "PtoP" {
+        description
+          "Point to point.";
+      }
+      enum "PtoMP" {
+        description
+          "Point to multi-point.";
+      }
+      enum "Broadcast" {
+        description
+          "Broadcast.";
+      }
+      enum "NBMA" {
+        description
+          "Non-broadcast multi-access.";
+      }
+      enum "invalid" {
+        description
+          "None.";
+      }
+    }
+    description
+      "Interface Router Type";
+  }
+  typedef ifmcommAdminStaType {
+    type enumeration {
+      enum "up" {
+        description
+          "Administratively Up.";
+      }
+      enum "down" {
+        description
+          "Administratively Down.";
+      }
+    }
+    description
+      "Interface Admin State Type";
+  }
+  typedef ifmcommNetWorkLayerState {
+    type enumeration {
+      enum "ipv4andipv6up" {
+        description
+          "Administratively Up of  ipv4 and ipv6 state.";
+      }
+      enum "ipv4andipv6down" {
+        description
+          "Administratively Down of ipv4 and ipv6 state.";
+      }
+    }
+    description
+      "Interface Network Layer State Type";
+  }
+  typedef ifmcommLinkProtocol {
+    type enumeration {
+      enum "ethernet" {
+        description
+          "The link protocol of the interface is Ethernet.";
+      }
+      enum "ppp" {
+        description
+          "The link protocol of the interface is PPP.";
+      }
+      enum "hdlc" {
+        description
+          "The link protocol of the interface is HDLC.";
+      }
+      enum "fr" {
+        description
+          "The link protocol of the interface is FR.";
+      }
+      enum "tdm" {
+        description
+          "The link protocol of the interface is TDM.";
+      }
+      enum "atm" {
+        description
+          "The link protocol of the interface is ATM.";
+      }
+      enum "invalid" {
+        description
+          "None.";
+      }
+    }
+    description
+      "Interface Link Portocol Type";
+  }
+  typedef ifmcommIfStatus {
+    type enumeration {
+      enum "up" {
+        description
+          "The interface is in Up state.";
+      }
+      enum "down" {
+        description
+          "The interface is in Down state.";
+      }
+    }
+    description
+      "Interface Status Type";
+  }
+  typedef ifmam4IpAddrType {
+    type enumeration {
+      enum "main" {
+        description
+          "Primary address of an interface.";
+      }
+      enum "sub" {
+        description
+          "Secondary address of an interface.";
+      }
+      enum "neg" {
+        description
+          "Negotiated address of an interface.";
+      }
+      enum "neg_remote" {
+        description
+          "Remotely negotiated address of an interface.";
+      }
+      enum "unnumber" {
+        description
+          "Unnumbered address of an interface.";
+      }
+      enum "nap" {
+        description
+          "Negotiated address using the Neighbor access protocol.";
+      }
+    }
+    description
+      "Ip Address Type";
+  }
+  typedef ifmam4CfgType {
+    type enumeration {
+      enum "config" {
+        description
+          "Configured address.";
+      }
+      enum "negotiation" {
+        description
+          "Negotiated address.";
+      }
+      enum "unnumbered" {
+        description
+          "Unnumbered address.";
+      }
+    }
+    description
+      "Am4 Config Type";
+  }
+  typedef ifmam4IpAddrCreateOrDelete {
+    type enumeration {
+      enum "Config" {
+        description
+          "The IP address is manually configured.";
+      }
+      enum "Delete" {
+        description
+          "No IP address is allocated.";
+      }
+    }
+    description
+      "Ip Address Create or Delete";
+  }
+  typedef ifmam6IpAddr6Type {
+    type enumeration {
+      enum "global" {
+        description
+          "Global unicast address.";
+      }
+      enum "linkLocal" {
+        description
+          "Link local address.";
+      }
+      enum "ndPrefix" {
+        description
+          "ND prefix.";
+      }
+      enum "eui64" {
+        description
+          "EUI 64.";
+      }
+      enum "anycast" {
+        description
+          "Anycast address.";
+      }
+    }
+    description
+      "Ipv6 Address Type";
+  }
+  typedef ifmam6IDGenType {
+    type enumeration {
+      enum "none" {
+        description
+          "none.";
+      }
+      enum "cga" {
+        description
+          "CGA.";
+      }
+      enum "eui64" {
+        description
+          "EUI 64.";
+      }
+    }
+    description
+      "Ipv6 Address Algorithm Type";
+  }
+  typedef ifmcommServiceType {
+    type enumeration {
+      enum "None" {
+        description
+          "None.";
+      }
+      enum "TrunkMember" {
+        description
+          "Trunk member.";
+      }
+      enum "StackMember" {
+        description
+          "Stack member.";
+      }
+      enum "MpMember" {
+        description
+          "MP-Group Member.";
+      }
+      enum "VbridgeMember" {
+        description
+          "VBridge member.";
+      }
+      enum "ImaMember" {
+        description
+          "IMA member.";
+      }
+      enum "BundleMember" {
+        description
+          "Bundle member.";
+      }
+      enum "FabricMember" {
+        description
+          "Fabric member";
+      }
+      enum "LagMasterMember" {
+        description
+          "Master member in a LAG.";
+      }
+      enum "LagSlaveMember" {
+        description
+          "Slave member in a LAG.";
+      }
+      enum "CposTrunkMember" {
+        description
+          "Cpos-Trunk Member.";
+      }
+      enum "PosTrunkMember" {
+        description
+          "Pos-Trunk Member.";
+      }
+      enum "GlobalMpMember" {
+        description
+          "Global-Mp-group Member.";
+      }
+      enum "GlobalImaMember" {
+        description
+          "Global-Ima-group Member.";
+      }
+    }
+    description
+      "Interface Service Type";
+  }
+  typedef ifmcommErrorDownType {
+    type enumeration {
+      enum "bpdu-protection" {
+        description
+          "BPDU protection.";
+      }
+      enum "auto-defend" {
+        description
+          "Attack source tracing.";
+      }
+      enum "monitor-link" {
+        description
+          "The uplink of monitor-link group is down.";
+      }
+      enum "loopback-detect" {
+        description
+          "Loopback detect.";
+      }
+      enum "portsec-reachedlimit" {
+        description
+          "Secure MAC addresses have reached the upper limit.";
+      }
+      enum "mac-address-flapping" {
+        description
+          "MAC address flapping.";
+      }
+      enum "storm-control" {
+        description
+          "Storm-control.";
+      }
+      enum "dual-active" {
+        description
+          "Dual-active.";
+      }
+      enum "no-stack-link" {
+        description
+          "No-stack-link.";
+      }
+      enum "crc-statistics" {
+        description
+          "CRC statistics.";
+      }
+      enum "transceiver-power-low" {
+        description
+          "The transceiver power is low.";
+      }
+      enum "link-flap" {
+        description
+          "Link flapping.";
+      }
+      enum "l2-loop-occured" {
+        description
+          "L2 loop.";
+      }
+      enum "stack-member-exceed-limit" {
+        description
+          "The number of stack members exceeds the limit.";
+      }
+      enum "spine-member-exceed-limit" {
+        description
+          "The number of spine members exceeds the limit.";
+      }
+      enum "resource-mismatch" {
+        description
+          "Resource mismatch.";
+      }
+      enum "leaf-mstp" {
+        description
+          "Leaf port mstp disable.";
+      }
+      enum "m-lag" {
+        description
+          "M-LAG peer detect error.";
+      }
+      enum "fabric-uplink-threshold" {
+        description
+          "Fabric uplink less then threshold.";
+      }
+      enum "stack-config-conflict" {
+        description
+          "Stack config conflict.";
+      }
+      enum "spine-type-unsupported" {
+        description
+          "Spine type unsupported.";
+      }
+      enum "stack-packet-defensive" {
+        description
+          "Stack packet defensive.";
+      }
+      enum "forward-engine-buffer-failed" {
+        description
+          "Forward engine buffer failed.";
+      }
+      enum "forward-engine-interface-failed" {
+        description
+          "Forward engine interface failed.";
+      }
+      enum "fabric-link-failure" {
+        description
+          "Fabric link failure.";
+      }
+      enum "invalid" {
+        description
+          "None.";
+      }
+    }
+    description
+      "Interface Error Down Type";
+  }
+  typedef veInterfaceType {
+    type enumeration {
+      enum "L2VE" {
+        description
+          "Layer 2 Virtual-Ethernet interface.";
+      }
+      enum "L3VE" {
+        description
+          "Layer 3 Virtual-Ethernet interface.
+";
+      }
+      enum "invalid" {
+        description
+          "None.
+";
+      }
+    }
+    description
+      "Ve Interface Type";
+  }
+  typedef veForwarModeType {
+    type enumeration {
+      enum "through" {
+        description
+          "Software loopback.";
+      }
+      enum "loopback" {
+        description
+          "Hardware loopback.";
+      }
+      enum "invalid" {
+        description
+          "None.";
+      }
+    }
+    description
+      "Ve Forward Mode Type";
+  }
+  typedef ifIpStatiModeType {
+    type enumeration {
+      enum "forward" {
+        description
+          "Forward mode statistics.";
+      }
+      enum "mac" {
+        description
+          "MAC mode statistics.";
+      }
+      enum "invalid" {
+        description
+          "None.";
+      }
+    }
+    description
+      "Ip Statistic Mode Type";
+  }
+  typedef ifmcommIfClassType {
+    type enumeration {
+      enum "mainInterface" {
+        description
+          "Main Interface.";
+      }
+      enum "subInterface" {
+        description
+          "Sub-interface.";
+      }
+    }
+    description
+      "Interface Class Type";
+  }
+  typedef ifmcommControlMtu {
+    type enumeration {
+      enum "1450" {
+        description
+          "1450.0";
+      }
+      enum "1500" {
+        description
+          "1500.0";
+      }
+    }
+    description
+      "Control Mtu Value";
+  }
+  typedef ifmcommEncapType {
+    type enumeration {
+      enum "vlanType" {
+        description
+          "VLAN type.";
+      }
+      enum "dot1q" {
+        description
+          "Dot1q.";
+      }
+      enum "qinq" {
+        description
+          "QinQ.";
+      }
+      enum "p2p" {
+        description
+          "P2P.";
+      }
+      enum "p2mp" {
+        description
+          "P2MP.";
+      }
+      enum "l2ve" {
+        description
+          "L2VE.";
+      }
+      enum "l3ve" {
+        description
+          "L3VE.";
+      }
+      enum "vlanTypePolicy" {
+        description
+          "VLAN type policy.";
+      }
+      enum "dot1qPolicy" {
+        description
+          "Dot1q policy.";
+      }
+      enum "stackingPolicy" {
+        description
+          "Stacking policy.";
+      }
+      enum "untagPolicy" {
+        description
+          "Untag policy.";
+      }
+      enum "qinqMapping" {
+        description
+          "QinQ mapping.";
+      }
+      enum "l2vc" {
+        description
+          "L2VC.";
+      }
+      enum "l3vc" {
+        description
+          "L3VC.";
+      }
+      enum "evcUntag" {
+        description
+          "EvcUntag.";
+      }
+      enum "evcDot1q" {
+        description
+          "EvcDot1q.";
+      }
+      enum "evcQinq" {
+        description
+          "EvcQinq.";
+      }
+      enum "evcDefault" {
+        description
+          "EvcDefault.";
+      }
+      enum "evcDot1qPolicy" {
+        description
+          "EvcDot1qPolicy.";
+      }
+      enum "ietf" {
+        description
+          "IETF.";
+      }
+      enum "nonstandard" {
+        description
+          "Nonstandard.";
+      }
+      enum "userVlan" {
+        description
+          "userVlan";
+      }
+      enum "userVlanAny" {
+        description
+          "userVlan AnyOther";
+      }
+      enum "QinqLink" {
+        description
+          "QinqLink";
+      }
+      enum "invalid" {
+        description
+          "Invalid.";
+      }
+    }
+    description
+      "Fr Encap Type";
+  }
+  typedef ifmcommStatMode {
+    type enumeration {
+      enum "baseInterface" {
+        description
+          "Statistics are collected based on interfaces.";
+      }
+      enum "baseVlanGroup" {
+        description
+          "Statistics are collected based on VLANs.";
+      }
+    }
+    description
+      "Interface Statistic Mode";
+  }
+  typedef ifmcommPortMode {
+    type enumeration {
+      enum "Mix" {
+        description
+          "Mix Port Mode";
+      }
+      enum "L2" {
+        description
+          "L2 Port Mode";
+      }
+      enum "L3" {
+        description
+          "L3 Port Mode";
+      }
+    }
+    description
+      "Interface Port Mode";
+  }
+  typedef transAlarmDownType {
+    type enumeration {
+      enum "enable" {
+        description
+          "Enable Transmission-Alarm Down";
+      }
+      enum "disable" {
+        description
+          "Disable Transmission-Alarm Down";
+      }
+    }
+    description
+      "Trans Alarm Down Type";
+  }
+  typedef ifmcommDampLevelType {
+    type enumeration {
+      enum "light" {
+        description
+          "Light weight";
+      }
+      enum "middle" {
+        description
+          "Middle weight";
+      }
+      enum "heavy" {
+        description
+          "Heavy weight";
+      }
+      enum "manual" {
+        description
+          "Manually configure the parameters";
+      }
+    }
+    description
+      "Damp Level Type";
+  }
+  typedef ifmMacAddress {
+    type string {
+      length "0..14";
+      pattern '[0-9a-fA-F]{4}(-[0-9a-fA-F]{4}){2}';
+    }
+    description
+      "A MAC address in standard notation";
+  }
+  typedef ifmIpv4Mask {
+    type string {
+      length "1..15";
+      pattern '((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))';
+    }
+    description
+      "ipv4Mask support mask format";
+  }
+  typedef ifmcommDampStatusType {
+    type enumeration {
+      enum "suppressed" {
+        description
+          "suppressed:";
+      }
+      enum "unsuppressed" {
+        description
+          "unsuppressed:";
+      }
+    }
+    description
+      "Damp status type";
+  }
+}

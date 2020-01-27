@@ -1,0 +1,85 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-nd-action {
+  belongs-to huawei-nd {
+    prefix nd;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  include huawei-nd-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of submodule nd_action";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc Ipv6NbClear {
+    description
+      "To clear the ND entries on the specified interface. Currently, only the dynamic ND entries on the specified interface can be cleared.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "To clear the ND entries on the specified interface. Currently, only the dynamic ND entries on the specified interface can be cleared.";
+      }
+    }
+  }
+  rpc ipv6NbClearAll {
+    description
+      "To clear all dynamic ND entries.";
+  }
+  rpc sendClearNonce {
+    description
+      "Clear nonce for SEND.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Interface name.";
+      }
+    }
+  }
+  rpc sendClearPktStat {
+    description
+      "Clear statistics for SEND.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Interface name.";
+      }
+    }
+  }
+  rpc sendClearTimestamp {
+    description
+      "Clear timestamp for SEND.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Interface name.";
+      }
+    }
+  }
+}

@@ -1,0 +1,126 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-vlan-action {
+  belongs-to huawei-vlan {
+    prefix vlan;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  include huawei-vlan-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description FOR submodule";
+  revision 2017-03-23 {
+	description
+	"Functions supported by the schema are added to the YANG file.";
+	reference
+	"Huawei private.";
+	}
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference    "Huawei private.";
+  }
+  rpc shVlanInstCrt {
+    description
+      "Create or modify a VLAN instance.";
+    input {
+      leaf instanceId {
+        type uint16 {
+          range "0..4094";
+        }
+        mandatory true;
+        description
+          "Instance ID.";
+      }
+      leaf vlans {
+        type pub-type:VLAN_RANGE;
+        mandatory true;
+        description
+          "VLAN list.";
+      }
+    }
+  }
+  rpc shVlanInstDel {
+    description
+      "Delete a VLAN instance.";
+    input {
+      leaf instanceId {
+        type uint16 {
+          range "0..4094";
+        }
+        mandatory true;
+        description
+          "Instances ID.";
+      }
+      leaf vlans {
+        type pub-type:VLAN_RANGE;
+        mandatory true;
+        description
+          "VLAN list.";
+      }
+    }
+  }
+  rpc shVlanBatchCrt {
+    description
+      "Create VLAN quickly.";
+    input {
+      leaf vlans {
+        type pub-type:VLAN_RANGE;
+        mandatory true;
+        description
+          "VLAN list.";
+      }
+    }
+  }
+  rpc shVlanBatchDel {
+    description
+      "Delete VLAN quickly.";
+    input {
+      leaf vlans {
+        type pub-type:VLAN_RANGE;
+        mandatory true;
+        description
+          "VLAN list.";
+      }
+    }
+  }
+  rpc resetVlanStatistics {
+    description
+      "Clear statistics by VLAN ID.";
+    input {
+      leaf vlanId {
+        type vlanId;
+        mandatory true;
+        description
+          "VLAN ID.";
+      }
+    }
+  }
+  rpc resetIfVlanStatistics {
+    description
+      "Clear VLAN statistics by VLAN ID + interface.";
+    input {
+      leaf vlanId {
+        type vlanId;
+        mandatory true;
+        description
+          "VLAN ID.";
+      }
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Interface name. ";
+      }
+    }
+  }
+}

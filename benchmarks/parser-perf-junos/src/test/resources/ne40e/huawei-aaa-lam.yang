@@ -1,0 +1,463 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-aaa-lam {
+  belongs-to huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-aaa-lam-type;
+  include huawei-aaa-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of lam submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef aaa_lam_user_password_type {
+    type pub-type:passwordExtend {
+    }
+    description
+      "The type of user password";
+  }
+  grouping aaa_lam_type {
+    description
+      "";
+    container loginFailedLimit {
+      description
+        "Login failed times limit in special period.";
+      leaf failedTimes {
+        type uint64 {
+          range "0..10";
+        }
+        default "5";
+        description
+          "Failed times.The default value is 5. 0 indicates that the number of times for a user to fail the authentification continuously is not restricted.";
+        ext:allowDelete "true";
+      }
+      leaf period {
+        type uint64 {
+          range "1..120";
+        }
+        must "not(not(../failedTimes)) or (not(../failedTimes) and not(../period))";
+        default "5";
+        description
+          "Period, in minute. The default value is five minutes.";
+        ext:allowDelete "true";
+      }
+      leaf reactiveTime {
+        type uint64 {
+          range "0..1000";
+        }
+        default "5";
+        description
+          "Reactive time, in minute. The default value is five minutes. 0 indicates that the locked account will not be unlocked automatically.";
+        ext:allowDelete "true";
+      }
+    }
+    container userSecurityPolicy {
+      description
+        "Local-user security policy.";
+      leaf securityPolicy {
+        type boolean;
+        default "true";
+        description
+          "Local-user security policy switch.";
+        ext:allowDelete "true";
+      }
+      leaf userAgingPeriod {
+        type uint64 {
+          range "1..365";
+        }
+        description
+          "The period of user-age.";
+        ext:allowDelete "true";
+      }
+      leaf userNameMinLen {
+        type uint64 {
+          range "1..253";
+        }
+        description
+          "The minumum length of username.";
+        ext:allowDelete "true";
+      }
+    }
+    container passwordPolicy {
+      description
+        "Local-user password policy.";
+      leaf expireDays {
+        type uint64 {
+          range "0..365";
+        }
+        default "0";
+        description
+          "password expiredays, default is 0, via password is useful forever.";
+        ext:allowDelete "true";
+      }
+      leaf promptDays {
+        type uint64 {
+          range "0..180";
+        }
+        must "(../expireDays and ../promptDays<=../expireDays) or (not(../expireDays) and not(../promptDays)) or not(../expireDays or not(../expireDays))";
+        default "0";
+        description
+          "password promptdays, default is 0.";
+        ext:allowDelete "true";
+      }
+      leaf changeCheck {
+        type boolean;
+        default "false";
+        description
+          "The switch of password change when it is used at the first time.";
+        ext:allowDelete "true";
+      }
+      leaf complexityCheck {
+        type boolean;
+        default "false";
+        description
+          "The switch of password complexity.";
+        ext:allowDelete "true";
+      }
+      leaf expiredPwdReuseNum {
+        type uint64;
+        config false;
+        description
+          "Max. Number of Times to Reuse Expired Password";
+      }
+      leaf historyPwdNum {
+        type uint64;
+        config false;
+        description
+          "History password number";
+      }
+      leaf pwdExpireDays {
+        type uint64;
+        config false;
+        description
+          "The passowrd will expire in the special days.";
+      }
+    }
+    container forbiddenWordRules {
+      description
+        "Password black list";
+      list forbiddenWordRule {
+        key "forbiddenWord";
+        description
+          "Password forbidden rule";
+        leaf forbiddenWord {
+          type string {
+            length "1..255";
+          }
+          description
+            "Forbidden word, it is not case sensitive.";
+        }
+      }
+    }
+    container users {
+      description
+        "Local user list.";
+      list user {
+        key "userName";
+        description
+          "Local user.";
+        leaf userName {
+          type string {
+            length "1..253";
+          }
+          description
+            "Name of a local user, it is not case sensitive.";
+        }
+        leaf beginLifeDate {
+          type pub-type:date;
+          config false;
+          description
+            "The begin date of local user's life.";
+        }
+        leaf endLifeDate {
+          type pub-type:date;
+          description
+            "The end date of local user's life.";
+          ext:allowDelete "true";
+        }
+        leaf isLoginAnytime {
+          type boolean;
+          must "not(../beginLoginDay='sun' and ../endLoginDay='sat' and ../beginLoginTime='00:00:00' and ../endLoginTime='23:59:59' and ../isLoginAnytime='false') or (../beginLoginDay='sun' and ../endLoginDay='sat' and ../beginLoginTime='00:00:00' and ../endLoginTime='23:59:59' and ../isLoginAnytime='false' and ../isLoginAnytime!='false')";
+          default "true";
+          description
+            "The flag of login anytime.";
+        }
+        leaf beginLoginDay {
+          type lamWeekDayType;
+          must "not(../isLoginAnytime='true') or (../isLoginAnytime='true' and ../beginLoginDay='sun')";
+          default "sun";
+          description
+            "The begin day of week for login.";
+        }
+        leaf endLoginDay {
+          type lamWeekDayType;
+          must "not(../isLoginAnytime='true') or (../isLoginAnytime='true' and ../endLoginDay='sat')";
+          default "sat";
+          description
+            "The end day of week for login.";
+        }
+        leaf beginLoginTime {
+          type pub-type:time;
+          must "not(../isLoginAnytime='true') or (../isLoginAnytime='true' and ../beginLoginTime='00:00:00')";
+          default "00:00:00";
+          description
+            "The begin time of every login day.";
+        }
+        leaf endLoginTime {
+          type pub-type:time;
+          must "not(../isLoginAnytime='true') or (../isLoginAnytime='true' and ../endLoginTime='23:59:59')";
+          default "23:59:59";
+          description
+            "The end time of every login day.";
+        }
+        leaf lastLoginTime {
+          type yang:date-and-time;
+          config false;
+          description
+            "lastLoginTime";
+        }
+        leaf agingInDays {
+          type uint64 {
+            range "0..365";
+          }
+          description
+            "The user will age if not online in the special days.";
+          ext:allowDelete "true";
+          ext:value-replace {
+            ext:item  "0" {
+              ext:meaning "never";
+            }
+          }
+        }
+        leaf idleTimeout {
+          type uint64 {
+            range "5..60";
+          }
+          description
+            "the idle timeout of a local user, the minimum value is 5(minutes).";
+          ext:allowDelete "true";
+          ext:value-replace {
+            ext:item  "0" {
+              ext:meaning "never";
+            }
+          }
+        }
+        leaf isAged {
+          type aaaBoolType;
+          config false;
+          description
+            "Is the user aged now.";
+        }
+        leaf passwordExpireInDays {
+          type uint64 {
+            range "0..999";
+          }
+          description
+            "The passowrd will expire in the special days.";
+          ext:allowDelete "true";
+          ext:value-replace {
+            ext:item  "0" {
+              ext:meaning "forever";
+            }
+          }
+        }
+        leaf userGroupName {
+          type leafref {
+            path "/aaa/userGroups/userGroup/userGroupName";
+          }
+          description
+            "Name of the user group where the user belongs. The user inherits all the rights of the user group.";
+          ext:support-filter "true";
+          ext:allowDelete "true";
+        }
+        leaf userState {
+          type userStateType;
+          must "((../userState='block' or ../userState='active') )";
+          default "active";
+          description
+            "Activated state of a user.";
+        }
+        leaf isLocked {
+          type aaaBoolType;
+          config false;
+          description
+            "Is the user locked now.";
+        }
+        leaf leftLockTime {
+          type uint64 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "left lock time of locked user, in second.";
+        }
+        leaf passModifyTime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Password ModifyTime.";
+        }
+        leaf isPassExpired {
+          type isPassExpiredType;
+          config false;
+          description
+            "Is Password Expired.";
+        }
+        leaf isPassChanged {
+          type boolean;
+          config false;
+          description
+            "Is Password Changed.";
+        }
+        leaf failedTimes {
+          type uint64 {
+            range "1..10";
+          }
+          must "not(../userState='block') or (../userState='block' and not(../failedTimes))";
+          default "3";
+          description
+            "When user continuous authen failed times reach the limit, the user is locked.";
+          ext:allowDelete "true";
+        }
+        leaf interval {
+          type uint64 {
+            range "1..65535";
+          }
+          must "(../userState='block' and not(../interval)) or (not(../failedTimes) and not(../interval)) or not(../userState='block' or not(../failedTimes))";
+          default "5";
+          description
+            "The time interval.";
+          ext:allowDelete "true";
+        }
+        leaf passwordType {
+          type aaaPwdModeType;
+          must "not(not(../password))";
+          default "cipher";
+          description
+            "User Password Type.";
+        }
+        leaf password {
+          type aaa_lam_user_password_type {
+            length "1..128";
+          }
+          mandatory true;
+          description
+            "Login password of a user. The password can contain letters, numbers, and special characters.";
+        }
+        leaf userLevel {
+          type uint64 {
+            range "0..15";
+          }
+          description
+            "Login level of a local user.";
+          ext:allowDelete "true";
+        }
+        leaf ftpDir {
+          type string {
+            length "1..255";
+          }
+          description
+            "FTP user directory.";
+          ext:allowDelete "true";
+        }
+        leaf serviceTerminal {
+          type boolean;
+          default "false";
+          description
+            "Login through a terminal.";
+        }
+        leaf serviceTelnet {
+          type boolean;
+          default "false";
+          description
+            "Login through Telnet.";
+        }
+        leaf serviceFtp {
+          type boolean;
+          default "false";
+          description
+            "Login through FTP.";
+        }
+        leaf servicePpp {
+          type boolean;
+          default "false";
+          description
+            "Login through PPP.";
+        }
+        leaf serviceSsh {
+          type boolean;
+          default "false";
+          description
+            "Login through SSH.";
+        }
+        leaf serviceQx {
+          type boolean;
+          default "false";
+          description
+            "Login through QX.";
+        }
+        leaf serviceSnmp {
+          type boolean;
+          default "false";
+          description
+            "Login through SNMP.";
+        }
+        leaf serviceMml {
+          type boolean;
+          default "false";
+          description
+            "Login through MML.";
+        }
+        leaf serviceDot1x {
+          type boolean;
+          default "false";
+          description
+            "Login through DOT1X.";
+        }
+        leaf maxAccessNum {
+          type int64 {
+            range "1..2147483647";
+          }
+          description
+            "the localuser max access number.";
+          ext:allowDelete "true";
+        }
+        leaf aliveNum {
+          type int64 {
+            range "0..2147483647";
+          }
+          config false;
+          description
+            "Online number of the localuser.";
+        }
+      }
+    }
+  }
+}
