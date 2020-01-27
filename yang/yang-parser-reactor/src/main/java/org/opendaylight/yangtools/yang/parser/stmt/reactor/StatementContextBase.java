@@ -494,20 +494,35 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public D buildDeclared() {
-        checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
-                || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        if (declaredInstance == null) {
-            declaredInstance = definition.getFactory().createDeclared(this);
+        final D existing = declaredInstance;
+        if (existing != null) {
+            return existing;
         }
-        return declaredInstance;
+
+        checkState(completedPhase == ModelProcessingPhase.FULL_DECLARATION
+                || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
+        /*
+         * Share original instance of declared statement between all effective
+         * statements which have been copied or derived from this original
+         * declared statement.
+         */
+        @SuppressWarnings("unchecked")
+        final StmtContext<A, D, E> lookupCtx = (StmtContext<A, D, E>) getOriginalCtx().orElse(this);
+        final D created = definition.getFactory().createDeclared(lookupCtx);
+        declaredInstance = created;
+        return created;
     }
 
     @Override
     public E buildEffective() {
-        if (effectiveInstance == null) {
-            effectiveInstance = definition.getFactory().createEffective(this);
+        final E existing = effectiveInstance;
+        if (existing != null) {
+            return existing;
         }
-        return effectiveInstance;
+
+        final E created = definition.getFactory().createEffective(this);
+        effectiveInstance = created;
+        return created;
     }
 
     /**
