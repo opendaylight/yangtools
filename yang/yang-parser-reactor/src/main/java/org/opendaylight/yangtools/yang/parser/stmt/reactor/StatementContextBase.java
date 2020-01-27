@@ -505,9 +505,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         if (existing != null) {
             return existing;
         }
-        checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
+        checkState(completedPhase == ModelProcessingPhase.FULL_DECLARATION
                 || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        return declaredInstance = definition.getFactory().createDeclared(this);
+        return declaredInstance = createDeclared();
+    }
+
+    @NonNull D createDeclared() {
+        return definition.getFactory().createDeclared(this);
     }
 
     @Override
@@ -798,6 +802,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             }
 
             copy = new InferredStatementContext<>(result, original, childCopyType, type, targetModule);
+            copy.setCompletedPhase(result.getCompletedPhase());
             result.addEffectiveSubstatement(copy);
         } else {
             result = copy = new InferredStatementContext<>(this, original, type, type, targetModule);
