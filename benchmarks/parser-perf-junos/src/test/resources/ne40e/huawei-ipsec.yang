@@ -1,0 +1,810 @@
+module huawei-ipsec {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-ipsec";
+  prefix ipsec;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ipsec-action;
+  include huawei-ipsec-type;
+  include huawei-ipsec-ike-type;
+  include huawei-ipsec-ike;
+  include huawei-ipsec-ike-action;
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "IPSec";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference "Huawei private.";
+  }
+
+  container ipsec {
+    description
+      "IPSec";
+    container ipsecProposals {
+      description
+        "IPSec Proposals";
+      list ipsecProposal {
+        key "proposalName";
+        description
+          "IPSec Proposal";
+        leaf proposalName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Proposal Name";
+        }
+        leaf encapsulationMode {
+          type ipsecEncapModeType;
+          default "tunnel";
+          description
+            "Encapsulation Mode: Tunnel / Transport ";
+        }
+        leaf ipsecProtocol {
+          type ipsecProtocolType;
+          default "esp";
+          description
+            "IPSec protocol: AH / ESP / AH-ESP ";
+        }
+        leaf ahAuthenticationAlgorithm {
+          when "not(../ipsecProtocol='esp') or ../ipsecProtocol='ah' or ../ipsecProtocol='ah-esp'";
+          type ipsecAhAuthAlgoType;
+          default "md5";
+          description
+            "Authentication Algorithm";
+          ext:allowDelete "true";
+        }
+        leaf espAuthenticationAlgorithm {
+          when "not(../ipsecProtocol='ah') or ../ipsecProtocol='ah-esp' or ../ipsecProtocol='esp'";
+          type ipsecEspAuthAlgoType;
+          default "md5";
+          description
+            "Authentication Algorithm";
+          ext:allowDelete "true";
+        }
+        leaf encryptionAlgorithm {
+          when "not(../ipsecProtocol='ah') or ../ipsecProtocol='ah-esp' or ../ipsecProtocol='esp'";
+          type ipsecEncrAlgoType;
+          default "des";
+          description
+            "Encryption algorithm ";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container ipsecSAs {
+      description
+        "IPSec SA's";
+      list ipsecSA {
+        key "saName";
+        max-elements "1000";
+        description
+          "IPSec SA";
+        leaf saName {
+          type string {
+            length "1..15";
+          }
+          description
+            "SA name ";
+        }
+        leaf proposalName {
+          type leafref {
+            path "/ipsec/ipsecProposals/ipsecProposal/proposalName";
+          }
+          description
+            "Proposal name";
+          ext:allowDelete "true";
+        }
+        leaf inboundAhAuthPasswd {
+          type pub-type:passwordExtend {
+            length "32..128";
+          }
+          description
+            "Inbound AH authentication password,   [32,40,64,96,128] Hexadecimal string for key(16 bytes for MD5 or 20 bytes for SHA1 or 32 bytes for SHA2-256 or 48 bytes for SHA2-384 or 64 bytes for SHA2-512)";
+          ext:allowDelete "true";
+        }
+        leaf outboundAhAuthPasswd {
+          type pub-type:passwordExtend {
+            length "32..128";
+          }
+          description
+            "Outbound AH authentication password,   [32,40,64,96,128] Hexadecimal string for key(16 bytes for MD5 or 20 bytes for SHA1 or 32 bytes for SHA2-256 or 48 bytes for SHA2-384 or 64 bytes for SHA2-512)";
+          ext:allowDelete "true";
+        }
+        leaf inboundEspAuthPasswd {
+          type pub-type:passwordExtend {
+            length "32..128";
+          }
+          description
+            "Inbound ESP authentication password,  [32,40,64,96,128] Hexadecimal string for key(16 bytes for MD5 or 20 bytes for SHA1 or 32 bytes for SHA2-256 or 48 bytes for SHA2-384 or 64 bytes for SHA2-512)";
+          ext:allowDelete "true";
+        }
+        leaf outboundEspAuthPasswd {
+          type pub-type:passwordExtend {
+            length "32..128";
+          }
+          description
+            "Outbound ESP authentication password,  [32,40,64,96,128] Hexadecimal string for key(16 bytes for MD5 or 20 bytes for SHA1or 32 bytes for SHA2-256 or 48 bytes for SHA2-384 or 64 bytes for SHA2-512)";
+          ext:allowDelete "true";
+        }
+        leaf inboundEspEncrPasswd {
+          type pub-type:passwordExtend {
+            length "16..64";
+          }
+          description
+            "Inbound ESP encryption password, [16,32,48,64] Hexadecimal string for key(8 bytes for DES or 24 bytes for 3DES or 16 bytes for AES-128 or 24 bytes for AES-192 or 32 bytes for AES-256) ";
+          ext:allowDelete "true";
+        }
+        leaf outboundEspEncrPasswd {
+          type pub-type:passwordExtend {
+            length "16..64";
+          }
+          description
+            "Outbound ESP encryption password, [16,32,48,64] Hexadecimal string for key(8 bytes for DES or 24 bytes for 3DES or 16 bytes for AES-128 or 24 bytes for AES-192 or 32 bytes for AES-256) ";
+          ext:allowDelete "true";
+        }
+        leaf inboundAhStrKey {
+          type pub-type:passwordExtend {
+            length "1..255";
+          }
+          description
+            "Inbound AH string-key, Plain text ";
+          ext:allowDelete "true";
+        }
+        leaf outboundAhStrKey {
+          type pub-type:passwordExtend {
+            length "1..255";
+          }
+          description
+            "Outbound AH string-key, Plain text";
+          ext:allowDelete "true";
+        }
+        leaf inboundEspStrKey {
+          type pub-type:passwordExtend {
+            length "1..255";
+          }
+          description
+            "Inbound ESP string-key, Plain text";
+          ext:allowDelete "true";
+        }
+        leaf outboundEspStrKey {
+          type pub-type:passwordExtend {
+            length "1..255";
+          }
+          description
+            "Outbound ESP string-key, Plain text";
+          ext:allowDelete "true";
+        }
+        leaf inboundAhSpi {
+          type uint32 {
+            range "256..4294967295";
+          }
+          description
+            "Inbound AH SPI";
+          ext:allowDelete "true";
+        }
+        leaf outboundAhSpi {
+          type uint32 {
+            range "256..4294967295";
+          }
+          description
+            "Outbound AH SPI";
+          ext:allowDelete "true";
+        }
+        leaf inboundEspSpi {
+          type uint32 {
+            range "256..4294967295";
+          }
+          description
+            "Inbound ESP SPI";
+          ext:allowDelete "true";
+        }
+        leaf outboundEspSpi {
+          type uint32 {
+            range "256..4294967295";
+          }
+          description
+            "Outbound ESP SPI";
+          ext:allowDelete "true";
+        }
+        leaf referenceCount {
+          type uint32 {
+            range "0..4294967295";
+          }
+          config false;
+          description
+            "Reference count ";
+        }
+        container ipsecSaStatisticss {
+          config false;
+          description
+            "IPSec SA Statistics List";
+          list ipsecSaStatistics {
+            key "slotNumber";
+            config false;
+            description
+              "Ipsec SA Statistics";
+            leaf slotNumber {
+              type string {
+                length "1..31";
+              }
+              config false;
+              description
+                "Slot Number";
+            }
+            leaf inboundSecurityPackets {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Inbound IPv6 Security Packets";
+            }
+            leaf outboundSecurityPackets {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Outbound IPv6 Security Packets";
+            }
+            leaf inboundSecurityBytes {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Inbound IPv6 Security Bytes ";
+            }
+            leaf outboundSecurityBytes {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Outbound IPv6 Security Bytes ";
+            }
+            leaf inboundDropdSecurityPackets {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Inbound IPv6 Dropped Security Bytes";
+            }
+            leaf outboundDropdSecurityPackets {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Outbound IPv6 Dropped Security Bytes";
+            }
+            leaf memoryProcessProblem {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Memory Process Problem for IPv6 Packets";
+            }
+            leaf saNotExist {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "SA does not exist for IPv6 Packets";
+            }
+            leaf queueStatistics {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Queue Statistics for IPv6 Packets";
+            }
+            leaf authStatistics {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Authentication Statistics for IPv6 Packets";
+            }
+            leaf wrongLengthPackets {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "IPv6 Wrong Length Packets  ";
+            }
+            leaf replayPackets {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "IPv6 Replay Packets";
+            }
+            leaf longPackets {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "IPv6 Long Packets ";
+            }
+            leaf invalidSA {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Invalid SA for IPv6 Packets";
+            }
+            leaf policyDeny {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Policy Deny";
+            }
+            leaf inboundDropNoPkts {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Inbound IPv6 Dropped Packets Count";
+            }
+            leaf outboundDropNoPkts {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Outbound IPv6 Dropped Packets Count";
+            }
+            leaf inboundSecurityPacketsV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Inbound IPv4 Security Packets";
+            }
+            leaf outboundSecurityPacketsV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Outbound IPv4 Security Packets";
+            }
+            leaf inboundSecurityBytesV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Inbound IPv4 Security Bytes ";
+            }
+            leaf outboundSecurityBytesV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Outbound IPv4 Security Bytes ";
+            }
+            leaf inboundDropdSecurityPacketsV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Inbound IPv4 Dropped Security Bytes";
+            }
+            leaf outboundDropdSecurityPacketsV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Outbound IPv4 Dropped Security Bytes";
+            }
+            leaf memoryProcessProblemV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Memory Process Problem for IPv4 Packets";
+            }
+            leaf saNotExistV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "SA does not exist for IPv4 Packets";
+            }
+            leaf queueStatisticsV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Queue Statistics for IPv4 Packets";
+            }
+            leaf authStatisticsV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Authentication Statistics for IPv6 Packets";
+            }
+            leaf wrongLengthPacketsV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "IPv4 Wrong Length Packets  ";
+            }
+            leaf replayPacketsV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "IPv4 Replay Packets";
+            }
+            leaf longPacketsV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "IPv4 Long Packets ";
+            }
+            leaf invalidSAV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Invalid SA for IPv4 Packets";
+            }
+            leaf policyDenyV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Policy Deny";
+            }
+            leaf inboundDropNoPktsV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Inbound IPv4 Dropped Packets Count";
+            }
+            leaf outboundDropNoPktsV4 {
+              type uint32 {
+                range "0..4294967295";
+              }
+              config false;
+              description
+                "Outbound IPv4 Dropped Packets Count";
+            }
+          }
+        }
+      }
+    }
+    container ipsecStatistics {
+      config false;
+      description
+        "IPSec Statistics";
+      leaf inboundSecurityPackets {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Inbound IPv6 Security Packets";
+      }
+      leaf outboundSecurityPackets {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Outbound IPv6 Security Packets";
+      }
+      leaf inboundSecurityBytes {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Inbound IPv6 Security Bytes ";
+      }
+      leaf outboundSecurityBytes {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Outbound IPv6 Security Bytes ";
+      }
+      leaf inboundDropdSecurityPackets {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Inbound IPv6 Dropped Security Bytes";
+      }
+      leaf outboundDropdSecurityPackets {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Outbound IPv6 Dropped Security Bytes";
+      }
+      leaf memoryProcessProblem {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Memory Process Problem for IPv6 Packets";
+      }
+      leaf saNotExist {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "SA does not exist for IPv6 Packets";
+      }
+      leaf queueStatistics {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Queue Statistics for IPv6 Packets";
+      }
+      leaf authStatistics {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Authentication Statistics for IPv6 Packets";
+      }
+      leaf wrongLengthPackets {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "IPv6 Wrong Length Packets  ";
+      }
+      leaf replayPackets {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "IPv6 Replay Packets";
+      }
+      leaf longPackets {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "IPv6 Long Packets ";
+      }
+      leaf invalidSA {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Invalid SA for IPv6 Packets";
+      }
+      leaf policyDeny {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Policy Deny";
+      }
+      leaf inboundDropNoPkts {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Inbound IPv6 Dropped Packets Count";
+      }
+      leaf outboundDropNoPkts {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Outbound IPv6 Dropped Packets Count";
+      }
+      leaf inboundSecurityPacketsV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Inbound IPv4 Security Packets";
+      }
+      leaf outboundSecurityPacketsV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Outbound IPv4 Security Packets";
+      }
+      leaf inboundSecurityBytesV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Inbound IPv4 Security Bytes ";
+      }
+      leaf outboundSecurityBytesV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Outbound IPv4 Security Bytes ";
+      }
+      leaf inboundDropdSecurityPacketsV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Inbound IPv4 Dropped Security Bytes";
+      }
+      leaf outboundDropdSecurityPacketsV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Outbound IPv4 Dropped Security Bytes";
+      }
+      leaf memoryProcessProblemV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Memory Process Problem for IPv4 Packets";
+      }
+      leaf saNotExistV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "SA does not exist for IPv4 Packets";
+      }
+      leaf queueStatisticsV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Queue Statistics for IPv4 Packets";
+      }
+      leaf authStatisticsV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Authentication Statistics for IPv6 Packets";
+      }
+      leaf wrongLengthPacketsV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "IPv4 Wrong Length Packets  ";
+      }
+      leaf replayPacketsV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "IPv4 Replay Packets";
+      }
+      leaf longPacketsV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "IPv4 Long Packets ";
+      }
+      leaf invalidSAV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Invalid SA for IPv4 Packets";
+      }
+      leaf policyDenyV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Policy Deny";
+      }
+      leaf inboundDropNoPktsV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Inbound IPv4 Dropped Packets Count";
+      }
+      leaf outboundDropNoPktsV4 {
+        type uint32 {
+          range "0..4294967295";
+        }
+        config false;
+        description
+          "Outbound IPv4 Dropped Packets Count";
+      }
+    }
+    container ike {
+      description
+        "IKE";
+      uses ipsec:ikeipsec_ikeipsec_type;
+    }
+  }
+}

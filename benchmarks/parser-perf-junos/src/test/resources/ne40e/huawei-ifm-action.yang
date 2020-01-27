@@ -1,0 +1,148 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifm-action {
+  belongs-to huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  include huawei-ifm-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the ifm action submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  rpc rstStaByIfName {
+    description
+      "Clear statistics based on the interface name.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Clear statistics based on the interface name. For example, ethernet0/1/0.";
+      }
+    }
+  }
+  rpc rstStaByPhyType {
+    description
+      "Clear statistics based on the interface type.";
+    input {
+      leaf ifPhyType {
+        type ifmcommPhyType;
+        mandatory true;
+        description
+          "To clear the statistics by the type of interface.";
+      }
+    }
+  }
+  rpc rstStaByAll {
+    description
+      "Clear the statistics on all interfaces.";
+    input {
+      leaf allIf {
+        type boolean;
+        mandatory true;
+        description
+          "Clear the statistics on all interfaces.";
+      }
+    }
+  }
+  rpc rstIfPnlty {
+    description
+      "Clear the penalty value of an interface and remove the suppression on the interface.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Name of the interface. For example, ethernet0/1/0.";
+      }
+    }
+  }
+  rpc rstIfCnt {
+    description
+      "Clear the number of flapping control times.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Name of the interface. For example, ethernet0/1/0.";
+      }
+    }
+  }
+  rpc rstIfCrcAlarm {
+    description
+      "Clear PPP CRC alarms.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface Name. For example, serial0/3/0:0.";
+      }
+    }
+  }
+  rpc rstIfMacMtuDisStat {
+    description
+      "clear MAC&MTU error statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name of cleared MAC&MTU error statistics.";
+      }
+    }
+  }
+  rpc rstRemoteIfStat {
+    description
+      "Clear remote interface statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name of clear remote interface statistics.";
+      }
+    }
+  }
+  rpc restartInterface {
+    description
+      "Restart interface";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Interface name of the Restart interface";
+      }
+    }
+  }
+  rpc rstIfMruDisStat {
+    description
+      "Clear interface Mru discard statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name of clear interface Mru discard statistics.";
+      }
+    }
+  }
+}

@@ -1,0 +1,726 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-dcn {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-dcn";
+  prefix dcn;
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-dcn-action;
+  include huawei-dcn-type;
+  include huawei-dcn-dscpremark;
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+      People's Republic of China                    
+      Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Data communication network.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container dcn {
+    description
+      "Data communication network.";
+    container dcnSite {
+      description
+        "DCN Global Attribute";
+      leaf neId {
+        type pub-type:hexBinary;
+        description
+          "For the CX and NE40E, NEID=subnetid<<16+baseid, in which subnetid varies from 0x01 to 0xfe, and baseid varies from 0x0001 to 0xfffe.
+           For the PTN, NEID=subnetid<<16+baseid, in which subnetid varies from 0x01 to 0xfe, and baseid varies from 0x0001 to 0xbfef.";
+      }
+      leaf dcnEnable {
+        type boolean;
+        default "true";
+        description
+          "Enable DCN.";
+      }
+      leaf neIp {
+        when "../dcnEnable='true'";
+        type string {
+          length "0..255";
+          pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+        }
+        description
+          "Caution:
+           Changing the NE IP address will interrupt services on the NE. Exercise caution when performing this operation.
+           
+           Note:
+           If the NE is using a public network IP address, assigning a private network IP address to the NE is recommended.";
+      }
+      leaf neIpMask {
+        when "../dcnEnable='true'";
+        type string {
+          length "0..255";
+          pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+        }
+        default "255.255.0.0";
+        description
+          "Mask of the subnet on which the NE resides, which identifies the network segment of the NE.
+           
+           Caution:
+           
+           Changing the subnet mask will interrupt services on the NE. Exercise caution when performing this operation.";
+      }
+      leaf advertiseNeIp {
+        when "../dcnEnable='true'";
+        type boolean;
+        default "false";
+        description
+          "Advertise the NEIP address.";
+      }
+      leaf qxServerEnable {
+        when "../dcnEnable='true'";
+        type boolean;
+        default "false";
+        description
+          "Compatible mode.";
+      }
+      leaf connectionMode {
+        when "../dcnEnable='true' and ../qxServerEnable='true'";
+        type dcn_Connect_Type;
+        default "ALL";
+        description
+          "Set the communication mode between the NMS and NE.
+           
+           Common: Data is not encrypted when being transmitted between the NMS and NE.
+           
+           SSL: Data is encrypted when being transmitted between the NMS and NE.
+           
+           Common+SSL: Data can be either encrypted or not encrypted when being transmitted between the NMS and NE. Use this mode if you want the NE to have the same security requirement as the NMS. In this manner, you need only to change the connection mode of a GNE when you want to change the communication security level of a DCC subnet.
+           
+           Caution:
+           Changing the connection mode will interrupt services on the NE. Exercise caution when performing this operation.";
+      }
+      leaf autoReport {
+        when "../dcnEnable='true'";
+        type boolean;
+        default "false";
+        description
+          "Automatic report.";
+      }
+      leaf domain {
+        type dcn_Domain_Type;
+        default "Manage";
+        description
+          "Domain.";
+      }
+      leaf lanAccess {
+        type dcn_LanAccess_Type;
+        default "Enable";
+        description
+          "LAN access.";
+      }
+      leaf nodeThreshold {
+        type uint32 {
+          range "30..2000";
+        }
+        default "1000";
+        description
+          "Alarm threshold for the number of NEs.";
+      }
+      leaf gatewayIpAddress {
+        type string {
+          length "0..255";
+          pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+        }
+        default "0.0.0.0";
+        description
+          "IP address of the router that connects to the NE in an ECC communication scenario.
+           
+           Caution:
+           Changing the gateway IP address will interrupt services on the NE. Exercise caution when performing this operation.";
+      }
+      leaf sslVerifyMode {
+        when "../dcnEnable='true' and ../qxServerEnable='true'";
+        type dcn_sslMode_Type;
+        default "single";
+        description
+          "SSL verify-mode.";
+      }
+      leaf sslVerifyIp {
+        when "../dcnEnable='true' and ../qxServerEnable='true'";
+        type boolean;
+        default "false";
+        description
+          "SSL verify-IP.";
+      }
+      leaf bindSslPolicy {
+        when "../dcnEnable='true' and ../qxServerEnable='true'";
+        type boolean;
+        default "false";
+        description
+          "Bind SSL-policy.";
+      }
+      leaf sslPolicyName {
+        when "../bindSslPolicy='true' or ../dcnEnable='true' and ../qxServerEnable='true'";
+        type string {
+          length "1..23";
+        }
+        description
+          "SSL policy-name.";
+        ext:allowDelete "true";
+      }
+      leaf dataPriority {
+        type uint32 {
+          range "0..5";
+        }
+        default "3";
+        description
+          "Data packet priority.";
+      }
+      leaf sslFailThreshold {
+        when "../dcnEnable='true' and ../qxServerEnable='true'";
+        type uint32 {
+          range "1..100";
+        }
+        default "1";
+        description
+          "Set the threshold for SSL. The ranges is from 1 to 100 and the default value is 1.";
+      }
+      leaf aclNameOrNum {
+        when "../dcnEnable='true'";
+        type string {
+          length "1..64";
+          pattern "\\s*([2-3][0-9]{3}|[a-zA-Z]{1,64})\\s*";
+        }
+        description
+          "Set an ACL number or name used for DCN. The ACL number ranges from 2000 to 3999. The ACL name must start with a letter, and the ACL name is case-sensitive.";
+        ext:allowDelete "true";
+      }
+    }
+    container nmsServer {
+      description
+        "NMS server IP address.";
+      leaf reportFlag {
+        type dcn_AutoReport_Type;
+        default "Disable";
+        description
+          "NE automatic reporting.";
+      }
+      leaf nmsAddr1 {
+        type string {
+          length "0..255";
+          pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+        }
+        description
+          "Server IP1.";
+      }
+      leaf nmsAddr2 {
+        type string {
+          length "0..255";
+          pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+        }
+        description
+          "Server IP2.";
+      }
+      leaf nmsAddr3 {
+        type string {
+          length "0..255";
+          pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+        }
+        description
+          "Server IP3.";
+      }
+      leaf nmsAddr4 {
+        type string {
+          length "0..255";
+          pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+        }
+        description
+          "Server IP4.";
+      }
+      leaf nmsAddr5 {
+        type string {
+          length "0..255";
+          pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+        }
+        description
+          "Server IP5.";
+      }
+    }
+    container dcnBandwidth {
+      description
+        "DCN interface bandwidth management.";
+      leaf posBandwidth {
+        type uint32 {
+          range "64..2048";
+        }
+        default "1024";
+        description
+          "Pos bandwidth.";
+      }
+      leaf serialBandwidth {
+        type uint32 {
+          range "64..2048";
+        }
+        default "192";
+        description
+          "Serial bandwidth.";
+      }
+      leaf ethBandwidth {
+        type uint32 {
+          range "64..10240";
+        }
+        default "2048";
+        description
+          "Ethernet Bandwidth.";
+      }
+      leaf ethVlan {
+        type uint16 {
+          range "2..4094";
+        }
+        default "4094";
+        description
+          "VLAN.";
+        ext:allowDelete "true";
+      }
+    }
+    container dcnOspfGlobal {
+      description
+        "Configure global DCN OSPF timers.";
+      leaf ospfHelloTimer {
+        type uint32 {
+          range "1..65535";
+        }
+        default "10";
+        description
+          "Hello timer, in seconds.";
+      }
+      leaf ospfDeadTimer {
+        type uint32 {
+          range "1..235926000";
+        }
+        default "40";
+        description
+          "Dead timer, in seconds.";
+      }
+      leaf ospfRetransmitTimer {
+        type uint16 {
+          range "1..3600";
+        }
+        default "5";
+        description
+          "Retransmission timer.";
+      }
+      leaf ospfTransdelay {
+        type uint16 {
+          range "1..500";
+        }
+        default "1";
+        description
+          "Transmission delay.";
+      }
+      leaf ospfPollTimer {
+        type uint16 {
+          range "1..3600";
+        }
+        default "120";
+        description
+          "Poll timer, in seconds.";
+      }
+    }
+    container dcnPacketPrioritys {
+      description
+        "Priority.";
+      list dcnPacketPriority {
+        key "packetType";
+        max-elements "2";
+        description
+          "Priority.";
+        leaf packetType {
+          type dcn_Packet_Type;
+          description
+            "Packet type.";
+        }
+        leaf appType {
+          type dcn_PriorityApply_Type;
+          default "ALL";
+          description
+            "Application type.";
+        }
+        leaf packetPriority {
+          type dcn_DataPktPriority_Type;
+          must "((../packetPriority='BE' or ../packetPriority='AF1' or ../packetPriority='AF2' or ../packetPriority='AF3' or ../packetPriority='AF4' or ../packetPriority='EF' or ../packetPriority='CS6') )";
+          default "AF3";
+          description
+            "Priority.";
+        }
+      }
+    }
+    container dcnTransparnetPorts {
+      description
+        "DCN message transparent transmission.";
+      list dcnTransparnetPort {
+        key "ifNameSrc ifNameDst";
+        description
+          "DCN message transparent transmission.";
+        leaf ifNameSrc {
+          type pub-type:ifName;
+          description
+            "Source port.";
+        }
+        leaf ifNameDst {
+          type pub-type:ifName;
+          description
+            "Destination port.";
+        }
+      }
+    }
+    container dcnInterfaces {
+      description
+        "DCN-capable physical interfaces.";
+      list dcnInterface {
+        when "../../dcnSite/dcnEnable='true'";
+        key "ifName";
+        description
+          "DCN-capable physical interface.";
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "Interface name.";
+        }
+        leaf ifType {
+          type ifPhyType;
+          config false;
+          description
+            "Interface type.";
+          ext:support-filter "true";
+        }
+        leaf dcnVlanId {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "DCN VLAN.";
+          ext:allowDelete "true";
+        }
+        leaf dcnMulVlan {
+          type pub-type:VLAN_BITMAP;
+          description
+            "DCN VLAN.";
+          ext:allowDelete "true";
+        }
+        leaf ospfEnable {
+          type boolean;
+          default "false";
+          description
+            "Enable OSPF.";
+        }
+        leaf ospfProcessId {
+          when "../ospfEnable='true'";
+          type uint32 {
+            range "1..4294967295";
+          }
+          default "65534";
+          description
+            "Process ID.";
+        }
+        leaf ospfAreaId {
+          when "../ospfEnable='true'";
+          type pub-type:ipv4Address;
+          default "0.0.0.0";
+          description
+            "Area ID. ";
+        }
+        leaf subNetId {
+          type uint32 {
+            range "65534..65549";
+          }
+          default "65534";
+          description
+            "Process ID.";
+        }
+        leaf ospfHelloTimer {
+          type uint32 {
+            range "1..65535";
+          }
+          default "10";
+          description
+            "Interval at which Hello packets are sent.";
+        }
+        leaf ospfDeadTimer {
+          type uint32 {
+            range "1..235926000";
+          }
+          default "40";
+          description
+            "Dead timer.";
+        }
+        leaf ospfRetransmitTimer {
+          type uint16 {
+            range "1..3600";
+          }
+          default "5";
+          description
+            "LSA retransmission timer.";
+        }
+        leaf ospfTransdelay {
+          type uint16 {
+            range "1..500";
+          }
+          default "1";
+          description
+            "LSA transmission delay.";
+        }
+        leaf ospfPollTimer {
+          type uint16 {
+            range "1..3600";
+          }
+          default "120";
+          description
+            "Interval at which Poll Hello packet are sent in the NBMA network.";
+        }
+        leaf authenticationMode {
+          type dcnIntfAuthenMode;
+          default "none";
+          description
+            "Set authentication type: Simple authentication type, null, Md5/HMAC-MD5/HMAC-SHA256 authentication type.";
+        }
+        leaf authTextSimple {
+          when "../authenticationMode='simple'";
+          type pub-type:passwordOSPF;
+          description
+            "Simple authentication key.";
+          ext:allowDelete "true";
+        }
+        leaf keyId {
+          when "not(../authenticationMode!='hmac-sha256' and ../authenticationMode!='md5' and ../authenticationMode!='hmac-md5')";
+          type uint32 {
+            range "1..255";
+          }
+          description
+            "Authentication identifier.";
+          ext:allowDelete "true";
+        }
+        leaf authTextMd5 {
+          when "not(../authenticationMode!='hmac-sha256' and ../authenticationMode!='md5' and ../authenticationMode!='hmac-md5')";
+          type pub-type:passwordExtend;
+          description
+            "MD5/HMAC-MD5/HMAC-SHA256 Authentication Password.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container dcnAccessInterfaces {
+      description
+        "DCN access.";
+      list dcnAccessInterface {
+        key "ifName";
+        description
+          "DCN access.";
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "Interface name.";
+        }
+        leaf ipAddress {
+          type string {
+            length "0..255";
+            pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+          }
+          default "0.0.0.0";
+          description
+            "IP address.";
+        }
+        leaf mask {
+          type string {
+            length "0..255";
+            pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+          }
+          default "0.0.0.0";
+          description
+            "Mask.";
+        }
+        leaf vlan {
+          type boolean;
+          default "false";
+          description
+            "VLAN.";
+        }
+      }
+    }
+    container dcnRemarks {
+      description
+        "Packet forwarding priority.";
+      list dcnRemark {
+        key "ifName";
+        description
+          "Packet forwarding priority.";
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "Interface name.";
+        }
+        leaf dscpPriority {
+          type dcn_PktPriority_Type;
+          default "AF3";
+          description
+            "DSCP priority in IP packets.";
+        }
+      }
+    }
+    container dcnMaxBands {
+      description
+        "DCN maximum bandwidth.";
+      list dcnMaxBand {
+        key "ifName";
+        description
+          "DCN maximum bandwidth.";
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "Interface name.";
+        }
+        leaf maxBandwidth {
+          type dcnIfBandwidth;
+          default "0";
+          description
+            "Maximum bandwidth for IP packets on the outbound interface.";
+        }
+      }
+    }
+    container dcnNes {
+      description
+        "DCN NEs.";
+      list dcnNe {
+        when "../../dcnSite/dcnEnable='true'";
+        key "neId";
+        config false;
+        description
+          "DCN NE information.";
+        leaf neId {
+          type string {
+            length "0..255";
+            pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+          }
+          config false;
+          description
+            "NEID.";
+        }
+        leaf neIp {
+          type string {
+            length "0..255";
+            pattern "((([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))";
+          }
+          config false;
+          description
+            "NE IP address.";
+        }
+        leaf protocolType {
+          type dcn_protocol_Type;
+          config false;
+          description
+            "Protocol type.";
+        }
+        leaf distance {
+          type uint32;
+          default "0";
+          config false;
+          description
+            "NE distance. ";
+        }
+        leaf lifeCycle {
+          type uint32 {
+            range "0..4294967295";
+          }
+          default "0";
+          config false;
+          description
+            "NE lifecycle.";
+        }
+        leaf neLoginMode {
+          type neLoginModeType;
+          config false;
+          description
+            "NE login mode.";
+        }
+        leaf hostName {
+          type string {
+            length "0..256";
+          }
+          config false;
+          description
+            "NE hostname.";
+        }
+        container dcnNeNhps {
+          description
+            "NE next hops.";
+          list dcnNeNhp {
+            key "dcnIfName phyIfName";
+            config false;
+            description
+              "NE next hop.";
+            leaf nexthop {
+              type pub-type:ipv4Address;
+              config false;
+              description
+                "IP address.";
+            }
+            leaf dcnIfName {
+              type string {
+                length "1..63";
+              }
+              config false;
+              description
+                "DCN outbound interface.";
+            }
+            leaf phyIfName {
+              type pub-type:ifName;
+              config false;
+              description
+                "Outbound interface.";
+            }
+          }
+        }
+        leaf pnpState {
+          type dcnPnpStateType;
+          config false;
+          description
+            "State of PNP.";
+        }
+        leaf esn {
+          type string {
+            length "0..65";
+          }
+          config false;
+          description
+            "ESN.";
+        }
+      }
+    }
+    container dcnDscpRemarks {
+      description
+        "Transparent transmission of the priority configured on the outbound interface.";
+      uses dcn:dcn_DscpRemarks_type;
+    }
+    container dcnfastterm {
+      description
+        "Enable fast terminate.";
+      leaf termflag {
+        type boolean;
+        default "true";
+        description
+          "Enable fast terminate flag.";
+      }
+    }
+  }
+}

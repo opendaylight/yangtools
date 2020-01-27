@@ -1,0 +1,69 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-staticrt-staticmrt-type {
+  belongs-to huawei-staticrt {
+    prefix staticrt;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "staticmrt type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef rmbaseAfType {
+    type enumeration {
+      enum "ipv4unicast" {
+        description
+          "ipv4unicast:";
+      }
+      enum "ipv6unicast" {
+        description
+          "ipv6unicast:";
+      }
+    }
+    description
+      "address family:";
+  }
+  typedef rmbaseRmTableId {
+    type enumeration {
+      enum "base" {
+        description
+          "base:";
+      }
+      enum "localmt" {
+        description
+          "localmt:";
+      }
+      enum "igpext" {
+        description
+          "igpext:";
+      }
+      enum "mbgp" {
+        description
+          "mbgp:";
+      }
+      enum "msr" {
+        description
+          "msr:";
+      }
+    }
+    description
+      "route TableId";
+  }
+}

@@ -1,0 +1,409 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-tty-type {
+  belongs-to huawei-tty {
+    prefix tty;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of tty type submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef ttyCamlLineType {
+    type enumeration {
+      enum "CON" {
+        description
+          "Line type console.";
+      }
+      enum "AUX" {
+        description
+          "Line type AUX.";
+      }
+      enum "TTY" {
+        description
+          "Line type TTY.";
+      }
+      enum "VTY" {
+        description
+          "Line type VTY.";
+      }
+      enum "LTT" {
+        description
+          "Line type LTT.";
+      }
+      enum "NCA" {
+        description
+          "Line type netconf.";
+      }
+    }
+    description
+      "TTY CAML line type list";
+  }
+  typedef ttyCamlProtFlg {
+    type enumeration {
+      enum "CON" {
+        description
+          "CON:";
+      }
+      enum "AUX" {
+        description
+          "AUX:";
+      }
+      enum "TEL" {
+        description
+          "TEL:";
+      }
+      enum "SSH" {
+        description
+          "SSH:";
+      }
+      enum "MDM" {
+        description
+          "MDM:";
+      }
+    }
+    description
+      "TTY CAML prot flag list";
+  }
+  typedef ttyCamlConnState {
+    type enumeration {
+      enum "YES" {
+        description
+          "Terminal is connected.";
+      }
+      enum "NO" {
+        description
+          "Terminal is not connected.";
+      }
+    }
+    description
+      "TTY CAML connection state list";
+  }
+  typedef ttyTtySpeedType {
+    type enumeration {
+      enum "300" {
+        description
+          "Speed 300";
+      }
+      enum "600" {
+        description
+          "Speed 600";
+      }
+      enum "1200" {
+        description
+          "Speed 1200";
+      }
+      enum "2400" {
+        description
+          "Speed 2400";
+      }
+      enum "4800" {
+        description
+          "Speed 4800";
+      }
+      enum "9600" {
+        description
+          "Speed 9600";
+      }
+      enum "19200" {
+        description
+          "Speed 19200";
+      }
+      enum "38400" {
+        description
+          "Speed 38400";
+      }
+      enum "57600" {
+        description
+          "Speed 57600";
+      }
+      enum "115200" {
+        description
+          "Speed 115200";
+      }
+    }
+    description
+      "TTY speed type list";
+  }
+  typedef ttyTtyFlwCntrlType {
+    type enumeration {
+      enum "none" {
+        description
+          "Flow control as none.";
+      }
+      enum "software" {
+        description
+          "Flow control as software.";
+      }
+      enum "hardware" {
+        description
+          "Flow control as hardware.";
+      }
+    }
+    description
+      "TTY flow control type list";
+  }
+  typedef ttyTtyStpBitsType {
+    type enumeration {
+      enum "1" {
+        description
+          "Stopbit as 1.";
+      }
+      enum "1.5" {
+        description
+          "Stop bit as 1.5.";
+      }
+      enum "2" {
+        description
+          "Stop bit as 2.";
+      }
+    }
+    description
+      "TTY stop bits type list";
+  }
+  typedef ttyTtyDataBitsType {
+    type enumeration {
+      enum "5" {
+        description
+          "Data bits as 5.";
+      }
+      enum "6" {
+        description
+          "Data bits as 6.";
+      }
+      enum "7" {
+        description
+          "Data bits as 7.";
+      }
+      enum "8" {
+        description
+          "Databits as 8.";
+      }
+    }
+    description
+      "TTY data bits type list";
+  }
+  typedef ttyTtyParityType {
+    type enumeration {
+      enum "none" {
+        description
+          "Parity as None.";
+      }
+      enum "odd" {
+        description
+          "Parity as odd.";
+      }
+      enum "even" {
+        description
+          "Parity as even.";
+      }
+      enum "mark" {
+        description
+          "Parity as mark.";
+      }
+      enum "space" {
+        description
+          "Parity as space.";
+      }
+    }
+    description
+      "TTY parity type list";
+  }
+  typedef ttyTtyAuthModeType {
+    type enumeration {
+      enum "init" {
+        description
+          "Undo authentication mode.";
+      }
+      enum "password" {
+        description
+          "Authentication mode password.";
+      }
+      enum "aaa" {
+        description
+          "Authentication mode aaa.";
+      }
+      enum "none" {
+        description
+          "Authentication mode none.";
+      }
+    }
+    description
+      "TTY authentication mode type list";
+  }
+  typedef ttyTtyCallStatType {
+    type enumeration {
+      enum "call_in" {
+        description
+          "call-in:";
+      }
+      enum "both" {
+        description
+          "both:";
+      }
+    }
+    description
+      "TTY call state type list";
+  }
+  typedef ttyTriggerType {
+    type enumeration {
+      enum "login" {
+        description
+          "login:";
+      }
+      enum "connect" {
+        description
+          "connect:";
+      }
+      enum "logout" {
+        description
+          "logout:";
+      }
+      enum "dial" {
+        description
+          "dial:";
+      }
+      enum "init" {
+        description
+          "init:";
+      }
+    }
+    description
+      "TTY trigger type list";
+  }
+  typedef ttyTtyPortType {
+    type enumeration {
+      enum "console" {
+        description
+          "Console terminal.";
+      }
+      enum "vty" {
+        description
+          "VTY terminal.";
+      }
+      enum "nca" {
+        description
+          "Netconf terminal.";
+      }
+    }
+    description
+      "TTY port type list";
+  }
+  typedef ttyTtyPswType {
+    type enumeration {
+      enum "simple" {
+        description
+          "Password type simple.";
+      }
+      enum "cipher" {
+        description
+          "Password type cipher.";
+      }
+    }
+    description
+      "TTY password type list";
+  }
+  typedef ttyTtyCmdType {
+    type enumeration {
+      enum "CMD_TYPE_SCR_LEN" {
+        description
+          "CMD_TYPE_SCR_LEN:Temporary Screen Length Command";
+      }
+      enum "CMD_TYPE_HISTORY" {
+        description
+          "CMD_TYPE_HISTORY:History Cmd Type";
+      }
+      enum "CMD_TYPE_REDIRECT" {
+        description
+          "CMD_TYPE_REDIRECT:Redirect Command";
+      }
+      enum "CMD_TYPE_SHELL" {
+        description
+          "CMD_TYPE_SHELL:Shell Command";
+      }
+      enum "speed" {
+        description
+          "speed:";
+      }
+      enum "flow_control" {
+        description
+          "flow-control:";
+      }
+      enum "stopbits" {
+        description
+          "stopbits:";
+      }
+      enum "databits" {
+        description
+          "databits:";
+      }
+      enum "parity" {
+        description
+          "parity:";
+      }
+      enum "idle_timeout" {
+        description
+          "idle-timeout:";
+      }
+      enum "authentication_mode" {
+        description
+          "authentication-mode:";
+      }
+      enum "auto_execute" {
+        description
+          "auto-execute:";
+      }
+      enum "modem" {
+        description
+          "modem:";
+      }
+      enum "script_trigger" {
+        description
+          "script-trigger:";
+      }
+      enum "modemtimeranswer" {
+        description
+          "modemtimeranswer:";
+      }
+      enum "modemautoanswer" {
+        description
+          "modemautoanswer:";
+      }
+      enum "user_privilege" {
+        description
+          "user_privilege:";
+      }
+      enum "setAuthenticationPassword" {
+        description
+          "setAuthenticationPassword:";
+      }
+      enum "cmdTypeModem" {
+        description
+          "cmdTypeModem:";
+      }
+      enum "cmdTypeScreenWidth" {
+        description
+          "cmdTypeScreenWidth:";
+      }
+    }
+    description
+      "TTY command type list";
+  }
+}

@@ -1,0 +1,2715 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bfd {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-bfd";
+  prefix bfd;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-bfd-action;
+  include huawei-bfd-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Bidirectional Forwarding Detection (BFD) is a detection mechanism used uniformly on the entire network. BFD is used to rapidly detect and monitor the connectivity of links or IP routes on a network.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container bfd {
+    description
+      "Bidirectional Forwarding Detection (BFD) is a detection mechanism used uniformly on the entire network. BFD is used to rapidly detect and monitor the connectivity of links or IP routes on a network.";
+    container bfdSchGlobal {
+      description
+        "Global BFD configurations and statistics.";
+      leaf bfdEnable {
+        type boolean;
+        default "false";
+        description
+          "Flag of globally enabling BFD. By default, BFD is disabled.";
+        ext:support-filter "false";
+      }
+      leaf delayUpTimer {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type uint32 {
+          range "1..600";
+        }
+        description
+          "Duration during which a BFD session delays going Up. The value is expressed in seconds. By default, there is no delay when the BFD session goes Up.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf mplsPassive {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type boolean;
+        default "false";
+        description
+          "Indicate whether to enable BFD to support the creation of an MPLS passive session. By default, such a creation is disabled.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf pingInterval {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type uint32 {
+          range "30..600";
+        }
+        default "60";
+        description
+          "Interval between sending LSP Ping packets on a regular basis. The value is expressed in seconds.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf processMode {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type bfdDeployMode;
+        description
+          "BFD deployment mode, which is configured on a logical router. The default deployment mode is distributed. If centralized is selected, the central process slot ID must be set.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf procCentralSlt {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type string {
+          length "1..19";
+          pattern '(^\w{0,3}\d{0,2}(/\d{1,2}){0,1}$)';
+        }
+        must "not(../bfdEnable='true' and ../processMode='DISTRIBUTE') or (../bfdEnable='true' and ../processMode='DISTRIBUTE' and not(../procCentralSlt))";
+        description
+          "The central process slot is configured on a logical router and can be set only when BFD is deployed in centralized mode.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf procCentralSlt2 {
+        when "../bfdEnable='true'";
+        type string {
+          length "1..19";
+          pattern '(^\w{0,3}\d{0,2}(/\d{1,2}){0,1}$)';
+        }
+        must "(../bfdEnable='true' and ../processMode!='DISTRIBUTE' and ../procCentralSlt2!=../procCentralSlt) or (../bfdEnable='true' and ../processMode='DISTRIBUTE' and not(../procCentralSlt2)) or not(../bfdEnable='true' and ../processMode!='DISTRIBUTE' or ../bfdEnable='true' and ../processMode='DISTRIBUTE')";
+        description
+          "The central process slot is configured on a logical router and can be set only when BFD is deployed in centralized mode.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf defaultIp {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type inet:ipv4-address-no-zone {
+          length "0..15";
+        }
+        description
+          "This address is configured on a logical router. BFD uses this address as the destination address of multicast packets. The value ranges from 224.0.0.107 to 224.0.0.250. The default value is 224.0.0.184.";
+        ext:allowDelete "true";
+      }
+      leaf tosExp {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type uint32 {
+          range "0..7";
+        }
+        default "7";
+        description
+          "Priority of a dynamic BFD session packet. The default value is 7.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf echoPassive {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type boolean;
+        default "false";
+        description
+          "Flag of enabling passive echo.";
+        ext:support-filter "false";
+      }
+      leaf basicAclNum {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type uint32 {
+          range "2000..2999";
+        }
+        must "not(../bfdEnable='true' and ../echoPassive!='true') or (../bfdEnable='true' and ../echoPassive!='true' and not(../basicAclNum))";
+        description
+          "ACL number of a BFD session.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf tosExpStatic {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type uint32 {
+          range "0..7";
+        }
+        default "7";
+        description
+          "Priority of static session packets. The value ranges from 0 to 7. By default, the value 7 indicates the highest priority. In the case of system congestion, the BFD packets with the higher priority are sent.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf dampInitWaitTime {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type uint32 {
+          range "1..3600000";
+        }
+        description
+          "Specifies the initial delay in milliseconds before starting a BFD session. The default is 2000.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf dampMaxWaitTime {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type uint32 {
+          range "1..3600000";
+        }
+        description
+          "Specifies the maximum delay in milliseconds before starting a BFD session. The default is 12000.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf dampSecondWaitTime {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type uint32 {
+          range "1..3600000";
+        }
+        description
+          "Specifies a secondary delay in milliseconds before starting a BFD session. The default is 5000. ";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf linkBundleDampInitTime {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type uint32 {
+          range "6000..3600000";
+        }
+        description
+          "Specifies the initial delay in milliseconds before starting a BFD session. For bundle members, the default is 16000.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf linkBundleDampMaxTime {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type uint32 {
+          range "20000..3600000";
+        }
+        description
+          "Specifies the maximum delay in milliseconds before starting a BFD session. For bundle members, the default is 600000.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf linkBundleDampSecondTime {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type uint32 {
+          range "10000..3600000";
+        }
+        description
+          "Specifies a secondary delay in milliseconds before starting a BFD session. For bundle members, the default is 20000.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+      leaf linkBundleIsL3OnlyMode {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type boolean;
+        default "false";
+        description
+          "Applies dampening, if the failure is Layer 3 (L3)-specific. ";
+        ext:support-filter "false";
+      }
+      leaf lspPathCheck {
+        when "not(../bfdEnable!='true') or ../bfdEnable='true'";
+        type boolean;
+        default "true";
+        description
+          "Check of whether LSP path bound by BFD session mismatches. By default, it is enabled.";
+        ext:support-filter "false";
+        ext:allowDelete "true";
+      }
+    }
+    container bfdStat {
+      config false;
+      description
+        "Statistics about global BFD.";
+      leaf hafStaEnum {
+        type bfdSmpHafState;
+        config false;
+        description
+          "Protection status of BFD components.";
+        ext:support-filter "false";
+      }
+      leaf ipSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions of the IP type.";
+        ext:support-filter "false";
+      }
+      leaf ldpLspSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions of the LDP LSP type.";
+        ext:support-filter "false";
+      }
+      leaf sLspSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions of the static LSP type.";
+        ext:support-filter "false";
+      }
+      leaf teLspSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions of the TE LSP type.";
+        ext:support-filter "false";
+      }
+      leaf totalSessNum {
+        type uint32;
+        config false;
+        description
+          "Total number of BFD sessions.";
+        ext:support-filter "false";
+      }
+      leaf SessUpNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions that are in the Up state.";
+        ext:support-filter "false";
+      }
+      leaf SessDownNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions that are in the Down state.";
+        ext:support-filter "false";
+      }
+      leaf staticSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions created in static mode.";
+        ext:support-filter "false";
+      }
+      leaf dynSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions created in dynamic mode.";
+        ext:support-filter "false";
+      }
+      leaf autoSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions created in static auto-negotiation mode.";
+        ext:support-filter "false";
+      }
+      leaf passiveSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions created in entirely dynamic mode.";
+        ext:support-filter "false";
+      }
+      leaf teTunnelSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions of the TE tunnel type.";
+        ext:support-filter "false";
+      }
+      leaf usedDiscrNum {
+        type uint32;
+        config false;
+        description
+          "Number of used session identifiers.";
+        ext:support-filter "false";
+      }
+      leaf pwSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions for the PW.";
+        ext:support-filter "false";
+      }
+      leaf vsiPwSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions for the VSI PW.";
+        ext:support-filter "false";
+      }
+      leaf ldpTnlSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions of the LDP tunnel type.";
+        ext:support-filter "false";
+      }
+      leaf bgpTnlSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions of the BGP tunnel type.";
+        ext:support-filter "false";
+      }
+      leaf vxlanSessNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sessions of the VXLAN type.";
+        ext:support-filter "false";
+      }
+      leaf mainSessUpNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD main sessions that are in the Up state.";
+        ext:support-filter "false";
+      }
+      leaf mainSessDownNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD main sessions that are in the Down state.";
+        ext:support-filter "false";
+      }
+      leaf subSessUpNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sub sessions that are in the Up state.";
+        ext:support-filter "false";
+      }
+      leaf subSessDownNum {
+        type uint32;
+        config false;
+        description
+          "Number of BFD sub sessions that are in the Down state.";
+        ext:support-filter "false";
+      }
+    }
+    container bfdCfgSessions {
+      description
+        "List of BFD session configurations.";
+      list bfdCfgSession {
+        key "sessName";
+        description
+          "BFD session configuration, which includes basic session information such as different types of sessions, local discriminator or remote discriminator of the session.";
+        leaf sessName {
+          type string {
+            length "1..15";
+            pattern '(^[^\s?]+[\s]*[^?]*[^\s?]+$|^[^\s?]*$)';
+          }
+          description
+            "Name of a BFD session. It is the unique identifier of a BFD session and session names are case-insensitive.";
+          ext:support-filter "false";
+        }
+        leaf bfdHopType {
+          type bfdHopType;
+          must "(../createType='SESS_AUTO' and ../linkType='VXLAN' and ../bfdHopType='-') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../bfdHopType='-') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../bfdHopType='-') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../bfdHopType='-') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../bfdHopType='-') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../bfdHopType='-') or not(../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "IP_SINGLE_HOP";
+          description
+            "BFD IP Session Hops.";
+          ext:support-filter "false";
+        }
+        leaf createType {
+          type bfdCreateType;
+          default "SESS_STATIC";
+          description
+            "Type for creating a BFD session. Currently, the available options are Static and Static Auto-Negotiation, createType must be configured for the every session type.";
+          ext:support-filter "false";
+        }
+        leaf localDiscr {
+          type uint32 {
+            range "1..16384";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../localDiscr)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../localDiscr)) or (../createType='SESS_AUTO' and not(../localDiscr)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp='true' and ../localDiscr!=../remoteDiscr) or (../createType='SESS_STATIC' and ../useDefaultIp='true' and ../localDiscr!=../remoteDiscr) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp='true' or ../createType='SESS_STATIC' and ../useDefaultIp='true')";
+          description
+            "Local discriminator of a BFD session. When the BFD session is created in static auto-negotiation mode, you do not need to set this parameter. Note that the local discriminator must correspond to the remote discriminator on the peer of the BFD session. That is, the value of the local discriminator must be the same as the value of the remote discriminator.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf remoteDiscr {
+          type uint32 {
+            range "1..4294967295";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../remoteDiscr)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../remoteDiscr)) or (../createType='SESS_AUTO' and not(../remoteDiscr)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho='true' and not(../remoteDiscr)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' and not(../remoteDiscr)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' and not(../remoteDiscr)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true')";
+          description
+            "Remote discriminator of a BFD session. When the BFD session is created in static auto-negotiation mode, you do not need to set this parameter. Note that the remote discriminator must correspond to the local discriminator on the peer of the BFD session. That is, the value of the remote discriminator must be the same as the value of the local discriminator.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf linkType {
+          type bfdLinkType;
+          must "(../createType='SESS_AUTO' and (../linkType='IP' or ../linkType='VXLAN') ) or (../createType='SESS_STATIC' and (../linkType='IP' or ../linkType='LDP_LSP' or ../linkType='TE_LSP' or ../linkType='TE_TUNNEL' or ../linkType='VLL_PW' or ../linkType='VSI_PW') ) or not(../createType='SESS_AUTO' or ../createType='SESS_STATIC')";
+          default "IP";
+          description
+            "Type of the link detected by a BFD session. You must select the correct link type based on the detection scenario of a BFD session. For example, you must set this parameter to TE Tunnel when a TE tunnel is detected.";
+          ext:support-filter "false";
+        }
+        leaf addrType {
+          type bfdSmpBfdCap;
+          must "(../createType='SESS_AUTO' and ../linkType='VXLAN' and ../addrType='IPV4') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../addrType='IPV4') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../addrType='IPV4') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../addrType='IPV4') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../addrType='IPV4') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../addrType='IPV4') or not(../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "IPV4";
+          description
+            "Type of the IP address.";
+          ext:support-filter "false";
+        }
+        leaf outIfName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../outIfName)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../trackIfName and not(../outIfName)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../outIfName)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../outIfName)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../outIfName)) or not(../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_STATIC' and ../linkType='IP' and ../trackIfName or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "Name of the outbound interface of a BFD session. This parameter is available only when the type of the detected link is IP or LDP LSP. If only the destination IP address is specified, multi-hop routes are detected. If both the destination IP address and outbound interface name are specified, single-hop links are detected. That is, a fixed route is detected, with the interface where the BFD session resides as the outbound interface and the destination IP address as the next hop address.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf destAddr {
+          type inet:ip-address-no-zone ;
+          must "(../addrType='IPV4' and ../destAddr and ../destAddr='IPV4') or (../addrType='IPV6' and ../destAddr and ../destAddr='IPV6') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp='true' and not(../destAddr)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../destAddr)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../destAddr)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../destAddr)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../destAddr)) or not(../addrType='IPV4' and ../destAddr or ../addrType='IPV6' and ../destAddr or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "Destination IP address of a BFD session. This parameter is available only when the type of the detected link is IP or LDP LSP.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf srcAddr {
+          type inet:ip-address-no-zone ;
+          must "(../addrType='IPV4' and ../srcAddr and ../srcAddr='IPV4') or (../addrType='IPV6' and ../srcAddr and ../srcAddr='IPV6') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../srcAddr)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../srcAddr)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../srcAddr)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../srcAddr)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../srcAddr)) or not(../addrType='IPV4' and ../srcAddr or ../addrType='IPV6' and ../srcAddr or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "Source IP address of a BFD session. This parameter must be configured when a static BFD session with automatically negotiated discriminators is created. This parameter is available only when the type of the detected link is IP. Note that the source IP address is used to ensure that BFD packets are correctly forwarded when the URPF feature is enabled. The source IP address must be configured correctly because the system checks only the validity of the source IP address format. A multicast or broadcast address is invalid. If the source IP address of the outbound interface is changed after a BFD session is successfully configured, the source IP address in BFD packets is not updated.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf nextHop {
+          type inet:ipv4-address-no-zone {
+            length "0..255";
+          }
+          must "(../addrType='IPV4' and ../nextHop and ../nextHop='IPV4') or (../addrType='IPV6' and ../nextHop and ../nextHop='IPV6') or (../createType='SESS_AUTO' and ../linkType='IP' and not(../nextHop)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../nextHop)) or (../createType='SESS_AUTO' and not(../nextHop)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../nextHop)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../nextHop)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../nextHop)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../nextHop)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../nextHop)) or not(../addrType='IPV4' and ../nextHop or ../addrType='IPV6' and ../nextHop or ../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "Next hop IP address of a BFD session. This parameter is available only when the type of the detected link is LDP LSP.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../vrfName)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp='true' and not(../vrfName)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../vrfName)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../vrfName)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../vrfName)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../vrfName)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../vrfName)) or not(../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp='true' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "Name of the VPN to which a BFD session belongs. If the VPN name is not specified, the destination IP address is considered as a public network address.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf tunnelName {
+          type pub-type:ifName;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../tunnelName)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../tunnelName)) or (../createType='SESS_AUTO' and not(../tunnelName)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../tunnelName)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../tunnelName)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../tunnelName)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../tunnelName)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "Name of a TE tunnel. This parameter is available only when the type of the detected link is TE LSP or TE Tunnel.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf teBackup {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../teBackup='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../teBackup='false') or (../createType='SESS_AUTO' and ../teBackup='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../teBackup='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../teBackup='false') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../teBackup='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../teBackup='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../teBackup='false') or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "false";
+          description
+            "Flag of determining whether the LSP is the primary LSP in a tunnel. By default, the LSP is the primary LSP. This parameter is available when the type of the detected link is TE LSP.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf remotePeer {
+          type inet:ipv4-address-no-zone {
+            length "0..255";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../remotePeer)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../remotePeer)) or (../createType='SESS_AUTO' and not(../remotePeer)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../remotePeer)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../remotePeer)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../remotePeer)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../remotePeer)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../useDefaultIp='true' and not(../remotePeer)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../useDefaultIp='true')";
+          description
+            "Remote address of the PW/VSI.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf autoCalc {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../autoCalc='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../autoCalc='false') or (../createType='SESS_AUTO' and ../autoCalc='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../autoCalc='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../autoCalc='false') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../autoCalc='false') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../autoCalc='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../remotePeer) and ../autoCalc='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../autoCalc='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../useDefaultIp='true' and not(../autoCalc)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../remotePeer) and ../autoCalc='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../autoCalc='false') or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../remotePeer) or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../useDefaultIp='true' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../remotePeer) or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "false";
+          description
+            "Automatically calculate the PW/VSI TTL.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf pwTtl {
+          type uint16 {
+            range "1..255";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../pwTtl)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../pwTtl)) or (../createType='SESS_AUTO' and not(../pwTtl)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../pwTtl)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../pwTtl)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../pwTtl)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../pwTtl)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../remotePeer and ../autoCalc='true' and not(../pwTtl)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../remotePeer) and not(../pwTtl)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../pwTtl)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../remotePeer and ../autoCalc='true' and not(../pwTtl)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../useDefaultIp='true' and not(../pwTtl)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../remotePeer) and not(../pwTtl)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../pwTtl)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../remotePeer and ../autoCalc='true' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../remotePeer) or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../remotePeer and ../autoCalc='true' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../useDefaultIp='true' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../remotePeer) or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "Specify the PW/VSI TTL.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf pwSecondary {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../pwSecondary='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../pwSecondary='false') or (../createType='SESS_AUTO' and ../pwSecondary='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../pwSecondary='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../pwSecondary='false') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../pwSecondary='false') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../pwSecondary='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../pwSecondary='false') or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "false";
+          description
+            "Secondary PW flag.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf vsiName {
+          type string {
+            length "1..31";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../vsiName)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../vsiName)) or (../createType='SESS_AUTO' and not(../vsiName)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../vsiName)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../vsiName)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../vsiName)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../vsiName)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../vsiName)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW')";
+          description
+            "Name of a VSI.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf peerIp {
+          type inet:ipv4-address-no-zone {
+            length "0..255";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../peerIp)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../peerIp)) or (../createType='SESS_AUTO' and not(../peerIp)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../peerIp)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../peerIp)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../peerIp)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../peerIp)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../peerIp)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW')";
+          description
+            "Peer IP address of a VSI.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf vcId {
+          type uint32 {
+            range "1..4294967295";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../vcId)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../vcId)) or (../createType='SESS_AUTO' and not(../vcId)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../vcId)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../vcId)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../vcId)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../vcId)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../vcId)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW')";
+          description
+            "Specify a VC ID.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf minTxInt {
+          type uint32 {
+            range "3..1000";
+          }
+          must "(../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho='true' and not(../minTxInt)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' and not(../minTxInt)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' and not(../minTxInt)) or not(../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true')";
+          description
+            "Minimum interval between sending packets, which is set for a BFD session. The value is expressed in milliseconds.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf minRxInt {
+          type uint32 {
+            range "3..1000";
+          }
+          must "(../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho='true' and not(../minRxInt)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' and not(../minRxInt)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' and not(../minRxInt)) or not(../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true')";
+          description
+            "Minimum interval between receiving packets, which is set for a BFD session. The value is expressed in milliseconds.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf detectMulti {
+          type uint32 {
+            range "3..50";
+          }
+          default "3";
+          description
+            "Number of times that a BFD session continuously detects that packets are sent but no response is returned and then the system considers the BFD session Down. The detection multiplier is configured on the systems at both ends of the BFD session and does not need to be negotiated.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf wtrTimerInt {
+          type uint32 {
+            range "1..60";
+          }
+          description
+            "Timeout duration set on the wait-to-restore (WTR) timer. The configured value is expressed in minutes. The query value is expressed in milliseconds. By default, a BFD session does not wait for restoration. When a BFD session goes Up, the BFD session status is reported to the application after a certain period. Therefore, the WTR parameter must be set to avoid the switchover between the active and standby applications caused by session flapping. When you configure a bidirectional BFD session, it is recommended that you set the same WTR value for the two sessions.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf tosExp {
+          type uint32 {
+            range "0..7";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../tosExp)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../tosExp)) or (../createType='SESS_AUTO' and not(../tosExp)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_AUTO')";
+          description
+            "Priority of a packet. The value ranges from 0 to 7. The default value is 7, indicating the highest priority. In the case of system congestion, BFD packets with high priorities are preferentially sent.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf adminDown {
+          type boolean;
+          default "false";
+          description
+            "Indicate whether a BFD session becomes AdminDown. By default, this parameter is not selected. To stop BFD session detection, you can enable this parameter. If this parameter is set, the applied BFD detection mechanism is disabled. Therefore, exercise caution when performing this operation.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf description {
+          type string {
+            length "1..51";
+            pattern '(^[^?]+[^\s]+(\s)*$|^[^\s]+$)';
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../description)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../description)) or (../createType='SESS_AUTO' and not(../description)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_AUTO')";
+          description
+            "Description about a BFD session.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf processPst {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../outIfName) and ../processPst='false') or (../createType='SESS_AUTO' and ../linkType='IP' and ../processPst='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../processPst='false') or (../createType='SESS_AUTO' and not(../outIfName) and ../processPst='false') or (../createType='SESS_STATIC' and ../linkType='IP' and not(../outIfName) and ../processPst='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../processPst='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../processPst='false') or not(../createType='SESS_AUTO' and ../linkType='IP' and not(../outIfName) or ../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' and not(../outIfName) or ../createType='SESS_STATIC' and ../linkType='IP' and not(../outIfName) or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VLL_PW')";
+          default "false";
+          description
+            "Flag of determining whether to update the PST when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf pis {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../pis='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../pis='false') or (../createType='SESS_AUTO' and ../pis='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' and ../pis='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' and ../pis='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' and ../pis='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../pis='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../pis='false') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../pis='false') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../pis='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../pis='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../pis='false') or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "false";
+          description
+            "Flag of determining whether to update the PIS when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf pisSubIf {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../pisSubIf='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../pisSubIf='false') or (../createType='SESS_AUTO' and ../pisSubIf='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../pis!='true' and ../useDefaultIp='true' and ../pisSubIf='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' and ../pisSubIf='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' and ../pisSubIf='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../pis!='true' and ../useDefaultIp='true' and ../pisSubIf='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' and ../pisSubIf='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../pisSubIf='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../pisSubIf='false') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../pisSubIf='false') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../pisSubIf='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../pisSubIf='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../pisSubIf='false') or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../pis!='true' and ../useDefaultIp='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_STATIC' and ../linkType='IP' and ../pis!='true' and ../useDefaultIp='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "false";
+          description
+            "Flag of determining whether to associate the sub-interface when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf pisNoImpact {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../pisNoImpact='false') or (../createType='SESS_AUTO' and ../pisNoImpact='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../pis!='true' and ../useDefaultIp='true' and ../pisNoImpact='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' and ../pisNoImpact='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../pis!='true' and ../useDefaultIp='true' and ../pisNoImpact='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' and ../pisNoImpact='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../pisNoImpact='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../pisNoImpact='false') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../pisNoImpact='false') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../pisNoImpact='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../pisNoImpact='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../pisNoImpact='false') or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../pis!='true' and ../useDefaultIp='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_STATIC' and ../linkType='IP' and ../pis!='true' and ../useDefaultIp='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "false";
+          description
+            "Is or No impact on reboot";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf useDefaultIp {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../useDefaultIp='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../useDefaultIp='false') or (../createType='SESS_AUTO' and ../useDefaultIp='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../destAddr and ../oneArmEcho!='true' and ../useDefaultIp='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' and ../useDefaultIp='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho='true' and ../useDefaultIp='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../useDefaultIp='false') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../useDefaultIp='false') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../useDefaultIp='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../useDefaultIp='false') or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../destAddr and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW')";
+          default "false";
+          description
+            "A multicast address is used as the destination address for sending BFD packets. You must specify an outbound interface.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf procSlotId {
+          type string {
+            length "0..32";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../procSlotId)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../procSlotId)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../procSlotId)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../procSlotId)) or not(../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "ID of the slot for forcible board selection.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf procSlotId2 {
+          type string {
+            length "0..20";
+          }
+          must "not(not(../procSlotId)) or (not(../procSlotId) and not(../procSlotId2))";
+          description
+            "ID of the slot for second forcible board selection.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf dot1qVid {
+          type uint32 {
+            range "1..4094";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../dot1qVid)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../dot1qVid)) or (../createType='SESS_AUTO' and not(../dot1qVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' and not(../dot1qVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' and not(../dot1qVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' and not(../dot1qVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../dot1qVid)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../dot1qVid)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../dot1qVid)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../dot1qVid)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../dot1qVid)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../dot1qVid)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "VLAN ID of a dot1q termination sub-interface.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf qinqPeVid {
+          type uint32 {
+            range "1..4094";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../qinqPeVid)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../qinqPeVid)) or (../createType='SESS_AUTO' and not(../qinqPeVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' and not(../qinqPeVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' and not(../qinqPeVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' and not(../qinqPeVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../qinqPeVid)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../qinqPeVid)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../qinqPeVid)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../qinqPeVid)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../qinqPeVid)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../qinqPeVid)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "Outer VLAN ID of a QinQ termination sub-interface.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf qinqCeVid {
+          type uint32 {
+            range "1..4094";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../qinqCeVid)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../qinqCeVid)) or (../createType='SESS_AUTO' and not(../qinqCeVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' and not(../qinqCeVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' and not(../qinqCeVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' and not(../qinqCeVid)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../qinqCeVid)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../qinqCeVid)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../qinqCeVid)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../qinqCeVid)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../qinqCeVid)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../qinqCeVid)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_STATIC' and ../linkType='IP' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "Inner VLAN ID of a QinQ termination sub-interface.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf isSetTrackIf {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../isSetTrackIf='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../isSetTrackIf='false') or (../createType='SESS_AUTO' and ../isSetTrackIf='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../isSetTrackIf='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../isSetTrackIf='false') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../isSetTrackIf='false') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../isSetTrackIf='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../procSlotId and ../isSetTrackIf='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../isSetTrackIf='false') or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../procSlotId or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "false";
+          description
+            "Flag of enabling a BFD session to track an AC interface.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf lag {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../lag='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../lag='false') or (../createType='SESS_AUTO' and ../lag='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' and ../lag='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' and ../lag='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../lag='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../lag='false') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../lag='false') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../lag='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../lag='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../lag='false') or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp!='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "false";
+          description
+            "Flag of detecting a LAG.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf trackIfName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../trackIfName)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../trackIfName)) or (../createType='SESS_AUTO' and not(../trackIfName)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp='true' and not(../trackIfName)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' and not(../trackIfName)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho='true' and not(../trackIfName)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../outIfName and not(../trackIfName)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../trackIfName)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../trackIfName)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../trackIfName)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../isSetTrackIf='true' and not(../trackIfName)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../trackIfName)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../outIfName or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../isSetTrackIf='true' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "Name of the interface tracked by a BFD session.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf perLink {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../addrType='IPV6' and ../perLink='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../perLink='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../perLink='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../perLink='false') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../perLink='false') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../perLink='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../perLink='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../perLink='false') or (../createType='SESS_STATIC' and not(../perLink)) or not(../createType='SESS_AUTO' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' or ../createType='SESS_STATIC')";
+          default "false";
+          description
+            "Indicate whether to detect member links of the primary link.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf oneArmEcho {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../oneArmEcho='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../oneArmEcho='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp='true' and ../oneArmEcho='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' and ../oneArmEcho='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../oneArmEcho='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../oneArmEcho='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../oneArmEcho='false') or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV4' and ../useDefaultIp='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "false";
+          description
+            "Echo session in one-arm mode, one-arm-echo must be configured for one-arm session type.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf minEchoRxInt {
+          type uint32 {
+            range "3..1000";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and not(../minEchoRxInt)) or (../createType='SESS_AUTO' and ../linkType='VXLAN' and not(../minEchoRxInt)) or (../createType='SESS_AUTO' and not(../minEchoRxInt)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' and not(../minEchoRxInt)) or (../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho!='true' and not(../minEchoRxInt)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../minEchoRxInt)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../minEchoRxInt)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho!='true' and not(../minEchoRxInt)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../minEchoRxInt)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho!='true' and not(../minEchoRxInt)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../minEchoRxInt)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../minEchoRxInt)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../minEchoRxInt)) or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='IP' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          description
+            "Minimum interval between receiving one-arm echo session packets. The value is expressed in milliseconds.";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf unlimitedNego {
+          type boolean;
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../unlimitedNego='false') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../unlimitedNego='false') or (../createType='SESS_STATIC' and ../linkType='IP' and ../unlimitedNego='false') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../unlimitedNego='false') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../unlimitedNego='false') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../unlimitedNego='false') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../unlimitedNego='false') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../unlimitedNego='false') or (../createType='SESS_STATIC' and ../unlimitedNego='false') or not(../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' or ../createType='SESS_STATIC')";
+          default "false";
+          description
+            "default-ip unlimited negotiate";
+          ext:support-filter "false";
+          ext:allowDelete "true";
+        }
+        leaf bundleMode {
+          type bfdBundleMode;
+          must "(../createType='SESS_AUTO' and ../linkType='VXLAN' and ../bundleMode='-') or (../createType='SESS_AUTO' and ../linkType='VXLAN' and ../bundleMode='-') or (../createType='SESS_STATIC' and ../linkType='IP' and ../bundleMode='-') or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and ../bundleMode='-') or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../bundleMode='-') or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../bundleMode='-') or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and ../bundleMode='-') or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and ../bundleMode='-') or not(../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_AUTO' and ../linkType='VXLAN' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW')";
+          default "-";
+          description
+            "Mode of Link-bundle session, '-': Not bundle mode; 'Bundle_Standard': RFC7310 mode; 'Bundle_Compatible': mode of connectiong with other company.";
+          ext:support-filter "false";
+        }
+        leaf destMac {
+          when "../createType='SESS_AUTO' and ../linkType='VXLAN'";
+          type pub-type:macAddress {
+            length "0..255";
+          }
+          must "(../createType='SESS_AUTO' and ../linkType='IP' and ../addrType='IPV4' and not(../destMac)) or (../createType='SESS_AUTO' and ../linkType='IP' and ../addrType='IPV6' and not(../destMac)) or (../createType='SESS_AUTO' and ../linkType='IP' and ../outIfName and not(../destMac)) or (../createType='SESS_AUTO' and ../linkType='IP' and ../perLink!='true' and not(../destMac)) or (../createType='SESS_AUTO' and ../linkType='IP' and ../perLink='true' and not(../destMac)) or (../createType='SESS_AUTO' and ../linkType='IP' and not(../outIfName) and not(../destMac)) or (../createType='SESS_AUTO' and ../linkType='IP' and not(../destMac)) or (../createType='SESS_STATIC' and ../linkType='IP' and not(../destMac)) or (../createType='SESS_STATIC' and ../linkType='LDP_LSP' and not(../destMac)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho!='true' and not(../destMac)) or (../createType='SESS_STATIC' and ../linkType='TE_LSP' and not(../destMac)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho!='true' and not(../destMac)) or (../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and not(../destMac)) or (../createType='SESS_STATIC' and ../linkType='VLL_PW' and not(../destMac)) or (../createType='SESS_STATIC' and ../linkType='VSI_PW' and not(../destMac)) or (../createType='SESS_STATIC' and not(../destMac)) or not(../createType='SESS_AUTO' and ../linkType='IP' and ../addrType='IPV4' or ../createType='SESS_AUTO' and ../linkType='IP' and ../addrType='IPV6' or ../createType='SESS_AUTO' and ../linkType='IP' and ../outIfName or ../createType='SESS_AUTO' and ../linkType='IP' and ../perLink!='true' or ../createType='SESS_AUTO' and ../linkType='IP' and ../perLink='true' or ../createType='SESS_AUTO' and ../linkType='IP' and not(../outIfName) or ../createType='SESS_AUTO' and ../linkType='IP' or ../createType='SESS_AUTO' or ../createType='SESS_STATIC' and ../linkType='IP' or ../createType='SESS_STATIC' and ../linkType='LDP_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_LSP' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' and ../oneArmEcho!='true' or ../createType='SESS_STATIC' and ../linkType='TE_TUNNEL' or ../createType='SESS_STATIC' and ../linkType='VLL_PW' or ../createType='SESS_STATIC' and ../linkType='VSI_PW' or ../createType='SESS_STATIC')";
+          default "0000-0000-0000";
+          description
+            "The inner destination MAC address of a BFD for VXLAN session.";
+          ext:support-filter "false";
+        }
+        container bfdSessRunning {
+          config false;
+          description
+            "The BFD session running information contains the session name, status, TX interval, RX interval, detection time multiplier and other information.";
+          leaf sessState {
+            type bfdSmpBfdState;
+            config false;
+            description
+              "Status of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf udpDstPort {
+            type uint32;
+            config false;
+            description
+              "Destination port number of the UDP packets transmitted in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf detectMode {
+            type bfdSmpDetectMode;
+            config false;
+            description
+              "Actual detection mode for a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf reDemandMode {
+            type boolean;
+            config false;
+            description
+              "Whether the remote end of a BFD session is in demand mode.";
+            ext:support-filter "false";
+          }
+          leaf actTxInt {
+            type uint32;
+            config false;
+            description
+              "Actual interval between sending packets in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf actRxInt {
+            type uint32;
+            config false;
+            description
+              "Actual interval between receiving packets in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf actMulti {
+            type uint32;
+            config false;
+            description
+              "Actual detection multiplier for determining whether a BFD session is Down.";
+            ext:support-filter "false";
+          }
+          leaf detectTime {
+            type uint32;
+            config false;
+            description
+              "Detection interval when a BFD session is in asynchronous mode.";
+            ext:support-filter "false";
+          }
+          leaf ttl {
+            type uint32 {
+              range "1..255";
+            }
+            config false;
+            description
+              "Time to live (TTL) value of BFD packets.";
+            ext:support-filter "false";
+          }
+          leaf txTmrID {
+            type uint32;
+            config false;
+            description
+              "Sending timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf detectTmrID {
+            type uint32;
+            config false;
+            description
+              "Detect timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf initTmrID {
+            type uint32;
+            config false;
+            description
+              "Init timeout timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf wtrTmrID {
+            type uint32;
+            config false;
+            description
+              "WTR timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf notUpReason {
+            type bfdbaseNotUpReason;
+            config false;
+            description
+              "Reason why a BFD session cannot become Up.";
+            ext:support-filter "false";
+          }
+          leaf aclNum {
+            type uint32;
+            config false;
+            description
+              "Number of ACLs for a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf localDiag {
+            type bfdSmpBfdDiag;
+            config false;
+            description
+              "Reason why a BFD session becomes Down last time.";
+            ext:support-filter "false";
+          }
+          leaf echoTxTmrID {
+            type uint32;
+            config false;
+            description
+              "Sending timer of a BFD session with Echo.";
+            ext:support-filter "false";
+          }
+          leaf localDiscr {
+            type uint32;
+            config false;
+            description
+              "Local discriminator of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf remoteDiscr {
+            type uint32;
+            config false;
+            description
+              "Remote discriminator of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf minTxInt {
+            type uint32;
+            config false;
+            description
+              "Minimum interval between sending packets, which is set for a BFD session. The value is expressed in milliseconds.";
+            ext:support-filter "false";
+          }
+          leaf minRxInt {
+            type uint32;
+            config false;
+            description
+              "Minimum interval between receiving packets, which is set for a BFD session. The value is expressed in milliseconds.";
+            ext:support-filter "false";
+          }
+        }
+        container bfdSessStat {
+          config false;
+          description
+            "Statistics about a BFD session, including the time of the session state change, the duration of the change, and the number of packets sent and received.";
+          leaf lastDownTime {
+            type yang:date-and-time;
+            config false;
+            description
+              "Down time of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf timeFromDown {
+            type string {
+              length "0..32";
+            }
+            config false;
+            description
+              "Duration of a BFD session from last Down.";
+            ext:support-filter "false";
+          }
+          leaf createTime {
+            type yang:date-and-time;
+            config false;
+            description
+              "Creation time of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf timeFromCreate {
+            type string {
+              length "0..32";
+            }
+            config false;
+            description
+              "Duration of a BFD session from creation.";
+            ext:support-filter "false";
+          }
+          leaf lastUpTime {
+            type yang:date-and-time;
+            config false;
+            description
+              "Up time of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf timeFromUp {
+            type string {
+              length "0..32";
+            }
+            config false;
+            description
+              "Duration of a BFD session from last Up.";
+            ext:support-filter "false";
+          }
+          leaf recvPkt {
+            type uint64;
+            config false;
+            description
+              "Number of packets received in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf sendPkt {
+            type uint64;
+            config false;
+            description
+              "Number of packets sent in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf downCount {
+            type uint32;
+            config false;
+            description
+              "Number of times that a BFD session becomes Down.";
+            ext:support-filter "false";
+          }
+          leaf recvBadPkt {
+            type uint64;
+            config false;
+            description
+              "Number of bad packets received in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf sendBadPkt {
+            type uint64;
+            config false;
+            description
+              "Number of bad packets sent in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf shortBreakCount {
+            type uint32;
+            default "0";
+            config false;
+            description
+              "Number of short breaks in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf lspPingCount {
+            type uint32;
+            config false;
+            description
+              "Number of LSP Ping packets sent in a BFD session.";
+            ext:support-filter "false";
+          }
+        }
+      }
+    }
+    container bfdAllSessions {
+      config false;
+      description
+        "All BFD sessions, including the statically configured sessions and dynamically generated sessions.";
+      list bfdAllSession {
+        key "sessName localDiscr";
+        config false;
+        description
+          "Information about all BFD sessions, including the statically configured sessions and dynamically generated sessions.";
+        leaf sessName {
+          type string {
+            length "0..15";
+          }
+          config false;
+          description
+            "Name of a BFD session.";
+          ext:support-filter "true";
+        }
+        leaf createType {
+          type bfdSmpCreateType;
+          config false;
+          description
+            "Type for creating a BFD session.";
+          ext:support-filter "true";
+        }
+        leaf sessType {
+          type bfdSmpSessType;
+          config false;
+          description
+            "Type of a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf localDiscr {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "Local discriminator of a BFD session.";
+          ext:support-filter "true";
+        }
+        leaf remoteDiscr {
+          type uint32;
+          config false;
+          description
+            "Remote discriminator of a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf linkType {
+          type bfdSmpLinkType;
+          config false;
+          description
+            "Type of the link detected by a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf destAddr {
+          type inet:ip-address-no-zone ;
+          config false;
+          description
+            "Destination IP address of a BFD session. This parameter is available only when the type of the detected link is IP or LDP LSP.";
+          ext:support-filter "true";
+        }
+        leaf srcAddr {
+          type inet:ip-address-no-zone ;
+          config false;
+          description
+            "Source IP address of a BFD session. ";
+          ext:support-filter "false";
+        }
+        leaf nextHop {
+          type inet:ip-address-no-zone ;
+          config false;
+          description
+            "Next hop IP address of a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf outIfName {
+          type pub-type:ifName;
+          config false;
+          description
+            "Name of the outbound interface of a BFD session. This parameter is available only when the type of the detected link is IP or LDP LSP. If only the destination IP address is specified, multi-hop routes are detected. If both the destination IP address and outbound interface name are specified, single-hop links are detected. That is, a fixed route is detected, with the interface where the BFD session resides as the outbound interface and the destination IP address as the next hop address.";
+          ext:support-filter "false";
+        }
+        leaf vrfName {
+          type pub-type:vrfName {
+            length "1..31";
+          }
+          config false;
+          description
+            "Name of the VPN to which a BFD session belongs. If the VPN name is not specified, the destination IP address is considered as a public network address.";
+          ext:support-filter "false";
+        }
+        leaf tunnelName {
+          type pub-type:ifName;
+          config false;
+          description
+            "Name of a TE tunnel. This parameter is available only when the type of the detected link is TE LSP or TE Tunnel.";
+          ext:support-filter "false";
+        }
+        leaf teBackup {
+          type bfdTeBackupType;
+          config false;
+          description
+            "Flag of determining whether an LSP link is a backup TE LSP.";
+          ext:support-filter "false";
+        }
+        leaf minTxInt {
+          type uint32;
+          config false;
+          description
+            "Minimum interval between sending packets, which is set for a BFD session. The value is expressed in milliseconds.";
+          ext:support-filter "false";
+        }
+        leaf minRxInt {
+          type uint32;
+          config false;
+          description
+            "Minimum interval between receiving packets, which is set for a BFD session. The value is expressed in milliseconds.";
+          ext:support-filter "false";
+        }
+        leaf detectMulti {
+          type uint32;
+          config false;
+          description
+            "Number of times that a BFD session continuously detects that packets are sent but no response is returned and then the system considers the BFD session Down. The detection multiplier is configured on the systems at both ends of the BFD session and does not need to be negotiated.";
+          ext:support-filter "false";
+        }
+        leaf demandEnable {
+          type boolean;
+          config false;
+          description
+            "Indicate whether to enable the demand mode for a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf wtrTimerInt {
+          type uint32;
+          config false;
+          description
+            "Timeout duration set on the wait-to-restore (WTR) timer. The value is expressed in milliseconds. The value 0 indicates that a BFD session does not wait for restoration.";
+          ext:support-filter "false";
+        }
+        leaf tosExp {
+          type uint32;
+          config false;
+          description
+            "Priority of a packet. The value ranges from 0 to 7. The default value is 7, indicating the highest priority.";
+          ext:support-filter "false";
+        }
+        leaf shutdown {
+          type boolean;
+          config false;
+          description
+            "Indicate whether a BFD session becomes AdminDown.";
+          ext:support-filter "false";
+        }
+        leaf description {
+          type string {
+            length "0..51";
+          }
+          config false;
+          description
+            "Description about a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf configPst {
+          type bfdCommonAbility;
+          config false;
+          description
+            "Flag of determining whether to configure the PST when the status of a BFD session changes.";
+          ext:support-filter "false";
+        }
+        leaf processPst {
+          type bfdCommonAbility;
+          config false;
+          description
+            "Flag of determining whether to update the PST when the status of a BFD session changes.";
+          ext:support-filter "false";
+        }
+        leaf pis {
+          type bfdPisSate;
+          config false;
+          description
+            "Flag of determining whether to update the PIS when the status of a BFD session changes. On each interface, only one BFD session can be set for this parameter.";
+          ext:support-filter "false";
+        }
+        leaf bindApps {
+          type string {
+            length "0..128";
+          }
+          config false;
+          description
+            "Information about the application to which a BFD session is bound.";
+          ext:support-filter "false";
+        }
+        leaf fsmBoardStr {
+          type string {
+            length "0..20";
+          }
+          config false;
+          description
+            "Number of board selection for a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf pwTtlMode {
+          type bfdPwTtlMode;
+          config false;
+          description
+            "PW TTL mode.";
+          ext:support-filter "false";
+        }
+        leaf pwTtl {
+          type uint32;
+          config false;
+          description
+            "PW TTL.";
+          ext:support-filter "false";
+        }
+        leaf node {
+          type bfdVpwsNodeType;
+          config false;
+          description
+            "PW node.";
+          ext:support-filter "false";
+        }
+        leaf encapType {
+          type string {
+            length "0..16";
+          }
+          config false;
+          description
+            "Encapsulation type.";
+          ext:support-filter "false";
+        }
+        leaf trackInterface {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "Track interface.";
+          ext:support-filter "false";
+        }
+        leaf localVcLabel {
+          type uint32;
+          config false;
+          description
+            "Local VC label.";
+          ext:support-filter "false";
+        }
+        leaf remoteVcLabel {
+          type uint32;
+          config false;
+          description
+            "Remote VC label.";
+          ext:support-filter "false";
+        }
+        leaf swapVcLabel {
+          type uint32;
+          config false;
+          description
+            "Swap VC label.";
+          ext:support-filter "false";
+        }
+        leaf lspToken {
+          type string {
+            length "0..12";
+          }
+          config false;
+          description
+            "LSP token.";
+          ext:support-filter "false";
+        }
+        leaf vsiName {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "VSI name.";
+          ext:support-filter "false";
+        }
+        leaf vsiPeerAddr {
+          type inet:ip-address-no-zone ;
+          config false;
+          description
+            "VSI peer IP address.";
+          ext:support-filter "false";
+        }
+        leaf vcId {
+          type string {
+            length "0..12";
+          }
+          config false;
+          description
+            "VC ID.";
+          ext:support-filter "false";
+        }
+        leaf remotePeer {
+          type inet:ip-address-no-zone ;
+          config false;
+          description
+            "Remote peer.";
+          ext:support-filter "false";
+        }
+        leaf pwSecondary {
+          type bfdPwRole;
+          config false;
+          description
+            "Secondary PW.";
+          ext:support-filter "false";
+        }
+        leaf dot1qVid {
+          type uint32;
+          config false;
+          description
+            "VLAN ID of a dot1q termination sub-interface.";
+          ext:support-filter "false";
+        }
+        leaf qinqPeVid {
+          type uint32;
+          config false;
+          description
+            "Outer VLAN ID of a QinQ termination sub-interface.";
+          ext:support-filter "false";
+        }
+        leaf qinqCeVid {
+          type uint32;
+          config false;
+          description
+            "Inner VLAN ID of a QinQ termination sub-interface.";
+          ext:support-filter "false";
+        }
+        leaf echoPassive {
+          type bfdCommonAbility;
+          config false;
+          description
+            "Enabling state of a passive echo session.";
+          ext:support-filter "false";
+        }
+        leaf basicAclNum {
+          type uint32;
+          config false;
+          description
+            "Number of ACLs for a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf minEchoRxInt {
+          type string {
+            length "0..8";
+          }
+          config false;
+          description
+            "Minimum interval between receiving one-arm echo session packets. The value is expressed in milliseconds.";
+          ext:support-filter "false";
+        }
+        leaf lag {
+          type boolean;
+          config false;
+          description
+            "Flag of detecting a LAG.";
+          ext:support-filter "false";
+        }
+        leaf mainSubRole {
+          type bfdPerLinkRole;
+          config false;
+          description
+            "Role of session.";
+          ext:support-filter "false";
+        }
+        leaf bundleMode {
+          type bfdBundleMode;
+          config false;
+          description
+            "Mode of Link-bundle session.";
+          ext:support-filter "false";
+        }
+        container bfdSessRunning {
+          config false;
+          description
+            "The BFD session running information contains the session name, status, TX interval, RX interval, detection time multiplier and other information.";
+          leaf sessState {
+            type bfdSmpBfdState;
+            config false;
+            description
+              "Status of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf udpDstPort {
+            type uint32;
+            config false;
+            description
+              "Destination port number of the UDP packets transmitted in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf detectMode {
+            type bfdSmpDetectMode;
+            config false;
+            description
+              "Actual detection mode for a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf reDemandMode {
+            type boolean;
+            config false;
+            description
+              "Whether the remote end of a BFD session is in demand mode.";
+            ext:support-filter "false";
+          }
+          leaf actTxInt {
+            type uint32;
+            config false;
+            description
+              "Actual interval between sending packets in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf actRxInt {
+            type uint32;
+            config false;
+            description
+              "Actual interval between receiving packets in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf actMulti {
+            type uint32;
+            config false;
+            description
+              "Actual detection multiplier for determining whether a BFD session is Down.";
+            ext:support-filter "false";
+          }
+          leaf detectTime {
+            type uint32;
+            config false;
+            description
+              "Detection interval when a BFD session is in asynchronous mode.";
+            ext:support-filter "false";
+          }
+          leaf ttl {
+            type uint32 {
+              range "1..255";
+            }
+            config false;
+            description
+              "Time to live (TTL) value of BFD packets.";
+            ext:support-filter "false";
+          }
+          leaf txTmrID {
+            type uint32;
+            config false;
+            description
+              "Sending timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf detectTmrID {
+            type uint32;
+            config false;
+            description
+              "Detect timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf initTmrID {
+            type uint32;
+            config false;
+            description
+              "Init timeout timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf wtrTmrID {
+            type uint32;
+            config false;
+            description
+              "WTR timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf notUpReason {
+            type bfdbaseNotUpReason;
+            config false;
+            description
+              "Reason why a BFD session cannot become Up.";
+            ext:support-filter "false";
+          }
+          leaf aclNum {
+            type uint32;
+            config false;
+            description
+              "Number of ACLs for a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf localDiag {
+            type bfdSmpBfdDiag;
+            config false;
+            description
+              "Reason why a BFD session becomes Down last time.";
+            ext:support-filter "false";
+          }
+          leaf echoTxTmrID {
+            type uint32;
+            config false;
+            description
+              "Sending timer of a BFD session with Echo.";
+            ext:support-filter "false";
+          }
+          leaf localDiscr {
+            type uint32;
+            config false;
+            description
+              "Local discriminator of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf remoteDiscr {
+            type uint32;
+            config false;
+            description
+              "Remote discriminator of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf minTxInt {
+            type uint32;
+            config false;
+            description
+              "Minimum interval between sending packets, which is set for a BFD session. The value is expressed in milliseconds.";
+            ext:support-filter "false";
+          }
+          leaf minRxInt {
+            type uint32;
+            config false;
+            description
+              "Minimum interval between receiving packets, which is set for a BFD session. The value is expressed in milliseconds.";
+            ext:support-filter "false";
+          }
+        }
+        container bfdSessStat {
+          config false;
+          description
+            "Statistics about a BFD session, including the time of the session state change, the duration of the change, and the number of packets sent and received.";
+          leaf lastDownTime {
+            type yang:date-and-time;
+            config false;
+            description
+              "Down time of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf timeFromDown {
+            type string {
+              length "0..32";
+            }
+            config false;
+            description
+              "Duration of a BFD session from last Down.";
+            ext:support-filter "false";
+          }
+          leaf createTime {
+            type yang:date-and-time;
+            config false;
+            description
+              "Creation time of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf timeFromCreate {
+            type string {
+              length "0..32";
+            }
+            config false;
+            description
+              "Duration of a BFD session from creation.";
+            ext:support-filter "false";
+          }
+          leaf lastUpTime {
+            type yang:date-and-time;
+            config false;
+            description
+              "Up time of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf timeFromUp {
+            type string {
+              length "0..32";
+            }
+            config false;
+            description
+              "Duration of a BFD session from last Up.";
+            ext:support-filter "false";
+          }
+          leaf recvPkt {
+            type uint64;
+            config false;
+            description
+              "Number of packets received in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf sendPkt {
+            type uint64;
+            config false;
+            description
+              "Number of packets sent in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf downCount {
+            type uint32;
+            config false;
+            description
+              "Number of times that a BFD session becomes Down.";
+            ext:support-filter "false";
+          }
+          leaf recvBadPkt {
+            type uint64;
+            config false;
+            description
+              "Number of bad packets received in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf sendBadPkt {
+            type uint64;
+            config false;
+            description
+              "Number of bad packets sent in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf shortBreakCount {
+            type uint32;
+            default "0";
+            config false;
+            description
+              "Number of short breaks in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf lspPingCount {
+            type uint32;
+            config false;
+            description
+              "Number of LSP Ping packets sent in a BFD session.";
+            ext:support-filter "false";
+          }
+        }
+      }
+    }
+    container bindInterfaces {
+      config false;
+      description
+        "Information about the interface to which a BFD session is bound.";
+      list bindInterface {
+        key "ifName";
+        config false;
+        description
+          "Information about the interface to which a BFD session is bound.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "Name of the interface to which a BFD session is bound.";
+          ext:support-filter "true";
+        }
+        leaf sessCount {
+          type uint32;
+          config false;
+          description
+            "BFD session statistics on the interface.";
+          ext:support-filter "false";
+        }
+        leaf ifOperStatus {
+          type bfdSmpOperState;
+          config false;
+          description
+            "Operating status of the interface to which a BFD session is bound.";
+          ext:support-filter "false";
+        }
+      }
+    }
+    container crcLspSessions {
+      config false;
+      description
+        "Information about all LSP CRC-ERR sessions.";
+      list crcLspSession {
+        key "ingressLsrId tnlId lspId";
+        config false;
+        description
+          "Information about an LSP CRC-ERR session.";
+        leaf sessType {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Type of CRC-ERR sessions.";
+        }
+        leaf faultType {
+          type string {
+            length "1..64";
+          }
+          config false;
+          description
+            "Fault type.";
+        }
+        leaf ingressLsrId {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "ID of an ingress LSR.";
+          ext:support-filter "true";
+        }
+        leaf tnlId {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Tunnel ID.";
+          ext:support-filter "true";
+        }
+        leaf lspId {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "LSP ID.";
+          ext:support-filter "true";
+        }
+        leaf tnlName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "Tunnel name.";
+          ext:support-filter "true";
+        }
+        leaf lspRole {
+          type bfdLspRoleType;
+          default "Invalid";
+          config false;
+          description
+            "LSP role.";
+          ext:support-filter "true";
+        }
+        leaf outIfName {
+          type pub-type:ifName;
+          config false;
+          description
+            "Outbound interface name.";
+        }
+        leaf lspToken {
+          type uint32;
+          config false;
+          description
+            "LSP token.";
+        }
+        leaf fsmBoardId {
+          type uint32;
+          config false;
+          description
+            "Number of board selection for a BFD session.";
+        }
+        leaf minTxInt {
+          type uint32;
+          config false;
+          description
+            "Minimum interval between sending packets, which is set for a CRC-ERR session. The value is expressed in milliseconds.";
+        }
+        leaf maxTxInt {
+          type uint32;
+          config false;
+          description
+            "Maximum interval between sending packets, which is set for a CRC-ERR session. The value is expressed in milliseconds.";
+        }
+        leaf actualTxInt {
+          type uint32;
+          config false;
+          description
+            "Actual interval between sending packets in a CRC-ERR session.";
+        }
+        leaf detectMulti {
+          type uint32;
+          config false;
+          description
+            "Detection multiplier of a CRC-ERR session.";
+        }
+        leaf srcAddr {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Source IP address of a CRC-ERR session.";
+        }
+        leaf destAddr {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Destination IP address of a CRC-ERR session.";
+        }
+        leaf destPort {
+          type uint32;
+          config false;
+          description
+            "Destination port number of a CRC-ERR session.";
+        }
+        leaf tosExp {
+          type uint32;
+          config false;
+          description
+            "Priority of a packet. The value ranges from 0 to 7. The default value is 7, indicating the highest priority.";
+        }
+        container lspInIfInfos {
+          config false;
+          description
+            "Information about an LSP.";
+          list lspInIfInfo {
+            config false;
+            description
+              "Inbound interface information of an LSP.";
+            leaf inIfName {
+              type pub-type:ifName;
+              config false;
+              description
+                "Inbound interface name.";
+            }
+          }
+        }
+      }
+    }
+    container crcSecSessions {
+      config false;
+      description
+        "Information about all section CRC-ERR sessions.";
+      list crcSecSession {
+        key "ifName";
+        config false;
+        description
+          "Information about a section CRC-ERR session.";
+        leaf sessType {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Type of a CRC-ERR session.";
+        }
+        leaf faultType {
+          type string {
+            length "1..64";
+          }
+          config false;
+          description
+            "Fault type.";
+        }
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "Interface name.";
+          ext:support-filter "true";
+        }
+        leaf fsmBoardId {
+          type uint32;
+          config false;
+          description
+            "Number of board selection for a BFD session.";
+        }
+        leaf minTxInt {
+          type uint32;
+          config false;
+          description
+            "Minimum interval between sending packets, which is set for a CRC-ERR session. The value is expressed in milliseconds.";
+        }
+        leaf maxTxInt {
+          type uint32;
+          config false;
+          description
+            "Maximum interval between sending packets, which is set for a CRC-ERR session. The value is expressed in milliseconds.";
+        }
+        leaf actualTxInt {
+          type uint32;
+          config false;
+          description
+            "Actual interval between sending packets in a CRC-ERR session.";
+        }
+        leaf detectMulti {
+          type uint32;
+          config false;
+          description
+            "Detection multiplier of a CRC-ERR session.";
+        }
+        leaf destAddr {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Destination IP address of a CRC-ERR session.";
+        }
+        leaf destPort {
+          type uint32;
+          config false;
+          description
+            "Destination port number of a CRC-ERR session.";
+        }
+        leaf tosExp {
+          type uint32;
+          config false;
+          description
+            "Priority of a packet. The value ranges from 0 to 7. The default value is 7, indicating the highest priority.";
+        }
+      }
+    }
+    container crcErrTrunkIfs {
+      description
+        "Configure bit error detection on a trunk interface.";
+      list crcErrTrunkIf {
+        key "ifName";
+        description
+          "Configure bit error detection on a trunk interface.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Interface name.";
+        }
+      }
+    }
+    container bfdTrigIfDowns {
+      description
+        "Configure the BFD-trigger-if-down function on an interface.";
+      list bfdTrigIfDown {
+        key "ifName";
+        description
+          "Configure the BFD-trigger-if-down function on an interface.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Interface name.";
+        }
+      }
+    }
+    container mulCastSessions {
+      config false;
+      description
+        "All BFD for P2MP sessions.";
+      list mulCastSession {
+        key "sessName localDiscr";
+        config false;
+        description
+          "Information about BFD for P2MP sessions.";
+        leaf sessName {
+          type string {
+            length "0..15";
+          }
+          config false;
+          description
+            "Name of a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf createType {
+          type bfdSmpCreateType;
+          config false;
+          description
+            "Type for creating a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf sessType {
+          type bfdSmpSessType;
+          config false;
+          description
+            "Type of a BFD session, including single-/multi-hop IP, LSP, tunnel, and TE LSP.";
+          ext:support-filter "false";
+        }
+        leaf localDiscr {
+          type uint32 {
+            range "1..32768";
+          }
+          config false;
+          description
+            "Local discriminator of a BFD session.";
+          ext:support-filter "true";
+        }
+        leaf multiSessType {
+          type string {
+            length "0..24";
+          }
+          config false;
+          description
+            "Type of a multicast session.";
+          ext:support-filter "false";
+        }
+        leaf p2mpId {
+          type string {
+            length "0..30";
+          }
+          config false;
+          description
+            "P2MP ID.";
+          ext:support-filter "false";
+        }
+        leaf p2mpIngressLsrId {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "ID of an ingress LSR.";
+          ext:support-filter "false";
+        }
+        leaf p2mpTunnelId {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "P2MP tunnel ID.";
+          ext:support-filter "false";
+        }
+        leaf rootIp {
+          type inet:ipv4-address-no-zone {
+            length "0..40";
+          }
+          config false;
+          description
+            "ROOT IP.";
+          ext:support-filter "false";
+        }
+        leaf lspId {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "MLDP P2MP LSPID.";
+          ext:support-filter "false";
+        }
+        leaf opaqueId {
+          type string {
+            length "0..256";
+          }
+          config false;
+          description
+            "MLDP OPAQUE ID.";
+          ext:support-filter "false";
+        }
+        leaf remoteDiscr {
+          type uint32;
+          config false;
+          description
+            "Remote discriminator of a BFD session. When the BFD session is created in static auto-negotiation mode, you do not need to set this parameter. Note that the remote discriminator must correspond to the local discriminator on the peer of the session. That is, the value of the remote discriminator must be the same as the value of the local discriminator.";
+          ext:support-filter "false";
+        }
+        leaf linkType {
+          type bfdSmpLinkType;
+          config false;
+          description
+            "Type of the link detected by a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf destAddr {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "Destination IP address of a BFD session. This parameter is available only when the type of the detected link is IP or LDP LSP.";
+          ext:support-filter "false";
+        }
+        leaf minTxInt {
+          type uint32;
+          config false;
+          description
+            "Minimum interval between sending packets, which is set for a BFD session. The value is expressed in milliseconds.";
+          ext:support-filter "false";
+        }
+        leaf minRxInt {
+          type uint32;
+          config false;
+          description
+            "Minimum interval between receiving packets, which is set for a BFD session. The value is expressed in milliseconds.";
+          ext:support-filter "false";
+        }
+        leaf detectMulti {
+          type uint32;
+          config false;
+          description
+            "Number of times that a BFD session continuously detects that packets are sent but no response is returned and then the system considers the BFD session Down. The detection multiplier is configured on the systems at both ends of the BFD session and does not need to be negotiated.";
+          ext:support-filter "false";
+        }
+        leaf tosExp {
+          type uint32;
+          config false;
+          description
+            "Priority of a packet. The value ranges from 0 to 7. The default value is 7, indicating the highest priority.";
+          ext:support-filter "false";
+        }
+        leaf description {
+          type string {
+            length "0..51";
+          }
+          config false;
+          description
+            "Description about a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf bindApps {
+          type string {
+            length "0..128";
+          }
+          config false;
+          description
+            "Information about the application to which a BFD session is bound.";
+          ext:support-filter "false";
+        }
+        leaf fsmBoardStr {
+          type string {
+            length "0..20";
+          }
+          config false;
+          description
+            "Number of board selection for a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf trackInterface {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "Track interface.";
+          ext:support-filter "false";
+        }
+        container mulCastSessRunning {
+          config false;
+          description
+            "Running information about a BFD session.";
+          leaf sessState {
+            type bfdSmpBfdState;
+            config false;
+            description
+              "Status of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf udpDstPort {
+            type uint32;
+            config false;
+            description
+              "Destination port number of the UDP packets transmitted in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf detectMode {
+            type bfdSmpDetectMode;
+            config false;
+            description
+              "Actual detection mode for a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf reDemandMode {
+            type boolean;
+            config false;
+            description
+              "Whether the remote end of a BFD session is in demand mode.";
+            ext:support-filter "false";
+          }
+          leaf actTxInt {
+            type uint32;
+            config false;
+            description
+              "Actual interval between sending packets in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf actRxInt {
+            type uint32;
+            config false;
+            description
+              "Actual interval between receiving packets in a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf actMulti {
+            type uint32;
+            config false;
+            description
+              "Actual detection multiplier for determining whether a BFD session is Down.";
+            ext:support-filter "false";
+          }
+          leaf detectTime {
+            type uint32;
+            config false;
+            description
+              "Detection interval when a BFD session is in asynchronous mode.";
+            ext:support-filter "false";
+          }
+          leaf ttl {
+            type uint32 {
+              range "1..255";
+            }
+            config false;
+            description
+              "Time to live (TTL) value of BFD packets.";
+            ext:support-filter "false";
+          }
+          leaf txTmrID {
+            type uint32;
+            config false;
+            description
+              "Sending timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf detectTmrID {
+            type uint32;
+            config false;
+            description
+              "Detect timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf initTmrID {
+            type uint32;
+            config false;
+            description
+              "Init timeout timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf wtrTmrID {
+            type uint32;
+            config false;
+            description
+              "WTR timer of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf notUpReason {
+            type bfdbaseNotUpReason;
+            config false;
+            description
+              "Reason why a BFD session cannot become Up.";
+            ext:support-filter "false";
+          }
+          leaf aclNum {
+            type uint32;
+            config false;
+            description
+              "Number of ACLs for a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf localDiag {
+            type bfdSmpBfdDiag;
+            config false;
+            description
+              "Reason why a BFD session becomes Down last time.";
+            ext:support-filter "false";
+          }
+          leaf echoTxTmrID {
+            type uint32;
+            config false;
+            description
+              "Sending timer of a BFD session with Echo.";
+            ext:support-filter "false";
+          }
+          leaf localDiscr {
+            type uint32;
+            config false;
+            description
+              "Local discriminator of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf remoteDiscr {
+            type uint32;
+            config false;
+            description
+              "Remote discriminator of a BFD session.";
+            ext:support-filter "false";
+          }
+          leaf minTxInt {
+            type uint32;
+            config false;
+            description
+              "Minimum interval between sending packets, which is set for a BFD session. The value is expressed in milliseconds.";
+            ext:support-filter "false";
+          }
+          leaf minRxInt {
+            type uint32;
+            config false;
+            description
+              "Minimum interval between receiving packets, which is set for a BFD session. The value is expressed in milliseconds.";
+            ext:support-filter "false";
+          }
+        }
+      }
+    }
+    container bfdBundleSessions {
+      config false;
+      description
+        "All Bundle Sessions.";
+      list bfdBundleSession {
+        key "localDiscr";
+        config false;
+        description
+          "Bundle Sessions.";
+        leaf sessName {
+          type string {
+            length "0..15";
+          }
+          config false;
+          description
+            "Name of a BFD session. ";
+          ext:support-filter "false";
+        }
+        leaf localDiscr {
+          type uint32;
+          config false;
+          description
+            "Local discriminator of a BFD session. ";
+          ext:support-filter "true";
+        }
+        leaf remoteDiscr {
+          type uint32;
+          config false;
+          description
+            "Remote discriminator of a BFD session. ";
+          ext:support-filter "false";
+        }
+        leaf mainSubRole {
+          type bfdPerLinkRole;
+          config false;
+          description
+            "Role of session.";
+          ext:support-filter "false";
+        }
+        leaf mainSessName {
+          type string {
+            length "0..15";
+          }
+          config false;
+          description
+            "Name of the main session.";
+          ext:support-filter "false";
+        }
+        leaf sessState {
+          type bfdSmpBfdState;
+          config false;
+          description
+            "Status of a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf detectMode {
+          type bfdSmpDetectMode;
+          config false;
+          description
+            "Actual detection Mode for a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf createType {
+          type bfdSmpCreateType;
+          config false;
+          description
+            "Type for creating a BFD session. ";
+          ext:support-filter "false";
+        }
+        leaf linkType {
+          type bfdSmpLinkType;
+          config false;
+          description
+            "Type of the link detected by a BFD session. ";
+          ext:support-filter "false";
+        }
+        leaf destAddr {
+          type inet:ip-address-no-zone ;
+          config false;
+          description
+            "Destination IP address of a BFD session. This parameter is available only when the type of link detection is IP and LDP LSP.";
+          ext:support-filter "false";
+        }
+        leaf srcAddr {
+          type inet:ip-address-no-zone ;
+          config false;
+          description
+            "Source IP address of a BFD session. ";
+          ext:support-filter "false";
+        }
+        leaf fsmBoardStr {
+          type string {
+            length "0..16";
+          }
+          config false;
+          description
+            "Number of board selection for a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf tosExp {
+          type uint32;
+          config false;
+          description
+            "Priority of a packet. The value ranges from 0 to 6. By default, the value 6 indicates the highest priority. In the case of system congestion, the BFD packets with the higher priority are sent.";
+          ext:support-filter "false";
+        }
+        leaf minTxInt {
+          type uint32;
+          config false;
+          description
+            "Minimum interval for sending packets, which is set for a BFD session. The value is expressed in milliseconds.";
+          ext:support-filter "false";
+        }
+        leaf minRxInt {
+          type uint32;
+          config false;
+          description
+            "Minimum interval for receiving packets, which is set for a BFD session. The value is expressed in milliseconds.";
+          ext:support-filter "false";
+        }
+        leaf detectMul {
+          type uint32;
+          config false;
+          description
+            "Number of times when a BFD session continuously detects that packets are sent but no response is returned and then the system considers the BFD session as Down. The detection multiplier is configured by the systems at both ends of the BFD session and does not need to be negotiated. ";
+          ext:support-filter "false";
+        }
+        leaf actTxInt {
+          type uint32;
+          config false;
+          description
+            "Actual interval for sending packets in a BFD session.The value is expressed in milliseconds.";
+          ext:support-filter "false";
+        }
+        leaf actRxInt {
+          type uint32;
+          config false;
+          description
+            "Actual interval for receiving packets in a BFD session.The value is expressed in milliseconds.";
+          ext:support-filter "false";
+        }
+        leaf actDetectMul {
+          type uint32;
+          config false;
+          description
+            "Actual detection multiplier for determining whether a BFD session is Down.";
+          ext:support-filter "false";
+        }
+        leaf detectTime {
+          type uint32;
+          config false;
+          description
+            "Detection interval when a BFD session is in asynchronism mode.The value is expressed in milliseconds.";
+          ext:support-filter "false";
+        }
+        leaf destPort {
+          type uint32;
+          config false;
+          description
+            "Destination port number of the UDP packets transmitted in a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf wtrTimerInt {
+          type uint32;
+          config false;
+          description
+            "Timeout duration set on the wait-to-restore (WTR) timer. The value is expressed in Milliseconds. Value 0 indicates that a BFD session does not wait for restoration. ";
+          ext:support-filter "false";
+        }
+        leaf localDiag {
+          type bfdSmpBfdDiag;
+          config false;
+          description
+            "Reason why a BFD session becomes Down last time.";
+          ext:support-filter "false";
+        }
+        leaf bindApps {
+          type string {
+            length "0..128";
+          }
+          config false;
+          description
+            "Information about the binding application of a BFD session.";
+          ext:support-filter "false";
+        }
+        leaf subSessCount {
+          type uint32;
+          config false;
+          description
+            "Number of Sub Session.";
+          ext:support-filter "false";
+        }
+        leaf outIfName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "Name of the outbound interface of a BFD session. This parameter is available only when the type of detected link is IP or LDPLSP. If only the destination IP address is specified, it indicates that multi-hop routes are detected. If both the destination IP address and outbound interface name are specified, it indicates that single hop links are detected. That is, a fixed route is detected, with the interface where the BFD session resides as the outbound interface and the destination IP address as the next hop address. ";
+          ext:support-filter "true";
+        }
+        leaf bundleMode {
+          type bfdBundleMode;
+          config false;
+          description
+            "Mode of Link-bundle session.";
+          ext:support-filter "false";
+        }
+        leaf vrfName {
+          type pub-type:vrfName {
+            length "1..31";
+          }
+          config false;
+          description
+            "Name of the VPN to which a BFD session belongs. If the VPN name is not specified, the destination IP address is considered as a public network address.";
+          ext:support-filter "false";
+        }
+        leaf dispSessType {
+          type bfdMainSubSessType;
+          config false;
+          description
+            "Session Type.";
+          ext:support-filter "true";
+        }
+      }
+    }
+    container sbfdGlobalCfg {
+      description
+        "Global SBFD Information";
+      leaf sbfdEnable {
+        type boolean;
+        description
+          "SBFD Enabling Flag";
+        ext:support-filter "false";
+      }
+    }
+    container sbfdRefDiscrInts {
+      description
+        "SBFD Reflector Integer Type Discriminator List";
+      list sbfdRefDiscrInt {
+        key "discrInt";
+        description
+          "SBFD Reflector Integer Type Discriminator";
+        leaf discrInt {
+          type uint32 {
+            range "16777216..3758096383";
+          }
+          description
+            "SBFD Reflector Integer Type Discriminator";
+          ext:support-filter "false";
+        }
+      }
+    }
+    container sbfdRefDiscrIps {
+      description
+        "SBFD Reflector IP Type Discriminator List";
+      list sbfdRefDiscrIp {
+        key "discrIp";
+        description
+          "SBFD Reflector IP Type Discriminator";
+        leaf discrIp {
+          type inet:ipv4-address-no-zone {
+          }
+          description
+            "SBFD Reflector IP Type Discriminator";
+          ext:support-filter "false";
+        }
+      }
+    }
+    container sbfdRefDisInfos {
+      config false;
+      description
+        "SBFD Reflector Discriminator Information List";
+      list sbfdRefDisInfo {
+        config false;
+        description
+          "SBFD Reflector Discriminator Information";
+        leaf refDiscrInt {
+          type uint32;
+          config false;
+          description
+            "SBFD Reflector Integer Type Discriminator Information";
+        }
+        leaf refDiscrIp {
+          type inet:ipv4-address-no-zone {
+            length "0..255";
+          }
+          config false;
+          description
+            "SBFD Reflector IP Type Discriminator Information";
+          ext:support-filter "false";
+        }
+        leaf discrState {
+          type sbfdDiscrState;
+          config false;
+          description
+            "SBFD Reflector Discriminator Station Information";
+        }
+        leaf createType {
+          type sbfdDiscrConfigType;
+          config false;
+          description
+            "SBFD Reflector Discriminator Create Type Information";
+        }
+      }
+    }
+  }
+}

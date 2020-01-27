@@ -1,0 +1,1868 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-devm-action {
+  belongs-to huawei-devm {
+    prefix devm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-devm-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "devmRunState";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc resetBoard {
+    description
+      "Reset Board.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc resetMpuBoard {
+    description
+      "Reset MPU Board.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc resetLpuBoard {
+    description
+      "Reset LPU Board.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc resetSfuBoard {
+    description
+      "Reset SFU Board.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc resetEcuBoard {
+    description
+      "Reset ECU Board.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc resetIcuBoard {
+    description
+      "Reset ICU Board.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc resetCmuBoard {
+    description
+      "Reset CMU Board.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc resetFanBoard {
+    description
+      "Reset Fan.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Fan Position.";
+      }
+    }
+  }
+  rpc resetLcd {
+    description
+      "Reset Lcd.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Lcd Position.";
+      }
+    }
+  }
+  rpc switchOver {
+    description
+      "Switchover.";
+    input {
+      leaf position {
+        type string {
+          length "0..32";
+        }
+        description
+          "Chassis Position";
+      }
+    }
+  }
+  rpc resetCard {
+    description
+      "Reset Card.";
+    input {
+      leaf cardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Card Position.";
+      }
+    }
+  }
+  rpc resetChassis {
+    description
+      "Reset Chassis.";
+    input {
+      leaf chassisPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Chassis Position.";
+      }
+    }
+  }
+  rpc reboot {
+    description
+      "Reboot.";
+    input {
+      leaf saveConfig {
+        type boolean;
+        description
+          "Save configuration flag. Save configuration when this flag set as true.";
+      }
+    }
+  }
+  rpc transferFile {
+    description
+      "Transfer File.";
+    input {
+      leaf serverIpAddress {
+        type inet:ip-address-no-zone;
+        description
+          "Server IP Address.";
+      }
+      leaf serverPort {
+        type uint32 {
+          range "21..65535";
+        }
+        default "21";
+        description
+          "Server Port.";
+        ext:allowDelete "true";
+      }
+      leaf vpnInstanceName {
+        type string {
+          length "1..128";
+        }
+        description
+          "VpnInstance Name.";
+        ext:allowDelete "true";
+      }
+      leaf sourceIpv4Address {
+        type inet:ipv4-address-no-zone;
+        description
+          "Source Ipv4Address.";
+      }
+      leaf sourceInterfaceName {
+        type pub-type:ifName;
+        description
+          "Source Interface Name.";
+        ext:allowDelete "true";
+      }
+      leaf serverType {
+        type devmServerType;
+        default "ftp";
+        description
+          "Server Type.";
+      }
+      leaf commandType {
+        type devmTransType;
+        default "put";
+        description
+          "Command Type.";
+        ext:allowDelete "true";
+      }
+      leaf userName {
+        type string {
+          length "1..85";
+        }
+        mandatory true;
+        description
+          "User Name.";
+        ext:allowDelete "false";
+      }
+      leaf password {
+        type pub-type:password;
+        description
+          "Password.";
+        ext:allowDelete "false";
+      }
+      leaf localFileName {
+        type string {
+          length "1..128";
+        }
+        description
+          "Local File Name.";
+        ext:allowDelete "false";
+      }
+      leaf remoteFileName {
+        type string {
+          length "1..128";
+        }
+        description
+          "Remote File Name.";
+        ext:allowDelete "true";
+      }
+      leaf remoteExtension {
+        type string {
+          length "1..5";
+        }
+        default ".hw!";
+        description
+          "Remote Extension.";
+        ext:allowDelete "true";
+      }
+      container secureTransferOptions {
+        description
+          "Secure Transfer Options.";
+        leaf preferKex {
+          type devmPreferKexType;
+          description
+            "PreferKex.";
+          ext:allowDelete "true";
+        }
+        leaf preferStocCipher {
+          type devmCipherType;
+          description
+            "Prefer Stoc Cipher.";
+          ext:allowDelete "true";
+        }
+        leaf preferCtosCipher {
+          type devmCipherType;
+          description
+            "Prefer Ctos Cipher.";
+          ext:allowDelete "true";
+        }
+        leaf preferStocHmac {
+          type devmStocHmacType;
+          description
+            "Prefer Stoc Hmac.";
+          ext:allowDelete "true";
+        }
+        leaf preferCtosHmac {
+          type devmStocHmacType;
+          description
+            "Prefer Ctos Hmac.";
+          ext:allowDelete "true";
+        }
+        leaf keepAliveInterval {
+          type uint32 {
+            range "0..60";
+          }
+          default "0";
+          description
+            "Keep Alive Interval.";
+          ext:allowDelete "true";
+        }
+        leaf keepAliveCount {
+          type uint32 {
+            range "0..100";
+          }
+          default "0";
+          description
+            "Keep Alive Count.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+  }
+  rpc clearLpuMacMtuErrorStat {
+    description
+      "Clear MAC&MTU error statistics.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position of cleared MAC&MTU error statistics.";
+      }
+    }
+  }
+  rpc clearMpuMacMtuErrorStat {
+    description
+      "Clear MAC&MTU error statistics.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position of cleared MAC&MTU error statistics.";
+      }
+    }
+  }
+  rpc clearPortCrcErrAlarm {
+    description
+      "Clear CRC error alarm.";
+    input {
+      leaf portPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Port position.";
+      }
+    }
+  }
+  rpc clearPortSymbolErrAlarm {
+    description
+      "Clear symbol error alarm.";
+    input {
+      leaf portPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Port position.";
+      }
+    }
+  }
+  rpc clearPortInputErrAlarm {
+    description
+      "Clear input error alarm.";
+    input {
+      leaf portPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Port position.";
+      }
+    }
+  }
+  rpc clearPortOutputErrAlarm {
+    description
+      "Clear output error alarm.";
+    input {
+      leaf portPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Port position.";
+      }
+    }
+  }
+  rpc clearPortSdhErrAlarm {
+    description
+      "Clear SDH error alarm.";
+    input {
+      leaf portPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Port position.";
+      }
+    }
+  }
+  rpc clearPortBip8ErrAlarm {
+    description
+      "Clear Bip error alarm.";
+    input {
+      leaf portPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Port position.";
+      }
+    }
+  }
+  rpc clearPortTxPauseErrAlarm {
+    description
+      "Clear TxPause error alarm.";
+    input {
+      leaf portPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Port position.";
+      }
+    }
+  }
+  rpc clearNvPortCrcErrAlarm {
+    description
+      "Clear NvCRC error alarm.";
+    input {
+      leaf ifIndex {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote Port Index.";
+      }
+    }
+  }
+  rpc clearNvPortSymbolErrAlarm {
+    description
+      "Clear Nvsymbol error alarm.";
+    input {
+      leaf ifIndex {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote Port Index.";
+      }
+    }
+  }
+  rpc clearNvPortInputErrAlarm {
+    description
+      "Clear Nvinput error alarm.";
+    input {
+      leaf ifIndex {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote Port Index.";
+      }
+    }
+  }
+  rpc clearNvPortOutputErrAlarm {
+    description
+      "Clear Nvoutput error alarm.";
+    input {
+      leaf ifIndex {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote Port Index.";
+      }
+    }
+  }
+  rpc clearNvPortSdhErrAlarm {
+    description
+      "Clear NvSDH error alarm.";
+    input {
+      leaf ifIndex {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote Port Index.";
+      }
+    }
+  }
+  rpc clearNvPortBip8ErrAlarm {
+    description
+      "Clear NvBip error alarm.";
+    input {
+      leaf ifIndex {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote Port Index.";
+      }
+    }
+  }
+  rpc clearNvPortTxPauseErrAlarm {
+    description
+      "Clear NvTxPause error alarm.";
+    input {
+      leaf ifIndex {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote Port Index.";
+      }
+    }
+  }
+  rpc clearNvPortTransAlarm {
+    description
+      "Clear Remote Port TAD Alarm Information.";
+    input {
+      leaf ifIndex {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote Port Index.";
+      }
+    }
+  }
+  rpc clearPortTransAlarm {
+    description
+      "Clear TAD Alarm Information.";
+    input {
+      leaf portPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Port position.";
+      }
+    }
+  }
+  rpc resetDustproofNet {
+    description
+      "Reset DustproofNet.";
+    input {
+      leaf chassisPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Chassis Position.";
+      }
+    }
+  }
+  rpc powerOnMpu {
+    description
+      "Power On Mpu.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc powerOffMpu {
+    description
+      "Power Off Mpu.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc powerOnLpu {
+    description
+      "Power On Board.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc powerOffLpu {
+    description
+      "Power Off Board.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc powerOnSfu {
+    description
+      "Power On Sfu.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc powerOffSfu {
+    description
+      "Power Off Sfu.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc powerOnEcu {
+    description
+      "Power On Ecu.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc powerOffEcu {
+    description
+      "Power Off Ecu.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc powerOnIcu {
+    description
+      "Power On Icu.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc powerOffIcu {
+    description
+      "Power Off Icu.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Board Position.";
+      }
+    }
+  }
+  rpc powerOnCard {
+    description
+      "Power On Card.";
+    input {
+      leaf cardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Card Position.";
+      }
+    }
+  }
+  rpc powerOffCard {
+    description
+      "Power Off Card.";
+    input {
+      leaf cardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Card Position.";
+      }
+    }
+  }
+  rpc ccuUpgradeAct {
+    description
+      "CCU upgrade.";
+    input {
+      leaf serverIpAddress {
+        type string {
+          length "0..32";
+        }
+        description
+          "CCU ip address.";
+      }
+      leaf password {
+        type string {
+          length "0..32";
+        }
+        description
+          "CCU server pwd.";
+      }
+    }
+  }
+  rpc clearInactiveCfg {
+    description
+      "Clear Inactive Configuration.";
+    input {
+      leaf entClass {
+        type devmOfflineType;
+        description
+          "Class.";
+      }
+      leaf position {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position.";
+      }
+    }
+  }
+  rpc shutCposSerial {
+    description
+      "Shutdown serial.";
+    input {
+      leaf e1t1Number {
+        type uint32 {
+          range "1..63";
+        }
+        description
+          "E1 number.";
+      }
+      leaf position {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position.";
+      }
+      leaf setNumber {
+        type uint32 {
+          range "0..30";
+        }
+        description
+          "Set number.";
+      }
+    }
+  }
+  rpc shutE1Serial {
+    description
+      "Shutdown serial.";
+    input {
+      leaf position {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position.";
+      }
+      leaf setNumber {
+        type uint32 {
+          range "0..30";
+        }
+        description
+          "Set number.";
+      }
+    }
+  }
+  rpc setLaserTurn {
+    description
+      "Set Port Laser.";
+    input {
+      leaf portPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Port Position.";
+      }
+      leaf laserShutdown {
+        type devmlaserturnonType;
+        default "on";
+        description
+          "LaserOpenOrShut.";
+        ext:allowDelete "true";
+      }
+      leaf laserTestTime {
+        type uint32 {
+          range "200..30000";
+        }
+        description
+          "LaserOpenTime(10ms).";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc setNvLaserTurn {
+    description
+      "Set Port NV Laser.";
+    input {
+      leaf ifIndex {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Remote Port Index.";
+      }
+      leaf laserShutdown {
+        type devmlaserturnonType;
+        default "on";
+        description
+          "LaserOpenOrShut.";
+        ext:allowDelete "true";
+      }
+      leaf laserTestTime {
+        type uint32 {
+          range "200..30000";
+        }
+        description
+          "LaserOpenTime(10ms).";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc setLedFlash {
+    description
+      "Set Led Flash.";
+    input {
+      leaf flashTime {
+        type uint32 {
+          range "1..5";
+        }
+        description
+          "Flash Time(s).";
+        ext:allowDelete "true";
+      }
+      leaf alarmStatusTime {
+        type uint32 {
+          range "1..5";
+        }
+        description
+          "Alarm Status Time(s).";
+        ext:allowDelete "true";
+      }
+      leaf cancelTime {
+        type uint32 {
+          range "5..60";
+        }
+        description
+          "Cancel Time(min).";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc resetMbusnote {
+    description
+      "Reset Mbus Note.";
+    input {
+      leaf boardPosition {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position.";
+      }
+    }
+  }
+  rpc upgradelpuByTestbus {
+    description
+      "Upgrade LPU By Testbus.";
+    input {
+      leaf boardType {
+        type devmupglpuByTestbusBrdType;
+        default "LPU";
+        description
+          "Board Type.";
+        ext:allowDelete "true";
+      }
+      leaf slotID {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position.";
+      }
+      leaf startup {
+        type devmBool;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf fileName {
+        type string {
+          length "1..128";
+        }
+        description
+          "File Name.";
+        ext:allowDelete "true";
+      }
+      leaf operation {
+        type devmupglpuByTestbusProcType;
+        default "lpu-bootload";
+        description
+          "Upgrade Object.";
+      }
+    }
+  }
+  rpc upgradempuByTestbus {
+    description
+      "Upgrade MPU By Testbus.";
+    input {
+      leaf boardType {
+        type devmupgmpuByTestbusBrdType;
+        default "MPU";
+        description
+          "Board Type.";
+        ext:allowDelete "true";
+      }
+      leaf slotID {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position.";
+      }
+      leaf startup {
+        type devmBool;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf fileName {
+        type string {
+          length "1..128";
+        }
+        description
+          "File Name.";
+        ext:allowDelete "true";
+      }
+      leaf operation {
+        type devmupgmpuByTestbusProcType;
+        default "bootload";
+        description
+          "Upgrade Object.";
+      }
+    }
+  }
+  rpc upgradesfuByTestbus {
+    description
+      "Upgrade SFU By Testbus.";
+    input {
+      leaf boardType {
+        type devmupgsfuByTestbusBrdType;
+        default "SFU";
+        description
+          "Board Type.";
+        ext:allowDelete "true";
+      }
+      leaf slotID {
+        type string {
+          length "1..30";
+        }
+        description
+          "Position.";
+      }
+      leaf startup {
+        type devmBool;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf fileName {
+        type string {
+          length "1..128";
+        }
+        description
+          "File Name.";
+        ext:allowDelete "true";
+      }
+      leaf operation {
+        type devmupgsfuByTestbusProcType;
+        default "sfu-bootload";
+        description
+          "Upgrade Object.";
+      }
+    }
+  }
+  rpc upgradeipuByTestbus {
+    description
+      "Upgrade IPU By Testbus.";
+    input {
+      leaf boardType {
+        type devmupgipuByTestbusBrdType;
+        default "IPU";
+        description
+          "Board Type.";
+        ext:allowDelete "true";
+      }
+      leaf slotID {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position.";
+      }
+      leaf startup {
+        type devmBool;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf fileName {
+        type string {
+          length "1..128";
+        }
+        description
+          "File Name.";
+        ext:allowDelete "true";
+      }
+      leaf operation {
+        type devmupgipuByTestbusProcType;
+        default "pic-epld";
+        description
+          "Upgrade Object.";
+      }
+      leaf cardID {
+        type string {
+          length "1..30";
+        }
+        description
+          "Card ID.";
+      }
+    }
+  }
+  rpc upgradecmuByTestbus {
+    description
+      "Upgrade CMU By Testbus.";
+    input {
+      leaf boardType {
+        type devmupgcmuByTestbusBrdType;
+        default "CMU";
+        description
+          "Board Type.";
+        ext:allowDelete "true";
+      }
+      leaf slotID {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position.";
+      }
+      leaf startup {
+        type devmBool;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf fileName {
+        type string {
+          length "1..128";
+        }
+        description
+          "File Name.";
+        ext:allowDelete "true";
+      }
+      leaf operation {
+        type devmupgcmuByTestbusProcType;
+        default "cmu-epld";
+        description
+          "Upgrade Object.";
+      }
+    }
+  }
+  rpc upgradeMPU {
+    description
+      "Upgrade MPU.";
+    input {
+      leaf boardtype {
+        type devmmpuType;
+        default "MPU";
+        description
+          "Boardtype.";
+      }
+      leaf all {
+        type devmStatus;
+        default "NO";
+        description
+          "All Slot.";
+      }
+      leaf slotid {
+        type string {
+          length "0..32";
+        }
+        description
+          "Slot ID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "CC name.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmoperType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force.";
+      }
+    }
+  }
+  rpc upgradeLPU {
+    description
+      "Upgrade LPU.";
+    input {
+      leaf boardtype {
+        type devmlpuType;
+        default "LPU";
+        description
+          "Boardtype.";
+      }
+      leaf all {
+        type devmStatus;
+        default "NO";
+        description
+          "All Slot.";
+      }
+      leaf slotid {
+        type string {
+          length "0..32";
+        }
+        description
+          "Slot ID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "CC name.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmoperType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force.";
+      }
+    }
+  }
+  rpc upgradeFAN {
+    description
+      "Upgrade FAN.";
+    input {
+      leaf boardtype {
+        type devmfanType;
+        default "FAN";
+        description
+          "Boardtype.";
+      }
+      leaf all {
+        type devmStatus;
+        default "NO";
+        description
+          "All Slot.";
+      }
+      leaf slotid {
+        type string {
+          length "0..32";
+        }
+        description
+          "Slot ID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "CC name.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmlocType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force.";
+      }
+    }
+  }
+  rpc upgradeLCD {
+    description
+      "Upgrade LCD.";
+    input {
+      leaf boardtype {
+        type devmlcdType;
+        default "LCD";
+        description
+          "Boardtype.";
+      }
+      leaf all {
+        type devmStatus;
+        default "NO";
+        description
+          "All Slot.";
+      }
+      leaf slotid {
+        type string {
+          length "0..32";
+        }
+        description
+          "Slot ID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "CC name.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmlocType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force.";
+      }
+    }
+  }
+  rpc upgradeECU {
+    description
+      "Upgrade ECU.";
+    input {
+      leaf boardtype {
+        type devmecuType;
+        default "ECU";
+        description
+          "Boardtype.";
+      }
+      leaf all {
+        type devmStatus;
+        default "NO";
+        description
+          "All Slot.";
+      }
+      leaf slotid {
+        type string {
+          length "0..32";
+        }
+        description
+          "Slot ID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "CC name.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmoperType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force.";
+      }
+    }
+  }
+  rpc upgradeICU {
+    description
+      "Upgrade ICU.";
+    input {
+      leaf boardtype {
+        type devmicuType;
+        default "ICU";
+        description
+          "Boardtype.";
+      }
+      leaf all {
+        type devmStatus;
+        default "NO";
+        description
+          "All Slot.";
+      }
+      leaf slotid {
+        type string {
+          length "0..32";
+        }
+        description
+          "Slot ID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "CC name.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmoperType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force.";
+      }
+    }
+  }
+  rpc upgradeCMU {
+    description
+      "Upgrade CMU.";
+    input {
+      leaf boardtype {
+        type devmcmuType;
+        default "CMU";
+        description
+          "Boardtype.";
+      }
+      leaf all {
+        type devmStatus;
+        default "NO";
+        description
+          "All Slot.";
+      }
+      leaf slotid {
+        type string {
+          length "0..32";
+        }
+        description
+          "Slot ID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "NO";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "CC name.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmlocType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force.";
+      }
+    }
+  }
+  rpc upgradePMU {
+    description
+      "Upgrade PMU.";
+    input {
+      leaf boardtype {
+        type devmpmuType;
+        default "PMU";
+        description
+          "Boardtype.";
+      }
+      leaf all {
+        type devmStatus;
+        default "NO";
+        description
+          "All Slot.";
+      }
+      leaf slotid {
+        type string {
+          length "1..30";
+        }
+        description
+          "Slot ID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "CC name.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmlocType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force.";
+      }
+    }
+  }
+  rpc upgradeSFU {
+    description
+      "Upgrade SFU.";
+    input {
+      leaf boardtype {
+        type devmsfuType;
+        default "SFU";
+        description
+          "Boardtype.";
+      }
+      leaf all {
+        type devmStatus;
+        default "NO";
+        description
+          "All Slot.";
+      }
+      leaf slotid {
+        type string {
+          length "1..30";
+        }
+        description
+          "Slot ID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "CC name.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmoperType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force.";
+      }
+    }
+  }
+  rpc upgradeIPU {
+    description
+      "UpgradeIPU.";
+    input {
+      leaf boardtype {
+        type devmipuType;
+        default "IPU";
+        description
+          "Boardtype.";
+      }
+      leaf all {
+        type devmStatus;
+        default "NO";
+        description
+          "All Slot.";
+      }
+      leaf slotid {
+        type string {
+          length "0..32";
+        }
+        description
+          "Slot ID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "CC name.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmoperType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force.";
+      }
+    }
+  }
+  rpc upgradeAllslot {
+    description
+      "Upgrade All Slot.";
+    input {
+      leaf boardtype {
+        type devmallslotType;
+        default "All-Slot";
+        description
+          "Boardtype.";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "CC name.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmoperType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force.";
+      }
+    }
+  }
+  rpc upgradeBrdChassis {
+    description
+      "Upgrade board system by Chassis Unit.";
+    input {
+      leaf boardtype {
+        type devmbrdType;
+        default "MPU";
+        description
+          "Boardtype.";
+      }
+      leaf chassisid {
+        type string {
+          length "0..32";
+        }
+        description
+          "ChassisID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "System File Name with absolute path.";
+        ext:allowDelete "true";
+      }
+      leaf all {
+        type devmallslotType;
+        default "All-Slot";
+        description
+          "All Slot.";
+      }
+      leaf oper {
+        type devmoperType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force or Not.";
+      }
+    }
+  }
+  rpc upgradeChassis {
+    description
+      "Upgrade board system by Chassis Unit.";
+    input {
+      leaf boardtype {
+        type devmallslotType;
+        default "All-Slot";
+        description
+          "Boardtype.";
+      }
+      leaf chassisid {
+        type string {
+          length "0..32";
+        }
+        description
+          "ChassisID.";
+        ext:allowDelete "true";
+      }
+      leaf startup {
+        type devmStatus;
+        default "YES";
+        description
+          "Using Startup Upgrade.";
+      }
+      leaf ccname {
+        type string {
+          length "1..128";
+        }
+        description
+          "System File Name with absolute path.";
+        ext:allowDelete "true";
+      }
+      leaf oper {
+        type devmoperType;
+        default "monitorbus";
+        description
+          "Operation.";
+      }
+      leaf force {
+        type devmBool;
+        default "YES";
+        description
+          "Force or Not.";
+      }
+    }
+  }
+  rpc upgradeactmpuByTestbus {
+    description
+      "Upgrade MPU By Testbus.";
+    input {
+      leaf boardType {
+        type devmupgmpuByTestbusBrdType;
+        default "MPU";
+        description
+          "Board Type.";
+        ext:allowDelete "true";
+      }
+      leaf slotID {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position.";
+      }
+      leaf fileName {
+        type string {
+          length "1..128";
+        }
+        description
+          "File Name.";
+        ext:allowDelete "true";
+      }
+      leaf upgradeTypeStr {
+        type devmupgmpuByTestbusType;
+        default "bootload";
+        description
+          "Upgrade Object.";
+      }
+    }
+  }
+  rpc upgradeactlpuByTestbus {
+    description
+      "Upgrade LPU By Testbus.";
+    input {
+      leaf boardType {
+        type devmupglpuByTestbusBrdType;
+        default "LPU";
+        description
+          "Board Type.";
+        ext:allowDelete "true";
+      }
+      leaf slotID {
+        type string {
+          length "0..32";
+        }
+        description
+          "Position.";
+      }
+      leaf fileName {
+        type string {
+          length "1..128";
+        }
+        description
+          "File Name.";
+        ext:allowDelete "true";
+      }
+      leaf upgradeTypeStr {
+        type devmupglpuByTestbusType;
+        default "lpu-bootload";
+        description
+          "Upgrade Object.";
+      }
+    }
+  }
+}

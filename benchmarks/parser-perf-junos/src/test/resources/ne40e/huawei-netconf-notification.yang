@@ -1,0 +1,84 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-netconf-notification {
+  belongs-to huawei-netconf {
+    prefix netconf;
+  }
+  include huawei-netconf-notification-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Netconf notification";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping netconf_notification_type {
+    description
+      "";
+    container statistics {
+      config false;
+      description
+        "Notification statistics";
+      leaf alarmsReceived {
+        type uint32;
+        config false;
+        description
+          "Number of alarms received";
+      }
+      leaf alarmsSent {
+        type uint32;
+        config false;
+        description
+          "Number of Alarms sent";
+      }
+    }
+    container streams {
+      config false;
+      description
+        "Notifications streams list";
+      list stream {
+        key "name";
+        config false;
+        description
+          "Notifications stream";
+        leaf name {
+          type netconfEventStream;
+          config false;
+          description
+            "Stream Name";
+        }
+        leaf description {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Stream description";
+        }
+        leaf replaySupport {
+          type string {
+            length "1..8";
+          }
+          config false;
+          description
+            "Replay Support";
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,487 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-l3vpn-qos {
+  belongs-to huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  include huawei-l3vpn-qos-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "submodule of l3vpn:l3vpn_qos";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping qos_qosL3vpnPolicyApplys_type {
+    description
+      "";
+    list qosL3vpnPolicyApply {
+      key "vpnpolicyName vpndirection";
+      max-elements 2;
+      description
+        "Application of a traffic policy.";
+      leaf vpnpolicyName {
+        type qosL3vpnPolicyName {
+          length "1..31";
+        }
+        description
+          "Policy name.";
+      }
+      leaf vpndirection {
+        type qosL3vpnDirectionType;
+        description
+          "Direction.";
+      }
+      container qosL3vpnPolicyStats {
+        config false;
+        description
+          "List of traffic policy statistics.";
+        list qosL3vpnPolicyStat {
+          key "slotId";
+          config false;
+          description
+            "Traffic policy statistics.";
+          leaf slotId {
+            type qosL3vpnSlotPath {
+              length "1..32";
+              pattern '^(c[cl]c\d+/)?\d+$';
+            }
+            config false;
+            description
+              "Slot ID. The chassis ID must also be specified when have multi chassis, such as 3, clc1/3 or ccc1/3.";
+          }
+          leaf vpnapplyTime {
+            type yang:date-and-time;
+            config false;
+            description
+              "Time of applying a policy.";
+          }
+          leaf vpnstatEnableTime {
+            type yang:date-and-time;
+            config false;
+            description
+              "Time of enabling/disabling statistics.";
+          }
+          leaf vpnstatClearTime {
+            type yang:date-and-time;
+            config false;
+            description
+              "Time of clearing statistics.";
+          }
+          leaf vpnstatClearFlag {
+            type boolean;
+            config false;
+            description
+              "Flag of clearing statistics";
+          }
+          leaf vpnmatchPackets {
+            type uint64;
+            config false;
+            description
+              "Number of matched packets.";
+          }
+          leaf vpnmatchBytes {
+            type uint64;
+            config false;
+            description
+              "Number of matched bytes.";
+          }
+          leaf vpnmatchPktRate {
+            type uint64;
+            config false;
+            description
+              "Rate of matched packets (unit: packet/s).";
+          }
+          leaf vpnmatchByteRate {
+            type uint64;
+            config false;
+            description
+              "Rate of matched bytes (unit: bit/s).";
+          }
+          leaf vpnmissPackets {
+            type uint64;
+            config false;
+            description
+              "Number of unmatched packets.";
+          }
+          leaf vpnmissBytes {
+            type uint64;
+            config false;
+            description
+              "Number of unmatched bytes.";
+          }
+          leaf vpnmatchPassPkts {
+            type uint64;
+            config false;
+            description
+              "Number of matched and passed packets.";
+          }
+          leaf vpnmatchPassBytes {
+            type uint64;
+            config false;
+            description
+              "Number of matched and passed bytes.";
+          }
+          leaf vpnmatchDropPkts {
+            type uint64;
+            config false;
+            description
+              "Number of matched but discarded packets.";
+          }
+          leaf vpnmatchDropBytes {
+            type uint64;
+            config false;
+            description
+              "Number of matched but discarded bytes.";
+          }
+          leaf vpnmissPktsRate {
+            type uint64;
+            config false;
+            description
+              "Rate of the packets that do not match the policy (unit: packet/s).";
+          }
+          leaf vpnmissBytesRate {
+            type uint64;
+            config false;
+            description
+              "Rate of the bytes that do not match the policy (unit: bit/s).";
+          }
+          leaf vpnmatchPassPktsRate {
+            type uint64;
+            config false;
+            description
+              "Rate of the packets that match the policy and passed (unit: packet/s).";
+          }
+          leaf vpnmatchPassBytesRate {
+            type uint64;
+            config false;
+            description
+              "Rate of the bytes that match the policy and passed (unit: bit/s).";
+          }
+          leaf vpnmatchDropPktsRate {
+            type uint64;
+            config false;
+            description
+              "Rate of the packets that match the policy but are discarded (unit: packet/s).";
+          }
+          leaf vpnmatchDropBytesRate {
+            type uint64;
+            config false;
+            description
+              "Rate of the bytes that match the policy but are discarded.";
+          }
+          container qosL3vpnClassifierStats {
+            config false;
+            description
+              "List of traffic classifier statistics.";
+            list qosL3vpnClassifierStat {
+              key "slotId";
+              config false;
+              description
+                "Traffic classifier statistics.";
+              leaf slotId {
+                type qosL3vpnSlotPath {
+                  length "1..32";
+                  pattern '^(c[cl]c\d+/)?\d+$';
+                }
+                config false;
+                description
+                  "Slot ID. The chassis ID must also be specified when have multi chassis, such as 3, clc1/3 or ccc1/3.";
+              }
+              leaf vpnclassifierName {
+                type qosL3vpnPolicyName {
+                  length "1..31";
+                }
+                config false;
+                description
+                  "Name of a traffic classifier.";
+              }
+              leaf vpnmatchPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of matched packets.";
+              }
+              leaf vpnmatchBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of matched bytes.";
+              }
+              leaf vpnmatchPktRt {
+                type uint64;
+                config false;
+                description
+                  "Rate of matched packets (unit: packet/s).";
+              }
+              leaf vpnmatchByteRt {
+                type uint64;
+                config false;
+                description
+                  "Rate of matched bytes (unit: bit/s).";
+              }
+              leaf vpnmatchPassPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of matched and passed packets.";
+              }
+              leaf vpnmatchPassBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of matched and passed bytes.";
+              }
+              leaf vpnmatchDropPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of matched but discarded packets.";
+              }
+              leaf vpnmatchDropBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of matched but discarded bytes.";
+              }
+              leaf vpnmatchPassPktsRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the packets matching the traffic classifier and passed (unit: packet/s).";
+              }
+              leaf vpnmatchPassBytesRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the bytes matching the traffic classifier and passed (unit: bit/s).";
+              }
+              leaf vpnmatchDropPktsRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the packets matching the traffic classifier but  discarded (unit: packet/s).";
+              }
+              leaf vpnmatchDropBytesRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the bytes matching the traffic classifier but discarded (unit: bit/s).";
+              }
+              leaf vpnfilterPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of filtered bytes.";
+              }
+              leaf vpnfilterBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of filtered packets.";
+              }
+              leaf vpnfilterPktsRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of filtered packets (unit: packet/s).";
+              }
+              leaf vpnfilterBytesRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of filtered bytes.";
+              }
+              leaf vpnurpfDropPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of the discarded packets by URPF check.";
+              }
+              leaf vpnurpfDropBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of the discarded bytes by URPF check.";
+              }
+              leaf vpnurpfDropPktsRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the discarded packets by URPF check (unit: packet/s).";
+              }
+              leaf vpnurpfDropBytesRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the discarded bytes by URPF check (unit: bit/s).";
+              }
+              leaf vpncarPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of the processed packets by CAR.";
+              }
+              leaf vpncarBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of the processed bytes by CAR.";
+              }
+              leaf vpncarPktsRate {
+                type uint64;
+                config false;
+                description
+                  "Number of the passed packets by CAR (unit: packet/s).";
+              }
+              leaf vpncarBytesRate {
+                type uint64;
+                config false;
+                description
+                  "Number of the passed bytes by CAR (unit: bit/s).";
+              }
+              leaf vpncarPassPkts {
+                type uint64;
+                config false;
+                description
+                  "Number of the passed packets by CAR.";
+              }
+              leaf vpncarPassBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of the passed bytes by CAR.";
+              }
+              leaf vpncarDropPkts {
+                type uint64;
+                config false;
+                description
+                  "Rate of the discarded packets by CAR.";
+              }
+              leaf vpncarDropBytes {
+                type uint64;
+                config false;
+                description
+                  "Rate of the discarded bytes by CAR.";
+              }
+              leaf vpncarPassPktsRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the passed packets CAR (unit: packet/s).";
+              }
+              leaf vpncarPassBytesRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the passed bytes by CAR (unit: bit/s).";
+              }
+              leaf vpncarDropPktsRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the discarded packets by CAR (unit: packet/s).";
+              }
+              leaf vpncarDropBytesRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the discarded bytes by CAR (unit: bit/s).";
+              }
+              leaf vpncarGPkts {
+                type uint64;
+                config false;
+                description
+                  "Number of green packets by CAR.";
+              }
+              leaf vpncarGBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of the bytes of green packets by CAR.";
+              }
+              leaf vpncarYPkts {
+                type uint64;
+                config false;
+                description
+                  "Number of yellow packets by CAR.";
+              }
+              leaf vpncarYBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of the bytes of yellow packets by CAR.";
+              }
+              leaf vpncarRPkts {
+                type uint64;
+                config false;
+                description
+                  "Number of red packets by CAR.";
+              }
+              leaf vpncarRBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of the bytes of red packets by CAR.";
+              }
+              leaf vpncarGPktsRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of green packets by CAR (unit: packet/s).";
+              }
+              leaf vpncarGBytesRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the bytes of green packets by CAR (unit: bit/s).";
+              }
+              leaf vpncarYPktsRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of yellow packets by CAR (unit: packet/s).";
+              }
+              leaf vpncarYBytesRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the bytes of yellow packets by CAR (unit: bit/s).";
+              }
+              leaf vpncarRPktsRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of red packets by CAR(unit: packet/s).";
+              }
+              leaf vpncarRBytesRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of the bytes of red packets by CAR(unit: bit/s).";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

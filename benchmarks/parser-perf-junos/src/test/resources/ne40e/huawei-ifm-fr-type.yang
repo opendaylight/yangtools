@@ -1,0 +1,66 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifm-fr-type {
+  belongs-to huawei-ifm {
+    prefix ifm;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "fr type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  typedef cfgLmiType {
+    type enumeration {
+      enum "ansi" {
+        description
+          "LMI ANSI.";
+      }
+      enum "q933a" {
+        description
+          "LMI q933a.";
+      }
+      enum "nonstandard" {
+        description
+          "LMI nonstandard";
+      }
+    }
+    description
+      "type of configured lmi type";
+  }
+  typedef cfgRole {
+    type enumeration {
+      enum "dte" {
+        description
+          "FR DTE.";
+      }
+      enum "dce" {
+        description
+          "FR DCE.";
+      }
+      enum "nni" {
+        description
+          "FR NNI.";
+      }
+    }
+    description
+      "type of configured role";
+  }
+}

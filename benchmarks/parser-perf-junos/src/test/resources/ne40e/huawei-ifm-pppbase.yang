@@ -1,0 +1,449 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifm-pppbase {
+  belongs-to huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ifm-pppbase-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "submodule pppbase";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  grouping pppDamp_type {
+    description
+      "type of PPP damp";
+    leaf pppDampEnable {
+      type boolean;
+      default "true";
+      description
+        "PPP protocal status damping enable";
+    }
+    leaf pppDampLevel {
+      when "not(../pppDampEnable='false') or ../pppDampEnable='true'";
+      type pppDampLevelType;
+      default "light";
+      description
+        "PPP protocal status damping level";
+    }
+    leaf pppSuppress {
+      when "not(../pppDampEnable='false' or ../pppDampLevel!='manual')";
+      type uint16 {
+        range "1..20000";
+      }
+      units second;
+      description
+        "1000 times of PPP protocal status damping suppress threshold";
+      ext:allowDelete "true";
+    }
+    leaf pppReuse {
+      when "not(../pppDampEnable='false' or ../pppDampLevel!='manual')";
+      type uint16 {
+        range "1..20000";
+      }
+      units second;
+      description
+        "1000 times of PPP protocal status damping reuse threshold";
+      ext:allowDelete "true";
+    }
+    leaf pppMaxSuppressTime {
+      when "not(../pppDampEnable='false' or ../pppDampLevel!='manual')";
+      type uint8 {
+        range "1..255";
+      }
+      units second;
+      description
+        "PPP protocal status damping max suppress time(seconds)";
+      ext:allowDelete "true";
+    }
+    leaf pppHalfLifePeriod {
+      when "not(../pppDampEnable='false' or ../pppDampLevel!='manual')";
+      type uint8 {
+        range "1..60";
+      }
+      units second;
+      description
+        "PPP protocal status damping half life time(seconds)";
+      ext:allowDelete "true";
+    }
+  }
+  grouping ifm_pppbase_pppConfig_type {
+    description
+      "";
+    leaf negoTimeout {
+      type uint32 {
+        range "1..10";
+      }
+      units second;
+      default "3";
+      description
+        "Timeout duration of PPP negotiation. The value is expressed in seconds.";
+      ext:allowDelete "true";
+    }
+    leaf deadLinkTime {
+      type uint32 {
+        range "5..30";
+      }
+      units second;
+      default "30";
+      description
+        "Specify the Link Dead timer value. The value is expressed in seconds.";
+      ext:allowDelete "true";
+    }
+    leaf peerIpAddr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address assigned for the peer.";
+      ext:allowDelete "true";
+    }
+    leaf mruNegoMtd {
+      type pppbaseMruNegoMtd;
+      default "IPV4";
+      description
+        "Enable MRU negotiation. By default, IPv4 negotiation is applied.";
+      ext:allowDelete "true";
+    }
+    leaf ifPapAuth {
+      type boolean;
+      default "false";
+      description
+        "Enable the PAP authentication mode.";
+    }
+    leaf ifChapAuth {
+      type boolean;
+      default "false";
+      description
+        "Enable the CHAP authentication mode.";
+    }
+    leaf magicNumCheck {
+      type boolean;
+      default "false";
+      description
+        "Enable the function of Magic-Number Check";
+      ext:allowDelete "true";
+    }
+    leaf osicpNego {
+      type pppbaseNcpNegoType;
+      default "Enable";
+      description
+        "Enable OSICP negotiate.";
+      ext:allowDelete "true";
+    }
+    leaf mplscpNego {
+      type pppbaseNcpNegoType;
+      default "Enable";
+      description
+        "Enable MPLSCP negotiate.";
+      ext:allowDelete "true";
+    }
+    leaf peerHostRoute {
+      type boolean;
+      default "false";
+      description
+        "Enable the function of suppressing the adding of peer host routes to the local direct route table.";
+      ext:allowDelete "true";
+    }
+    leaf papUserName {
+      type string {
+        length "1..253";
+      }
+      description
+        "PAP authentication on user names.";
+      ext:allowDelete "true";
+    }
+    leaf papPaswrd {
+      type pub-type:password {
+        length "1..16";
+      }
+      description
+        "The password of this type is saved in the configuration file in cipher text.";
+      ext:allowDelete "true";
+    }
+    leaf chapUserName {
+      type string {
+        length "1..253";
+      }
+      description
+        "CHAP authentication on user names.";
+      ext:allowDelete "true";
+    }
+    leaf chapPaswrd {
+      type pub-type:password {
+        length "1..16";
+      }
+      description
+        "The password of this type is saved in the configuration file in cipher text.";
+      ext:allowDelete "true";
+    }
+    leaf dnsAdmitAny {
+      type boolean;
+      description
+        "Receive any DNS address sent by the peer.";
+    }
+    leaf primDNSAddr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the master DNS server.";
+    }
+    leaf secndDNSAddr {
+      type inet:ipv4-address-no-zone;
+      description
+        "IP address of the slave DNS server.";
+    }
+    container ifLink {
+      description
+        "PPP polling interval. The value is expressed in seconds.";
+      leaf timeInternal {
+        type uint32 {
+          range "0..32767";
+        }
+        units second;
+        default "10";
+        description
+          "FR polling interval. The value is expressed in seconds.";
+      }
+    }
+    container crcParam {
+      description
+        "CRC alarm configurations.";
+      leaf errType {
+        type pppbaseCrcType;
+        default "Default";
+        description
+          "CRC alarm type.";
+        ext:allowDelete "true";
+      }
+      leaf highThreshold {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "CRC upper limit.";
+        ext:allowDelete "true";
+      }
+      leaf lowThreshold {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "CRC lower limit.";
+        ext:allowDelete "true";
+      }
+      leaf interval {
+        type uint32 {
+          range "1..65535";
+        }
+        description
+          "Time interval.The value is expressed in seconds.";
+        ext:allowDelete "true";
+      }
+      leaf pktAlaCof {
+        type uint32 {
+          range "1..9";
+        }
+        description
+          "Error packet alarm coefficient.";
+        ext:allowDelete "true";
+      }
+      leaf pktAlaPow {
+        type uint32 {
+          range "1..5";
+        }
+        description
+          "Error packet alarm power.";
+        ext:allowDelete "true";
+      }
+      leaf pktResCof {
+        type uint32 {
+          range "1..9";
+        }
+        description
+          "Error packet resume coefficient.";
+        ext:allowDelete "true";
+      }
+      leaf pktResPow {
+        type uint32 {
+          range "1..6";
+        }
+        description
+          "Error packet resume power.";
+        ext:allowDelete "true";
+      }
+      leaf bitAlaCof {
+        type uint32 {
+          range "1";
+        }
+        description
+          "Error bit alarm coefficient.";
+        ext:allowDelete "true";
+      }
+      leaf bitAlaPow {
+        type uint32 {
+          range "3..6";
+        }
+        description
+          "Error bit alarm power.";
+        ext:allowDelete "true";
+      }
+      leaf bitResCof {
+        type uint32 {
+          range "1";
+        }
+        description
+          "Error bit resume coefficient.";
+        ext:allowDelete "true";
+      }
+      leaf bitResPow {
+        type uint32 {
+          range "3..6";
+        }
+        description
+          "Error bit resume power.";
+        ext:allowDelete "true";
+      }
+      leaf shutdown {
+        type boolean;
+        description
+          "CRC action Down.";
+        ext:allowDelete "true";
+      }
+      leaf crcBit {
+        type pppbaseCrcBitType;
+        default "32";
+        description
+          "CRC bit.";
+        ext:allowDelete "true";
+      }
+      leaf sampleFactor {
+        type uint32 {
+          range "10..100";
+        }
+        default "50";
+        description
+          "Sample window factor, default is 50.";
+        ext:allowDelete "false";
+      }
+      leaf childMaxNum {
+        type uint32 {
+          range "10..100";
+        }
+        default "50";
+        description
+          "Maximum number of child windows, default is 50.";
+        ext:allowDelete "false";
+      }
+      leaf childAlarmNum {
+        type uint32 {
+          range "1..100";
+        }
+        default "5";
+        description
+          "Minimal number of child windows for alarm generating, default is 5.";
+        ext:allowDelete "false";
+      }
+      leaf childResmNum {
+        type uint32 {
+          range "1..100";
+        }
+        default "30";
+        description
+          "Minimal number of child windows for alarm resuming, default is 30.";
+        ext:allowDelete "false";
+      }
+    }
+    container pppStatistics {
+      config false;
+      description
+        "PPP statistics.";
+      leaf inputShortPkts {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "PPP input short packets.";
+      }
+      leaf inputLongPkts {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "PPP input long packets.";
+      }
+      leaf inputCrcPkts {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "PPP input CRC packets.";
+      }
+      leaf inputLostPkts {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "PPP input lost packets.";
+      }
+      leaf outLostPkts {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "PPP output lost packets.";
+      }
+      leaf outOverPkts {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "PPP output over packets.";
+      }
+      leaf outUnderPkts {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "PPP output under packets.";
+      }
+    }
+  }
+  grouping ifm_pppbase_ifLink_type {
+    description
+      "";
+    leaf timeInternal {
+      type uint32 {
+        range "0..32767";
+      }
+      units second;
+      default "10";
+      description
+        "FR polling interval. The value is expressed in seconds.";
+    }
+  }
+}

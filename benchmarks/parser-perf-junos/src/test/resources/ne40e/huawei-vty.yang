@@ -1,0 +1,299 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-vty {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-vty";
+  prefix vty;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-vty-action;
+  include huawei-vty-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "VTY.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference      "Huawei private.";
+  }
+  container vty {
+    description
+      "VTY.";
+    container lineCfgs {
+      description
+        "VTY specific configuration list.";
+      list lineCfg {
+        key "lineIndex";
+        description
+          "VTY specific configuration.";
+        leaf lineIndex {
+          type uint16 {
+            range "34..54";
+          }
+          description
+            "Terminal line index.";
+        }
+        leaf uiNumber {
+          type uint16 {
+            range "0..20";
+          }
+          config false;
+          mandatory true;
+          description
+            "VTY Index.";
+        }
+        leaf idleTimeOutMin {
+          type uint16 {
+            range "0..35791";
+          }
+          default "10";
+          description
+            "Idle timeout in minutes.";
+          ext:allowDelete "true";
+        }
+        leaf idleTimeOutSec {
+          type uint8 {
+            range "0..59";
+          }
+          default "0";
+          description
+            "Idle timeout in seconds.";
+          ext:allowDelete "true";
+        }
+        leaf authMode {
+          type vtyTtyAuthModeType;
+          description
+            "Authentication Mode.";
+          ext:allowDelete "true";
+        }
+        leaf authPassword {
+          type pub-type:password {
+            length "8..16";
+          }
+          description
+            "Authentication Password";
+          ext:allowDelete "true";
+        }
+        leaf privilegeLevel {
+          type uint32 {
+            range "0..15";
+          }
+          default "0";
+          description
+            "User privilege level.";
+          ext:allowDelete "true";
+        }
+        leaf historyCmdSize {
+          type uint16 {
+            range "0..256";
+          }
+          default "10";
+          description
+            "History command buffer size. Describes the number of commands will be stored in history.";
+          ext:allowDelete "true";
+        }
+        leaf scrLength {
+          type uint16 {
+            range "0..512";
+          }
+          default "24";
+          description
+            "VTY screen length value.";
+          ext:allowDelete "true";
+        }
+        leaf shellEnable {
+          type boolean;
+          description
+            "Shell (Enable/Disable).";
+          ext:allowDelete "true";
+        }
+        leaf acl4InBound {
+          type string {
+            length "0..64";
+          }
+          description
+            "Acl inbound name for IPv4 protocol.";
+          ext:allowDelete "true";
+        }
+        leaf acl4OutBound {
+          type string {
+            length "0..64";
+          }
+          description
+            "Acl outbound name for IPv4 protocol.";
+          ext:allowDelete "true";
+        }
+        leaf acl6InBound {
+          type string {
+            length "0..64";
+          }
+          description
+            "Acl inbound name for IPv6 protocol.";
+          ext:allowDelete "true";
+        }
+        leaf acl6OutBound {
+          type string {
+            length "0..64";
+          }
+          description
+            "Acl outbound name for IPv6 protocol.";
+          ext:allowDelete "true";
+        }
+        leaf acl4InNum {
+          type uint32 {
+            range "2000..3999";
+          }
+          description
+            "Acl inbound number for IPv4 protocol.";
+          ext:allowDelete "true";
+        }
+        leaf acl4OutNum {
+          type uint32 {
+            range "2000..3999";
+          }
+          description
+            "Acl outbound number for IPv4 protocol.";
+          ext:allowDelete "true";
+        }
+        leaf acl6InNum {
+          type uint32 {
+            range "2000..3999";
+          }
+          description
+            "Acl inbound number for IPv6 protocol.";
+          ext:allowDelete "true";
+        }
+        leaf acl6OutNum {
+          type uint32 {
+            range "2000..3999";
+          }
+          description
+            "Acl outbound number for IPv6 protocol.";
+          ext:allowDelete "true";
+        }
+        leaf protoInbound {
+          type vtyTtyProtoInbnd;
+          description
+            "VTY protocol inbound name.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container lineGlobalCfg {
+      description
+        "VTY global configuration.";
+      leaf vtymaxUsers {
+        type uint32 {
+          range "0..21";
+        }
+        default "5";
+        description
+          "Maximum users can connect to VTY.";
+        ext:allowDelete "true";
+      }
+      leaf vtyPasswordLock {
+        type boolean;
+        default "true";
+        description
+          "VTY IP Block";
+      }
+      leaf vtySecurityPolicy {
+        type boolean;
+        default "true";
+        description
+          "VTY Security Policy. Disabling this may reduce the degree of vty security. It is strongly recommended to keep this enabled.";
+      }
+    }
+    container vtyIPBlockStatss {
+      config false;
+      description
+        "VTY IP Block Statistics";
+      list vtyIPBlockStats {
+        key "blockIpAddr vpnInstance";
+        config false;
+        description
+          "VTY IP Block Statistics";
+        leaf blockIpAddr {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "IP Address";
+        }
+        leaf vpnInstance {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "VPN Name";
+        }
+        leaf unBlockInterval {
+          type uint32 {
+            range "0..300";
+          }
+          config false;
+          description
+            "UnBlock Interval(Seconds)";
+        }
+      }
+    }
+    container vtyIPBlockAllStatss {
+      config false;
+      description
+        "VTY IP Block All Statistics";
+      list vtyIPBlockAllStats {
+        key "blockIpAddr vpnInstance";
+        config false;
+        description
+          "VTY IP Block All Statistics";
+        leaf blockIpAddr {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "IP Address";
+        }
+        leaf vpnInstance {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "VPN Name";
+        }
+        leaf state {
+          type vtyTtyIPBlockStateType;
+          config false;
+          description
+            "IP Current State";
+        }
+        leaf authFailCount {
+          type uint32 {
+            range "0..6";
+          }
+          config false;
+          description
+            "Authentication fialed Count";
+        }
+      }
+    }
+  }
+}

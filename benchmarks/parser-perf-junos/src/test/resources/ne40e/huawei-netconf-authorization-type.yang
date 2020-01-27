@@ -1,0 +1,153 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-netconf-authorization-type {
+  belongs-to huawei-netconf {
+    prefix netconf;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Netconf authorization type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef netconfOperationName {
+    type enumeration {
+      enum "get" {
+        description
+          "RPC operation get";
+      }
+      enum "get-config" {
+        description
+          "RPC operation get-config";
+      }
+      enum "edit-config" {
+        description
+          "RPC operation edit-config";
+      }
+      enum "lock" {
+        description
+          "RPC operation lock";
+      }
+      enum "unlock" {
+        description
+          "RPC operation unlock";
+      }
+      enum "kill-session" {
+        description
+          "RPC operation kill-session";
+      }
+      enum "copy-config" {
+        description
+          "RPC operation copy-config";
+      }
+      enum "delete-config" {
+        description
+          "RPC operation delete-config";
+      }
+      enum "discard-changes" {
+        description
+          "RPC operation discard-changes";
+      }
+      enum "commit" {
+        description
+          "RPC operation commit";
+      }
+      enum "get-next" {
+        description
+          "RPC operation get-next";
+      }
+      enum "discard-commit" {
+        description
+          "RPC operation discard-commit";
+      }
+      enum "sync-full" {
+        description
+          "RPC operation sync-full";
+      }
+      enum "sync-increment" {
+        description
+          "RPC operation sync-increment";
+      }
+      enum "execute-action" {
+        description
+          "RPC operation execute-action";
+      }
+      enum "execute-cli" {
+        description
+          "RPC operation execute-cli";
+      }
+      enum "update" {
+        description
+          "RPC operation update";
+      }
+      enum "create-subscription" {
+        description
+          "RPC operation create-subscription";
+      }
+      enum "rpc" {
+        description
+          "Yang RPC operation";
+      }
+    }
+    description
+      "Netconf operation name";
+  }
+  typedef netconfAuthorizationAccess {
+    type enumeration {
+      enum "enable" {
+        description
+          "Enable access";
+      }
+      enum "disable" {
+        description
+          "Disable access";
+      }
+    }
+    description
+      "Netconf authorization access";
+  }
+  typedef netconfAuthorizationAction {
+    type enumeration {
+      enum "permit" {
+        description
+          "Permit action";
+      }
+      enum "deny" {
+        description
+          "Deny action";
+      }
+    }
+    description
+      "Netconf authorization action";
+  }
+  typedef netconfAuthorizationRuleType {
+    type enumeration {
+      enum "operationRule" {
+        description
+          "Operation rule type";
+      }
+      enum "datanodeRule" {
+        description
+          "Datanode rule type";
+      }
+    }
+    description
+      "Netconf authorization rule type";
+  }
+}

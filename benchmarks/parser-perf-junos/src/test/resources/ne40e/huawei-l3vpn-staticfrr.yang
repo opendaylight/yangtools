@@ -1,0 +1,126 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-l3vpn-staticfrr {
+  belongs-to huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-l3vpn-l3vpncomm-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the submodule of l3vpn:l3vpn_staticfrr";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping l3vpn_l3vpncomm_staticfrrs_type {
+    description
+      "staticfrr group cfgrigure";
+    list staticFrr {
+      key "ifNameMaster ifNameSlave nextHopMaster nextHopSlave";
+      description
+        "Static FRR Instance";
+      leaf ifNameMaster {
+        type pub-type:ifName;
+        description
+          "Master Outbound Interface Name";
+      }
+      leaf ifNameSlave {
+        type pub-type:ifName;
+        description
+          "Slave Outbound Interface Name";
+      }
+      leaf nextHopMaster {
+        type inet:ipv4-address-no-zone;
+        description
+          "Master Next Hop Address";
+      }
+      leaf nextHopSlave {
+        type inet:ipv4-address-no-zone;
+        description
+          "Slave Next Hop Address";
+      }
+      leaf wtrTime {
+        type uint16 {
+          range "0..1800";
+        }
+        mandatory true;
+        description
+          "Wait to Restore Time";
+      }
+      leaf trackEventType {
+        type string;
+        mandatory true;
+        description
+          "Trace Event Type";
+      }
+      leaf bfdSessionName {
+        when "not(../trackEventType='track_null' or ../trackEventType='track_vrrp') or ../trackEventType='track_bfd'";
+        type string {
+          length "1..16";
+        }
+        description
+          "BFD Name";
+        ext:allowDelete "true";
+      }
+      leaf vrrpIfName {
+        when "not(../trackEventType='track_bfd' or ../trackEventType='track_null') or ../trackEventType='track_vrrp'";
+        type pub-type:ifName;
+        description
+          "VRRP interface Name";
+        ext:allowDelete "true";
+      }
+      leaf vrrpId {
+        when "not(../trackEventType='track_bfd' or ../trackEventType='track_null') or ../trackEventType='track_vrrp'";
+        type uint8;
+        default "0";
+        description
+          "VRRP Index";
+        ext:allowDelete "true";
+      }
+      leaf state {
+        type string;
+        config false;
+        description
+          "State";
+      }
+      leaf nhpTypeMaster {
+        type string;
+        default "single_next_hop";
+        description
+          "Master next hop type";
+        ext:allowDelete "true";
+      }
+      leaf nhpTypeSlave {
+        type string;
+        default "single_next_hop";
+        description
+          "Slave next hop type";
+        ext:allowDelete "true";
+      }
+    }
+  }
+}

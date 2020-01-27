@@ -1,0 +1,519 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-l3vpn-l3vpncomm-type {
+  belongs-to huawei-l3vpn {
+    prefix l3vpn;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the submodule of l3vpn:l3vpncomm_type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef l3vpncommonVrfRtType {
+    type enumeration {
+      enum "export_extcommunity" {
+        description
+          "Specifies the value of the extended community attribute of the route from an outbound interface to the destination VPN.";
+      }
+      enum "import_extcommunity" {
+        description
+          "Receives routes that carry the specified extended community attribute value.";
+      }
+    }
+    description
+      "the type of l3vpncommonVrfRt";
+  }
+  typedef l3vpncommonOperationType {
+    type enumeration {
+      enum "all" {
+        description
+          "all:";
+      }
+    }
+    description
+      "the type of l3vpncommonOperation";
+  }
+  typedef l3vpncommonRowStatus {
+    type enumeration {
+      enum "active" {
+        description
+          "active:";
+      }
+      enum "notInService" {
+        description
+          "notInService:";
+      }
+      enum "notReady" {
+        description
+          "notReady:";
+      }
+      enum "createAndGo" {
+        description
+          "createAndGo:";
+      }
+      enum "createAndWait" {
+        description
+          "createAndWait:";
+      }
+      enum "destroy" {
+        description
+          "destroy:";
+      }
+    }
+    description
+      "the status of l3vpncommonRow";
+  }
+  typedef l3vpncommonStorageType {
+    type enumeration {
+      enum "other" {
+        description
+          "other:";
+      }
+      enum "volatile" {
+        description
+          "volatile:";
+      }
+      enum "nonVolatile" {
+        description
+          "nonVolatile:";
+      }
+      enum "permanent" {
+        description
+          "permanent:";
+      }
+      enum "readOnly" {
+        description
+          "readOnly:";
+      }
+    }
+    description
+      "the type of l3vpncommonStorage";
+  }
+  typedef l3vpncommonLabelMode {
+    type enumeration {
+      enum "perInstance" {
+        description
+          "Labels are assigned to VPN instances in 'one label per instance' mode, that is, all routes in a VPN instance are assigned with the same label.";
+      }
+      enum "perRoute" {
+        description
+          "Labels are assigned to routes in the 'one label per route' mode, that is, each route is assigned with one label. ";
+      }
+    }
+    description
+      "the Mode of l3vpncommonLabel";
+  }
+  typedef l3vpncommonL3vpnPrefixType {
+    type enumeration {
+      enum "ipv4uni" {
+        description
+          "IPv4 unicast address family.";
+      }
+      enum "ipv6uni" {
+        description
+          "IPv6 unicast address family.";
+      }
+    }
+    description
+      "the type of l3vpncommonL3vnpPrefix";
+  }
+  typedef l3vpncommonTtlModeVpn {
+    type enumeration {
+      enum "uniform" {
+        description
+          "The TTL processing mode of MPLS is Uniform. In this mode, the TTL is deducted by one each time packets pass a hop in the MPLS domain.";
+      }
+      enum "pipe" {
+        description
+          "The TTL processing mode of MPLS is Pipe. In this mode, the TTL is deducted by one each time packets pass the inbound interface and outbound interface in the MPLS domain.";
+      }
+    }
+    description
+      "The TTL processing mode of MPLS";
+  }
+  typedef l3vpncommonVrfStatus {
+    type enumeration {
+      enum "up" {
+        description
+          "VPN Instance status Up.";
+      }
+      enum "down" {
+        description
+          "VPN Instance status Down.";
+      }
+    }
+    description
+      "the status of the vpn-instance";
+  }
+  typedef l3vpncommonProtocolType {
+    type enumeration {
+      enum "ALL" {
+        description
+          "To import all routes.";
+      }
+      enum "Direct" {
+        description
+          "To import direct routes.";
+      }
+      enum "OSPF" {
+        description
+          "To import OSPF routes.";
+      }
+      enum "ISIS" {
+        description
+          "To import IS-IS routes.";
+      }
+      enum "Static" {
+        description
+          "To import static routes.";
+      }
+      enum "RIP" {
+        description
+          "To import RIP routes.";
+      }
+      enum "BGP" {
+        description
+          "To import BGP routes.";
+      }
+      enum "OSPFV3" {
+        description
+          "To import OSPFv3 routes.";
+      }
+      enum "RIPNG" {
+        description
+          "To import RIPng routes.";
+      }
+      enum "Total" {
+        description
+          "To import Total routes.";
+      }
+      enum "NetStream" {
+        description
+          "To import NetStream routes.";
+      }
+      enum "INVALID" {
+        description
+          "INVALID";
+      }
+    }
+    description
+      "the type of the l3vpncommonProtocol";
+  }
+  typedef l3vpnbaseVpnAddrFm {
+    type enumeration {
+      enum "ipv4unicast" {
+        description
+          "IPv4 unicast address family.";
+      }
+    }
+    description
+      "the address family of the vpn";
+  }
+  typedef rmbaseVrfLabelMode {
+    type enumeration {
+      enum "perInstance" {
+        description
+          "perInstance:";
+      }
+      enum "perRoute" {
+        description
+          "perRoute:";
+      }
+    }
+    description
+      "the mode of the rmbaseVrfLabel";
+  }
+  typedef rmbaseProtocolType {
+    type enumeration {
+      enum "Direct" {
+        description
+          "Direct routes.";
+      }
+      enum "OSPF" {
+        description
+          "OSPF protocol.";
+      }
+      enum "ISIS" {
+        description
+          "IS-IS protocol.";
+      }
+      enum "Static" {
+        description
+          "Static routing protocol.";
+      }
+      enum "RIP" {
+        description
+          "RIP routing protocol.";
+      }
+      enum "BGP" {
+        description
+          "BGP routing protocol.";
+      }
+      enum "OSPFV3" {
+        description
+          "OSPFv3 protocol.";
+      }
+      enum "RIPNG" {
+        description
+          "Routing Information Protocol next generation (RIPng) protocol.";
+      }
+      enum "Total" {
+        description
+          "All routing protocols.";
+      }
+      enum "NetStream" {
+        description
+          "NetStream.";
+      }
+      enum "UNR" {
+        description
+          "UNR protocol.";
+      }
+      enum "OPR" {
+        description
+          "OPR protocol.";
+      }
+    }
+    description
+      "the type of the rmbaseProtocal";
+  }
+  typedef rmbaseRouteFlag {
+    type enumeration {
+      enum "D" {
+        description
+          "A route is advertised to the FIB table.";
+      }
+      enum "RD" {
+        description
+          "A route is an iterated route and needs to be advertised to the FIB table.";
+      }
+      enum "R" {
+        description
+          "A route is an iterated route.";
+      }
+      enum "T" {
+        description
+          "Nexthop is vpn instance.";
+      }
+      enum "DT" {
+        description
+          "Download to FIB and nexthop is vpn instance.";
+      }
+      enum "RDT" {
+        description
+          "Download to FIB and relay.";
+      }
+      enum "RT" {
+        description
+          "Relay and nexthop is vpn instance.";
+      }
+      enum "DB" {
+        description
+          "The route is downloaded to FIB.";
+      }
+      enum "RDB" {
+        description
+          "The route is downloaded to FIB and iterated.";
+      }
+      enum "RB" {
+        description
+          "The route is iterated.";
+      }
+      enum "TB" {
+        description
+          "The next hop is a VPN instance.";
+      }
+      enum "DTB" {
+        description
+          "The route is downloaded to FIB, and the next hop is a VPN instance.";
+      }
+      enum "RDTB" {
+        description
+          "The route is downloaded to FIB and iterated, and the next hop is a VPN instance.";
+      }
+      enum "RTB" {
+        description
+          "The route is iterated, and the next hop is a VPN instance.";
+      }
+      enum "B" {
+        description
+          "The route is blackhole.";
+      }
+    }
+    description
+      "the flag of the rmbaseRoute";
+  }
+  typedef rmbaseRouteState {
+    type enumeration {
+      enum "Active_Adv" {
+        description
+          "The route state is active and advertised.";
+      }
+      enum "Active_NoAdv" {
+        description
+          "The route state is active and not advertised.";
+      }
+      enum "Inactive_Adv" {
+        description
+          "The route state is inactive and advertised.";
+      }
+      enum "Active_Adv_Relied" {
+        description
+          "The route state is active, advertised, and relied.";
+      }
+      enum "Invalid_Adv" {
+        description
+          "The route state is invalid and advertised.";
+      }
+      enum "Active_NoAdv_Relied" {
+        description
+          "The route state is active, not advertised, and relied.";
+      }
+      enum "Invalid_NoAdv" {
+        description
+          "The route state is invalid and not advertised.";
+      }
+      enum "Inactive_NoAdv" {
+        description
+          "The route state is inactive and not advertised.";
+      }
+      enum "Inactive_Adv_Relied" {
+        description
+          "The route state is inactive, advertised, and relied.";
+      }
+      enum "Inactive_NoAdv_Relied" {
+        description
+          "The route state is inactive, not advertised, and relied.";
+      }
+    }
+    description
+      "the state of the rmbaseRoute";
+  }
+  typedef rmbaseRoutePriority {
+    type enumeration {
+      enum "critical" {
+        description
+          "Highest protocol priority.";
+      }
+      enum "high" {
+        description
+          "High protocol priority.";
+      }
+      enum "medium" {
+        description
+          "Medium protocol priority.";
+      }
+      enum "low" {
+        description
+          "Low protocol priority.";
+      }
+    }
+    description
+      "the priority of the rmbaseRoute";
+  }
+  typedef commodelProtocolType {
+    type enumeration {
+      enum "INIT" {
+        description
+          "INIT:";
+      }
+      enum "Direct" {
+        description
+          "Direct:";
+      }
+      enum "OSPF" {
+        description
+          "OSPF:";
+      }
+      enum "ISIS" {
+        description
+          "ISIS:";
+      }
+      enum "Static" {
+        description
+          "Static:";
+      }
+      enum "RIP" {
+        description
+          "RIP:";
+      }
+      enum "BGP" {
+        description
+          "BGP:";
+      }
+      enum "OSPFV3" {
+        description
+          "OSPFV3:";
+      }
+      enum "RIPNG" {
+        description
+          "RIPNG:";
+      }
+      enum "Total" {
+        description
+          "Total:";
+      }
+      enum "NetStream" {
+        description
+          "NetStream:";
+      }
+    }
+    description
+      "the type of the commodelProtocol";
+  }
+  typedef l3vpncommonlabelOpType {
+    type enumeration {
+      enum "POP" {
+        description
+          "";
+      }
+      enum "POPGO" {
+        description
+          "";
+      }
+    }
+    description
+      "the label operation mode of the l3vpncommon";
+  }
+  typedef l3vpncommontnlGroupState {
+    type enumeration {
+      enum "DOWN" {
+        description
+          "DOWM.";
+      }
+      enum "UP" {
+        description
+          "UP.";
+      }
+    }
+    description
+      "the state of the l3vpncommontnlGroup";
+  }
+  typedef l3vpncommonExtL3vpnPrefixType {
+    type enumeration {
+      enum "evpn" {
+        description
+          "Evpn Extend address family.";
+      }
+    }
+    description
+      "the type of the l3vpncommonExtL3vpnPrefix";
+  }
+}

@@ -1,0 +1,87 @@
+submodule huawei-ipsec-action {
+  belongs-to huawei-ipsec {
+    prefix ipsec;
+  }
+
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ipsec-type;
+  include huawei-ipsec-ike-type;
+  include huawei-ipsec-ike-action;
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "submodule ipsec-action";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference "Huawei private.";
+  }
+
+  rpc ipsecResetAllStats {
+    description
+      "IPSec Reset All Statistics";
+  }
+  rpc ipsecResetSlotStats {
+    description
+      "IPSec Reset Statistics By Slot";
+    input {
+      leaf slotNumber {
+        type string {
+          length "1..31";
+        }
+        mandatory true;
+        description
+          "Slot Number";
+      }
+      leaf subSlotType {
+        type ipsecSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ipsecResetSaStats {
+    description
+      "IPSec Reset SA Statistics";
+    input {
+      leaf saName {
+        type string {
+          length "1..15";
+        }
+        mandatory true;
+        description
+          "SA Name";
+      }
+      leaf slotNumber {
+        type string {
+          length "1..31";
+        }
+        description
+          "Slot Number";
+        ext:allowDelete "true";
+      }
+    }
+  }
+}

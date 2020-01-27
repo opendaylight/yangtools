@@ -1,0 +1,85 @@
+module huawei-extension {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-extension";
+  prefix ext;
+
+  organization
+    "Huawei Technologies";
+  contact
+    "Huawei Industrial Base
+     Bantian, Longgang
+     Shenzhen 518129
+     People's Republic of China
+     Website: http://www.huawei.com
+     Email: support@huawei.com";
+  description
+    "ac ne extension yang syntax";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Initial revision";
+    reference "Huawei private.";
+  }
+
+  extension support-filter {
+    argument value;
+    description
+      "support-filter";
+  }
+
+  extension value-mapping {
+    description
+      "value-mapping";
+  }
+
+  extension value-replace {
+    description
+      "value-replace";
+  }
+
+  extension item {
+    argument value;
+    description
+      "item";
+  }
+
+  extension meaning {
+    argument value;
+    description
+      "meaning";
+  }
+
+  extension case-sensitivity {
+    argument value;
+    description
+      "case-sensitivity ";
+  }
+
+  extension bitmap-bit-range {
+    argument value;
+    description
+      "bitmap-bit-range";
+  }
+
+  extension masklen {
+    argument value;
+    description
+      "masklen";
+  }
+
+  extension bit {
+    argument value;
+    description
+      "bit";
+  }
+
+  extension allowDelete {
+    argument value;
+    description
+      "allowDelete";
+  }
+}

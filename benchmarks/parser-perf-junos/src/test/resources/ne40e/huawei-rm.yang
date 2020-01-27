@@ -1,0 +1,41 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-rm {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-rm";
+  prefix rm;
+  include huawei-rm-action;
+  include huawei-rm-rmbase-type;
+  include huawei-rm-rmbase;
+  include huawei-rm-l3vpn-labelstack;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Routing management module that stores and selects the optimal route.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container rm {
+    description
+      "Routing management module that stores and selects the optimal route.";
+    container rmbase {
+      description
+        "Basic service package of routing management ";
+      uses rm:rm_rmbase_rmbase_type;
+    }
+  }
+}

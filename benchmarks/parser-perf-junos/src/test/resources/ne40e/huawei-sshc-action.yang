@@ -1,0 +1,206 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-sshc-action {
+  belongs-to huawei-sshc {
+    prefix sshc;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-sshc-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of ssh client action submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference    "Huawei private.";
+  }
+  rpc sshcConnects {
+    description
+      "SFTP file transfer";
+    input {
+      list sshcConnect {
+        description
+          "SFTP file transfer";
+        leaf sourceIpv4Address {
+          type inet:ipv4-address-no-zone;
+          description
+            "Specify the source IPv4 address.";
+        }
+        leaf sourceIpv6Address {
+          type inet:ipv6-address-no-zone;
+          description
+            "Specify the source IPv6 address.";
+        }
+        leaf serverPort {
+          type uint32 {
+            range "1..65535";
+          }
+          description
+            "Specify the port number. The default port is 22.";
+          ext:allowDelete "true";
+        }
+        leaf HostAddrIPv4 {
+          type string {
+            length "1..255";
+          }
+          description
+            "Specify the IPv4 address of remote system (SFTP server).";
+          ext:allowDelete "true";
+        }
+        leaf HostAddrIPv6 {
+          type string {
+            length "1..255";
+          }
+          description
+            "Specify the IPv6 address of remote system (SFTP server).";
+          ext:allowDelete "true";
+        }
+        leaf commandType {
+          type sshcTransCmdType;
+          description
+            "Specify the type of operation need to be performed (GET/PUT).";
+          ext:allowDelete "false";
+        }
+        leaf userName {
+          type string {
+            length "1..255";
+          }
+          mandatory true;
+          description
+            "Specify the user name to authenticate the connection before file transfer.";
+          ext:allowDelete "false";
+        }
+        leaf password {
+          type pub-type:password;
+          mandatory true;
+          description
+            "Specify the password to authenticate the connection before file transfer.";
+          ext:allowDelete "false";
+        }
+        leaf localFileName {
+          type string {
+            length "1..256";
+          }
+          description
+            "Specify the local file name ";
+          ext:allowDelete "true";
+        }
+        leaf remoteFileName {
+          type string {
+            length "1..256";
+          }
+          description
+            "Specify the remote file name";
+          ext:allowDelete "true";
+        }
+        leaf CtosCipher {
+          type sshcSshcCipherList;
+          description
+            "Specify the preferred encryption algorithm from the client to the server, including des, 3des and aes128. The default algorithm is aes128.";
+          ext:allowDelete "true";
+        }
+        leaf StocCipher {
+          type sshcSshcCipherList;
+          description
+            "Specify the preferred encryption algorithm from the server to the client, including des, 3des and aes128. The default algorithm is aes128.";
+          ext:allowDelete "true";
+        }
+        leaf CtosCompress {
+          type sshcSshcComprsList;
+          description
+            "Specify the preferred compression algorithm from the client to the server, the default algorithm is zlib.";
+          ext:allowDelete "true";
+        }
+        leaf StocCompress {
+          type sshcSshcComprsList;
+          description
+            "Specify the preferred compression algorithm from the server to the client, the default algorithm is zlib.";
+          ext:allowDelete "true";
+        }
+        leaf CtosHMAC {
+          type sshcSshcHmacList;
+          description
+            "Specify the preferred HMAC algorithm from the client to the server, including shal, shal-96, md5 and md5-96. The default algorithm is shal-96.";
+          ext:allowDelete "true";
+        }
+        leaf StocHMAC {
+          type sshcSshcHmacList;
+          description
+            "Specify the preferred HMAC algorithm from the server to the client, including shal, shal-96, md5 and md5-96. The default algorithm is shal-96.";
+          ext:allowDelete "true";
+        }
+        leaf KeyExchange {
+          type sshcSshcKeyExList;
+          description
+            "Specify the key exchange algorithm, including the dh-group1 , dh-exchange-group sha1, dh-exchange-group sha2 ,sm2_kep, ECDH 256, ECDH 384 and ECDH 521  algorithm. The default algorithm is ECDH 521.";
+          ext:allowDelete "true";
+        }
+        leaf vpnInstanceName {
+          type string {
+            length "1..31";
+          }
+          description
+            "Specify the VPN instance name of an MPLS VPN.";
+          ext:allowDelete "true";
+        }
+        leaf sourceInterfaceName {
+          type pub-type:ifName;
+          description
+            "Specify the source interface name.";
+          ext:allowDelete "true";
+        }
+        leaf identityKey {
+          type sshcSshcEntityList;
+          description
+            "Specify the host type for connection.";
+          ext:allowDelete "true";
+        }
+        leaf transferType {
+          type sshcSshcTransferType;
+          description
+            "Specify the transfer type (SFTP/SCP)";
+          ext:allowDelete "true";
+        }
+        leaf isRecursive {
+          type sshcScpBool;
+          description
+            "Specify the recursive file transfer for SCP";
+          ext:allowDelete "true";
+        }
+        leaf forceReceivePubkey {
+          type sshcBoolType;
+          description
+            "This will enable first time connection do same job as ssh client first time enable.";
+          ext:allowDelete "true";
+        }
+        leaf passpharse {
+          type pub-type:password;
+          description
+            "Configure passpharse";
+          ext:allowDelete "true";
+        }
+      }
+    }
+  }
+}

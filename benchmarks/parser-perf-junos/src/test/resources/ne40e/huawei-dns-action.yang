@@ -1,0 +1,61 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-dns-action {
+  belongs-to huawei-dns {
+    prefix dns;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  include huawei-dns-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of submodule dns_action";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc clearIpv4Host {
+    description
+      "To clear all IPv4 dynamic host cache of specified type.";
+    input {
+      leaf vrfName {
+        type pub-type:vrfName;
+        default "_public_";
+        description
+          "Clearance of DNS dynamic entries based on VPN names.";
+      }
+    }
+  }
+  rpc clearIpv6Host {
+    description
+      "To clear all IPv6 dynamic host cache of specified type.";
+    input {
+      leaf vrfName {
+        type pub-type:vrfName;
+        default "_public_";
+        description
+          "Clearance of DNS dynamic entries based on VPN names.";
+      }
+    }
+  }
+  rpc clearPktStat {
+    description
+      "Clearance of DNS packet Statistics.";
+  }
+}

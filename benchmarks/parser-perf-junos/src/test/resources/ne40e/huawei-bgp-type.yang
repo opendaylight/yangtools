@@ -1,0 +1,1455 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-bgp-type {
+  belongs-to huawei-bgp {
+    prefix bgp;
+  }
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "The type of the bgp module.";
+
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  typedef bgpcommAddrFamilyType {
+    type enumeration {
+      enum "ipv4" {
+        description
+          "ipv4:";
+      }
+      enum "ipv6" {
+        description
+          "ipv6:";
+      }
+    }
+    description
+      "the type of bgpcommAddrFamily";
+  }
+
+  typedef bgpcommSubAddrFamType {
+    type enumeration {
+      enum "unicast" {
+        description
+          "unicast:";
+      }
+      enum "multicast" {
+        description
+          "multicast:";
+      }
+      enum "both" {
+        description
+          "both:";
+      }
+      enum "labelunicast" {
+        description
+          "labelunicast:";
+      }
+    }
+    description
+      "the type of bgpcommSubAddrFam";
+  }
+
+  typedef bgpcommPasswordType {
+    type enumeration {
+      enum "null" {
+        description
+          "No password is set.";
+      }
+      enum "cipher" {
+        description
+          "Set a ciphertext.";
+      }
+      enum "simple" {
+        description
+          "Set a plaintext.";
+      }
+    }
+    description
+      "the type of bgpcommPassword";
+  }
+
+  typedef bgpcommPrefixType {
+    type enumeration {
+      enum "ipv4uni" {
+        description
+          "IPv4 unicast address family.";
+      }
+      enum "ipv4multi" {
+        description
+          "IPv4 multicast address family.";
+      }
+      enum "ipv4vpn" {
+        description
+          "IPv4 VPN address family.";
+      }
+      enum "ipv6uni" {
+        description
+          "IPv6 unicast address family.";
+      }
+      enum "ipv6vpn" {
+        description
+          "IPv6 VPN address family.";
+      }
+      enum "ipv4flow" {
+        description
+          "IPv4 Flow address family.";
+      }
+      enum "l2vpnad" {
+        description
+          "L2VPN-AD Address Family.";
+      }
+      enum "mvpn" {
+        description
+          "IPv4 MVPN address family.";
+      }
+      enum "vpntarget" {
+        description
+          "Vpntarget Address Family";
+      }
+      enum "evpn" {
+        description
+          "EVPN address family.";
+      }
+      enum "ipv4vpnmcast" {
+        description
+          "IPv4 VPN Multicast Address Family.";
+      }
+      enum "ls" {
+        description
+          "Link-state Address Family.";
+      }
+      enum "mdt" {
+        description
+          "IPv4 MDT Address Family.";
+      }
+      enum "ipv6flow" {
+        description
+          "IPv6 Flow Address Family.";
+      }
+    }
+    description
+      "the type of bgpcommPrefix";
+  }
+
+  typedef bgpcommVrfPrefixType {
+    type enumeration {
+      enum "ipv4uni" {
+        description
+          "IPv4 unicast address family.";
+      }
+      enum "ipv6uni" {
+        description
+          "IPv6 unicast address family.";
+      }
+    }
+    description
+      "the type of bgpcommVrfPrefix";
+  }
+
+  typedef bgpcommGroupAddrFamily {
+    type enumeration {
+      enum "public" {
+        description
+          "Public peer group.";
+      }
+      enum "ipv4uni" {
+        description
+          "IPv4 unicast address family.";
+      }
+      enum "ipv6uni" {
+        description
+          "IPv6 unicast address family.";
+      }
+    }
+    description
+      "the address family of bgp common group";
+  }
+
+  typedef bgpcommImRouteProtocol {
+    type enumeration {
+      enum "direct" {
+        description
+          "Import direct routes.";
+      }
+      enum "ospf" {
+        description
+          "Import OSPF routes.";
+      }
+      enum "isis" {
+        description
+          "Import IS-IS routes.";
+      }
+      enum "static" {
+        description
+          "Import static routes.";
+      }
+      enum "rip" {
+        description
+          "Import RIP routes.";
+      }
+      enum "ospfv3" {
+        description
+          "Import OSPFv3 routes.";
+      }
+      enum "ripng" {
+        description
+          "Import RIPng routes.";
+      }
+      enum "unr" {
+        description
+          "Import UNR routes.";
+      }
+      enum "op-route" {
+        description
+          "Import OPR routes.";
+      }
+    }
+    description
+      "the protocol of bgpcommonImRoute";
+  }
+
+  typedef bgpcommFilterProtocol {
+    type enumeration {
+      enum "noprotocol" {
+        description
+          "Import routes of all protocols.";
+      }
+      enum "direct" {
+        description
+          "Import direct routes.";
+      }
+      enum "ospf" {
+        description
+          "Import OSPF routes.";
+      }
+      enum "isis" {
+        description
+          "Import IS-IS routes.";
+      }
+      enum "static" {
+        description
+          "Import static routes.";
+      }
+      enum "rip" {
+        description
+          "Import RIP routes.";
+      }
+      enum "ospfv3" {
+        description
+          "Import OSPFv3 routes.";
+      }
+      enum "ripng" {
+        description
+          "Import RIPng routes.";
+      }
+      enum "unr" {
+        description
+          "Import UNR routes.";
+      }
+      enum "op-route" {
+        description
+          "Import OPR routes.";
+      }
+    }
+    description
+      "the protocol of bgp common filter";
+  }
+
+  typedef bgpcommPeerType {
+    type enumeration {
+      enum "ebgp" {
+        description
+          "EBGP peer.";
+      }
+      enum "ibgp" {
+        description
+          "IBGP peer.";
+      }
+    }
+    description
+      "the type of bgp common peer";
+  }
+
+  typedef bgpcommPeerConnectMode {
+    type enumeration {
+      enum "listenOnly" {
+        description
+          "Listening mode.";
+      }
+      enum "connectOnly" {
+        description
+          "Connection mode.";
+      }
+      enum "null" {
+        description
+          "Default value.";
+      }
+    }
+    description
+      "the connect mode of bgp common peer";
+  }
+
+  typedef bgpcommRefDirection {
+    type enumeration {
+      enum "export" {
+        description
+          "export:";
+      }
+      enum "import" {
+        description
+          "import:";
+      }
+    }
+    description
+      "the direction of bgpcommonRef";
+  }
+
+  typedef bgpcommUPGListType {
+    type enumeration {
+      enum "PendingList" {
+        description
+          "PendingList:";
+      }
+      enum "SendingList" {
+        description
+          "SendingList:";
+      }
+      enum "WaitingList" {
+        description
+          "WaitingList:";
+      }
+      enum "SyncingList" {
+        description
+          "SyncingList:";
+      }
+    }
+    description
+      "the type of bgpcommUPGList";
+  }
+
+  typedef bgpcommUpgState {
+    type enumeration {
+      enum "pending" {
+        description
+          "pending:";
+      }
+      enum "batchsend" {
+        description
+          "batchsend:";
+      }
+      enum "realTimeSend" {
+        description
+          "realTimeSend:";
+      }
+      enum "max" {
+        description
+          "max:";
+      }
+    }
+    description
+      "the state of bgpcommUpgState";
+  }
+
+  typedef bgpcommUpgEvent {
+    type enumeration {
+      enum "startQuery" {
+        description
+          "startQuery:";
+      }
+      enum "sendStopQuery" {
+        description
+          "sendStopQuery:";
+      }
+      enum "syncStopQuery" {
+        description
+          "syncStopQuery:";
+      }
+      enum "sendBufFinished" {
+        description
+          "sendBufFinished:";
+      }
+      enum "max" {
+        description
+          "max:";
+      }
+    }
+    description
+      "the Event of bgpcommUpg";
+  }
+
+  typedef bgpcommRouteLmtType {
+    type enumeration {
+      enum "noparameter" {
+        description
+          "Default value.";
+      }
+      enum "alertOnly" {
+        description
+          "An alarm is generated and no additional routes will be accepted if the maximum number of routes allowed have been received.";
+      }
+      enum "idleForever" {
+        description
+          "The connection that is interrupted is not automatically re-established if the maximum number of routes allowed have been received.";
+      }
+      enum "idleTimeout" {
+        description
+          "After the number of received routes exceeds the threshold and the timeout timer expires, the connection that is interrupted is automatically re-established.";
+      }
+    }
+    description
+      "the type of bgpcommRouteLmt";
+  }
+
+  typedef bgpcommAddPathCapType {
+    type enumeration {
+      enum "null" {
+        description
+          "Null.";
+      }
+      enum "receive" {
+        description
+          "Support receiving Add-Path routes.";
+      }
+      enum "send" {
+        description
+          "Support sending Add-Path routes.";
+      }
+      enum "both" {
+        description
+          "Support receiving and sending Add-Path routes.";
+      }
+    }
+    description
+      "the type of bgpcommAddPathCap";
+  }
+
+  typedef bgpcommRTVarFieldType {
+    type enumeration {
+      enum "aspath" {
+        description
+          "aspath:";
+      }
+      enum "community" {
+        description
+          "community:";
+      }
+      enum "extcommunity" {
+        description
+          "extcommunity:";
+      }
+      enum "peerlist" {
+        description
+          "peerlist:";
+      }
+      enum "clusterid" {
+        description
+          "clusterid:";
+      }
+    }
+    description
+      "the type of bgpcommRTVarField";
+  }
+
+  typedef bgpcommNextHopCfg {
+    type enumeration {
+      enum "null" {
+        description
+          "The next hop is not changed.";
+      }
+      enum "local" {
+        description
+          "The next hop is changed to the local IP address.";
+      }
+      enum "invariable" {
+        description
+          "Prevent the device from changing the next hop of each imported IGP route when advertising it to its BGP peers.";
+      }
+    }
+    description
+      "the configuration of bgp next-hop";
+  }
+
+  typedef bgpcommRTShowTmpType {
+    type enumeration {
+      enum "null" {
+        description
+          "null:";
+      }
+      enum "normalTmp" {
+        description
+          "normalTmp:";
+      }
+      enum "natureTmp" {
+        description
+          "natureTmp:";
+      }
+      enum "samePreTmp" {
+        description
+          "samePreTmp:";
+      }
+    }
+    description
+      "the type of bgpcommRTShowTmp";
+  }
+
+  typedef bgpcommTTLType {
+    type enumeration {
+      enum "default" {
+        description
+          "Default value.";
+      }
+      enum "EBGPMAXHOP" {
+        description
+          "EBGP peer multi-hop connection.";
+      }
+      enum "GTSM" {
+        description
+          "Number of valid TTL hops.";
+      }
+    }
+    description
+      "the type of bgpcommTTL";
+  }
+
+  typedef bgpcommApplyLabelType {
+    type enumeration {
+      enum "perRoute" {
+        description
+          "Labels are assigned to routes in the 'one label per route' mode, that is, each route is assigned with one label. ";
+      }
+      enum "perNexthop" {
+        description
+          "Labels are assigned to the routes which have same nexthop and out-label  in 'one label per nexthop' mode, that is, all routes  have same nexthop and out-label are assigned with the same label.";
+      }
+    }
+    description
+      "the type of bgpcommApplyLabel";
+  }
+
+  typedef bgpcommPEERSTATE {
+    type enumeration {
+      enum "idle" {
+        description
+          "Idle state.";
+      }
+      enum "connect" {
+        description
+          "Connecting state.";
+      }
+      enum "active" {
+        description
+          "Active state.";
+      }
+      enum "opensent" {
+        description
+          "OpenSent state.";
+      }
+      enum "openconfirm" {
+        description
+          "OpenConfirm state.";
+      }
+      enum "established" {
+        description
+          "Established state.";
+      }
+      enum "idle-admin" {
+        description
+          "Idle(Admin) state.";
+      }
+      enum "idle-ovlmt" {
+        description
+          "Idle(Ovlmt) state.";
+      }
+      enum "no-neg" {
+        description
+          "No neg state.";
+      }
+    }
+    description
+      "the state of bgpcommPeer";
+  }
+
+  typedef bgpcommPEERADMINSTATUS {
+    type enumeration {
+      enum "stop" {
+        description
+          "stop:";
+      }
+      enum "start" {
+        description
+          "start:";
+      }
+    }
+    description
+      "the status of bgpcommPeerAdmin";
+  }
+
+  typedef bgpcommATOMAGGREGATE {
+    type enumeration {
+      enum "lessSpecificRrouteNotSelected" {
+        description
+          "lessSpecificRrouteNotSelected:";
+      }
+      enum "lessSpecificRouteSelected" {
+        description
+          "lessSpecificRouteSelected:";
+      }
+    }
+    description
+      "the AGGREGate of bgpcommATOM";
+  }
+
+  typedef bgpcommSelDependType {
+    type enumeration {
+      enum "default" {
+        description
+          "Default value.";
+      }
+      enum "dependTunnel" {
+        description
+          "Routing-dependent tunnel iteration.";
+      }
+      enum "dependIp" {
+        description
+          "Routing-dependent IP iteration.";
+      }
+    }
+    description
+      "the type of bgpcommSelDepend";
+  }
+
+  typedef bgpcommNhpLookUpBitErrType {
+    type enumeration {
+      enum "null" {
+        description
+          "Null.";
+      }
+      enum "upgrade-cost" {
+        description
+          "Increase the MED.";
+      }
+      enum "degrade-localpref" {
+        description
+          "Reduce the Local-Preference.";
+      }
+    }
+    description
+      "the type of bgpcommNhpLookUpBitErr";
+  }
+
+  typedef bgpcommBrmDebugType {
+    type enumeration {
+      enum "component" {
+        description
+          "component:";
+      }
+      enum "instance" {
+        description
+          "instance:";
+      }
+      enum "peer" {
+        description
+          "peer:";
+      }
+      enum "route" {
+        description
+          "route:";
+      }
+      enum "nexthop" {
+        description
+          "nexthop:";
+      }
+    }
+    description
+      "the type of bgpcommBrmDebug";
+  }
+
+  typedef bgpcommBGPMIBBOOL {
+    type enumeration {
+      enum "false" {
+        description
+          "false:";
+      }
+      enum "true" {
+        description
+          "true:";
+      }
+    }
+    description
+      "the bool value of the bgpcommBGPMIB";
+  }
+
+  typedef bgpcommBgpDistType {
+    type enumeration {
+      enum "center" {
+        description
+          "Central BGP process.";
+      }
+      enum "distributed" {
+        description
+          "Distributed BGP process.";
+      }
+    }
+    description
+      "the type of bgpcommBgpDist";
+  }
+
+  typedef bgpcommImportAddrFmType {
+    type enumeration {
+      enum "ipv4uni" {
+        description
+          "ipv4uni:";
+      }
+      enum "ipv4vpn" {
+        description
+          "ipv4vpn:";
+      }
+      enum "ipv6uni" {
+        description
+          "ipv6uni:";
+      }
+    }
+    description
+      "the type of bgpcommImportAddress family";
+  }
+
+  typedef bgpcommBgpBfdState {
+    type enumeration {
+      enum "up" {
+        description
+          "up:";
+      }
+      enum "down" {
+        description
+          "down:";
+      }
+      enum "unknown" {
+        description
+          "unknown:";
+      }
+    }
+    description
+      "the state of bgpcommBgpBfd";
+  }
+
+  typedef bgpcommRoutQueConType {
+    type enumeration {
+      enum "null" {
+        description
+          "null:";
+      }
+      enum "cidr" {
+        description
+          "cidr:";
+      }
+      enum "inconAS" {
+        description
+          "inconAS:";
+      }
+      enum "asPathFilter" {
+        description
+          "asPathFilter:";
+      }
+      enum "communityFilter" {
+        description
+          "communityFilter:";
+      }
+      enum "communityNotWhole" {
+        description
+          "communityNotWhole:";
+      }
+      enum "communityWhole" {
+        description
+          "communityWhole:";
+      }
+      enum "regular" {
+        description
+          "regular:";
+      }
+      enum "label" {
+        description
+          "label:";
+      }
+      enum "longerPrefix" {
+        description
+          "longerPrefix:";
+      }
+    }
+    description
+      "the type of bgpcommRoutQuecon";
+  }
+
+  typedef bgpcommAdvOrRecv {
+    type enumeration {
+      enum "null" {
+        description
+          "null:";
+      }
+      enum "advertised" {
+        description
+          "advertised:";
+      }
+      enum "received" {
+        description
+          "received:";
+      }
+      enum "receivedActive" {
+        description
+          "receivedActive:";
+      }
+    }
+    description
+      "the type of bgpcommon";
+  }
+
+  typedef bgpcommOrigin {
+    type enumeration {
+      enum "igp" {
+        description
+          "IBGP route.";
+      }
+      enum "egp" {
+        description
+          "EBGP route.";
+      }
+      enum "incomplete" {
+        description
+          "Route whose source is unknown.";
+      }
+    }
+    description
+      "the origin of bgpcommon";
+  }
+
+  typedef bgpcommDirectionType {
+    type enumeration {
+      enum "export" {
+        description
+          "Outbound direction.";
+      }
+      enum "import" {
+        description
+          "Inbound direction.";
+      }
+    }
+    description
+      "the type of bgpcommDirection";
+  }
+
+  typedef bgpcommonOrfMode {
+    type enumeration {
+      enum "null" {
+        description
+          "Default value.";
+      }
+      enum "receive" {
+        description
+          "ORF for incoming packets.";
+      }
+      enum "send" {
+        description
+          "ORF for outgoing packets.";
+      }
+      enum "both" {
+        description
+          "ORF for incoming and outgoing packets.";
+      }
+    }
+    description
+      "the mode of bgpcommonOrf";
+  }
+
+  typedef flowRtpDistributeType {
+    type enumeration {
+      enum "null" {
+        description
+          "Null.";
+      }
+      enum "receive" {
+        description
+          "Receive.";
+      }
+      enum "send" {
+        description
+          "Send.";
+      }
+      enum "both" {
+        description
+          "Both.";
+      }
+    }
+    description
+      "the type of flowRtpDistribute";
+  }
+
+  typedef bgpcommonOrfType {
+    type enumeration {
+      enum "null" {
+        description
+          "null:";
+      }
+      enum "ip-prefix" {
+        description
+          "ip-prefix:";
+      }
+      enum "nonstandard-compatible" {
+        description
+          "nonstandard-compatible:";
+      }
+    }
+    description
+      "the type of bgpcommonOrf";
+  }
+
+  typedef bgpcommonCraMatchMode {
+    type enumeration {
+      enum "null" {
+        description
+          "Null.";
+      }
+      enum "matchall" {
+        description
+          "Advertise the default route if all matching conditions are met.";
+      }
+      enum "matchany" {
+        description
+          "Advertise the default route if any matching condition is met.";
+      }
+    }
+    description
+      "the mode of bgpcommonCraMatch";
+  }
+
+  typedef defaultRtMatchMode {
+    type enumeration {
+      enum "null" {
+        description
+          "Null.";
+      }
+      enum "any" {
+        description
+          "Advertise the default route if any matching condition is met.";
+      }
+      enum "all" {
+        description
+          "Advertise the default route if all matching conditions are met.";
+      }
+    }
+    description
+      "the Mode of defaultRtMatch";
+  }
+
+  typedef bgpBfdState {
+    type enumeration {
+      enum "up" {
+        description
+          "The BFD session is Up.";
+      }
+      enum "down" {
+        description
+          "The BFD session is Down.";
+      }
+      enum "unknown" {
+        description
+          "The BFD session is unknown.";
+      }
+    }
+    description
+      "the state of bgpBfd";
+  }
+
+  typedef aclNumOrName {
+    type string {
+      length "1..32";
+      pattern '(2[0-9]{3})|([a-zA-Z]([^\s]*))';
+    }
+    description
+      "aclNumOrName is begin with a-z or A-Z or 0-9";
+  }
+
+  typedef acl6NumOrName {
+    type string {
+      length "1..32";
+      pattern '(2[0-9]{3})|([a-zA-Z]([^\s]*))';
+    }
+    description
+      "acl6NumOrName is begin with a-z or A-Z or 0-9";
+  }
+
+  typedef bgpcommExpModeType {
+    type enumeration {
+      enum "null" {
+        description
+          "Default value.";
+      }
+      enum "pipe" {
+        description
+          "The priority of BGP labels is not modified, and the outer label is removed.";
+      }
+      enum "uniform" {
+        description
+          "The label priority of intra-AS tunnels is copied to the BGP label. ";
+      }
+    }
+    description
+      "the type of bgpcommExpMode";
+  }
+
+  typedef bgpcommIngressProtectModeType {
+    type enumeration {
+      enum "null" {
+        description
+          "By default, LSP FRR is not enabled.";
+      }
+      enum "bgpFrr" {
+        description
+          "BGP FRR.";
+      }
+    }
+    description
+      "the type of bgpcommIngressProtectMode";
+  }
+
+  typedef bgpBfdTriggerType {
+    type enumeration {
+      enum "none" {
+        description
+          "No policy for establishing BGP BFD sessions is configured.";
+      }
+      enum "host" {
+        description
+          "Use host addresses to dynamically establish BGP BFD sessions.";
+      }
+      enum "ip-prefix" {
+        description
+          "IP prefix list used to dynamically establish a BFD session to monitor an LDP tunnel.";
+      }
+    }
+    description
+      "the type of the bgpBfdTrigger";
+  }
+
+  typedef bgpLspBfdSessionState {
+    type enumeration {
+      enum "adminDown" {
+        description
+          "The BGP LSP BFD session is administratively Down.";
+      }
+      enum "down" {
+        description
+          "The BGP LSP BFD session is Down.";
+      }
+      enum "init" {
+        description
+          "The BGP LSP BFD session is in initial state.";
+      }
+      enum "up" {
+        description
+          "The BGP LSP BFD session is Up.";
+      }
+    }
+    description
+      "the state of the bgpLspBfdSession";
+  }
+
+  typedef bgpLspType {
+    type enumeration {
+      enum "Ingress" {
+        description
+          "Ingress of the BGP LSP.";
+      }
+      enum "Transit" {
+        description
+          "Transit node of the BGP LSP.";
+      }
+      enum "Egress" {
+        description
+          "Egress of the BGP LSP.";
+      }
+    }
+    description
+      "the type of the bgplsp";
+  }
+
+  typedef bgpLspFrrType {
+    type enumeration {
+      enum "Primary" {
+        description
+          "Primary LSP type.";
+      }
+      enum "Backup" {
+        description
+          "Backup LSP type.";
+      }
+    }
+    description
+      "the type of the bgpLspFrr";
+  }
+
+  typedef bgpLabelOperationType {
+    type enumeration {
+      enum "Push" {
+        description
+          "Push a label.";
+      }
+      enum "Swap" {
+        description
+          "Swap a Label.";
+      }
+      enum "Pop" {
+        description
+          "Pop out a label.";
+      }
+      enum "Swappush" {
+        description
+          "Swap a label and push a label.";
+      }
+      enum "Popgo" {
+        description
+          "Packets are forwarded based on the next hop directly mapped to the
+           label after label popping";
+      }
+    }
+    description
+      "the type of the bgpLabelOperation";
+  }
+
+  typedef ipPrefix {
+    type string {
+      length "1..169";
+      pattern "([^\\? ]+)";
+    }
+    description
+      "ipprefix is not include";
+  }
+
+  typedef policyName {
+    type string {
+      length "1..200";
+      pattern "([^\\? ]+)";
+    }
+    description
+      "policyName is not include";
+  }
+  typedef tnlSelName {
+    type string {
+      length "1..40";
+      pattern '(^[^\? ]+$)';
+    }
+    description
+      "tnlSelName is not include";
+  }
+  typedef l2vpnadRouteType {
+    type enumeration {
+      enum "vplsad" {
+        description
+          "VPLS-AD routes.";
+      }
+      enum "vpls" {
+        description
+          "VPLS routes.";
+      }
+      enum "vpws" {
+        description
+          "VPWS routes.";
+      }
+    }
+    description
+      "the type of the l2vpnadRoute";
+  }
+
+  typedef asNumberValidate {
+    type string {
+      length "1..11";
+          pattern '((([1-9]\d{0,8})|([1-3]\d{9})|(4[0-1]\d{8})|(42[0-8]\d{7})|(429[0-3]\d{6})|(4294[0-8]\d{5})|(42949[0-5]\d{4})|(429496[0-6]\d{3})|(4294967[0-1]\d{2})|(42949672[0-8]\d{1})|(429496729[0-5]))|((([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))(\.)(([0-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))))';
+    }
+    description
+      "asNumber is not include";
+  }
+
+  typedef ifState {
+    type enumeration {
+      enum "down" {
+        description
+          "Down state.";
+      }
+      enum "up" {
+        description
+          "up:";
+      }
+    }
+    description
+      "the state of the route:down or up";
+  }
+
+  typedef dfTimerType {
+    type enumeration {
+      enum "esidftimer" {
+        description
+          "ESI DF timer.";
+      }
+      enum "ifdftimer" {
+        description
+          "IF DF timer.";
+      }
+    }
+    description
+      "the type of the dfTimer";
+  }
+
+  typedef dfTimerMode {
+    type enumeration {
+      enum "idle" {
+        description
+          "Idle.";
+      }
+      enum "running" {
+        description
+          "Running.";
+      }
+    }
+    description
+      "the Mode of the dfTimer";
+  }
+
+  typedef dfResultType {
+    type enumeration {
+      enum "backup" {
+        description
+          "Backup DF.";
+      }
+      enum "primary" {
+        description
+          "Primary DF.";
+      }
+    }
+    description
+      "the type of the dfResult";
+  }
+
+  typedef esiExt {
+    type string {
+      length "24";
+      pattern "(0[0-1]([0-9a-fA-F]){2}\\.(([0-9a-fA-F]){4}\\.){3}(([0-9a-fA-F]){4}))";
+    }
+    description
+      "aclNumOrName is begin with a-f or A-f or 0-9";
+  }
+
+  typedef bgpcommAdvRouteProtocol {
+    type enumeration {
+      enum "all" {
+        description
+          "Advertise All the Types of Route Protocol.";
+      }
+    }
+    description
+      "the Protocol of the bgpcomonAdvRoute";
+  }
+
+  typedef bgpcommLsRouteType {
+    type enumeration {
+      enum "node" {
+        description
+          "NODE.";
+      }
+      enum "link" {
+        description
+          "LINK.";
+      }
+      enum "ipv4PrefixRoute" {
+        description
+          "IPV4-PREFIX.";
+      }
+      enum "ipv6PrefixRoute" {
+        description
+          "IPV6-PREFIX.";
+      }
+    }
+    description
+      "the type of the bgpcommLsRoute";
+  }
+
+  typedef bgpcommLsProtocolType {
+    type enumeration {
+      enum "is-is-level-1" {
+        description
+          "ISIS-LEVEL-1.";
+      }
+      enum "is-is-level-2" {
+        description
+          "ISIS-LEVEL-2.";
+      }
+      enum "ospf" {
+        description
+          "OSPF.";
+      }
+      enum "direct" {
+        description
+          "Direct.";
+      }
+      enum "static" {
+        description
+          "Static.";
+      }
+      enum "ospfv3" {
+        description
+          "OSPFv3.";
+      }
+    }
+    description
+      "the type of the bgpcommLsp protocol";
+  }
+
+  typedef bgpcommOspfRouteType {
+    type enumeration {
+      enum "intraarea" {
+        description
+          "intraarea:";
+      }
+      enum "inteaarea" {
+        description
+          "inteaarea:";
+      }
+      enum "external1" {
+        description
+          "external1:";
+      }
+      enum "external2" {
+        description
+          "external2:";
+      }
+      enum "nssa1" {
+        description
+          "nssa1:";
+      }
+      enum "nssa2" {
+        description
+          "nssa2:";
+      }
+    }
+    description
+      "the type of bgpcommOspfRoute";
+  }
+
+  typedef advertiseEncapType {
+    type enumeration {
+      enum "vxlan" {
+        description
+          "VXLAN.";
+      }
+      enum "mpls" {
+        description
+          "MPLS.";
+      }
+    }
+    description
+      "the type of advertiseEncap";
+  }
+
+  typedef bgpmultiinstcommPrefixType {
+    type enumeration {
+      enum "ipv4uni" {
+        description
+          "IPv4 unicast address family.";
+      }
+      enum "ipv4multi" {
+        description
+          "IPv4 multicast address family.";
+      }
+      enum "ipv4vpn" {
+        description
+          "IPv4 VPN address family.";
+      }
+      enum "ipv6uni" {
+        description
+          "IPv6 unicast address family.";
+      }
+      enum "ipv6vpn" {
+        description
+          "IPv6 VPN address family.";
+      }
+      enum "ipv4flow" {
+        description
+          "IPv4 Flow Address Family.";
+      }
+      enum "l2vpnad" {
+        description
+          "L2VPN-AD Address Family.";
+      }
+      enum "mvpn" {
+        description
+          "IPv4 MVPN address family.";
+      }
+      enum "evpn" {
+        description
+          "EVPN address family.";
+      }
+      enum "ipv4vpnmcast" {
+        description
+          "IPv4 VPN Multicast Address Family.";
+      }
+      enum "ls" {
+        description
+          "Link-state Address Family.";
+      }
+      enum "mdt" {
+        description
+          "IPv4 MDT Address Family.";
+      }
+    }
+    description
+      "the type of bgpmultiinstcommPrefix";
+  }
+
+  typedef bgpmultiinstcommGroupAddrFamily {
+    type enumeration {
+      enum "public" {
+        description
+          "Public peer group.";
+      }
+      enum "ipv4uni" {
+        description
+          "IPv4 unicast address family.";
+      }
+      enum "ipv6uni" {
+        description
+          "IPv6 unicast address family.";
+      }
+    }
+    description
+      "the type of bgpmultiinstcommGroupAddrFamily";
+  }
+
+  typedef bgpmultiinstcommVrfPrefixType {
+    type enumeration {
+      enum "ipv4uni" {
+        description
+          "IPv4 unicast address family.";
+      }
+      enum "ipv6uni" {
+        description
+          "IPv6 unicast address family.";
+      }
+    }
+    description
+      "the type of bgpmultiinstcommVrfPrefix";
+  }
+}

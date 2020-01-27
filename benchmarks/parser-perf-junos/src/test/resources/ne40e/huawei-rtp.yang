@@ -1,0 +1,2284 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-rtp {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-rtp";
+  prefix rtp;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-rtp-action;
+  include huawei-rtp-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Routing policies are used to filter routes and control the receiving and advertising of routes. By changing the route attributes, such as reachability, you can change the path through which the traffic passes.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container rtp {
+    description
+      "Routing policies are used to filter routes and control the receiving and advertising of routes. By changing the route attributes, such as reachability, you can change the path through which the traffic passes.";
+    container asPathFilters {
+      description
+        "List of AS_Path filters. Routes are filtered based on the AS_Path attributes of routes.";
+      list asPathFilter {
+        key "index";
+        max-elements 65535;
+        description
+          "AS_Path filter. Routes are filtered based on routes AS_Path attributes.";
+        leaf index {
+          type string {
+            length "1..51";
+          }
+          description
+            "Name of a AS_Path filter, which can be a numeral or a string. The ID of an as-path attribute filter is an integer ranging from 1 to 256. The name of a as-path attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+        }
+        container asPathFilterNodes {
+          description
+            "List of AS_Path filter nodes.";
+          list asPathFilterNode {
+            key "nodeSequence";
+            max-elements 65535;
+            description
+              "Node of an AS_Path filter.";
+            leaf nodeSequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf regular {
+              type string {
+                length "1..1024";
+              }
+              mandatory true;
+              description
+                "Regular expression that is used for filtering.";
+            }
+          }
+        }
+      }
+    }
+    container communityFilters {
+      description
+        "List of community attribute filters. Routes are filtered based on the community attributes of routes.";
+      list communityFilter {
+        key "cmntyNameOrNum";
+        max-elements 65535;
+        description
+          "Community attribute filter. Routes are filtered based on the community attributes of routes.";
+        leaf communityFilterType {
+          type rtpCmntyFilterType;
+          mandatory true;
+          description
+            "Type of a community filter, which can be basic or advanced.";
+        }
+        leaf cmntyNameOrNum {
+          type string {
+            length "1..51";
+            pattern '((0*[1-9][0-9]?)|(0*1[0-9][0-9])|([^?\s0-9][^?\s]{0,50})|([\d][^?\s]*[^?\s0-9][^?\s]*))';
+          }
+          description
+            "Name of a community filter, which can be a numeral or a string. The ID of a basic community attribute filter is an integer ranging from 1 to 99; the ID of an advanced community attribute filter is an integer ranging from 100 to 199. The name of a community attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+        }
+        container basicCommunityNodes {
+          description
+            "List of basic community filter nodes. You can use the community ID or the attribute of a known community as a matching condition.";
+          list basicCommunityNode {
+            when "not(../../communityFilterType='advanced' or not(../../communityFilterType)) or ../../communityFilterType='basic'";
+            key "nodeSequence";
+            max-elements 65535;
+            description
+              "Basic community filter node. You can use the community ID or the attribute of a known community as a matching condition.";
+            leaf nodeSequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf stringValue1 {
+              type string {
+                length "0..19";
+              }
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue2 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue1))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue3 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue2))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue4 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue3))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue5 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue4))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue6 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue5))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue7 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue6))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue8 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue7))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue9 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue8))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue10 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue9))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue11 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue10))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue12 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue11))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue13 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue12))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue14 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue13))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue15 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue14))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue16 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue15))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue17 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue16))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue18 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue17))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue19 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue18))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf stringValue20 {
+              type string {
+                length "0..19";
+              }
+              must "not(not(../stringValue19))";
+              description
+                "Attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+            }
+            leaf isInternetStrictMatch {
+              type boolean;
+              default "false";
+              description
+                "Set internet strict match";
+            }
+          }
+        }
+        container advancedCommunityNodes {
+          description
+            "List of advanced community filter nodes. You can use a regular expression as a matching condition.";
+          list advancedCommunityNode {
+            when "not(../../communityFilterType='basic' or not(../../communityFilterType)) or ../../communityFilterType='advanced'";
+            key "nodeSequence";
+            max-elements 65535;
+            description
+              "Advanced community filter node. You can use a regular expression as a matching condition.";
+            leaf nodeSequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+              ext:allowDelete "false";
+            }
+            leaf regular {
+              type string {
+                length "1..1024";
+              }
+              mandatory true;
+              description
+                "Regular expression that is used for matching.";
+            }
+          }
+        }
+      }
+    }
+    container extendCommunityFilters {
+      description
+        "List of extended community filters. You can use the route-target extended community as a matching condition.";
+      list extendCommunityFilter {
+        key "index";
+        max-elements 65535;
+        description
+          "Extended community filter. You can use the route-target extended community as a matching condition.";
+        leaf filterType {
+          type rtpExtCmntyFilterType;
+          mandatory true;
+          description
+            "Type of an extended community filter, which can be basic or advanced.";
+        }
+        leaf index {
+          type string {
+            length "1..51";
+          }
+          description
+            "Name of an extended community filter, which can be a numeral or a string. The ID of a basic extended community attribute filter is an integer ranging from 1 to 199; the ID of an advanced extended community attribute filter is an integer ranging from 200 to 399. The name of an extended community attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+        }
+        container extendCommunityFilterNodes {
+          description
+            "List of extended community filter nodes.";
+          list extendCommunityFilterNode {
+            when "not(../../filterType='advanced' or not(../../filterType)) or ../../filterType='basic'";
+            key "nodeSequence";
+            max-elements 65535;
+            description
+              "Extended community filter node.";
+            leaf nodeSequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf stringValue1 {
+              type string {
+                length "3..21";
+              }
+              mandatory true;
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+            }
+            leaf stringValue2 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue1))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue3 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue2))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue4 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue3))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue5 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue4))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue6 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue5))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue7 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue6))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue8 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue7))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue9 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue8))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue10 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue9))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue11 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue10))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue12 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue11))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue13 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue12))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue14 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue13))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue15 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue14))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue16 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue15))";
+              description
+                "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container advExtCommunityNodes {
+          description
+            "List of advanced extended community filter nodes. You can use a regular expression as a matching condition.";
+          list advExtCommunityNode {
+            when "not(../../filterType='basic' or not(../../filterType)) or ../../filterType='advanced'";
+            key "nodeSequence";
+            max-elements 65535;
+            description
+              "Advanced extended community filter node. You can use a regular expression as a matching condition.";
+            leaf nodeSequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+              ext:allowDelete "false";
+            }
+            leaf regular {
+              type string {
+                length "1..1024";
+              }
+              mandatory true;
+              description
+                "Regular expression that is used for matching.";
+            }
+          }
+        }
+      }
+    }
+    container extCmntySooLists {
+      description
+        "List of extended community attribute SoO filters. Routes are filtered based on the SoO extended community attributes of routes.";
+      list extCmntySooList {
+        key "name";
+        max-elements 65535;
+        description
+          "Extended community attribute SoO filter. Routes are filtered based on the SoO extended community attributes of routes.";
+        leaf filterType {
+          type rtpExtCmntyFilterType;
+          mandatory true;
+          description
+            "Type of an extended community SoO filter, which can be basic or advanced.";
+        }
+        leaf name {
+          type string {
+            length "1..51";
+          }
+          description
+            "Name of an extended community SoO filter. The name is a string and cannot contain spaces.";
+        }
+        container basExtCmntySooListNodes {
+          description
+            "List of basic extended community SoO filter nodes. You can use the SoO extended community ID as a matching condition.";
+          list basExtCmntySooListNode {
+            when "not(../../filterType='advanced' or not(../../filterType)) or ../../filterType='basic'";
+            key "nodeSequence";
+            max-elements 65535;
+            description
+              "Basic extended community SoO filter node. You can use the SoO extended community ID as a matching condition.";
+            leaf nodeSequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf stringValue1 {
+              type string {
+                length "3..21";
+              }
+              mandatory true;
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+            }
+            leaf stringValue2 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue1))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue3 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue2))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue4 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue3))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue5 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue4))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue6 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue5))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue7 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue6))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue8 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue7))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue9 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue8))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue10 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue9))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue11 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue10))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue12 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue11))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue13 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue12))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue14 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue13))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue15 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue14))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+            leaf stringValue16 {
+              type string {
+                length "3..21";
+              }
+              must "not(not(../stringValue15))";
+              description
+                "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535) or the format of as-number : nn ('as-number' ranges from 65536 to 4294967295 and 'nn' ranges from 0 to 65535).";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container advExtCmntySooListNodes {
+          description
+            "List of advanced extend community SoO filter nodes. You can use a regular expression as a matching condition.";
+          list advExtCmntySooListNode {
+            when "not(../../filterType='basic' or not(../../filterType)) or ../../filterType='advanced'";
+            key "nodeSequence";
+            max-elements 65535;
+            description
+              "Advanced extended community SoO filter node. You can use a regular expression as a matching condition.";
+            leaf nodeSequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+              ext:allowDelete "false";
+            }
+            leaf regular {
+              type string {
+                length "1..1024";
+              }
+              mandatory true;
+              description
+                "Regular expression that is used for matching.";
+            }
+          }
+        }
+      }
+    }
+    container rdFilters {
+      description
+        "List of RD filters. You can use the RD as a matching condition.";
+      list rdFilter {
+        key "index";
+        max-elements 65535;
+        description
+          "RD filter.";
+        leaf index {
+          type uint32 {
+            range "1..199";
+          }
+          description
+            "Index of an RD filter.";
+        }
+        container rdFilterNodes {
+          description
+            "List of RD filter nodes.";
+          list rdFilterNode {
+            key "nodeSequence";
+            max-elements 65535;
+            description
+              "RD filter node.";
+            leaf nodeSequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            container rdStrings {
+              description
+                "List of RD attribute values. A maximum of 10 values are supported.";
+              list rdString {
+                key "stringValue";
+                max-elements 10;
+                description
+                  "RD attribute value.";
+                leaf stringValue {
+                  type string {
+                    length "3..21";
+                  }
+                  description
+                    "RD attribute value, which can be in the format of IPv4-address:nn (for example, 1.1.1.1:200), the format of aa:nn (for example, 100:1), the format of IPv4-address:* (for example, 1.1.1.1:*), or the format of aa:* (for example, 100:*). The example '1.1.1.1:*' indicates that all the RDs starting with 1.1.1.1 are matched, and the example '100:*' indicates that all the RDs starting with 100 are matched.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container prefixFilters {
+      description
+        "List of IPv4 prefix filters. A maximum of 100000 filters are supported.";
+      list prefixFilter {
+        key "name";
+        max-elements 100000;
+        description
+          "IPv4 prefix filter.";
+        leaf name {
+          type string {
+            length "1..169";
+          }
+          description
+            "Name of an IPv4 prefix filter. The name is a string and cannot contain spaces.";
+        }
+        leaf permitCnt {
+          type uint32 {
+            range "0..65535";
+          }
+          default "0";
+          config false;
+          description
+            "Number of routes that match the route-policy.";
+        }
+        leaf denyCnt {
+          type uint32 {
+            range "0..65535";
+          }
+          default "0";
+          config false;
+          description
+            "Number of routes that do not match the route-policy.";
+        }
+        leaf description {
+          type string {
+            length "0..80";
+          }
+          description
+            "Description of prefix filter.";
+        }
+        container prefixFilterNodes {
+          description
+            "List of IPv4 prefix filter nodes.";
+          list prefixFilterNode {
+            key "nodeSequence";
+            max-elements 100000;
+            description
+              "IPv4 prefix filter node.";
+            leaf nodeSequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf address {
+              type inet:ipv4-address-no-zone {
+                length "1..255";
+              }
+              mandatory true;
+              description
+                "IPv4 address.";
+            }
+            leaf maskLength {
+              type uint8 {
+                range "0..32";
+              }
+              must "not(../greaterEqual) or (../greaterEqual and ../maskLength<=../greaterEqual)";
+              mandatory true;
+              description
+                "Mask length.";
+            }
+            leaf matchNetwork {
+              type boolean;
+              default "false";
+              description
+                "Match routes destined for IP addresses with IP prefix 0.";
+            }
+            leaf greaterEqual {
+              type uint8 {
+                range "0..32";
+              }
+              must "(../greaterEqual and ../greaterEqual>=../maskLength) or (../lessEqual and ../greaterEqual and ../greaterEqual<=../lessEqual) or not(../greaterEqual or ../lessEqual and ../greaterEqual)";
+              description
+                "If both the IP address and mask length match, this parameter is used to specify the range of IP prefixes. The following rule must be observed: Mask length <= The Least Mask Length <= The Largest Mask Length <= 32. If only the least mask length is specified, the prefix ranges from the least mask length to 32.";
+              ext:allowDelete "true";
+            }
+            leaf lessEqual {
+              type uint8 {
+                range "0..32";
+              }
+              must "(../lessEqual and ../greaterEqual and ../lessEqual>=../greaterEqual) or (../lessEqual and not(../greaterEqual) and ../lessEqual>=../maskLength) or not(../lessEqual and ../greaterEqual or ../lessEqual and not(../greaterEqual))";
+              description
+                "If both the IP address and mask length match, this parameter is used to specify the range of IP prefixes. The following rule must be observed: Mask length <= The Least Mask Length <= The Largest Mask Length <= 32. If only the maximum mask length is specified, the prefix ranges from the mask length to the maximum mask length.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+      }
+    }
+    container ipv6PrefixFilters {
+      description
+        "List of IPv6 prefix filters. ";
+      list ipv6PrefixFilter {
+        key "name";
+        max-elements 100000;
+        description
+          "IPv6 prefix filter.";
+        leaf name {
+          type string {
+            length "1..169";
+          }
+          description
+            "Name of a prefix filter. The name is a string and cannot contain spaces.";
+        }
+        leaf permitCnt {
+          type uint32 {
+            range "0..65535";
+          }
+          default "0";
+          config false;
+          description
+            "Number of routes that match the route-policy.";
+        }
+        leaf denyCnt {
+          type uint32 {
+            range "0..65535";
+          }
+          default "0";
+          config false;
+          description
+            "Number of routes that do not match the route-policy.";
+        }
+        leaf description {
+          type string {
+            length "0..80";
+          }
+          description
+            "Description of prefix filter.";
+        }
+        container ipv6PrefixFilterNodes {
+          description
+            "List of IPv6 prefix filter nodes.";
+          list ipv6PrefixFilterNode {
+            key "nodeSequence";
+            max-elements 100000;
+            description
+              "IPv6 prefix filter node.";
+            leaf nodeSequence {
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf address {
+              type inet:ipv6-address-no-zone {
+                length "1..255";
+              }
+              mandatory true;
+              description
+                "IPv6 address.";
+            }
+            leaf maskLength {
+              type uint8 {
+                range "0..128";
+              }
+              mandatory true;
+              description
+                "Mask length.";
+            }
+            leaf matchNetwork {
+              type boolean;
+              default "false";
+              description
+                "Match routes destined for IPv6 addresses with IPv6 prefix 0.";
+            }
+            leaf greaterEqual {
+              type uint8 {
+                range "0..128";
+              }
+              must "not(../greaterEqual) or (../greaterEqual and ../greaterEqual>=../maskLength)";
+              description
+                "If both the IP address and mask length match, this parameter is used to specify the range of IP prefixes. The following rule must be observed: Mask length <= The Least Mask Length <= The Largest Mask Length <= 128. If only the least mask length is specified, the prefix ranges from the least mask length to 128.";
+              ext:allowDelete "true";
+            }
+            leaf lessEqual {
+              type uint8 {
+                range "0..128";
+              }
+              must "(../lessEqual and ../greaterEqual and ../lessEqual>=../greaterEqual) or (../lessEqual and not(../greaterEqual) and ../lessEqual>=../maskLength) or not(../lessEqual and ../greaterEqual or ../lessEqual and not(../greaterEqual))";
+              description
+                "If both the IP address and mask length match, this parameter is used to specify the range of IP prefixes. The following rule must be observed: Mask length <= The Least Mask Length <= The Largest Mask Length <= 128. If only the maximum mask length is specified, the prefix ranges from the mask length to the maximum mask length.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+      }
+    }
+    container routePolicys {
+      description
+        "List of routing policies.";
+      list routePolicy {
+        key "name";
+        max-elements 65535;
+        description
+          "Routing policy.";
+        leaf name {
+          type string {
+            length "1..200";
+          }
+          description
+            "Policy name in the format of a string.";
+        }
+        container routePolicyNodes {
+          description
+            "List of routing policy nodes.";
+          list routePolicyNode {
+            key "nodeSequence";
+            max-elements 65535;
+            description
+              "Routing policy node.";
+            leaf nodeSequence {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            leaf description {
+              type string {
+                length "0..80";
+              }
+              description
+                "Description of a routing policy.";
+            }
+            leaf matchCount {
+              type uint32;
+              config false;
+              description
+                "Match count of route policy node.";
+            }
+            container matchCondition {
+              description
+                "Match Type List";
+              container matchCosts {
+                description
+                  "Match route cost values.";
+                container matchCost {
+                  description
+                    "Match a route cost value.";
+                  leaf costValue {
+                    type uint32 {
+                      range "0..4294967295";
+                    }
+                    default "0";
+                    description
+                      "Route cost value.";
+                    ext:allowDelete "true";
+                  }
+                }
+              }
+              container matchInterfaces {
+                description
+                  "Match interfaces.";
+                list matchInterface {
+                  key "ifName";
+                  max-elements 256;
+                  description
+                    "Match an interface.";
+                  leaf ifName {
+                    type pub-type:ifName;
+                    description
+                      "Outbound interface name.";
+                  }
+                }
+              }
+              container matchRouteTypes {
+                description
+                  "Match route types.";
+                list matchRouteType {
+                  key "routeType";
+                  description
+                    "Match a route type.";
+                  leaf routeType {
+                    type rtpMchRtType;
+                    description
+                      "Route type.";
+                  }
+                }
+              }
+              container matchTags {
+                description
+                  "Match route tag values. ";
+                container matchTag {
+                  description
+                    "Match a route tag value.";
+                  leaf tagValue {
+                    type uint32 {
+                      range "0..4294967295";
+                    }
+                    default "0";
+                    description
+                      "Route tag value.";
+                    ext:allowDelete "true";
+                  }
+                }
+              }
+              container matchMplsLabels {
+                description
+                  "Match MPLS labels.";
+                container matchMplsLabel {
+                  description
+                    "Match an MPLS label.";
+                  leaf mplsLabel {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enabling mode that is specified during MPLS label matching.";
+                    ext:allowDelete "true";
+                  }
+                }
+              }
+              container matchDestinationAcls {
+                description
+                  "Match IPv4 destination addresses based on ACL rules. The configurations of matching IPv4 destination addresses based on ACL rules are mutually exclusive with the configurations of matching IPv4 destination addresses by the prefix filter.";
+                container matchDestinationAcl {
+                  description
+                    "Match an IPv4 destination address based on ACL rules.";
+                  leaf aclNameOrNum {
+                    type string {
+                      length "1..64";
+                    }
+                    description
+                      "Name of the specified ACL filter when destination addresses are matched, which can be a value ranging from 2000 to 2999 or a string of 1 to 32 characters beginning with a-z or A-Z.
+";
+                  }
+                }
+              }
+              container matchDestPrefixFilters {
+                description
+                  "Match IPv4 destination addresses by the prefix filter. The configurations of matching IPv4 destination addresses by the prefix filter are mutually exclusive with the configurations of matching IPv4 destination addresses based on ACL rules.";
+                container matchDestPrefixFilter {
+                  description
+                    "Match an IPv4 destination address by the prefix filter.";
+                  leaf prefixName {
+                    type leafref {
+                      path "/rtp/prefixFilters/prefixFilter/name";
+                    }
+                    description
+                      "Name of the specified prefix filter when IPv4 destination addresses are matched.";
+                  }
+                }
+              }
+              container matchDestPrefix6Filters {
+                description
+                  "Match IPv6 destination addresses by the IPv6 prefix filter.";
+                container matchDestPrefix6Filter {
+                  description
+                    "Match an IPv6 destination address by the IPv6 prefix filter.";
+                  leaf ipv6PrefixName {
+                    type leafref {
+                      path "/rtp/ipv6PrefixFilters/ipv6PrefixFilter/name";
+                    }
+                    description
+                      "Name of the specified prefix filter when IPv6 destination addresses are matched.";
+                  }
+                }
+              }
+              container matchDestAcl6s {
+                description
+                  "Match IPv6 destination addresses based on ACL rules. The configurations of matching IPv6 destination addresses based on ACL rules are mutually exclusive with the configurations of matching IPv6 destination addresses by the prefix filter.";
+                container matchDestAcl6 {
+                  description
+                    "Match an IPv6 destination address based on ACL rules.";
+                  leaf aclNameOrNum {
+                    type string {
+                      length "1..64";
+                    }
+                    description
+                      "Name of the specified ACL filter when IPv6 destination addresses are matched, which can be a value ranging from 2000 to 2999 or a string of 1 to 32 characters beginning with a-z or A-Z.";
+                  }
+                }
+              }
+              container matchNextHopPrefixFilters {
+                description
+                  "Match IPv4 next hops by the prefix filter. The configurations of matching IPv4 next hops by the prefix filter are mutually exclusive with the configurations of matching IPv4 next hops based on ACL rules.";
+                container matchNextHopPrefixFilter {
+                  description
+                    "Match an IPv4 next hop by the prefix filter.";
+                  leaf prefixName {
+                    type leafref {
+                      path "/rtp/prefixFilters/prefixFilter/name";
+                    }
+                    description
+                      "Name of the specified prefix filter when IPv4 next hops are matched.";
+                  }
+                }
+              }
+              container matchNexthopAcls {
+                description
+                  "Match IPv4 next hops based on ACL rules. The configurations of matching IPv4 next hops based on ACL rules are mutually exclusive with the configurations of matching IPv4 next hops by the prefix filter.";
+                container matchNexthopAcl {
+                  description
+                    "Match an IPv4 next hop based on ACL rules.";
+                  leaf aclNameOrNum {
+                    type string {
+                      length "1..64";
+                    }
+                    description
+                      "Name of the specified ACL filter when next hops are matched, which can be a value ranging from 2000 to 2999 or a string of 1 to 32 characters beginning with a-z or A-Z.";
+                  }
+                }
+              }
+              container matchNextHopPrefix6Filters {
+                description
+                  "Match IPv6 next hops by the IPv6 prefix filter. ";
+                container matchNextHopPrefix6Filter {
+                  description
+                    "Match an IPv6 next hop by the IPv6 prefix filter.";
+                  leaf ipv6PrefixName {
+                    type leafref {
+                      path "/rtp/ipv6PrefixFilters/ipv6PrefixFilter/name";
+                    }
+                    description
+                      "Name of the specified prefix filter when IPv6 next hops are matched.";
+                  }
+                }
+              }
+              container matchNextHopAcl6s {
+                description
+                  "Match IPv6 next hops based on ACL rules. The configurations of matching IPv6 next hops based on ACL rules are mutually exclusive with the configurations of matching IPv6 next hops by the prefix filter.";
+                container matchNextHopAcl6 {
+                  description
+                    "Match an IPv6 next hop based on ACL rules.";
+                  leaf aclNameOrNum {
+                    type string {
+                      length "1..64";
+                    }
+                    description
+                      "Name of the specified ACL filter when IPv6 next hops are matched, which can be a value ranging from 2000 to 2999 or a string of 1 to 32 characters beginning with a-z or A-Z.";
+                  }
+                }
+              }
+              container matchRouteSourceAcls {
+                description
+                  "Match IPv4 route sources based on ACL rules. The configurations of matching IPv4 route sources based on ACL rules are mutually exclusive with the configurations of matching IPv4 route sources by the prefix filter.";
+                container matchRouteSourceAcl {
+                  description
+                    "Match an IPv4 route source based on ACL rules.";
+                  leaf aclNameOrNum {
+                    type string {
+                      length "1..64";
+                    }
+                    description
+                      "Name of the specified ACL filter when route sources are matched, which can be a value ranging from 2000 to 2999 or a string of 1 to 32 characters beginning with a-z or A-Z.";
+                  }
+                }
+              }
+              container matchRtSrcPrefixFilters {
+                description
+                  "Match IPv4 route sources by the prefix filter. The configurations of matching IPv4 route sources by the prefix filter are mutually exclusive with the configurations of matching IPv4 route sources based on ACL rules.";
+                container matchRtSrcPrefixFilter {
+                  description
+                    "Match an IPv4 route source by the prefix filter.";
+                  leaf prefixName {
+                    type leafref {
+                      path "/rtp/prefixFilters/prefixFilter/name";
+                    }
+                    description
+                      "Name of the specified prefix filter when IPv4 route sources are matched.";
+                  }
+                }
+              }
+              container matchRtSrcPrefix6Filters {
+                description
+                  "Match IPv6 route sources by the prefix filter.";
+                container matchRtSrcPrefix6Filter {
+                  description
+                    "Match an IPv6 route source by the IPv6 prefix filter.";
+                  leaf ipv6PrefixName {
+                    type leafref {
+                      path "/rtp/ipv6PrefixFilters/ipv6PrefixFilter/name";
+                    }
+                    description
+                      "Name of the specified prefix filter when IPv6 route sources are matched.";
+                  }
+                }
+              }
+              container matchRtSrcAcl6s {
+                description
+                  "Match IPv6 route sources based on ACL rules. The configurations of matching IPv6 route sources based on ACL rules are mutually exclusive with the configurations of matching IPv6 route sources by the prefix filter.";
+                container matchRtSrcAcl6 {
+                  description
+                    "Match an IPv6 route source based on ACL rules.";
+                  leaf aclNameOrNum {
+                    type string {
+                      length "1..64";
+                    }
+                    description
+                      "Name of the specified ACL filter when IPv6 route sources are matched, which can be a value ranging from 2000 to 2999 or a string of 1 to 32 characters beginning with a-z or A-Z.";
+                  }
+                }
+              }
+              container matchCommunityFilters {
+                description
+                  "Match community attribute filters.";
+                list matchCommunityFilter {
+                  key "cmntyNameOrNum";
+                  max-elements 32;
+                  description
+                    "Match a community attribute filter.";
+                  leaf wholeMatch {
+                    type boolean;
+                    default "false";
+                    description
+                      "All the communities are matched. It is valid to only basic community attribute filters.";
+                  }
+                  leaf sortMatch {
+                    type boolean;
+                    default "false";
+                    description
+                      "";
+                  }
+                  leaf cmntyNameOrNum {
+                    type leafref {
+                      path "/rtp/communityFilters/communityFilter/cmntyNameOrNum";
+                    }
+                    description
+                      "Name or index of a community attribute filter. It can be a numeral or a string. The ID of a basic community attribute filter is an integer ranging from 1 to 99; the ID of an advanced community attribute filter is an integer ranging from 100 to 199. The name of a community attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+                  }
+                }
+              }
+              container matchExtcommunityFilters {
+                description
+                  "Match extended community filters.";
+                list matchExtcommunityFilter {
+                  key "extCmntyIndex";
+                  max-elements 16;
+                  description
+                    "Match an extended community filter.";
+                  leaf extCmntyIndex {
+                    type leafref {
+                      path "/rtp/extendCommunityFilters/extendCommunityFilter/index";
+                    }
+                    description
+                      "Index of an extended community filter.";
+                  }
+                }
+              }
+              container matchRdFilters {
+                description
+                  "Match RD filters.";
+                container matchRdFilter {
+                  description
+                    "Match an RD filter.";
+                  leaf rdIndex {
+                    type leafref {
+                      path "/rtp/rdFilters/rdFilter/index";
+                    }
+                    description
+                      "Index of an RD filter.";
+                  }
+                }
+              }
+              container matchAsPathFilters {
+                description
+                  "Match AS_Path filters.";
+                list matchAsPathFilter {
+                  key "asPathIndex";
+                  max-elements 32;
+                  description
+                    "Match an AS_Path filter.";
+                  leaf asPathIndex {
+                    type leafref {
+                      path "/rtp/asPathFilters/asPathFilter/index";
+                    }
+                    description
+                      "Name or index of a AS_Path filter, which can be a numeral or a string. The ID of a as-path attribute filter is an integer ranging from 1 to 256. The name of a as-path attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+                  }
+                }
+              }
+              container matchRPKIs {
+                description
+                  "Match the result of origin AS validation.";
+                container matchRPKI {
+                  description
+                    "Match the result of origin AS validation.";
+                  leaf oriAsValidate {
+                    type rtpMchASValidate;
+                    description
+                      "Result of origin AS validation.";
+                  }
+                }
+              }
+              container matchExtCmntySooLists {
+                description
+                  "Match the extended community SoO filter list.";
+                list matchExtCmntySooList {
+                  key "name";
+                  description
+                    "Match an extended community SoO filter.";
+                  leaf name {
+                    type leafref {
+                      path "/rtp/extCmntySooLists/extCmntySooList/name";
+                    }
+                    description
+                      "Index of an extended community SoO filter.";
+                  }
+                }
+              }
+              container matchProtocols {
+                description
+                  "Match route protocols type.";
+                list matchProtocol {
+                  key "protocolType";
+                  max-elements 9;
+                  description
+                    "Match route protocols type.";
+                  leaf protocolType {
+                    type rtpMatchProtocolType;
+                    description
+                      "route protocol type:including direct,static,isis,bgp,unr,ospf,rip,ospfv3,ripng";
+                  }
+                }
+              }
+              container matchGroupAddrs {
+                description
+                  "Match groupaddress by the prefix filter or ACL filter.";
+                container matchGroupAddr {
+                  description
+                    "Match groupaddress by the prefix filter or ACL filter.";
+                  leaf mchFilterType {
+                    type rtpMchFilterType;
+                    description
+                      "Match GroupAddress Type
+matchAcl: Match groupaddress by ACL Filter.
+matchPrefix: Match groupaddress by ip-prifix Filter.";
+                  }
+                  leaf prefixName {
+                    when "not(../mchFilterType='matchAcl') or ../mchFilterType='matchPrefix'";
+                    type leafref {
+                      path "/rtp/prefixFilters/prefixFilter/name";
+                    }
+                    description
+                      "Name of the specified prefix filter when groupaddress are matched.";
+                  }
+                  leaf aclNameOrNum {
+                    when "not(../mchFilterType='matchPrefix') or ../mchFilterType='matchAcl'";
+                    type string {
+                      length "1..64";
+                    }
+                    description
+                      "Name of the specified ACL filter when groupaddress are matched, which can be a value ranging from 2000 to 2999 or a string of 1 to 32 characters beginning with a-z or A-Z.";
+                  }
+                }
+              }
+            }
+            container applyAction {
+              description
+                "Set Type List";
+              container applyAsPaths {
+                description
+                  "Set AS values.";
+                container applyAsPath {
+                  description
+                    "Set an AS value. You can set a maximum of 10 AS values.";
+                  container asPathStrings {
+                    description
+                      "List of AS attribute values.";
+                    list asPathString {
+                      when "not(../../operationType='delete')";
+                      key "sequenceNumber";
+                      max-elements 63;
+                      description
+                        "AS attribute value.";
+                      leaf sequenceNumber {
+                        type uint32 {
+                          range "1..63";
+                        }
+                        description
+                          "The sequence number of AS attribute value, which ranges from 1 to 10.";
+                      }
+                      leaf stringValue {
+                        type string {
+                          length "1..11";
+                        }
+                        mandatory true;
+                        description
+                          "The AS number in an AS_Path can be in asplain format ranging from 1 to 4294967295 or in asdot format, X.Y for example, in which X ranges from 1 to 65535, and Y ranges from 0 to 65535.";
+                      }
+                    }
+                  }
+                  leaf operationType {
+                    type rtpAdditiveChoice;
+                    default "replace";
+                    description
+                      "Append: Apply the configured AS value to the original AS value of a route. 
+Replace: To replace the original AS value of a route with the configured AS value. 
+Delete: Delete all the original AS value of a route. 
+DelSpecial: Delete the specified AS value of a route.";
+                  }
+                }
+              }
+              container applyNextHops {
+                description
+                  "Set IPv4 next hops.";
+                container applyNextHop {
+                  description
+                    "Set a next-hop IPv4 address.";
+                  leaf nextHop {
+                    when "not(../isBlackHole='true' or ../isPeerAddress='true')";
+                    type inet:ipv4-address-no-zone {
+                      length "1..255";
+                    }
+                    description
+                      "Next-hop address.";
+                  }
+                  leaf isPeerAddress {
+                    when "not(../isBlackHole='true')";
+                    type boolean;
+                    default "false";
+                    description
+                      "BGP peer address.";
+                  }
+                  leaf isBlackHole {
+                    when "not(../isPeerAddress='true')";
+                    type boolean;
+                    default "false";
+                    description
+                      "Apply black hole.";
+                  }
+                }
+              }
+              container applyLocalPreferences {
+                description
+                  "Set local priorities.";
+                container applyLocalPreference {
+                  description
+                    "Set a local priority.";
+                  leaf applyChoice {
+                    type rtpApplyLocalPrefChoice;
+                    default "Replace";
+                    description
+                      "Mode of setting the local priority.";
+                  }
+                  leaf localPreference {
+                    type uint32 {
+                      range "0..4294967295";
+                    }
+                    description
+                      "Local priority of a route.";
+                  }
+                }
+              }
+              container applyCosts {
+                description
+                  "Set route cost values. ";
+                container applyCost {
+                  description
+                    "Set a route cost value.";
+                  leaf applyChoice {
+                    type rtpApplyCostChoice;
+                    default "Replace";
+                    description
+                      "Mode of setting the route cost.";
+                    ext:allowDelete "true";
+                  }
+                  leaf costValue {
+                    when "../applyChoice!='Inherit'";
+                    type uint32 {
+                      range "0..4294967295";
+                    }
+                    default "0";
+                    description
+                      "Cost value of a route.";
+                    ext:allowDelete "true";
+                  }
+                }
+              }
+              container applyIpv6NextHops {
+                description
+                  "Set IPv6 next hops.";
+                container applyIpv6NextHop {
+                  description
+                    "Set an IPv6 next-hop address.";
+                  leaf ipv6NextHop {
+                    when "not(../isBlackHole='true' or ../isPeerAddress='true')";
+                    type inet:ipv6-address-no-zone {
+                      length "1..255";
+                    }
+                    description
+                      "IPv6 next-hop address.";
+                  }
+                  leaf isPeerAddress {
+                    when "not(../isBlackHole='true')";
+                    type boolean;
+                    default "false";
+                    description
+                      "IPv6 BGP peer address.";
+                  }
+                  leaf isBlackHole {
+                    when "not(../isPeerAddress='true')";
+                    type boolean;
+                    default "false";
+                    description
+                      "Apply ipv6 black hole.";
+                  }
+                }
+              }
+              container applyCostTypes {
+                description
+                  "Set route cost types.";
+                container applyCostType {
+                  description
+                    "Set a route cost type.";
+                  leaf costType {
+                    type rtpCostType;
+                    description
+                      "Route cost type.";
+                  }
+                }
+              }
+              container applyOrigins {
+                description
+                  "Set routing information sources.";
+                container applyOrigin {
+                  description
+                    "Set a routing information source.";
+                  leaf originType {
+                    type rtpOriginType;
+                    description
+                      "Source of BGP routing information. The available options are as follows:egp: indicates that BGP routing information comes from the EGP route. The as-number parameter is required to specify the AS number of the EGP route.
+igp: indicates that BGP routing information comes from the IGP route.
+incomplete: The source of BGP routing information is unknown.";
+                  }
+                  leaf asStrOrNum {
+                    when "not(../originType!='egp')";
+                    type string {
+                      length "1..11";
+                    }
+                    description
+                      "AS_Path value, which can contain two or four bytes. A 2-byte AS_Path value ranges from 1 to 65535; a 4-byte AS_Path value is in the format of n.m. 'n' ranges from 1 to 65535,'m' ranges from 0 to 65535.";
+                  }
+                }
+              }
+              container applyCommunitys {
+                description
+                  "Set community attribute values.";
+                container applyCommunity {
+                  description
+                    "Set a community attribute value. You can set a maximum of 32 community attribute values.";
+                  leaf operationType {
+                    type rtpAdditiveChoice;
+                    must "((../operationType='delete' or ../operationType='replace' or ../operationType='additive') )";
+                    default "replace";
+                    description
+                      "Set the application mode of the community attribute. The available options are as follows:
+Append: Append the configured community attribute to the original community attribute of a route.
+Replace: To replace the original community attribute of a route with the configured community attribute.
+Delete: Delete all the original community attributes of a route.";
+                  }
+                  leaf isAplCmntyListName {
+                    when "not(../operationType='delete')";
+                    type boolean;
+                    must "not(../isAplCmntyListName='true')";
+                    default "false";
+                    description
+                      "Apply a community list name.";
+                  }
+                  container applyCmntyStrings {
+                    description
+                      "List of community attribute values. ";
+                    list applyCmntyString {
+                      when "not(../../isAplCmntyListName='true' or ../../operationType='delete')";
+                      key "stringValue";
+                      max-elements 32;
+                      description
+                        "Community attribute value.";
+                      leaf stringValue {
+                        type string {
+                          length "1..19";
+                        }
+                        description
+                          "Community attribute value, which ranges from 0 to 4294967295, in the format of aa:nn (both 'aa' and 'nn' range from 0 to 65535), or an attribute (internet, no-export-subconfed, no-advertise, or no-export) of a known community.";
+                      }
+                    }
+                  }
+                  leaf cmntyListName {
+                    when "../isAplCmntyListName='true' or not(../operationType='delete') or ../operationType='delete'";
+                    type leafref {
+                      path "/rtp/communityLists/communityList/name";
+                    }
+                    description
+                      "Community list name.";
+                  }
+                }
+              }
+              container applyTags {
+                description
+                  "Set tag values.";
+                container applyTag {
+                  description
+                    "Set a tag value.";
+                  leaf tagValue {
+                    type uint32 {
+                      range "0..4294967295";
+                    }
+                    description
+                      "Tag value of a route.";
+                  }
+                }
+              }
+              container applyMplsLabels {
+                description
+                  "Set MPLS labels.";
+                container applyMplsLabel {
+                  description
+                    "Set an MPLS label.";
+                  leaf mplsLabel {
+                    type boolean;
+                    default "false";
+                    description
+                      "Enabling mode that is specified during MPLS label settings.";
+                    ext:allowDelete "true";
+                  }
+                }
+              }
+              container applyPreferences {
+                description
+                  "Set protocol priorities.";
+                container applyPreference {
+                  description
+                    "Set a protocol priority.";
+                  leaf preference {
+                    type uint32 {
+                      range "1..255";
+                    }
+                    description
+                      "Protocol priority.";
+                  }
+                }
+              }
+              container applyExtendCommunitys {
+                description
+                  "Set extended community attribute values.";
+                container applyExtendCommunity {
+                  description
+                    "Set an extended community attribute value. You can set a maximum of 16 extended community attribute values.";
+                  container applyExtCmntyStrings {
+                    description
+                      "List of extended community attribute values.";
+                    list applyExtCmntyString {
+                      key "stringValue";
+                      max-elements 16;
+                      description
+                        "Extended community attribute value.";
+                      leaf stringValue {
+                        type string {
+                          length "3..21";
+                        }
+                        description
+                          "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+                      }
+                    }
+                  }
+                  leaf additiveFlag {
+                    type boolean;
+                    default "false";
+                    description
+                      "The available options are as follows: 
+true: The configured extended community attribute will be appended to the original extended community attribute of a route.
+false: The original extended community attribute of a route will be replaced by the configured extended community attribute.";
+                  }
+                }
+              }
+              container applyCommunityFilterDeletes {
+                description
+                  "Delete community attribute values. ";
+                list applyCommunityFilterDelete {
+                  key "communityNameOrNum";
+                  description
+                    "Delete a community attribute value.";
+                  leaf communityNameOrNum {
+                    type leafref {
+                      path "/rtp/communityFilters/communityFilter/cmntyNameOrNum";
+                    }
+                    description
+                      "Name or index of a community attribute filter. It can be a numeral or a string. The ID of a basic community attribute filter is an integer ranging from 1 to 99; the ID of an advanced community attribute filter is an integer ranging from 100 to 199. The name of a community attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+                  }
+                }
+              }
+              container applyDampenings {
+                description
+                  "Set route penalty parameters.";
+                container applyDampening {
+                  description
+                    "Set a route penalty parameter.";
+                  leaf halfLifeValue {
+                    type uint32 {
+                      range "1..45";
+                    }
+                    default "15";
+                    description
+                      "Suppression half-life during route flapping, in minutes. The value ranges from 1 to 45.";
+                    ext:allowDelete "true";
+                  }
+                  leaf reuseValue {
+                    type uint32 {
+                      range "1..20000";
+                    }
+                    default "750";
+                    description
+                      "Threshold for the route to be unsuppressed. When the penalty value falls below the threshold, the route is reused. The threshold ranges from 1 to 20000.";
+                    ext:allowDelete "true";
+                  }
+                  leaf suppressValue {
+                    type uint32 {
+                      range "1..20000";
+                    }
+                    default "2000";
+                    description
+                      "Threshold for the route to be suppressed. When the penalty value of a route exceeds the suppression threshold, the route is suppressed. The threshold ranges from 1 to 20000, and the configured threshold must be greater than the reuse threshold.";
+                    ext:allowDelete "true";
+                  }
+                  leaf ceilingValue {
+                    type uint32 {
+                      range "1001..20000";
+                    }
+                    default "16000";
+                    description
+                      "Penalty ceiling of the specified route. The configured value must be greater than the suppression threshold.";
+                    ext:allowDelete "true";
+                  }
+                }
+              }
+              container applyRouteTypes {
+                description
+                  "Set route types.";
+                container applyRouteType {
+                  description
+                    "Set a route type.";
+                  leaf routeType {
+                    type rtpRouteType;
+                    description
+                      "Route type.";
+                  }
+                }
+              }
+              container applyPreferredValues {
+                description
+                  "Set the preferred values of BGP routes.";
+                container applyPreferredValue {
+                  description
+                    "Set the preferred value of a BGP route.";
+                  leaf preferredValue {
+                    type uint32 {
+                      range "0..65535";
+                    }
+                    description
+                      "Preferred value of a BGP route.";
+                  }
+                }
+              }
+              container applyQosParas {
+                description
+                  "Set QoS parameters.";
+                container applyQosPara {
+                  description
+                    "Set QoS parameters.";
+                  leaf QosType {
+                    type rtpApplyQosChoice;
+                    description
+                      "QoS parameter type.";
+                  }
+                  leaf qosLocalID {
+                    when "not(../QosType='Behavior' or ../QosType='IpPrecedence') or ../QosType='IpPrecedenceAndQosID' or ../QosType='QosID'";
+                    type uint32 {
+                      range "1..4095";
+                    }
+                    description
+                      "Local ID.";
+                  }
+                  leaf ipPrecedence {
+                    when "not(../QosType='Behavior' or ../QosType='QosID') or ../QosType='IpPrecedence' or ../QosType='IpPrecedenceAndQosID'";
+                    type uint32 {
+                      range "0..7";
+                    }
+                    description
+                      "IP precedence value.";
+                  }
+                  leaf behaviorName {
+                    when "not(../QosType='IpPrecedence' or ../QosType='IpPrecedenceAndQosID' or ../QosType='QosID') or ../QosType='Behavior'";
+                    type string {
+                      length "1..127";
+                    }
+                    description
+                      "Name of traffic behavior.";
+                  }
+                }
+              }
+              container applyTrafficIndexs {
+                description
+                  "Set BGP traffic indexes. ";
+                container applyTrafficIndex {
+                  description
+                    "Set BGP traffic index.";
+                  leaf trafficIndex {
+                    type uint32 {
+                      range "1..64";
+                    }
+                    description
+                      "BGP traffic index.";
+                  }
+                }
+              }
+              container applyExtCmntySoos {
+                description
+                  "Set SoO extended community attribute values.";
+                container applyExtCmntySoo {
+                  description
+                    "Set an SoO extended community attribute value. You can set a maximum of 16 extended community attribute values.";
+                  leaf operationType {
+                    type rtpAdditiveChoice;
+                    must "(../operationType='additive')";
+                    default "additive";
+                    description
+                      "Apply the configured SoO value to the original SoO value of a route.";
+                  }
+                  container applyExtCmntySooStrings {
+                    description
+                      "List of extended community SoO attribute values.";
+                    list applyExtCmntySooString {
+                      key "stringValue";
+                      max-elements 16;
+                      description
+                        "Extended community SoO attribute value.";
+                      leaf stringValue {
+                        type string {
+                          length "3..21";
+                        }
+                        description
+                          "Extended community SoO attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295) or the format of IPv4-address : nn ('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 65535) or the format of as-number.as-number:nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 65535).";
+                      }
+                    }
+                  }
+                }
+              }
+              container applyExtCmntyRdtIps {
+                description
+                  "Set extended community attribute redirect IP values.";
+                container applyExtCmntyRdtIp {
+                  description
+                    "Set extended community attribute redirect IP value.";
+                  leaf stringValue {
+                    type string {
+                      length "9..17";
+                    }
+                    description
+                      "Extended community attribute value, which can be in the format of IPv4-address : nn('IPv4-address' is an IPv4 address and 'nn' ranges from 0 to 1).";
+                  }
+                }
+              }
+              container applyExtCmntyVpnRts {
+                description
+                  "Set extended community attribute redirect VPN values.";
+                container applyExtCmntyVpnRt {
+                  description
+                    "Set extended community attribute redirect VPN value.";
+                  leaf stringValue {
+                    type string {
+                      length "3..16";
+                    }
+                    description
+                      "Extended community attribute value, which can be in the format of as-number : nn ('as-number' ranges from 0 to 65535 and 'nn' ranges from 0 to 4294967295).";
+                  }
+                }
+              }
+              container applyAigps {
+                description
+                  "Apply AIGP Attribute List.";
+                container applyAigp {
+                  description
+                    "Apply AIGP Attribute.";
+                  leaf applyChoice {
+                    type rtpApplyAigpChoice;
+                    default "config";
+                    description
+                      "Mode of Setting Route AIGP Attribute";
+                    ext:allowDelete "true";
+                  }
+                  leaf aigpValue {
+                    when "not(../applyChoice='inheritCost') or ../applyChoice='config'";
+                    type uint32 {
+                      range "0..4294967295";
+                    }
+                    default "0";
+                    description
+                      "AIGP Attribute Value";
+                    ext:allowDelete "true";
+                  }
+                }
+              }
+            }
+            container nextNodeChoice {
+              description
+                "Set continue to match the next node.";
+              leaf isGotoNextNode {
+                type boolean;
+                default "false";
+                description
+                  "Continue to match.";
+              }
+              leaf nextNodeSeq {
+                type int32 {
+                  range "1..65535";
+                }
+                description
+                  "Matching node sequence number.";
+                ext:allowDelete "true";
+              }
+            }
+          }
+        }
+      }
+    }
+    container tunnelSelectors {
+      description
+        "List of tunnel selectors.";
+      list tunnelSelector {
+        key "name";
+        max-elements 65535;
+        description
+          "Tunnel selector. Usually used in BGP VPN Option B or BGP VPN Option C, tunnel selector selects a proper tunnel policy for routes.";
+        leaf name {
+          type string {
+            length "1..40";
+          }
+          description
+            "Name of a tunnel selector. The name is a string of 1 to 40 case-sensitive characters without spaces.";
+        }
+        container tunnelSelectorNodes {
+          description
+            "List of tunnel selector nodes.";
+          list tunnelSelectorNode {
+            key "nodeSequence";
+            max-elements 65535;
+            description
+              "Tunnel selector node.";
+            leaf nodeSequence {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "Sequence number of a node.";
+            }
+            leaf matchMode {
+              type rtpMatchMode;
+              mandatory true;
+              description
+                "Matching mode of nodes.";
+            }
+            container matchCondition {
+              description
+                "Match Type List";
+              container matchDestPrefixFilters {
+                description
+                  "Match IPv4 destination addresses by the prefix filter. The configurations of matching IPv4 destination addresses by the prefix filter are mutually exclusive with the configurations of matching IPv4 destination addresses based on ACL rules.";
+                container matchDestPrefixFilter {
+                  description
+                    "Match an IPv4 destination address by the prefix filter.";
+                  leaf prefixName {
+                    type leafref {
+                      path "/rtp/prefixFilters/prefixFilter/name";
+                    }
+                    description
+                      "Name of the specified prefix filter when IPv4 destination addresses are matched.";
+                  }
+                }
+              }
+              container matchIPv4NextHops {
+                description
+                  "Match IPv4 next hops by the prefix filter or ACL filter. The configurations of matching IPv4 next hops by the prefix filter are mutually exclusive with the configurations of matching IPv4 next hops by the ACL filter.";
+                container matchIPv4NextHop {
+                  description
+                    "Match an IPv4 next hop by the prefix or ACL.";
+                  leaf matchType {
+                    type rtpTnlSelMchType;
+                    description
+                      "Match type. IPv4 next hops are matched with either the prefix or ACL.";
+                  }
+                  leaf prefixName {
+                    when "not(../matchType='matchNHopAcl' or not(../matchType)) or ../matchType='matchNHopPF'";
+                    type leafref {
+                      path "/rtp/prefixFilters/prefixFilter/name";
+                    }
+                    description
+                      "Name of the specified prefix when IPv4 next hops are matched.";
+                  }
+                  leaf aclNameOrNum {
+                    when "not(../matchType='matchNHopPF' or not(../matchType)) or ../matchType='matchNHopAcl'";
+                    type string {
+                      length "1..64";
+                    }
+                    description
+                      "Name of the specified ACL when next hops are matched, which can be a value ranging from 2000 to 2999 or a string of 1 to 32 characters beginning with a-z or A-Z.";
+                  }
+                }
+              }
+              container matchIPv6NextHops {
+                description
+                  "Match IPv6 next hops by the IPv6 prefix filter.";
+                container matchIPv6NextHop {
+                  description
+                    "Match an IPv6 next hop by the IPv6 prefix filter.";
+                  leaf ipv6PrefixName {
+                    type leafref {
+                      path "/rtp/ipv6PrefixFilters/ipv6PrefixFilter/name";
+                    }
+                    description
+                      "Name of the specified prefix filter when IPv6 next hops are matched.";
+                  }
+                }
+              }
+              container matchCommunityFilters {
+                description
+                  "Match community attribute filters.";
+                list matchCommunityFilter {
+                  key "cmntyNameOrNum";
+                  max-elements 32;
+                  description
+                    "Match a community attribute filter.";
+                  leaf wholeMatch {
+                    type boolean;
+                    default "false";
+                    description
+                      "All the communities are matched. It is valid to only basic community attribute filters.";
+                  }
+                  leaf sortMatch {
+                    type boolean;
+                    default "false";
+                    description
+                      "";
+                  }
+                  leaf cmntyNameOrNum {
+                    type leafref {
+                      path "/rtp/communityFilters/communityFilter/cmntyNameOrNum";
+                    }
+                    description
+                      "Name or index of a community attribute filter. It can be a numeral or a string. The ID of a basic community attribute filter is an integer ranging from 1 to 99; the ID of an advanced community attribute filter is an integer ranging from 100 to 199. The name of a community attribute filter is a string of 1 to 51 characters. The string cannot contain only digits.";
+                  }
+                }
+              }
+              container matchRdFilters {
+                description
+                  "Match RD filters.";
+                container matchRdFilter {
+                  description
+                    "Match an RD filter.";
+                  leaf rdIndex {
+                    type leafref {
+                      path "/rtp/rdFilters/rdFilter/index";
+                    }
+                    description
+                      "Index of an RD filter.";
+                  }
+                }
+              }
+            }
+            container applyAction {
+              description
+                "Set Type List";
+              container applyTnlPolicys {
+                description
+                  "Set tunnel policies.";
+                container applyTnlPolicy {
+                  description
+                    "Set a tunnel policy.";
+                  leaf tnlPolicyName {
+                    type string {
+                      length "1..39";
+                    }
+                    description
+                      "Name of a tunnel policy. The name is a string of 1 to 40 case-sensitive characters, spaces not supported.";
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container communityLists {
+      description
+        "Community lists.";
+      list communityList {
+        key "name";
+        max-elements 65535;
+        description
+          "Community list.";
+        leaf name {
+          type string {
+            length "1..63";
+          }
+          description
+            "Community list name.";
+        }
+        container communitys {
+          description
+            "Communitys.";
+          list community {
+            key "stringValue";
+            max-elements 100;
+            description
+              "Community.";
+            leaf stringValue {
+              type string {
+                length "1..19";
+              }
+              description
+                "Community value.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,745 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifmtrunk {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-ifmtrunk";
+  prefix ifmtrunk;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ifmtrunk-action;
+  include huawei-ifmtrunk-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Define the trunk bundling technology that bundles multiple physical interfaces into a logical interface.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  container ifmtrunk {
+    description
+      "Define the trunk bundling technology that bundles multiple physical interfaces into a logical interface.";
+    container lacpSysInfo {
+      description
+        "Global attributes.";
+      leaf priority {
+        type uint16 {
+          range "0..65535";
+        }
+        default "32768";
+        description
+          "The device with a higher system priority is selected as the Actor, and then active member interfaces are selected based on the configuration of the Eth-Trunk interface on the Actor. The default value is 32768. If the system priorities are the same, the Actor is selected based on the system ID. The device with the smaller system ID becomes the Actor.";
+      }
+      container lacpMlagGlobal {
+        description
+          "M-LAG Global attributes.";
+        leaf lacpMlagPriority {
+          type uint16 {
+            range "0..65535";
+          }
+          default "32768";
+          description
+            "M-LAG global LACP system priority.";
+          ext:allowDelete "true";
+        }
+        leaf lacpMlagSysId {
+          type pub-type:macAddress {
+            length "0..255";
+          }
+          description
+            "M-LAG global LACP system MAC address.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container TrunkIfs {
+      description
+        "Specify the list of trunk interfaces.";
+      list TrunkIf {
+        key "ifName";
+        description
+          "Define the trunk bundling technology that bundles multiple physical interfaces into a logical interface.";
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "Specify the name of a trunk interface. ";
+        }
+        leaf minUpNum {
+          when "not(../trunkType='EthTrunk' and ../workMode='Backup') or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk'";
+          type uint32 {
+            range "1..64";
+          }
+          must "not(../trunkType='EthTrunk' and ../workMode='Static') or (../trunkType='EthTrunk' and ../workMode='Static' and ../minUpNum<=../lacpTrunk/maxActiveNum)";
+          default "1";
+          description
+            "Specify the minimum number of Up member links of a trunk interface.";
+          ext:allowDelete "true";
+        }
+        leaf minUpBand {
+          when "not(../trunkType='EthTrunk' and ../workMode='Backup') or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk'";
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Specify the minimum bandwidth of Up member links of a trunk interface.";
+          ext:allowDelete "true";
+        }
+        leaf maxUpNum {
+          when "not(../trunkType='EthTrunk' and ../workMode='Backup' or ../trunkType='IPTrunk') or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static'";
+          type uint32 {
+            range "1..64";
+          }
+          description
+            "Maximum number of links that affect the actual bandwidth of the Layer 2 Eth-Trunk interface.";
+          ext:allowDelete "true";
+        }
+        leaf trunkType {
+          type ifmtrunkTrunkType;
+          default "EthTrunk";
+          description
+            "Specify the trunk interface types: Eth-Trunk and IP-Trunk.";
+        }
+        leaf remoteEthTrunk {
+          type boolean;
+          default "false";
+          description
+            "To identify remote Eth-Trunk interface.";
+        }
+        leaf hashType {
+          when "not(../trunkType='EthTrunk' and ../workMode='Backup') or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk'";
+          type ifmtrunkTrunkHashType;
+          must "(../trunkType='EthTrunk' and ../workMode='Manual' and (../hashType='IP' or ../hashType='MAC' or ../hashType='PacketAll') ) or (../trunkType='EthTrunk' and ../workMode='Static' and (../hashType='IP' or ../hashType='MAC' or ../hashType='PacketAll') ) or (../trunkType='IPTrunk' and (../hashType='IP' or ../hashType='PacketAll') ) or not(../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk')";
+          default "IP";
+          description
+            "Configure the hash algorithm for a forwarding table.";
+        }
+        leaf workMode {
+          type ifmtrunkTrunkMode;
+          must "(../trunkType='EthTrunk' and ../workMode='Backup' and (../workMode='Manual' or ../workMode='Static' or ../workMode='Backup') ) or (../trunkType='EthTrunk' and ../workMode='Manual' and (../workMode='Manual' or ../workMode='Static' or ../workMode='Backup') ) or (../trunkType='EthTrunk' and ../workMode='Static' and (../workMode='Manual' or ../workMode='Static' or ../workMode='Backup') ) or not(../trunkType='EthTrunk' and ../workMode='Backup' or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static')";
+          default "Manual";
+          description
+            "Configure the working mode for a trunk interface.";
+        }
+        leaf ifMac {
+          when "not(../trunkType='EthTrunk' and ../workMode='Backup' or ../trunkType='IPTrunk') or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static'";
+          type pub-type:macAddress {
+            length "0..255";
+          }
+          description
+            "Specify the MAC address of a trunk interface, in the format of HH-HH-HH or H-H-H-H-H-H.";
+        }
+        leaf trunkpriority {
+          when "not(../trunkType='EthTrunk' and ../workMode='Backup' or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk')";
+          type uint16;
+          default "32768";
+          description
+            "Trunk priority.";
+        }
+        leaf upMemberIfNum {
+          when "../trunkType='EthTrunk' and ../workMode='Backup' or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk'";
+          type uint32 {
+            range "0..64";
+          }
+          config false;
+          description
+            "Specify the number of member interfaces in the Up state.";
+        }
+        leaf memberIfNum {
+          when "../trunkType='EthTrunk' and ../workMode='Backup' or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk'";
+          type uint32 {
+            range "0..64";
+          }
+          config false;
+          description
+            "Specify the number of trunk member interfaces.";
+        }
+        leaf maxBandWidth {
+          when "../trunkType='EthTrunk' and ../workMode='Backup' or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk'";
+          type uint64;
+          config false;
+          description
+            "Specify the maximum bandwidth of a trunk interface.";
+        }
+        leaf smlkFlushVlanId {
+          when "not(../trunkType='IPTrunk') or ../trunkType='EthTrunk' and ../workMode='Backup' or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static'";
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "Specify the ID of the VLAN to which Smart-link flush packets are sent.";
+          ext:allowDelete "true";
+        }
+        leaf inactivePortShutdown {
+          when "not(../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk') or ../trunkType='EthTrunk' and ../workMode='Backup'";
+          type boolean;
+          default "false";
+          description
+            "Enable the laser auto shutdown function on the backup interface of the Eth-Trunk interface working in 1:1 master/backup mode.
+After this function is enabled, the backup interface will be shut down. By default, the laser auto shutdown function is disabled.";
+        }
+        leaf preemptEnable {
+          when "not(../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk') or ../trunkType='EthTrunk' and ../workMode='Backup'";
+          type boolean;
+          default "false";
+          description
+            "Enable delay switchback for the master member interface of an Eth-Trunk interface working in 1:1 master/backup mode. By default, this function is disabled. This function works together with revert delay time that can be configured only after this function is enabled.
+After this function is enabled, the restored master interface automatically takes over traffic of the backup interface when the revert delay time expires.";
+        }
+        leaf preemptDelayTime {
+          when "not(../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk')";
+          type uint32 {
+            range "0..30";
+          }
+          default "0";
+          description
+            "Specify the delay interval (in minutes) at which the master interface of an Eth-Trunk interface working 1:1 master/backup mode switches back to the master state. Value 0 indicates that a master interface immediately switches back to the master state once it is restored. This time can be configured only after delay switchback is enabled.
+After this time is configured, the restored master interface switches back to the master state only after the time expires, preventing frequent interface flappings and traffic loss.";
+        }
+        leaf preemptDelaySec {
+          type uint32 {
+            range "0..59";
+          }
+          default "0";
+          description
+            "Specify the delay interval (in seconds) at which the master interface of an Eth-Trunk interface working 1:1 master/backup mode switches back to the master state. Value 0 indicates that a master interface immediately switches back to the master state once it is restored. This time can be configured only after delay switchback is enabled.
+After this time is configured, the restored master interface switches back to the master state only after the time expires, preventing frequent interface flappings and traffic loss.";
+        }
+        leaf preemptDelayMS {
+          type uint32 {
+            range "0..999";
+          }
+          default "0";
+          description
+            "Specify the delay interval (in million-seconds) at which the master interface of an Eth-Trunk interface working 1:1 master/backup mode switches back to the master state. Value 0 indicates that a master interface immediately switches back to the master state once it is restored. This time can be configured only after delay switchback is enabled.
+After this time is configured, the restored master interface switches back to the master state only after the time expires, preventing frequent interface flappings and traffic loss.";
+        }
+        container lacpTrunk {
+          when "not(../trunkType='EthTrunk' and ../workMode='Backup' or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='IPTrunk') or ../trunkType='EthTrunk' and ../workMode='Static'";
+          description
+            "LACP attribute.";
+          leaf isSupportPrmpt {
+            when "../../trunkType='EthTrunk' and ../../workMode='Static'";
+            type boolean;
+            default "false";
+            description
+              "If the preemption function is enabled, the high-priority link can replace the low-priority link and switch to active.";
+            ext:allowDelete "true";
+          }
+          leaf rcvTimeoutType {
+            when "../../trunkType='EthTrunk' and ../../workMode='Static'";
+            type lacpRcvTmOutType;
+            default "Slow";
+            description
+              "Timeout period for an Eth-Trunk interface in static LACP mode to receive LACP packets. The Fast mode indicates a short interval, and the Slow mode indicates a long interval. The default value is Slow.";
+            ext:allowDelete "true";
+          }
+          leaf fastTimeoutUserDefinedValue {
+            when "not(../../trunkType='EthTrunk' and ../../workMode='Static')";
+            type uint32 {
+              range "3..90";
+            }
+            default "3";
+            description
+              "Set the value of fast timeout. The value is an integer ranging from 3 to 90, in seconds. ";
+            ext:allowDelete "true";
+          }
+          leaf selectPortStd {
+            when "../../trunkType='EthTrunk' and ../../workMode='Static'";
+            type lacpSelectStd;
+            default "Prority";
+            description
+              "Indicate that active interfaces are selected based on the interface priority or rate.";
+            ext:allowDelete "true";
+          }
+          leaf promptDelay {
+            when "../../trunkType='EthTrunk' and ../../workMode='Static'";
+            type uint32 {
+              range "0..180";
+            }
+            default "30";
+            description
+              "When the preemption function is enabled, the high-priority link switches to active after the configured delay time.";
+          }
+          leaf maxActiveNum {
+            when "../../trunkType='EthTrunk' and ../../workMode='Static'";
+            type uint32 {
+              range "1..64";
+            }
+            description
+              "After the number of Up member links reaches the upper limit, the bandwidth of the Eth-Trunk interface does not increase even if more member links go Up. Setting the maximum number of Up member links improves network reliability on the basis of sufficient bandwidth.";
+            ext:allowDelete "true";
+          }
+          leaf collectMaxDelay {
+            type uint16 {
+              range "0..65535";
+            }
+            default "0";
+            description
+              "The port receive the max delay time of collecting from parterner.";
+          }
+          leaf mixRateEnable {
+            type boolean;
+            default "false";
+            description
+              "If the mix-rate link function is enabled, Lacp will select links with different rate at the same time.";
+            ext:allowDelete "true";
+          }
+          leaf dampStaFlapEn {
+            type boolean;
+            default "false";
+            description
+              "If the dampening state flaping function is enabled, Lacp will dampen state flapping.";
+          }
+          leaf dampUnexpMacEn {
+            type boolean;
+            default "true";
+            description
+              "If the dampening unexpeced MAC-pdu flaping function is enabled, Lacp will dampen unexpected MAC-Pdu flapping.";
+          }
+          container lacpTrunkInfo {
+            config false;
+            description
+              "Number of LACP interfaces.";
+            leaf portUpNum {
+              type uint32;
+              config false;
+              description
+                "Number of Up LACP interfaces in this Eth-Trunk interface.";
+            }
+          }
+          container lacpTrackVrrp {
+            description
+              "Eth-Trunk interface binding VRRP.";
+            leaf vrrpId {
+              type uint8 {
+                range "1..255";
+              }
+              description
+                "VRRP ID.";
+              ext:allowDelete "true";
+            }
+            leaf ifName {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Specified interface.";
+              ext:allowDelete "true";
+            }
+            leaf vrrpLacpPri {
+              type uint16 {
+                range "0..65535";
+              }
+              description
+                "LACP system priority of VRRP-bound Eth-Trunk interface.";
+              ext:allowDelete "true";
+            }
+            leaf portIdExt {
+              type boolean;
+              description
+                "Enabling status of LACP port number extension.";
+              ext:allowDelete "true";
+            }
+          }
+          leaf trunkSysMac {
+            type pub-type:macAddress {
+              length "0..255";
+            }
+            description
+              "Specify the LACP system ID of a trunk interface, in the format of HH-HH-HH.";
+            ext:allowDelete "true";
+          }
+          leaf operSysPri {
+            type uint32;
+            config false;
+            description
+              "Specify the operate LACP system priority of a trunk interface.";
+          }
+          leaf operSysMac {
+            type pub-type:macAddress {
+              length "0..255";
+            }
+            config false;
+            description
+              "Specify the operate LACP system ID of a trunk interface, in the format of HH-HH-HH or H-H-H-H-H-H.";
+          }
+          leaf sysMacSource {
+            type lacpSysMacSource;
+            config false;
+            description
+              "Specify the source of LACP operate System ID.";
+          }
+        }
+        container lacpErrPkt {
+          when "not(../trunkType='EthTrunk' and ../workMode='Backup' or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='IPTrunk') or ../trunkType='EthTrunk' and ../workMode='Static'";
+          config false;
+          description
+            "Error LACP packets.";
+          leaf portName {
+            type string {
+              length "0..64";
+            }
+            config false;
+            description
+              "Name of the interface receiving error LACP packets.";
+          }
+          leaf time {
+            type yang:date-and-time;
+            config false;
+            description
+              "Time when an error LACP packet is received.";
+          }
+          leaf errPkt {
+            type string {
+              length "0..512";
+            }
+            config false;
+            description
+              "Content of an error LACP packet.";
+          }
+        }
+        container TrunkMemberIfs {
+          description
+            "Configure a list of trunk member interfaces.";
+          list TrunkMemberIf {
+            key "memberIfName";
+            max-elements 64;
+            description
+              "Configure trunk member interfaces.";
+            leaf memberIfName {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Configure the name of a trunk member interface.";
+            }
+            leaf weight {
+              type uint32 {
+                range "1..64";
+              }
+              default "1";
+              description
+                "Set the weight for a trunk member interface.";
+            }
+            leaf memberIfState {
+              type ifmtrunkMemberState;
+              config false;
+              description
+                "Display the status of a trunk member interface.";
+            }
+            leaf isMasterMember {
+              type boolean;
+              default "false";
+              description
+                "Configure a trunk member interface as the master interface.";
+            }
+            leaf memberIfRole {
+              type ifmtrunkMemberRole;
+              default "Slave";
+              config false;
+              description
+                "Display the role of a trunk member interface.";
+            }
+            container lacpPortInfo {
+              description
+                "Interface LACP attribute.";
+              leaf status {
+                type ifmtrunkMemberSelectedState;
+                config false;
+                description
+                  "Interface LACP selected status.";
+              }
+              leaf portType {
+                type lacpPortType;
+                config false;
+                description
+                  "LACP Interface type.";
+              }
+              leaf actorState {
+                type string {
+                  length "8";
+                }
+                config false;
+                description
+                  "Actor select state.";
+              }
+              leaf actorPortKey {
+                type uint32 {
+                  range "0..65535";
+                }
+                config false;
+                description
+                  "Actor interface keyword.";
+              }
+              leaf actorSysID {
+                type string {
+                  length "0..255";
+                }
+                config false;
+                description
+                  "LACP Actor system priority and system MAC.";
+              }
+              leaf actorPortNo {
+                type uint32;
+                config false;
+                description
+                  "LACP Actor interface number.";
+              }
+              leaf partnerSysPriMac {
+                type string {
+                  length "0..255";
+                }
+                config false;
+                description
+                  "LACP partner system priority and system MAC.";
+              }
+              leaf partnerSysPri {
+                type uint32 {
+                  range "0..65535";
+                }
+                config false;
+                description
+                  "Partner system priority.";
+              }
+              leaf partnerSysId {
+                type pub-type:macAddress {
+                  length "0..255";
+                }
+                config false;
+                description
+                  "Partner system ID.";
+              }
+              leaf partnerPortPri {
+                type uint32 {
+                  range "0..65535";
+                }
+                config false;
+                description
+                  "Partner interface priority.";
+              }
+              leaf partnerPortNo {
+                type uint32 {
+                  range "0..65535";
+                }
+                config false;
+                description
+                  "Partner interface ID.";
+              }
+              leaf partnerPortKey {
+                type uint32 {
+                  range "0..65535";
+                }
+                config false;
+                description
+                  "Partner interface keyword.";
+              }
+              leaf partnerState {
+                type string {
+                  length "8";
+                }
+                config false;
+                description
+                  "Partner select state.";
+              }
+              leaf isReferencePort {
+                type boolean;
+                config false;
+                description
+                  "LACP reference interface.";
+              }
+              container lacpPort {
+                description
+                  "Interface LACP configurable attributes.";
+                leaf portId {
+                  type uint16 {
+                    range "57343..65534";
+                  }
+                  description
+                    "Interface LACP port ID.";
+                  ext:allowDelete "true";
+                }
+                leaf portPriority {
+                  when "../../../../../trunkType='EthTrunk' and ../../../../../workMode='Static'";
+                  type uint16 {
+                    range "0..65535";
+                  }
+                  default "32768";
+                  description
+                    "The interface with high LACP priority is selected as the active interface.";
+                  ext:allowDelete "true";
+                }
+              }
+              container lacpPduInfo {
+                config false;
+                description
+                  "LACP PDU information.";
+                leaf revLacpPduNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of received LACP PDUs.";
+                }
+                leaf revErrLacpPduNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of received error LACP PDUs.";
+                }
+                leaf sndLacpPduNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of transmitted LACP PDUs.";
+                }
+                leaf revMarkerPduNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of received Marker LACP PDUs.";
+                }
+                leaf revErrMarkerPduNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of received error Marker LACP PDUs.";
+                }
+                leaf sndMarkerPduNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of transmitted Marker LACP PDUs.";
+                }
+              }
+            }
+          }
+        }
+        container TrunkFwdTbls {
+          when "../trunkType='EthTrunk' and ../workMode='Backup' or ../trunkType='EthTrunk' and ../workMode='Manual' or ../trunkType='EthTrunk' and ../workMode='Static' or ../trunkType='IPTrunk'";
+          config false;
+          description
+            "Display the trunk forwarding table list.";
+          list TrunkFwdTbl {
+            key "ID";
+            config false;
+            description
+              "Display information about the trunk forwarding table.";
+            leaf ID {
+              type uint32;
+              config false;
+              description
+                "ID of a trunk forwarding item.";
+            }
+            leaf masterPortName {
+              type pub-type:ifName;
+              config false;
+              description
+                "Specify the name of the master interface in the trunk forwarding table.";
+            }
+            leaf slavePortName {
+              type pub-type:ifName;
+              config false;
+              description
+                "Specify the name of the slave interface in the trunk forwarding table.";
+            }
+          }
+        }
+        container trunkLocality {
+          description
+            "Configure virtual-cluster trunk localization of a trunk interface.";
+          leaf locality {
+            type boolean;
+            default "true";
+            description
+              "Enable or disable virtual-cluster trunk localization.";
+          }
+        }
+        container trunkHashArith {
+          description
+            "Configure the hash arithmetic type for a forwarding table.";
+          leaf hashArithType {
+            type ifmTrunkArithHashType;
+            default "CRC32_1";
+            description
+              "Configure the hash arithmetic type for a trunk interface.";
+          }
+        }
+        container lacpMlagIf {
+          description
+            "M-LAG interface.";
+          leaf lacpMlagPriority {
+            type uint32 {
+              range "0..65535";
+            }
+            must "not(../../workMode!='Dynamic' and ../../workMode!='Static')";
+            default "32768";
+            description
+              "LACP system priority of the M-LAG.";
+            ext:allowDelete "true";
+          }
+          leaf lacpMlagSysId {
+            type pub-type:macAddress {
+              length "0..255";
+            }
+            must "not(../../workMode!='Dynamic' and ../../workMode!='Static')";
+            description
+              "LACP system MAC of the M-LAG.";
+            ext:allowDelete "true";
+          }
+        }
+        container trunkDualRcv {
+          when "../trunkType='EthTrunk' and ../workMode='Backup'";
+          description
+            "Configure the backup-dual-receiving of the eth-trunk interface.";
+          leaf trunkDualRcvEnable {
+            when "../../trunkType='EthTrunk' and ../../workMode='Backup'";
+            type boolean;
+            default "false";
+            description
+              "Enable the backup-dual-receiving function of the eth-trunk interface.";
+            ext:allowDelete "true";
+          }
+        }
+      }
+    }
+    container lacpForceUps {
+      description
+        "Specify Force-up Interfaces.";
+      list lacpForceUp {
+        key "ifName";
+        description
+          "Specify Force-up Interface.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Interface name.";
+        }
+      }
+    }
+  }
+}

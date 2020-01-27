@@ -1,0 +1,303 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-dhcpv6-relay-type {
+  belongs-to huawei-dhcpv6 {
+    prefix dhcpv6;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "test.Description FOR submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef dhcpv6RelayInterfaceIdOptCfg {
+    type enumeration {
+      enum "disable" {
+        description
+          "Disable.";
+      }
+      enum "cn-telecom" {
+        description
+          "CN-telecom.";
+      }
+      enum "tr-101" {
+        description
+          "TR-101.";
+      }
+      enum "self-define" {
+        description
+          "Self-define.";
+      }
+    }
+    description
+      "description of dhcp6_dhcpv6RelayInterfaceIdOptCfg_type";
+  }
+  typedef dhcpv6RelayRemoteIdOptCfg {
+    type enumeration {
+      enum "invalid" {
+        description
+          "-";
+      }
+      enum "duid" {
+        description
+          "DUID.";
+      }
+      enum "self-define" {
+        description
+          "Self-define.";
+      }
+    }
+    description
+      "description of dhcp6_dhcpv6RelayRemoteIdOptCfg_type";
+  }
+  typedef dhcpFailCause {
+    type enumeration {
+      enum "useless" {
+        description
+          "Invalid status.";
+      }
+      enum "inforequestPkt" {
+        description
+          "DHCPv6 Information request entries created using Information-Request packets and deleted after packet exchange.";
+      }
+      enum "serverAssignAddr" {
+        description
+          "IPv6 address allocation failure.";
+      }
+      enum "serverAssignPrefix" {
+        description
+          "IPv6 prefix allocation failure.";
+      }
+      enum "serverRenewAddr" {
+        description
+          "IPv6 address renewal failure.";
+      }
+      enum "serverRenewPrefix" {
+        description
+          "IPv6 prefix renewal failure.";
+      }
+      enum "serverConfirm" {
+        description
+          "A user created by confirm packets is deleted after the status code in reply messages sent by the server is Fail.";
+      }
+      enum "clientDeclineAddr" {
+        description
+          "Users send DHCP Decline packets to release conflicted addresses.";
+      }
+      enum "clientReleaseAddr" {
+        description
+          "Users send DHCP Release packets to release conflicted addresses.";
+      }
+      enum "deleteRelayPort" {
+        description
+          "A user is deleted after the relay interface is deleted.";
+      }
+      enum "deleteVpnCfig" {
+        description
+          "A user is deleted after the relay interface is unbound from a VPN instance.";
+      }
+      enum "userTimeOut" {
+        description
+          "A relay user entry times out.";
+      }
+      enum "iaClientSolicit" {
+        description
+          "A client resends Solicit packets to request the IA option.";
+      }
+      enum "iaConflictAddr" {
+        description
+          "The IPv6 address assigned by the server is used by another client.";
+      }
+      enum "leaseTimeout" {
+        description
+          "The valid lifetime expired.";
+      }
+      enum "addPdroute" {
+        description
+          "Failed to add PD routes.";
+      }
+      enum "macDuid" {
+        description
+          "The user MAC address or DUID does not match that of an online user.";
+      }
+      enum "reachIfMac" {
+        description
+          "The interface or VLAN limit is reached.";
+      }
+      enum "allocUserSource" {
+        description
+          "Failed to allocate DHCPv6 relay user entry resources.";
+      }
+      enum "allocUserIndex" {
+        description
+          "Failed to allocate DHCPv6 relay user table index resources.";
+      }
+      enum "updateUserData" {
+        description
+          "Failed to update DHCPv6 relay user entries.";
+      }
+      enum "iaBoardAddClient" {
+        description
+          "Failed to add DHCPv6 relay user entries on a board, causing a PD option release.";
+      }
+      enum "commondReset" {
+        description
+          "User entries are deleted by the reset dhcpv6 relay command.";
+      }
+      enum "phyinfoChanged" {
+        description
+          "The relay interface information changed.";
+      }
+      enum "duidChanged" {
+        description
+          "The client DUID changed.";
+      }
+    }
+    description
+      "description of dhcp6_dhcpFailCause_type";
+  }
+  typedef dhcpv6RelayAddrState {
+    type enumeration {
+      enum "tblInit" {
+        description
+          "TABLE_INIT.";
+      }
+      enum "tblSolicit" {
+        description
+          "SEND_SOLICIT_PKT.";
+      }
+      enum "tblAdvertise" {
+        description
+          "SEND_ADVERTISE_PKT.";
+      }
+      enum "tblRequest" {
+        description
+          "SEND_REQUEST_PKT.";
+      }
+      enum "tblRenewRebind" {
+        description
+          "SEND_RENEW_REBIND_PKT.";
+      }
+      enum "tblConfirm" {
+        description
+          "SEND_CONFIRM_PKT.";
+      }
+      enum "tblEecline" {
+        description
+          "SEND_DECLINE.";
+      }
+      enum "tblRelese" {
+        description
+          "SEND_RELEASE.";
+      }
+      enum "tblUp" {
+        description
+          "ADDR_UP.";
+      }
+      enum "tblButt" {
+        description
+          "ERRO_STAT.";
+      }
+    }
+    description
+      "description of dhcp6_dhcpv6RelayAddrState_type";
+  }
+  typedef dhcpv6RelayRapidCommit {
+    type enumeration {
+      enum "off" {
+        description
+          "Off.";
+      }
+      enum "on" {
+        description
+          "On.";
+      }
+    }
+    description
+      "description of dhcp6_dhcpv6RelayRapidCommit_type";
+  }
+  typedef dhcpv6RelayTblStatus {
+    type enumeration {
+      enum "init" {
+        description
+          "TABLE_INIT.";
+      }
+      enum "solicit" {
+        description
+          "SEND_SOLICIT_PKT.";
+      }
+      enum "advertise" {
+        description
+          "SEND_ADVERTISE_PKT.";
+      }
+      enum "request" {
+        description
+          "SEND_REQUEST_PKT.";
+      }
+      enum "renewrebind" {
+        description
+          "SEND_RENEW_REBIND_PKT.";
+      }
+      enum "confirm" {
+        description
+          "SEND_CONFIRM_PKT.";
+      }
+      enum "decline" {
+        description
+          "SEND_DECLINE.";
+      }
+      enum "release" {
+        description
+          "SEND_RELEASE.";
+      }
+      enum "up" {
+        description
+          "ADDR_UP.";
+      }
+      enum "err" {
+        description
+          "ERRO_STAT.";
+      }
+    }
+    description
+      "description of dhcp6_dhcpv6RelayTblStatus_type";
+  }
+  typedef dhcpv6RelayIaType {
+    type enumeration {
+      enum "IAinvalid" {
+        description
+          "Invalid IA.";
+      }
+      enum "IA_NA" {
+        description
+          "Identity Association for Non-temporary Addresses.";
+      }
+      enum "IA_TA" {
+        description
+          "Identity Association for Temporary Addresses";
+      }
+      enum "IA_PD" {
+        description
+          "Identity Association for Prefix Delegation.";
+      }
+    }
+    description
+      "description of dhcp6_dhcpv6RelayIaType_type";
+  }
+}

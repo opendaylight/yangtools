@@ -1,0 +1,491 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-bgp-bgpcomm-action {
+  belongs-to huawei-bgp {
+    prefix bgp;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  include huawei-bgp-type;
+  include huawei-bgp-bgpcomm;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the common actions of bgp";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc resetVrf {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+    }
+  }
+  rpc resetAddrAll {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+    }
+  }
+  rpc resetAsNumber {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf remoteAS {
+        type string {
+          length "1..11";
+        }
+        description
+          "AS number of a peer.";
+      }
+    }
+  }
+  rpc resetIpAddr {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf remoteAddress {
+        type inet:ip-address-no-zone;
+        description
+          "Address of a peer.";
+      }
+    }
+  }
+  rpc resetPeerType {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf peerType {
+        type bgpcommPeerType;
+        description
+          "EBGP: soft reset EBGP connections.
+IBGP: soft reset IBGP connections.";
+      }
+    }
+  }
+  rpc resetGroup {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf groupName {
+        type string {
+          length "1..47";
+          pattern '([^\? ]+)';
+        }
+        description
+          "Name of a peer group.";
+      }
+    }
+  }
+  rpc resetDampenAll {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+    }
+  }
+  rpc resetDampIpv4 {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf networkAddress {
+        type inet:ip-address-no-zone;
+        description
+          "IPv4 network address advertised by BGP.";
+      }
+      leaf maskLen {
+        type uint8 {
+          range "0..128";
+        }
+        description
+          "Mask length of an IP address.";
+      }
+    }
+  }
+  rpc resetFlapAll {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+    }
+  }
+  rpc resetFlapPeerAddr {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf remoteAddress {
+        type inet:ip-address-no-zone;
+        description
+          "Address of a peer.";
+      }
+    }
+  }
+  rpc resetAsPathRegexp {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf asPathRegexpEnable {
+        type boolean;
+        default "false";
+        description
+          "Flag indicating that the AS_Path regular expression is enabled.";
+      }
+      leaf asPathRegexpText {
+        type string {
+          length "1..80";
+        }
+        description
+          "Reset route flapping statistics that match the AS-Path regular expression.";
+      }
+    }
+  }
+  rpc resetFlapAsPathFilter {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf asPathFilterNumber {
+        type string {
+          length "0..51";
+        }
+        description
+          "Reset the statistics of the route flapping based on the specified AS_Path filter.";
+      }
+    }
+  }
+  rpc resetFlapNetworkAddr {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf networkAddress {
+        type inet:ip-address-no-zone;
+        description
+          "IPv4 network address advertised by BGP.";
+      }
+      leaf maskLen {
+        type uint8 {
+          range "0..128";
+        }
+        description
+          "Mask length of an IP address.";
+      }
+    }
+  }
+  rpc refreshAll {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf direction {
+        type bgpcommDirectionType;
+        description
+          "Soft reset BGP connections in the inbound/outbound direction.";
+      }
+      leaf pathrecovery {
+        type boolean;
+        default "false";
+        description
+          "Soft reset BGP connections in the inbound/outbound direction.";
+      }
+    }
+  }
+  rpc refreshPeerType {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf peerType {
+        type bgpcommPeerType;
+        description
+          "EBGP: softly resets EBGP connections.
+IBGP: softly resets IBGP connections.";
+      }
+      leaf direction {
+        type bgpcommDirectionType;
+        description
+          "Soft reset BGP connections in the inbound/outbound direction.";
+      }
+    }
+  }
+  rpc refreshIpAddress {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf remoteAddress {
+        type inet:ip-address-no-zone;
+        description
+          "Address of a peer.";
+      }
+      leaf direction {
+        type bgpcommDirectionType;
+        description
+          "Triggers softly reset at the outgoing/incoming interface.";
+      }
+    }
+  }
+  rpc refreshGroup {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf groupName {
+        type string {
+          length "1..47";
+          pattern '([^\? ]+)';
+        }
+        description
+          "Name of a peer group.";
+      }
+      leaf direction {
+        type bgpcommDirectionType;
+        description
+          "Soft reset BGP connections in the inbound/outbound direction.";
+      }
+    }
+  }
+  rpc resetFlowSpecStat {
+    description
+      "";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of a BGP instance.";
+      }
+      leaf afType {
+        type bgpcommPrefixType;
+        description
+          "Address family type of a BGP instance.";
+      }
+      leaf reIndex {
+        type uint32 {
+          range "0..4294967295";
+        }
+        description
+          "ReIndex of a BGP Flow Specification route.";
+      }
+    }
+  }
+  rpc refreshAllPeerUp {
+    description
+      "";
+    input {
+      leaf bgpName {
+        type string;
+        description
+          "Name of a BGP instance.";
+      }
+    }
+  }
+}

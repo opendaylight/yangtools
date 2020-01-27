@@ -1,0 +1,108 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifm-hdlc {
+  belongs-to huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ifm-pppbase;
+  include huawei-ifm-hdlc-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "submodule hdlc";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  grouping hdlcDamp_type {
+    description
+      "type of HDLC damp";
+    leaf hdlcDampEnable {
+      type boolean;
+      default "true";
+      description
+        "HDLC link status damping enable";
+    }
+    leaf hdlcDampLevel {
+      when "not(../hdlcDampEnable='false') or ../hdlcDampEnable='true'";
+      type hdlcDampLevelType;
+      default "light";
+      description
+        "HDLC link status damping level";
+    }
+    leaf hdlcSuppress {
+      when "not(../hdlcDampEnable='false' or ../hdlcDampLevel!='manual')";
+      type uint32 {
+        range "1..20000";
+      }
+      units second;
+      must "not(../hdlcDampLevel='manual') or (../hdlcDampLevel='manual' and ../hdlcSuppress>../hdlcReuse)";
+      description
+        "1000 times of suppress threshold";
+      ext:allowDelete "true";
+    }
+    leaf hdlcReuse {
+      when "not(../hdlcDampEnable='false' or ../hdlcDampLevel!='manual')";
+      type uint32 {
+        range "1..20000";
+      }
+      units second;
+      description
+        "1000 times of reuse threshold";
+      ext:allowDelete "true";
+    }
+    leaf hdlcMaxSuppressTime {
+      when "not(../hdlcDampEnable='false' or ../hdlcDampLevel!='manual')";
+      type uint16 {
+        range "1..255";
+      }
+      units second;
+      description
+        "Max suppress time(seconds)";
+      ext:allowDelete "true";
+    }
+    leaf hdlcHalfLifePeriod {
+      when "not(../hdlcDampEnable='false' or ../hdlcDampLevel!='manual')";
+      type uint16 {
+        range "1..60";
+      }
+      units second;
+      description
+        "HDLC protocol status damping half life time(seconds)";
+      ext:allowDelete "true";
+    }
+  }
+  grouping hdlc_chdlc_oper_hdlcConfig_type {
+    description
+      "";
+    leaf downWhenLoop {
+      type boolean;
+      default "false";
+      description
+        "Enable the function of CHDLC DownWhenLoop.";
+    }
+    container ifLink {
+      description
+        "HDLC polling interval.The value is expressed in seconds.";
+      uses ifm:ifm_pppbase_ifLink_type;
+    }
+  }
+}

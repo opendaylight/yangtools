@@ -1,0 +1,128 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-vty-type {
+  belongs-to huawei-vty {
+    prefix vty;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of vty type submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference    "Huawei private.";
+  }
+  typedef vtyTtyAuthModeType {
+    type enumeration {
+      enum "init" {
+        description
+          "Undo authentication mode.";
+      }
+      enum "none" {
+        description
+          "VTY authentication mode none.";
+      }
+      enum "password" {
+        description
+          "VTY authentication mode password.";
+      }
+      enum "aaa" {
+        description
+          "VTY authentication mode aaa.";
+      }
+    }
+    description
+      "Vty and tty authentication mode type";
+  }
+  typedef vtyTtyPortType {
+    type enumeration {
+      enum "console" {
+        description
+          "Console terminal.";
+      }
+      enum "vty" {
+        description
+          "VTY terminal.";
+      }
+      enum "nca" {
+        description
+          "NCA terminal.";
+      }
+    }
+    description
+      "Vty and tty port type";
+  }
+  typedef vtyTtyPswType {
+    type enumeration {
+      enum "simple" {
+        description
+          "Password type simple";
+      }
+      enum "cipher" {
+        description
+          "Password type cipher";
+      }
+    }
+    description
+      "Vty and tty password type";
+  }
+  typedef vtyTtyProtoInbnd {
+    type enumeration {
+      enum "all" {
+        description
+          "Protocol inbound all.";
+      }
+      enum "ssh" {
+        description
+          "Protocol inbound ssh.";
+      }
+      enum "telnet" {
+        description
+          "Protocol inbound telnet.";
+      }
+    }
+    description
+      "Vty and tty ProtoInbnd";
+  }
+  typedef vtyTtyBoolType {
+    type enumeration {
+      enum "true" {
+        description
+          "VTY shell enable.";
+      }
+      enum "false" {
+        description
+          "VTY shell disable.";
+      }
+    }
+    description
+      "Vty and tty bool type";
+  }
+  typedef vtyTtyIPBlockStateType {
+    type enumeration {
+      enum "AUTH FAILED" {
+        description
+          "Authentication fialed State";
+      }
+      enum "BLOCKED" {
+        description
+          "BLOCKED State";
+      }
+    }
+    description
+      "Vty and tty IPBlock State type";
+  }
+}

@@ -1,0 +1,2088 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ethernet {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-ethernet";
+  prefix ethernet;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-vlan {
+    prefix vlan;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ethernet-action;
+  include huawei-ethernet-type;
+  include huawei-ethernet-stacking;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Ethernet Interface.";
+  revision 2017-03-23 {
+	description
+	"Functions supported by the schema are added to the YANG file.";
+	reference
+	"Huawei private.";
+	}
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference      "Huawei private.";
+  }
+  container ethernet {
+    description
+      "Ethernet Interface.";
+    container ethernetIfs {
+      description
+        "List of Ethernet interfaces.";
+      list ethernetIf {
+        key "ifName";
+        description
+          "Ethernet interface.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Name of an interface. For example, Ethernet 0/1/0. ";
+        }
+        leaf isolateGroupID {
+          type ethernetIsolateGroupId {
+            range "0..32";
+          }
+          default "0";
+          description
+            "Isolation group ID.";
+        }
+        leaf swapEnable {
+          type ethernetEnableStatus;
+          default "disable";
+          description
+            "Enable or disable VLAN tag swapping.";
+          ext:allowDelete "true";
+        }
+        leaf l2Enable {
+          type ethernetEnableStatus;
+          default "disable";
+          description
+            "Enable or disable L2 interface switching.";
+          ext:allowDelete "true";
+        }
+        leaf peEthType {
+          type pub-type:hexBinary;
+          must "(../encapType!='QinQ' and ../encapType!='8021Q-QinQ' and ../peEthType='0x8100') or not(../encapType!='QinQ' and ../encapType!='8021Q-QinQ' or ../encapType='Null' and ../l2EthTag/linkType!='dot1qtunnel')";
+          default "8100";
+          description
+            "Ethernet type, ranging from 0x600 to 0xffff.";
+          ext:allowDelete "true";
+        }
+        leaf vlanAssigns {
+          type pub-type:VLAN_RANGE {
+            length "0..4094";
+          }
+          description
+            "VLAN Resource Assign.";
+          ext:allowDelete "true";
+        }
+        container outerVlanOnly {
+          description
+            "Modify One Tag Ethernet Type Attribute.";
+          leaf outerVlan {
+            type outerVlanOnlyType;
+            default "disable";
+            description
+              "Modify One Tag Ethernet Type.";
+          }
+        }
+        leaf encapType {
+          type encapType;
+          must "not(../l2EthTag/linkType='dot1qtunnel')";
+          default "8021q";
+          description
+            "Encapsulation type.";
+        }
+        container l2EthTag {
+          description
+            "Ethernet tag attribute.";
+          leaf linkType {
+            type ethernetLinkType;
+            must "(../../encapType='Null' and (../linkType='trunk' or ../linkType='dot1qtunnel') ) or ((not(../../encapType='Null') and (../linkType='access' or ../linkType='trunk' or ../linkType='hybrid') )) or not(../../encapType!='8021q' and ../../encapType!='8021Q-QinQ' and ../../encapType!='Null')";
+            default "hybrid";
+            description
+              "Link type.";
+          }
+          leaf pvid {
+            when "../../l2Enable='disable'";
+            type uint16 {
+              range "0..4094";
+            }
+            must "not(../../encapType!='8021q' and ../../encapType!='8021Q-QinQ' and ../../encapType!='Null' or ../../encapType='Null' and ../linkType!='dot1qtunnel')";
+            description
+              "L3 Port Default VLAN ID.";
+            ext:allowDelete "true";
+          }
+          leaf pvidPriority {
+            when "not(../priorityMode!='Precedence')";
+            type uint8 {
+              range "0..7";
+            }
+            must "not(../../encapType!='8021q' and ../../encapType!='8021Q-QinQ' and ../../encapType!='Null' or ../../encapType='Null' and ../linkType!='dot1qtunnel' or ../priorityMode!='Precedence')";
+            default "0";
+            description
+              "IEEE 802.1p priority.";
+            ext:allowDelete "true";
+          }
+          leaf priorityMode {
+            type remarkType;
+            must "(../linkType='dot1qtunnel' and (../priorityMode='TrustPe8021p' or ../priorityMode='Precedence') ) or ((not(../linkType='dot1qtunnel') and (../priorityMode='Precedence') )) or ../linkType='dot1qtunnel' or not(../../encapType='Null' and ../linkType!='dot1qtunnel')";
+            default "TrustPe8021p";
+            description
+              "802.1P Priority Encapsulation Mode.";
+            ext:allowDelete "true";
+          }
+        }
+        container l2Attribute {
+          when "not(../l2Enable='disable')";
+          description
+            "Interface Layer 2 attribute.";
+          leaf linkType {
+            type ethernetLinkType;
+            default "hybrid";
+            description
+              "Link type.";
+          }
+          leaf pvid {
+            when "../linkType!='trunk' and ../linkType";
+            type leafref {
+              path "/vlan:vlan/vlan:vlans/vlan:vlan/vlan:vlanId";
+            }
+            description
+              "Default VLAN ID.";
+            ext:allowDelete "true";
+          }
+          leaf trunkVlans {
+            when "../linkType!='access' and ../linkType!='dot1qtunnel' and ../linkType";
+            type pub-type:VLAN_RANGE {
+              length "0..4094";
+            }
+            description
+              "List of VLANs that are allowed to pass.";
+            ext:allowDelete "true";
+          }
+          leaf untagVlans {
+            type pub-type:VLAN_RANGE {
+              length "0..4094";
+            }
+            description
+              "List of Untagged VLANs that are allowed to pass.";
+            ext:allowDelete "true";
+          }
+          leaf portPriority {
+            type ethernetportPriority {
+              range "0..7";
+            }
+            default "0";
+            description
+              "Interface priority.";
+          }
+          leaf untagDiscarding {
+            type boolean;
+            default "false";
+            description
+              "Discard untagged packets.";
+          }
+          leaf macLearnPriority {
+            type uint8 {
+              range "0..3";
+            }
+            default "0";
+            description
+              "MAC address learning priority on an interface.";
+          }
+          leaf portBridgEnable {
+            type boolean;
+            description
+              "Whether port bridge is enabled.";
+          }
+          leaf portSecState {
+            type ethernetMacSecurityType;
+            default "common";
+            description
+              "Enable or disable the security function on an interface.";
+          }
+          leaf portSecMaxMacNum {
+            type uint16 {
+              range "1..4096";
+            }
+            default "1";
+            description
+              "The maximum number of MAC addresses that a security-enabled interface can learn.";
+          }
+          leaf portSecAction {
+            type ethernetMacSecurityActionType;
+            default "protect";
+            description
+              "Set a protection action on an interface with the security function enabled.";
+          }
+          container portSuppresses {
+            description
+              "Interface suppression list.";
+            list portSuppress {
+              when "not(../../../l2Enable='disable')";
+              key "suppressType direction";
+              description
+                "Interface suppression.";
+              leaf suppressType {
+                type suppressType;
+                description
+                  "Suppression type.";
+              }
+              leaf percent {
+                type uint64 {
+                  range "0..100";
+                }
+                must "not(../ratePercent)";
+                description
+                  "Bandwidth usage percentage.";
+                ext:allowDelete "true";
+              }
+              leaf ratePercent {
+                type uint64 {
+                  range "0..1000";
+                }
+                must "not(../percent)";
+                description
+                  "Rate limit.";
+                ext:allowDelete "true";
+              }
+              leaf direction {
+                type directionType;
+                description
+                  "Suppression direction.";
+              }
+            }
+          }
+          container portVlanSuppresses {
+            description
+              "VLAN suppression list.";
+            list portVlanSuppress {
+              when "not(../../../l2Enable='disable')";
+              key "suppressType cir cbs direction";
+              description
+                "VLAN suppression.";
+              leaf suppressType {
+                type suppressType;
+                description
+                  "Suppression type.";
+              }
+              leaf cir {
+                type uint64 {
+                  range "0..4294967295";
+                }
+                description
+                  "CIR value.";
+              }
+              leaf cbs {
+                type uint64 {
+                  range "0..4294967295";
+                }
+                description
+                  "CBS value.";
+              }
+              leaf direction {
+                type directionType;
+                description
+                  "Suppression direction.";
+              }
+              leaf vlans {
+                type pub-type:VLAN_RANGE {
+                  length "0..4094";
+                }
+                mandatory true;
+                description
+                  "VLAN list.";
+              }
+            }
+          }
+          leaf taggedPacketDiscard {
+            type boolean;
+            default "false";
+            description
+              "Discard tagged packets.";
+          }
+          container l2StackPorts {
+            description
+              "VLAN stacking interface list.";
+            list l2StackPort {
+              when "not(../../../l2Enable='disable')";
+              key "isCeDefault stackingVid";
+              description
+                "VLAN stacking interface.";
+              leaf stackingVid {
+                type ethernetVlanId {
+                  range "1..4094";
+                }
+                description
+                  "VLAN ID in the outer VLAN tag after VLAN stacking is performed.";
+              }
+              leaf isCeDefault {
+                type ethernetEnableStatus;
+                description
+                  "Whether to add a VLAN tag to received untagged packets.";
+              }
+              leaf transVlans {
+                when "not(../isCeDefault='enable')";
+                type pub-type:VLAN_RANGE {
+                  length "0..4094";
+                }
+                mandatory true;
+                description
+                  "List of VLAN IDs of received packets.";
+              }
+            }
+          }
+          container l2StackPortExts {
+            config false;
+            description
+              "VLAN stacking interface list.";
+            list l2StackPortExt {
+              key "segIndex";
+              config false;
+              description
+                "VLAN stacking interface.";
+              leaf segIndex {
+                type uint64;
+                config false;
+                description
+                  "Specify a VLAN stacking segment.";
+              }
+              leaf l2StackType {
+                type l2StackType;
+                config false;
+                mandatory true;
+                description
+                  "VLAN stacking type.";
+              }
+              leaf stackVidBgn {
+                type ethernetVlanId {
+                  range "1..4094";
+                }
+                config false;
+                mandatory true;
+                description
+                  "Start VLAN ID carried in user packets.";
+              }
+              leaf stackVidEnd {
+                type ethernetVlanId {
+                  range "1..4094";
+                }
+                config false;
+                description
+                  "End VLAN ID carried in user packets.";
+              }
+              leaf stackingVid {
+                type ethernetVlanId {
+                  range "1..4094";
+                }
+                config false;
+                mandatory true;
+                description
+                  "VLAN ID in the outer VLAN tag after VLAN stacking is performed.";
+              }
+              leaf remark8021p {
+                type uint8 {
+                  range "0..7";
+                }
+                config false;
+                description
+                  "Specify the 802.1p priority in the outer VLAN tag after VLAN mapping is performed.";
+              }
+            }
+          }
+          container l2MappingPorts {
+            description
+              "VLAN mapping interface list.";
+            list l2MappingPort {
+              when "not(../../../l2Enable='disable')";
+              key "mappingVid";
+              description
+                "VLAN mapping interface.";
+              leaf mappingVid {
+                type ethernetVlanId {
+                  range "1..4094";
+                }
+                description
+                  "VLAN ID in the VLAN tag after VLAN mapping is performed.";
+              }
+              leaf transVlans {
+                type pub-type:VLAN_RANGE {
+                  length "0..4094";
+                }
+                mandatory true;
+                description
+                  "List of VLAN IDs in VLAN tags before VLAN mapping is performed.";
+              }
+            }
+          }
+          container l2MapPortExts {
+            config false;
+            description
+              "VLAN mapping interface list.";
+            list l2MapPortExt {
+              key "segIndex";
+              config false;
+              description
+                "VLAN mapping interface.";
+              leaf segIndex {
+                type uint64;
+                config false;
+                description
+                  "Specify a VLAN mapping segment.";
+              }
+              leaf l2MapType {
+                type l2MapType;
+                config false;
+                mandatory true;
+                description
+                  "VLAN mapping type.";
+              }
+              leaf mapVid {
+                type ethernetVlanId {
+                  range "1..4094";
+                }
+                config false;
+                mandatory true;
+                description
+                  "VLAN ID in the outer VLAN tag before VLAN mapping is performed.";
+              }
+              leaf mapInnerVid {
+                type ethernetVlanId {
+                  range "1..4094";
+                }
+                config false;
+                description
+                  "VLAN ID in the inner VLAN tag before VLAN mapping is performed.";
+              }
+              leaf mappingVid {
+                type ethernetVlanId {
+                  range "1..4094";
+                }
+                config false;
+                mandatory true;
+                description
+                  "VLAN ID in the VLAN tag after VLAN mapping is performed.";
+              }
+              leaf remark8021p {
+                type uint8 {
+                  range "0..7";
+                }
+                config false;
+                description
+                  "Specify the 802.1p priority in the VLAN tag after VLAN mapping is performed.";
+              }
+            }
+          }
+          container vlanisolateattribute {
+            description
+              "VLAN isolation attribute.";
+            leaf isolatevlans {
+              type pub-type:VLAN_BITMAP {
+                length "1024..2049";
+              }
+              description
+                "Isolated VLAN list.";
+              ext:allowDelete "true";
+            }
+            leaf outVlaniso {
+              type boolean;
+              default "false";
+              description
+                "User VLAN isolation state.";
+              ext:allowDelete "true";
+            }
+          }
+          container statsEnableVlans {
+            description
+              "List of VLANs with statistics collection enabled.";
+            container statsEnableVlan {
+              when "not(../../../l2Enable='disable')";
+              description
+                "List of VLANs with statistics collection enabled.";
+              leaf statisEnable {
+                type pub-type:VLAN_RANGE {
+                  length "0..4094";
+                }
+                mandatory true;
+                description
+                  "VLAN statistics collection enable.";
+              }
+            }
+          }
+          container ethernetVlanSuppressions {
+            config false;
+            description
+              "AC Suppressions.";
+            list ethernetVlanSuppression {
+              key "vlanId";
+              config false;
+              description
+                "AC.";
+              leaf vlanId {
+                type ethernetVlanId {
+                  range "1..4094";
+                }
+                config false;
+                description
+                  "vlanId.";
+              }
+              leaf time {
+                type string {
+                  length "1..60";
+                }
+                config false;
+                description
+                  "AC suppression time.";
+              }
+              leaf ucInFlag {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "Unicast inbound suppression flag.";
+              }
+              leaf unInPassPacks {
+                type uint64;
+                config false;
+                description
+                  "Number of unknown unicast packets passed in the inbound direction of an AC interface.";
+              }
+              leaf unInPassBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of unknown unicast bytes passed in the inbound direction of an AC interface.";
+              }
+              leaf unInDropPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of unknown unicast packets dropped in the inbound direction of an AC interface.";
+              }
+              leaf unInDropBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of unknown unicast bytes dropped in the inbound direction of an AC interface.";
+              }
+              leaf ucOutFlag {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "Unicast outbound suppression flag.";
+              }
+              leaf unOutPassPacks {
+                type uint64;
+                config false;
+                description
+                  "Number of unknown unicast packets passed in the outbound direction of an AC interface.";
+              }
+              leaf unOutPassBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of unknown unicast bytes passed in the outbound direction of an AC interface.";
+              }
+              leaf unOutDropPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of unknown unicast packets dropped in the outbound direction of an AC interface.";
+              }
+              leaf unOutDropBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of unknown unicast bytes dropped in the outbound direction of an AC interface.";
+              }
+              leaf mulInFlag {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "Multicast inbound suppression flag.";
+              }
+              leaf mulInPassPacks {
+                type uint64;
+                config false;
+                description
+                  "Number of multicast packets passed in the inbound direction of an AC interface.";
+              }
+              leaf mulInPassBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of multicast bytes passed in the inbound direction of an AC interface.";
+              }
+              leaf mulInDropPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of multicast packets dropped in the inbound direction of an AC interface.";
+              }
+              leaf mulInDropBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of multicast bytes dropped in the inbound direction of an AC interface.";
+              }
+              leaf mulOutFlag {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "Multicast outbound suppression flag.";
+              }
+              leaf mulOutPassPacks {
+                type uint64;
+                config false;
+                description
+                  "Number of multicast packets passed in the outbound direction of an AC interface.";
+              }
+              leaf mulOutPassBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of multicast bytes passed in the outbound direction of an AC interface.";
+              }
+              leaf mulOutDropPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of multicast packets dropped in the outbound direction of an AC interface.";
+              }
+              leaf mulOutDropBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of multicast bytes dropped in the outbound direction of an AC interface.";
+              }
+              leaf brInFlag {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "Broadcast inbound suppression flag.";
+              }
+              leaf brInPassPacks {
+                type uint64;
+                config false;
+                description
+                  "Number of broadcast packets passed in the inbound direction of an AC interface.";
+              }
+              leaf brInPassBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of broadcast bytes passed in the inbound direction of an AC interface.";
+              }
+              leaf brInDropPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of broadcast packets dropped in the inbound direction of an AC interface.";
+              }
+              leaf brInDropBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of broadcast bytes dropped in the inbound direction of an AC interface.";
+              }
+              leaf brOutFlag {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "Broadcast outbound suppression flag.";
+              }
+              leaf brOutPassPacks {
+                type uint64;
+                config false;
+                description
+                  "Number of broadcast packets passed in the outbound direction of an AC interface.";
+              }
+              leaf brOutPassBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of broadcast bytes passed in the outbound direction of an AC interface.";
+              }
+              leaf brOutDropPackets {
+                type uint64;
+                config false;
+                description
+                  "Number of broadcast packets dropped in the outbound direction of an AC interface.";
+              }
+              leaf brOutDropBytes {
+                type uint64;
+                config false;
+                description
+                  "Number of broadcast bytes dropped in the outbound direction of an AC interface.";
+              }
+            }
+          }
+          container portIsolateGroups {
+            description
+              "Port Isolate Groups";
+            list portIsolateGroup {
+              key "groupId";
+              description
+                "Port Isolate Group";
+              leaf groupId {
+                type int32 {
+                  range "1..32";
+                }
+                description
+                  "Group Id";
+              }
+            }
+          }
+          container ifProtocolVlans {
+            description
+              "protocol Vlan List.";
+            list ifProtocolVlan {
+              key "vlan protocolIndex";
+              description
+                "protocol Vlan.";
+              leaf vlan {
+                type uint32 {
+                  range "1..4094";
+                }
+                description
+                  "Identifier of a VLAN.";
+              }
+              leaf protocolIndex {
+                type uint16 {
+                  range "0..15";
+                }
+                description
+                  "protocol ifindex.";
+              }
+              leaf priority {
+                type uint16 {
+                  range "0..7";
+                }
+                default "0";
+                description
+                  "vlan priority.";
+              }
+            }
+          }
+          container muxVlanEna {
+            description
+              "Enable Mux Vlan List";
+            leaf enableVlans {
+              type pub-type:VLAN_RANGE {
+                length "0..4094";
+              }
+              description
+                "Mux Vlan List";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container amIsolatePorts {
+          description
+            "Isolated interface list.";
+          list amIsolatePort {
+            key "ifName";
+            max-elements 8;
+            description
+              "Isolated interface.";
+            leaf ifName {
+              type pub-type:ifName;
+              description
+                "Name of an interface. For example, Ethernet 0/1/0. ";
+            }
+          }
+        }
+        container ethernetSupression {
+          config false;
+          description
+            "";
+          leaf time {
+            type string {
+              length "1..60";
+            }
+            config false;
+            description
+              "AC suppression time.";
+          }
+          leaf ucInFlag {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "Unicast inbound suppression flag.";
+          }
+          leaf unInPassPacks {
+            type uint64;
+            config false;
+            description
+              "Number of unknown unicast packets passed in the inbound direction of an AC interface.";
+          }
+          leaf unInPassBytes {
+            type uint64;
+            config false;
+            description
+              "Number of unknown unicast bytes passed in the inbound direction of an AC interface.";
+          }
+          leaf unInDropPackets {
+            type uint64;
+            config false;
+            description
+              "Number of unknown unicast packets dropped in the inbound direction of an AC interface.";
+          }
+          leaf unInDropBytes {
+            type uint64;
+            config false;
+            description
+              "Number of unknown unicast bytes dropped in the inbound direction of an AC interface.";
+          }
+          leaf ucOutFlag {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "Unicast outbound suppression flag.";
+          }
+          leaf unOutPassPacks {
+            type uint64;
+            config false;
+            description
+              "Number of unknown unicast packets passed in the outbound direction of an AC interface.";
+          }
+          leaf unOutPassBytes {
+            type uint64;
+            config false;
+            description
+              "Number of unknown unicast bytes passed in the outbound direction of an AC interface.";
+          }
+          leaf unOutDropPackets {
+            type uint64;
+            config false;
+            description
+              "Number of unknown unicast packets dropped in the outbound direction of an AC interface.";
+          }
+          leaf unOutDropBytes {
+            type uint64;
+            config false;
+            description
+              "Number of unknown unicast bytes dropped in the outbound direction of an AC interface.";
+          }
+          leaf mulInFlag {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "Multicast inbound suppression flag.";
+          }
+          leaf mulInPassPacks {
+            type uint64;
+            config false;
+            description
+              "Number of multicast packets passed in the inbound direction of an AC interface.";
+          }
+          leaf mulInPassBytes {
+            type uint64;
+            config false;
+            description
+              "Number of multicast bytes passed in the inbound direction of an AC interface.";
+          }
+          leaf mulInDropPackets {
+            type uint64;
+            config false;
+            description
+              "Number of multicast packets dropped in the inbound direction of an AC interface.";
+          }
+          leaf mulInDropBytes {
+            type uint64;
+            config false;
+            description
+              "Number of multicast bytes dropped in the inbound direction of an AC interface.";
+          }
+          leaf mulOutFlag {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "Multicast outbound suppression flag.";
+          }
+          leaf mulOutPassPacks {
+            type uint64;
+            config false;
+            description
+              "Number of multicast packets passed in the outbound direction of an AC interface.";
+          }
+          leaf mulOutPassBytes {
+            type uint64;
+            config false;
+            description
+              "Number of multicast bytes passed in the outbound direction of an AC interface.";
+          }
+          leaf mulOutDropPackets {
+            type uint64;
+            config false;
+            description
+              "Number of multicast packets dropped in the outbound direction of an AC interface.";
+          }
+          leaf mulOutDropBytes {
+            type uint64;
+            config false;
+            description
+              "Number of multicast bytes dropped in the outbound direction of an AC interface.";
+          }
+          leaf brInFlag {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "Broadcast inbound suppression flag.";
+          }
+          leaf brInPassPacks {
+            type uint64;
+            config false;
+            description
+              "Number of broadcast packets passed in the inbound direction of an AC interface.";
+          }
+          leaf brInPassBytes {
+            type uint64;
+            config false;
+            description
+              "Number of broadcast bytes passed in the inbound direction of an AC interface.";
+          }
+          leaf brInDropPackets {
+            type uint64;
+            config false;
+            description
+              "Number of broadcast packets dropped in the inbound direction of an AC interface.";
+          }
+          leaf brInDropBytes {
+            type uint64;
+            config false;
+            description
+              "Number of broadcast bytes dropped in the inbound direction of an AC interface.";
+          }
+          leaf brOutFlag {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "Broadcast outbound suppression flag.";
+          }
+          leaf brOutPassPacks {
+            type uint64;
+            config false;
+            description
+              "Number of broadcast packets passed in the outbound direction of an AC interface.";
+          }
+          leaf brOutPassBytes {
+            type uint64;
+            config false;
+            description
+              "Number of broadcast bytes passed in the outbound direction of an AC interface.";
+          }
+          leaf brOutDropPackets {
+            type uint64;
+            config false;
+            description
+              "Number of broadcast packets dropped in the outbound direction of an AC interface.";
+          }
+          leaf brOutDropBytes {
+            type uint64;
+            config false;
+            description
+              "Number of broadcast bytes dropped in the outbound direction of an AC interface.";
+          }
+        }
+      }
+    }
+    container flowGroups {
+      description
+        "Sub-interface VLAN group list.";
+      list flowGroup {
+        key "ifName groupId";
+        description
+          "Sub-interface VLAN group.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Name of a sub-interface. For example, Ethernet 0/1/0.1. ";
+        }
+        leaf groupId {
+          type uint8 {
+            range "1..16";
+          }
+          description
+            "Specified VLAN group ID.";
+        }
+        leaf groupMode {
+          type groupModeType;
+          default "single";
+          description
+            "Include single and multiple modes.";
+          ext:allowDelete "true";
+        }
+        leaf statisEnable {
+          type boolean;
+          default "false";
+          description
+            "Enable collection of VLAN group-based QinQ packet statistics.";
+	  ext:allowDelete "true";
+        }
+        leaf description {
+          type string {
+            length "1..31";
+          }
+          description
+            "VLAN group description.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container ethSubIfs {
+      description
+        "Sub-interface attribute list.";
+      list ethSubIf {
+        key "ifName";
+        description
+          "Sub-interface attribute.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Name of a sub-interface. For example, Ethernet 0/1/0.1.";
+        }
+        leaf flowType {
+          type flowType;
+          mandatory true;
+          description
+            "Sub-interface type, including VLAN sub-interfaces, sub-interfaces for Dot1q VLAN tag termination, sub-interfaces for QinQ VLAN tag termination, and stacking sub-interfaces.";
+        }
+        leaf tag {
+          when "not(../flowType='Mapping1to1' or ../flowType='QinQLink' or ../flowType='Stacking' or ../flowType='StackingPolicy' or ../flowType='UntaggedPolicy' or ../flowType='VlanType' or ../flowType='VlanTypePolicy') or ../flowType='Dot1qTerm' or ../flowType='Dot1qTermPolicy' or ../flowType='QinQTerm'";
+          type tagType;
+          must "(../flowType='Dot1qTerm' and (../tag='None' or ../tag='RtProtocol') ) or (../flowType='Dot1qTermPolicy' and (../tag='None' or ../tag='RtProtocol') ) or (../flowType='QinQTerm' and (../tag='None' or ../tag='LocalSwitch' or ../tag='RtProtocol') ) or not(../flowType='Dot1qTerm' or ../flowType='Dot1qTermPolicy' or ../flowType='QinQTerm')";
+          default "None";
+          description
+            "Include local switching and routing protocol or not specified.";
+        }
+        leaf dot1qBitmap {
+          when "not(../flowType='Mapping1to1' or ../flowType='QinQLink' or ../flowType='VlanType') or ../flowType='Dot1qTerm' or ../flowType='Stacking'";
+          type pub-type:VLAN_RANGE {
+            length "0..4094";
+          }
+          description
+            "VLAN list.";
+          ext:allowDelete "true";
+        }
+        leaf arpBroadcastEnable {
+          when "not(../flowType='Mapping1to1' or ../flowType='QinQLink' or ../flowType='Stacking' or ../flowType='StackingPolicy' or ../flowType='UntaggedPolicy' or ../flowType='VlanType' or ../flowType='VlanTypePolicy') or ../flowType='Dot1qTerm' or ../flowType='Dot1qTermPolicy' or ../flowType='QinQTerm'";
+          type boolean;
+          default "false";
+          description
+            "Enable ARP broadcast.";
+        }
+        leaf vlanTypeVid {
+          when "not(../flowType='Dot1qTerm' or ../flowType='Dot1qTermPolicy' or ../flowType='Mapping1to1' or ../flowType='QinQTerm' or ../flowType='Stacking' or ../flowType='StackingPolicy' or ../flowType='UntaggedPolicy' or ../flowType='VlanTypePolicy') or ../flowType='QinQLink' or ../flowType='VlanType'";
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "VLAN ID of the VLAN sub-interface.";
+		  ext:allowDelete "true";
+        }
+        leaf peVid {
+          when "not(../flowType='Dot1qTerm' or ../flowType='Dot1qTermPolicy' or ../flowType='Mapping1to1' or ../flowType='QinQLink' or ../flowType='QinQTerm' or ../flowType='StackingPolicy' or ../flowType='UntaggedPolicy' or ../flowType='VlanType' or ../flowType='VlanTypePolicy') or ../flowType='Stacking'";
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "Outer VLAN ID.";
+          ext:allowDelete "true";
+        }        
+        leaf isUntagDefault {
+          when "not(../flowType='Dot1qTerm' or ../flowType='Dot1qTermPolicy' or ../flowType='Mapping1to1' or ../flowType='QinQTerm' or ../flowType='Stacking' or ../flowType='StackingPolicy' or ../flowType='VlanType' or ../flowType='VlanTypePolicy') or ../flowType='UntaggedPolicy'";
+          type boolean;
+          default "false";
+          description
+            "Untagged Default Policy.";
+        }
+        leaf untagDscpValues {
+          when "not(../flowType='Dot1qTerm' or ../flowType='Dot1qTermPolicy' or ../flowType='Mapping1to1' or ../flowType='QinQTerm' or ../flowType='Stacking' or ../flowType='StackingPolicy' or ../flowType='VlanType' or ../flowType='VlanTypePolicy' or ../isUntagDefault='true') or ../flowType='UntaggedPolicy' or ../isUntagDefault='false' and ../flowType='UntaggedPolicy'";
+          type pub-type:BIT_RANGE {
+            length "0..255";
+            pattern "((6[0-3]|[1-5][0-9]|[0-9])?(-(6[0-3]|[1-5][0-9]|[0-9]))?(,((6[0-3]|[1-5][0-9]|[0-9])(-(6[0-3]|[1-5][0-9]|[0-9]))?))*)|((([\\+|\\-](6[0-3]|[1-5][0-9]|[0-9]))|([\\+|\\-]\\((6[0-3]|[1-5][0-9]|[0-9])-(6[0-3]|[1-5][0-9]|[0-9])\\)))?(,(([\\+|\\-](6[0-3]|[1-5][0-9]|[0-9]))|([\\+|\\-]\\((6[0-3]|[1-5][0-9]|[0-9])-(6[0-3]|[1-5][0-9]|[0-9])\\))))*)";
+          }
+          description
+            "Untagged Dscp Policy Value";
+          ext:allowDelete "true";
+        }
+        leaf vidPriority {
+          when "not(../flowType='Dot1qTerm' or ../flowType='Mapping1to1' or ../flowType='Stacking' and not(../peVid) or ../flowType='VlanType') or ../flowType='QinQLink' or ../flowType='Stacking' and ../peVid or ../flowType='Stacking'";
+          type uint8 {
+            range "0..7";
+          }
+          description
+            "Priority of Service VLAN.";
+          ext:allowDelete "true";
+        }        
+        leaf tagMode {
+          when "not(../flowType='Dot1qTerm') or ../flowType='Mapping1to1' or ../flowType='Stacking' or ../flowType='VlanType'";
+          type subifTagMode;
+          description
+            "Recognize Mode of TPID.";
+          ext:allowDelete "true";
+        }
+        container stackingModeEn {
+          description
+            "single-mode configuration.";
+          uses ethernet:l2vpn_stacking_single_type;
+        }
+        container flowDot1qs {
+          config false;
+          description
+            "Dot1q VLAN tag termination list.";
+          list flowDot1q {
+            when "not(../../flowType='Dot1qTerm' or ../../flowType='Dot1qTermPolicy' or ../../flowType='Mapping1to1' or ../../flowType='QinQTerm' or ../../flowType='StackingPolicy' or ../../flowType='UntaggedPolicy' or ../../flowType='VlanType' or ../../flowType='VlanTypePolicy') or ../../flowType='Dot1qTerm' or ../../flowType='Stacking'";
+            key "segIndex";
+            config false;
+            description
+              "Dot1q VLAN tag termination.";
+            leaf segIndex {
+              type uint64;
+              config false;
+              description
+                "Specify a QinQ segment.";
+            }
+            leaf vlanIdBgn {
+              type uint32 {
+                range "1..4094";
+              }
+              config false;
+              mandatory true;
+              description
+                "Start VLAN ID in the user packet.";
+            }
+            leaf vlanIdEnd {
+              type uint16 {
+                range "1..4094";
+              }
+              config false;
+              description
+                "End VLAN ID in the user packet.";
+            }
+            leaf groupId {
+              type uint8 {
+                range "1..16";
+              }
+              config false;
+              description
+                "Specified VLAN group ID.";
+            }
+          }
+        }
+        container flowQinqs {
+          config false;
+          description
+            "QinQ VLAN tag termination list";
+          list flowQinq {
+            when "not(../../flowType='Dot1qTerm' or ../../flowType='Dot1qTermPolicy' or ../../flowType='Mapping1to1' or ../../flowType='QinQTerm' or ../../flowType='Stacking' or ../../flowType='StackingPolicy' or ../../flowType='UntaggedPolicy' or ../../flowType='VlanType' or ../../flowType='VlanTypePolicy') or ../../flowType='QinQTerm'";
+            key "segIndex";
+            config false;
+            description
+              "QinQ VLAN tag termination";
+            leaf segIndex {
+              type uint64;
+              config false;
+              description
+                "Specify a QinQ segment.";
+            }
+            leaf peVlanIdBgn {
+              type uint16 {
+                range "1..4094";
+              }
+              config false;
+              mandatory true;
+              description
+                "Start outer VLAN ID.";
+            }
+            leaf peVlanIdEnd {
+              type uint32 {
+                range "1..4094";
+              }
+              config false;
+              description
+                "End outer VLAN ID.";
+            }
+            leaf ceVlanIdBgn {
+              type uint32 {
+                range "1..4094";
+              }
+              config false;
+              mandatory true;
+              description
+                "Start inner VLAN ID.";
+            }
+            leaf ceVlanIdEnd {
+              type uint16 {
+                range "1..4094";
+              }
+              config false;
+              description
+                "End inner VLAN ID.";
+            }
+            leaf groupId {
+              type uint8 {
+                range "1..16";
+              }
+              config false;
+              description
+                "Specified VLAN group ID.";
+            }
+            leaf isCeAny {
+              type boolean;
+              default "false";
+              config false;
+              description
+                "Inner Any VLAN ID.";
+            }
+          }
+        }
+        container qinqDynamic {
+          description
+            "QinQ.";
+          leaf maxUsers {
+            type uint32 {
+              range "1..16000";
+            }
+            default "1";
+            description
+              "QinQ.";
+          }
+          leaf queueIn {
+            type uint16;
+            default "0";
+            description
+              "QinQ.";
+          }
+          leaf bandWidthIn {
+            type uint16;
+            default "0";
+            description
+              "QinQ.";
+          }
+          leaf queueOut {
+            type uint16;
+            default "0";
+            description
+              "QinQ.";
+          }
+          leaf bandWidthOut {
+            type uint16;
+            default "0";
+            description
+              "QinQ.";
+          }
+        }
+        container remark8021p {
+          when "not(../flowType='Dot1qTerm' or ../flowType='Dot1qTermPolicy' or ../flowType='Mapping1to1' or ../flowType='QinQTerm' or ../flowType='Stacking' or ../flowType='StackingPolicy' or ../flowType='UntaggedPolicy' or ../flowType='VlanType' or ../flowType='VlanTypePolicy') or ../flowType='QinQTerm'";
+          description
+            "802.1p mapping.";
+          leaf remarkType {
+            type remarkType;
+            must "not(../../flowType='QinQTerm') or (../../flowType='QinQTerm' and (../remarkType='TrustPe8021p' or ../remarkType='TrustCe8021p' or ../remarkType='Precedence') )";
+            default "TrustPe8021p";
+            description
+              "Trust the 802.1p in the outer VLAN tag, inner VLAN tag, or user-defined precedence.";
+          }
+          leaf precedenceVal {
+            when "not(../remarkType='TrustCe8021p' or ../remarkType='TrustPe8021p') or ../remarkType='Precedence'";
+            type uint8 {
+              range "0..7";
+            }
+            default "0";
+            description
+              "User-defined 802.1p value.";
+          }
+        }
+        container l2Symmetry {
+          when "not(../flowType='Dot1qTerm' or ../flowType='Dot1qTermPolicy' or ../flowType='Mapping1to1' or ../flowType='QinQTerm' or ../flowType='Stacking' or ../flowType='StackingPolicy' or ../flowType='UntaggedPolicy' or ../flowType='VlanType' or ../flowType='VlanTypePolicy') or ../flowType='QinQTerm'";
+          description
+            "Symmetry mode.";
+          leaf isSymmetry {
+            type symmetryType;
+            must "((../isSymmetry='Symmetry' or ../isSymmetry='Asymmetry') ) or (../../flowType='QinQTerm' and (../isSymmetry='Symmetry' or ../isSymmetry='Asymmetry' or ../isSymmetry='Transparent') ) or not(../../flowType='QinQTerm')";
+            mandatory true;
+            description
+              "Include symmetry and asymmetry modes.";
+          }
+          leaf userMode {
+            when "../isSymmetry='Symmetry'";
+            type userModeEnable;
+            must "not(../../flowType='QinQTerm') or (../../flowType='QinQTerm' and (../userMode='Enable' or ../userMode='Disable') )";
+            mandatory true;
+            description
+              "Enable or disable the user mode.";
+          }
+        }
+        container qinqMappings {
+          description
+            "QinQ 1 to 1 mapping.";
+          list qinqMapping {
+            when "not(../../flowType='Dot1qTerm' or ../../flowType='Dot1qTermPolicy' or ../../flowType='QinQLink' or ../../flowType='QinQTerm' or ../../flowType='Stacking' or ../../flowType='StackingPolicy' or ../../flowType='UntaggedPolicy' or ../../flowType='VlanType' or ../../flowType='VlanTypePolicy') or ../../flowType='Mapping1to1'";
+            key "vlanId";
+            description
+              "QinQ 1 to 1 mapping.";
+            leaf vlanId {
+              type uint32 {
+                range "1..4094";
+              }
+              description
+                "VLAN ID.";
+            }
+            leaf mappingVid {
+              type uint16 {
+                range "1..4094";
+              }
+              mandatory true;
+              description
+                "VLAN ID after VLAN mapping is performed.";
+            }
+            leaf mapPe8021p {
+              when "../mapCeVid";
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "Priority of VLAN ID After Mapping.";
+              ext:allowDelete "true";
+            }
+            leaf mapCeVid {
+              type uint16 {
+                range "1..4094";
+              }
+              description
+                "Inner VLAN ID After Mapping.";
+              ext:allowDelete "true";
+            }
+            leaf groupId {
+              type uint8 {
+                range "1..16";
+              }
+              description
+                "Specified VLAN group ID.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container qinq2ToXMappings {
+          description
+            "QinQ 2 Tags mapping.";
+          list qinq2ToXMapping {
+            when "not(../../flowType='Dot1qTerm' or ../../flowType='QinQLink' or ../../flowType='QinQTerm' or ../../flowType='Stacking' or ../../flowType='VlanType') or ../../flowType='Mapping1to1'";
+            key "peVid ceVid";
+            description
+              "QinQ 2 Tags mapping.";
+            leaf peVid {
+              type uint32 {
+                range "1..4094";
+              }
+              description
+                "OuterVLAN ID Before Mapping.";
+            }
+            leaf ceVid {
+              type uint32 {
+                range "1..4094";
+              }
+              description
+                "Inner VLAN ID Before Mapping.";
+            }
+            leaf mappingVid {
+              type uint16 {
+                range "1..4094";
+              }
+              mandatory true;
+              description
+                "VLAN ID after VLAN mapping is performed.";
+            }
+            leaf mapCeVid {
+              type uint16 {
+                range "1..4094";
+              }
+              description
+                "Inner VLAN ID After Mapping.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container policys {
+          must "not(../flowType='VlanTypePolicy') or (../flowType='VlanTypePolicy' and count(policy)=1)";
+          description
+            "Sub-interface policy list.";
+          list policy {
+            when "not(../../flowType='Dot1qTerm' or ../../flowType='Mapping1to1' or ../../flowType='QinQTerm' or ../../flowType='Stacking' or ../../flowType='UntaggedPolicy' or ../../flowType='VlanType') or ../../flowType='Dot1qTermPolicy' or ../../flowType='StackingPolicy' or ../../flowType='VlanTypePolicy'";
+            key "vlanIdBgn policyType";
+            description
+              "Sub-interface policy.";
+            leaf policyType {
+              type policyType;
+              description
+                "Policy type.";
+            }            
+            leaf vlanIdBgn {
+              type uint16 {
+                range "1..4094";
+              }
+              description
+                "Start VLAN ID in the user packet.";
+            }
+            leaf vlanIdEnd {
+              when "not(../../../flowType='VlanTypePolicy' and ../policyType)";
+              type uint32 {
+                range "1..4094";
+              }
+              must "(../vlanIdEnd>=../vlanIdBgn)";
+              description
+                "End VLAN ID in the user packet.";
+              ext:allowDelete "true";
+            }
+            leaf value8021p {
+              when "not(../../../flowType='Dot1qTermPolicy' and ../policyType='Default' or ../../../flowType='Dot1qTermPolicy' and ../policyType='Dscp' or ../../../flowType='Dot1qTermPolicy' and ../policyType='PPPoE' or ../../../flowType='StackingPolicy' and ../policyType='Default' or ../../../flowType='StackingPolicy' and ../policyType='Dscp' or ../../../flowType='StackingPolicy' and ../policyType='PPPoE' or ../../../flowType='VlanTypePolicy' and ../policyType='Default' or ../../../flowType='VlanTypePolicy' and ../policyType='Dscp' or ../../../flowType='VlanTypePolicy' and ../policyType='PPPoE' or ../policyType='Default' or ../policyType='PPPoE') or ../policyType='8021p'";
+              type pub-type:BIT_RANGE {
+                length "0..31";
+                pattern "(([0-7])?(-([0-7]))?(,(([0-7])(-([0-7]))?))*)|((([\\+|\\-]([0-7]))|([\\+|\\-]\\(([0-7])-([0-7])\\)))?(,(([\\+|\\-]([0-7]))|([\\+|\\-]\\(([0-7])-([0-7])\\))))*)";
+              }
+              description
+                "802.1p policy value.";
+              ext:allowDelete "true";
+            }
+            leaf dscpValues {
+              when "not(../../../flowType='Dot1qTermPolicy' and ../policyType='8021p' or ../../../flowType='Dot1qTermPolicy' and ../policyType='Default' or ../../../flowType='Dot1qTermPolicy' and ../policyType='PPPoE' or ../../../flowType='StackingPolicy' and ../policyType='8021p' or ../../../flowType='StackingPolicy' and ../policyType='Default' or ../../../flowType='StackingPolicy' and ../policyType='PPPoE' or ../../../flowType='VlanTypePolicy' and ../policyType='8021p' or ../../../flowType='VlanTypePolicy' and ../policyType='Default' or ../../../flowType='VlanTypePolicy' and ../policyType='PPPoE' or ../policyType='Default' or ../policyType='PPPoE') or ../policyType='Dscp'";
+              type pub-type:BIT_RANGE {
+                length "0..255";
+                pattern "((6[0-3]|[1-5][0-9]|[0-9])?(-(6[0-3]|[1-5][0-9]|[0-9]))?(,((6[0-3]|[1-5][0-9]|[0-9])(-(6[0-3]|[1-5][0-9]|[0-9]))?))*)|((([\\+|\\-](6[0-3]|[1-5][0-9]|[0-9]))|([\\+|\\-]\\((6[0-3]|[1-5][0-9]|[0-9])-(6[0-3]|[1-5][0-9]|[0-9])\\)))?(,(([\\+|\\-](6[0-3]|[1-5][0-9]|[0-9]))|([\\+|\\-]\\((6[0-3]|[1-5][0-9]|[0-9])-(6[0-3]|[1-5][0-9]|[0-9])\\))))*)";
+              }
+              description
+                "DSCP policy value.";
+              ext:allowDelete "true";
+            }            
+            leaf groupId {
+              when "not(../../../flowType='VlanTypePolicy' and ../policyType)";
+              type uint8 {
+                range "1..16";
+              }
+              description
+                "Specified VLAN group ID.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container subIfSuppresses {
+          description
+            "Sub-interface suppression list.";
+          list subIfSuppress {
+            key "suppressType direction";
+            description
+              "Sub-interface suppression.";
+			leaf direction {
+              type directionType;
+              description
+                "Direction.";
+            }
+            leaf suppressType {
+              type suppressType;
+              description
+                "Suppression type.";
+            }
+            leaf cir {
+              type uint64 {
+                range "0..4294967295";
+              }
+              default "0";
+              description
+                "CIR value.";
+            }
+            leaf cbs {
+              type uint64 {
+                range "0..4294967295";
+              }
+              description
+                "CBS value.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container dot1qVrrpVids {
+          description
+            "Dot1q VRRP list.";
+          list dot1qVrrpVid {
+            when "not(../../flowType='Dot1qTerm' or ../../flowType='Dot1qTermPolicy' or ../../flowType='Mapping1to1' or ../../flowType='QinQTerm' or ../../flowType='Stacking' or ../../flowType='StackingPolicy' or ../../flowType='UntaggedPolicy' or ../../flowType='VlanType' or ../../flowType='VlanTypePolicy') or ../../flowType='Dot1qTerm' or ../../flowType='Dot1qTermPolicy'";
+            key "vrrpVid";
+            description
+              "Dot1q VRRP entry.";
+            leaf vrrpVid {
+              type uint32 {
+                range "1..4094";
+              }
+              description
+                "Specified VLAN ID.";
+            }
+          }
+        }
+        container vrrpVids {
+          description
+            "QinQ VRRP list.";
+          list vrrpVid {
+            when "not(../../flowType='Dot1qTerm' or ../../flowType='Dot1qTermPolicy' or ../../flowType='Mapping1to1' or ../../flowType='QinQTerm' or ../../flowType='Stacking' or ../../flowType='StackingPolicy' or ../../flowType='UntaggedPolicy' or ../../flowType='VlanType' or ../../flowType='VlanTypePolicy') or ../../flowType='QinQTerm'";
+            key "vrrpVid";
+            description
+              "QinQ VRRP entry.";
+            leaf vrrpVid {
+              type uint32 {
+                range "1..4094";
+              }
+              description
+                "Outer VLAN ID.";
+            }
+            leaf vrrpCeVid {
+              type uint32 {
+                range "1..4094";
+              }
+              mandatory true;
+              description
+                "Inner VLAN ID.";
+            }
+          }
+        }
+        container subIfChannel {
+          description
+            "Eth SubIf Channel.";
+          leaf sliceInstanceId {
+            type uint32 {
+              range "1..8";
+            }
+            description
+              "Network Slice Instance ID.";
+            ext:allowDelete "true";
+          }
+          leaf sliceInstanceDescr {
+            type string {
+              length "1..63";
+            }
+            config false;
+            description
+              "Network Slice Description.";
+          }
+          leaf sendSrsValue {
+            type uint32 {
+              range "1..100";
+            }
+            default "90";
+            description
+              "Channelized Ethernet Sub-Interface flow-over serious threshold";
+          }
+          leaf sendGenValue {
+            type uint32 {
+              range "1..100";
+            }
+            default "80";
+            description
+              "Channelized Ethernet Sub-Interface send flow-over  general threshold";
+          }
+          leaf sendWrnValue {
+            type uint32 {
+              range "1..100";
+            }
+            default "70";
+            description
+              "Channelized Ethernet Sub-Interface send flow-over warning threshold";
+          }
+          leaf revSrsValue {
+            type uint32 {
+              range "1..100";
+            }
+            default "90";
+            description
+              "Channelized Ethernet Sub-Interface received flow-over serious threshold";
+          }
+          leaf revGenValue {
+            type uint32 {
+              range "1..100";
+            }
+            default "80";
+            description
+              "Channelized Ethernet Sub-Interface received flow-over general threshold";
+          }
+          leaf revWrnValue {
+            type uint32 {
+              range "1..100";
+            }
+            default "70";
+            description
+              "Channelized Ethernet Sub-Interface received flow-over warning threshold";
+          }
+        }
+        container subIfBand {
+          description
+            "Eth SubIf Channel Bandwidth.";
+          leaf bandwidth {
+            type uint32;
+            description
+              "Eth SubIf Channel Bandwidth.";
+            ext:allowDelete "true";
+          }
+        }
+      }
+    }
+    container trunkMemBindVlans {
+      description
+        "Trunk member port bind VLAN list.";
+      list trunkMemBindVlan {
+        key "ifName vlanId";
+        description
+          "Trunk member port bind VLAN.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Name of a trunk member port. For example, Ethernet 0/1/0.";
+        }
+        leaf vlanId {
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "VLAN bound by trunk member port.";
+        }
+      }
+    }
+    container servicePoints {
+      description
+        "Service points.";
+      list servicePoint {
+        key "ifName";
+        description
+          "Service point.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Interface name.";
+        }
+        leaf localSwitch {
+          type ethernetEnableStatus;
+          default "disable";
+          description
+            "Enable local switching on a sub-interface for QinQ VLAN tag termination.";
+          ext:allowDelete "true";
+        }
+        leaf flowType {
+          type fpMatchType;
+          mandatory true;
+          description
+            "Specify an encapsulation type.";
+        }
+        container flowAction {
+          description
+            "Packet rewriting information.";
+          leaf actionType {
+            type fpActionType;
+            must "(../../flowType='default' and (../actionType='push1Layer' or ../actionType='noaction') ) or (../../flowType='dot1q' and (../actionType='popOuter' or ../actionType='push1Layer' or ../actionType='map_offset_increase' or ../actionType='map_1_to_1' or ../actionType='map_1_to_2' or ../actionType='push2Layer' or ../actionType='map_offset_decrease' or ../actionType='noaction') ) or (../../flowType='none' and (../actionType='popOuter' or ../actionType='push1Layer' or ../actionType='swap' or ../actionType='map_offset_increase' or ../actionType='map_1_to_1' or ../actionType='map_2_to_1' or ../actionType='map_1_to_2' or ../actionType='map_2_to_2' or ../actionType='popDouble' or ../actionType='push2Layer' or ../actionType='map_offset_decrease' or ../actionType='noaction') ) or (../../flowType='qinq' and (../actionType='popOuter' or ../actionType='push1Layer' or ../actionType='swap' or ../actionType='map_offset_increase' or ../actionType='map_1_to_1' or ../actionType='map_2_to_1' or ../actionType='map_1_to_2' or ../actionType='map_2_to_2' or ../actionType='popDouble' or ../actionType='map_offset_decrease' or ../actionType='noaction') ) or (../../flowType='untag' and (../actionType='push1Layer' or ../actionType='push2Layer' or ../actionType='noaction') ) or not(../../flowType='default' or ../../flowType='dot1q' or ../../flowType='none' or ../../flowType='qinq' or ../../flowType='untag')";
+            default "noaction";
+            description
+              "Specify a traffic action type.";
+          }
+          leaf outerVlanId {
+            when "not(../actionType='map_offset_decrease' or ../actionType='map_offset_increase' or ../actionType='noaction' or ../actionType='popDouble' or ../actionType='popOuter' or ../actionType='swap') or ../actionType='map_1_to_1' or ../actionType='map_1_to_2' or ../actionType='map_2_to_1' or ../actionType='map_2_to_2' or ../actionType='push1Layer' or ../actionType='push2Layer'";
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "Modified outer VLAN ID.";
+	      ext:allowDelete "true";
+          }
+          leaf innerVlanId {
+            when "not(../actionType='map_1_to_1' or ../actionType='map_2_to_1' or ../actionType='map_offset_decrease' or ../actionType='map_offset_increase' or ../actionType='noaction' or ../actionType='popDouble' or ../actionType='popOuter' or ../actionType='push1Layer' or ../actionType='swap') or ../actionType='map_1_to_2' or ../actionType='map_2_to_2' or ../actionType='push2Layer'";
+            type uint32 {
+              range "1..4094";
+            }
+            description
+              "Modified inner VLAN ID.";
+               ext:allowDelete "true";
+          }
+          leaf outer8021p {
+            when "not(../actionType='map_offset_decrease' or ../actionType='map_offset_increase' or ../actionType='noaction' or ../actionType='popDouble' or ../actionType='popOuter' or ../actionType='swap') or ../actionType='map_1_to_1' or ../actionType='map_1_to_2' or ../actionType='map_2_to_1' or ../actionType='map_2_to_2' or ../actionType='push1Layer' or ../actionType='push2Layer'";
+            type uint8 {
+              range "0..7";
+            }
+            description
+              "Modified outer 802.1p.";
+            ext:allowDelete "true";
+          }
+          leaf inner8021p {
+            when "not(../actionType='map_1_to_1' or ../actionType='map_2_to_1' or ../actionType='map_offset_decrease' or ../actionType='map_offset_increase' or ../actionType='noaction' or ../actionType='popDouble' or ../actionType='popOuter' or ../actionType='push1Layer' or ../actionType='swap') or ../actionType='map_1_to_2' or ../actionType='map_2_to_2' or ../actionType='push2Layer'";
+            type uint8 {
+              range "0..7";
+            }
+            description
+              "Modified inner 802.1p.";
+            ext:allowDelete "true";
+          }
+          leaf offsetValue {
+            when "not(../actionType='map_1_to_1' or ../actionType='map_1_to_2' or ../actionType='map_2_to_1' or ../actionType='map_2_to_2' or ../actionType='noaction' or ../actionType='popDouble' or ../actionType='popOuter' or ../actionType='push1Layer' or ../actionType='push2Layer' or ../actionType='swap') or ../actionType='map_offset_decrease' or ../actionType='map_offset_increase'";
+            type uint16 {
+              range "1..4093";
+            }
+            description
+              "Offset value of the modified VLAN.";
+	       ext:allowDelete "true";
+          }
+        }
+        container flowDot1qs {
+          when "not(../flowType='default' or ../flowType='none' or ../flowType='qinq' or ../flowType='untag') or ../flowType='dot1q'";
+          description
+            "Dot1q encapsulation list.";
+          leaf isPolicy {
+            type ethernetEnableStatus;
+            mandatory true;
+            description
+              "Whether a VLAN matching policy is used.";
+          }
+          leaf dot1qVids {
+            when "not(../../flowType='dot1q' and ../isPolicy='enable' or ../isPolicy='enable') or ../../flowType='dot1q' and ../isPolicy='disable' or ../../flowType='dot1q' and not(../isPolicy) or ../isPolicy='disable'";
+            type pub-type:VLAN_RANGE {
+              length "0..4094";
+            }
+            mandatory true;
+            description
+              "VLAN list.";
+          }
+          container flowDot1qPolicys {
+            description
+              "VLAN policy encapsulation list.";
+            list flowDot1qPolicy {
+              when "not(../../../flowType='dot1q' and ../../isPolicy='disable' or ../../isPolicy='disable') or ../../../flowType='dot1q' and ../../isPolicy='enable' or ../../isPolicy='enable'";
+              key "vlanIdBgn";
+              description
+                "VLAN policy encapsulation.";
+              leaf vlanIdBgn {
+                type uint32 {
+                  range "1..4094";
+                }
+                description
+                  "Start VLAN ID in the user packet.";
+              }
+              leaf vlanIdEnd {
+                type uint16 {
+                  range "1..4094";
+                }
+                description
+                  "End VLAN ID in the user packet.";
+                ext:allowDelete "true";
+              }
+              leaf dot1q8021p {
+                type pub-type:BIT_RANGE {
+                  length "0..31";
+                  pattern "(([0-7])?(-([0-7]))?(,(([0-7])(-([0-7]))?))*)|((([\\+|\\-]([0-7]))|([\\+|\\-]\\(([0-7])-([0-7])\\)))?(,(([\\+|\\-]([0-7]))|([\\+|\\-]\\(([0-7])-([0-7])\\))))*)";
+                }
+                mandatory true;
+                description
+                  "User-defined 802.1p priority value.";
+              }
+            }
+          }
+        }
+        container flowQinqs {
+          description
+            "QinQ encapsulation list.";
+          list flowQinq {
+            when "not(../../flowType='default' or ../../flowType='dot1q' or ../../flowType='none' or ../../flowType='untag') or ../../flowType='qinq'";
+            key "peVlanId";
+            description
+              "QinQ encapsulation.";
+            leaf peVlanId {
+              type uint16 {
+                range "1..4094";
+              }
+              description
+                "Outer VLAN ID.";
+            }
+            leaf ceVlanIdDefault {
+              type ethernetEnableStatus;
+              mandatory true;
+              description
+                "CE VLAN ID that is not specified.";
+            }
+            leaf ceVids {
+              when "not(../ceVlanIdDefault='enable')";
+              type pub-type:VLAN_RANGE {
+                length "0..4094";
+              }
+              mandatory true;
+              description
+                "CE VLAN ID list.";
+            }
+          }
+        }
+        container flowQinqSegments {
+          config false;
+          description
+            "QinQ encapsulation list.";
+          list flowQinqSegment {
+            key "peVlanIdBgn ceVlanIdBgn";
+            config false;
+            description
+              "QinQ encapsulation.";
+            leaf peVlanIdBgn {
+              type uint16 {
+                range "1..4094";
+              }
+              config false;
+              description
+                "Start outer VLAN ID.";
+            }
+            leaf peVlanIdEnd {
+              type uint32 {
+                range "1..4094";
+              }
+              config false;
+              description
+                "End outer VLAN ID.";
+            }
+            leaf ceVlanIdBgn {
+              type uint32 {
+                range "1..4094";
+              }
+              config false;
+              description
+                "Start inner VLAN ID.";
+            }
+            leaf ceVlanIdEnd {
+              type uint16 {
+                range "1..4094";
+              }
+              config false;
+              description
+                "End inner VLAN ID.";
+            }
+          }
+        }
+        container flowUntag {
+          when "not(../flowType='default' or ../flowType='dot1q' or ../flowType='none' or ../flowType='qinq') or ../flowType='untag'";
+          config false;
+          description
+            "Untagged encapsulation.";
+          leaf matchUntag {
+            type ethernetEnableStatus;
+            default "enable";
+            config false;
+            description
+              "Match untagged packets.";
+          }
+        }
+        container flowDefault {
+          when "not(../flowType='dot1q' or ../flowType='none' or ../flowType='qinq' or ../flowType='untag') or ../flowType='default'";
+          config false;
+          description
+            "Default encapsulation.";
+          leaf matchDefault {
+            type ethernetEnableStatus;
+            default "enable";
+            config false;
+            description
+              "Match default encapsulation.";
+          }
+        }
+        container ifFilter {
+          description
+            "Enable strict filter on an EVC sub-interface.";
+          leaf ifFilterEnable {
+            type ifFilterState;
+            default "disable";
+            description
+              "Enable or disable strict filter on an EVC sub-interface.";
+            ext:allowDelete "true";
+          }
+        }
+      }
+    }
+    container userVlanQinqs {
+    config false;
+		description
+    "user-vlan qinq list.";
+      list userVlanQinq {
+        key "ifName";
+        config false;
+		description
+              "user-vlan qinq.";
+        leaf ifName {
+          type pub-type:ifName;
+          config false;
+		   description
+            "interface name.";
+        }
+        leaf peVlanIdBgn {
+          type uint16 {
+            range "1..4094";
+          }
+          config false;
+          mandatory true;
+          description
+            "Pe VLAN begin ID";
+        }
+        leaf peVlanIdEnd {
+          type uint16;
+          config false;
+          description
+            "Pe VLAN end ID";
+        }
+        leaf ceVlanIdBgn {
+          type uint16 {
+            range "1..4094";
+          }
+          config false;
+          mandatory true;
+          description
+            "Ce VLAN begin ID";
+        }
+        leaf ceVlanIdEnd {
+          type uint16 {
+            range "1..4094";
+          }
+          config false;
+          description
+            "Ce VLAN end ID";
+        }
+      }
+    }
+    container qinqDescs {
+		description
+    "user-vlan qinq description list.";
+      list qinqDesc {
+        key "ifName peVlanId ceVlanId";
+		description
+              "user-vlan qinq description.";
+        leaf ifName {
+          type pub-type:ifName;
+		  description
+            "interface name.";
+        }
+        leaf peVlanId {
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "Pe Vlan ID";
+        }
+        leaf ceVlanId {
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "ce Vlan ID";
+        }
+        leaf description {
+          type string {
+            length "1..128";
+          }
+          mandatory true;
+          description
+            "Description";
+        }
+      }
+    }
+    container userVlanDot1qs {
+	config false;
+		description
+    "user-vlan dot1q list.";
+      list userVlanDot1q {
+        key "ifName";
+        config false;
+		description
+              "user-vlan dot1q.";
+        leaf ifName {
+          type pub-type:ifName;
+          config false;
+		  description
+            "interface name.";
+        }
+        leaf dot1qAnyFlag {
+          type ethernetEnableStatus;
+          config false;
+		  description
+            "dot1q Any Flag.";
+        }
+        leaf vlanIdBgn {
+          type uint16 {
+            range "1..4094";
+          }
+          config false;
+          mandatory true;
+          description
+            "VLAN begin ID";
+        }
+        leaf vlanIdEnd {
+          type uint16;
+          config false;
+          description
+            "VLAN end ID";
+        }
+      }
+    }
+    container dot1qDescs {
+	description
+    "user-vlan dot1q description list.";
+      list dot1qDesc {
+        key "ifName vlanId";
+		description
+              "user-vlan dot1q description.";
+        leaf ifName {
+          type pub-type:ifName;
+		  description
+            "interface name.";
+        }
+        leaf vlanId {
+          type uint32 {
+            range "1..4094";
+          }
+          description
+            "Vlan ID";
+        }
+        leaf description {
+          type string {
+            length "1..128";
+          }
+          mandatory true;
+          description
+            "Description";
+        }
+      }
+    }
+  }
+}

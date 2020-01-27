@@ -1,0 +1,203 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-system-type {
+  belongs-to huawei-system {
+    prefix system;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "System type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef systemLanguageE {
+    type enumeration {
+      enum "English" {
+        description
+          "English.";
+      }
+      enum "Chinese" {
+        description
+          "Chinese.";
+      }
+      enum "Spanish" {
+        description
+          "Spanish.";
+      }
+      enum "Russian" {
+        description
+          "Russian.";
+      }
+      enum "Arabic" {
+        description
+          "Arabic.";
+      }
+      enum "German" {
+        description
+          "German.";
+      }
+      enum "Portuguese" {
+        description
+          "Portuguese.";
+      }
+      enum "French" {
+        description
+          "French.";
+      }
+      enum "Italian" {
+        description
+          "Italian.";
+      }
+    }
+    description
+      "systemLanguageE";
+  }
+  typedef systemEncodingE {
+    type enumeration {
+      enum "gbk" {
+        description
+          "gbk:";
+      }
+      enum "iso8859_1" {
+        description
+          "iso8859-1:";
+      }
+      enum "utf_8" {
+        description
+          "utf-8:";
+      }
+    }
+    description
+      "systemEncodingE";
+  }
+  typedef systemCfgtoolsE {
+    type enumeration {
+      enum "netconf" {
+        description
+          "netconf:netconf";
+      }
+      enum "cli" {
+        description
+          "cli:cli";
+      }
+      enum "snmp" {
+        description
+          "snmp:snmp";
+      }
+    }
+    description
+      "systemCfgtoolsE";
+  }
+  typedef systemLsRoleType {
+    type enumeration {
+      enum "admin" {
+        description
+          "Admin logical system (LS) that has permission on the physical system (PS) layer, such as LS partition.";
+      }
+      enum "common" {
+        description
+          "Common LS that has no permission on the PS layer.";
+      }
+      enum "invalid" {
+        description
+          "Invalid. The LS role is not supported.";
+      }
+    }
+    description
+      "systemLsRoleType";
+  }
+  typedef systemFileCollectTaskType {
+    type enumeration {
+      enum "IBMS" {
+        description
+          "Installed Base Management System (IBMS).";
+      }
+    }
+    description
+      "";
+  }
+  typedef systemFileCompressType {
+    type enumeration {
+      enum "zip" {
+        description
+          ".zip format.";
+      }
+      enum "none" {
+        description
+          "No compression.";
+      }
+    }
+    description
+      "";
+  }
+  typedef systemFileCollectTaskOperateState {
+    type enumeration {
+      enum "InProgress" {
+        description
+          "In progress.";
+      }
+      enum "Success" {
+        description
+          "Succeeded.";
+      }
+      enum "Error" {
+        description
+          "Failed.";
+      }
+    }
+    description
+      "";
+  }
+  typedef characterSet {
+    type enumeration {
+      enum "UTF-8" {
+        description
+          "System character set is UTF-8.";
+      }
+      enum "ISO8859-1" {
+        description
+          "System character set is ISO8859-1.";
+      }
+      enum "GBK" {
+        description
+          "System character set is GBK.";
+      }
+    }
+    description
+      "characterSet";
+  }
+  typedef riskLevelType {
+    type enumeration {
+      enum "high" {
+        description
+          "High level.";
+      }
+      enum "medium" {
+        description
+          "Medium level.";
+      }
+      enum "low" {
+        description
+          "Low level.";
+      }
+    }
+    description
+      "";
+  }
+}

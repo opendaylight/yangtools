@@ -1,0 +1,116 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifm-pppbase-type {
+  belongs-to huawei-ifm {
+    prefix ifm;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "type of pppbase";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  typedef pppbaseMruNegoMtd {
+    type enumeration {
+      enum "IPV4" {
+        description
+          "IPv4 MRU negotiation on PPP MRU.";
+      }
+      enum "IPV6" {
+        description
+          "IPv6 MRU negotiation on PPP MRU.";
+      }
+    }
+    description
+      "type of ppp negotiated mru";
+  }
+  typedef pppbaseCrcType {
+    type enumeration {
+      enum "BitErrRatio" {
+        description
+          "Error bit rate.";
+      }
+      enum "PktErrRatio" {
+        description
+          "Error packet rate.";
+      }
+      enum "HighLow" {
+        description
+          "CRC upper and lower limit.";
+      }
+      enum "Default" {
+        description
+          "Default CRC alarm type.";
+      }
+    }
+    description
+      "type of ppp crc";
+  }
+  typedef pppbaseCrcBitType {
+    type enumeration {
+      enum "16" {
+        description
+          "16 bit.";
+      }
+      enum "32" {
+        description
+          "32 bit.";
+      }
+    }
+    description
+      "type of ppp crc bit";
+  }
+  typedef pppbaseNcpNegoType {
+    type enumeration {
+      enum "Enable" {
+        description
+          "Enable.";
+      }
+      enum "Disable" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "type of ppp ncp negotiation";
+  }
+  typedef pppDampLevelType {
+    type enumeration {
+      enum "light" {
+        description
+          "Light weight";
+      }
+      enum "middle" {
+        description
+          "Middle weight";
+      }
+      enum "heavy" {
+        description
+          "Heavy weight";
+      }
+      enum "manual" {
+        description
+          "Manually configure the parameters";
+      }
+    }
+    description
+      "pppDampLevelType is light/middle/heavy/manual";
+  }
+}
