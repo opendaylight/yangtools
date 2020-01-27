@@ -110,6 +110,11 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
+    D createDeclared() {
+        return prototype.buildDeclared();
+    }
+
+    @Override
     InferredStatementContext<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
         return new InferredStatementContext<>(this, newParent);
     }
