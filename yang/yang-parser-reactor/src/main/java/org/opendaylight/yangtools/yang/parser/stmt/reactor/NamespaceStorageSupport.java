@@ -136,10 +136,22 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
             checkLocalNamespaceAllowed(type);
             ret = new HashMap<>(1);
 
-            if (namespaces.isEmpty()) {
-                namespaces = new HashMap<>(1);
+            switch (namespaces.size()) {
+                case 0:
+                    // We typically have small population of namespaces, use a singleton map
+                    namespaces = ImmutableMap.of(type, ret);
+                    break;
+                case 1:
+                    // Alright, time to grow to a full HashMap
+                    final Map<Class<?>, Map<?,?>> newNamespaces = new HashMap<>(4);
+                    final Entry<Class<?>, Map<?, ?>> entry = namespaces.entrySet().iterator().next();
+                    newNamespaces.put(entry.getKey(), entry.getValue());
+                    namespaces = newNamespaces;
+                    // fall-through
+                default:
+                    // Already expanded, just put the new namespace
+                    namespaces.put(type, ret);
             }
-            namespaces.put(type, ret);
         }
 
         return ret;
