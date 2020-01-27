@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -53,7 +51,7 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
 
     @Override
     public final E createEffective(final StmtContext<A, D, E> ctx) {
-        final D declared = buildDeclared(ctx);
+        final D declared = ctx.buildDeclared();
         final ImmutableList<? extends EffectiveStatement<?, ?>> substatements = buildEffectiveSubstatements(ctx);
         return substatements.isEmpty() ? createEmptyEffective(ctx, declared)
                 : createEffective(ctx, declared, substatements);
@@ -78,17 +76,6 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
             final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<E> type, final A defValue) {
         final @Nullable E stmt = findFirstStatement(statements, type);
         return stmt != null ? stmt.argument() : defValue;
-    }
-
-    static final <A, D extends DeclaredStatement<A>> @NonNull D buildDeclared(final StmtContext<A, D, ?> ctx) {
-        /*
-         * Share original instance of declared statement between all effective
-         * statements which have been copied or derived from this original
-         * declared statement.
-         */
-        @SuppressWarnings("unchecked")
-        final StmtContext<?, D, ?> lookupCtx = (StmtContext<?, D, ?>) ctx.getOriginalCtx().orElse(ctx);
-        return verifyNotNull(lookupCtx.buildDeclared(), "Statement %s failed to build declared statement", lookupCtx);
     }
 
     /**
