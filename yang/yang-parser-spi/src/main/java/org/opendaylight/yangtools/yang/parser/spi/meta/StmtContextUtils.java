@@ -422,15 +422,15 @@ public final class StmtContextUtils {
         }
 
         final StmtContext<?, ?, ?> listStmtCtx = ctx.getParentContext();
-        final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> keyStmtCtx =
-                StmtContextUtils.findFirstDeclaredSubstatement(listStmtCtx, KeyStatement.class);
+        final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> keyStmtCtx = findFirstDeclaredSubstatement(
+            listStmtCtx, KeyStatement.class);
 
         if (YangStmtMapping.LEAF.equals(ctx.getPublicDefinition())) {
             if (isListKey(ctx, keyStmtCtx)) {
                 disallowIfFeatureAndWhenOnListKeys(ctx);
             }
         } else if (YangStmtMapping.USES.equals(ctx.getPublicDefinition())) {
-            StmtContextUtils.findAllEffectiveSubstatements(listStmtCtx, LeafStatement.class).forEach(leafStmtCtx -> {
+            findAllEffectiveSubstatements(listStmtCtx, LeafStatement.class).forEach(leafStmtCtx -> {
                 if (isListKey(leafStmtCtx, keyStmtCtx)) {
                     disallowIfFeatureAndWhenOnListKeys(leafStmtCtx);
                 }
@@ -439,10 +439,8 @@ public final class StmtContextUtils {
     }
 
     private static boolean isRelevantForIfFeatureAndWhenOnListKeysCheck(final StmtContext<?, ?, ?> ctx) {
-        return YangVersion.VERSION_1_1.equals(ctx.getRootVersion())
-                && StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.LIST)
-                && StmtContextUtils.findFirstDeclaredSubstatement(ctx.coerceParentContext(),
-                    KeyStatement.class) != null;
+        return YangVersion.VERSION_1_1.equals(ctx.getRootVersion()) && hasParentOfType(ctx, YangStmtMapping.LIST)
+                && findFirstDeclaredSubstatement(ctx.coerceParentContext(), KeyStatement.class) != null;
     }
 
     private static boolean isListKey(final StmtContext<?, ?, ?> leafStmtCtx,
@@ -479,20 +477,20 @@ public final class StmtContextUtils {
         switch (namesParts.length) {
             case 1:
                 localName = namesParts[0];
-                qnameModule = StmtContextUtils.getRootModuleQName(ctx);
+                qnameModule = getRootModuleQName(ctx);
                 break;
             default:
                 prefix = namesParts[0];
                 localName = namesParts[1];
-                qnameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
+                qnameModule = getModuleQNameByPrefix(ctx, prefix);
                 // in case of unknown statement argument, we're not going to parse it
                 if (qnameModule == null && isUnknownStatement(ctx)) {
                     localName = value;
-                    qnameModule = StmtContextUtils.getRootModuleQName(ctx);
+                    qnameModule = getRootModuleQName(ctx);
                 }
                 if (qnameModule == null && ctx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
                     ctx = ctx.getOriginalCtx().orElse(null);
-                    qnameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
+                    qnameModule = getModuleQNameByPrefix(ctx, prefix);
                 }
         }
 
@@ -518,7 +516,7 @@ public final class StmtContextUtils {
 
     public static QName parseNodeIdentifier(StmtContext<?, ?, ?> ctx, final String prefix,
             final String localName) {
-        final QNameModule module = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
+        final QNameModule module = getModuleQNameByPrefix(ctx, prefix);
         if (module != null) {
             return internedQName(ctx, module, localName);
         }
@@ -527,7 +525,7 @@ public final class StmtContextUtils {
             final Optional<StmtContext<?, ?, ?>> optOrigCtx = ctx.getOriginalCtx();
             if (optOrigCtx.isPresent()) {
                 ctx = optOrigCtx.get();
-                final QNameModule origModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
+                final QNameModule origModule = getModuleQNameByPrefix(ctx, prefix);
                 if (origModule != null) {
                     return internedQName(ctx, origModule, localName);
                 }
@@ -566,7 +564,7 @@ public final class StmtContextUtils {
     }
 
     private static QName internedQName(final StmtContext<?, ?, ?> ctx, final String localName) {
-        return internedQName(ctx, StmtContextUtils.getRootModuleQName(ctx), localName);
+        return internedQName(ctx, getRootModuleQName(ctx), localName);
     }
 
     private static QName internedQName(final StmtContext<?, ?, ?> ctx, final QNameModule module,
