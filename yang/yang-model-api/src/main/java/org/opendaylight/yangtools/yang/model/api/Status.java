@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
@@ -18,16 +19,41 @@ public enum Status {
     /**
      * CURRENT means that the definition is current and valid.
      */
-    CURRENT,
+    CURRENT("current"),
     /**
      * DEPRECATED indicates an obsolete definition, but it permits new/
      * continued implementation in order to foster interoperability with
      * older/existing implementations.
      */
-    DEPRECATED,
+    DEPRECATED("deprecated"),
     /**
      * OBSOLETE means the definition is obsolete and SHOULD NOT be implemented
      * and/or can be removed from implementations.
      */
-    OBSOLETE
+    OBSOLETE("obsolete");
+
+    private final String argumentString;
+
+    Status(final String argumentString) {
+        this.argumentString = argumentString;
+    }
+
+    @Beta
+    public String getArgumentString() {
+        return argumentString;
+    }
+
+    @Beta
+    public static Status forArgumentString(final String argumentString) {
+        switch (argumentString) {
+            case "current":
+                return CURRENT;
+            case "deprecated":
+                return DEPRECATED;
+            case "obsolete":
+                return OBSOLETE;
+            default:
+                throw new IllegalArgumentException("Invalid status string '" + argumentString + "'");
+        }
+    }
 }
