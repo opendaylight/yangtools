@@ -454,10 +454,21 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public E buildEffective() {
-        if (effectiveInstance == null) {
-            effectiveInstance = definition.getFactory().createEffective(this);
+        final E existing = effectiveInstance;
+        if (existing != null) {
+            return existing;
         }
-        return effectiveInstance;
+
+        /*
+         * Share original instance of declared statement between all effective
+         * statements which have been copied or derived from this original
+         * declared statement.
+         */
+        @SuppressWarnings("unchecked")
+        final StmtContext<A, D, E> lookupCtx = (StmtContext<A, D, E>) getOriginalCtx().orElse(this);
+        final E created = definition.getFactory().createEffective(lookupCtx);
+        effectiveInstance = created;
+        return created;
     }
 
     /**
