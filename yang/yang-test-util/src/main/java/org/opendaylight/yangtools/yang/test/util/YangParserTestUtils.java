@@ -360,11 +360,16 @@ public final class YangParserTestUtils {
             throw new IllegalArgumentException("Failed to read a source", e);
         }
 
+        final EffectiveModelContext result;
+
         try {
-            return parser.buildEffectiveModel();
+            result = parser.buildEffectiveModel();
         } catch (YangParserException e) {
             throw new IllegalStateException("Failed to assemble SchemaContext", e);
         }
+
+        System.out.println(parser);
+        return result;
     }
 
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Wrong inferent on listFiles")
