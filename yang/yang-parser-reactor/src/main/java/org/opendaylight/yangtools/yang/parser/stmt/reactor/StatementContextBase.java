@@ -524,7 +524,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
         checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
                 || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        return declaredInstance = definition.getFactory().createDeclared(this);
+        return declaredInstance = createDeclared();
+    }
+
+    @NonNull D createDeclared() {
+        return definition.getFactory().createDeclared(this);
     }
 
     @Override
