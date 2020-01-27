@@ -105,23 +105,13 @@ public final class OrderedByStatementSupport
             final OrderedByStatement declared) {
         // Aggressively reuse effective instances which are backed by the corresponding empty declared instance, as this
         // is the case unless there is a weird extension in use.
-        final Ordering argument = declared.getValue();
-        switch (argument) {
-            case SYSTEM:
-                if (EMPTY_SYSTEM_DECL.equals(declared)) {
-                    return EMPTY_SYSTEM_EFF;
-                }
-                break;
-            case USER:
-                if (EMPTY_USER_DECL.equals(declared)) {
-                    return EMPTY_USER_EFF;
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unhandled argument " + argument);
+        if (EMPTY_USER_DECL.equals(declared)) {
+            // Most likely to be seen (as system is the default)
+            return EMPTY_USER_EFF;
+        } else if (EMPTY_SYSTEM_DECL.equals(declared)) {
+            return EMPTY_SYSTEM_EFF;
+        } else {
+            return new EmptyOrderedByEffectiveStatement(declared);
         }
-
-        // Declared instance was non-empty, which can happen with extensions
-        return new EmptyOrderedByEffectiveStatement(declared);
     }
 }
