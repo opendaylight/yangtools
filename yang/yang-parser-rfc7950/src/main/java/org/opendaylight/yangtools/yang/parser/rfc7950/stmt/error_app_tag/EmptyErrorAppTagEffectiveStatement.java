@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_app_tag;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyErrorAppTagEffectiveStatement extends AbstractErrorAppTagEffectiveStatement {
+final class EmptyErrorAppTagEffectiveStatement extends DefaultArgument<String, ErrorAppTagStatement>
+        implements ErrorAppTagEffectiveStatement {
     EmptyErrorAppTagEffectiveStatement(final ErrorAppTagStatement declared) {
         super(declared);
     }

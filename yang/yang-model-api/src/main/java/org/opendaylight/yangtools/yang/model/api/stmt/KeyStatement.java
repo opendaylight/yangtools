@@ -8,9 +8,13 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public interface KeyStatement extends DeclaredStatement<Collection<SchemaNodeIdentifier>> {
-
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.KEY;
+    }
 }
-

@@ -8,21 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.prefix;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-final class RegularPrefixEffectiveStatement extends AbstractPrefixEffectiveStatement {
-    private final @NonNull Object substatements;
-
+final class RegularPrefixEffectiveStatement extends WithSubstatements<String, PrefixStatement>
+        implements PrefixEffectiveStatement {
     RegularPrefixEffectiveStatement(final PrefixStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared);
-        this.substatements = maskList(substatements);
-    }
-
-    @Override
-    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return unmaskList(substatements);
+        super(declared, substatements);
     }
 }

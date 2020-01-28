@@ -8,21 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.presence;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-final class RegularPresenceEffectiveStatement extends AbstractPresenceEffectiveStatement {
-    private final @NonNull Object substatements;
-
+final class RegularPresenceEffectiveStatement extends WithSubstatements<String, PresenceStatement>
+        implements PresenceEffectiveStatement {
     RegularPresenceEffectiveStatement(final PresenceStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared);
-        this.substatements = maskList(substatements);
-    }
-
-    @Override
-    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return unmaskList(substatements);
+        super(declared, substatements);
     }
 }
