@@ -49,7 +49,7 @@ public final class BitsSpecificationEffectiveStatement extends
                         effectivePos = 0L;
                     }
                 } else {
-                    effectivePos = bitSubStmt.getDeclaredPosition();
+                    effectivePos = bitSubStmt.getDeclaredPosition().toJava();
                 }
 
                 final Bit bit = EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos);
