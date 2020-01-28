@@ -163,9 +163,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // a bit in terms of size -- but those are only a few and SchemaPath is on its way out anyway.
     private volatile SchemaPath schemaPath;
 
+    // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
         this.copyHistory = original.copyHistory;
         this.definition = original.definition;
+
+        this.isSupportedToBuildEffective = original.isSupportedToBuildEffective;
+        this.fullyDefined = original.fullyDefined;
+        this.completedPhase = original.completedPhase;
+        this.declaredInstance = original.declaredInstance;
+        this.flags = original.flags;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
