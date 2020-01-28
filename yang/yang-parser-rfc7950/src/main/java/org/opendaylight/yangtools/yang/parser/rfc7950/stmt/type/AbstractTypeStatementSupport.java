@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -47,7 +48,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -309,10 +309,9 @@ abstract class AbstractTypeStatementSupport
         final SchemaPath path = stmtCtx.getSchemaPath().get();
         final SchemaPath parent = path.getParent();
         final QName parentQName = parent.getLastComponent();
-        Preconditions.checkArgument(parentQName != null, "Path %s has an empty parent", path);
+        checkArgument(parentQName != null, "Path %s has an empty parent", path);
 
-        final QName qname = stmtCtx.getFromNamespace(QNameCacheNamespace.class,
-            QName.create(parentQName, path.getLastComponent().getLocalName()));
+        final QName qname = path.getLastComponent().withModule(parentQName.getModule()).intern();
         return parent.createChild(qname);
     }
 }
