@@ -212,8 +212,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return Context of the previous copy of this statement, if this statement has been copied.
      */
-    // FIXME: 5.0.0: this should return Optional<? extends StmtContext<A, D, E>>
-    Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx();
+    Optional<? extends StmtContext<A, D, E>> getPreviousCopyCtx();
 
     ModelProcessingPhase getCompletedPhase();
 

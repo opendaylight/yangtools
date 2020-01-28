@@ -108,7 +108,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx() {
+    public Optional<? extends StmtContext<A, D, E>> getPreviousCopyCtx() {
         return Optional.of(prototype);
     }
 
