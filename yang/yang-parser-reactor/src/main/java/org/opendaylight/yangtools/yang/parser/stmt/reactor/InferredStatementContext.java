@@ -43,6 +43,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     private final @NonNull StatementContextBase<A, D, E> prototype;
     private final @NonNull StatementContextBase<?, ?, ?> parent;
+    private final @NonNull StmtContext<A, D, E> originalCtx;
     private final @NonNull CopyType childCopyType;
     private final QNameModule targetModule;
     private final A argument;
@@ -54,6 +55,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.childCopyType = original.childCopyType;
         this.targetModule = original.targetModule;
         this.prototype = original.prototype;
+        this.originalCtx = original.originalCtx;
         this.argument = original.argument;
     }
 
@@ -66,6 +68,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
                 : prototype.definition().adaptArgumentValue(prototype, targetModule);
         this.childCopyType = requireNonNull(childCopyType);
         this.targetModule = targetModule;
+        // FIXME: 5.0.0: ugly cast due getOriginalCtx() return type :(
+        this.originalCtx = (StmtContext<A, D, E>) prototype.getOriginalCtx().orElse(prototype);
 
         // FIXME: YANGTOOLS-784: instantiate these lazily
         addEffectiveSubstatements(createEffective());
@@ -90,18 +94,17 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public StatementSourceReference getStatementSourceReference() {
-        return prototype.getStatementSourceReference();
+        return originalCtx.getStatementSourceReference();
     }
 
     @Override
     public String rawStatementArgument() {
-        return prototype.rawStatementArgument();
+        return originalCtx.rawStatementArgument();
     }
 
     @Override
     public Optional<StmtContext<?, ?, ?>> getOriginalCtx() {
-        final Optional<StmtContext<?, ?, ?>> orig = prototype.getOriginalCtx();
-        return orig.isPresent() ? orig : Optional.of(prototype);
+        return Optional.of(originalCtx);
     }
 
     @Override
@@ -110,8 +113,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    D createDeclared() {
-        return prototype.buildDeclared();
+    public D buildDeclared() {
+        /*
+         * Share original instance of declared statement between all effective statements which have been copied or
+         * derived from this original declared statement.
+         */
+        return originalCtx.buildDeclared();
     }
 
     @Override
