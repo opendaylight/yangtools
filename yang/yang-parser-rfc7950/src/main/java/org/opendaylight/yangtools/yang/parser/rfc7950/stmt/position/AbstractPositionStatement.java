@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.position;
 
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
-abstract class AbstractPositionStatement extends ArgumentToString<Long> implements PositionStatement {
-    AbstractPositionStatement(final Long argument) {
+abstract class AbstractPositionStatement extends ArgumentToString<Uint32> implements PositionStatement {
+    AbstractPositionStatement(final Uint32 argument) {
         super(argument);
     }
 
