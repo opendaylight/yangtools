@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.position;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -19,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class PositionStatementSupport
-        extends BaseInternedStatementSupport<Long, PositionStatement, PositionEffectiveStatement> {
+        extends BaseInternedStatementSupport<Uint32, PositionStatement, PositionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.POSITION).build();
     private static final PositionStatementSupport INSTANCE = new PositionStatementSupport();
@@ -33,10 +34,10 @@ public final class PositionStatementSupport
     }
 
     @Override
-    public Long parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public Uint32 parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         try {
-            return Long.parseLong(value);
-        } catch (NumberFormatException e) {
+            return Uint32.valueOf(value).intern();
+        } catch (IllegalArgumentException e) {
             throw new SourceException(String.format("Bit position value %s is not valid integer", value),
                     ctx.getStatementSourceReference(), e);
         }
@@ -48,13 +49,13 @@ public final class PositionStatementSupport
     }
 
     @Override
-    protected PositionStatement createDeclared(final Long argument,
+    protected PositionStatement createDeclared(final Uint32 argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularPositionStatement(argument, substatements);
     }
 
     @Override
-    protected PositionStatement createEmptyDeclared(final Long argument) {
+    protected PositionStatement createEmptyDeclared(final Uint32 argument) {
         return new EmptyPositionStatement(argument);
     }
 
@@ -65,7 +66,7 @@ public final class PositionStatementSupport
 
     @Override
     protected PositionEffectiveStatement createEffective(
-            final StmtContext<Long, PositionStatement, PositionEffectiveStatement> ctx,
+            final StmtContext<Uint32, PositionStatement, PositionEffectiveStatement> ctx,
             final PositionStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new RegularPositionEffectiveStatement(declared, substatements);
     }
