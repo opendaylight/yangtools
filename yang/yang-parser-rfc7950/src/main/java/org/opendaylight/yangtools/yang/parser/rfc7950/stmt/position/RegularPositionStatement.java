@@ -10,12 +10,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.position;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 final class RegularPositionStatement extends AbstractPositionStatement {
     private final @NonNull Object substatements;
 
-    RegularPositionStatement(final Long argument,
+    RegularPositionStatement(final Uint32 argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(argument);
         this.substatements = maskList(substatements);
