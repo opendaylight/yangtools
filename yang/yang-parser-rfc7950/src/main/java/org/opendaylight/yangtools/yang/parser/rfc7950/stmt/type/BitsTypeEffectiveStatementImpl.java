@@ -46,7 +46,7 @@ final class BitsTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBas
                 if (bitSubStmt.getDeclaredPosition() == null) {
                     effectivePos = getBaseTypeBitPosition(bitSubStmt.getName(), baseType, ctx);
                 } else {
-                    effectivePos = bitSubStmt.getDeclaredPosition();
+                    effectivePos = bitSubStmt.getDeclaredPosition().toJava();
                 }
 
                 builder.addBit(EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos));
