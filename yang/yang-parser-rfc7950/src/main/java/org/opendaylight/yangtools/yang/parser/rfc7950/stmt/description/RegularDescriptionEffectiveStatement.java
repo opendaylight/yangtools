@@ -8,21 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.description;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-final class RegularDescriptionEffectiveStatement extends AbstractDescriptionEffectiveStatement {
-    private final @NonNull Object substatements;
-
+final class RegularDescriptionEffectiveStatement extends WithSubstatements<String, DescriptionStatement>
+        implements DescriptionEffectiveStatement {
     RegularDescriptionEffectiveStatement(final DescriptionStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared);
-        this.substatements = maskList(substatements);
-    }
-
-    @Override
-    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return unmaskList(substatements);
+        super(declared, substatements);
     }
 }

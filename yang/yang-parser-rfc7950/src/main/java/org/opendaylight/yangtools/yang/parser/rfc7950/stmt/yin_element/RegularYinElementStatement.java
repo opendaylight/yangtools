@@ -8,21 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
-final class RegularYinElementStatement extends AbstractYinElementStatement {
-    private final @NonNull Object substatements;
-
+final class RegularYinElementStatement extends WithSubstatements<Boolean> implements YinElementStatement {
     RegularYinElementStatement(final Boolean argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument);
-        this.substatements = maskList(substatements);
-    }
-
-    @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        return unmaskList(substatements);
+        super(argument, substatements);
     }
 }

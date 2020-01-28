@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.description;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class EmptyDescriptionStatement extends AbstractDescriptionStatement {
+final class EmptyDescriptionStatement extends WithRawStringArgument implements DescriptionStatement {
     EmptyDescriptionStatement(final StmtContext<String, ?, ?> context) {
         super(context);
     }

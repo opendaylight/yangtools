@@ -8,21 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.position;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-final class RegularPositionEffectiveStatement extends AbstractPositionEffectiveStatement {
-    private final @NonNull Object substatements;
-
+final class RegularPositionEffectiveStatement extends WithSubstatements<Long, PositionStatement>
+        implements PositionEffectiveStatement {
     RegularPositionEffectiveStatement(final PositionStatement declared,
-        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared);
-        this.substatements = maskList(substatements);
-    }
-
-    @Override
-    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return unmaskList(substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared, substatements);
     }
 }

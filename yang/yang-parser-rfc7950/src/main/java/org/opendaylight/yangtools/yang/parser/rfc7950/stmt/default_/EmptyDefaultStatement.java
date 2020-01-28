@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.default_;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class EmptyDefaultStatement extends AbstractDefaultStatement {
+final class EmptyDefaultStatement extends WithRawStringArgument implements DefaultStatement {
     EmptyDefaultStatement(final StmtContext<String, ?, ?> context) {
         super(context);
     }

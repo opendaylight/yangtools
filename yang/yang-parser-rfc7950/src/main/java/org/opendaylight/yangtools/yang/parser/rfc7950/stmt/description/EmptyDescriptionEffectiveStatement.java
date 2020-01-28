@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.description;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyDescriptionEffectiveStatement extends AbstractDescriptionEffectiveStatement {
+final class EmptyDescriptionEffectiveStatement extends DefaultArgument<String, DescriptionStatement>
+        implements DescriptionEffectiveStatement {
     EmptyDescriptionEffectiveStatement(final DescriptionStatement declared) {
         super(declared);
     }

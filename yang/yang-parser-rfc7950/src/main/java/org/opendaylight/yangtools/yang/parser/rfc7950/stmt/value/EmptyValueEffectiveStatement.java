@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.value;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyValueEffectiveStatement extends AbstractValueEffectiveStatement {
+final class EmptyValueEffectiveStatement extends DefaultArgument<Integer, ValueStatement>
+        implements ValueEffectiveStatement {
     EmptyValueEffectiveStatement(final ValueStatement declared) {
         super(declared);
     }

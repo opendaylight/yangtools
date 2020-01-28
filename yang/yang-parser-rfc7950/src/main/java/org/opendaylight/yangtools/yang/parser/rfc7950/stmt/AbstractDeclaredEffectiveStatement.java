@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
@@ -50,11 +49,6 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
     @Override
     public final StatementSource getStatementSource() {
         return StatementSource.DECLARATION;
-    }
-
-    @Override
-    public final StatementDefinition statementDefinition() {
-        return getDeclared().statementDefinition();
     }
 
     @Override
@@ -147,6 +141,22 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      * @param <D> Class representing declared version of this statement.
      */
     public abstract static class DefaultArgument<A, D extends DeclaredStatement<A>> extends Default<A, D> {
+        public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>>
+                extends DefaultArgument<A, D> {
+            private final @NonNull Object substatements;
+
+            protected WithSubstatements(final D declared,
+                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(declared);
+                this.substatements = maskList(substatements);
+            }
+
+            @Override
+            public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+                return unmaskList(substatements);
+            }
+        }
+
         protected DefaultArgument(final D declared) {
             super(declared);
         }

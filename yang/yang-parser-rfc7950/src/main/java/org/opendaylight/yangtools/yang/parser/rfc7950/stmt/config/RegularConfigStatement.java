@@ -8,20 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.config;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
-final class RegularConfigStatement extends AbstractConfigStatement {
-    private final @NonNull Object substatements;
-
+final class RegularConfigStatement extends WithSubstatements<Boolean> implements ConfigStatement {
     RegularConfigStatement(final Boolean argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument);
-        this.substatements = maskList(substatements);
-    }
-
-    @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        return unmaskList(substatements);
+        super(argument, substatements);
     }
 }

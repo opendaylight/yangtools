@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.position;
 
-final class EmptyPositionStatement extends AbstractPositionStatement {
+import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
+
+final class EmptyPositionStatement extends ArgumentToString<Long> implements PositionStatement {
     EmptyPositionStatement(final Long argument) {
         super(argument);
     }
