@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -113,5 +117,18 @@ public final class KeyStatementSupport
         final Collection<SchemaNodeIdentifier> arg = ctx.coerceStatementArgument();
         return arg.equals(declared.argument()) ? new EmptyLocalKeyEffectiveStatement(declared)
                 : new EmptyForeignKeyEffectiveStatement(declared, arg);
+    }
+
+    static @NonNull Object maskCollection(final @NonNull Collection<SchemaNodeIdentifier> coll) {
+        return coll.size() == 1 ? verifyNotNull(coll.iterator().next()) : coll;
+    }
+
+    @SuppressWarnings("unchecked")
+    static @NonNull Collection<SchemaNodeIdentifier> unmaskCollection(final @NonNull Object masked) {
+        if (masked instanceof Collection) {
+            return (Collection<SchemaNodeIdentifier>) masked;
+        }
+        verify(masked instanceof SchemaNodeIdentifier, "Unexpected argument %s", masked);
+        return ImmutableSet.of((SchemaNodeIdentifier) masked);
     }
 }
