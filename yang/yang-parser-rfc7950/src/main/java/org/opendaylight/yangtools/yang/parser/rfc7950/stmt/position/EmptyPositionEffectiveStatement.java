@@ -8,11 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.position;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class PositionStatementImpl extends AbstractDeclaredStatement<Long> implements PositionStatement {
-    PositionStatementImpl(final StmtContext<Long, PositionStatement, ?> context) {
-        super(context);
+final class EmptyPositionEffectiveStatement extends AbstractPositionEffectiveStatement {
+    EmptyPositionEffectiveStatement(final PositionStatement declared) {
+        super(declared);
     }
 }
