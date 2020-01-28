@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
@@ -22,7 +23,7 @@ public final class BitEffectiveStatementImpl extends AbstractEffectiveDocumented
 
     private final QName qname;
     private final SchemaPath schemaPath;
-    private final Long declaredPosition;
+    private final Uint32 declaredPosition;
 
     BitEffectiveStatementImpl(final StmtContext<QName, BitStatement, ?> ctx) {
         super(ctx);
@@ -30,7 +31,7 @@ public final class BitEffectiveStatementImpl extends AbstractEffectiveDocumented
         qname = ctx.getStatementArgument();
         schemaPath = ctx.getSchemaPath().get();
 
-        Long declaredPositionInit = null;
+        Uint32 declaredPositionInit = null;
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof PositionEffectiveStatement) {
                 declaredPositionInit = ((PositionEffectiveStatement) effectiveStatement).argument();
@@ -40,7 +41,7 @@ public final class BitEffectiveStatementImpl extends AbstractEffectiveDocumented
         declaredPosition = declaredPositionInit;
     }
 
-    public Long getDeclaredPosition() {
+    public Uint32 getDeclaredPosition() {
         return declaredPosition;
     }
 
