@@ -575,8 +575,7 @@ public final class StmtContextUtils {
         } catch (IllegalArgumentException e) {
             throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid identifier '%s'", localName);
         }
-
-        return ctx.getFromNamespace(QNameCacheNamespace.class, template);
+        return template.intern();
     }
 
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {
