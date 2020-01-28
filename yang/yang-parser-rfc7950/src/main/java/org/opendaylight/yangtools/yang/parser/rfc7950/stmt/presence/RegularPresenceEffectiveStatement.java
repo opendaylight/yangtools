@@ -10,9 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.presence;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class RegularPresenceEffectiveStatement extends AbstractPresenceEffectiveStatement {
+final class RegularPresenceEffectiveStatement extends DefaultArgument<String, PresenceStatement>
+        implements PresenceEffectiveStatement {
     private final @NonNull Object substatements;
 
     RegularPresenceEffectiveStatement(final PresenceStatement declared,

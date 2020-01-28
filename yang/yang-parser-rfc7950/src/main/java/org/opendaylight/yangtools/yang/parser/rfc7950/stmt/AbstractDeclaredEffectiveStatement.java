@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
@@ -50,11 +49,6 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
     @Override
     public final StatementSource getStatementSource() {
         return StatementSource.DECLARATION;
-    }
-
-    @Override
-    public final StatementDefinition statementDefinition() {
-        return getDeclared().statementDefinition();
     }
 
     @Override

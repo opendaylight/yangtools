@@ -10,9 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.value;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class RegularValueEffectiveStatement extends AbstractValueEffectiveStatement {
+final class RegularValueEffectiveStatement extends DefaultArgument<Integer, ValueStatement>
+        implements ValueEffectiveStatement {
     private final @NonNull Object substatements;
 
     RegularValueEffectiveStatement(final ValueStatement declared,

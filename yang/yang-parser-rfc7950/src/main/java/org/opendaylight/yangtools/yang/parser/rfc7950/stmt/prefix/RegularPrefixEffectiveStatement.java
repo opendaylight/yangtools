@@ -10,9 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.prefix;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class RegularPrefixEffectiveStatement extends AbstractPrefixEffectiveStatement {
+final class RegularPrefixEffectiveStatement extends DefaultArgument<String, PrefixStatement>
+        implements PrefixEffectiveStatement {
     private final @NonNull Object substatements;
 
     RegularPrefixEffectiveStatement(final PrefixStatement declared,

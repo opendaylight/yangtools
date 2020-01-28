@@ -10,9 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class RegularMandatoryEffectiveStatement extends AbstractMandatoryEffectiveStatement {
+final class RegularMandatoryEffectiveStatement extends DefaultArgument<Boolean, MandatoryStatement>
+        implements MandatoryEffectiveStatement {
     private final @NonNull Object substatements;
 
     RegularMandatoryEffectiveStatement(final MandatoryStatement declared,

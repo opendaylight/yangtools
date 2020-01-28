@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.belongs_to;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyBelongsToEffectiveStatement extends AbstractBelongsToEffectiveStatement {
+final class EmptyBelongsToEffectiveStatement extends DefaultArgument<String, BelongsToStatement>
+        implements BelongsToEffectiveStatement {
     EmptyBelongsToEffectiveStatement(final BelongsToStatement declared) {
         super(declared);
     }

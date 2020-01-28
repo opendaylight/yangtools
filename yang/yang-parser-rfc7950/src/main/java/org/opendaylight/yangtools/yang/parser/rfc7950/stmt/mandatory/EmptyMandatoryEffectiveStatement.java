@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyMandatoryEffectiveStatement extends AbstractMandatoryEffectiveStatement {
+final class EmptyMandatoryEffectiveStatement extends DefaultArgument<Boolean, MandatoryStatement>
+        implements MandatoryEffectiveStatement {
     EmptyMandatoryEffectiveStatement(final MandatoryStatement declared) {
         super(declared);
     }

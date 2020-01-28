@@ -11,8 +11,10 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
-final class RegularValueStatement extends AbstractValueStatement {
+final class RegularValueStatement extends ArgumentToString<Integer> implements ValueStatement {
     private final @NonNull Object substatements;
 
     RegularValueStatement(final Integer argument,

@@ -11,8 +11,10 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractBooleanDeclaredStatement;
 
-final class RegularYinElementStatement extends AbstractYinElementStatement {
+final class RegularYinElementStatement extends AbstractBooleanDeclaredStatement implements YinElementStatement {
     private final @NonNull Object substatements;
 
     RegularYinElementStatement(final Boolean argument,

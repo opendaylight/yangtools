@@ -12,8 +12,10 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
-final class RegularPositionStatement extends AbstractPositionStatement {
+final class RegularPositionStatement extends ArgumentToString<Uint32> implements PositionStatement {
     private final @NonNull Object substatements;
 
     RegularPositionStatement(final Uint32 argument,

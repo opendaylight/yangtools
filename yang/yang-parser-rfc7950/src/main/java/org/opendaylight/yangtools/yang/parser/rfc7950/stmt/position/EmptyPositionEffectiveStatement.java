@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.position;
 
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyPositionEffectiveStatement extends AbstractPositionEffectiveStatement {
+final class EmptyPositionEffectiveStatement extends DefaultArgument<Uint32, PositionStatement>
+        implements PositionEffectiveStatement {
     EmptyPositionEffectiveStatement(final PositionStatement declared) {
         super(declared);
     }

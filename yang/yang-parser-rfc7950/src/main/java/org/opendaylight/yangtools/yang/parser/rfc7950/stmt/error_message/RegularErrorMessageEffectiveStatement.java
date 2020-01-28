@@ -10,9 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_message;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class RegularErrorMessageEffectiveStatement extends AbstractErrorMessageEffectiveStatement {
+final class RegularErrorMessageEffectiveStatement extends DefaultArgument<String, ErrorMessageStatement>
+        implements ErrorMessageEffectiveStatement {
     private final @NonNull Object substatements;
 
     RegularErrorMessageEffectiveStatement(final ErrorMessageStatement declared,

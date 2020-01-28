@@ -11,8 +11,11 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractBooleanDeclaredStatement;
 
-final class RegularRequireInstanceStatement extends AbstractRequireInstanceStatement {
+final class RegularRequireInstanceStatement extends AbstractBooleanDeclaredStatement
+        implements RequireInstanceStatement {
     private final @NonNull Object substatements;
 
     RegularRequireInstanceStatement(final Boolean argument,

@@ -11,9 +11,11 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RegularPrefixStatement extends AbstractPrefixStatement {
+final class RegularPrefixStatement extends WithRawStringArgument implements PrefixStatement {
     private final @NonNull Object substatements;
 
     RegularPrefixStatement(final StmtContext<String, ?, ?> context,

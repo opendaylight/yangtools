@@ -9,10 +9,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.position;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class RegularPositionEffectiveStatement extends AbstractPositionEffectiveStatement {
+final class RegularPositionEffectiveStatement extends DefaultArgument<Uint32, PositionStatement>
+        implements PositionEffectiveStatement {
     private final @NonNull Object substatements;
 
     RegularPositionEffectiveStatement(final PositionStatement declared,

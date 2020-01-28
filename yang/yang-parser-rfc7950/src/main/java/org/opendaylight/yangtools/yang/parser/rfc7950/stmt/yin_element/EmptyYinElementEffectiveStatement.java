@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyYinElementEffectiveStatement extends AbstractYinElementEffectiveStatement {
+final class EmptyYinElementEffectiveStatement extends DefaultArgument<Boolean, YinElementStatement>
+        implements YinElementEffectiveStatement {
     EmptyYinElementEffectiveStatement(final YinElementStatement declared) {
         super(declared);
     }

@@ -10,9 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.belongs_to;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class RegularBelongsToEffectiveStatement extends AbstractBelongsToEffectiveStatement {
+final class RegularBelongsToEffectiveStatement extends DefaultArgument<String, BelongsToStatement>
+        implements BelongsToEffectiveStatement {
     private final @NonNull Object substatements;
 
     RegularBelongsToEffectiveStatement(final BelongsToStatement declared,

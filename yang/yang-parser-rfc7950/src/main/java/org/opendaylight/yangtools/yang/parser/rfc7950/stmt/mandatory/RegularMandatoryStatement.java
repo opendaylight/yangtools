@@ -11,8 +11,10 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractBooleanDeclaredStatement;
 
-final class RegularMandatoryStatement extends AbstractMandatoryStatement {
+final class RegularMandatoryStatement extends AbstractBooleanDeclaredStatement implements MandatoryStatement {
     private final @NonNull Object substatements;
 
     RegularMandatoryStatement(final Boolean argument,

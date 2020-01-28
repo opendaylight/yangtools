@@ -11,9 +11,11 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RegularErrorMessageStatement extends AbstractErrorMessageStatement {
+final class RegularErrorMessageStatement extends WithRawStringArgument implements ErrorMessageStatement {
     private final @NonNull Object substatements;
 
     RegularErrorMessageStatement(final StmtContext<String, ?, ?> context,

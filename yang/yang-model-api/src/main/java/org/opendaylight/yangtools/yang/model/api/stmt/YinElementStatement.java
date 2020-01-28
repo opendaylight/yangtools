@@ -7,9 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public interface YinElementStatement extends DeclaredStatement<Boolean> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.YIN_ELEMENT;
+    }
+
     default boolean getValue() {
         return argument().booleanValue();
     }

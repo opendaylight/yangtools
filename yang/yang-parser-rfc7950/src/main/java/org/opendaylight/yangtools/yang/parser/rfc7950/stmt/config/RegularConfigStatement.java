@@ -11,8 +11,10 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractBooleanDeclaredStatement;
 
-final class RegularConfigStatement extends AbstractConfigStatement {
+final class RegularConfigStatement extends AbstractBooleanDeclaredStatement implements ConfigStatement {
     private final @NonNull Object substatements;
 
     RegularConfigStatement(final Boolean argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {

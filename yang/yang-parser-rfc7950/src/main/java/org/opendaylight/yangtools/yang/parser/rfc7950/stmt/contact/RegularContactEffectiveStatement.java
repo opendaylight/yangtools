@@ -10,9 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.contact;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class RegularContactEffectiveStatement extends AbstractContactEffectiveStatement {
+final class RegularContactEffectiveStatement extends DefaultArgument<String, ContactStatement>
+        implements ContactEffectiveStatement {
     private final @NonNull Object substatements;
 
     RegularContactEffectiveStatement(final ContactStatement declared,

@@ -10,9 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.config;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class RegularConfigEffectiveStatement extends AbstractConfigEffectiveStatement {
+final class RegularConfigEffectiveStatement extends DefaultArgument<Boolean, ConfigStatement>
+        implements ConfigEffectiveStatement {
     private final @NonNull Object substatements;
 
     RegularConfigEffectiveStatement(final ConfigStatement declared,

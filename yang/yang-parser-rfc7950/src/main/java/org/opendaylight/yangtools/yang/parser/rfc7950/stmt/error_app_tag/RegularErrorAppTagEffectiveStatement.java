@@ -10,9 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_app_tag;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class RegularErrorAppTagEffectiveStatement extends AbstractErrorAppTagEffectiveStatement {
+final class RegularErrorAppTagEffectiveStatement extends DefaultArgument<String, ErrorAppTagStatement>
+        implements ErrorAppTagEffectiveStatement {
     private final @NonNull Object substatements;
 
     RegularErrorAppTagEffectiveStatement(final ErrorAppTagStatement declared,

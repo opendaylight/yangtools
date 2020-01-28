@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
 
-final class EmptyYinElementStatement extends AbstractYinElementStatement {
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractBooleanDeclaredStatement;
+
+final class EmptyYinElementStatement extends AbstractBooleanDeclaredStatement implements YinElementStatement {
     EmptyYinElementStatement(final Boolean argument) {
         super(argument);
     }
