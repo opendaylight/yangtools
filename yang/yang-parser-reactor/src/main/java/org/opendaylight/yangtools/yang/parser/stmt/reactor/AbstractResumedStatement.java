@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -39,6 +40,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     private final String rawArgument;
 
     private StatementMap substatements = StatementMap.empty();
+    private @Nullable D declaredInstance;
 
     // Copy constructor
     AbstractResumedStatement(final AbstractResumedStatement<A, D, E> original) {
@@ -46,6 +48,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         this.statementDeclSource = original.statementDeclSource;
         this.rawArgument = original.rawArgument;
         this.substatements = original.substatements;
+        this.declaredInstance = original.declaredInstance;
     }
 
     AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
@@ -85,6 +88,18 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     @Override
     public Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements() {
         return substatements.values();
+    }
+
+    @Override
+    public final D buildDeclared() {
+        final D existing = declaredInstance;
+        if (existing != null) {
+            return existing;
+        }
+        final ModelProcessingPhase phase = getCompletedPhase();
+        checkState(phase == ModelProcessingPhase.FULL_DECLARATION || phase == ModelProcessingPhase.EFFECTIVE_MODEL,
+                "Cannot build declared instance after phase %s", phase);
+        return declaredInstance = definition().getFactory().createDeclared(this);
     }
 
     @Override
