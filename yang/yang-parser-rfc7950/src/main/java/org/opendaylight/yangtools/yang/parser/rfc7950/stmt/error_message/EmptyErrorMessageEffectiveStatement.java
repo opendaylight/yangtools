@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_message;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyErrorMessageEffectiveStatement extends AbstractErrorMessageEffectiveStatement {
+final class EmptyErrorMessageEffectiveStatement extends DefaultArgument<String, ErrorMessageStatement>
+        implements ErrorMessageEffectiveStatement {
     EmptyErrorMessageEffectiveStatement(final ErrorMessageStatement declared) {
         super(declared);
     }

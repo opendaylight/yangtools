@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.presence;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyPresenceEffectiveStatement extends AbstractPresenceEffectiveStatement {
+final class EmptyPresenceEffectiveStatement extends DefaultArgument<String, PresenceStatement>
+        implements PresenceEffectiveStatement {
     EmptyPresenceEffectiveStatement(final PresenceStatement declared) {
         super(declared);
     }

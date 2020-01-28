@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.config;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyConfigEffectiveStatement extends AbstractConfigEffectiveStatement {
+final class EmptyConfigEffectiveStatement extends DefaultArgument<Boolean, ConfigStatement>
+        implements ConfigEffectiveStatement {
     EmptyConfigEffectiveStatement(final ConfigStatement declared) {
         super(declared);
     }

@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.prefix;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyPrefixEffectiveStatement extends AbstractPrefixEffectiveStatement {
+final class EmptyPrefixEffectiveStatement extends DefaultArgument<String, PrefixStatement>
+        implements PrefixEffectiveStatement {
     EmptyPrefixEffectiveStatement(final PrefixStatement declared) {
         super(declared);
     }

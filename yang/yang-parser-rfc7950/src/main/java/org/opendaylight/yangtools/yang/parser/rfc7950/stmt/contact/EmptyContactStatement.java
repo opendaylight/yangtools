@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.contact;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class EmptyContactStatement extends AbstractContactStatement {
+final class EmptyContactStatement extends WithRawStringArgument implements ContactStatement {
     EmptyContactStatement(final StmtContext<String, ?, ?> context) {
         super(context);
     }

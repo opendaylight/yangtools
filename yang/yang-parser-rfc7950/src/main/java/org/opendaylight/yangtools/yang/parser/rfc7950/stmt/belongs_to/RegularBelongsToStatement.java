@@ -8,22 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.belongs_to;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RegularBelongsToStatement extends AbstractBelongsToStatement {
-    private final @NonNull Object substatements;
-
+final class RegularBelongsToStatement extends WithSubstatements implements BelongsToStatement {
     RegularBelongsToStatement(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context);
-        this.substatements = maskList(substatements);
-    }
-
-    @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        return unmaskList(substatements);
+        super(context, substatements);
     }
 }

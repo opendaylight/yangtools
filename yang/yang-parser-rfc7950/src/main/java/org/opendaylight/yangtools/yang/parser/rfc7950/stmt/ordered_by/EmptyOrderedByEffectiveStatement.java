@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyOrderedByEffectiveStatement extends AbstractOrderedByEffectiveStatement {
+final class EmptyOrderedByEffectiveStatement extends DefaultArgument<Ordering, OrderedByStatement>
+        implements OrderedByEffectiveStatement {
     EmptyOrderedByEffectiveStatement(final OrderedByStatement declared) {
         super(declared);
     }

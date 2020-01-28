@@ -11,7 +11,9 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public interface OrderedByStatement extends DeclaredStatement<OrderedByStatement.Ordering> {
     @NonNullByDefault
@@ -19,7 +21,7 @@ public interface OrderedByStatement extends DeclaredStatement<OrderedByStatement
         SYSTEM("system"),
         USER("user");
 
-        private final String argumentString;
+        private String argumentString;
 
         Ordering(final String argumentString) {
             this.argumentString = argumentString;
@@ -39,6 +41,11 @@ public interface OrderedByStatement extends DeclaredStatement<OrderedByStatement
                     throw new IllegalArgumentException("Invalid ordering string '" + argumentString + "'");
             }
         }
+    }
+
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.ORDERED_BY;
     }
 
     default @NonNull Ordering getValue() {
