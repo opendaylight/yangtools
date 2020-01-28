@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 import com.google.common.annotations.Beta;
 
 @Beta
-public abstract class AbstractBooleanDeclaredStatement extends AbstractDeclaredStatement.ArgumentToString<Boolean> {
-    protected AbstractBooleanDeclaredStatement(final Boolean argument) {
-        super(argument);
-    }
+public abstract class AbstractIntegerDeclaredStatement extends AbstractDeclaredStatement<Integer> {
+
 }

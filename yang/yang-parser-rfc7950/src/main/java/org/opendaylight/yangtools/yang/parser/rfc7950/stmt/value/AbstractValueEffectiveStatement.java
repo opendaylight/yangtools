@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.value;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
 
-final class ValueEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Integer, ValueStatement>
+abstract class AbstractValueEffectiveStatement
+        extends AbstractDeclaredEffectiveStatement.DefaultArgument<Integer, ValueStatement>
         implements ValueEffectiveStatement {
-    ValueEffectiveStatementImpl(final StmtContext<Integer, ValueStatement, ?> ctx) {
-        super(ctx);
+    AbstractValueEffectiveStatement(final ValueStatement declared) {
+        super(declared);
     }
 }
