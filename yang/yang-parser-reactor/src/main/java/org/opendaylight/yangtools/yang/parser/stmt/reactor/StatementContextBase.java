@@ -144,7 +144,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private List<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
 
     private @Nullable ModelProcessingPhase completedPhase;
-    private @Nullable D declaredInstance;
     private @Nullable E effectiveInstance;
 
     // Master flag controlling whether this context can yield an effective statement
@@ -171,7 +170,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.isSupportedToBuildEffective = original.isSupportedToBuildEffective;
         this.fullyDefined = original.fullyDefined;
         this.completedPhase = original.completedPhase;
-        this.declaredInstance = original.declaredInstance;
         this.flags = original.flags;
     }
 
@@ -497,21 +495,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Exists only due to memory optimization, should live in AbstractResumedStatement
     final void setFullyDefined() {
         fullyDefined = true;
-    }
-
-    @Override
-    public D buildDeclared() {
-        final D existing = declaredInstance;
-        if (existing != null) {
-            return existing;
-        }
-        checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
-                || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        return declaredInstance = createDeclared();
-    }
-
-    @NonNull D createDeclared() {
-        return definition.getFactory().createDeclared(this);
     }
 
     @Override
