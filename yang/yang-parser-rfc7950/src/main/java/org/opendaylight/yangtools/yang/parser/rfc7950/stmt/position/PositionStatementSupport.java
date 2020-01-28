@@ -7,16 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.position;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseInternedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class PositionStatementSupport
-        extends AbstractStatementSupport<Long, PositionStatement, PositionEffectiveStatement> {
+        extends BaseInternedStatementSupport<Long, PositionStatement, PositionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.POSITION).build();
     private static final PositionStatementSupport INSTANCE = new PositionStatementSupport();
@@ -40,18 +43,30 @@ public final class PositionStatementSupport
     }
 
     @Override
-    public PositionStatement createDeclared(final StmtContext<Long, PositionStatement, ?> ctx) {
-        return new PositionStatementImpl(ctx);
-    }
-
-    @Override
-    public PositionEffectiveStatement createEffective(
-            final StmtContext<Long, PositionStatement, PositionEffectiveStatement> ctx) {
-        return new PositionEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected PositionStatement createDeclared(final Long argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularPositionStatement(argument, substatements);
+    }
+
+    @Override
+    protected PositionStatement createEmptyDeclared(final Long argument) {
+        return new EmptyPositionStatement(argument);
+    }
+
+    @Override
+    protected PositionEffectiveStatement createEmptyEffective(final PositionStatement declared) {
+        return new EmptyPositionEffectiveStatement(declared);
+    }
+
+    @Override
+    protected PositionEffectiveStatement createEffective(
+            final StmtContext<Long, PositionStatement, PositionEffectiveStatement> ctx,
+            final PositionStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularPositionEffectiveStatement(declared, substatements);
     }
 }

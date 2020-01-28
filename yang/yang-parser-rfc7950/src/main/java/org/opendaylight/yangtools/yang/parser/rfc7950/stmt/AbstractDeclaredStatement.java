@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -85,6 +87,24 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         @Override
         public final A argument() {
             return argument;
+        }
+    }
+
+    public abstract static class ArgumentToString<A> extends AbstractDeclaredStatement<A> {
+        private final @NonNull A argument;
+
+        protected ArgumentToString(final A argument) {
+            this.argument = requireNonNull(argument);
+        }
+
+        @Override
+        public final @NonNull A argument() {
+            return argument;
+        }
+
+        @Override
+        public final String rawArgument() {
+            return argument.toString();
         }
     }
 }
