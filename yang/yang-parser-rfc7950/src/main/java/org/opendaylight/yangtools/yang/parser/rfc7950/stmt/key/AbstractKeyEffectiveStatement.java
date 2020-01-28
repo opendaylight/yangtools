@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
-import static com.google.common.base.Verify.verify;
-
-import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
@@ -25,17 +22,12 @@ abstract class AbstractKeyEffectiveStatement
 
         Foreign(final KeyStatement declared, final Collection<SchemaNodeIdentifier> argument) {
             super(declared);
-            this.argument = argument.size() == 1 ? argument.iterator().next() : argument;
+            this.argument = KeyStatementSupport.maskCollection(argument);
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public final Collection<SchemaNodeIdentifier> argument() {
-            if (argument instanceof Collection) {
-                return (Collection<SchemaNodeIdentifier>) argument;
-            }
-            verify(argument instanceof SchemaNodeIdentifier, "Unexpected argument %s", argument);
-            return ImmutableSet.of((SchemaNodeIdentifier) argument);
+            return KeyStatementSupport.unmaskCollection(argument);
         }
     }
 
