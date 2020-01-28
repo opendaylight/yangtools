@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -68,7 +67,7 @@ public final class KeyStatementSupport
         for (final SchemaNodeIdentifier arg : ctx.coerceStatementArgument()) {
             final QName qname = arg.getLastComponent();
             if (!targetModule.equals(qname.getModule())) {
-                final QName newQname = ctx.getFromNamespace(QNameCacheNamespace.class, qname.withModule(targetModule));
+                final QName newQname = qname.withModule(targetModule).intern();
                 builder.add(SchemaNodeIdentifier.SAME.createChild(newQname));
                 replaced = true;
             } else {
