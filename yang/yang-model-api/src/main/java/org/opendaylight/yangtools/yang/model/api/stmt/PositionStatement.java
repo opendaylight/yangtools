@@ -7,10 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface PositionStatement extends DeclaredStatement<Long> {
-    default long getValue() {
-        return argument().longValue();
+public interface PositionStatement extends DeclaredStatement<Uint32> {
+    default Uint32 getValue() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
     }
 }
