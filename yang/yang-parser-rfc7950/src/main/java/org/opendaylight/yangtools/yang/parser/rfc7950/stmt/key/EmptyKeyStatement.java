@@ -8,12 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class EmptyKeyStatement extends WithArgument<Collection<SchemaNodeIdentifier>> implements KeyStatement {
+final class EmptyKeyStatement extends AbstractKeyStatement {
     EmptyKeyStatement(final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> context) {
         super(context);
     }
