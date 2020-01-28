@@ -68,8 +68,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
                 : prototype.definition().adaptArgumentValue(prototype, targetModule);
         this.childCopyType = requireNonNull(childCopyType);
         this.targetModule = targetModule;
-        // FIXME: 5.0.0: ugly cast due getOriginalCtx() return type :(
-        this.originalCtx = (StmtContext<A, D, E>) prototype.getOriginalCtx().orElse(prototype);
+        this.originalCtx = prototype.getOriginalCtx().orElse(prototype);
 
         // FIXME: YANGTOOLS-784: instantiate these lazily
         addEffectiveSubstatements(createEffective());
@@ -103,12 +102,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public Optional<StmtContext<?, ?, ?>> getOriginalCtx() {
+    public Optional<StmtContext<A, D, E>> getOriginalCtx() {
         return Optional.of(originalCtx);
     }
 
     @Override
-    public Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx() {
+    public Optional<StmtContext<A, D, E>> getPreviousCopyCtx() {
         return Optional.of(prototype);
     }
 

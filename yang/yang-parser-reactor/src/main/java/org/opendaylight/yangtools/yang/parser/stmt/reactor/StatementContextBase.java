@@ -944,7 +944,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
         if (argument instanceof String) {
             // FIXME: This may yield illegal argument exceptions
-            final Optional<StmtContext<?, ?, ?>> originalCtx = getOriginalCtx();
+            final Optional<StmtContext<A, D, E>> originalCtx = getOriginalCtx();
             final QName qname = StmtContextUtils.qnameFromArgument(originalCtx.orElse(this), (String) argument);
             return parentPath.createChild(qname);
         }

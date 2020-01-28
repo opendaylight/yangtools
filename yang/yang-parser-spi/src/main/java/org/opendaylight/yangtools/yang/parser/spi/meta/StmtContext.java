@@ -203,8 +203,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return Original definition, if this statement was copied.
      */
-    // FIXME: 5.0.0: this should return Optional<? extends StmtContext<A, D, E>>, is that feasible?
-    Optional<StmtContext<?, ?, ?>> getOriginalCtx();
+    Optional<StmtContext<A, D, E>> getOriginalCtx();
 
     /**
      * Return the context of the previous copy of this statement -- effectively walking towards the source origin
@@ -212,8 +211,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return Context of the previous copy of this statement, if this statement has been copied.
      */
-    // FIXME: 5.0.0: this should return Optional<? extends StmtContext<A, D, E>>
-    Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx();
+    Optional<StmtContext<A, D, E>> getPreviousCopyCtx();
 
     ModelProcessingPhase getCompletedPhase();
 

@@ -200,12 +200,12 @@ final class ModuleStmtContext extends ForwardingObject
     }
 
     @Override
-    public Optional<StmtContext<?, ?, ?>> getOriginalCtx() {
+    public Optional<StmtContext<String, ModuleStatement, ModuleEffectiveStatement>> getOriginalCtx() {
         return delegate.getOriginalCtx();
     }
 
     @Override
-    public Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx() {
+    public Optional<StmtContext<String, ModuleStatement, ModuleEffectiveStatement>> getPreviousCopyCtx() {
         return delegate.getPreviousCopyCtx();
     }
 

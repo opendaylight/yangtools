@@ -66,12 +66,12 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public final Optional<StmtContext<?, ?, ?>> getOriginalCtx() {
+    public final Optional<StmtContext<A, D, E>> getOriginalCtx() {
         return Optional.empty();
     }
 
     @Override
-    public final Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx() {
+    public final Optional<StmtContext<A, D, E>> getPreviousCopyCtx() {
         return Optional.empty();
     }
 

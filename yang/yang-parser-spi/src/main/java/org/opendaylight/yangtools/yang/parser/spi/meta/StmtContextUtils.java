@@ -522,7 +522,7 @@ public final class StmtContextUtils {
         }
 
         if (ctx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-            final Optional<StmtContext<?, ?, ?>> optOrigCtx = ctx.getOriginalCtx();
+            final Optional<? extends StmtContext<?, ?, ?>> optOrigCtx = ctx.getOriginalCtx();
             if (optOrigCtx.isPresent()) {
                 ctx = optOrigCtx.get();
                 final QNameModule origModule = getModuleQNameByPrefix(ctx, prefix);
