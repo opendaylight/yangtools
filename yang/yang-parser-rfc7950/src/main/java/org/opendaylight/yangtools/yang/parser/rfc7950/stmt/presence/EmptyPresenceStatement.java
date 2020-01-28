@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.presence;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class EmptyPresenceStatement extends AbstractPresenceStatement {
+final class EmptyPresenceStatement extends WithRawStringArgument implements PresenceStatement {
     EmptyPresenceStatement(final StmtContext<String, ?, ?> context) {
         super(context);
     }

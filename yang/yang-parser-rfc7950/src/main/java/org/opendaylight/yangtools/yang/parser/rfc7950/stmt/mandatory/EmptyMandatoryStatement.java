@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
 
-final class EmptyMandatoryStatement extends AbstractMandatoryStatement {
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
+
+final class EmptyMandatoryStatement extends ArgumentToString<Boolean> implements MandatoryStatement {
     EmptyMandatoryStatement(final Boolean argument) {
         super(argument);
     }

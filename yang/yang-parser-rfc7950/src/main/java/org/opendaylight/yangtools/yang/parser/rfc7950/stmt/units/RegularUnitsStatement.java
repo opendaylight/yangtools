@@ -8,22 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.units;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RegularUnitsStatement extends AbstractUnitsStatement {
-    private final @NonNull Object substatements;
-
+final class RegularUnitsStatement extends WithSubstatements implements UnitsStatement {
     RegularUnitsStatement(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context);
-        this.substatements = maskList(substatements);
-    }
-
-    @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        return unmaskList(substatements);
+        super(context, substatements);
     }
 }

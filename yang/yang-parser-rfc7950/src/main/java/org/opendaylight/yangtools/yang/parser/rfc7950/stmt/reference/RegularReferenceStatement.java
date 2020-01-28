@@ -8,22 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.reference;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RegularReferenceStatement extends AbstractReferenceStatement {
-    private final @NonNull Object substatements;
-
+final class RegularReferenceStatement extends WithSubstatements implements ReferenceStatement {
     RegularReferenceStatement(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context);
-        this.substatements = maskList(substatements);
-    }
-
-    @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        return unmaskList(substatements);
+        super(context, substatements);
     }
 }

@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.contact;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyContactEffectiveStatement extends AbstractContactEffectiveStatement {
+final class EmptyContactEffectiveStatement extends DefaultArgument<String, ContactStatement>
+        implements ContactEffectiveStatement {
     EmptyContactEffectiveStatement(final ContactStatement declared) {
         super(declared);
     }

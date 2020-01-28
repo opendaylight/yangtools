@@ -8,22 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_app_tag;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RegularErrorAppTagStatement extends AbstractErrorAppTagStatement {
-    private final @NonNull Object substatements;
-
+final class RegularErrorAppTagStatement extends WithSubstatements implements ErrorAppTagStatement {
     RegularErrorAppTagStatement(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context);
-        this.substatements = maskList(substatements);
-    }
-
-    @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        return unmaskList(substatements);
+        super(context, substatements);
     }
 }

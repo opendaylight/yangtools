@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.config;
 
-final class EmptyConfigStatement extends AbstractConfigStatement {
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
+
+final class EmptyConfigStatement extends ArgumentToString<Boolean> implements ConfigStatement {
     EmptyConfigStatement(final Boolean argument) {
         super(argument);
     }
