@@ -7,16 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.value;
 
+import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseInternedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ValueStatementSupport
-        extends AbstractStatementSupport<Integer, ValueStatement, ValueEffectiveStatement> {
+        extends BaseInternedStatementSupport<Integer, ValueStatement, ValueEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.VALUE).build();
     private static final ValueStatementSupport INSTANCE = new ValueStatementSupport();
@@ -40,18 +44,30 @@ public final class ValueStatementSupport
     }
 
     @Override
-    public ValueStatement createDeclared(final StmtContext<Integer, ValueStatement, ?> ctx) {
-        return new ValueStatementImpl(ctx);
-    }
-
-    @Override
-    public ValueEffectiveStatement createEffective(
-            final StmtContext<Integer, ValueStatement, ValueEffectiveStatement> ctx) {
-        return new ValueEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected ValueStatement createDeclared(final Integer argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularValueStatement(argument, substatements);
+    }
+
+    @Override
+    protected ValueStatement createEmptyDeclared(@NonNull final Integer argument) {
+        return new EmptyValueStatement(argument);
+    }
+
+    @Override
+    protected ValueEffectiveStatement createEmptyEffective(@NonNull final ValueStatement declared) {
+        return new EmptyValueEffectiveStatement(declared);
+    }
+
+    @Override
+    protected ValueEffectiveStatement createEffective(
+            final StmtContext<Integer, ValueStatement, ValueEffectiveStatement> ctx, final ValueStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularValueEffectiveStatement(declared, substatements);
     }
 }
