@@ -511,20 +511,19 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public D buildDeclared() {
+        final D existing = declaredInstance;
+        if (existing != null) {
+            return existing;
+        }
         checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
                 || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        if (declaredInstance == null) {
-            declaredInstance = definition.getFactory().createDeclared(this);
-        }
-        return declaredInstance;
+        return declaredInstance = definition.getFactory().createDeclared(this);
     }
 
     @Override
     public E buildEffective() {
-        if (effectiveInstance == null) {
-            effectiveInstance = definition.getFactory().createEffective(this);
-        }
-        return effectiveInstance;
+        final E existing = effectiveInstance;
+        return existing != null ? existing : (effectiveInstance = definition.getFactory().createEffective(this));
     }
 
     /**
