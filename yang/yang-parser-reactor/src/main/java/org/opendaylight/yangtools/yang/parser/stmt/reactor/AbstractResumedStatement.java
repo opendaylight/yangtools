@@ -36,18 +36,15 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.Resumed
 abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> implements ResumedStatement {
     private final @NonNull StatementSourceReference statementDeclSource;
-    private final StmtContext<?, ?, ?> originalCtx;
-    private final StmtContext<?, ?, ?> prevCopyCtx;
     private final String rawArgument;
 
     private StatementMap substatements = StatementMap.empty();
 
+    // Copy constructor
     AbstractResumedStatement(final AbstractResumedStatement<A, D, E> original) {
         super(original);
         this.statementDeclSource = original.statementDeclSource;
         this.rawArgument = original.rawArgument;
-        this.originalCtx = original.getOriginalCtx().orElse(original);
-        this.prevCopyCtx = original;
         this.substatements = original.substatements;
     }
 
@@ -56,8 +53,6 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         super(def);
         this.statementDeclSource = requireNonNull(ref);
         this.rawArgument = def.internArgument(rawArgument);
-        this.originalCtx = null;
-        this.prevCopyCtx = null;
     }
 
     AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
@@ -65,18 +60,16 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         super(def, CopyHistory.of(copyType, CopyHistory.original()));
         this.statementDeclSource = requireNonNull(ref);
         this.rawArgument = rawArgument;
-        this.originalCtx = null;
-        this.prevCopyCtx = null;
     }
 
     @Override
     public final Optional<StmtContext<?, ?, ?>> getOriginalCtx() {
-        return Optional.ofNullable(originalCtx);
+        return Optional.empty();
     }
 
     @Override
     public final Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx() {
-        return Optional.ofNullable(prevCopyCtx);
+        return Optional.empty();
     }
 
     @Override
