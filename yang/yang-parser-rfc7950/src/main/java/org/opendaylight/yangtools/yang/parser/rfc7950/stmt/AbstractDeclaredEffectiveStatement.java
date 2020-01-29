@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -84,7 +83,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             return child instanceof DataSchemaNode ? Optional.of((DataSchemaNode) child) : Optional.empty();
         }
 
-        protected abstract ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace();
+        protected abstract Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace();
     }
 
     /**
@@ -107,7 +106,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             return super.getNamespaceContents(namespace);
         }
 
-        protected abstract ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace();
+        protected abstract Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace();
     }
 
     /**
@@ -176,7 +175,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      */
     public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>,
             E extends SchemaTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
-        private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
+        private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull D declared;
 
         protected DefaultWithSchemaTree(final D declared, final StmtContext<?, ?, ?> ctx,
@@ -192,7 +191,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         }
 
         @Override
-        protected final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
+        protected final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
             return schemaTree;
         }
     }
@@ -207,8 +206,8 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      */
     public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>,
             E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
-        private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
-        private final @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTree;
+        private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
+        private final @NonNull Map<QName, DataTreeEffectiveStatement<?>> dataTree;
         private final @NonNull D declared;
 
         protected DefaultWithDataTree(final D declared, final StmtContext<?, ?, ?> ctx,
@@ -225,12 +224,12 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         }
 
         @Override
-        protected final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
+        protected final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
             return schemaTree;
         }
 
         @Override
-        protected final ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace() {
+        protected final Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace() {
             return dataTree;
         }
     }
