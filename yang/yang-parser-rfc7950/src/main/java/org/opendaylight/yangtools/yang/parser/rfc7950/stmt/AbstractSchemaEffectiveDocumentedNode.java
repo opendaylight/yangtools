@@ -15,8 +15,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.lang.invoke.VarHandle;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -45,8 +47,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 @Beta
 public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveDocumentedNode<A, D> {
-    private final ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace;
-    private final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
+    private final Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace;
+    private final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
 
     protected AbstractSchemaEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
         super(ctx);
@@ -97,17 +99,17 @@ public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends Declare
         return child instanceof DataSchemaNode ? Optional.of((DataSchemaNode) child) : Optional.empty();
     }
 
-    static @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> createSchemaTreeNamespace(
+    static @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> createSchemaTreeNamespace(
             final StatementSourceReference ref, final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         final Map<QName, SchemaTreeEffectiveStatement<?>> schemaChildren = new LinkedHashMap<>();
         substatements.stream().filter(SchemaTreeEffectiveStatement.class::isInstance)
             .forEach(child -> putChild(schemaChildren, (SchemaTreeEffectiveStatement) child, ref, "schema"));
-        return ImmutableMap.copyOf(schemaChildren);
+        return toImmutable(schemaChildren);
     }
 
-    static @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> createDataTreeNamespace(
+    static @NonNull Map<QName, DataTreeEffectiveStatement<?>> createDataTreeNamespace(
             final StatementSourceReference ref,
-            final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace) {
+            final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace) {
         final Map<QName, DataTreeEffectiveStatement<?>> dataChildren = new LinkedHashMap<>();
         boolean sameAsSchema = true;
 
@@ -122,7 +124,22 @@ public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends Declare
 
         // This is a mighty hack to lower memory usage: if we consumed all schema tree children as data nodes,
         // the two maps are equal and hence we can share the instance.
-        return sameAsSchema ? (ImmutableMap) schemaTreeNamespace : ImmutableMap.copyOf(dataChildren);
+        return sameAsSchema ? (Map) schemaTreeNamespace : toImmutable(dataChildren);
+    }
+
+    private static <K, V> Map<K, V> toImmutable(final Map<K, V> map) {
+        switch (map.size()) {
+            case 0:
+                return ImmutableMap.of();
+            case 1:
+                // Special case: singleton ImmutableMap is actually SingletonImmutableBiMap, which allocates its inverse
+                //               view and its keySet() when asked for values() -- which costs us 64 bytes (40+24).
+                //               java.util.Collections can do the same job for less memory.
+                final Entry<K, V> entry = map.entrySet().iterator().next();
+                return Collections.singletonMap(entry.getKey(), entry.getValue());
+            default:
+                return ImmutableMap.copyOf(map);
+        }
     }
 
     @SuppressWarnings("unchecked")
