@@ -10,11 +10,18 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public interface ContainerStatement extends DataDefinitionStatement,
         DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
         ActionStatementAwareDeclaredStatement<QName>, ConfigStatementAwareDeclaredStatement<QName>,
         NotificationStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.CONTAINER;
+    }
+
     default @Nullable PresenceStatement getPresence() {
         final Optional<PresenceStatement> opt = findFirstDeclaredSubstatement(PresenceStatement.class);
         return opt.isPresent() ? opt.get() : null;

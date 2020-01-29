@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
@@ -72,13 +73,19 @@ public final class LeafStatementSupport extends BaseQNameStatementSupport<LeafSt
     }
 
     @Override
-    public LeafStatement createDeclared(final StmtContext<QName, LeafStatement, ?> ctx) {
-        return new LeafStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected LeafStatement createDeclared(final StmtContext<QName, LeafStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularLeafStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected LeafStatement createEmptyDeclared(final StmtContext<QName, LeafStatement, ?> ctx) {
+        return new EmptyLeafStatement(ctx.coerceStatementArgument());
     }
 
     @Override
