@@ -32,6 +32,19 @@ public abstract class BaseQNameStatementSupport<D extends DeclaredStatement<QNam
     }
 
     @Override
+    public final D createDeclared(final StmtContext<QName, D, ?> ctx) {
+        final ImmutableList<? extends DeclaredStatement<?>> substatements = ctx.declaredSubstatements().stream()
+                .map(StmtContext::buildDeclared)
+                .collect(ImmutableList.toImmutableList());
+        return substatements.isEmpty() ? createEmptyDeclared(ctx) : createDeclared(ctx, substatements);
+    }
+
+    protected abstract @NonNull D createDeclared(@NonNull StmtContext<QName, D, ?> ctx,
+            @NonNull ImmutableList<? extends DeclaredStatement<?>> substatements);
+
+    protected abstract @NonNull D createEmptyDeclared(@NonNull StmtContext<QName, D, ?> ctx);
+
+    @Override
     public final E createEffective(final StmtContext<QName, D, E> ctx) {
         final D declared = ctx.buildDeclared();
         final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =

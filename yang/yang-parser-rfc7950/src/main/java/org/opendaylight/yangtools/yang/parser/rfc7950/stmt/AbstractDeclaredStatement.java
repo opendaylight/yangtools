@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -62,6 +63,39 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         @Override
         public final String rawArgument() {
             return rawArgument;
+        }
+    }
+
+    public abstract static class WithQNameArgument extends AbstractDeclaredStatement<QName> {
+        public abstract static class WithSubstatements extends WithQNameArgument {
+            private final @NonNull Object substatements;
+
+            protected WithSubstatements(final QName argument,
+                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                super(argument);
+                this.substatements = maskList(substatements);
+            }
+
+            @Override
+            public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+                return unmaskList(substatements);
+            }
+        }
+
+        private final QName argument;
+
+        protected WithQNameArgument(final QName argument) {
+            this.argument = requireNonNull(argument);
+        }
+
+        @Override
+        public final @NonNull QName argument() {
+            return argument;
+        }
+
+        @Override
+        public final String rawArgument() {
+            return argument.toString();
         }
     }
 
