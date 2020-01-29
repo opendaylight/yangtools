@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
@@ -50,8 +51,14 @@ abstract class AbstractLeafListStatementSupport
     }
 
     @Override
-    public final LeafListStatement createDeclared(final StmtContext<QName, LeafListStatement, ?> ctx) {
-        return new LeafListStatementImpl(ctx);
+    protected final LeafListStatement createDeclared(final StmtContext<QName, LeafListStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularLeafListStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected final LeafListStatement createEmptyDeclared(final StmtContext<QName, LeafListStatement, ?> ctx) {
+        return new EmptyLeafListStatement(ctx.coerceStatementArgument());
     }
 
     @Override
