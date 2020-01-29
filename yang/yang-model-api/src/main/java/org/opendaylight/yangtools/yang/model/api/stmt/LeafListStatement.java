@@ -10,9 +10,16 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public interface LeafListStatement extends MultipleElementsDeclaredStatement, TypeAwareDeclaredStatement,
         ConfigStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.LEAF_LIST;
+    }
+
     /**
      * Return default statements defined in this leaf-list. For RFC6020 semantics, this method returns an empty
      * collection.

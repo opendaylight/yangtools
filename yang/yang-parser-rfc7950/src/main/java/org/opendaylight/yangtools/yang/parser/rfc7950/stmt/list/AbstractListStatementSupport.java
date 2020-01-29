@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -58,8 +59,14 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
     }
 
     @Override
-    public final ListStatement createDeclared(final StmtContext<QName, ListStatement, ?> ctx) {
-        return new ListStatementImpl(ctx);
+    protected ListStatement createDeclared(final StmtContext<QName, ListStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularListStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected ListStatement createEmptyDeclared(final StmtContext<QName, ListStatement, ?> ctx) {
+        return new EmptyListStatement(ctx.coerceStatementArgument());
     }
 
     @Override

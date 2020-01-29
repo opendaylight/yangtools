@@ -1,12 +1,10 @@
 <module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
     xmlns:foo-prefix="foo-namespace" name="foo">
-    <namespace uri="foo-namespace"></namespace>
-    <prefix value="foo-prefix"></prefix>
-    <revision date="2016-08-05"></revision>
-    <extension name="test-extension">
-    </extension>
+    <namespace uri="foo-namespace"/>
+    <prefix value="foo-prefix"/>
+    <revision date="2016-08-05"/>
     <feature name="test-feature">
-        <status value="current"></status>
+        <status value="current"/>
         <description>
             <text>test-feature description</text>
         </description>
@@ -14,34 +12,20 @@
             <text>test-feature reference</text>
         </reference>
     </feature>
-    <identity name="test-identity">
-        <base name="test-base-identity"></base>
-        <status value="current"></status>
-        <description>
-            <text>test-identity description</text>
-        </description>
-        <reference>
-            <text>test-identity reference</text>
-        </reference>
-    </identity>
-    <identity name="test-base-identity">
-    </identity>
     <typedef name="test-uint32-typedef">
         <type name="uint32">
-            <range value="50..100">
-            </range>
+            <range value="50..100"/>
         </type>
         <units name="seconds"></units>
     </typedef>
     <typedef name="test-int32-typedef">
         <type name="int32">
-            <range value="50..100">
-            </range>
+            <range value="50..100"/>
         </type>
     </typedef>
     <typedef name="test-leafref-typedef">
         <type name="leafref">
-            <path value="../leafref-target-leaf"></path>
+            <path value="../leafref-target-leaf"/>
         </type>
     </typedef>
     <typedef name="test-iid-typedef">
@@ -49,76 +33,67 @@
             <require-instance value="false"></require-instance>
         </type>
     </typedef>
-    <grouping name="test-grouping-1">
-        <leaf name="test-leaf-1">
-            <type name="string"></type>
-            <default value="def-val"></default>
-        </leaf>
-        <leaf-list name="test-leaf-list">
-            <type name="string"></type>
-            <config value="false"></config>
-            <ordered-by value="user"></ordered-by>
-        </leaf-list>
-        <list name="test-list">
-            <key value="key-leaf-1 key-leaf-2"></key>
-            <min-elements value="5"></min-elements>
-            <leaf name="key-leaf-1">
-                <type name="string"></type>
+    <identity name="test-base-identity"/>
+    <identity name="test-identity">
+        <base name="test-base-identity"/>
+        <status value="current"/>
+        <description>
+            <text>test-identity description</text>
+        </description>
+        <reference>
+            <text>test-identity reference</text>
+        </reference>
+    </identity>
+    <extension name="test-extension"/>
+    <rpc name="test-rpc">
+        <input>
+            <leaf name="input-leaf">
+                <type name="string"/>
             </leaf>
-            <leaf name="key-leaf-2">
-                <type name="string"></type>
+        </input>
+        <output>
+            <leaf name="output-leaf">
+                <type name="string"/>
             </leaf>
-        </list>
-        <container name="test-container-2">
-            <config value="false"></config>
-        </container>
-    </grouping>
-    <grouping name="test-grouping-2">
-        <anyxml name="test-anyxml-2">
-            <config value="false"></config>
-        </anyxml>
-        <choice name="test-choice-2">
-            <config value="false"></config>
-            <case name="first">
-                <leaf name="first-case-leaf">
-                    <type name="string">
-                        <length value="10..10 | 15">
-                        </length>
-                    </type>
-                </leaf>
-            </case>
-            <case name="second">
-                <leaf name="second-case-leaf">
-                    <type name="int32">
-                        <range value="10..10 | 15">
-                        </range>
-                    </type>
-                </leaf>
-            </case>
-        </choice>
-    </grouping>
+        </output>
+        <grouping name="rpc-grouping">
+            <leaf name="rpc-grouping-leaf">
+                <type name="string"/>
+            </leaf>
+        </grouping>
+    </rpc>
+    <notification name="test-notification">
+        <uses name="test-grouping-2">
+            <refine target-node="test-choice-2">
+                <config value="false"/>
+            </refine>
+            <refine target-node="test-anyxml-2">
+                <config value="false"/>
+            </refine>
+        </uses>
+    </notification>
     <anyxml name="test-anyxml">
-        <when condition="foo != 'bar'"></when>
-        <must condition="bar != 'foo'"></must>
-        <foo-prefix:test-extension></foo-prefix:test-extension>
+        <when condition="foo != 'bar'"/>
+        <must condition="bar != 'foo'"/>
+        <foo-prefix:test-extension/>
     </anyxml>
     <leaf name="leafref-target-leaf">
-        <type name="string"></type>
+        <type name="string"/>
     </leaf>
     <container name="test-container-1">
-        <must condition="bar != 'foo'"></must>
+        <must condition="bar != 'foo'"/>
     </container>
     <container name="test-container-3">
         <choice name="test-choice">
             <case name="a">
                 <leaf name="case-a-leaf">
-                    <type name="int32"></type>
+                    <type name="int32"/>
                 </leaf>
             </case>
             <case name="b">
                 <leaf name="case-b-leaf">
                     <type name="decimal64">
-                        <fraction-digits value="3"></fraction-digits>
+                        <fraction-digits value="3"/>
                     </type>
                 </leaf>
             </case>
@@ -126,72 +101,91 @@
         <leaf name="bits-leaf">
             <type name="bits">
                 <bit name="one">
-                    <position value="1"></position>
+                    <position value="1"/>
                 </bit>
                 <bit name="two">
-                    <position value="2"></position>
+                    <position value="2"/>
                 </bit>
             </type>
         </leaf>
         <leaf name="identityref-leaf">
             <type name="identityref">
-                <base name="test-base-identity"></base>
+                <base name="test-base-identity"/>
             </type>
         </leaf>
     </container>
     <augment target-node="/test-container-3/test-choice">
         <case name="c">
             <leaf name="case-c-leaf">
-                <type name="string"></type>
+                <type name="string"/>
             </leaf>
         </case>
     </augment>
     <augment target-node="/test-container-1">
         <uses name="test-grouping-1">
             <refine target-node="test-list">
-                <min-elements value="5"></min-elements>
+                <min-elements value="5"/>
             </refine>
             <refine target-node="test-leaf-list">
-                <config value="false"></config>
+                <config value="false"/>
             </refine>
             <refine target-node="test-leaf-1">
-                <default value="def-val"></default>
+                <default value="def-val"/>
             </refine>
             <refine target-node="test-container-2">
-                <config value="false"></config>
+                <config value="false"/>
             </refine>
             <augment target-node="test-container-2">
                 <leaf name="test-leaf-2">
-                    <type name="string"></type>
+                    <type name="string"/>
                 </leaf>
             </augment>
         </uses>
     </augment>
-    <rpc name="test-rpc">
-        <grouping name="rpc-grouping">
-            <leaf name="rpc-grouping-leaf">
-                <type name="string"></type>
+    <grouping name="test-grouping-1">
+        <leaf name="test-leaf-1">
+            <type name="string"/>
+            <default value="def-val"/>
+        </leaf>
+        <leaf-list name="test-leaf-list">
+            <type name="string"/>
+            <config value="false"/>
+            <ordered-by value="user"/>
+        </leaf-list>
+        <list name="test-list">
+            <key value="key-leaf-1 key-leaf-2"/>
+            <min-elements value="5"/>
+            <leaf name="key-leaf-1">
+                <type name="string"/>
             </leaf>
-        </grouping>
-        <input>
-            <leaf name="input-leaf">
-                <type name="string"></type>
+            <leaf name="key-leaf-2">
+                <type name="string"/>
             </leaf>
-        </input>
-        <output>
-            <leaf name="output-leaf">
-                <type name="string"></type>
-            </leaf>
-        </output>
-    </rpc>
-    <notification name="test-notification">
-        <uses name="test-grouping-2">
-            <refine target-node="test-choice-2">
-                <config value="false"></config>
-            </refine>
-            <refine target-node="test-anyxml-2">
-                <config value="false"></config>
-            </refine>
-        </uses>
-    </notification>
+        </list>
+        <container name="test-container-2">
+            <config value="false"/>
+        </container>
+    </grouping>
+    <grouping name="test-grouping-2">
+        <anyxml name="test-anyxml-2">
+            <config value="false"/>
+        </anyxml>
+        <choice name="test-choice-2">
+            <config value="false"/>
+            <case name="first">
+                <leaf name="first-case-leaf">
+                    <type name="string">
+                        <length value="10..10 | 15"/>
+                    </type>
+                </leaf>
+            </case>
+            <case name="second">
+                <leaf name="second-case-leaf">
+                    <type name="int32">
+                        <range value="10..10 | 15"/>
+                    </type>
+                </leaf>
+            </case>
+        </choice>
+    </grouping>
 </module>

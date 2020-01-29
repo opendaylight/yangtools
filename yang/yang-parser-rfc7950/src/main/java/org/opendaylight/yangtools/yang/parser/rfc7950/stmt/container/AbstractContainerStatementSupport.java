@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
@@ -43,8 +44,14 @@ abstract class AbstractContainerStatementSupport
     }
 
     @Override
-    public final ContainerStatement createDeclared(final StmtContext<QName, ContainerStatement,?> ctx) {
-        return new ContainerStatementImpl(ctx);
+    protected final ContainerStatement createDeclared(final StmtContext<QName, ContainerStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularContainerStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected final ContainerStatement createEmptyDeclared(final StmtContext<QName, ContainerStatement, ?> ctx) {
+        return new EmptyContainerStatement(ctx.coerceStatementArgument());
     }
 
     @Override
