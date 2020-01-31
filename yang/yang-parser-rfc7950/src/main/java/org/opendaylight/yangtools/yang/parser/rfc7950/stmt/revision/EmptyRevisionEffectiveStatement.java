@@ -10,13 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNodeWithoutStatus;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 
-final class RevisionEffectiveStatementImpl
-        extends AbstractEffectiveDocumentedNodeWithoutStatus<Revision, RevisionStatement>
-        implements RevisionEffectiveStatement {
-    RevisionEffectiveStatementImpl(final StmtContext<Revision, RevisionStatement, ?> ctx) {
-        super(ctx);
+final class EmptyRevisionEffectiveStatement extends DefaultArgument<Revision, RevisionStatement>
+        implements RevisionEffectiveStatement, DocumentedNodeMixin<Revision, RevisionStatement> {
+    EmptyRevisionEffectiveStatement(final RevisionStatement declared) {
+        super(declared);
     }
 }
