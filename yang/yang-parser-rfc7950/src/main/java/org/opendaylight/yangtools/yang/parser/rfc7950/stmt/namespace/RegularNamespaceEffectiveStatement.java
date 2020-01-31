@@ -7,15 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.namespace;
 
+import com.google.common.collect.ImmutableList;
 import java.net.URI;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-final class NamespaceEffectiveStatementImpl extends DeclaredEffectiveStatementBase<URI, NamespaceStatement>
+final class RegularNamespaceEffectiveStatement extends WithSubstatements<URI, NamespaceStatement>
         implements NamespaceEffectiveStatement {
-    NamespaceEffectiveStatementImpl(final StmtContext<URI, NamespaceStatement, ?> ctx) {
-        super(ctx);
+    RegularNamespaceEffectiveStatement(final NamespaceStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared, substatements);
     }
 }

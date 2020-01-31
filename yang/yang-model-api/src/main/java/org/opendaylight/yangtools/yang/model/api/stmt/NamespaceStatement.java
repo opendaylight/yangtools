@@ -11,9 +11,16 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import java.net.URI;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public interface NamespaceStatement extends DeclaredStatement<URI> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.NAMESPACE;
+    }
+
     default @NonNull URI getUri() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
