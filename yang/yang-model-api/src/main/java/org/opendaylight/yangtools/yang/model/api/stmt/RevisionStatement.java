@@ -11,8 +11,15 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public interface RevisionStatement extends DocumentedDeclaredStatement<Revision> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.REVISION;
+    }
+
     default @NonNull Revision getDate() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
