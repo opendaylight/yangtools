@@ -59,13 +59,13 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
     }
 
     @Override
-    protected ListStatement createDeclared(final StmtContext<QName, ListStatement, ?> ctx,
+    protected final ListStatement createDeclared(final StmtContext<QName, ListStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularListStatement(ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
-    protected ListStatement createEmptyDeclared(final StmtContext<QName, ListStatement, ?> ctx) {
+    protected final ListStatement createEmptyDeclared(final StmtContext<QName, ListStatement, ?> ctx) {
         return new EmptyListStatement(ctx.coerceStatementArgument());
     }
 
