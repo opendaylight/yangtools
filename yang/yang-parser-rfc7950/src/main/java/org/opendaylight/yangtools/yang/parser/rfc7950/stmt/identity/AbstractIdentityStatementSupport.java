@@ -7,19 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity;
 
+import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractIdentityStatementSupport
-        extends AbstractQNameStatementSupport<IdentityStatement, IdentityEffectiveStatement> {
+        extends BaseQNameStatementSupport<IdentityStatement, IdentityEffectiveStatement> {
 
     AbstractIdentityStatementSupport() {
         super(YangStmtMapping.IDENTITY);
@@ -31,17 +35,6 @@ abstract class AbstractIdentityStatementSupport
     }
 
     @Override
-    public final IdentityStatement createDeclared(final StmtContext<QName, IdentityStatement, ?> ctx) {
-        return new IdentityStatementImpl(ctx);
-    }
-
-    @Override
-    public final IdentityEffectiveStatement createEffective(
-            final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx) {
-        return new IdentityEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     public final void onStatementDefinitionDeclared(
             final Mutable<QName, IdentityStatement, IdentityEffectiveStatement> stmt) {
         final QName qname = stmt.coerceStatementArgument();
@@ -50,4 +43,31 @@ abstract class AbstractIdentityStatementSupport
                 qname);
         stmt.addToNs(IdentityNamespace.class, qname, stmt);
     }
+
+
+    @Override
+    protected final IdentityStatement createDeclared(final StmtContext<QName, IdentityStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularIdentityStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected final IdentityStatement createEmptyDeclared(@NonNull final StmtContext<QName, IdentityStatement, ?> ctx) {
+        return new EmptyIdentityStatement(ctx.coerceStatementArgument());
+    }
+
+    @Override
+    protected IdentityEffectiveStatement createEffective(
+            final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx,
+            final IdentityStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularIdentityEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected IdentityEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx,
+            final IdentityStatement declared) {
+        return new EmptyIdentityEffectiveStatement(declared);
+    }
+
 }
