@@ -19,21 +19,28 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<IdentityStatement>
-        implements IdentityEffectiveStatement, IdentitySchemaNode, MutableStatement {
+abstract class AbstractIdentityEffectiveStatement extends DefaultArgument<QName, IdentityStatement>
+        implements IdentityEffectiveStatement, IdentitySchemaNode, MutableStatement,
+                   SchemaNodeMixin<QName, IdentityStatement> {
+    private final @NonNull SchemaPath path;
     private final ImmutableSet<IdentitySchemaNode> derivedIdentities;
+
     private @NonNull Set<IdentitySchemaNode> baseIdentities;
     private boolean sealed;
 
-    IdentityEffectiveStatementImpl(final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx) {
-        super(ctx);
+    AbstractIdentityEffectiveStatement(final IdentityStatement declared,
+            final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx) {
+        super(declared);
+        this.path = ctx.getSchemaPath().get();
 
         this.baseIdentities = new HashSet<>();
         ((StmtContext.Mutable<?, ?, ?>) ctx).addMutableStmtToSeal(this);
@@ -47,32 +54,37 @@ final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<I
             return;
         }
         for (final StmtContext<?, ?, ?> derivedIdentityCtx : derivedIdentitiesCtxList) {
-            final IdentityEffectiveStatementImpl derivedIdentity = (IdentityEffectiveStatementImpl) derivedIdentityCtx
-                    .buildEffective();
+            final AbstractIdentityEffectiveStatement derivedIdentity =
+                    (AbstractIdentityEffectiveStatement) derivedIdentityCtx.buildEffective();
             derivedIdentity.addBaseIdentity(this);
             derivedIdentitiesInit.add(derivedIdentity);
         }
         this.derivedIdentities = ImmutableSet.copyOf(derivedIdentitiesInit);
     }
 
-    private void addBaseIdentity(final IdentityEffectiveStatementImpl baseIdentity) {
+    private void addBaseIdentity(final AbstractIdentityEffectiveStatement baseIdentity) {
         checkState(!sealed, "Attempt to modify sealed identity effective statement %s", getQName());
         this.baseIdentities.add(baseIdentity);
     }
 
     @Override
-    public Set<IdentitySchemaNode> getBaseIdentities() {
+    public final SchemaPath getPath() {
+        return path;
+    }
+
+    @Override
+    public final Set<IdentitySchemaNode> getBaseIdentities() {
         checkState(sealed, "Attempt to get base identities from unsealed identity effective statement %s", getQName());
         return baseIdentities;
     }
 
     @Override
-    public Set<IdentitySchemaNode> getDerivedIdentities() {
+    public final Set<IdentitySchemaNode> getDerivedIdentities() {
         return Collections.unmodifiableSet(derivedIdentities);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + Objects.hashCode(getQName());
@@ -81,27 +93,24 @@ final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<I
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (!(obj instanceof AbstractIdentityEffectiveStatement)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final IdentityEffectiveStatementImpl other = (IdentityEffectiveStatementImpl) obj;
+        final AbstractIdentityEffectiveStatement other = (AbstractIdentityEffectiveStatement) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return MoreObjects.toStringHelper(this).add("qname", getQName()).add("path", getPath()).toString();
     }
 
     @Override
-    public void seal() {
+    public final void seal() {
         if (!sealed) {
             baseIdentities = ImmutableSet.copyOf(baseIdentities);
             sealed = true;
