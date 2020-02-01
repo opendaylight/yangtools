@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -22,9 +21,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_.EnumEffectiveSt
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@VisibleForTesting
-// FIXME: 5.0.0: hide this class
-public final class EnumSpecificationEffectiveStatement extends
+final class EnumSpecificationEffectiveStatement extends
         DeclaredEffectiveStatementBase<String, EnumSpecification> implements
         TypeEffectiveStatement<EnumSpecification> {
 

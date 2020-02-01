@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -19,9 +18,7 @@ import org.opendaylight.yangtools.yang.model.util.type.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-@VisibleForTesting
-// FIXME: 5.0.0: hide this class
-public final class UnionSpecificationEffectiveStatement extends
+final class UnionSpecificationEffectiveStatement extends
         DeclaredEffectiveStatementBase<String, UnionSpecification> implements
         TypeEffectiveStatement<UnionSpecification> {
 
