@@ -377,8 +377,5 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         void setRootIdentifier(SourceIdentifier identifier);
 
         void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
-
-        // FIXME: this seems to be unused, but looks useful.
-        void setCompletedPhase(ModelProcessingPhase completedPhase);
     }
 }
