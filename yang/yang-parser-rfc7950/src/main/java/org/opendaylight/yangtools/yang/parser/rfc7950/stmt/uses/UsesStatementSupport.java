@@ -230,8 +230,7 @@ public final class UsesStatementSupport
     private static void resolveUsesNode(final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode,
             final StmtContext<?, ?, ?> targetNodeStmtCtx) {
         for (final Mutable<?, ?, ?> subStmtCtx : usesNode.mutableDeclaredSubstatements()) {
-            if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)
-                    && areFeaturesSupported(subStmtCtx)) {
+            if (subStmtCtx.producesDeclared(RefineStatement.class) && areFeaturesSupported(subStmtCtx)) {
                 performRefine(subStmtCtx, targetNodeStmtCtx);
             }
         }

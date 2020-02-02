@@ -52,7 +52,7 @@ public final class StmtContextUtils {
     public static <A, D extends DeclaredStatement<A>> A firstAttributeOf(
             final Iterable<? extends StmtContext<?, ?, ?>> contexts, final Class<D> declaredType) {
         for (final StmtContext<?, ?, ?> ctx : contexts) {
-            if (producesDeclared(ctx, declaredType)) {
+            if (ctx.producesDeclared(declaredType)) {
                 return (A) ctx.getStatementArgument();
             }
         }
@@ -62,7 +62,7 @@ public final class StmtContextUtils {
     @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> A firstAttributeOf(final StmtContext<?, ?, ?> ctx,
             final Class<D> declaredType) {
-        return producesDeclared(ctx, declaredType) ? (A) ctx.getStatementArgument() : null;
+        return ctx.producesDeclared(declaredType) ? (A) ctx.getStatementArgument() : null;
     }
 
     public static <A, D extends DeclaredStatement<A>> A firstSubstatementAttributeOf(
@@ -74,7 +74,7 @@ public final class StmtContextUtils {
     public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
-            if (producesDeclared(subStmtContext, declaredType)) {
+            if (subStmtContext.producesDeclared(declaredType)) {
                 return (StmtContext<A, ?, ?>) subStmtContext;
             }
         }
@@ -102,7 +102,7 @@ public final class StmtContextUtils {
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         final ImmutableList.Builder<StmtContext<A, D, ?>> listBuilder = ImmutableList.builder();
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
-            if (producesDeclared(subStmtContext, declaredType)) {
+            if (subStmtContext.producesDeclared(declaredType)) {
                 listBuilder.add((StmtContext<A, D, ?>) subStmtContext);
             }
         }
@@ -114,7 +114,7 @@ public final class StmtContextUtils {
             final StmtContext<?, ?, ?> stmtContext, final Class<D> type) {
         final ImmutableList.Builder<StmtContext<A, D, ?>> listBuilder = ImmutableList.builder();
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.effectiveSubstatements()) {
-            if (producesDeclared(subStmtContext, type)) {
+            if (subStmtContext.producesDeclared(type)) {
                 listBuilder.add((StmtContext<A, D, ?>) subStmtContext);
             }
         }
@@ -133,7 +133,7 @@ public final class StmtContextUtils {
     public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstEffectiveSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.effectiveSubstatements()) {
-            if (producesDeclared(subStmtContext, declaredType)) {
+            if (subStmtContext.producesDeclared(declaredType)) {
                 return (StmtContext<A, ?, ?>) subStmtContext;
             }
         }
@@ -193,6 +193,7 @@ public final class StmtContextUtils {
         return null;
     }
 
+    @Deprecated
     public static boolean producesDeclared(final StmtContext<?, ?, ?> ctx,
             final Class<? extends DeclaredStatement<?>> type) {
         return type.isAssignableFrom(ctx.getPublicDefinition().getDeclaredRepresentationClass());
@@ -238,8 +239,7 @@ public final class StmtContextUtils {
      *             if supplied statement context is null
      */
     public static boolean isUnrecognizedStatement(final StmtContext<?, ?, ?> stmtCtx) {
-        return UnrecognizedStatement.class
-                .isAssignableFrom(stmtCtx.getPublicDefinition().getDeclaredRepresentationClass());
+        return stmtCtx.producesDeclared(UnrecognizedStatement.class);
     }
 
     public static boolean checkFeatureSupport(final StmtContext<?, ?, ?> stmtContext,
@@ -586,9 +586,9 @@ public final class StmtContextUtils {
         final StmtContext<?, ?, ?> rootCtx = ctx.getRoot();
         final QNameModule qnameModule;
 
-        if (producesDeclared(rootCtx, ModuleStatement.class)) {
+        if (rootCtx.producesDeclared(ModuleStatement.class)) {
             qnameModule = rootCtx.getFromNamespace(ModuleCtxToModuleQName.class, rootCtx);
-        } else if (producesDeclared(rootCtx, SubmoduleStatement.class)) {
+        } else if (rootCtx.producesDeclared(SubmoduleStatement.class)) {
             final String belongsToModuleName = firstAttributeOf(rootCtx.declaredSubstatements(),
                 BelongsToStatement.class);
             qnameModule = rootCtx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
@@ -608,8 +608,9 @@ public final class StmtContextUtils {
             return qnameModule;
         }
 
-        if (producesDeclared(ctx.getRoot(), SubmoduleStatement.class)) {
-            final String moduleName = ctx.getRoot().getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
+        final StmtContext<?, ?, ?> root = ctx.getRoot();
+        if (root.producesDeclared(SubmoduleStatement.class)) {
+            final String moduleName = root.getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
             return ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
         }
 
@@ -631,8 +632,7 @@ public final class StmtContextUtils {
     public static Optional<Revision> getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
         Revision revision = null;
         for (final StmtContext<?, ?, ?> subStmt : subStmts) {
-            if (subStmt.getPublicDefinition().getDeclaredRepresentationClass().isAssignableFrom(
-                    RevisionStatement.class)) {
+            if (subStmt.producesDeclared(RevisionStatement.class)) {
                 if (revision == null && subStmt.getStatementArgument() != null) {
                     revision = (Revision) subStmt.getStatementArgument();
                 } else {
