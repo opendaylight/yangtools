@@ -57,7 +57,7 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
     @Override
     public void onStatementDefinitionDeclared(final Mutable<QName, BaseStatement, BaseEffectiveStatement> baseStmtCtx) {
         final Mutable<?, ?, ?> baseParentCtx = baseStmtCtx.getParentContext();
-        if (StmtContextUtils.producesDeclared(baseParentCtx, IdentityStatement.class)) {
+        if (baseParentCtx.producesDeclared(IdentityStatement.class)) {
 
             final QName baseIdentityQName = baseStmtCtx.coerceStatementArgument();
             final ModelActionBuilder baseIdentityAction = baseStmtCtx.newInferenceAction(

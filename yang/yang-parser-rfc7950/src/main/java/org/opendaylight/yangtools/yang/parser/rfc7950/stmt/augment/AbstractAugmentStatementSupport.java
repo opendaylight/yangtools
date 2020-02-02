@@ -201,9 +201,8 @@ abstract class AbstractAugmentStatementSupport
 
     static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
-        final CopyType typeOfCopy = UsesStatement.class.equals(sourceCtx.coerceParentContext().getPublicDefinition()
-                .getDeclaredRepresentationClass()) ? CopyType.ADDED_BY_USES_AUGMENTATION
-                : CopyType.ADDED_BY_AUGMENTATION;
+        final CopyType typeOfCopy = sourceCtx.coerceParentContext().producesDeclared(UsesStatement.class)
+                ? CopyType.ADDED_BY_USES_AUGMENTATION : CopyType.ADDED_BY_AUGMENTATION;
         /*
          * Since Yang 1.1, if an augmentation is made conditional with a
          * "when" statement, it is allowed to add mandatory nodes.
@@ -261,7 +260,7 @@ abstract class AbstractAugmentStatementSupport
             final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy,
             final boolean skipCheckOfMandatoryNodes) {
 
-        if (WhenStatement.class.equals(sourceCtx.getPublicDefinition().getDeclaredRepresentationClass())) {
+        if (sourceCtx.producesDeclared(WhenStatement.class)) {
             return;
         }
 
@@ -271,12 +270,9 @@ abstract class AbstractAugmentStatementSupport
         }
 
         // Data definition statements must not collide on their namespace
-        if (DataDefinitionStatement.class.isAssignableFrom(
-            sourceCtx.getPublicDefinition().getDeclaredRepresentationClass())) {
+        if (sourceCtx.producesDeclared(DataDefinitionStatement.class)) {
             for (final StmtContext<?, ?, ?> subStatement : targetCtx.allSubstatements()) {
-                if (DataDefinitionStatement.class.isAssignableFrom(
-                    subStatement.getPublicDefinition().getDeclaredRepresentationClass())) {
-
+                if (subStatement.producesDeclared(DataDefinitionStatement.class)) {
                     InferenceException.throwIf(
                         Objects.equals(sourceCtx.getStatementArgument(), subStatement.getStatementArgument()),
                         sourceCtx.getStatementSourceReference(),
