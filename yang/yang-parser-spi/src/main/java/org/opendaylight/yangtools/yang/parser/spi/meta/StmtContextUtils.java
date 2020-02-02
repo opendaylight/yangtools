@@ -193,12 +193,6 @@ public final class StmtContextUtils {
         return null;
     }
 
-    @Deprecated(forRemoval = true)
-    public static boolean producesDeclared(final StmtContext<?, ?, ?> ctx,
-            final Class<? extends DeclaredStatement<?>> type) {
-        return ctx.producesDeclared(type);
-    }
-
     public static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
         StmtContext<?, ?, ?> current = stmtCtx;
         while (current.coerceParentContext().getParentContext() != null) {
