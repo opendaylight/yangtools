@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
 import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -159,12 +159,28 @@ public final class UsesStatementSupport
         usesNode.addAsEffectOfStatement(buffer);
     }
 
-    // FIXME: YANGTOOLS-652: this map looks very much like InferredStatementContext.REUSED_DEF_SET
-    // FIXME: YANGTOOLS-694: we should take advantage of CopyPolicy
-    private static final ImmutableSet<? extends StatementDefinition> TOP_REUSED_DEF_SET = ImmutableSet.of(
-        YangStmtMapping.TYPE, YangStmtMapping.TYPEDEF);
-    private static final ImmutableSet<? extends StatementDefinition> DOCUMENTATION_STATEMENTS = ImmutableSet.of(
-        YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.STATUS);
+    // Note: do not put CopyPolicy.DECLARED_COPY, we treat non-presence as such
+    private static final ImmutableMap<StatementDefinition, CopyPolicy> GROUPING_TO_TARGET_POLICY =
+            ImmutableMap.<StatementDefinition, CopyPolicy>builder()
+                // FIXME: YANGTOOLS-652: this map looks very much like InferredStatementContext.REUSED_DEF_SET
+                // a grouping's type/typedef statements are fully defined at the grouping, we want the same effective
+                // statement
+                .put(YangStmtMapping.TYPE, CopyPolicy.CONTEXT_INDEPENDENT)
+                .put(YangStmtMapping.TYPEDEF, CopyPolicy.CONTEXT_INDEPENDENT)
+
+                // We do not want to propagate description/reference/status statements, as they are the source
+                // grouping's documentation, not target statement's
+                .put(YangStmtMapping.DESCRIPTION, CopyPolicy.IGNORE)
+                .put(YangStmtMapping.REFERENCE, CopyPolicy.IGNORE)
+                .put(YangStmtMapping.STATUS, CopyPolicy.IGNORE)
+
+                // Do not propagate uses, as their effects have been accounted for in effective statements
+                // FIXME: YANGTOOLS-652: this check is different from InferredStatementContext. Why is that? We should
+                //                       express a common condition in our own implementation of applyCopyPolicy() --
+                //                       most notably reactor performs the equivalent of CopyPolicy.CONTEXT_INDEPENDENT.
+                // FIXME: YANGTOOLS-694: note that if the above is true, why are we propagating grouping statements?
+                .put(YangStmtMapping.USES, CopyPolicy.IGNORE)
+                .build();
 
     private static void copyStatement(final Mutable<?, ?, ?> original,
             final StatementContextBase<?, ?, ?> targetCtx, final QNameModule targetModule,
@@ -181,27 +197,16 @@ public final class UsesStatementSupport
         //                       buildEffective() I think) is actually a SchemaTreeEffectiveStatement -- i.e. if it
         //                       is not a SchemaTreeEffectiveStatement, it just cannot be added to target's tree and
         //                       hence it should not be copied.
-
-        final StatementDefinition def = original.getPublicDefinition();
-        if (DOCUMENTATION_STATEMENTS.contains(def)) {
-            // We do not want to propagate description/reference/status statements, as they are the source grouping's
-            // documentation, not target statement's
-            return;
-        }
-        if (TOP_REUSED_DEF_SET.contains(def)) {
-            // a grouping's type/typedef statements are fully defined at the grouping, we want the same effective
-            // statement
+        final CopyPolicy policy = GROUPING_TO_TARGET_POLICY.get(original.getPublicDefinition());
+        if (policy == null) {
+            original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, targetModule).ifPresent(buffer::add);
+        } else if (policy == CopyPolicy.CONTEXT_INDEPENDENT) {
             buffer.add(original);
-            return;
+        } else if (policy == CopyPolicy.IGNORE) {
+            // No-op
+        } else {
+            throw new IllegalStateException("Unhandled policy " + policy);
         }
-        if (YangStmtMapping.USES.equals(def)) {
-            // Do not propagate uses, as their effects have been accounted for in effective statements
-            // FIXME: YANGTOOLS-652: this check is different from InferredStatementContext. Why is that? We should
-            //                       express a common condition in our own implementation of applyCopyPolicy()
-            // FIXME: YANGTOOLS-694: note that if the above is true, why are we propagating grouping statements?
-            return;
-        }
-        original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, targetModule).ifPresent(buffer::add);
     }
 
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
