@@ -64,6 +64,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -753,7 +754,31 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
             final QNameModule targetModule) {
         checkEffectiveModelCompleted(this);
-        return definition.support().copyAsChildOf(this, parent, type, targetModule);
+
+        final StatementSupport<A, D, E> support = definition.support();
+        final CopyPolicy policy = support.applyCopyPolicy(this, parent, type, targetModule);
+        switch (policy) {
+            case CONTEXT_INDEPENDENT:
+                // FIXME: YANGTOOLS-652: we need isEmpty() here for performance reasons
+                if (allSubstatementsStream().findAny().isEmpty()) {
+                    // This statement is context-independent and has no substatements -- hence it can be freely shared.
+                    return Optional.of(this);
+                }
+                // FIXME: YANGTOOLS-694: filter out all context-independent substatements, eliminate fall-through
+                // fall through
+            case DECLARED_COPY:
+                // FIXME: YANGTOOLS-694: this is still to eager, we really want to copy as a lazily-instantiated
+                //                       context, so that we can support building an effective statement without copying
+                //                       anything -- we will typically end up not being inferred against. In that case,
+                //                       this slim context should end up dealing with differences at buildContext()
+                //                       time. This is a YANGTOOLS-1067 prerequisite (which will deal with what can and
+                //                       cannot be shared across instances).
+                return Optional.of(parent.childCopyOf(this, type, targetModule));
+            case IGNORE:
+                return Optional.empty();
+            default:
+                throw new IllegalStateException("Unhandled policy " + policy);
+        }
     }
 
     @Override
