@@ -141,23 +141,31 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     @Nullable StatementSupport<?, ?, ?> getSupportSpecificForArgument(String argument);
 
     /**
-     * Create an optional copy of specified statement as a substatement of parent.
-     *
-     * <p>
-     * Note that while it may be tempting to return the same context, this is not safe in general case. It is only safe
-     * if the entire subtree is unaffected by changes to parent/namespace/history. This includes the semantics of this
-     * statement (it cannot be a target of any inference effects) as well as any substatements -- an extension statement
-     * is allowed pretty much anywhere and if its semantics are context-dependent, a simple instance reuse will not
-     * work.
+     * Determine reactor copy behavior of a statement instance. Statement support classes are required to determine
+     * their operations with regard to their statements being replicated into different contexts, so that
+     * {@link Mutable} instances are not created when it is evident they are superfluous.
      *
      * @param stmt Context of statement to be copied statement.
      * @param parent Parent statement context
      * @param type Type of copy being performed
      * @param targetModule Target module, if present
-     * @return Empty if the statement should be ignored, or present with an instance that should be copied into parent.
+     * @return Policy that needs to be applied to the copy operation of this statement.
      */
-    @NonNull Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(Mutable<?, ?, ?> stmt, Mutable<?, ?, ?> parent,
-            CopyType type, @Nullable QNameModule targetModule);
+    // FIXME: YANGTOOLS-694: clarify targetModule semantics (does null mean 'same as declared'?)
+    default @NonNull CopyPolicy applyCopyPolicy(final Mutable<?, ?, ?> stmt, final Mutable<?, ?, ?> parent,
+            final CopyType type, @Nullable final QNameModule targetModule) {
+        // Most of statement supports will just want to copy the statement
+        // FIXME: YANGTOOLS-694: that is not strictly true. Subclasses of this should indicate if they are themselves
+        //                       copy-sensitive:
+        //                       1) if they are not and cannot be targeted by inference, and all their current
+        //                          substatements are also non-sensitive, we want to return the same context.
+        //                       2) if they are not and their current substatements are sensitive, we want to copy
+        //                          as a lazily-instantiated interceptor to let it deal with substatements when needed
+        //                          (YANGTOOLS-1067 prerequisite)
+        //                       3) otherwise perform this eager copy
+        //      return Optional.of(parent.childCopyOf(stmt, copyType, targetModule));
+        return CopyPolicy.DECLARED_COPY;
+    }
 
     /**
      * Given a raw string representation of an argument, try to use a shared representation.
@@ -224,5 +232,42 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     @Override
     default Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass() {
         return getPublicView().getEffectiveRepresentationClass();
+    }
+
+    /**
+     * Statement context copy policy, indicating how should reactor handle statement copy operations. Every statement
+     * copied by the reactor is subject to policy check done by
+     * {@link StatementSupport#applyCopyPolicy(Mutable, Mutable, CopyType, QNameModule)}.
+     *
+     */
+    enum CopyPolicy {
+        /**
+         * Reuse the source statement context in the new place, as it cannot be affected by any further operations. This
+         * implies that the semantics of the effective statement are not affected by any of its substatements. Each
+         * of the substatements is free to make its own policy.
+         *
+         * <p>
+         * This policy is typically used by static constant statements such as {@code description} or {@code length},
+         * where the baseline RFC7950 does not allow any impact. A {@code description} could hold an extension statement
+         * in which case this interaction would come into play. Normal YANG will see empty substatements, so the reactor
+         * will be free to complete reuse the context.
+         *
+         * <p>
+         * In case any substatement is of stronger policy, it is up to the reactor to handle correct handling of
+         * resulting subobjects.
+         */
+        // TODO: does this mean source must have transitioned to ModelProcessingPhase.EFFECTIVE_MODEL?
+        CONTEXT_INDEPENDENT,
+        /**
+         * Create a copy sharing declared instance, but otherwise having a separate disconnected lifecycle.
+         */
+        // TODO: will the copy transition to ModelProcessingPhase.FULL_DECLARATION or which phase?
+        DECLARED_COPY,
+        /**
+         * Ignore this statement's existence for the purposes of the new place -- it is not impacted. This guidance
+         * is left here for completeness, as it can have justifiable uses (but I can't think of any). Any substatements
+         * need to be ignored, too.
+         */
+        IGNORE;
     }
 }
