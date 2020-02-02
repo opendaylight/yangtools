@@ -260,8 +260,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return completedPhase;
     }
 
-    @Override
-    public void setCompletedPhase(final ModelProcessingPhase completedPhase) {
+    // FIXME: this should be propagated through a correct constructor
+    @Deprecated
+    final void setCompletedPhase(final ModelProcessingPhase completedPhase) {
         this.completedPhase = completedPhase;
     }
 
