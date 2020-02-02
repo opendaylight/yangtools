@@ -79,6 +79,7 @@ public final class StmtContextUtils {
     }
 
     @SafeVarargs
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static StmtContext<?, ?, ?> findFirstDeclaredSubstatement(final StmtContext<?, ?, ?> stmtContext,
             int startIndex, final Class<? extends DeclaredStatement<?>>... types) {
         if (startIndex >= types.length) {
@@ -86,7 +87,7 @@ public final class StmtContextUtils {
         }
 
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
-            if (producesDeclared(subStmtContext, types[startIndex])) {
+            if (subStmtContext.producesDeclared((Class) types[startIndex])) {
                 return startIndex + 1 == types.length ? subStmtContext : findFirstDeclaredSubstatement(subStmtContext,
                         ++startIndex, types);
             }
@@ -159,9 +160,9 @@ public final class StmtContextUtils {
     }
 
     public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatementOnSublevel(
-            final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType, int sublevel) {
+            final StmtContext<?, ?, ?> stmtContext, final Class<? super D> declaredType, int sublevel) {
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
-            if (sublevel == 1 && producesDeclared(subStmtContext, declaredType)) {
+            if (sublevel == 1 && subStmtContext.producesDeclared(declaredType)) {
                 return subStmtContext;
             }
             if (sublevel > 1) {
@@ -177,9 +178,9 @@ public final class StmtContextUtils {
     }
 
     public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findDeepFirstDeclaredSubstatement(
-            final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
+            final StmtContext<?, ?, ?> stmtContext, final Class<? super D> declaredType) {
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
-            if (producesDeclared(subStmtContext, declaredType)) {
+            if (subStmtContext.producesDeclared(declaredType)) {
                 return subStmtContext;
             }
 
@@ -190,12 +191,6 @@ public final class StmtContextUtils {
         }
 
         return null;
-    }
-
-    @Deprecated(forRemoval = true)
-    public static boolean producesDeclared(final StmtContext<?, ?, ?> ctx,
-            final Class<? extends DeclaredStatement<?>> type) {
-        return type.isAssignableFrom(ctx.getPublicDefinition().getDeclaredRepresentationClass());
     }
 
     public static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
