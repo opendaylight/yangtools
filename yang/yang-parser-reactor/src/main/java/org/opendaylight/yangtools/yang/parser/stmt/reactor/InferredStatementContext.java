@@ -126,6 +126,11 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return new InferredStatementContext<>(this, newParent);
     }
 
+    @Override
+    boolean hasEmptySubstatements() {
+        return hasEmptyEffectiveSubstatements();
+    }
+
     // Instantiate this statement's effective substatements. Note this method has side-effects in namespaces and overall
     // BuildGlobalContext, hence it must be called at most once.
     private List<Mutable<?, ?, ?>> createEffective() {

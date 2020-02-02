@@ -775,8 +775,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final CopyPolicy policy = support.applyCopyPolicy(this, parent, type, targetModule);
         switch (policy) {
             case CONTEXT_INDEPENDENT:
-                // FIXME: YANGTOOLS-652: we need isEmpty() here for performance reasons
-                if (allSubstatementsStream().findAny().isEmpty()) {
+                if (hasEmptySubstatements()) {
                     // This statement is context-independent and has no substatements -- hence it can be freely shared.
                     return Optional.of(this);
                 }
@@ -873,6 +872,17 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     abstract StatementContextBase<A, D, E> reparent(StatementContextBase<?, ?, ?> newParent);
+
+    /**
+     * Indicate that the set of substatements is empty. This is a preferred shortcut to substatement stream filtering.
+     *
+     * @return True if {@link #allSubstatements()} and {@link #allSubstatementsStream()} would return an empty stream.
+     */
+    abstract boolean hasEmptySubstatements();
+
+    final boolean hasEmptyEffectiveSubstatements() {
+        return effective.isEmpty();
+    }
 
     /**
      * Config statements are not all that common which means we are performing a recursive search towards the root
