@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -645,17 +644,5 @@ public final class StmtContextUtils {
             }
         }
         return Optional.ofNullable(revision);
-    }
-
-    /**
-     * Determine if a specific statetement context is a child of a statement context which produces a grouping.
-     *
-     * @param stmt Statement to examine
-     * @return True if parent context is that of a grouping.
-     */
-    @Beta
-    public static boolean isChildOfGrouping(final StmtContext<?, ?, ?> stmt) {
-        final StmtContext<?, ?, ?> parent = stmt.getParentContext();
-        return parent != null && parent.getPublicDefinition() == YangStmtMapping.GROUPING;
     }
 }

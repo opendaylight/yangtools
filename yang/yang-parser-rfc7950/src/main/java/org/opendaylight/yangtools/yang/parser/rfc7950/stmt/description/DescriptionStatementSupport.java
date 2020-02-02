@@ -8,18 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.description;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Optional;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DescriptionStatementSupport
@@ -39,13 +34,6 @@ public final class DescriptionStatementSupport
     @Override
     public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return value;
-    }
-
-    @Override
-    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> stmt,
-            final Mutable<?, ?, ?> parent, final CopyType type, final QNameModule targetModule) {
-        return StmtContextUtils.isChildOfGrouping(stmt) ? Optional.empty()
-                : super.copyAsChildOf(stmt, parent, type, targetModule);
     }
 
     @Override
