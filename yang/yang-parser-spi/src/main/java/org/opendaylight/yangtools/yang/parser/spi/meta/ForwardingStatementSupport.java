@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -89,8 +88,8 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     }
 
     @Override
-    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> stmt,
+    public CopyPolicy applyCopyPolicy(final Mutable<?, ?, ?> stmt,
             final Mutable<?, ?, ?> parent, final CopyType type, final QNameModule targetModule) {
-        return delegate().copyAsChildOf(stmt, parent, type, targetModule);
+        return delegate().applyCopyPolicy(stmt, parent, type, targetModule);
     }
 }
