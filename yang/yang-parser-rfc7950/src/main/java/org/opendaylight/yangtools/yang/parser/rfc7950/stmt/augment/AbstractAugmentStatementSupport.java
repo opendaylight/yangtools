@@ -175,9 +175,8 @@ abstract class AbstractAugmentStatementSupport
 
     static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
-        final CopyType typeOfCopy = UsesStatement.class.equals(sourceCtx.coerceParentContext().getPublicDefinition()
-                .getDeclaredRepresentationClass()) ? CopyType.ADDED_BY_USES_AUGMENTATION
-                : CopyType.ADDED_BY_AUGMENTATION;
+        final CopyType typeOfCopy = sourceCtx.producesDeclared(UsesStatement.class)
+                ? CopyType.ADDED_BY_USES_AUGMENTATION : CopyType.ADDED_BY_AUGMENTATION;
         /*
          * Since Yang 1.1, if an augmentation is made conditional with a
          * "when" statement, it is allowed to add mandatory nodes.

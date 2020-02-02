@@ -201,9 +201,12 @@ public final class UsesStatementSupport
     private static void resolveUsesNode(final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode,
             final StmtContext<?, ?, ?> targetNodeStmtCtx) {
         for (final Mutable<?, ?, ?> subStmtCtx : usesNode.mutableDeclaredSubstatements()) {
-            if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)
-                    && areFeaturesSupported(subStmtCtx)) {
-                performRefine(subStmtCtx, targetNodeStmtCtx);
+            if (areFeaturesSupported(subStmtCtx)) {
+                final Mutable<SchemaNodeIdentifier, RefineStatement, ?> refineCtx =
+                    StmtContextUtils.asProducingDeclared(subStmtCtx, RefineStatement.class);
+                if (refineCtx != null) {
+                    performRefine(refineCtx, targetNodeStmtCtx);
+                }
             }
         }
     }
@@ -215,7 +218,8 @@ public final class UsesStatementSupport
         return !YangVersion.VERSION_1_1.equals(subStmtCtx.getRootVersion()) || subStmtCtx.isSupportedByFeatures();
     }
 
-    private static void performRefine(final Mutable<?, ?, ?> subStmtCtx, final StmtContext<?, ?, ?> usesParentCtx) {
+    private static void performRefine(final Mutable<SchemaNodeIdentifier, RefineStatement, ?> subStmtCtx,
+            final StmtContext<?, ?, ?> usesParentCtx) {
         final Object refineArgument = subStmtCtx.getStatementArgument();
         InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier),
             subStmtCtx.getStatementSourceReference(),

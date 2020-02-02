@@ -108,6 +108,16 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         return verifyNotNull(getStatementArgument(), "Statement context %s does not have an argument", this);
     }
 
+    default boolean producesDeclared(final Class<? extends DeclaredStatement<?>> type) {
+        return type.isAssignableFrom(getPublicDefinition().getDeclaredRepresentationClass());
+    }
+
+    @SuppressWarnings("unchecked")
+    default <X, Y extends DeclaredStatement<X>> @Nullable StmtContext<X, Y, ?> asProducingDeclared(
+            final StmtContext<?, ?, ?> ctx, final Class<Y> type) {
+        return producesDeclared(type) ? (StmtContext<X, Y, ?>) ctx : null;
+    }
+
     /**
      * Return the {@link SchemaPath} of this statement. Not all statements have a SchemaPath, in which case
      * {@link Optional#empty()} is returned.
@@ -259,6 +269,12 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
         @Override
         Mutable<?, ?, ?> getRoot();
+
+        @SuppressWarnings("unchecked")
+        default <X, Y extends DeclaredStatement<X>> @Nullable Mutable<X, Y, ?> asProducingDeclared(
+                final Class<D> type) {
+            return producesDeclared(type) ? (Mutable<X, Y, ?>) this : null;
+        }
 
         /**
          * Create a child sub-statement, which is a child of this statement, inheriting all attributes from specified
