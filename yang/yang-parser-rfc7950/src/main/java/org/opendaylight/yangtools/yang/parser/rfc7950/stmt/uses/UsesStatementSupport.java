@@ -160,24 +160,48 @@ public final class UsesStatementSupport
     }
 
     // FIXME: YANGTOOLS-652: this map looks very much like InferredStatementContext.REUSED_DEF_SET
-    private static final ImmutableSet<YangStmtMapping> TOP_REUSED_DEF_SET = ImmutableSet.of(
-        YangStmtMapping.TYPE,
-        YangStmtMapping.TYPEDEF);
+    // FIXME: YANGTOOLS-694: we should take advantage of CopyPolicy
+    private static final ImmutableSet<? extends StatementDefinition> TOP_REUSED_DEF_SET = ImmutableSet.of(
+        YangStmtMapping.TYPE, YangStmtMapping.TYPEDEF);
+    private static final ImmutableSet<? extends StatementDefinition> DOCUMENTATION_STATEMENTS = ImmutableSet.of(
+        YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.STATUS);
 
     private static void copyStatement(final Mutable<?, ?, ?> original,
             final StatementContextBase<?, ?, ?> targetCtx, final QNameModule targetModule,
             final Collection<Mutable<?, ?, ?>> buffer) {
+
+        // FIXME: YANGTOOLS-694: This method needs to be adjusted to account for RFC7950,
+        //                       https://tools.ietf.org/html/rfc7950#section-7.13, which states that:
+        //
+        //        The effect of a "uses" reference to a grouping is that the nodes
+        //        defined by the grouping are copied into the current schema tree and
+        //        are then updated according to the "refine" and "augment" statements.
+        //
+        //                       This means that the statement that is about to be copied (and can be subjected to
+        //                       buildEffective() I think) is actually a SchemaTreeEffectiveStatement -- i.e. if it
+        //                       is not a SchemaTreeEffectiveStatement, it just cannot be added to target's tree and
+        //                       hence it should not be copied.
+
         final StatementDefinition def = original.getPublicDefinition();
+        if (DOCUMENTATION_STATEMENTS.contains(def)) {
+            // We do not want to propagate description/reference/status statements, as they are the source grouping's
+            // documentation, not target statement's
+            return;
+        }
         if (TOP_REUSED_DEF_SET.contains(def)) {
+            // a grouping's type/typedef statements are fully defined at the grouping, we want the same effective
+            // statement
             buffer.add(original);
             return;
         }
-        // Do not propagate uses, as their effects have been accounted for in effective statements
-        // FIXME: YANGTOOLS-652: this check is different from InferredStatementContext. Why is that? We should express
-        //                       a common condition in our own implementation of copyAsChildOf()
-        if (!YangStmtMapping.USES.equals(def)) {
-            original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, targetModule).ifPresent(buffer::add);
+        if (YangStmtMapping.USES.equals(def)) {
+            // Do not propagate uses, as their effects have been accounted for in effective statements
+            // FIXME: YANGTOOLS-652: this check is different from InferredStatementContext. Why is that? We should
+            //                       express a common condition in our own implementation of applyCopyPolicy()
+            // FIXME: YANGTOOLS-694: note that if the above is true, why are we propagating grouping statements?
+            return;
         }
+        original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, targetModule).ifPresent(buffer::add);
     }
 
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
