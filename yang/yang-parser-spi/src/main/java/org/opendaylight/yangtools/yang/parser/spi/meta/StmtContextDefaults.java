@@ -47,7 +47,7 @@ public final class StmtContextDefaults {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static boolean hasSubstatement(final @NonNull StmtContext<?, ?, ?> stmt,
-            @SuppressWarnings("rawtypes") final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
+            final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
         return stmt.allSubstatementsStream().anyMatch(ctx -> ((StmtContext) ctx).producesEffective(type));
     }
 }
