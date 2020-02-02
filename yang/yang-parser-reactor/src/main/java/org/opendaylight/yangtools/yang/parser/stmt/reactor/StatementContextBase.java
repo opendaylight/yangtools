@@ -1033,7 +1033,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final Object argument = getStatementArgument();
         if (argument instanceof QName) {
             final QName qname = (QName) argument;
-            if (StmtContextUtils.producesDeclared(this, UsesStatement.class)) {
+            if (producesDeclared(UsesStatement.class)) {
                 return maybeParentPath.orElse(null);
             }
 
@@ -1046,9 +1046,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return parentPath.createChild(qname);
         }
         if (argument instanceof SchemaNodeIdentifier
-                && (StmtContextUtils.producesDeclared(this, AugmentStatement.class)
-                        || StmtContextUtils.producesDeclared(this, RefineStatement.class)
-                        || StmtContextUtils.producesDeclared(this, DeviationStatement.class))) {
+                && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
+                        || producesDeclared(DeviationStatement.class))) {
 
             return parentPath.createChild(((SchemaNodeIdentifier) argument).getNodeIdentifiers());
         }
