@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractGroupingStatementSupport
         extends BaseQNameStatementSupport<GroupingStatement, GroupingEffectiveStatement> {
     AbstractGroupingStatementSupport() {
-        super(YangStmtMapping.GROUPING);
+        super(YangStmtMapping.GROUPING, CopyPolicy.IGNORE);
     }
 
     @Override
