@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
 import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -19,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
@@ -146,67 +146,56 @@ public final class UsesStatementSupport
         final QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
 
         for (final Mutable<?, ?, ?> original : declared) {
-            if (original.isSupportedByFeatures()) {
-                copyStatement(original, targetCtx, newQNameModule, buffer);
+            if (original.isSupportedByFeatures() && shouldCopy(original)) {
+                original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(buffer::add);
             }
         }
 
         for (final Mutable<?, ?, ?> original : effective) {
-            copyStatement(original, targetCtx, newQNameModule, buffer);
+            if (shouldCopy(original)) {
+                original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(buffer::add);
+            }
         }
 
         targetCtx.addEffectiveSubstatements(buffer);
         usesNode.addAsEffectOfStatement(buffer);
     }
 
-    // Note: do not put CopyPolicy.DECLARED_COPY, we treat non-presence as such
-    private static final ImmutableMap<StatementDefinition, CopyPolicy> GROUPING_TO_TARGET_POLICY =
-            ImmutableMap.<StatementDefinition, CopyPolicy>builder()
-                // FIXME: YANGTOOLS-652: this map looks very much like InferredStatementContext.REUSED_DEF_SET
-                // a grouping's type/typedef statements are fully defined at the grouping, we want the same effective
-                // statement
-                .put(YangStmtMapping.TYPE, CopyPolicy.CONTEXT_INDEPENDENT)
-                .put(YangStmtMapping.TYPEDEF, CopyPolicy.CONTEXT_INDEPENDENT)
 
-                // We do not want to propagate description/reference/status statements, as they are the source
-                // grouping's documentation, not target statement's
-                .put(YangStmtMapping.DESCRIPTION, CopyPolicy.IGNORE)
-                .put(YangStmtMapping.REFERENCE, CopyPolicy.IGNORE)
-                .put(YangStmtMapping.STATUS, CopyPolicy.IGNORE)
-
-                // Do not propagate uses, as their effects have been accounted for in effective statements
-                // FIXME: YANGTOOLS-652: this check is different from InferredStatementContext. Why is that? We should
-                //                       express a common condition in our own implementation of applyCopyPolicy() --
-                //                       most notably reactor performs the equivalent of CopyPolicy.CONTEXT_INDEPENDENT.
-                // FIXME: YANGTOOLS-694: note that if the above is true, why are we propagating grouping statements?
-                .put(YangStmtMapping.USES, CopyPolicy.IGNORE)
-                .build();
-
-    private static void copyStatement(final Mutable<?, ?, ?> original,
-            final StatementContextBase<?, ?, ?> targetCtx, final QNameModule targetModule,
-            final Collection<Mutable<?, ?, ?>> buffer) {
-
-        // FIXME: YANGTOOLS-694: This method needs to be adjusted to account for RFC7950,
-        //                       https://tools.ietf.org/html/rfc7950#section-7.13, which states that:
+    private static boolean shouldCopy(final StmtContext<?, ?, ?> stmt) {
+        // https://tools.ietf.org/html/rfc7950#section-7.13:
         //
         //        The effect of a "uses" reference to a grouping is that the nodes
         //        defined by the grouping are copied into the current schema tree and
         //        are then updated according to the "refine" and "augment" statements.
         //
-        //                       This means that the statement that is about to be copied (and can be subjected to
-        //                       buildEffective() I think) is actually a SchemaTreeEffectiveStatement -- i.e. if it
-        //                       is not a SchemaTreeEffectiveStatement, it just cannot be added to target's tree and
-        //                       hence it should not be copied.
-        final CopyPolicy policy = GROUPING_TO_TARGET_POLICY.get(original.getPublicDefinition());
-        if (policy == null) {
-            original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, targetModule).ifPresent(buffer::add);
-        } else if (policy == CopyPolicy.CONTEXT_INDEPENDENT) {
-            buffer.add(original);
-        } else if (policy == CopyPolicy.IGNORE) {
-            // No-op
-        } else {
-            throw new IllegalStateException("Unhandled policy " + policy);
+        // This means that the statement that is about to be copied (and can be subjected to buildEffective() I think)
+        // is actually a SchemaTreeEffectiveStatement
+        if (SchemaTreeEffectiveStatement.class.isAssignableFrom(
+                stmt.getPublicDefinition().getEffectiveRepresentationClass())) {
+            return true;
         }
+
+        // As per https://tools.ietf.org/html/rfc7950#section-7.13.2:
+        //
+        //        o  Any node can get refined extensions, if the extension allows
+        //           refinement.  See Section 7.19 for details.
+        //
+        // and https://tools.ietf.org/html/rfc7950#section-7.19:
+        //
+        //        An extension can allow refinement (see Section 7.13.2) and deviations
+        //        (Section 7.20.3.2), but the mechanism for how this is defined is
+        //        outside the scope of this specification.
+        //
+        // This is actively used out there (tailf-common.yang's tailf:action), which is incorrect, though. They do
+        // publish a bunch of metadata (through tailf-meta-extension.yang), but fail to publish a key aspect of the
+        // statement: it attaches to schema tree namespace (just as RFC7950 action does). Such an extension would
+        // automatically result in the extension being picked up by the above check and everybody would live happily
+        // ever after.
+        //
+        // We do not live in that world yet, hence we do the following and keep our fingers crossed.
+        // FIXME: YANGTOOLS-403: this should not be necessary once we implement the above (although tests will complain)
+        return StmtContextUtils.isUnknownStatement(stmt);
     }
 
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,

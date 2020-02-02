@@ -185,16 +185,13 @@ public class YangParserWithContextTest {
 
         // grouping defined by 'uses'
         final Collection<? extends GroupingDefinition> groupings_u = destination.getGroupings();
-        assertEquals(1, groupings_u.size());
-        final GroupingDefinition grouping_u = groupings_u.iterator().next();
-        assertTrue(grouping_u.isAddedByUses());
+        assertEquals(0, groupings_u.size());
 
         // grouping defined in 'grouping' node
         final Collection<? extends GroupingDefinition> groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         assertFalse(grouping_g.isAddedByUses());
-        assertFalse(grouping_u.equals(grouping_g));
 
         final Collection<? extends UnknownSchemaNode> nodes_u = destination.getUnknownSchemaNodes();
         assertEquals(1, nodes_u.size());
