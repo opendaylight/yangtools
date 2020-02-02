@@ -108,6 +108,15 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         return verifyNotNull(getStatementArgument(), "Statement context %s does not have an argument", this);
     }
 
+    default <X, Y extends DeclaredStatement<X>> boolean producesDeclared(final Class<? super Y> type) {
+        return type.isAssignableFrom(getPublicDefinition().getDeclaredRepresentationClass());
+    }
+
+    default <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<A, D>> boolean producesEffective(
+            final Class<? super Z> type) {
+        return type.isAssignableFrom(getPublicDefinition().getEffectiveRepresentationClass());
+    }
+
     /**
      * Return the {@link SchemaPath} of this statement. Not all statements have a SchemaPath, in which case
      * {@link Optional#empty()} is returned.
