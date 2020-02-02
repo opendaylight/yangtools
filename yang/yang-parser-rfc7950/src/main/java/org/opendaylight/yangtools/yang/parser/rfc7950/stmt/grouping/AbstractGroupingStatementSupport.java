@@ -22,7 +22,7 @@ abstract class AbstractGroupingStatementSupport
         extends AbstractQNameStatementSupport<GroupingStatement, GroupingEffectiveStatement> {
 
     AbstractGroupingStatementSupport() {
-        super(YangStmtMapping.GROUPING);
+        super(YangStmtMapping.GROUPING, CopyPolicy.IGNORE);
     }
 
     @Override
