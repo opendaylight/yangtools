@@ -31,6 +31,10 @@ public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<
         super(publicDefinition);
     }
 
+    protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
+        super(publicDefinition, copyPolicy);
+    }
+
     @Override
     public QName adaptArgumentValue(final StmtContext<QName, D, E> ctx, final QNameModule targetModule) {
         return ctx.getStatementArgument().withModule(targetModule).intern();
