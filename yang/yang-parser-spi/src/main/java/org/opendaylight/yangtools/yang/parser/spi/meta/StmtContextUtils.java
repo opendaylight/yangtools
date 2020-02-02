@@ -192,7 +192,7 @@ public final class StmtContextUtils {
         return null;
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static boolean producesDeclared(final StmtContext<?, ?, ?> ctx,
             final Class<? extends DeclaredStatement<?>> type) {
         return type.isAssignableFrom(ctx.getPublicDefinition().getDeclaredRepresentationClass());
