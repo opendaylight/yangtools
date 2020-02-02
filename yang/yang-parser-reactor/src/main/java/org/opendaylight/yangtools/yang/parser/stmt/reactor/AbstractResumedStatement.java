@@ -151,6 +151,11 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         return ret;
     }
 
+    @Override
+    final boolean hasEmptySubstatements() {
+        return substatements.size() == 0 && hasEmptyEffectiveSubstatements();
+    }
+
     /**
      * Lookup substatement by its offset in this statement.
      *
