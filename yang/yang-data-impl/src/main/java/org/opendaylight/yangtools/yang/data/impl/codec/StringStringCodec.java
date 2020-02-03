@@ -44,10 +44,37 @@ public class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTy
         return data;
     }
 
+    /**
+     * Defines allowed chars and ranges for chars according to RFC7950, Section 14.
+     * String can contain characters
+     * 9(Horizontal tab, %x09), 10(Line feed, %x0A), 13(Carriage return, %x0D)
+     * and allowed range is from 32(%x20) to 55295(%xD7FF).
+     * Every other character in range 0 to 1114111(%x10FFFF) is disallowed.
+     */
+    protected boolean isCharAllowedRFC7950(final int ch) {
+        if (ch == 9 || ch == 10 || ch == 13 || (ch >= 32 && ch <= 55295)) {
+            return true;
+        } else {
+            return !(ch <= 1114111);
+        }
+    }
+
+    /**
+     * Method checking, whether all characters in string are valid according to RFC7950, Section 14,
+     * by calling method isCharAllowedRFC7950, where allowed chars and char ranges are checked.
+     */
+    protected void checkForbiddenChars(final String str) {
+        for (int i = 0; i < str.length(); i++) {
+            checkArgument(isCharAllowedRFC7950(str.charAt(i)),
+                "String '%s' contains forbidden characters defined in RFC7950(Section 14)", str);
+        }
+    }
+
     void validate(final String str) {
         if (lengthConstraint != null) {
             checkArgument(lengthConstraint.getAllowedRanges().contains(str.length()),
-                    "String '%s' does not match allowed length constraint %s", lengthConstraint);
+                "String '%s' does not match allowed length constraint %s", lengthConstraint);
         }
+        checkForbiddenChars(str);
     }
 }
