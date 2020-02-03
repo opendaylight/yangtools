@@ -7,15 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.organization;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class OrganizationStatementSupport extends
-        AbstractStatementSupport<String, OrganizationStatement, EffectiveStatement<String, OrganizationStatement>> {
+public final class OrganizationStatementSupport
+        extends BaseStringStatementSupport<OrganizationStatement, OrganizationEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.ORGANIZATION)
         .build();
@@ -35,20 +38,33 @@ public final class OrganizationStatementSupport extends
     }
 
     @Override
-    public OrganizationStatement createDeclared(
-            final StmtContext<String, OrganizationStatement, ?> ctx) {
-        return new OrganizationStatementImpl(ctx);
-    }
-
-    @Override
-    public EffectiveStatement<String, OrganizationStatement> createEffective(
-            final StmtContext<String, OrganizationStatement,
-            EffectiveStatement<String, OrganizationStatement>> ctx) {
-        return new OrganizationEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected OrganizationStatement createDeclared(final StmtContext<String, OrganizationStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularOrganizationStatement(ctx, substatements);
+    }
+
+    @Override
+    protected OrganizationStatement createEmptyDeclared(final StmtContext<String, OrganizationStatement, ?> ctx) {
+        return new EmptyOrganizationStatement(ctx);
+    }
+
+    @Override
+    protected OrganizationEffectiveStatement createEffective(
+            final StmtContext<String, OrganizationStatement, OrganizationEffectiveStatement> ctx,
+            final OrganizationStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularOrganizationEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected OrganizationEffectiveStatement createEmptyEffective(
+            final StmtContext<String, OrganizationStatement, OrganizationEffectiveStatement> ctx,
+            final OrganizationStatement declared) {
+        return new EmptyOrganizationEffectiveStatement(declared);
     }
 }
