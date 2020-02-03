@@ -264,6 +264,11 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
         // TODO: will the copy transition to ModelProcessingPhase.FULL_DECLARATION or which phase?
         DECLARED_COPY,
         /**
+         * Reject any attempt to copy this statement. This is useful for statements that are defined as top-level
+         * constructs, such as {@code contact}, {@code deviation} and similar.
+         */
+        REJECT,
+        /**
          * Ignore this statement's existence for the purposes of the new place -- it is not impacted. This guidance
          * is left here for completeness, as it can have justifiable uses (but I can't think of any). Any substatements
          * need to be ignored, too.

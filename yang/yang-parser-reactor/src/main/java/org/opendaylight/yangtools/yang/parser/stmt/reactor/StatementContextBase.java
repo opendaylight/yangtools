@@ -775,6 +775,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 return Optional.of(parent.childCopyOf(this, type, targetModule));
             case IGNORE:
                 return Optional.empty();
+            case REJECT:
+                throw new IllegalStateException("Statement " + support.getPublicView() + " should never be copied");
             default:
                 throw new IllegalStateException("Unhandled policy " + policy);
         }
