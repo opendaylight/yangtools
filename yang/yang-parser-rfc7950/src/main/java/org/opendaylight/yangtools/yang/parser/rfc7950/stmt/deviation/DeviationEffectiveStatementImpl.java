@@ -8,64 +8,42 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviation;
 
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
-import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNodeWithoutStatus;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 
-final class DeviationEffectiveStatementImpl
-        extends AbstractEffectiveDocumentedNodeWithoutStatus<SchemaNodeIdentifier, DeviationStatement>
-        implements Deviation, DeviationEffectiveStatement, Immutable {
-    private final SchemaPath targetPath;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
-    private final ImmutableList<DeviateDefinition> deviateDefinitions;
-
-    DeviationEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> ctx) {
-        super(ctx);
-        this.targetPath = ctx.getStatementArgument().asSchemaPath();
-        this.deviateDefinitions = ImmutableList.copyOf(allSubstatementsOfType(DeviateDefinition.class));
-
-        List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                unknownSchemaNodesInit.add((UnknownSchemaNode) effectiveStatement);
-            }
-        }
-        unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodesInit);
+final class DeviationEffectiveStatementImpl extends WithSubstatements<SchemaNodeIdentifier, DeviationStatement>
+        implements DeviationEffectiveStatement, Deviation,
+            DocumentedNodeMixin<SchemaNodeIdentifier, DeviationStatement> {
+    DeviationEffectiveStatementImpl(final DeviationStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared, substatements);
     }
 
     @Override
     public SchemaPath getTargetPath() {
-        return targetPath;
+        return argument().asSchemaPath();
     }
 
     @Override
-    public List<DeviateDefinition> getDeviates() {
-        return deviateDefinitions;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownSchemaNodes;
+    public Collection<? extends DeviateDefinition> getDeviates() {
+        return filterEffectiveStatements(DeviateDefinition.class);
     }
 
     @Override
     public String toString() {
         return DeviationEffectiveStatementImpl.class.getSimpleName() + "["
-                + "targetPath=" + targetPath
-                + ", deviates=" + deviateDefinitions
-                + ", description=" + nullableDescription()
-                + ", reference=" + nullableReference()
+                + "targetPath=" + getTargetPath()
+                + ", deviates=" + getDeviates()
+                + ", description=" + getDescription().orElse(null)
+                + ", reference=" + getReference().orElse(null)
                 + "]";
     }
 }

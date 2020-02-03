@@ -126,6 +126,21 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
     }
 
     public abstract static class WithArgument<A> extends WithRawArgument<A> {
+        public abstract static class WithSubstatements<A> extends WithArgument<A> {
+            private final @NonNull Object substatements;
+
+            protected WithSubstatements(final StmtContext<A, ?, ?> context,
+                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                super(context);
+                this.substatements = maskList(substatements);
+            }
+
+            @Override
+            public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+                return unmaskList(substatements);
+            }
+        }
+
         private final A argument;
 
         protected WithArgument(final StmtContext<A, ?, ?> context) {
