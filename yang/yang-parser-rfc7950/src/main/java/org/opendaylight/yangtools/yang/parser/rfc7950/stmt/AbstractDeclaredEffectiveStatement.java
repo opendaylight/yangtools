@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -175,14 +176,14 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      */
     public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>,
             E extends SchemaTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
-        private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
+        private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull D declared;
 
         protected DefaultWithSchemaTree(final D declared, final StmtContext<?, ?, ?> ctx,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.declared = requireNonNull(declared);
-            this.schemaTree = AbstractSchemaEffectiveDocumentedNode.createSchemaTreeNamespace(
-                ctx.getStatementSourceReference(), substatements);
+            this.schemaTree = ImmutableMap.copyOf(AbstractSchemaEffectiveDocumentedNode.createSchemaTreeNamespace(
+                ctx.getStatementSourceReference(), substatements));
         }
 
         @Override
@@ -206,16 +207,19 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      */
     public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>,
             E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
-        private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
-        private final @NonNull Map<QName, DataTreeEffectiveStatement<?>> dataTree;
+        private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
+        private final @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTree;
         private final @NonNull D declared;
 
         protected DefaultWithDataTree(final D declared, final StmtContext<?, ?, ?> ctx,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.declared = requireNonNull(declared);
             final StatementSourceReference ref = ctx.getStatementSourceReference();
-            this.schemaTree = AbstractSchemaEffectiveDocumentedNode.createSchemaTreeNamespace(ref, substatements);
-            this.dataTree = AbstractSchemaEffectiveDocumentedNode.createDataTreeNamespace(ref, schemaTree);
+            final Map<QName, SchemaTreeEffectiveStatement<?>> schema =
+                    AbstractSchemaEffectiveDocumentedNode.createSchemaTreeNamespace(ref, substatements);
+            this.schemaTree = ImmutableMap.copyOf(schema);
+            this.dataTree = AbstractSchemaEffectiveDocumentedNode.createDataTreeNamespace(ref, schema.values(),
+                schemaTree);
         }
 
         @Override
