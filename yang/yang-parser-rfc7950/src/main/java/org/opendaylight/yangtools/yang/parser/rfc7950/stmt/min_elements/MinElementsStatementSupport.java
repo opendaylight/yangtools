@@ -7,15 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.min_elements;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseInternedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class MinElementsStatementSupport
-        extends AbstractStatementSupport<Integer, MinElementsStatement, MinElementsEffectiveStatement> {
+        extends BaseInternedStatementSupport<Integer, MinElementsStatement, MinElementsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.MIN_ELEMENTS)
         .build();
@@ -31,22 +35,39 @@ public final class MinElementsStatementSupport
 
     @Override
     public Integer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return Integer.parseInt(value);
-    }
-
-    @Override
-    public MinElementsStatement createDeclared(final StmtContext<Integer, MinElementsStatement, ?> ctx) {
-        return new MinElementsStatementImpl(ctx);
-    }
-
-    @Override
-    public MinElementsEffectiveStatement createEffective(
-            final StmtContext<Integer, MinElementsStatement, MinElementsEffectiveStatement> ctx) {
-        return new MinElementsEffectiveStatementImpl(ctx);
+        try {
+            return Integer.valueOf(value);
+        } catch (NumberFormatException e) {
+            throw new SourceException("Invalid min-elements argument", ctx.getStatementSourceReference(), e);
+        }
     }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected MinElementsStatement createDeclared(final Integer argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularMinElementsStatement(argument, substatements);
+    }
+
+    @Override
+    protected MinElementsStatement createEmptyDeclared(final Integer argument) {
+        return new EmptyMinElementsStatement(argument);
+    }
+
+    @Override
+    protected MinElementsEffectiveStatement createEffective(
+            final StmtContext<Integer, MinElementsStatement, MinElementsEffectiveStatement> ctx,
+            final MinElementsStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularMinElementsEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected MinElementsEffectiveStatement createEmptyEffective(final MinElementsStatement declared) {
+        return new EmptyMinElementsEffectiveStatement(declared);
     }
 }
