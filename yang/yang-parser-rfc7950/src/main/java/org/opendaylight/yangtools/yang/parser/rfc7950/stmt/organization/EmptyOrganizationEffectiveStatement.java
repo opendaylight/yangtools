@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,12 +9,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.organization;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class OrganizationEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, OrganizationStatement>
+final class EmptyOrganizationEffectiveStatement extends DefaultArgument<String, OrganizationStatement>
         implements OrganizationEffectiveStatement {
-    OrganizationEffectiveStatementImpl(final StmtContext<String, OrganizationStatement, ?> ctx) {
-        super(ctx);
+    EmptyOrganizationEffectiveStatement(final OrganizationStatement declared) {
+        super(declared);
     }
 }
