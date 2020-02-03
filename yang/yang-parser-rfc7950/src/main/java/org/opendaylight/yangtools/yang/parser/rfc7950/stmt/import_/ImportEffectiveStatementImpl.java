@@ -8,68 +8,35 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import java.util.Objects;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNodeWithoutStatus;
-import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 
-final class ImportEffectiveStatementImpl extends AbstractEffectiveDocumentedNodeWithoutStatus<String, ImportStatement>
-        implements ImportEffectiveStatement, ModuleImport {
+final class ImportEffectiveStatementImpl extends WithSubstatements<String, ImportStatement>
+        implements ImportEffectiveStatement, ModuleImport, DocumentedNodeMixin<String, ImportStatement> {
+    private final @Nullable Revision revision;
+    private final @Nullable SemVer semVer;
 
-    private final String moduleName;
-    private final Revision revision;
-    private final SemVer semVer;
-    private final String prefix;
-
-    ImportEffectiveStatementImpl(final StmtContext<String, ImportStatement, ?> ctx) {
-        super(ctx);
-
-        moduleName = ctx.coerceStatementArgument();
-        final Optional<String> prefixStmt = findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class);
-        MissingSubstatementException.throwIf(!prefixStmt.isPresent(), ctx.getStatementSourceReference(),
-            "Prefix is mandatory substatement of import statement");
-        this.prefix = prefixStmt.get();
-
-        if (!ctx.isEnabledSemanticVersioning()) {
-            final Optional<Revision> optRev = findFirstEffectiveSubstatementArgument(
-                RevisionDateEffectiveStatement.class);
-            this.revision = optRev.isPresent() ? optRev.get() : getImportedRevision(ctx);
-            this.semVer = null;
-        } else {
-            final SemVerSourceIdentifier importedModuleIdentifier = ctx.getFromNamespace(
-                ImportPrefixToSemVerSourceIdentifier.class, prefix);
-            revision = importedModuleIdentifier.getRevision().orElse(null);
-            semVer = importedModuleIdentifier.getSemanticVersion().orElse(null);
-        }
-    }
-
-    private Revision getImportedRevision(final StmtContext<String, ImportStatement, ?> ctx) {
-        /*
-         * When 'revision-date' of an import is not specified in yang source, we
-         * need to find revision of imported module.
-         */
-        final QNameModule importedModule = StmtContextUtils.getModuleQNameByPrefix(ctx, this.prefix);
-        SourceException.throwIfNull(importedModule, ctx.getStatementSourceReference(),
-                "Unable to find import of module %s with prefix %s.", this.moduleName, this.prefix);
-        return importedModule.getRevision().orElse(null);
+    ImportEffectiveStatementImpl(final ImportStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @Nullable Revision revision, final @Nullable SemVer semVer) {
+        super(declared, substatements);
+        this.revision = revision;
+        this.semVer = semVer;
     }
 
     @Override
     public String getModuleName() {
-        return moduleName;
+        return argument();
     }
 
     @Override
@@ -84,12 +51,13 @@ final class ImportEffectiveStatementImpl extends AbstractEffectiveDocumentedNode
 
     @Override
     public String getPrefix() {
-        return prefix;
+        return getDeclared().getPrefix().getValue();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(moduleName, revision, prefix, semVer, nullableDescription(), nullableReference());
+        return Objects.hash(getModuleName(), revision, getPrefix(), semVer, getDescription().orElse(null),
+            getReference().orElse(null));
     }
 
     @Override
@@ -104,16 +72,21 @@ final class ImportEffectiveStatementImpl extends AbstractEffectiveDocumentedNode
             return false;
         }
         final ImportEffectiveStatementImpl other = (ImportEffectiveStatementImpl) obj;
-        return Objects.equals(moduleName, other.moduleName) && Objects.equals(revision, other.revision)
-                && Objects.equals(semVer, other.semVer) && Objects.equals(prefix, other.prefix)
-                && Objects.equals(nullableDescription(), other.nullableDescription())
-                && Objects.equals(nullableReference(), other.nullableReference());
+        return Objects.equals(getModuleName(), other.getModuleName()) && Objects.equals(revision, other.revision)
+                && Objects.equals(semVer, other.semVer) && Objects.equals(getPrefix(), other.getPrefix())
+                && Objects.equals(getDescription(), other.getDescription())
+                && Objects.equals(getReference(), other.getReference());
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).omitNullValues().add("moduleName", getModuleName())
-                .add("revision", revision).add("version", semVer).add("prefix", getPrefix())
-                .add("description", nullableDescription()).add("reference", nullableReference()).toString();
+        return MoreObjects.toStringHelper(this).omitNullValues()
+                .add("moduleName", getModuleName())
+                .add("revision", revision)
+                .add("version", semVer)
+                .add("prefix", getPrefix())
+                .add("description", getDescription().orElse(null))
+                .add("reference", getReference().orElse(null))
+                .toString();
     }
 }
