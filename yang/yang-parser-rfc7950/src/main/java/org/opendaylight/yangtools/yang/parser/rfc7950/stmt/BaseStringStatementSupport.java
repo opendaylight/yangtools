@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Specialization of {@link BaseStatementSupport} for String statement arguments. Note this implies context-independence
@@ -24,5 +25,10 @@ public abstract class BaseStringStatementSupport<D extends DeclaredStatement<Str
         E extends EffectiveStatement<String, D>> extends BaseStatementSupport<String, D, E> {
     protected BaseStringStatementSupport(final StatementDefinition publicDefinition) {
         super(publicDefinition, CopyPolicy.CONTEXT_INDEPENDENT);
+    }
+
+    @Override
+    public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return value;
     }
 }
