@@ -7,91 +7,72 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedMap;
-import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.SortedMap;
-import java.util.TreeMap;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithSchemaTree.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.AugmentationTargetMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MandatoryMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement>
-        implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode {
-
-    private final ImmutableSet<AugmentationSchemaNode> augmentations;
+final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, ChoiceStatement, ChoiceEffectiveStatement>
+        implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode,
+                   DataSchemaNodeMixin<QName, ChoiceStatement>, AugmentationTargetMixin<QName, ChoiceStatement>,
+                   MandatoryMixin<QName, ChoiceStatement> {
     private final ImmutableSortedMap<QName, CaseSchemaNode> cases;
     private final CaseSchemaNode defaultCase;
     private final ChoiceSchemaNode original;
-    private final boolean mandatory;
+    private final @NonNull SchemaPath path;
+    private final int flags;
 
-    ChoiceEffectiveStatementImpl(final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx) {
-        super(ctx);
-        this.original = (ChoiceSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+    ChoiceEffectiveStatementImpl(final ChoiceStatement declared,
+            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
+            final SortedMap<QName, CaseSchemaNode> cases, final @Nullable CaseSchemaNode defaultCase,
+            final @Nullable ChoiceSchemaNode original) {
+        super(declared, ctx, substatements);
+        this.flags = flags;
+        this.path = ctx.getSchemaPath().get();
+        this.cases = ImmutableSortedMap.copyOfSorted(cases);
+        this.defaultCase = defaultCase;
+        this.original = original;
+    }
 
-        // initSubstatementCollectionsAndFields
-        final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
-        final SortedMap<QName, CaseSchemaNode> casesInit = new TreeMap<>();
+    @Override
+    public @NonNull QName argument() {
+        return path.getLastComponent();
+    }
 
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof AugmentationSchemaNode) {
-                final AugmentationSchemaNode augmentationSchema = (AugmentationSchemaNode) effectiveStatement;
-                augmentationsInit.add(augmentationSchema);
-            }
-            if (effectiveStatement instanceof CaseSchemaNode) {
-                final CaseSchemaNode choiceCaseNode = (CaseSchemaNode) effectiveStatement;
-                // FIXME: we may be overwriting a previous entry, is that really okay?
-                casesInit.put(choiceCaseNode.getQName(), choiceCaseNode);
-            }
-        }
+    @Override
+    public QName getQName() {
+        return argument();
+    }
 
-        this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-        this.cases = ImmutableSortedMap.copyOfSorted(casesInit);
+    @Override
+    public SchemaPath getPath() {
+        return path;
+    }
 
-        final Optional<String> defaultArg = findFirstEffectiveSubstatementArgument(DefaultEffectiveStatement.class);
-        if (defaultArg.isPresent()) {
-            final String arg = defaultArg.get();
-            final QName qname;
-            try {
-                qname = QName.create(getQName(), arg);
-            } catch (IllegalArgumentException e) {
-                throw new SourceException(ctx.getStatementSourceReference(), "Default statement has invalid name '%s'",
-                    arg, e);
-            }
-
-            // FIXME: this does not work with submodules, as they are
-            defaultCase = InferenceException.throwIfNull(cases.get(qname), ctx.getStatementSourceReference(),
-                "Default statement refers to missing case %s", qname);
-        } else {
-            defaultCase = null;
-        }
-
-        mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
-                .booleanValue();
+    @Override
+    public int flags() {
+        return flags;
     }
 
     @Override
     public Optional<ChoiceSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
-    }
-
-    @Override
-    public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
-        return augmentations;
     }
 
     @Override
@@ -102,11 +83,6 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
     @Override
     public Optional<CaseSchemaNode> getDefaultCase() {
         return Optional.ofNullable(defaultCase);
-    }
-
-    @Override
-    public boolean isMandatory() {
-        return mandatory;
     }
 
     @Override
