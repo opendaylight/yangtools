@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.ActionNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.AugmentationTargetMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class ContainerEffectiveStatementImpl
-        extends DefaultWithDataTree<QName, ContainerStatement, ContainerEffectiveStatement>
+        extends WithSubstatements<QName, ContainerStatement, ContainerEffectiveStatement>
         implements ContainerEffectiveStatement, ContainerSchemaNode, DerivableSchemaNode,
             DataSchemaNodeMixin<QName, ContainerStatement>, DataNodeContainerMixin<QName, ContainerStatement>,
             ActionNodeContainerMixin<QName, ContainerStatement>,
@@ -46,7 +46,6 @@ final class ContainerEffectiveStatementImpl
             AugmentationTargetMixin<QName, ContainerStatement> {
 
     private final int flags;
-    private final @NonNull Object substatements;
     private final @NonNull SchemaPath path;
     private final @Nullable ContainerSchemaNode original;
 
@@ -59,15 +58,9 @@ final class ContainerEffectiveStatementImpl
         EffectiveStmtUtils.checkUniqueTypedefs(ctx, substatements);
         EffectiveStmtUtils.checkUniqueUses(ctx, substatements);
 
-        this.substatements = maskList(substatements);
         this.path = requireNonNull(path);
         this.original = original;
         this.flags = flags;
-    }
-
-    @Override
-    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return unmaskList(substatements);
     }
 
     @Override

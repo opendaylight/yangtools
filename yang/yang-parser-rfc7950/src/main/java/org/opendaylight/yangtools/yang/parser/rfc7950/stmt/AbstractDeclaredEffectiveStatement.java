@@ -207,6 +207,22 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      */
     public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>,
             E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
+        public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>,
+                E extends DataTreeAwareEffectiveStatement<A, D>> extends DefaultWithDataTree<A, D, E> {
+            private final @NonNull Object substatements;
+
+            protected WithSubstatements(final D declared, final StmtContext<?, ?, ?> ctx,
+                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(declared, ctx, substatements);
+                this.substatements = maskList(substatements);
+            }
+
+            @Override
+            public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+                return unmaskList(substatements);
+            }
+        }
+
         private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTree;
         private final @NonNull D declared;
