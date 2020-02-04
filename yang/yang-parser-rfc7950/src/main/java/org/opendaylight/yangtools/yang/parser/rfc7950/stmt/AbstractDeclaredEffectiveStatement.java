@@ -176,6 +176,22 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      */
     public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>,
             E extends SchemaTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
+        public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>,
+                E extends SchemaTreeAwareEffectiveStatement<A, D>> extends DefaultWithSchemaTree<A, D, E> {
+            private final @NonNull Object substatements;
+
+            protected WithSubstatements(final D declared, final StmtContext<?, ?, ?> ctx,
+                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(declared, ctx, substatements);
+                this.substatements = maskList(substatements);
+            }
+
+            @Override
+            public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+                return unmaskList(substatements);
+            }
+        }
+
         private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull D declared;
 
