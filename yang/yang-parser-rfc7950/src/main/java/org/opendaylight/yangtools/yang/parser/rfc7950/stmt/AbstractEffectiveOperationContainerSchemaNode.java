@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import java.util.Objects;
@@ -18,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-@Beta
+@Deprecated(forRemoval = true)
 public abstract class AbstractEffectiveOperationContainerSchemaNode<D extends DeclaredStatement<QName>>
         extends AbstractEffectiveContainerSchemaNode<D> {
     protected AbstractEffectiveOperationContainerSchemaNode(final StmtContext<QName, D, ?> ctx) {
