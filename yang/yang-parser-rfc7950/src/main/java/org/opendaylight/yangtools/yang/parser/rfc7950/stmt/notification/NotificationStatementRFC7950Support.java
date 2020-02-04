@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
  * Class providing necessary support for processing YANG 1.1 Notification
@@ -57,23 +58,21 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
     }
 
     @Override
-    public NotificationEffectiveStatement createEffective(
-            final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx) {
-        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS),
-            ctx.getStatementSourceReference(),
-            "Notification %s is defined within an rpc, action, or another notification",
-            ctx.getStatementArgument());
-        SourceException.throwIf(!StmtContextUtils.hasAncestorOfTypeWithChildOfType(ctx, YangStmtMapping.LIST,
-            YangStmtMapping.KEY), ctx.getStatementSourceReference(),
-            "Notification %s is defined within a list that has no key statement", ctx.getStatementArgument());
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.CASE),
-            ctx.getStatementSourceReference(), "Notification %s is defined within a case statement",
-            ctx.getStatementArgument());
-        return new NotificationEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+
+    @Override
+    void checkEffective(final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx) {
+        final StatementSourceReference ref = ctx.getStatementSourceReference();
+        final QName argument = ctx.getStatementArgument();
+        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS), ref,
+            "Notification %s is defined within an rpc, action, or another notification", argument);
+        SourceException.throwIf(
+            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(ctx, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
+            "Notification %s is defined within a list that has no key statement", argument);
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.CASE), ref,
+            "Notification %s is defined within a case statement", argument);
     }
 }
