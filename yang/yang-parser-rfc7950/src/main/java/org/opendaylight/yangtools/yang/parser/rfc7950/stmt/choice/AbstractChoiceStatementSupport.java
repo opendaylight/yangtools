@@ -7,15 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -23,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractChoiceStatementSupport
-        extends AbstractQNameStatementSupport<ChoiceStatement, ChoiceEffectiveStatement>
+        extends BaseQNameStatementSupport<ChoiceStatement, ChoiceEffectiveStatement>
         implements ImplicitParentAwareStatementSupport {
     AbstractChoiceStatementSupport() {
         super(YangStmtMapping.CHOICE);
@@ -36,10 +40,8 @@ abstract class AbstractChoiceStatementSupport
 
     @Override
     public final Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
-        if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmtDef)) {
-            return Optional.of(implictCase());
-        }
-        return Optional.empty();
+        return YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmtDef) ? Optional.of(implictCase())
+                : Optional.empty();
     }
 
     @Override
@@ -48,13 +50,28 @@ abstract class AbstractChoiceStatementSupport
     }
 
     @Override
-    public final ChoiceStatement createDeclared(final StmtContext<QName, ChoiceStatement, ?> ctx) {
-        return new ChoiceStatementImpl(ctx);
+    protected final ChoiceStatement createDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularChoiceStatement(ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
-    public final ChoiceEffectiveStatement createEffective(
-            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx) {
+    protected final ChoiceStatement createEmptyDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx) {
+        return new EmptyChoiceStatement(ctx.coerceStatementArgument());
+    }
+
+    @Override
+    protected final ChoiceEffectiveStatement createEffective(
+            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx,
+            final ChoiceStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        // TODO Auto-generated method stub
+        return new ChoiceEffectiveStatementImpl(ctx);
+    }
+
+    @Override
+    protected final ChoiceEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx, final ChoiceStatement declared) {
+        // TODO Auto-generated method stub
         return new ChoiceEffectiveStatementImpl(ctx);
     }
 

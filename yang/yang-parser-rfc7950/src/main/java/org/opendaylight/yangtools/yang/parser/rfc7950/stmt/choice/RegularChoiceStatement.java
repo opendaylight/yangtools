@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 
-final class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
-        implements ChoiceStatement {
-    ChoiceStatementImpl(final StmtContext<QName, ChoiceStatement, ?> context) {
-        super(context);
+final class RegularChoiceStatement extends WithSubstatements implements ChoiceStatement {
+    RegularChoiceStatement(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(argument, substatements);
     }
 }
