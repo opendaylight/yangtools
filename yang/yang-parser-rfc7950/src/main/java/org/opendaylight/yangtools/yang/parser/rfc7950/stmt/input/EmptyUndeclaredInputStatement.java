@@ -8,11 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 
-class EmptyInputStatement extends WithQNameArgument implements InputStatement {
-    EmptyInputStatement(final QName argument) {
+final class EmptyUndeclaredInputStatement extends EmptyInputStatement {
+    EmptyUndeclaredInputStatement(final QName argument) {
         super(argument);
+    }
+
+    @Override
+    public StatementSource getStatementSource() {
+        return StatementSource.CONTEXT;
     }
 }

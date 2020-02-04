@@ -5,14 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 
-class EmptyInputStatement extends WithQNameArgument implements InputStatement {
-    EmptyInputStatement(final QName argument) {
+final class EmptyUndeclaredOutputStatement extends EmptyOutputStatement {
+    EmptyUndeclaredOutputStatement(final QName argument) {
         super(argument);
+    }
+
+    @Override
+    public StatementSource getStatementSource() {
+        return StatementSource.CONTEXT;
     }
 }

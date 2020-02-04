@@ -46,7 +46,7 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
             final D declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final StatementSource source = ctx.getStatementSource();
         final int flags = computeFlags(ctx, substatements);
-        switch (ctx.getStatementSource()) {
+        switch (source) {
             case CONTEXT:
                 return createUndeclaredEffective(flags, ctx, substatements);
             case DECLARATION:
