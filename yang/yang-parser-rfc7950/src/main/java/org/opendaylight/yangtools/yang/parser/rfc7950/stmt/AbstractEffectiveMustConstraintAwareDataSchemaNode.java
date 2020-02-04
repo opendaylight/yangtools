@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -17,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-@Beta
+@Deprecated(forRemoval = true)
 public abstract class AbstractEffectiveMustConstraintAwareDataSchemaNode<D extends DeclaredStatement<QName>>
         extends AbstractEffectiveDataSchemaNode<D> implements MustConstraintAware {
     private static final VarHandle MUST_CONSTRAINTS;

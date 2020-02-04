@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * The "anydata" statement defines an interior node in the schema tree. It takes one argument, which is an identifier,
@@ -22,6 +24,9 @@ import org.opendaylight.yangtools.yang.common.QName;
  */
 @Beta
 public interface AnydataStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
-    MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
-
+        MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.ANYDATA;
+    }
 }

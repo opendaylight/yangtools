@@ -7,19 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 
+import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class AnyxmlStatementSupport
-        extends AbstractQNameStatementSupport<AnyxmlStatement, AnyxmlEffectiveStatement> {
+        extends BaseQNameStatementSupport<AnyxmlStatement, AnyxmlEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .ANYXML)
         .addOptional(YangStmtMapping.CONFIG)
@@ -52,18 +61,47 @@ public final class AnyxmlStatementSupport
     }
 
     @Override
-    public AnyxmlStatement createDeclared(final StmtContext<QName, AnyxmlStatement, ?> ctx) {
-        return new AnyxmlStatementImpl(ctx);
-    }
-
-    @Override
-    public AnyxmlEffectiveStatement createEffective(
-            final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx) {
-        return new AnyxmlEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected AnyxmlStatement createDeclared(final StmtContext<QName, AnyxmlStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularAnyxmlStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected AnyxmlStatement createEmptyDeclared(final StmtContext<QName, AnyxmlStatement, ?> ctx) {
+        return new EmptyAnyxmlStatement(ctx.coerceStatementArgument());
+    }
+
+    @Override
+    protected AnyxmlEffectiveStatement createEffective(
+            final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx,
+            final AnyxmlStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularAnyxmlEffectiveStatement(declared, ctx.getSchemaPath().get(),
+            computeFlags(ctx, substatements), findOriginal(ctx),substatements);
+    }
+
+    @Override
+    protected AnyxmlEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx, final AnyxmlStatement declared) {
+        return new EmptyAnyxmlEffectiveStatement(declared, ctx.getSchemaPath().get(),
+            computeFlags(ctx, ImmutableList.of()), findOriginal(ctx));
+    }
+
+    private static int computeFlags(final StmtContext<?, ?, ?> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new FlagsBuilder()
+                .setHistory(ctx.getCopyHistory())
+                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+                .setConfiguration(ctx.isConfiguration())
+                .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
+                .toFlags();
+    }
+
+    private static @Nullable AnyxmlSchemaNode findOriginal(final StmtContext<?, ?, ?> ctx) {
+        return (AnyxmlSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
     }
 }

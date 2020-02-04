@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 
-import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 
 /**
  * YANG 1.1 AnyData declared statement implementation.
  */
-@Beta
-final class AnydataStatementImpl extends AbstractDeclaredStatement<QName> implements AnydataStatement {
-    AnydataStatementImpl(final StmtContext<QName, AnydataStatement, ?> context) {
-        super(context);
+final class RegularAnydataStatement extends WithSubstatements implements AnydataStatement {
+    RegularAnydataStatement(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(argument, substatements);
     }
 }
