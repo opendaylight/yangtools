@@ -26,11 +26,6 @@ interface CaseEffectiveStatementMixin extends CaseEffectiveStatement, CaseSchema
 
     @Override
     default @NonNull QName argument() {
-        return getPath().getLastComponent();
-    }
-
-    @Override
-    default @NonNull QName getQName() {
-        return argument();
+        return getQName();
     }
 }
