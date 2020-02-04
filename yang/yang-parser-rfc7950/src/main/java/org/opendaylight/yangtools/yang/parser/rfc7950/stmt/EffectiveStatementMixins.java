@@ -329,15 +329,10 @@ public final class EffectiveStatementMixins {
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
             extends ContainerSchemaNode, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
                     MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D>, AugmentationTargetMixin<QName, D>,
-                    CopyableMixin<QName, D> {
+                    SchemaNodeMixin<QName, D>, CopyableMixin<QName, D> {
         @Override
         default @NonNull QName argument() {
-            return getPath().getLastComponent();
-        }
-
-        @Override
-        default QName getQName() {
-            return argument();
+            return getQName();
         }
 
         @Override
@@ -386,12 +381,7 @@ public final class EffectiveStatementMixins {
                     MandatoryMixin<QName, D>, MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D> {
         @Override
         default @NonNull QName argument() {
-            return getPath().getLastComponent();
-        }
-
-        @Override
-        default QName getQName() {
-            return argument();
+            return getQName();
         }
     }
 
@@ -404,12 +394,7 @@ public final class EffectiveStatementMixins {
             extends SchemaNodeMixin<QName, D>, OperationDefinition {
         @Override
         default @NonNull QName argument() {
-            return getPath().getLastComponent();
-        }
-
-        @Override
-        default QName getQName() {
-            return argument();
+            return getQName();
         }
 
         @Override

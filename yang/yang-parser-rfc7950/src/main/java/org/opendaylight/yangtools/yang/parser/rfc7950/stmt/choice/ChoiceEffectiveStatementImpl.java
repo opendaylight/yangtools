@@ -53,12 +53,7 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
 
     @Override
     public @NonNull QName argument() {
-        return path.getLastComponent();
-    }
-
-    @Override
-    public QName getQName() {
-        return argument();
+        return getQName();
     }
 
     @Override
