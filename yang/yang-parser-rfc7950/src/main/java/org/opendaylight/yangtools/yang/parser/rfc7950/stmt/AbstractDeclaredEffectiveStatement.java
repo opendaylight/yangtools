@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -28,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStat
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -128,6 +130,56 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         @Override
         public final D getDeclared() {
             return declared;
+        }
+    }
+
+    /**
+     * Utility class for implementing DataNodeContainer-type statements.
+     */
+    public abstract static class DefaultDataNodeContainer<A, D extends DeclaredStatement<A>> extends Default<A, D>
+            implements DataNodeContainerMixin<A, D> {
+        private final @NonNull Object substatements;
+
+        // Lazily initialized
+        private volatile @Nullable ImmutableMap<QName, DataSchemaNode> dataChildren;
+
+        protected DefaultDataNodeContainer(final D declared,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(declared);
+            this.substatements = maskList(substatements);
+        }
+
+        @Override
+        public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+            return unmaskList(substatements);
+        }
+
+        @Override
+        public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
+            return Optional.ofNullable(dataChildren().get(requireNonNull(name)));
+        }
+
+        private @NonNull ImmutableMap<QName, DataSchemaNode> dataChildren() {
+            final ImmutableMap<QName, DataSchemaNode> local = dataChildren;
+            return local != null ? local : createDataChilden();
+        }
+
+        private synchronized @NonNull ImmutableMap<QName, DataSchemaNode> createDataChilden() {
+            final ImmutableMap<QName, DataSchemaNode> local = dataChildren;
+            if (local != null) {
+                return local;
+            }
+
+            final Builder<QName, DataSchemaNode> builder = ImmutableMap.builder();
+            for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+                if (stmt instanceof DataSchemaNode) {
+                    final DataSchemaNode node = (DataSchemaNode) stmt;
+                    builder.put(node.getQName(), node);
+                }
+            }
+            final ImmutableMap<QName, DataSchemaNode> result = builder.build();
+            dataChildren = result;
+            return result;
         }
     }
 
