@@ -7,60 +7,52 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
-import com.google.common.collect.ImmutableSet;
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableList;
 import java.util.Objects;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedDataNodeContainer;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultDataNodeContainer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.ActionNodeContainerMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.AddedByUsesMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.NotificationNodeContainerMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class GroupingEffectiveStatementImpl
-        extends AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement>
+        extends DefaultDataNodeContainer<QName, GroupingStatement>
         implements GroupingDefinition, GroupingEffectiveStatement,
+            SchemaNodeMixin<QName, GroupingStatement>, ActionNodeContainerMixin<QName, GroupingStatement>,
             ActionNodeContainerCompat<QName, GroupingStatement>,
-            NotificationNodeContainerCompat<QName, GroupingStatement> {
-    private final @NonNull QName qname;
+            NotificationNodeContainerCompat<QName, GroupingStatement>,
+            NotificationNodeContainerMixin<QName, GroupingStatement>, AddedByUsesMixin<QName, GroupingStatement> {
     private final @NonNull SchemaPath path;
-    private final boolean addedByUses;
-    private final @NonNull ImmutableSet<ActionDefinition> actions;
-    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
+    private final int flags;
 
-    GroupingEffectiveStatementImpl(final StmtContext<QName, GroupingStatement, GroupingEffectiveStatement> ctx) {
-        super(ctx);
-
-        qname = ctx.coerceStatementArgument();
-        path = ctx.getSchemaPath().get();
-        addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
-
-        final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
-        final ImmutableSet.Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof ActionDefinition) {
-                actionsBuilder.add((ActionDefinition) effectiveStatement);
-            }
-            if (effectiveStatement instanceof NotificationDefinition) {
-                notificationsBuilder.add((NotificationDefinition) effectiveStatement);
-            }
-        }
-
-        this.actions = actionsBuilder.build();
-        this.notifications = notificationsBuilder.build();
+    GroupingEffectiveStatementImpl(final GroupingStatement declared, final SchemaPath path, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final StatementSourceReference ref) {
+        super(declared, ref, substatements);
+        this.path = requireNonNull(path);
+        this.flags = flags;
     }
 
     @Override
-    public QName getQName() {
-        return qname;
+    public int flags() {
+        return flags;
+    }
+
+    @Override
+    public @Nullable QName argument() {
+        return getQName();
     }
 
     @Override
@@ -69,25 +61,10 @@ final class GroupingEffectiveStatementImpl
     }
 
     @Override
-    public boolean isAddedByUses() {
-        return addedByUses;
-    }
-
-    @Override
-    public Set<ActionDefinition> getActions() {
-        return actions;
-    }
-
-    @Override
-    public Set<NotificationDefinition> getNotifications() {
-        return notifications;
-    }
-
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(qname);
+        result = prime * result + Objects.hashCode(getQName());
         result = prime * result + Objects.hashCode(path);
         return result;
     }
@@ -97,18 +74,15 @@ final class GroupingEffectiveStatementImpl
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         final GroupingEffectiveStatementImpl other = (GroupingEffectiveStatementImpl) obj;
-        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
+        return Objects.equals(getQName(), other.getQName()) && Objects.equals(path, other.path);
     }
 
     @Override
     public String toString() {
-        return GroupingEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + qname + "]";
+        return GroupingEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
     }
 }

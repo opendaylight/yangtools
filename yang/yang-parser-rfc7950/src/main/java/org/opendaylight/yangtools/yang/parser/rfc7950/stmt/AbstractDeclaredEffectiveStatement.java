@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -28,7 +29,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStat
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
@@ -128,6 +131,46 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         @Override
         public final D getDeclared() {
             return declared;
+        }
+    }
+
+    /**
+     * Utility class for implementing DataNodeContainer-type statements.
+     */
+    public abstract static class DefaultDataNodeContainer<A, D extends DeclaredStatement<A>> extends Default<A, D>
+            implements DataNodeContainerMixin<A, D> {
+        private final @NonNull ImmutableMap<QName, DataSchemaNode> dataChildren;
+        private final @NonNull Object substatements;
+
+        protected DefaultDataNodeContainer(final D declared, final StatementSourceReference ref,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(declared);
+            this.substatements = maskList(substatements);
+
+            // Note: we do not leak this map, so iteration order does not matter
+            final Map<QName, DataSchemaNode> tmp = new HashMap<>();
+
+            for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+                if (stmt instanceof DataSchemaNode) {
+                    final DataSchemaNode node = (DataSchemaNode) stmt;
+                    final QName id = node.getQName();
+                    final DataSchemaNode prev = tmp.put(id, node);
+                    SourceException.throwIf(prev != null, ref,
+                            "Cannot add child with name %s, a conflicting child already exists", id);
+                }
+            }
+
+            dataChildren = ImmutableMap.copyOf(tmp);
+        }
+
+        @Override
+        public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+            return unmaskList(substatements);
+        }
+
+        @Override
+        public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
+            return Optional.ofNullable(dataChildren.get(requireNonNull(name)));
         }
     }
 
