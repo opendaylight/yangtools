@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
 
-final class EmptyOutputStatement extends WithQNameArgument implements OutputStatement {
+class EmptyOutputStatement extends WithQNameArgument implements OutputStatement {
     EmptyOutputStatement(final QName argument) {
         super(argument);
     }

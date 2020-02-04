@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseOperationContainerStatementSupport;
@@ -33,12 +34,28 @@ abstract class AbstractOutputStatementSupport
     @Override
     protected final OutputStatement createDeclared(final StmtContext<QName, OutputStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularOutputStatement(ctx.coerceStatementArgument(), substatements);
+        final StatementSource source = ctx.getStatementSource();
+        switch (ctx.getStatementSource()) {
+            case CONTEXT:
+                return new RegularUndeclaredOutputStatement(ctx.coerceStatementArgument(), substatements);
+            case DECLARATION:
+                return new RegularOutputStatement(ctx.coerceStatementArgument(), substatements);
+            default:
+                throw new IllegalStateException("Unhandled statement source " + source);
+        }
     }
 
     @Override
     protected final OutputStatement createEmptyDeclared(final StmtContext<QName, OutputStatement, ?> ctx) {
-        return new EmptyOutputStatement(ctx.coerceStatementArgument());
+        final StatementSource source = ctx.getStatementSource();
+        switch (ctx.getStatementSource()) {
+            case CONTEXT:
+                return new EmptyUndeclaredOutputStatement(ctx.coerceStatementArgument());
+            case DECLARATION:
+                return new EmptyOutputStatement(ctx.coerceStatementArgument());
+            default:
+                throw new IllegalStateException("Unhandled statement source " + source);
+        }
     }
 
     @Override

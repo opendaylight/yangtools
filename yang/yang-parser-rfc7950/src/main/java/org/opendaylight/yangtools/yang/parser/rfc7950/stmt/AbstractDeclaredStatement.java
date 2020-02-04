@@ -29,7 +29,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
     }
 
     @Override
-    public final StatementSource getStatementSource() {
+    public StatementSource getStatementSource() {
         return StatementSource.DECLARATION;
     }
 
