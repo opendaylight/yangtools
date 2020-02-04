@@ -15,12 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 /**
  * Specialization of {@link BaseQNameStatementSupport} for {@code input} and {@code output} statements.
@@ -30,39 +27,25 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  */
 @Beta
 public abstract class BaseOperationContainerStatementSupport<D extends DeclaredStatement<QName>,
-        E extends EffectiveStatement<QName, D>> extends BaseQNameStatementSupport<D, E> {
+        E extends EffectiveStatement<QName, D>> extends BaseImplicitStatementSupport<D, E> {
     protected BaseOperationContainerStatementSupport(final StatementDefinition publicDefinition) {
         super(publicDefinition);
     }
 
     @Override
-    public final void onStatementAdded(final Mutable<QName, D, E> stmt) {
-        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
-    }
-
-    @Override
-    protected final E createEffective(
-            final StmtContext<QName, D, E> ctx,
-            final D declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final StatementSource source = ctx.getStatementSource();
-        final int flags = computeFlags(ctx, substatements);
-        switch (source) {
-            case CONTEXT:
-                return createUndeclaredEffective(flags, ctx, substatements);
-            case DECLARATION:
-                return createDeclaredEffective(flags, ctx, substatements, declared);
-            default:
-                throw new IllegalStateException("Unhandled statement source " + source);
-        }
-    }
-
-    @Override
-    protected final E createEmptyEffective(final StmtContext<QName, D, E> ctx, final D declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+    protected final @NonNull E createDeclaredEffective(final StmtContext<QName, D, E> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final D declared) {
+        return createDeclaredEffective(computeFlags(ctx, substatements), ctx, substatements, declared);
     }
 
     protected abstract @NonNull E createDeclaredEffective(int flags, @NonNull StmtContext<QName, D, E> ctx,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements, @NonNull D declared);
+
+    @Override
+    protected final E createUndeclaredEffective(final StmtContext<QName, D, E> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return createUndeclaredEffective(computeFlags(ctx, substatements), ctx, substatements);
+    }
 
     protected abstract @NonNull E createUndeclaredEffective(int flags, @NonNull StmtContext<QName, D, E> ctx,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
