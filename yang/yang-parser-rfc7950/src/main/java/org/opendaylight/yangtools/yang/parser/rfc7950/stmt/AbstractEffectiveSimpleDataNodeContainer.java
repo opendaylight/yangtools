@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
+@Deprecated(forRemoval = true)
 public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, D> implements AugmentationTarget, DataSchemaNode {
 

@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
 
-final class CaseStatementImpl extends AbstractDeclaredStatement<QName> implements CaseStatement {
-    CaseStatementImpl(final StmtContext<QName, CaseStatement, ?> context) {
-        super(context);
+class EmptyCaseStatement extends WithQNameArgument implements CaseStatement {
+    EmptyCaseStatement(final QName argument) {
+        super(argument);
     }
 }
