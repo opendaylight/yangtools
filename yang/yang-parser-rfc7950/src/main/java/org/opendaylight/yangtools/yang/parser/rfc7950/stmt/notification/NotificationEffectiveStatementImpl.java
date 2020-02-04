@@ -7,79 +7,56 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
-import com.google.common.collect.ImmutableSet;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.util.LinkedHashSet;
+import com.google.common.collect.ImmutableList;
 import java.util.Objects;
-import java.util.Set;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedDataNodeContainer;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.AugmentationTargetMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.CopyableMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class NotificationEffectiveStatementImpl
-        extends AbstractEffectiveDocumentedDataNodeContainer<QName, NotificationStatement>
-        implements NotificationDefinition, NotificationEffectiveStatement {
-    private static final VarHandle MUST_CONSTRAINTS;
+        extends WithSubstatements<QName, NotificationStatement, NotificationEffectiveStatement>
+        implements NotificationDefinition, NotificationEffectiveStatement,
+                   SchemaNodeMixin<QName, NotificationStatement>, DataNodeContainerMixin<QName, NotificationStatement>,
+                   AugmentationTargetMixin<QName, NotificationStatement>, CopyableMixin<QName, NotificationStatement>,
+                   MustConstraintMixin<QName, NotificationStatement> {
 
-    static {
-        try {
-            MUST_CONSTRAINTS = MethodHandles.lookup().findVarHandle(
-                NotificationEffectiveStatementImpl.class, "mustConstraints", ImmutableSet.class);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
-
-    private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
-    private final ImmutableSet<AugmentationSchemaNode> augmentations;
-    private final boolean augmenting;
-    private final boolean addedByUses;
+    private final int flags;
 
-    @SuppressWarnings("unused")
-    private volatile ImmutableSet<MustDefinition> mustConstraints;
-
-    NotificationEffectiveStatementImpl(
-            final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx) {
-        super(ctx);
-        this.qname = ctx.coerceStatementArgument();
+    NotificationEffectiveStatementImpl(final NotificationStatement declared, final int flags,
+            final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared, ctx, substatements);
         this.path = ctx.getSchemaPath().get();
-
-        // initSubstatementCollections
-        final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof AugmentationSchemaNode) {
-                final AugmentationSchemaNode augmentationSchema = (AugmentationSchemaNode) effectiveStatement;
-                augmentationsInit.add(augmentationSchema);
-            }
-        }
-        this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-
-        // initCopyType
-        final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
-            this.augmenting = true;
-            this.addedByUses = true;
-        } else {
-            this.augmenting = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
-            this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
-        }
+        this.flags = flags;
     }
 
     @Override
-    public QName getQName() {
-        return qname;
+    public @NonNull QName argument() {
+        return getQName();
+    }
+
+    @Override
+    public Optional<DataSchemaNode> findDataChildByName(final QName name) {
+        return findDataSchemaNode(name);
+    }
+
+    @Override
+    public int flags() {
+        return flags;
     }
 
     @Override
@@ -88,32 +65,10 @@ final class NotificationEffectiveStatementImpl
     }
 
     @Override
-    public ImmutableSet<MustDefinition> getMustConstraints() {
-        return derivedSet(MUST_CONSTRAINTS, MustDefinition.class);
-    }
-
-    @Override
-    public Set<AugmentationSchemaNode> getAvailableAugmentations() {
-        return augmentations;
-    }
-
-    @Deprecated
-    @Override
-    public boolean isAugmenting() {
-        return augmenting;
-    }
-
-    @Deprecated
-    @Override
-    public boolean isAddedByUses() {
-        return addedByUses;
-    }
-
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(qname);
+        result = prime * result + Objects.hashCode(getQName());
         result = prime * result + Objects.hashCode(path);
         return result;
     }
@@ -123,18 +78,16 @@ final class NotificationEffectiveStatementImpl
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         final NotificationEffectiveStatementImpl other = (NotificationEffectiveStatementImpl) obj;
-        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
+        return Objects.equals(getQName(), other.getQName()) && Objects.equals(path, other.path);
     }
 
     @Override
     public String toString() {
-        return NotificationEffectiveStatementImpl.class.getSimpleName() + "[qname=" + qname + ", path=" + path + "]";
+        return NotificationEffectiveStatementImpl.class.getSimpleName() + "[qname=" + getQName() + ", path=" + path
+                + "]";
     }
 }
