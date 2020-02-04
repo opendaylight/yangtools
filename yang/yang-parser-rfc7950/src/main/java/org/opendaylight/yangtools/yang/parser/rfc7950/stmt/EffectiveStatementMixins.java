@@ -464,7 +464,7 @@ public final class EffectiveStatementMixins {
                         bits = STATUS_DEPRECATED;
                         break;
                     case OBSOLETE:
-                        bits = STATUS_DEPRECATED;
+                        bits = STATUS_OBSOLETE;
                         break;
                     default:
                         throw new IllegalStateException("Unhandled status " + status);
