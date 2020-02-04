@@ -25,12 +25,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithSchemaTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement>
+final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, ChoiceStatement, ChoiceEffectiveStatement>
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode {
 
     private final ImmutableSet<AugmentationSchemaNode> augmentations;
@@ -39,8 +39,8 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
     private final ChoiceSchemaNode original;
     private final boolean mandatory;
 
-    ChoiceEffectiveStatementImpl(final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx) {
-        super(ctx);
+    ChoiceEffectiveStatementImpl(final ChoiceStatement declared, final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx) {
+        super(declared, ctx. substatements);
         this.original = (ChoiceSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         // initSubstatementCollectionsAndFields
