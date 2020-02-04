@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableSet;
@@ -26,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-@Beta
+@Deprecated(forRemoval = true)
 public abstract class AbstractEffectiveOperationDefinition<D extends DeclaredStatement<QName>>
         extends AbstractEffectiveSchemaNode<D> implements OperationDefinition {
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;

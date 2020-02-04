@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
 
-final class RpcStatementImpl extends AbstractDeclaredStatement<QName> implements RpcStatement {
-    RpcStatementImpl(final StmtContext<QName, RpcStatement, ?> context) {
-        super(context);
+final class EmptyRpcStatement extends WithQNameArgument implements RpcStatement {
+    EmptyRpcStatement(final QName argument) {
+        super(argument);
     }
 }
