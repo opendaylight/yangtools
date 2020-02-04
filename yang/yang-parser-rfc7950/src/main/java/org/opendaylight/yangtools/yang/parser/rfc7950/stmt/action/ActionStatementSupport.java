@@ -7,27 +7,33 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC7950Support;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
-public final class ActionStatementSupport
-        extends AbstractQNameStatementSupport<ActionStatement, ActionEffectiveStatement> {
+public final class ActionStatementSupport extends BaseQNameStatementSupport<ActionStatement, ActionEffectiveStatement> {
     private static final ImmutableSet<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(
             YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
 
@@ -63,30 +69,6 @@ public final class ActionStatementSupport
     }
 
     @Override
-    public ActionStatement createDeclared(
-            final StmtContext<QName, ActionStatement, ?> ctx) {
-        return new ActionStatementImpl(ctx);
-    }
-
-    @Override
-    public ActionEffectiveStatement createEffective(
-            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx) {
-        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS),
-                ctx.getStatementSourceReference(),
-                "Action %s is defined within a notification, rpc or another action", ctx.getStatementArgument());
-        SourceException.throwIf(!StmtContextUtils.hasAncestorOfTypeWithChildOfType(ctx, YangStmtMapping.LIST,
-                YangStmtMapping.KEY), ctx.getStatementSourceReference(),
-                "Action %s is defined within a list that has no key statement", ctx.getStatementArgument());
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.CASE),
-                ctx.getStatementSourceReference(), "Action %s is defined within a case statement",
-                ctx.getStatementArgument());
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.MODULE),
-                ctx.getStatementSourceReference(), "Action %s is defined at the top level of a module",
-                ctx.getStatementArgument());
-        return new ActionEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     public void onFullDefinitionDeclared(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
@@ -104,4 +86,51 @@ public final class ActionStatementSupport
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
+
+    @Override
+    protected ActionStatement createDeclared(final StmtContext<QName, ActionStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularActionStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected ActionStatement createEmptyDeclared(final StmtContext<QName, ActionStatement, ?> ctx) {
+        return new EmptyActionStatement(ctx.coerceStatementArgument());
+    }
+
+    @Override
+    protected ActionEffectiveStatement createEffective(
+            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx, final ActionStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final QName argument = ctx.coerceStatementArgument();
+        final StatementSourceReference ref = ctx.getStatementSourceReference();
+        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS), ref,
+            "Action %s is defined within a notification, rpc or another action", argument);
+        SourceException.throwIf(
+            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(ctx, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
+            "Action %s is defined within a list that has no key statement", argument);
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.CASE), ref,
+            "Action %s is defined within a case statement", argument);
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.MODULE), ref,
+            "Action %s is defined at the top level of a module", argument);
+
+        return new ActionEffectiveStatementImpl(declared, ctx.getSchemaPath().get(), computeFlags(ctx, substatements),
+            ctx, substatements);
+    }
+
+    @Override
+    protected ActionEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx, final ActionStatement declared) {
+        throw new IllegalStateException("Missing implicit input/output statements at "
+            + ctx.getStatementSourceReference());
+    }
+
+    private static int computeFlags(final StmtContext<?, ?, ?> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new FlagsBuilder()
+                .setHistory(ctx.getCopyHistory())
+                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+                .toFlags();
+    }
+
 }
