@@ -42,13 +42,12 @@ public final class NotificationStatementRFC6020Support extends AbstractNotificat
     }
 
     @Override
-    public NotificationEffectiveStatement createEffective(
-            final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx) {
-        return new NotificationEffectiveStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    void checkEffective(final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx) {
+        // No-op
     }
 }
