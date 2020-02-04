@@ -7,43 +7,42 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveOperationDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.CopyableMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationDefinitionMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ActionEffectiveStatementImpl extends AbstractEffectiveOperationDefinition<ActionStatement>
-        implements ActionDefinition, ActionEffectiveStatement {
-    private final boolean augmenting;
-    private final boolean addedByUses;
+final class ActionEffectiveStatementImpl extends WithSubstatements<QName, ActionStatement, ActionEffectiveStatement>
+        implements ActionDefinition, ActionEffectiveStatement, OperationDefinitionMixin<ActionStatement>,
+                   CopyableMixin<QName, ActionStatement> {
+    private final @NonNull SchemaPath path;
+    private final int flags;
 
-    ActionEffectiveStatementImpl(final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx) {
-        super(ctx);
-
-        // initCopyType
-        final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
-            this.augmenting = true;
-            this.addedByUses = true;
-        } else {
-            this.augmenting = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
-            this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
-        }
+    ActionEffectiveStatementImpl(final ActionStatement declared, final SchemaPath path, final int flags,
+            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared, ctx, substatements);
+        this.path = requireNonNull(path);
+        this.flags = flags;
     }
 
-    @Deprecated
     @Override
-    public boolean isAugmenting() {
-        return augmenting;
+    public @NonNull SchemaPath getPath() {
+        return path;
     }
 
-    @Deprecated
     @Override
-    public boolean isAddedByUses() {
-        return addedByUses;
+    public int flags() {
+        return flags;
     }
 }

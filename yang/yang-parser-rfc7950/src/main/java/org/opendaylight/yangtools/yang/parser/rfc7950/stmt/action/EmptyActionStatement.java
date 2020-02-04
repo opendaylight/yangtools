@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
 
-final class ActionStatementImpl extends AbstractDeclaredStatement<QName> implements ActionStatement {
-    ActionStatementImpl(final StmtContext<QName, ActionStatement, ?> context) {
-        super(context);
+final class EmptyActionStatement extends WithQNameArgument implements ActionStatement {
+    EmptyActionStatement(final QName argument) {
+        super(argument);
     }
 }

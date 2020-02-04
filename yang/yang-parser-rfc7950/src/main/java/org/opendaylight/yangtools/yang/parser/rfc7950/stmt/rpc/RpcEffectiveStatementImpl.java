@@ -7,16 +7,40 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveOperationDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationDefinitionMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RpcEffectiveStatementImpl extends AbstractEffectiveOperationDefinition<RpcStatement>
-        implements RpcDefinition, RpcEffectiveStatement {
-    RpcEffectiveStatementImpl(final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx) {
-        super(ctx);
+final class RpcEffectiveStatementImpl extends WithSubstatements<QName, RpcStatement, RpcEffectiveStatement>
+        implements RpcDefinition, RpcEffectiveStatement, OperationDefinitionMixin<RpcStatement> {
+    private final @NonNull SchemaPath path;
+    private final int flags;
+
+    RpcEffectiveStatementImpl(final RpcStatement declared, final SchemaPath path, final int flags,
+            final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared, ctx, substatements);
+        this.path = requireNonNull(path);
+        this.flags = flags;
+    }
+
+    @Override
+    public @NonNull SchemaPath getPath() {
+        return path;
+    }
+
+    @Override
+    public int flags() {
+        return flags;
     }
 }

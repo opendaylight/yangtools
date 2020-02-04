@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
@@ -34,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.MustConstraintAware;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -44,6 +47,8 @@ import org.opendaylight.yangtools.yang.model.api.WhenConditionAware;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
@@ -156,9 +161,7 @@ public final class EffectiveStatementMixins {
     public interface DataNodeContainerMixin<A, D extends DeclaredStatement<A>> extends DataNodeContainer, Mixin<A, D> {
         @Override
         default Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
-            // TODO: the cast here is needed to work around Java 11 javac type inference issue
-            return Collections2.transform(filterEffectiveStatements(TypedefEffectiveStatement.class),
-                TypedefEffectiveStatement::getTypeDefinition);
+            return filterTypeDefinitions(this);
         }
 
         @Override
@@ -361,7 +364,7 @@ public final class EffectiveStatementMixins {
     }
 
     /**
-     * Helper bridge for {@code anydata} and {@code anyxml} opaque data..
+     * Helper bridge for {@code anydata} and {@code anyxml} opaque data.
      *
      * @param <D> Class representing declared version of this statement.
      */
@@ -376,6 +379,44 @@ public final class EffectiveStatementMixins {
         @Override
         default QName getQName() {
             return argument();
+        }
+    }
+
+    /**
+     * Helper bridge for {@code rpc} and {@code action} operations.
+     *
+     * @param <D> Class representing declared version of this statement.
+     */
+    public interface OperationDefinitionMixin<D extends DeclaredStatement<QName>>
+            extends SchemaNodeMixin<QName, D>, OperationDefinition {
+        @Override
+        default @NonNull QName argument() {
+            return getPath().getLastComponent();
+        }
+
+        @Override
+        default QName getQName() {
+            return argument();
+        }
+
+        @Override
+        default Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
+            return filterTypeDefinitions(this);
+        }
+
+        @Override
+        default Collection<? extends GroupingDefinition> getGroupings() {
+            return filterEffectiveStatements(GroupingDefinition.class);
+        }
+
+        @Override
+        default ContainerSchemaNode getInput() {
+            return findAsContainer(this, InputEffectiveStatement.class);
+        }
+
+        @Override
+        default ContainerSchemaNode getOutput() {
+            return findAsContainer(this, OutputEffectiveStatement.class);
         }
     }
 
@@ -492,5 +533,18 @@ public final class EffectiveStatementMixins {
                 return flags;
             }
         }
+    }
+
+    static ContainerSchemaNode findAsContainer(final EffectiveStatement<?, ?> stmt,
+            final Class<? extends EffectiveStatement<QName, ?>> type) {
+        final EffectiveStatement<?, ?> statement = stmt.findFirstEffectiveSubstatement(type).get();
+        verify(statement instanceof ContainerSchemaNode, "Child statement %s is not a ContainerSchemaNode",
+            statement);
+        return (ContainerSchemaNode) statement;
+    }
+
+    static Collection<? extends TypeDefinition<?>> filterTypeDefinitions(final Mixin<?, ?> stmt) {
+        return Collections2.transform(stmt.filterEffectiveStatements(TypedefEffectiveStatement.class),
+            TypedefEffectiveStatement::getTypeDefinition);
     }
 }
