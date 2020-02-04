@@ -108,9 +108,25 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      */
     public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>,
             E extends SchemaTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
+        public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>,
+                E extends SchemaTreeAwareEffectiveStatement<A, D>> extends DefaultWithSchemaTree<A, D, E> {
+            private final @NonNull Object substatements;
+
+            protected WithSubstatements(final StmtContext<?, ?, ?> ctx,
+                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(ctx, substatements);
+                this.substatements = maskList(substatements);
+            }
+
+            @Override
+            public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+                return unmaskList(substatements);
+            }
+        }
+
         private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
 
-        protected DefaultWithSchemaTree(final D declared, final StmtContext<?, ?, ?> ctx,
+        protected DefaultWithSchemaTree(final StmtContext<?, ?, ?> ctx,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.schemaTree = ImmutableMap.copyOf(AbstractSchemaEffectiveDocumentedNode.createSchemaTreeNamespace(
                 ctx.getStatementSourceReference(), substatements));
