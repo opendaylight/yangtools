@@ -7,23 +7,38 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractChoiceStatementSupport
-        extends AbstractQNameStatementSupport<ChoiceStatement, ChoiceEffectiveStatement>
+        extends BaseQNameStatementSupport<ChoiceStatement, ChoiceEffectiveStatement>
         implements ImplicitParentAwareStatementSupport {
     AbstractChoiceStatementSupport() {
         super(YangStmtMapping.CHOICE);
@@ -36,10 +51,8 @@ abstract class AbstractChoiceStatementSupport
 
     @Override
     public final Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
-        if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmtDef)) {
-            return Optional.of(implictCase());
-        }
-        return Optional.empty();
+        return YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmtDef) ? Optional.of(implictCase())
+                : Optional.empty();
     }
 
     @Override
@@ -48,14 +61,63 @@ abstract class AbstractChoiceStatementSupport
     }
 
     @Override
-    public final ChoiceStatement createDeclared(final StmtContext<QName, ChoiceStatement, ?> ctx) {
-        return new ChoiceStatementImpl(ctx);
+    protected final ChoiceStatement createDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularChoiceStatement(ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
-    public final ChoiceEffectiveStatement createEffective(
-            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx) {
-        return new ChoiceEffectiveStatementImpl(ctx);
+    protected final ChoiceStatement createEmptyDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx) {
+        return new EmptyChoiceStatement(ctx.coerceStatementArgument());
+    }
+
+    @Override
+    protected final ChoiceEffectiveStatement createEffective(
+            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx,
+            final ChoiceStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        // FIXME: YANGTOOLS-652: this is rather unnecessary
+        final SortedMap<QName, CaseSchemaNode> cases = new TreeMap<>();
+        for (final EffectiveStatement<?, ?> effectiveStatement : substatements) {
+            if (effectiveStatement instanceof CaseSchemaNode) {
+                final CaseSchemaNode choiceCaseNode = (CaseSchemaNode) effectiveStatement;
+                // FIXME: we may be overwriting a previous entry, is that really okay?
+                cases.put(choiceCaseNode.getQName(), choiceCaseNode);
+            }
+        }
+
+        final String defaultArg = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
+        final CaseSchemaNode defaultCase;
+        if (defaultArg != null) {
+            final QName qname;
+            try {
+                qname = QName.create(ctx.coerceStatementArgument(), defaultArg);
+            } catch (IllegalArgumentException e) {
+                throw new SourceException(ctx.getStatementSourceReference(), "Default statement has invalid name '%s'",
+                    defaultArg, e);
+            }
+
+            // FIXME: this does not work with submodules, as they are
+            defaultCase = InferenceException.throwIfNull(cases.get(qname), ctx.getStatementSourceReference(),
+                "Default statement refers to missing case %s", qname);
+        } else {
+            defaultCase = null;
+        }
+
+        final int flags = new FlagsBuilder()
+                .setHistory(ctx.getCopyHistory())
+                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+                .setConfiguration(ctx.isConfiguration())
+                .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
+                .toFlags();
+
+        return new ChoiceEffectiveStatementImpl(declared, ctx, substatements, flags, cases, defaultCase,
+            (ChoiceSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null));
+    }
+
+    @Override
+    protected final ChoiceEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx, final ChoiceStatement declared) {
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 
     abstract StatementSupport<?, ?, ?> implictCase();
