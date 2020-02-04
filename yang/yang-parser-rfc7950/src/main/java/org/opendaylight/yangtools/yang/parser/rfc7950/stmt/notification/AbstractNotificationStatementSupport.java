@@ -12,13 +12,13 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractNotificationStatementSupport
-        extends AbstractQNameStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
+        extends BaseQNameStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
     AbstractNotificationStatementSupport() {
         super(YangStmtMapping.NOTIFICATION);
     }
