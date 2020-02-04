@@ -44,11 +44,6 @@ public final class OrderedByStatementSupport
     }
 
     @Override
-    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
-    }
-
-    @Override
     public String internArgument(final String rawArgument) {
         if ("user".equals(rawArgument)) {
             return "user";
