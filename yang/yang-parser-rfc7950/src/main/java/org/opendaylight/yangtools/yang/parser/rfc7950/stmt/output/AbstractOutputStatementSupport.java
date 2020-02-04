@@ -7,19 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseOperationContainerStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractOutputStatementSupport
-        extends AbstractQNameStatementSupport<OutputStatement, OutputEffectiveStatement> {
+        extends BaseOperationContainerStatementSupport<OutputStatement, OutputEffectiveStatement> {
     AbstractOutputStatementSupport() {
         super(YangStmtMapping.OUTPUT);
     }
@@ -30,18 +31,27 @@ abstract class AbstractOutputStatementSupport
     }
 
     @Override
-    public final void onStatementAdded(final Mutable<QName, OutputStatement, OutputEffectiveStatement> stmt) {
-        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
+    protected final OutputStatement createDeclared(final StmtContext<QName, OutputStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularOutputStatement(ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
-    public final OutputStatement createDeclared(final StmtContext<QName, OutputStatement, ?> ctx) {
-        return new OutputStatementImpl(ctx);
+    protected final OutputStatement createEmptyDeclared(final StmtContext<QName, OutputStatement, ?> ctx) {
+        return new EmptyOutputStatement(ctx.coerceStatementArgument());
     }
 
     @Override
-    public final OutputEffectiveStatement createEffective(
-            final StmtContext<QName, OutputStatement, OutputEffectiveStatement> ctx) {
-        return new OutputEffectiveStatementImpl(ctx);
+    protected final OutputEffectiveStatement createDeclaredEffective(final int flags,
+            final StmtContext<QName, OutputStatement, OutputEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final OutputStatement declared) {
+      return new DeclaredOutputEffectiveStatement(declared, flags, ctx, substatements);
+    }
+
+    @Override
+    protected final OutputEffectiveStatement createUndeclaredEffective(final int flags,
+            final StmtContext<QName, OutputStatement, OutputEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new UndeclaredOutputEffectiveStatement(flags, ctx, substatements);
     }
 }

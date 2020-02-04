@@ -40,11 +40,11 @@ public class Bug9241Test {
         final ContainerSchemaNode input = actionInCont.getInput();
         assertNotNull(input);
         assertEquals(1, input.getChildNodes().size());
-        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) input).getDeclared().getStatementSource());
+        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) input).getStatementSource());
 
         final ContainerSchemaNode output = actionInCont.getOutput();
         assertNotNull(output);
         assertEquals(1, output.getChildNodes().size());
-        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) output).getDeclared().getStatementSource());
+        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) output).getStatementSource());
     }
 }
