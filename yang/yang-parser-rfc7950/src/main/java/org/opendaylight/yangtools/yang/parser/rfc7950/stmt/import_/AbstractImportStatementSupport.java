@@ -48,11 +48,6 @@ abstract class AbstractImportStatementSupport
     }
 
     @Override
-    public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
-    }
-
-    @Override
     public final void onPreLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
         /*
          * Add ModuleIdentifier of a module which is required by this module.
