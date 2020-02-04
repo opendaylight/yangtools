@@ -7,6 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-public interface RpcStatement extends OperationDeclaredStatement {
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+public interface RpcStatement extends OperationDeclaredStatement {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.RPC;
+    }
 }
