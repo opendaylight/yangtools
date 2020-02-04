@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.MandatoryAware;
@@ -309,7 +310,6 @@ public final class EffectiveStatementMixins {
      *
      * @param <D> Class representing declared version of this statement.
      */
-    @Beta
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
             extends ContainerSchemaNode, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
                     MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D>, AugmentationTargetMixin<QName, D>,
@@ -357,6 +357,25 @@ public final class EffectiveStatementMixins {
 
         default String defaultToString() {
             return MoreObjects.toStringHelper(this).add("path", getPath()).toString();
+        }
+    }
+
+    /**
+     * Helper bridge for {@code anydata} and {@code anyxml} opaque data..
+     *
+     * @param <D> Class representing declared version of this statement.
+     */
+    public interface OpaqueDataSchemaNodeMixin<D extends DeclaredStatement<QName>>
+            extends DerivableSchemaNode, DataSchemaNodeMixin<QName, D>, DocumentedNodeMixin.WithStatus<QName, D>,
+                    MandatoryMixin<QName, D>, MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D> {
+        @Override
+        default @NonNull QName argument() {
+            return getPath().getLastComponent();
+        }
+
+        @Override
+        default QName getQName() {
+            return argument();
         }
     }
 
