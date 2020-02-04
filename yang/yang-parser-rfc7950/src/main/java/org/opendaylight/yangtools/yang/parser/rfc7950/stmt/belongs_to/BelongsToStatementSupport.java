@@ -48,11 +48,6 @@ public final class BelongsToStatementSupport
     }
 
     @Override
-    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
-    }
-
-    @Override
     public void onPreLinkageDeclared(final Mutable<String, BelongsToStatement, BelongsToEffectiveStatement> ctx) {
         ctx.addRequiredSource(getSourceIdentifier(ctx));
     }
