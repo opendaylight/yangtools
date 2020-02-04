@@ -111,11 +111,11 @@ public class RpcStmtTest {
         final ContainerSchemaNode input = barRpc.getInput();
         assertNotNull(input);
         assertEquals(2, input.getChildNodes().size());
-        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) input).getDeclared().getStatementSource());
+        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) input).getStatementSource());
 
         final ContainerSchemaNode output = barRpc.getOutput();
         assertNotNull(output);
         assertEquals(2, output.getChildNodes().size());
-        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) output).getDeclared().getStatementSource());
+        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) output).getStatementSource());
     }
 }

@@ -8,9 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -19,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -297,6 +301,62 @@ public final class EffectiveStatementMixins {
         @Override
         default Optional<RevisionAwareXPath> getWhenCondition() {
             return findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class);
+        }
+    }
+
+    /**
+     * Helper bridge for operation containers ({@code input} and {@code output}).
+     *
+     * @param <D> Class representing declared version of this statement.
+     */
+    @Beta
+    public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
+            extends ContainerSchemaNode, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
+                    MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D>, AugmentationTargetMixin<QName, D>,
+                    CopyableMixin<QName, D> {
+        @Override
+        default @NonNull QName argument() {
+            return getPath().getLastComponent();
+        }
+
+        @Override
+        default QName getQName() {
+            return argument();
+        }
+
+        @Override
+        default Optional<ActionDefinition> findAction(final QName qname) {
+            return Optional.empty();
+        }
+
+        @Override
+        default Optional<NotificationDefinition> findNotification(final QName qname) {
+            return Optional.empty();
+        }
+
+        @Override
+        default Collection<? extends ActionDefinition> getActions() {
+            return ImmutableSet.of();
+        }
+
+        @Override
+        default Collection<? extends NotificationDefinition> getNotifications() {
+            return ImmutableSet.of();
+        }
+
+        @Override
+        default boolean isConfiguration() {
+            return false;
+        }
+
+        @Override
+        default boolean isPresenceContainer() {
+            // FIXME: this should not really be here
+            return false;
+        }
+
+        default String defaultToString() {
+            return MoreObjects.toStringHelper(this).add("path", getPath()).toString();
         }
     }
 
