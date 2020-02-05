@@ -7,17 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
@@ -30,32 +32,74 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypes;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.Default;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<TypedefStatement> implements
-        TypedefEffectiveStatement {
+final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatement>
+        implements TypedefEffectiveStatement, SchemaNodeMixin<QName, TypedefStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(TypedefEffectiveStatementImpl.class);
 
-    private final @NonNull TypeDefinition<?> typeDefinition;
+    private final @NonNull Object substatements;
+    private final @NonNull SchemaPath path;
+    private final int flags;
 
+    private volatile TypeDefinition<?> typeDefinition;
     private volatile TypeEffectiveStatement<TypeStatement> typeStatement;
 
-    TypedefEffectiveStatementImpl(final StmtContext<QName, TypedefStatement, ?> ctx) {
-        super(ctx);
+    TypedefEffectiveStatementImpl(final TypedefStatement declared, final SchemaPath path, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared);
+        this.path = requireNonNull(path);
+        this.flags = flags;
+        this.substatements = maskList(substatements);
+    }
 
-        final TypeEffectiveStatement<?> typeEffectiveStmt = firstSubstatementOfType(TypeEffectiveStatement.class);
-        final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(typeEffectiveStmt.getTypeDefinition(),
-            ctx.getSchemaPath().get());
-        String dflt = null;
+    @Override
+    public int flags() {
+        return flags;
+    }
+
+    @Override
+    public SchemaPath getPath() {
+        return path;
+    }
+
+    @Override
+    public @NonNull QName argument() {
+        return getQName();
+    }
+
+    @Override
+    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+        return unmaskList(substatements);
+    }
+
+    @Override
+    public TypeDefinition<?> getTypeDefinition() {
+        final TypeDefinition<?> existing = typeDefinition;
+        return existing != null ? existing : loadTypeDefinition();
+    }
+
+    @Override
+    public TypeEffectiveStatement<TypeStatement> asTypeEffectiveStatement() {
+        final TypeEffectiveStatement<TypeStatement> local = typeStatement;
+        return local != null ? local : loadTypeStatement();
+    }
+
+    private synchronized @NonNull TypeDefinition<?> loadTypeDefinition() {
+        final TypeDefinition<?> existing = typeDefinition;
+        if (existing != null) {
+            return existing;
+        }
+
+        final TypeEffectiveStatement<?> type = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
+        final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), path);
+
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatement) {
-                dflt = ((DefaultEffectiveStatement) stmt).argument();
-                builder.setDefaultValue(dflt);
+                builder.setDefaultValue(((DefaultEffectiveStatement) stmt).argument());
             } else if (stmt instanceof DescriptionEffectiveStatement) {
                 builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
             } else if (stmt instanceof ReferenceEffectiveStatement) {
@@ -67,39 +111,21 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
             } else if (stmt instanceof UnknownSchemaNode) {
                 // FIXME: should not directly implement, I think
                 builder.addUnknownSchemaNode((UnknownSchemaNode)stmt);
-            } else {
-                if (!(stmt instanceof TypeEffectiveStatement)) {
-                    LOG.debug("Ignoring statement {}", stmt);
-                }
+            } else if (!(stmt instanceof TypeEffectiveStatement)) {
+                LOG.debug("Ignoring statement {}", stmt);
             }
         }
 
-        SourceException.throwIf(
-            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeEffectiveStmt, dflt),
-            ctx.getStatementSourceReference(),
-            "Typedef '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(),
-            dflt);
-
-        typeDefinition = builder.build();
+        final TypeDefinition<?> ret = builder.build();
+        typeDefinition = ret;
+        return ret;
     }
 
-    @Override
-    public TypeDefinition<?> getTypeDefinition() {
-        return typeDefinition;
-    }
-
-    @Override
-    public TypeEffectiveStatement<TypeStatement> asTypeEffectiveStatement() {
+    private synchronized @NonNull TypeEffectiveStatement<TypeStatement> loadTypeStatement() {
         TypeEffectiveStatement<TypeStatement> ret = typeStatement;
         if (ret == null) {
-            synchronized (this) {
-                ret = typeStatement;
-                if (ret == null) {
-                    typeStatement = ret = new ProxyTypeEffectiveStatement();
-                }
-            }
+            typeStatement = ret = new ProxyTypeEffectiveStatement();
         }
-
         return ret;
     }
 
@@ -123,11 +149,6 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
         @Override
         public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
             return TypedefEffectiveStatementImpl.this.effectiveSubstatements();
-        }
-
-        @Override
-        public StatementDefinition statementDefinition() {
-            return YangStmtMapping.TYPE;
         }
 
         @Override
