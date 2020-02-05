@@ -11,11 +11,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.Default;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class FeatureEffectiveStatementImpl extends AbstractEffectiveSchemaNode<FeatureStatement>
-        implements FeatureDefinition, FeatureEffectiveStatement {
+final class FeatureEffectiveStatementImpl extends Default<QName, FeatureStatement>
+        implements FeatureDefinition, FeatureEffectiveStatement, SchemaNodeMixin<QName, FeatureStatement> {
     FeatureEffectiveStatementImpl(final StmtContext<QName, FeatureStatement, ?> ctx) {
         super(ctx);
     }

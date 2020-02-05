@@ -7,19 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.feature;
 
+import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class FeatureStatementSupport
-        extends AbstractQNameStatementSupport<FeatureStatement, FeatureEffectiveStatement> {
+        extends BaseQNameStatementSupport<FeatureStatement, FeatureEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.FEATURE)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -49,18 +53,34 @@ public final class FeatureStatementSupport
     }
 
     @Override
-    public FeatureStatement createDeclared(final StmtContext<QName, FeatureStatement, ?> ctx) {
-        return new FeatureStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    public FeatureEffectiveStatement createEffective(
-            final StmtContext<QName, FeatureStatement, FeatureEffectiveStatement> ctx) {
+    protected FeatureStatement createDeclared(final StmtContext<QName, FeatureStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularFeatureStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected FeatureStatement createEmptyDeclared(@NonNull final StmtContext<QName, FeatureStatement, ?> ctx) {
+        return new EmptyFeatureStatement(ctx.coerceStatementArgument());
+    }
+
+    @Override
+    protected FeatureEffectiveStatement createEffective(
+            final StmtContext<QName, FeatureStatement, FeatureEffectiveStatement> ctx, final FeatureStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        // TODO Auto-generated method stub
         return new FeatureEffectiveStatementImpl(ctx);
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected FeatureEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, FeatureStatement, FeatureEffectiveStatement> ctx,
+            final FeatureStatement declared) {
+        // TODO Auto-generated method stub
+        return new FeatureEffectiveStatementImpl(ctx);
     }
 }
