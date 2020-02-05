@@ -7,16 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -26,7 +33,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -46,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class AbstractAugmentStatementSupport
-        extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> {
+        extends BaseStatementSupport<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractAugmentStatementSupport.class);
     private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
@@ -63,17 +71,6 @@ abstract class AbstractAugmentStatementSupport
             value);
 
         return ArgumentUtils.nodeIdentifierFromPath(ctx, value);
-    }
-
-    @Override
-    public final AugmentStatement createDeclared(final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx) {
-        return new AugmentStatementImpl(ctx);
-    }
-
-    @Override
-    public final AugmentEffectiveStatement createEffective(
-            final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx) {
-        return new AugmentEffectiveStatementImpl(ctx);
     }
 
     @Override
@@ -162,6 +159,48 @@ abstract class AbstractAugmentStatementSupport
                         "Augment target '%s' not found", augmentNode.getStatementArgument());
             }
         });
+    }
+
+    @Override
+    protected final AugmentStatement createDeclared(final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularAugmentStatement(ctx, substatements);
+    }
+
+    @Override
+    protected final AugmentStatement createEmptyDeclared(
+            final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx) {
+        return new EmptyAugmentStatement(ctx);
+    }
+
+    @Override
+    protected final List<? extends StmtContext<?, ?, ?>> statementsToBuild(
+            final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx,
+            final List<? extends StmtContext<?, ?, ?>> substatements) {
+        final StatementContextBase<?, ?, ?> implicitDef = ctx.getFromNamespace(AugmentImplicitHandlingNamespace.class,
+            ctx);
+        return implicitDef == null ? substatements : Lists.transform(substatements, subCtx -> {
+            verify(subCtx instanceof StatementContextBase);
+            return implicitDef.wrapWithImplicit((StatementContextBase<?, ?, ?>) subCtx);
+        });
+    }
+
+    @Override
+    protected final AugmentEffectiveStatement createEffective(
+            final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx,
+            final AugmentStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final int flags = new FlagsBuilder()
+                .toFlags();
+
+        return new AugmentEffectiveStatementImpl(declared, flags, StmtContextUtils.getRootModuleQName(ctx),
+            substatements, (AugmentationSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null));
+    }
+
+    @Override
+    protected final AugmentEffectiveStatement createEmptyEffective(
+            final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx,
+            final AugmentStatement declared) {
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 
     private static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
