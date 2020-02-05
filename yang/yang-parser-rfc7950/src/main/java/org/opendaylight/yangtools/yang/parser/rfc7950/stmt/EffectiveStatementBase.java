@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -42,14 +41,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
      * @param ctx context of statement.
      */
     protected EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
-        this.substatements = ImmutableList.copyOf(initSubstatements(ctx,
-            BaseStatementSupport.declaredSubstatements(ctx)));
-    }
-
-    @Beta
-    protected Collection<? extends EffectiveStatement<?, ?>> initSubstatements(final StmtContext<A, D, ?> ctx,
-            final Collection<? extends StmtContext<?, ?, ?>> substatementsInit) {
-        return initSubstatements(substatementsInit);
+        this.substatements = ImmutableList.copyOf(initSubstatements(BaseStatementSupport.declaredSubstatements(ctx)));
     }
 
     /**
