@@ -76,7 +76,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     private final QNameToStatementDefinitionMap qnameToStmtDefMap = new QNameToStatementDefinitionMap();
     private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
     private final BuildGlobalContext currentContext;
-    private final StatementStreamSource source;
+
+    // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
+    private StatementStreamSource source;
 
     /*
      * "imported" namespaces in this source -- this points to RootStatementContexts of
@@ -307,8 +309,12 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         if (phaseCompleted && currentPhaseModifiers.isEmpty()) {
             finishedPhase = phase;
             LOG.debug("Source {} finished phase {}", source, phase);
+            if (phase == ModelProcessingPhase.EFFECTIVE_MODEL) {
+                // We have the effective model acquired, which is the final phase of source interaction.
+                LOG.trace("Releasing source {}", source);
+                source = null;
+            }
             return PhaseCompletionProgress.FINISHED;
-
         }
 
         return hasProgressed ? PhaseCompletionProgress.PROGRESS : PhaseCompletionProgress.NO_PROGRESS;
