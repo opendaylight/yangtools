@@ -56,7 +56,8 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
     @Override
     public final E createEffective(final StmtContext<A, D, E> ctx) {
         final D declared = ctx.buildDeclared();
-        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements = buildEffectiveSubstatements(ctx);
+        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
+                buildEffectiveSubstatements(statementsToBuild(ctx, declaredSubstatements(ctx)));
         return substatements.isEmpty() ? createEmptyEffective(ctx, declared)
                 : createEffective(ctx, declared, substatements);
     }
@@ -65,6 +66,19 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 
     protected abstract @NonNull E createEmptyEffective(@NonNull StmtContext<A, D, E> ctx, @NonNull D declared);
+
+    /**
+     * Give statement support a hook to transform statement contexts before they are built. Default implementation
+     * does nothing, but note {@code augment} statement performs a real transformation.
+     *
+     * @param ctx Parent statement context
+     * @param substatements Substatement contexts which have been determined to be built
+     * @return Substatement context which are to be actually built
+     */
+    protected List<? extends StmtContext<?, ?, ?>> statementsToBuild(final StmtContext<A, D, E> ctx,
+            final List<? extends StmtContext<?, ?, ?>> substatements) {
+        return substatements;
+    }
 
     protected static final <E extends EffectiveStatement<?, ?>> @Nullable E findFirstStatement(
             final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<E> type) {
