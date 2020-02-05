@@ -7,27 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import static com.google.common.base.Verify.verify;
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import java.lang.invoke.VarHandle;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
@@ -45,60 +35,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 @Beta
 public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveDocumentedNode<A, D> {
-    private final ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace;
-    private final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
-
     protected AbstractSchemaEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
         super(ctx);
-
-        // This check is rather weird, but comes from our desire to lower memory footprint while providing both
-        // EffectiveStatements and SchemaNode interfaces -- which do not overlap completely where child lookups are
-        // concerned. This ensures that we have SchemaTree index available for use with child lookups.
-        final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
-        if (this instanceof SchemaTreeAwareEffectiveStatement || this instanceof DataNodeContainer) {
-            schemaTree = createSchemaTreeNamespace(ctx.getStatementSourceReference(),
-                effectiveSubstatements());
-        } else {
-            schemaTree = ImmutableMap.of();
-        }
-        schemaTreeNamespace = ImmutableMap.copyOf(schemaTree);
-
-        if (this instanceof DataTreeAwareEffectiveStatement && !schemaTree.isEmpty()) {
-            dataTreeNamespace = createDataTreeNamespace(ctx.getStatementSourceReference(), schemaTree.values(),
-                schemaTreeNamespace);
-        } else {
-            dataTreeNamespace = ImmutableMap.of();
-        }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
-            final Class<N> namespace) {
-        if (this instanceof SchemaTreeAwareEffectiveStatement
-                && SchemaTreeAwareEffectiveStatement.Namespace.class.equals(namespace)) {
-            return Optional.of((Map<K, V>) schemaTreeNamespace);
-        }
-        if (this instanceof DataTreeAwareEffectiveStatement
-                && DataTreeAwareEffectiveStatement.Namespace.class.equals(namespace)) {
-            return Optional.of((Map<K, V>) dataTreeNamespace);
-        }
-        return super.getNamespaceContents(namespace);
-    }
-
-    protected final <T> @NonNull ImmutableSet<T> derivedSet(final VarHandle vh, final @NonNull Class<T> clazz) {
-        final ImmutableSet<T> existing = (ImmutableSet<T>) vh.getAcquire(this);
-        return existing != null ? existing : loadSet(vh, clazz);
-    }
-
-    /**
-     * Indexing support for {@link DataNodeContainer#findDataChildByName(QName)}.
-     */
-    protected final Optional<DataSchemaNode> findDataSchemaNode(final QName name) {
-        // Only DataNodeContainer subclasses should be calling this method
-        verify(this instanceof DataNodeContainer);
-        final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace.get(requireNonNull(name));
-        return child instanceof DataSchemaNode ? Optional.of((DataSchemaNode) child) : Optional.empty();
     }
 
     static @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> createSchemaTreeNamespace(
@@ -129,13 +67,6 @@ public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends Declare
         // This is a mighty hack to lower memory usage: if we consumed all schema tree children as data nodes,
         // the two maps are equal and hence we can share the instance.
         return sameAsSchema ? (ImmutableMap) schemaTreeNamespace : ImmutableMap.copyOf(dataChildren);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> @NonNull ImmutableSet<T> loadSet(final VarHandle vh, final @NonNull Class<T> clazz) {
-        final ImmutableSet<T> computed = ImmutableSet.copyOf(allSubstatementsOfType(clazz));
-        final Object witness = vh.compareAndExchangeRelease(this, null, computed);
-        return witness == null ? computed : (ImmutableSet<T>) witness;
     }
 
     private static <T extends SchemaTreeEffectiveStatement<?>> void putChild(final Map<QName, T> map,

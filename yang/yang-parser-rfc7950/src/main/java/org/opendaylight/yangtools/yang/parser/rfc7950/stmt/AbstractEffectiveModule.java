@@ -13,12 +13,14 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -42,12 +44,15 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
@@ -78,11 +83,22 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
     private final ImmutableSet<DataSchemaNode> publicChildNodes;
     private final SemVer semanticVersion;
+    private final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
 
     protected AbstractEffectiveModule(
             final @NonNull StmtContext<String, D, ? extends EffectiveStatement<String, ?>> ctx,
             final @NonNull String prefix) {
         super(ctx);
+
+        // This check is rather weird, but comes from our desire to lower memory footprint while providing both
+        // EffectiveStatements and SchemaNode interfaces -- which do not overlap completely where child lookups are
+        // concerned. This ensures that we have SchemaTree index available for use with child lookups.
+        final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree =
+                createSchemaTreeNamespace(ctx.getStatementSourceReference(), effectiveSubstatements());
+        schemaTreeNamespace = ImmutableMap.copyOf(schemaTree);
+
+        // Data tree check, not currently used
+        createDataTreeNamespace(ctx.getStatementSourceReference(), schemaTree.values(), schemaTreeNamespace);
 
         this.name = argument();
         this.prefix = requireNonNull(prefix);
@@ -260,7 +276,8 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     @Override
     @SuppressWarnings("checkstyle:hiddenField")
     public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
-        return findDataSchemaNode(name);
+        final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace.get(requireNonNull(name));
+        return child instanceof DataSchemaNode ? Optional.of((DataSchemaNode) child) : Optional.empty();
     }
 
     @Override
@@ -271,6 +288,16 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     @Override
     public Optional<SemVer> getSemanticVersion() {
         return Optional.ofNullable(semanticVersion);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
+            final Class<N> namespace) {
+        if (SchemaTreeAwareEffectiveStatement.Namespace.class.equals(namespace)) {
+            return Optional.of((Map<K, V>) schemaTreeNamespace);
+        }
+        return super.getNamespaceContents(namespace);
     }
 
     @Override
