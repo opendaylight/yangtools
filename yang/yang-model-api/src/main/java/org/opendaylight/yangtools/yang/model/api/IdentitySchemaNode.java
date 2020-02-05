@@ -31,14 +31,4 @@ public interface IdentitySchemaNode extends SchemaNode {
      *         a root identity.
      */
     @NonNull Collection<? extends IdentitySchemaNode> getBaseIdentities();
-
-    /**
-     * Get identities derived from this identity.
-     *
-     * @return collection of identities derived from this identity
-     */
-    // FIXME: 5.0.0: this causes circular references in implementation objects under immutables+builder pattern,
-    //               and really should be a SchemaContext-level utility (i.e. walk entire SchemaContext, cache the
-    //               result)
-    @NonNull Collection<? extends IdentitySchemaNode> getDerivedIdentities();
 }
