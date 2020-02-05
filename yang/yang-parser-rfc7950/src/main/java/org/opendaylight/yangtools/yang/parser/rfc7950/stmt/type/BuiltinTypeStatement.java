@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 
@@ -75,11 +74,6 @@ final class BuiltinTypeStatement implements TypeStatement {
     @Override
     public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
         return ImmutableList.of();
-    }
-
-    @Override
-    public StatementDefinition statementDefinition() {
-        return YangStmtMapping.TYPE;
     }
 
     @Override
