@@ -7,98 +7,84 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
-import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import java.net.URI;
-import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedDataNodeContainer;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.Default;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.ActionNodeContainerMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.NotificationNodeContainerMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.WhenConditionMixin;
 
-final class AugmentEffectiveStatementImpl
-        extends AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
+final class AugmentEffectiveStatementImpl extends Default<SchemaNodeIdentifier, AugmentStatement>
         implements AugmentEffectiveStatement, AugmentationSchemaNode, NamespaceRevisionAware,
+            DocumentedNodeMixin.WithStatus<SchemaNodeIdentifier, AugmentStatement>,
+            DataNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
+            ActionNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             ActionNodeContainerCompat<SchemaNodeIdentifier, AugmentStatement>,
-            NotificationNodeContainerCompat<SchemaNodeIdentifier, AugmentStatement> {
-    private final SchemaPath targetPath;
-    private final QNameModule rootModuleQName;
-    private final @NonNull ImmutableSet<ActionDefinition> actions;
-    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
-    private final RevisionAwareXPath whenCondition;
-    private final AugmentationSchemaNode copyOf;
+            NotificationNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
+            NotificationNodeContainerCompat<SchemaNodeIdentifier, AugmentStatement>,
+            WhenConditionMixin<SchemaNodeIdentifier, AugmentStatement> {
+    private final @Nullable AugmentationSchemaNode original;
+    private final @NonNull QNameModule rootModuleQName;
+    private final @NonNull Object substatements;
+    private final int flags;
 
-    AugmentEffectiveStatementImpl(
-            final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx) {
-        super(ctx);
-        targetPath = ctx.coerceStatementArgument().asSchemaPath();
-        rootModuleQName = StmtContextUtils.getRootModuleQName(ctx);
-        copyOf = (AugmentationSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
-        whenCondition = findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class).orElse(null);
+    // Lazily initialized
+    private volatile @Nullable ImmutableMap<QName, DataSchemaNode> dataChildren;
 
-        // initSubstatementCollections
-        final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
-        final ImmutableSet.Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof ActionDefinition) {
-                actionsBuilder.add((ActionDefinition) effectiveStatement);
-            } else if (effectiveStatement instanceof NotificationDefinition) {
-                notificationsBuilder.add((NotificationDefinition) effectiveStatement);
-            }
-        }
-
-        actions = actionsBuilder.build();
-        notifications = notificationsBuilder.build();
+    AugmentEffectiveStatementImpl(final AugmentStatement declared, final int flags, final QNameModule rootModuleQName,
+            final ImmutableList<?> substatements, final @Nullable AugmentationSchemaNode original) {
+        super(declared);
+        this.rootModuleQName = requireNonNull(rootModuleQName);
+        this.substatements = maskList(substatements);
+        this.flags = flags;
+        this.original = original;
     }
 
     @Override
-    protected Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
-            final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx,
-            final Collection<? extends StmtContext<?, ?, ?>> substatementsInit) {
-        final StatementContextBase<?, ?, ?> implicitDef = ctx.getFromNamespace(AugmentImplicitHandlingNamespace.class,
-            ctx);
-        return implicitDef == null ? super.initSubstatements(ctx, substatementsInit)
-                : Collections2.transform(Collections2.filter(substatementsInit,
-                    StmtContext::isSupportedToBuildEffective),
-                    subCtx -> {
-                        verify(subCtx instanceof StatementContextBase);
-                        return implicitDef.wrapWithImplicit((StatementContextBase<?, ?, ?>) subCtx).buildEffective();
-                    });
+    public SchemaNodeIdentifier argument() {
+        return getDeclared().argument();
+    }
+
+    @Override
+    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+        return unmaskList(substatements);
     }
 
     @Override
     public Optional<AugmentationSchemaNode> getOriginalDefinition() {
-        return Optional.ofNullable(this.copyOf);
+        return Optional.ofNullable(this.original);
     }
 
     @Override
     public SchemaPath getTargetPath() {
-        return targetPath;
+        return argument().asSchemaPath();
     }
 
     @Override
-    public Optional<RevisionAwareXPath> getWhenCondition() {
-        return Optional.ofNullable(whenCondition);
+    public int flags() {
+        return flags;
     }
 
     @Override
@@ -112,18 +98,36 @@ final class AugmentEffectiveStatementImpl
     }
 
     @Override
-    public Set<ActionDefinition> getActions() {
-        return actions;
-    }
-
-    @Override
-    public Set<NotificationDefinition> getNotifications() {
-        return notifications;
+    public Optional<DataSchemaNode> findDataChildByName(final QName name) {
+        return Optional.ofNullable(dataChildren().get(requireNonNull(name)));
     }
 
     @Override
     public String toString() {
-        return AugmentEffectiveStatementImpl.class.getSimpleName() + "[" + "targetPath=" + targetPath + ", when="
-                + whenCondition + "]";
+        return AugmentEffectiveStatementImpl.class.getSimpleName() + "[" + "targetPath=" + getTargetPath() + ", when="
+                + getWhenCondition() + "]";
+    }
+
+    private @NonNull ImmutableMap<QName, DataSchemaNode> dataChildren() {
+        final ImmutableMap<QName, DataSchemaNode> local = dataChildren;
+        return local != null ? local : createDataChilden();
+    }
+
+    private synchronized @NonNull ImmutableMap<QName, DataSchemaNode> createDataChilden() {
+        final ImmutableMap<QName, DataSchemaNode> local = dataChildren;
+        if (local != null) {
+            return local;
+        }
+
+        final Builder<QName, DataSchemaNode> builder = ImmutableMap.builder();
+        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+            if (stmt instanceof DataSchemaNode) {
+                final DataSchemaNode node = (DataSchemaNode) stmt;
+                builder.put(node.getQName(), node);
+            }
+        }
+        final ImmutableMap<QName, DataSchemaNode> result = builder.build();
+        dataChildren = result;
+        return result;
     }
 }
