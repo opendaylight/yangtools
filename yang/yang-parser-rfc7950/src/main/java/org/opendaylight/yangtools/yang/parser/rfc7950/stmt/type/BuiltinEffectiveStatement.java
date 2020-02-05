@@ -16,10 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -75,11 +73,6 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> 
     @Override
     public final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return ImmutableList.of();
-    }
-
-    @Override
-    public final StatementDefinition statementDefinition() {
-        return YangStmtMapping.TYPE;
     }
 
     @Override

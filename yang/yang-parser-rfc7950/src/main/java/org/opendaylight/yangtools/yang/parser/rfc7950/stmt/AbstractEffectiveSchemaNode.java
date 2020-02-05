@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
+@Deprecated(forRemoval = true)
 public abstract class AbstractEffectiveSchemaNode<D extends DeclaredStatement<QName>> extends
         AbstractSchemaEffectiveDocumentedNode<QName, D> implements SchemaNode {
 
