@@ -9,12 +9,15 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
@@ -22,10 +25,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -43,7 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractModuleStatementSupport
-        extends AbstractStatementSupport<String, ModuleStatement, ModuleEffectiveStatement> {
+        extends BaseStatementSupport<String, ModuleStatement, ModuleEffectiveStatement> {
     AbstractModuleStatementSupport() {
         super(YangStmtMapping.MODULE);
     }
@@ -51,17 +54,6 @@ abstract class AbstractModuleStatementSupport
     @Override
     public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return value;
-    }
-
-    @Override
-    public final ModuleStatement createDeclared(final StmtContext<String, ModuleStatement, ?> ctx) {
-        return new ModuleStatementImpl(ctx);
-    }
-
-    @Override
-    public final ModuleEffectiveStatement createEffective(
-            final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx) {
-        return new ModuleEffectiveStatementImpl(ctx);
     }
 
     @Override
@@ -125,6 +117,31 @@ abstract class AbstractModuleStatementSupport
         if (stmt.isEnabledSemanticVersioning()) {
             addToSemVerModuleNamespace(stmt, moduleIdentifier);
         }
+    }
+
+
+    @Override
+    protected final ModuleStatement createDeclared(final StmtContext<String, ModuleStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new ModuleStatementImpl(ctx, substatements);
+    }
+
+    @Override
+    protected final ModuleStatement createEmptyDeclared(final StmtContext<String, ModuleStatement, ?> ctx) {
+        return new ModuleStatementImpl(ctx, ImmutableList.of());
+    }
+
+    @Override
+    protected final ModuleEffectiveStatement createEffective(
+            final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx, final ModuleStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new ModuleEffectiveStatementImpl(declared, ctx, substatements);
+    }
+
+    @Override
+    protected final ModuleEffectiveStatement createEmptyEffective(
+            final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx, final ModuleStatement declared) {
+        return new ModuleEffectiveStatementImpl(declared, ctx, ImmutableList.of());
     }
 
     private static void addToSemVerModuleNamespace(

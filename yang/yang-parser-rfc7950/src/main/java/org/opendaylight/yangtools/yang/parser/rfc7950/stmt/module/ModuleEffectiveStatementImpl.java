@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -20,6 +21,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatementNamespace;
@@ -53,8 +55,9 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     private final @NonNull QNameModule qnameModule;
     private final ImmutableSet<Module> submodules;
 
-    private ModuleEffectiveStatementImpl(final @NonNull ModuleStmtContext ctx) {
-        super(ctx, findPrefix(ctx.delegate(), "module", ctx.getStatementArgument()));
+    private ModuleEffectiveStatementImpl(final ModuleStatement declared, final @NonNull ModuleStmtContext ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared, ctx, substatements, findPrefix(ctx.delegate(), "module", ctx.getStatementArgument()));
         submodules = ctx.getSubmodules();
 
         qnameModule = verifyNotNull(ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.delegate()));
@@ -92,8 +95,10 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
                 : ImmutableMap.copyOf(Maps.transformValues(identities, StmtContext::buildEffective));
     }
 
-    ModuleEffectiveStatementImpl(final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx) {
-        this(ModuleStmtContext.create(ctx));
+    ModuleEffectiveStatementImpl(final ModuleStatement declared,
+            final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        this(declared, ModuleStmtContext.create(ctx), substatements);
     }
 
     @Override
