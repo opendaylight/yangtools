@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -18,8 +17,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * @param <A> Argument type ({@link Void} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
  * @author Robert Varga
+ * @deprecated Use {@link AbstractEffectiveDocumentedNode} instead.
  */
-@Beta
+@Deprecated(forRemoval = true)
 public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveDocumentedNode<A, D> {
     protected AbstractSchemaEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
