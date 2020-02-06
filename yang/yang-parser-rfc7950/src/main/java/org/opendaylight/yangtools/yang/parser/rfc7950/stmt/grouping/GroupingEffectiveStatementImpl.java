@@ -18,8 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
-import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.ActionNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.AddedByUsesMixin;
@@ -31,8 +29,6 @@ final class GroupingEffectiveStatementImpl
         extends DefaultDataNodeContainer<QName, GroupingStatement>
         implements GroupingDefinition, GroupingEffectiveStatement,
             SchemaNodeMixin<QName, GroupingStatement>, ActionNodeContainerMixin<QName, GroupingStatement>,
-            ActionNodeContainerCompat<QName, GroupingStatement>,
-            NotificationNodeContainerCompat<QName, GroupingStatement>,
             NotificationNodeContainerMixin<QName, GroupingStatement>, AddedByUsesMixin<QName, GroupingStatement> {
     private final @NonNull SchemaPath path;
     private final int flags;
