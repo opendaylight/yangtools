@@ -179,7 +179,8 @@ public final class EffectiveStatementMixins {
 
         @Override
         default Collection<DataSchemaNode> getChildNodes() {
-            return filterEffectiveStatements(DataSchemaNode.class);
+            // Note: two invocations must end up being equal
+            return filterEffectiveStatementsList(DataSchemaNode.class);
         }
 
         @Override
