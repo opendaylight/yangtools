@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -134,5 +135,23 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
             return Optional.of((Map<K, V>) qnameToIdentity);
         }
         return super.getNamespaceContents(namespace);
+    }
+
+    @Override
+    public @Nullable String argument() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Optional<String> getDescription() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Optional<String> getReference() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

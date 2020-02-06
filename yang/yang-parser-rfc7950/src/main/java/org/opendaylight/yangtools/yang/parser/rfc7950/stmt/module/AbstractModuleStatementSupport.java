@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractModuleStatementSupport
-        extends AbstractStatementSupport<String, ModuleStatement, ModuleEffectiveStatement> {
+        extends BaseStatementSupport<String, ModuleStatement, ModuleEffectiveStatement> {
     AbstractModuleStatementSupport() {
         super(YangStmtMapping.MODULE);
     }

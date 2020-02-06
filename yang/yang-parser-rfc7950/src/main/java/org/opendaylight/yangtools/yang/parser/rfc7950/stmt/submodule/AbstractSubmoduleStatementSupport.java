@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractSubmoduleStatementSupport
-        extends AbstractStatementSupport<String, SubmoduleStatement, SubmoduleEffectiveStatement> {
+        extends BaseStatementSupport<String, SubmoduleStatement, SubmoduleEffectiveStatement> {
     AbstractSubmoduleStatementSupport() {
         super(YangStmtMapping.SUBMODULE);
     }

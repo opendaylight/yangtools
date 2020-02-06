@@ -58,6 +58,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
@@ -65,9 +67,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>,
-        E extends DataTreeAwareEffectiveStatement<String, D>>
-        extends AbstractEffectiveDocumentedNode<String, D>
-        implements Module, NotificationNodeContainerCompat<String, D, E> {
+        E extends DataTreeAwareEffectiveStatement<String, D>> extends DefaultWithDataTree<String, D, E>
+        implements Module, NotificationNodeContainerCompat<String, D, E>, DocumentedNodeMixin<String, D> {
     private final String name;
     private final String prefix;
     private final YangVersion yangVersion;
@@ -88,10 +89,11 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     private final SemVer semanticVersion;
     private final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
 
-    protected AbstractEffectiveModule(
-            final @NonNull StmtContext<String, D, ? extends EffectiveStatement<String, ?>> ctx,
+    protected AbstractEffectiveModule(final D declared,
+            final StmtContext<String, D, ? extends EffectiveStatement<String, ?>> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @NonNull String prefix) {
-        super(ctx);
+        super(declared, ctx, substatements);
 
         // This check is rather weird, but comes from our desire to lower memory footprint while providing both
         // EffectiveStatements and SchemaNode interfaces -- which do not overlap completely where child lookups are
