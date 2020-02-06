@@ -10,6 +10,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.VarHandle;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -41,12 +44,31 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
         implements TypedefEffectiveStatement, SchemaNodeMixin<QName, TypedefStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(TypedefEffectiveStatementImpl.class);
 
+    private static final VarHandle TYPE_DEFINITION;
+    private static final VarHandle TYPE_STATEMENT;
+
+    static {
+        final Lookup lookup = MethodHandles.lookup();
+        try {
+            TYPE_DEFINITION = lookup.findVarHandle(TypedefEffectiveStatementImpl.class, "typeDefinition",
+                TypeDefinition.class);
+            TYPE_STATEMENT = lookup.findVarHandle(TypedefEffectiveStatementImpl.class, "typeStatement",
+                ProxyTypeEffectiveStatement.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final @NonNull Object substatements;
     private final @NonNull SchemaPath path;
     private final int flags;
 
+    // Accessed via TYPE_DEFINITION
+    @SuppressWarnings("unused")
     private volatile TypeDefinition<?> typeDefinition;
-    private volatile TypeEffectiveStatement<TypeStatement> typeStatement;
+    // Accessed via TYPE_STATEMENT
+    @SuppressWarnings("unused")
+    private volatile ProxyTypeEffectiveStatement typeStatement;
 
     TypedefEffectiveStatementImpl(final TypedefStatement declared, final SchemaPath path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
@@ -78,22 +100,17 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
 
     @Override
     public TypeDefinition<?> getTypeDefinition() {
-        final TypeDefinition<?> existing = typeDefinition;
+        final TypeDefinition<?> existing = (TypeDefinition<?>) TYPE_DEFINITION.getAcquire(this);
         return existing != null ? existing : loadTypeDefinition();
     }
 
     @Override
     public TypeEffectiveStatement<TypeStatement> asTypeEffectiveStatement() {
-        final TypeEffectiveStatement<TypeStatement> local = typeStatement;
+        final ProxyTypeEffectiveStatement local = (ProxyTypeEffectiveStatement) TYPE_STATEMENT.getAcquire(this);
         return local != null ? local : loadTypeStatement();
     }
 
-    private synchronized @NonNull TypeDefinition<?> loadTypeDefinition() {
-        final TypeDefinition<?> existing = typeDefinition;
-        if (existing != null) {
-            return existing;
-        }
-
+    private @NonNull TypeDefinition<?> loadTypeDefinition() {
         final TypeEffectiveStatement<?> type = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
         final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), path);
 
@@ -116,17 +133,15 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
             }
         }
 
-        final TypeDefinition<?> ret = builder.build();
-        typeDefinition = ret;
-        return ret;
+        final TypeDefinition<?> created = builder.build();
+        final Object witness = TYPE_DEFINITION.compareAndExchangeRelease(this, null, created);
+        return witness == null ? created : (TypeDefinition<?>) witness;
     }
 
-    private synchronized @NonNull TypeEffectiveStatement<TypeStatement> loadTypeStatement() {
-        TypeEffectiveStatement<TypeStatement> ret = typeStatement;
-        if (ret == null) {
-            typeStatement = ret = new ProxyTypeEffectiveStatement();
-        }
-        return ret;
+    private @NonNull ProxyTypeEffectiveStatement loadTypeStatement() {
+        final ProxyTypeEffectiveStatement created = new ProxyTypeEffectiveStatement();
+        final Object witness = TYPE_STATEMENT.compareAndExchangeRelease(this, null, created);
+        return witness == null ? created : (ProxyTypeEffectiveStatement) witness;
     }
 
     private final class ProxyTypeEffectiveStatement implements TypeEffectiveStatement<TypeStatement> {
