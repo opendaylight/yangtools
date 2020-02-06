@@ -42,7 +42,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameTo
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModule<SubmoduleStatement>
+final class SubmoduleEffectiveStatementImpl
+        extends AbstractEffectiveModule<SubmoduleStatement, SubmoduleEffectiveStatement>
         implements SubmoduleEffectiveStatement, MutableStatement {
     private final ImmutableMap<String, ModuleEffectiveStatement> prefixToModule;
     private final ImmutableMap<QNameModule, String> namespaceToPrefix;

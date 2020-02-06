@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
-final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement>
+final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement, ModuleEffectiveStatement>
         implements ModuleEffectiveStatement {
     private final ImmutableMap<String, SubmoduleEffectiveStatement> nameToSubmodule;
     private final ImmutableMap<QName, ExtensionEffectiveStatement> qnameToExtension;

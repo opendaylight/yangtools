@@ -40,7 +40,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 abstract class AbstractListEffectiveStatement
         extends DefaultWithDataTree<QName, ListStatement, ListEffectiveStatement>
         implements ListEffectiveStatement, ListSchemaNode, DerivableSchemaNode,
-            ActionNodeContainerCompat<QName, ListStatement>, NotificationNodeContainerCompat<QName, ListStatement>,
+            ActionNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
+            NotificationNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
             DataSchemaNodeMixin<QName, ListStatement>, UserOrderedMixin<QName, ListStatement>,
             DataNodeContainerMixin<QName, ListStatement>, WhenConditionMixin<QName, ListStatement>,
             AugmentationTargetMixin<QName, ListStatement>, NotificationNodeContainerMixin<QName, ListStatement>,

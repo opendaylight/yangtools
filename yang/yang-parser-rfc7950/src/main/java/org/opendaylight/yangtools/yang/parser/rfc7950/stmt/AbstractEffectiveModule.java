@@ -47,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
@@ -63,9 +64,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
-public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
+public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>,
+        E extends DataTreeAwareEffectiveStatement<String, D>> extends
         AbstractSchemaEffectiveDocumentedNode<String, D> implements Module,
-        NotificationNodeContainerCompat<String, D> {
+        NotificationNodeContainerCompat<String, D, E> {
     private final String name;
     private final String prefix;
     private final YangVersion yangVersion;

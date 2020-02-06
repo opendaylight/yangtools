@@ -39,9 +39,9 @@ final class ContainerEffectiveStatementImpl
         implements ContainerEffectiveStatement, ContainerSchemaNode, DerivableSchemaNode,
             DataSchemaNodeMixin<QName, ContainerStatement>, DataNodeContainerMixin<QName, ContainerStatement>,
             ActionNodeContainerMixin<QName, ContainerStatement>,
-            ActionNodeContainerCompat<QName, ContainerStatement>,
+            ActionNodeContainerCompat<QName, ContainerStatement, ContainerEffectiveStatement>,
             NotificationNodeContainerMixin<QName, ContainerStatement>,
-            NotificationNodeContainerCompat<QName, ContainerStatement>,
+            NotificationNodeContainerCompat<QName, ContainerStatement, ContainerEffectiveStatement>,
             MustConstraintMixin<QName, ContainerStatement>, PresenceMixin<QName, ContainerStatement>,
             AugmentationTargetMixin<QName, ContainerStatement> {
 
