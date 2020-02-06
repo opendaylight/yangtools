@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -29,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
@@ -190,6 +192,7 @@ abstract class AbstractAugmentStatementSupport
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx,
             final AugmentStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final int flags = new FlagsBuilder()
+                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .toFlags();
 
         return new AugmentEffectiveStatementImpl(declared, flags, StmtContextUtils.getRootModuleQName(ctx),
