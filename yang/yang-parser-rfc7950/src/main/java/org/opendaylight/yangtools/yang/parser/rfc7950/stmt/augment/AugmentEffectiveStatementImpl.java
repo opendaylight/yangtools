@@ -23,8 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
-import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.ActionNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
@@ -38,9 +36,7 @@ final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<Schem
             DocumentedNodeMixin.WithStatus<SchemaNodeIdentifier, AugmentStatement>,
             DataNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             ActionNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
-            ActionNodeContainerCompat<SchemaNodeIdentifier, AugmentStatement>,
             NotificationNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
-            NotificationNodeContainerCompat<SchemaNodeIdentifier, AugmentStatement>,
             WhenConditionMixin<SchemaNodeIdentifier, AugmentStatement> {
     private final @Nullable AugmentationSchemaNode original;
     private final @NonNull QNameModule rootModuleQName;
