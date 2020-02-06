@@ -13,12 +13,20 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
  * Baseline stateless implementation of an EffectiveStatement. This class adds a few default implementations and
@@ -76,5 +84,60 @@ public abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<
     protected static final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> unmaskList(
             final @NonNull Object masked) {
         return (ImmutableList) unmaskList(masked, EffectiveStatement.class);
+    }
+
+    // TODO: below methods need to find a better place, this is just a temporary hideout as their public class is on
+    //       its way out
+    static @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> createSchemaTreeNamespace(
+            final StatementSourceReference ref, final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        final Map<QName, SchemaTreeEffectiveStatement<?>> schemaChildren = new LinkedHashMap<>();
+        substatements.stream().filter(SchemaTreeEffectiveStatement.class::isInstance)
+            .forEach(child -> putChild(schemaChildren, (SchemaTreeEffectiveStatement) child, ref, "schema"));
+        return schemaChildren;
+    }
+
+    static @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> createDataTreeNamespace(
+            final StatementSourceReference ref,
+            final Collection<SchemaTreeEffectiveStatement<?>> schemaTreeStatements,
+            // Note: this dance is needed to not retain ImmutableMap$Values
+            final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace) {
+        final Map<QName, DataTreeEffectiveStatement<?>> dataChildren = new LinkedHashMap<>();
+        boolean sameAsSchema = true;
+
+        for (SchemaTreeEffectiveStatement<?> child : schemaTreeStatements) {
+            if (child instanceof DataTreeEffectiveStatement) {
+                putChild(dataChildren, (DataTreeEffectiveStatement<?>) child, ref, "data");
+            } else {
+                sameAsSchema = false;
+                putChoiceDataChildren(dataChildren, ref, child);
+            }
+        }
+
+        // This is a mighty hack to lower memory usage: if we consumed all schema tree children as data nodes,
+        // the two maps are equal and hence we can share the instance.
+        return sameAsSchema ? (ImmutableMap) schemaTreeNamespace : ImmutableMap.copyOf(dataChildren);
+    }
+
+    private static <T extends SchemaTreeEffectiveStatement<?>> void putChild(final Map<QName, T> map,
+            final T child, final StatementSourceReference ref, final String tree) {
+        final QName id = child.getIdentifier();
+        final T prev = map.putIfAbsent(id, child);
+        SourceException.throwIf(prev != null, ref,
+                "Cannot add %s tree child with name %s, a conflicting child already exists", tree, id);
+    }
+
+    private static void putChoiceDataChildren(final Map<QName, DataTreeEffectiveStatement<?>> map,
+            final StatementSourceReference ref, final SchemaTreeEffectiveStatement<?> child) {
+        // For choice statements go through all their cases and fetch their data children
+        if (child instanceof ChoiceEffectiveStatement) {
+            child.streamEffectiveSubstatements(CaseEffectiveStatement.class).forEach(
+                caseStmt -> caseStmt.streamEffectiveSubstatements(SchemaTreeEffectiveStatement.class).forEach(stmt -> {
+                    if (stmt instanceof DataTreeEffectiveStatement) {
+                        putChild(map, (DataTreeEffectiveStatement<?>) stmt, ref, "data");
+                    } else {
+                        putChoiceDataChildren(map, ref, stmt);
+                    }
+                }));
+        }
     }
 }

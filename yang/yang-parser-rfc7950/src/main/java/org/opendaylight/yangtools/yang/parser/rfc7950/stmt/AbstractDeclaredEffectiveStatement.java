@@ -241,7 +241,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         protected DefaultWithSchemaTree(final D declared, final StmtContext<?, ?, ?> ctx,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.declared = requireNonNull(declared);
-            this.schemaTree = ImmutableMap.copyOf(AbstractSchemaEffectiveDocumentedNode.createSchemaTreeNamespace(
+            this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(
                 ctx.getStatementSourceReference(), substatements));
         }
 
@@ -290,11 +290,9 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.declared = requireNonNull(declared);
             final StatementSourceReference ref = ctx.getStatementSourceReference();
-            final Map<QName, SchemaTreeEffectiveStatement<?>> schema =
-                    AbstractSchemaEffectiveDocumentedNode.createSchemaTreeNamespace(ref, substatements);
+            final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(ref, substatements);
             this.schemaTree = ImmutableMap.copyOf(schema);
-            this.dataTree = AbstractSchemaEffectiveDocumentedNode.createDataTreeNamespace(ref, schema.values(),
-                schemaTree);
+            this.dataTree = createDataTreeNamespace(ref, schema.values(), schemaTree);
         }
 
         @Override
