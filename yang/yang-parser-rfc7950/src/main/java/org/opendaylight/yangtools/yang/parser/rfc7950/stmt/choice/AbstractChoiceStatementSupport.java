@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -75,16 +73,6 @@ abstract class AbstractChoiceStatementSupport
     protected final ChoiceEffectiveStatement createEffective(
             final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx,
             final ChoiceStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        // FIXME: YANGTOOLS-652: this is rather unnecessary
-        final SortedMap<QName, CaseSchemaNode> cases = new TreeMap<>();
-        for (final EffectiveStatement<?, ?> effectiveStatement : substatements) {
-            if (effectiveStatement instanceof CaseSchemaNode) {
-                final CaseSchemaNode choiceCaseNode = (CaseSchemaNode) effectiveStatement;
-                // FIXME: we may be overwriting a previous entry, is that really okay?
-                cases.put(choiceCaseNode.getQName(), choiceCaseNode);
-            }
-        }
-
         final String defaultArg = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
         final CaseSchemaNode defaultCase;
         if (defaultArg != null) {
@@ -97,8 +85,8 @@ abstract class AbstractChoiceStatementSupport
             }
 
             // FIXME: this does not work with submodules, as they are
-            defaultCase = InferenceException.throwIfNull(cases.get(qname), ctx.getStatementSourceReference(),
-                "Default statement refers to missing case %s", qname);
+            defaultCase = InferenceException.throwIfNull(findCase(qname, substatements),
+                ctx.getStatementSourceReference(), "Default statement refers to missing case %s", qname);
         } else {
             defaultCase = null;
         }
@@ -110,7 +98,7 @@ abstract class AbstractChoiceStatementSupport
                 .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
                 .toFlags();
 
-        return new ChoiceEffectiveStatementImpl(declared, ctx, substatements, flags, cases, defaultCase,
+        return new ChoiceEffectiveStatementImpl(declared, ctx, substatements, flags, defaultCase,
             (ChoiceSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null));
     }
 
@@ -121,4 +109,18 @@ abstract class AbstractChoiceStatementSupport
     }
 
     abstract StatementSupport<?, ?, ?> implictCase();
+
+    private static CaseSchemaNode findCase(final QName qname,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        for (final EffectiveStatement<?, ?> effectiveStatement : substatements) {
+            if (effectiveStatement instanceof CaseSchemaNode) {
+                final CaseSchemaNode choiceCaseNode = (CaseSchemaNode) effectiveStatement;
+                if (qname.equals(choiceCaseNode.getQName())) {
+                    return choiceCaseNode;
+                }
+            }
+        }
+
+        return null;
+    }
 }

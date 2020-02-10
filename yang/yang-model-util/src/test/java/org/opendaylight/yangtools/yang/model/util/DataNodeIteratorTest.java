@@ -14,11 +14,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.SortedMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -106,9 +104,7 @@ public class DataNodeIteratorTest {
         final QName mockedCase1QName = QName.create("", "case1");
         final CaseSchemaNode mockedCase2 = mockDataNodeContainer(CaseSchemaNode.class);
         final QName mockedCase2QName = QName.create("", "case2");
-        final SortedMap<QName, CaseSchemaNode> cases = ImmutableSortedMap.of(mockedCase1QName, mockedCase1,
-            mockedCase2QName, mockedCase2);
-        doReturn(cases).when(mockedChoice).getCases();
+        doReturn(ImmutableSet.of(mockedCase1, mockedCase2)).when(mockedChoice).getCases();
 
         final Set<DataSchemaNode> childNodes = ImmutableSet.of(mockedAugmentingContainer, mockedContainer, mockedList,
                 mockedChoice);
@@ -144,8 +140,8 @@ public class DataNodeIteratorTest {
         assertTrue(it.allContainers().contains(mockedContainer));
         assertTrue(it.allLists().contains(mockedList));
         assertTrue(it.allChoices().contains(mockedChoice));
-        assertTrue(it.allChoices().get(0).getCases().values().contains(mockedCase1));
-        assertTrue(it.allChoices().get(0).getCases().values().contains(mockedCase2));
+        assertTrue(it.allChoices().get(0).getCases().contains(mockedCase1));
+        assertTrue(it.allChoices().get(0).getCases().contains(mockedCase2));
         assertTrue(it.allContainers().contains(mockedContainerInNotification));
         assertTrue(it.allLists().contains(mockedListInRpcInputContainer));
         assertTrue(it.allGroupings().contains(mockedGrouping));
