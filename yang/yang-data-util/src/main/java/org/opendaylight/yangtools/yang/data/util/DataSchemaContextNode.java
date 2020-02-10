@@ -120,7 +120,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
     private static ChoiceSchemaNode findChoice(final Iterable<ChoiceSchemaNode> choices, final QName child) {
         for (ChoiceSchemaNode choice : choices) {
             // FIXME: this looks weird: what are we looking for again?
-            for (CaseSchemaNode caze : choice.getCases().values()) {
+            for (CaseSchemaNode caze : choice.getCases()) {
                 if (findChildSchemaNode(caze, child) != null) {
                     return choice;
                 }

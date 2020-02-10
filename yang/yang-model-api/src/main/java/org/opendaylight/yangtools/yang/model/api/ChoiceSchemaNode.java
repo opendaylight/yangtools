@@ -11,9 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.SortedMap;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -28,8 +28,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @return set of ChoiceCaseNode objects defined in this node which represents set of arguments of the YANG
      *         <code>case</code> substatement of the <code>choice</code> statement.
      */
-    // FIXME: 5.0.0: revert back to collection + lookup
-    SortedMap<QName, CaseSchemaNode> getCases();
+    Collection<? extends CaseSchemaNode> getCases();
 
     /**
      * Returns the concrete case according to specified Q name.
@@ -39,8 +38,9 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @return child case node of this Choice if child with given name is present, empty otherwise.
      * @throws NullPointerException if qname is null
      */
-    default Optional<CaseSchemaNode> findCase(final QName qname) {
-        return Optional.ofNullable(getCases().get(requireNonNull(qname)));
+    default Optional<? extends CaseSchemaNode> findCase(final QName qname) {
+        requireNonNull(qname);
+        return getCases().stream().filter(node -> qname.equals(node.getQName())).findFirst();
     }
 
     /**
@@ -52,8 +52,8 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @throws NullPointerException if localname is null
      */
     @Beta
-    default List<CaseSchemaNode> findCaseNodes(final String localname) {
-        return getCases().values().stream().filter(node -> localname.equals(node.getQName().getLocalName()))
+    default List<? extends CaseSchemaNode> findCaseNodes(final String localname) {
+        return getCases().stream().filter(node -> localname.equals(node.getQName().getLocalName()))
                 .collect(ImmutableList.toImmutableList());
     }
 
@@ -69,7 +69,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
     @Beta
     default Optional<DataSchemaNode> findDataSchemaChild(final QName qname) {
         requireNonNull(qname);
-        for (CaseSchemaNode caseNode : getCases().values()) {
+        for (CaseSchemaNode caseNode : getCases()) {
             final Optional<DataSchemaNode> child = caseNode.findDataChildByName(qname);
             if (child.isPresent()) {
                 return child;
@@ -77,20 +77,6 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
         }
 
         return Optional.empty();
-    }
-
-    /**
-     * Returns the concrete case according to specified QName.
-     *
-     * @param qname
-     *            QName of sought Choice Case Node
-     * @return child case node of this Choice if child with given name is present, <code>null</code> otherwise.
-     *
-     * @deprecated Use either {@code getCases().get(name)} or #findCase(QName)
-     */
-    @Deprecated
-    default CaseSchemaNode getCaseNodeByName(final QName qname) {
-        return getCases().get(qname);
     }
 
     /**

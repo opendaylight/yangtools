@@ -123,7 +123,7 @@ public final class SchemaNodeUtils {
             } else if (childNode instanceof ChoiceSchemaNode) {
                 final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) childNode;
                 aggregator.addChoice(choiceNode);
-                for (final CaseSchemaNode caseNode : choiceNode.getCases().values()) {
+                for (final CaseSchemaNode caseNode : choiceNode.getCases()) {
                     traverse(aggregator, caseNode);
                 }
             }
