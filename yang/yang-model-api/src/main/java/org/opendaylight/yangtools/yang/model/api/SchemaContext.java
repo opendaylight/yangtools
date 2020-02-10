@@ -234,4 +234,14 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
     default Optional<DataSchemaNode> findDataTreeChild(final QName name) {
         return findModule(name.getModule()).flatMap(mod -> mod.findDataTreeChild(name));
     }
+
+    /**
+     * Get identities derived from a selected identity.
+     *
+     * @return collection of identities derived from this identity
+     * @throws NullPointerException if identity is null
+     * @throws IllegalArgumentException if the specified identity is not present in this context
+     */
+    @Beta
+    @NonNull Collection<? extends IdentitySchemaNode> getDerivedIdentities(IdentitySchemaNode identity);
 }
