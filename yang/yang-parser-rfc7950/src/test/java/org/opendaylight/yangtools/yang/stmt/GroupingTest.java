@@ -19,7 +19,6 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import java.util.SortedMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -290,7 +289,7 @@ public class GroupingTest {
         assertNotNull(how_u);
         TestUtils.checkIsAddedByUses(how_u, true);
         assertFalse(how_u.isAugmenting());
-        final SortedMap<QName, CaseSchemaNode> cases_u = how_u.getCases();
+        final Collection<? extends CaseSchemaNode> cases_u = how_u.getCases();
         assertEquals(2, cases_u.size());
         final CaseSchemaNode interval = how_u.findCaseNodes("interval").iterator().next();
         assertFalse(interval.isAugmenting());

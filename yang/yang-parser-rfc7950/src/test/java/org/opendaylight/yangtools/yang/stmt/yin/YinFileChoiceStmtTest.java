@@ -41,7 +41,7 @@ public class YinFileChoiceStmtTest extends AbstractYinModulesTest {
         assertEquals(1, choice.getCases().size());
 
         // this choice is augmented (see main-impl.yang.xml)
-        final Iterator<CaseSchemaNode> casesIterator = choice.getCases().values().iterator();
+        final Iterator<? extends CaseSchemaNode> casesIterator = choice.getCases().iterator();
         final CaseSchemaNode caseNode = casesIterator.next();
         assertEquals("main-impl", caseNode.getQName().getLocalName());
         assertEquals(13, caseNode.getChildNodes().size());

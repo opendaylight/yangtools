@@ -59,7 +59,7 @@ public final class ParserStreamUtils {
 
         // try to find data schema node in choice (looking for first match)
         for (final ChoiceSchemaNode choiceNode : childChoices) {
-            for (final CaseSchemaNode concreteCase : choiceNode.getCases().values()) {
+            for (final CaseSchemaNode concreteCase : choiceNode.getCases()) {
                 final Deque<DataSchemaNode> resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase,
                         childName, namespace);
                 if (!resultFromRecursion.isEmpty()) {

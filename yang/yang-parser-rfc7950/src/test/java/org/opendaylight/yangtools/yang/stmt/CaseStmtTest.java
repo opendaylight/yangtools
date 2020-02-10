@@ -59,7 +59,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -72,7 +72,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -85,7 +85,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -98,7 +98,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -111,7 +111,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -124,7 +124,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -137,7 +137,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -150,7 +150,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -163,7 +163,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -176,7 +176,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -189,7 +189,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -202,7 +202,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -215,7 +215,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -228,7 +228,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -241,7 +241,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -254,7 +254,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -267,7 +267,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -280,7 +280,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -296,7 +296,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -309,7 +309,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -322,7 +322,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -335,7 +335,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -348,7 +348,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -361,7 +361,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -374,7 +374,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -387,7 +387,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -400,7 +400,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -413,7 +413,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -426,7 +426,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -439,7 +439,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -452,7 +452,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -465,7 +465,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertTrue(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -478,7 +478,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -491,7 +491,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -504,7 +504,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertFalse(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
@@ -517,7 +517,7 @@ public class CaseStmtTest {
         tempSecondChild = ((ContainerSchemaNode) tempChild).getChildNodes().iterator().next();
         assertNotNull(tempSecondChild);
         assertTrue(tempSecondChild.isConfiguration());
-        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().values().iterator().next();
+        tempChoice = ((ChoiceSchemaNode) tempSecondChild).getCases().iterator().next();
         assertNotNull(tempChoice);
         assertFalse(tempChoice.isConfiguration());
         tempThirdChild = tempChoice.getChildNodes().iterator().next();
