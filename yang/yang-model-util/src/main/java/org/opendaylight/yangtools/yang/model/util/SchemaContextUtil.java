@@ -482,7 +482,7 @@ public final class SchemaContextUtil {
         }
 
         if (foundNode == null && parent instanceof ChoiceSchemaNode) {
-            foundNode = ((ChoiceSchemaNode) parent).getCaseNodeByName(current);
+            foundNode = ((ChoiceSchemaNode) parent).findCase(current).orElse(null);
 
             if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);
@@ -490,7 +490,7 @@ public final class SchemaContextUtil {
 
             if (foundNode == null) {
                 // fallback that tries to map into one of the child cases
-                for (final CaseSchemaNode caseNode : ((ChoiceSchemaNode) parent).getCases().values()) {
+                for (final CaseSchemaNode caseNode : ((ChoiceSchemaNode) parent).getCases()) {
                     final DataSchemaNode maybeChild = caseNode.getDataChildByName(current);
                     if (maybeChild != null) {
                         foundNode = findNodeIn(maybeChild, nextPath);
