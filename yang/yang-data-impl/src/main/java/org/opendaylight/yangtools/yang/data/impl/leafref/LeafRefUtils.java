@@ -72,7 +72,7 @@ public final class LeafRefUtils {
                 currenDataNodeContainer = (DataNodeContainer) child;
             } else if (child instanceof ChoiceSchemaNode) {
                 if (nodePathIterator.hasNext()) {
-                    currenDataNodeContainer = ((ChoiceSchemaNode) child).getCases().get(nodePathIterator.next());
+                    currenDataNodeContainer = ((ChoiceSchemaNode) child).findCase(nodePathIterator.next()).orElse(null);
                 } else {
                     break;
                 }

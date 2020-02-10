@@ -208,7 +208,7 @@ public class NormalizedDataBuilderTest {
                     return retVal;
                 }
             } else if (dataSchemaNode instanceof ChoiceSchemaNode) {
-                for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) dataSchemaNode).getCases().values()) {
+                for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) dataSchemaNode).getCases()) {
                     DataSchemaNode retVal = findChildNode(caseNode, name);
                     if (retVal != null) {
                         return retVal;

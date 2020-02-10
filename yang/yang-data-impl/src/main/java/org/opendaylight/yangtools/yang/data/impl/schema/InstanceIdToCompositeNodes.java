@@ -338,7 +338,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             super(NodeIdentifier.create(schema.getQName()));
             final ImmutableMap.Builder<PathArgument, InstanceIdToNodes<?>> byArgBuilder = ImmutableMap.builder();
 
-            for (final CaseSchemaNode caze : schema.getCases().values()) {
+            for (final CaseSchemaNode caze : schema.getCases()) {
                 for (final DataSchemaNode cazeChild : caze.getChildNodes()) {
                     final InstanceIdToNodes<?> childOp = fromDataSchemaNode(cazeChild);
                     byArgBuilder.put(childOp.getIdentifier(), childOp);

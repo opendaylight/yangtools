@@ -125,7 +125,7 @@ public final class SchemaTracker {
     }
 
     private static SchemaNode findChildInCases(final ChoiceSchemaNode parent, final QName qname) {
-        for (final CaseSchemaNode caze : parent.getCases().values()) {
+        for (final CaseSchemaNode caze : parent.getCases()) {
             final Optional<DataSchemaNode> potential = caze.findDataChildByName(qname);
             if (potential.isPresent()) {
                 return potential.get();
@@ -135,7 +135,7 @@ public final class SchemaTracker {
     }
 
     private static SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
-        for (final CaseSchemaNode caze : parent.getCases().values()) {
+        for (final CaseSchemaNode caze : parent.getCases()) {
             final Optional<DataSchemaNode> potential = caze.findDataChildByName(qname);
             if (potential.isPresent()) {
                 return caze;

@@ -173,7 +173,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
 
     private static ChoiceSchemaNode findChoice(final Iterable<ChoiceSchemaNode> choices, final QName child) {
         for (final ChoiceSchemaNode choice : choices) {
-            for (final CaseSchemaNode caze : choice.getCases().values()) {
+            for (final CaseSchemaNode caze : choice.getCases()) {
                 if (findChildSchemaNode(caze, child).isPresent()) {
                     return choice;
                 }

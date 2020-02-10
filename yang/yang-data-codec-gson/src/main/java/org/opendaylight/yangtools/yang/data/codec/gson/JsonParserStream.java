@@ -419,7 +419,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             }
 
             for (final ChoiceSchemaNode choiceNode : choices) {
-                for (final CaseSchemaNode concreteCase : choiceNode.getCases().values()) {
+                for (final CaseSchemaNode concreteCase : choiceNode.getCases()) {
                     potentialUris.addAll(resolveAllPotentialNamespaces(elementName, concreteCase));
                 }
             }

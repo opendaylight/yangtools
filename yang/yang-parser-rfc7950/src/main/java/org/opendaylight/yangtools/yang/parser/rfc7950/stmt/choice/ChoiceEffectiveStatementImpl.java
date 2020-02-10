@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedMap;
+import java.util.Collection;
 import java.util.Optional;
-import java.util.SortedMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithSchemaTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.AugmentationTargetMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
@@ -31,7 +33,6 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode,
                    DataSchemaNodeMixin<QName, ChoiceStatement>, AugmentationTargetMixin<QName, ChoiceStatement>,
                    MandatoryMixin<QName, ChoiceStatement> {
-    private final ImmutableSortedMap<QName, CaseSchemaNode> cases;
     private final CaseSchemaNode defaultCase;
     private final ChoiceSchemaNode original;
     private final @NonNull SchemaPath path;
@@ -40,12 +41,10 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     ChoiceEffectiveStatementImpl(final ChoiceStatement declared,
             final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
-            final SortedMap<QName, CaseSchemaNode> cases, final @Nullable CaseSchemaNode defaultCase,
-            final @Nullable ChoiceSchemaNode original) {
+            final @Nullable CaseSchemaNode defaultCase, final @Nullable ChoiceSchemaNode original) {
         super(declared, ctx, substatements);
         this.flags = flags;
         this.path = ctx.getSchemaPath().get();
-        this.cases = ImmutableSortedMap.copyOfSorted(cases);
         this.defaultCase = defaultCase;
         this.original = original;
     }
@@ -71,8 +70,14 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     }
 
     @Override
-    public SortedMap<QName, CaseSchemaNode> getCases() {
-        return cases;
+    public Optional<? extends CaseSchemaNode> findCase(final QName qname) {
+        final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace().get(requireNonNull(qname));
+        return child instanceof CaseSchemaNode ? Optional.of((CaseSchemaNode) child) : Optional.empty();
+    }
+
+    @Override
+    public Collection<? extends CaseSchemaNode> getCases() {
+        return filterEffectiveStatements(CaseSchemaNode.class);
     }
 
     @Override

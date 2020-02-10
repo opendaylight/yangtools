@@ -137,7 +137,7 @@ public interface DataNodeContainer {
         // hence we have to resort to a full search.
         for (DataSchemaNode child : getChildNodes()) {
             if (child instanceof ChoiceSchemaNode) {
-                for (CaseSchemaNode choiceCase : ((ChoiceSchemaNode) child).getCases().values()) {
+                for (CaseSchemaNode choiceCase : ((ChoiceSchemaNode) child).getCases()) {
                     final Optional<DataSchemaNode> caseChild = choiceCase.findDataTreeChild(name);
                     if (caseChild.isPresent()) {
                         return caseChild;

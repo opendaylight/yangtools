@@ -75,7 +75,7 @@ final class LeafRefContextTreeBuilder {
             }
         } else if (node instanceof ChoiceSchemaNode) {
             // :FIXME choice without case
-            for (final CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases().values()) {
+            for (final CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
                 final LeafRefContext childLeafRefContext = buildLeafRefContextReferencingTree(caseNode, currentModule);
                 if (childLeafRefContext.hasReferencingChild() || childLeafRefContext.isReferencing()) {
                     currentLeafRefContextBuilder.addReferencingChild(childLeafRefContext,
@@ -121,7 +121,7 @@ final class LeafRefContextTreeBuilder {
                 }
             }
         } else if (node instanceof ChoiceSchemaNode) {
-            for (final CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases().values()) {
+            for (final CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
                 final LeafRefContext childLeafRefContext = buildLeafRefContextReferencedByTree(caseNode, currentModule);
                 if (childLeafRefContext.hasReferencedChild() || childLeafRefContext.isReferenced()) {
                     currentLeafRefContextBuilder.addReferencedByChild(childLeafRefContext,
