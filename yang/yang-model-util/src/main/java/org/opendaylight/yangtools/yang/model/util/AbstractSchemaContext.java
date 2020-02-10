@@ -8,14 +8,21 @@
 
 package org.opendaylight.yangtools.yang.model.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -30,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
@@ -68,6 +76,21 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     protected static final TreeSet<Module> createModuleSet() {
         return new TreeSet<>(REVISION_COMPARATOR);
     }
+
+    private static final VarHandle DERIVED_IDENTITIES;
+
+    static {
+        try {
+            DERIVED_IDENTITIES = MethodHandles.lookup().findVarHandle(AbstractSchemaContext.class, "derivedIdentities",
+                ImmutableMap.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    // Accessed via DERIVED_IDENTITIES
+    @SuppressWarnings("unused")
+    private volatile ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> derivedIdentities = null;
 
     /**
      * Returns the namespace-to-module mapping.
@@ -245,5 +268,43 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     @Override
     public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
         return Collections.emptySet();
+    }
+
+    @Override
+    public Collection<? extends IdentitySchemaNode> getDerivedIdentities(final IdentitySchemaNode identity) {
+        ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> local =
+                (ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>>)
+                DERIVED_IDENTITIES.getAcquire(this);
+        if (local == null) {
+            local = loadDerivedIdentities();
+        }
+        final ImmutableSet<IdentitySchemaNode> result = local.get(requireNonNull(identity));
+        checkArgument(result != null, "Identity %s not found", identity);
+        return result;
+    }
+
+    private ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> loadDerivedIdentities() {
+        final SetMultimap<IdentitySchemaNode, IdentitySchemaNode> tmp =
+                Multimaps.newSetMultimap(new HashMap<>(), HashSet::new);
+        final List<IdentitySchemaNode> identities = new ArrayList<>();
+        for (Module module : getModules()) {
+            final Collection<? extends IdentitySchemaNode> ids = module.getIdentities();
+            for (IdentitySchemaNode identity : ids) {
+                for (IdentitySchemaNode base : identity.getBaseIdentities()) {
+                    tmp.put(base, identity);
+                }
+            }
+            identities.addAll(ids);
+        }
+
+        final ImmutableMap.Builder<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> builder =
+                ImmutableMap.builderWithExpectedSize(identities.size());
+        for (IdentitySchemaNode identity : identities) {
+            builder.put(identity, ImmutableSet.copyOf(tmp.get(identity)));
+        }
+
+        final ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> result = builder.build();
+        final Object witness = DERIVED_IDENTITIES.compareAndExchangeRelease(this, null, result);
+        return witness == null ? result : (ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>>) witness;
     }
 }

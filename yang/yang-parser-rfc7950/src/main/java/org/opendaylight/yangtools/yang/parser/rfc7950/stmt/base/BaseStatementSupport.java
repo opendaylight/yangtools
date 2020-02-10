@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.base;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
@@ -17,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -67,19 +64,13 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
                 ModelProcessingPhase.STATEMENT_DEFINITION);
             final Prerequisite<StmtContext<?, ?, ?>> requiresPrereq = baseIdentityAction.requiresCtx(baseStmtCtx,
                 IdentityNamespace.class, baseIdentityQName, ModelProcessingPhase.STATEMENT_DEFINITION);
-            final Prerequisite<StmtContext.Mutable<?, ?, ?>> mutatesPrereq = baseIdentityAction.mutatesCtx(
-                baseParentCtx, ModelProcessingPhase.STATEMENT_DEFINITION);
+            final Prerequisite<Mutable<?, ?, ?>> mutatesPrereq = baseIdentityAction.mutatesCtx(baseParentCtx,
+                ModelProcessingPhase.STATEMENT_DEFINITION);
 
             baseIdentityAction.apply(new InferenceAction() {
                 @Override
                 public void apply(final InferenceContext ctx) {
-                    List<StmtContext<?, ?, ?>> derivedIdentities = baseStmtCtx.getFromNamespace(
-                        DerivedIdentitiesNamespace.class, baseIdentityQName);
-                    if (derivedIdentities == null) {
-                        derivedIdentities = new ArrayList<>(1);
-                        baseStmtCtx.addToNs(DerivedIdentitiesNamespace.class, baseIdentityQName, derivedIdentities);
-                    }
-                    derivedIdentities.add(baseParentCtx);
+                    // No-op, we just want to ensure the statement is specified
                 }
 
                 @Override
