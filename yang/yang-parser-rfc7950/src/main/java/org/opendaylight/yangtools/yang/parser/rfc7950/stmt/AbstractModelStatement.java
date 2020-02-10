@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.ModelStatement;
 
@@ -43,4 +44,17 @@ abstract class AbstractModelStatement<A> implements ModelStatement<A> {
                 // of exception we throw. ClassCastException is as good as VerifyException.
                 : ImmutableList.of(type.cast(masked));
     }
+
+    protected static final @NonNull Object maskSet(final ImmutableSet<?> set) {
+        return set.size() == 1 ? set.iterator().next() : set;
+    }
+
+    protected static final <T> @NonNull ImmutableSet<? extends T> unmaskSet(final @NonNull Object masked,
+            final @NonNull Class<T> type) {
+        return masked instanceof ImmutableSet ? (ImmutableSet<T>) masked
+                // Yes, this is ugly code, which could use an explicit verify, that would just change the what sort
+                // of exception we throw. ClassCastException is as good as VerifyException.
+                : ImmutableSet.of(type.cast(masked));
+    }
+
 }

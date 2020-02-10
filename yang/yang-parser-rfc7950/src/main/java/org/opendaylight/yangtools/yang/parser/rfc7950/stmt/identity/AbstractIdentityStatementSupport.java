@@ -7,13 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity;
 
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
@@ -63,9 +71,22 @@ abstract class AbstractIdentityStatementSupport
             final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx,
             final IdentityStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
 
+        final List<IdentitySchemaNode> identities = new ArrayList<>();
+        for (EffectiveStatement<?, ?> stmt : substatements) {
+            if (stmt instanceof BaseEffectiveStatement) {
+                final QName qname = ((BaseEffectiveStatement) stmt).argument();
+                final IdentityEffectiveStatement identity =
+                        verifyNotNull(ctx.getFromNamespace(IdentityNamespace.class, qname),
+                            "Failed to find identity %s", qname)
+                        .buildEffective();
+                verify(identity instanceof IdentitySchemaNode, "%s is not a IdentitySchemaNode", identity);
+                identities.add((IdentitySchemaNode) identity);
+            }
+        }
+
         return new RegularIdentityEffectiveStatement(declared, ctx, new FlagsBuilder()
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-            .toFlags(), substatements);
+            .toFlags(), substatements, ImmutableSet.copyOf(identities));
     }
 
     @Override
