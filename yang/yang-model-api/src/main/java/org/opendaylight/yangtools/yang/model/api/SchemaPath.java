@@ -16,12 +16,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableIterator;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -71,9 +72,15 @@ public abstract class SchemaPath implements Immutable {
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<SchemaPath, ImmutableList> LEGACYPATH_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(SchemaPath.class, ImmutableList.class, "legacyPath");
+    private static final VarHandle LEGACY_PATH;
+
+    static {
+        try {
+            LEGACY_PATH = MethodHandles.lookup().findVarHandle(SchemaPath.class, "legacyPath", ImmutableList.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     /**
      * Shared instance of the conceptual root schema node.
@@ -101,9 +108,9 @@ public abstract class SchemaPath implements Immutable {
     private final int hash;
 
     /**
-     * Cached legacy path, filled-in when {@link #getPath()} or {@link #getPathTowardsRoot()}
-     * is invoked.
+     * Cached legacy path, filled-in when {@link #getPath()} or {@link #getPathTowardsRoot()} is invoked.
      */
+    @SuppressWarnings("unused")
     private volatile ImmutableList<QName> legacyPath;
 
     SchemaPath(final SchemaPath parent, final QName qname) {
@@ -119,17 +126,19 @@ public abstract class SchemaPath implements Immutable {
     }
 
     private ImmutableList<QName> getLegacyPath() {
-        ImmutableList<QName> ret = legacyPath;
-        if (ret == null) {
-            final List<QName> tmp = new ArrayList<>();
-            for (QName item : getPathTowardsRoot()) {
-                tmp.add(item);
-            }
-            ret = ImmutableList.copyOf(Lists.reverse(tmp));
-            LEGACYPATH_UPDATER.lazySet(this, ret);
-        }
+        final ImmutableList<QName> local = (ImmutableList<QName>) LEGACY_PATH.getAcquire(this);
+        return local != null ? local : loadLegacyPath();
+    }
 
-        return ret;
+    @SuppressWarnings("unchecked")
+    private ImmutableList<QName> loadLegacyPath() {
+        final List<QName> tmp = new ArrayList<>();
+        for (QName item : getPathTowardsRoot()) {
+            tmp.add(item);
+        }
+        final ImmutableList<QName> ret = ImmutableList.copyOf(Lists.reverse(tmp));
+        final Object witness = LEGACY_PATH.compareAndExchangeRelease(this, null, ret);
+        return witness == null ? ret : (ImmutableList<QName>) witness;
     }
 
     /**
