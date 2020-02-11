@@ -140,7 +140,7 @@ public abstract class SchemaPath implements Immutable {
      *
      * @deprecated Use {@link #getPathFromRoot()} instead.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public List<QName> getPath() {
         return getLegacyPath();
     }

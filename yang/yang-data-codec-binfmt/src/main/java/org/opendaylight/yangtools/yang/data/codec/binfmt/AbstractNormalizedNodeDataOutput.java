@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.Iterables;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -168,8 +168,9 @@ abstract class AbstractNormalizedNodeDataOutput implements NormalizedNodeDataOut
         ensureHeaderWritten();
 
         output.writeBoolean(path.isAbsolute());
-        final List<QName> qnames = path.getPath();
-        output.writeInt(qnames.size());
+
+        final Iterable<QName> qnames = path.getPathFromRoot();
+        output.writeInt(Iterables.size(qnames));
         for (QName qname : qnames) {
             writeQNameInternal(qname);
         }
