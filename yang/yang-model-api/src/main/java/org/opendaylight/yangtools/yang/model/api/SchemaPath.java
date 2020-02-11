@@ -14,13 +14,8 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableIterator;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
@@ -72,16 +67,6 @@ public abstract class SchemaPath implements Immutable {
         }
     }
 
-    private static final VarHandle LEGACY_PATH;
-
-    static {
-        try {
-            LEGACY_PATH = MethodHandles.lookup().findVarHandle(SchemaPath.class, "legacyPath", ImmutableList.class);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
-
     /**
      * Shared instance of the conceptual root schema node.
      */
@@ -107,12 +92,6 @@ public abstract class SchemaPath implements Immutable {
      */
     private final int hash;
 
-    /**
-     * Cached legacy path, filled-in when {@link #getPath()} or {@link #getPathTowardsRoot()} is invoked.
-     */
-    @SuppressWarnings("unused")
-    private volatile ImmutableList<QName> legacyPath;
-
     SchemaPath(final SchemaPath parent, final QName qname) {
         this.parent = parent;
         this.qname = qname;
@@ -123,22 +102,6 @@ public abstract class SchemaPath implements Immutable {
         }
 
         hash = tmp;
-    }
-
-    private ImmutableList<QName> getLegacyPath() {
-        final ImmutableList<QName> local = (ImmutableList<QName>) LEGACY_PATH.getAcquire(this);
-        return local != null ? local : loadLegacyPath();
-    }
-
-    @SuppressWarnings("unchecked")
-    private ImmutableList<QName> loadLegacyPath() {
-        final List<QName> tmp = new ArrayList<>();
-        for (QName item : getPathTowardsRoot()) {
-            tmp.add(item);
-        }
-        final ImmutableList<QName> ret = ImmutableList.copyOf(Lists.reverse(tmp));
-        final Object witness = LEGACY_PATH.compareAndExchangeRelease(this, null, ret);
-        return witness == null ? ret : (ImmutableList<QName>) witness;
     }
 
     /**
@@ -247,7 +210,10 @@ public abstract class SchemaPath implements Immutable {
      *         path from the root to the schema node.
      */
     public Iterable<QName> getPathFromRoot() {
-        return getLegacyPath();
+        if (qname == null) {
+            return ImmutableList.of();
+        }
+        return parent == null ? ImmutableList.of(qname) : new PathFromRoot(this);
     }
 
     /**
