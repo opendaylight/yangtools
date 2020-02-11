@@ -142,19 +142,6 @@ public abstract class SchemaPath implements Immutable {
     }
 
     /**
-     * Returns the complete path to schema node.
-     *
-     * @return list of <code>QName</code> instances which represents complete
-     *         path to schema node
-     *
-     * @deprecated Use {@link #getPathFromRoot()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public List<QName> getPath() {
-        return getLegacyPath();
-    }
-
-    /**
      * Constructs new instance of this class with the concrete path.
      *
      * @param path
