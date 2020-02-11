@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
@@ -103,26 +102,6 @@ public abstract class SchemaPath implements Immutable {
         }
 
         hash = tmp;
-    }
-
-    /**
-     * Returns the complete path to schema node.
-     *
-     * @return list of <code>QName</code> instances which represents complete
-     *         path to schema node
-     *
-     * @deprecated Use {@link #getPathFromRoot()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public List<QName> getPath() {
-        return commonGetPath();
-    }
-
-    private List<QName> commonGetPath() {
-        if (qname == null) {
-            return ImmutableList.of();
-        }
-        return parent == null ? ImmutableList.of(qname) : new PathFromRoot(this);
     }
 
     /**
@@ -231,7 +210,10 @@ public abstract class SchemaPath implements Immutable {
      *         path from the root to the schema node.
      */
     public Iterable<QName> getPathFromRoot() {
-        return commonGetPath();
+        if (qname == null) {
+            return ImmutableList.of();
+        }
+        return parent == null ? ImmutableList.of(qname) : new PathFromRoot(this);
     }
 
     /**
