@@ -5,14 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -25,8 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 
 public class Bug6972Test {
-
-    @Ignore
     @Test
     public void allUnitsShouldBeTheSameInstance() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug6972");
@@ -43,16 +39,14 @@ public class Bug6972Test {
         final QName barFooLeaf = QName.create("bar-ns", "foo", revision);
 
         final UnitsEffectiveStatement unitsBar1 = getEffectiveUnits(bar, barExportCont, barFooLeaf);
-        final UnitsEffectiveStatement unitsBar2 = getEffectiveUnits(bar, barFooCont, barFooLeaf);
+        assertSame(unitsBar1, getEffectiveUnits(bar, barFooCont, barFooLeaf));
 
         final QName bazExportCont = QName.create("baz-ns", "baz-export", revision);
         final QName bazFooCont = QName.create("baz-ns", "baz-foo", revision);
         final QName bazFooLeaf = QName.create("baz-ns", "foo", revision);
 
-        final UnitsEffectiveStatement unitsBaz1 = getEffectiveUnits(baz, bazExportCont, bazFooLeaf);
-        final UnitsEffectiveStatement unitsBaz2 = getEffectiveUnits(baz, bazFooCont, bazFooLeaf);
-
-        assertTrue(unitsBar1 == unitsBar2 && unitsBar1 == unitsBaz1 && unitsBar1 == unitsBaz2);
+        assertSame(unitsBar1, getEffectiveUnits(baz, bazExportCont, bazFooLeaf));
+        assertSame(unitsBar1, getEffectiveUnits(baz, bazFooCont, bazFooLeaf));
     }
 
     private static UnitsEffectiveStatement getEffectiveUnits(final Module module, final QName containerQName,
