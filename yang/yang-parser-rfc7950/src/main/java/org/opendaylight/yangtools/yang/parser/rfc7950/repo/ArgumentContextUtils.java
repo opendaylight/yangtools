@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
-import java.util.List;
+import com.google.common.base.VerifyException;
 import java.util.regex.Pattern;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -87,17 +91,56 @@ enum ArgumentContextUtils {
         }
     }
 
+    /*
+     * NOTE: this method we do not use convenience methods provided by generated parser code, but instead are making
+     *       based on the grammar assumptions. While this is more verbose, it cuts out a number of unnecessary code,
+     *       such as intermediate List allocation et al.
+     */
     final @NonNull String stringFromStringContext(final ArgumentContext context, final StatementSourceReference ref) {
-        final StringBuilder sb = new StringBuilder();
-        final List<TerminalNode> strings = context.STRING();
-        if (!strings.isEmpty()) {
-            for (final TerminalNode stringNode : strings) {
-                appendString(sb, stringNode, ref);
-            }
-        } else {
-            appendString(sb, context.IDENTIFIER(), ref);
+        // Get first child, which we fully expect to exist and be a lexer token
+        final ParseTree firstChild = context.getChild(0);
+        verify(firstChild instanceof TerminalNode, "Unexpected shape of %s", context);
+        final TerminalNode firstNode = (TerminalNode) firstChild;
+        final int firstType = firstNode.getSymbol().getType();
+        switch (firstType) {
+            case YangStatementParser.IDENTIFIER:
+                // Simple case, there is a simple string, which cannot contain anything that we would need to process.
+                return firstNode.getText();
+            case YangStatementParser.STRING:
+                // Complex case, defer to a separate method
+                return concatStrings(context, ref);
+            default:
+                throw new VerifyException("Unexpected first symbol in " + context);
         }
+    }
 
+    private String concatStrings(final ArgumentContext context, final StatementSourceReference ref) {
+        /*
+         * We have multiple fragments. Just search the tree. This code is equivalent to
+         *
+         *    context.STRING().forEach(stringNode -> appendString(sb, stringNode, ref))
+         *
+         * except we minimize allocations which that would do.
+         */
+        final StringBuilder sb = new StringBuilder();
+        for (ParseTree child : context.children) {
+            verify(child instanceof TerminalNode, "Unexpected fragment component %s", child);
+            final TerminalNode childNode = (TerminalNode) child;
+            switch (childNode.getSymbol().getType()) {
+                case YangStatementParser.SEP:
+                    // Ignore whitespace
+                    break;
+                case YangStatementParser.PLUS:
+                    // Operator, which we are handling by concat
+                    break;
+                case YangStatementParser.STRING:
+                    // a lexer string, could be pretty much anything
+                    appendString(sb, childNode, ref);
+                    break;
+                default:
+                    throw new VerifyException("Unexpected symbol in " + childNode);
+            }
+        }
         return sb.toString();
     }
 
