@@ -129,14 +129,9 @@ abstract class AbstractAugmentStatementSupport
             }
 
             private void updateAugmentOrder(final StatementContextBase<?, ?, ?> augmentSourceCtx) {
-                Integer currentOrder = augmentSourceCtx.getFromNamespace(StmtOrderingNamespace.class,
+                final Integer prev = augmentSourceCtx.getFromNamespace(StmtOrderingNamespace.class,
                     YangStmtMapping.AUGMENT);
-                if (currentOrder == null) {
-                    currentOrder = 1;
-                } else {
-                    currentOrder++;
-                }
-
+                final int currentOrder = prev == null ? 1 : prev + 1;
                 augmentSourceCtx.addToNs(StmtOrderingNamespace.class, YangStmtMapping.AUGMENT, currentOrder);
             }
 
