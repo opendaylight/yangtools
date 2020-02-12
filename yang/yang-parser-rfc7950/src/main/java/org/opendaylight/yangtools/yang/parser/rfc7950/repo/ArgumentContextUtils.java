@@ -9,87 +9,41 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
-final class ArgumentContextUtils {
-    private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
-    private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
-    private static final Pattern ESCAPED_DQUOT = Pattern.compile("\\\"", Pattern.LITERAL);
-    private static final Pattern ESCAPED_BACKSLASH = Pattern.compile("\\\\", Pattern.LITERAL);
-    private static final Pattern ESCAPED_LF = Pattern.compile("\\n", Pattern.LITERAL);
-    private static final Pattern ESCAPED_TAB = Pattern.compile("\\t", Pattern.LITERAL);
-
-    private ArgumentContextUtils() {
-        // Hidden on purpose
-    }
-
-    static String stringFromStringContext(final ArgumentContext context, final YangVersion yangVersion,
-            final StatementSourceReference ref) {
-        final StringBuilder sb = new StringBuilder();
-        List<TerminalNode> strings = context.STRING();
-        if (strings.isEmpty()) {
-            strings = Collections.singletonList(context.IDENTIFIER());
-        }
-        for (final TerminalNode stringNode : strings) {
-            final String str = stringNode.getText();
-            final char firstChar = str.charAt(0);
-            final char lastChar = str.charAt(str.length() - 1);
-            if (firstChar == '"' && lastChar == '"') {
-                final String innerStr = str.substring(1, str.length() - 1);
-                /*
-                 * Unescape escaped double quotes, tabs, new line and backslash
-                 * in the inner string and trim the result.
-                 */
-                checkDoubleQuotedString(innerStr, yangVersion, ref);
-                sb.append(unescape(trimWhitespace(innerStr, stringNode.getSymbol().getCharPositionInLine())));
-            } else if (firstChar == '\'' && lastChar == '\'') {
-                /*
-                 * According to RFC6020 a single quote character cannot occur in
-                 * a single-quoted string, even when preceded by a backslash.
-                 */
-                sb.append(str, 1, str.length() - 1);
-            } else {
-                checkUnquotedString(str, yangVersion, ref);
-                sb.append(str);
-            }
-        }
-        return sb.toString();
-    }
-
-    private static String unescape(final String str) {
-        final int backslash = str.indexOf('\\');
-        if (backslash == -1) {
-            return str;
+/**
+ * Utilities for dealing with YANG statement argument strings, encapsulated in ANTLR grammar's ArgumentContext.
+ */
+enum ArgumentContextUtils {
+    /**
+     * YANG 1.0 version of strings, which were not completely clarified in RFC6020.
+     */
+    RFC6020 {
+        @Override
+        void checkDoubleQuotedString(final String str, final StatementSourceReference ref) {
+            // No-op
         }
 
-        // FIXME: given we the leading backslash, it would be more efficient to walk the string and unescape in one go
-        return ESCAPED_TAB.matcher(
-                    ESCAPED_LF.matcher(
-                        ESCAPED_BACKSLASH.matcher(
-                            ESCAPED_DQUOT.matcher(str).replaceAll("\\\""))
-                        .replaceAll("\\\\"))
-                    .replaceAll("\\\n"))
-               .replaceAll("\\\t");
-    }
-
-    private static void checkUnquotedString(final String str, final YangVersion yangVersion,
-            final StatementSourceReference ref) {
-        if (yangVersion == YangVersion.VERSION_1_1) {
-            SourceException.throwIf(ANYQUOTE_MATCHER.matchesAnyOf(str), ref,
-                "YANG 1.1: unquoted string (%s) contains illegal characters", str);
+        @Override
+        void checkUnquotedString(final String str, final StatementSourceReference ref) {
+            // No-op
         }
-    }
-
-    private static void checkDoubleQuotedString(final String str, final YangVersion yangVersion,
-            final StatementSourceReference ref) {
-        if (yangVersion == YangVersion.VERSION_1_1) {
+    },
+    /**
+     * YANG 1.1 version of strings, which were clarified in RFC7950.
+     */
+    // NOTE: the differences clarified lead to a proper ability to delegate this to ANTLR lexer, but that does not
+    //       understand versions and needs to work with both.
+    RFC7950 {
+        @Override
+        void checkDoubleQuotedString(final String str, final StatementSourceReference ref) {
             for (int i = 0; i < str.length() - 1; i++) {
                 if (str.charAt(i) == '\\') {
                     switch (str.charAt(i + 1)) {
@@ -107,6 +61,96 @@ final class ArgumentContextUtils {
                 }
             }
         }
+
+        @Override
+        void checkUnquotedString(final String str, final StatementSourceReference ref) {
+            SourceException.throwIf(ANYQUOTE_MATCHER.matchesAnyOf(str), ref,
+                "YANG 1.1: unquoted string (%s) contains illegal characters", str);
+        }
+    };
+
+    private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
+    private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
+    private static final Pattern ESCAPED_DQUOT = Pattern.compile("\\\"", Pattern.LITERAL);
+    private static final Pattern ESCAPED_BACKSLASH = Pattern.compile("\\\\", Pattern.LITERAL);
+    private static final Pattern ESCAPED_LF = Pattern.compile("\\n", Pattern.LITERAL);
+    private static final Pattern ESCAPED_TAB = Pattern.compile("\\t", Pattern.LITERAL);
+
+    static @NonNull ArgumentContextUtils forVersion(final YangVersion version) {
+        switch (version) {
+            case VERSION_1:
+                return RFC6020;
+            case VERSION_1_1:
+                return RFC7950;
+            default:
+                throw new IllegalStateException("Unhandled version " + version);
+        }
+    }
+
+    final @NonNull String stringFromStringContext(final ArgumentContext context, final StatementSourceReference ref) {
+        final StringBuilder sb = new StringBuilder();
+        final List<TerminalNode> strings = context.STRING();
+        if (!strings.isEmpty()) {
+            for (final TerminalNode stringNode : strings) {
+                appendString(sb, stringNode, ref);
+            }
+        } else {
+            appendString(sb, context.IDENTIFIER(), ref);
+        }
+
+        return sb.toString();
+    }
+
+    private void appendString(final StringBuilder sb, final TerminalNode stringNode,
+            final StatementSourceReference ref) {
+
+        final String str = stringNode.getText();
+        final char firstChar = str.charAt(0);
+        final char lastChar = str.charAt(str.length() - 1);
+        // NOTE: Enforcement and transformation logic here should certainly be pushed down to the lexer, as ANTLR can
+        //       account the for it with lexer modes. One problem is that lexing here depends on version being lexed,
+        //       hence we really would have to re-parse the YANG file after determining its version. We certainly do not
+        //       want to do that.
+        // FIXME: YANGTOOLS-1079: but since we are performing quoting checks, perhaps at least that part could be lexed?
+        if (firstChar == '"' && lastChar == '"') {
+            final String innerStr = str.substring(1, str.length() - 1);
+            /*
+             * Unescape escaped double quotes, tabs, new line and backslash
+             * in the inner string and trim the result.
+             */
+            checkDoubleQuotedString(innerStr, ref);
+            sb.append(unescape(trimWhitespace(innerStr, stringNode.getSymbol().getCharPositionInLine())));
+        } else if (firstChar == '\'' && lastChar == '\'') {
+            /*
+             * According to RFC6020 a single quote character cannot occur in
+             * a single-quoted string, even when preceded by a backslash.
+             */
+            sb.append(str, 1, str.length() - 1);
+        } else {
+            checkUnquotedString(str, ref);
+            sb.append(str);
+        }
+    }
+
+    abstract void checkDoubleQuotedString(String str, StatementSourceReference ref);
+
+    abstract void checkUnquotedString(String str, StatementSourceReference ref);
+
+    private static String unescape(final String str) {
+        final int backslash = str.indexOf('\\');
+        if (backslash == -1) {
+            return str;
+        }
+
+        // FIXME: YANGTOOLS-1079: given we the leading backslash, it would be more efficient to walk the string and
+        //                        unescape in one go
+        return ESCAPED_TAB.matcher(
+                    ESCAPED_LF.matcher(
+                        ESCAPED_BACKSLASH.matcher(
+                            ESCAPED_DQUOT.matcher(str).replaceAll("\\\""))
+                        .replaceAll("\\\\"))
+                    .replaceAll("\\\n"))
+               .replaceAll("\\\t");
     }
 
     @VisibleForTesting
