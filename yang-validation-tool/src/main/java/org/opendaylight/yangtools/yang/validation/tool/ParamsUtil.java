@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.validation.tool;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 
@@ -15,7 +16,8 @@ final class ParamsUtil {
 
     }
 
-    public static Params parseArgs(final String[] args, final ArgumentParser parser) {
+    @SuppressFBWarnings(value = "DM_EXIT", justification = "We do expect to terminate the JVM")
+    static Params parseArgs(final String[] args, final ArgumentParser parser) {
         final Params params = new Params();
         try {
             parser.parseArgs(args, params);
