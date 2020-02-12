@@ -48,7 +48,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -120,19 +119,11 @@ abstract class AbstractAugmentStatementSupport
                 try {
                     copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
                     augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
-                    updateAugmentOrder(augmentSourceCtx);
                 } catch (final SourceException e) {
                     LOG.warn("Failed to add augmentation {} defined at {}",
                         augmentTargetCtx.getStatementSourceReference(),
                             augmentSourceCtx.getStatementSourceReference(), e);
                 }
-            }
-
-            private void updateAugmentOrder(final StatementContextBase<?, ?, ?> augmentSourceCtx) {
-                final Integer prev = augmentSourceCtx.getFromNamespace(StmtOrderingNamespace.class,
-                    YangStmtMapping.AUGMENT);
-                final int currentOrder = prev == null ? 1 : prev + 1;
-                augmentSourceCtx.addToNs(StmtOrderingNamespace.class, YangStmtMapping.AUGMENT, currentOrder);
             }
 
             @Override

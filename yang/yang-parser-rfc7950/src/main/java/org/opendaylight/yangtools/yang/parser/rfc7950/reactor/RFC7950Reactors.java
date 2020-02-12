@@ -146,7 +146,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
@@ -301,7 +300,6 @@ public final class RFC7950Reactors {
             .addSupport(FeatureStatementSupport.getInstance())
             .addSupport(PositionStatementSupport.getInstance())
             .addSupport(ValueStatementSupport.getInstance())
-            .addSupport(StmtOrderingNamespace.BEHAVIOUR)
             .build();
 
     private static final Map<ModelProcessingPhase, StatementSupportBundle> RFC7950_BUNDLES =
