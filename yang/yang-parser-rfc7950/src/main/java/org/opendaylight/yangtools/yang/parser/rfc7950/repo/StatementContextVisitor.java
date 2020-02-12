@@ -30,8 +30,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.Resumed
 
 class StatementContextVisitor {
     private final QNameToStatementDefinition stmtDef;
+    private final ArgumentContextUtils utils;
     private final StatementWriter writer;
-    private final YangVersion yangVersion;
     private final PrefixToModule prefixes;
     private final String sourceName;
 
@@ -39,7 +39,7 @@ class StatementContextVisitor {
             final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
         this.writer = requireNonNull(writer);
         this.stmtDef = requireNonNull(stmtDef);
-        this.yangVersion = requireNonNull(yangVersion);
+        this.utils = ArgumentContextUtils.forVersion(yangVersion);
         this.sourceName = sourceName;
         this.prefixes = prefixes;
     }
@@ -110,8 +110,7 @@ class StatementContextVisitor {
             }
 
             final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
-            final String argument = argumentCtx == null ? null
-                    : ArgumentContextUtils.stringFromStringContext(argumentCtx, yangVersion, ref);
+            final String argument = argumentCtx == null ? null : utils.stringFromStringContext(argumentCtx, ref);
             writer.startStatement(myOffset, def, argument, ref);
         }
 
