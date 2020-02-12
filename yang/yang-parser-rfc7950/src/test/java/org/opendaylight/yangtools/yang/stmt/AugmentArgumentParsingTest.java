@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -50,69 +52,55 @@ public class AugmentArgumentParsingTest {
 
     @Test
     public void invalidAugRel1Test() {
-        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_REL1);
-
-        try {
-            reactor.build();
-            fail("reactor.process should fail due to invalid relative path");
-        } catch (ReactorException e) {
-            assertSourceExceptionCause(e, "Augment argument './aug1/aug11' is not valid");
-        }
+        assertSourceExceptionCause(assertReactorThrows(INVALID_REL1), "Augment argument './aug1/aug11' is not valid");
     }
 
     @Test
     public void invalidAugRel2Test() {
-        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_REL2);
-
-        try {
-            reactor.build();
-            fail("reactor.process should fail due to invalid relative path");
-        } catch (ReactorException e) {
-            assertSourceExceptionCause(e, "Augment argument '../aug1/aug11' is not valid");
-        }
+        assertSourceExceptionCause(assertReactorThrows(INVALID_REL2), "Augment argument '../aug1/aug11' is not valid");
     }
 
     @Test
     public void invalidAugAbs() {
-        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_ABS);
-
-        try {
-            reactor.build();
-            fail("reactor.process should fail due to invalid absolute path");
-        } catch (ReactorException e) {
-            assertSourceExceptionCause(e, "Augment argument '//aug1/aug11/aug111' is not valid");
-        }
+        assertSourceExceptionCause(assertReactorThrows(INVALID_ABS),
+            "Augment argument '//aug1/aug11/aug111' is not valid");
     }
 
     @Test
     public void invalidAugAbsPrefixedNoImp() {
-        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_ABS_PREFIXED_NO_IMP);
-
-        try {
-            reactor.build();
-            fail("reactor.process should fail due to missing import from augment path");
-        } catch (ReactorException e) {
-            assertSourceExceptionCause(e, "Failed to parse node 'imp:aug1'");
-        }
+        assertSourceExceptionCause(assertReactorThrows(INVALID_ABS_PREFIXED_NO_IMP), "Failed to parse node 'imp:aug1'");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    @Ignore
+    @Test
     public void invalidAugEmptyTest() throws ReactorException {
-        RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_EMPTY).build();
-        fail("reactor.process should fail due to empty path");
+        final ReactorException ex = assertReactorThrows(INVALID_EMPTY);
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(IllegalArgumentException.class));
+        assertEquals(
+            "Namespace class org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace keys may"
+            + " not be empty", cause.getMessage());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    @Ignore
+    @Test
     public void invalidAugXPathTest() throws ReactorException {
-        RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_XPATH).build();
-        fail("reactor.process should fail due to invalid XPath");
+        final ReactorException ex = assertReactorThrows(INVALID_XPATH);
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Failed to parse node '-' in path '/aug1/-'"));
+
+        final Throwable nested = cause.getCause();
+        assertThat(nested, instanceOf(SourceException.class));
+        assertThat(nested.getMessage(), startsWith("Invalid identifier '-'"));
+    }
+
+    private static ReactorException assertReactorThrows(final StatementStreamSource source) {
+        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(source);
+        return assertThrows(ReactorException.class, () -> reactor.build());
     }
 
     private static void assertSourceExceptionCause(final Throwable exception, final String start) {
         final Throwable cause = exception.getCause();
-        assertTrue(cause instanceof SourceException);
-        assertTrue(cause.getMessage().startsWith(start));
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith(start));
     }
 }
