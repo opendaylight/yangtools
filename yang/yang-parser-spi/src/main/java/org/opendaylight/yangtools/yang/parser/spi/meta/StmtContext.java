@@ -132,7 +132,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @return Value, or null if there is no element
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
-    @NonNull <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, T key);
+    <K, V, T extends K, N extends IdentifierNamespace<K, V>> @Nullable V getFromNamespace(Class<N> type, T key);
 
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(Class<N> type);
 

@@ -153,7 +153,7 @@ final class ModuleStmtContext extends ForwardingObject
     }
 
     @Override
-    public <K, V, T extends K, N extends IdentifierNamespace<K, V>> @NonNull V getFromNamespace(final Class<N> type,
+    public <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type,
             final T key) {
         return delegate.getFromNamespace(type, key);
     }
