@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class Params {
-
     private static final Logger LOG = LoggerFactory.getLogger(Params.class);
+
     @Arg(dest = "yang-source-dir")
     private File yangSourceDir;
 
@@ -48,7 +48,12 @@ final class Params {
             LOG.error("Yang source directory has to be readable");
             return false;
         }
-        if (yangSourceDir.list().length == 0) {
+        final String[] listed = yangSourceDir.list();
+        if (listed == null) {
+            LOG.error("Yang source directory {} is not a directory or cannot be read", yangSourceDir.getPath());
+            return false;
+        }
+        if (listed.length == 0) {
             LOG.error("Yang source directory {} doesn't contain any model", yangSourceDir.getPath());
             return false;
         }
