@@ -12,11 +12,13 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -362,7 +364,18 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         this.validatedNode = requireNonNull(node);
     }
 
-    Optional<? extends TreeNode> getValidatedNode(final ModificationApplyOperation op,
+    /**
+     * Acquire pre-validated node assuming a previous operation and node. This is a counterpart to
+     * {@link #setValidatedNode(ModificationApplyOperation, Optional, Optional)}.
+     *
+     * @param op Currently-executing operation
+     * @param current Currently-used tree node
+     * @return {@code null} if there is a mismatch with previously-validated node (if present) or the result of previous
+     *         validation.
+     */
+    @SuppressFBWarnings(value = "NP_OPTIONAL_RETURN_NULL",
+            justification = "The contract is package-internal and well documented, we do not need a separate wrapper")
+    @Nullable Optional<? extends TreeNode> getValidatedNode(final ModificationApplyOperation op,
             final Optional<? extends TreeNode> current) {
         return op.equals(validatedOp) && current.equals(validatedCurrent) ? validatedNode : null;
     }
