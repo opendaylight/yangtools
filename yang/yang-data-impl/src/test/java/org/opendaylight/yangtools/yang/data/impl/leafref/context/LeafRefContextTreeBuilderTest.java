@@ -7,17 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref.context;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -26,6 +29,9 @@ import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContextUtils;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,10 +222,16 @@ public class LeafRefContextTreeBuilderTest {
         assertTrue(allChildsReferencedByLeafRef.isEmpty());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    @Ignore
+    @Test
     public void incorrectLeafRefPathTest() {
-        LeafRefContext.create(
-                YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/incorrect-modules"));
+        final IllegalStateException ise = assertThrows(IllegalStateException.class,
+            () -> YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/incorrect-modules"));
+        final Throwable ype = ise.getCause();
+        assertThat(ype, instanceOf(YangParserException.class));
+        final Throwable reactor = ype.getCause();
+        assertThat(reactor, instanceOf(ReactorException.class));
+        final Throwable source = reactor.getCause();
+        assertThat(source, instanceOf(SourceException.class));
+        assertThat(source.getMessage(), startsWith("token recognition error at: './' at 1:2"));
     }
 }
