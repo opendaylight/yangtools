@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
@@ -330,7 +329,8 @@ public abstract class YangModelDependencyInfo {
         final StatementSourceReference ref = getReference(source, stmt);
         final ArgumentContext arg = stmt.argument();
         checkArgument(arg != null, "Missing %s at %s", desc, ref);
-        return ArgumentContextUtils.stringFromStringContext(arg, YangVersion.VERSION_1, ref);
+        // TODO: we probably need to understand yang version first....
+        return ArgumentContextUtils.RFC6020.stringFromStringContext(arg, ref);
     }
 
     private static StatementSourceReference getReference(final SourceIdentifier source,
