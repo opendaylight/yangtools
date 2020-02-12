@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -85,16 +84,15 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
 
         QName nextPath = iterator.next();
         @SuppressWarnings("unchecked")
-        Mutable<?, ?, EffectiveStatement<?, ?>> current = (Mutable)root.getFromNamespace(ChildSchemaNodeNamespace.class,
+        StmtContext<?, ?, ?> current = (StmtContext<?, ?, ?>) root.getFromNamespace(ChildSchemaNodeNamespace.class,
             nextPath);
         if (current == null) {
-            return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(),
-                (Mutable<?, ?, EffectiveStatement<?, ?>>) root));
+            return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), root));
         }
         while (current != null && iterator.hasNext()) {
             nextPath = iterator.next();
             @SuppressWarnings("unchecked")
-            final Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = (Mutable)current.getFromNamespace(
+            final StmtContext<?, ?, ?> nextNodeCtx = (StmtContext<?, ?, ?>) current.getFromNamespace(
                 ChildSchemaNodeNamespace.class, nextPath);
             if (nextNodeCtx == null) {
                 return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), current));
@@ -105,13 +103,13 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
     }
 
     @SuppressWarnings("unchecked")
-    static Mutable<?, ?, EffectiveStatement<?, ?>> tryToFindUnknownStatement(final String localName,
-            final Mutable<?, ?, EffectiveStatement<?, ?>> current) {
+    private static StmtContext<?, ?, ?> tryToFindUnknownStatement(final String localName,
+            final StmtContext<?, ?, ?> current) {
         final Collection<? extends StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(
             current, UnknownStatement.class);
         for (final StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
             if (localName.equals(unknownSubstatement.rawStatementArgument())) {
-                return (Mutable<?, ?, EffectiveStatement<?, ?>>) unknownSubstatement;
+                return unknownSubstatement;
             }
         }
         return null;
