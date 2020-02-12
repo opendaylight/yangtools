@@ -33,7 +33,6 @@ public class NamespaceTest {
         assertNotNull(ModuleNameToModuleQName.BEHAVIOUR);
         assertNotNull(ModulesDeviatedByModules.BEHAVIOUR);
         assertNotNull(PrefixToModule.BEHAVIOUR);
-        assertNotNull(StmtOrderingNamespace.BEHAVIOUR);
         assertNotNull(SupportedFeaturesNamespace.BEHAVIOUR);
     }
 }
