@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,13 +27,16 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 final class UnmodifiableChildrenMap
         implements CloneableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>, Serializable {
     private static final long serialVersionUID = 1L;
+
     /*
-     * Do not wrap maps which are smaller than this and instead copy them into
-     * an ImmutableMap.
+     * Do not wrap maps which are smaller than this and instead copy them into an ImmutableMap.
      */
     private static final int WRAP_THRESHOLD = 9;
+
+    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Delegate is expected to be Serializable")
     private final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> delegate;
-    private transient Collection<DataContainerChild<? extends PathArgument, ?>> values;
+
+    private transient Collection<DataContainerChild<? extends PathArgument, ?>> values = null;
 
     private UnmodifiableChildrenMap(final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> delegate) {
         this.delegate = requireNonNull(delegate);
