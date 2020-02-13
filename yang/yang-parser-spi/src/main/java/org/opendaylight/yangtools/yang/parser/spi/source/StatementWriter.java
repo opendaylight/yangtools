@@ -65,10 +65,7 @@ public interface StatementWriter {
      * @param childId Child
      * @return A resumed statement or empty if the statement has not previously been defined.
      */
-    @Beta
-    default Optional<? extends ResumedStatement> resumeStatement(final int childId) {
-        return Optional.empty();
-    }
+    Optional<? extends ResumedStatement> resumeStatement(int childId);
 
     /**
      * Store a defined statement, hinting at the number of children it is expected to have and indicating whether
@@ -78,10 +75,7 @@ public interface StatementWriter {
      * @param expectedChildren Number of expected children, cannot be negative
      * @param fullyDefined True if the statement and all its descendants have been defined.
      */
-    @Beta
-    default void storeStatement(final int expectedChildren, final boolean fullyDefined) {
-        // No-op
-    }
+    void storeStatement(int expectedChildren, boolean fullyDefined);
 
     /**
      * Starts statement with supplied name and location in source.
