@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -103,10 +104,10 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return inProgressPhase;
     }
 
-    Optional<AbstractResumedStatement<?, ?, ?>> lookupDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
+    @Nullable AbstractResumedStatement<?, ?, ?> lookupDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
             final int childId) {
         if (current == null) {
-            return Optional.empty();
+            return null;
         }
 
         // Fast path: we are entering a statement which was emitted in previous phase
@@ -115,7 +116,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             existing = existing.lookupSubstatement(childId);
         }
 
-        return Optional.ofNullable(existing);
+        return existing;
     }
 
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
