@@ -330,7 +330,7 @@ public abstract class YangModelDependencyInfo {
         final ArgumentContext arg = stmt.argument();
         checkArgument(arg != null, "Missing %s at %s", desc, ref);
         // TODO: we probably need to understand yang version first....
-        return ArgumentContextUtils.RFC6020.stringFromStringContext(arg, ref);
+        return ArgumentContextUtils.rfc6020().stringFromStringContext(arg, ref);
     }
 
     private static StatementSourceReference getReference(final SourceIdentifier source,

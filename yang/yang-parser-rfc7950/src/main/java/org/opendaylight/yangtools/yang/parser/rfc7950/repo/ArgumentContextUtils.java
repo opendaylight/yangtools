@@ -25,11 +25,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 /**
  * Utilities for dealing with YANG statement argument strings, encapsulated in ANTLR grammar's ArgumentContext.
  */
-enum ArgumentContextUtils {
+abstract class ArgumentContextUtils {
     /**
-     * YANG 1.0 version of strings, which were not completely clarified in RFC6020.
+     * YANG 1.0 version of strings, which were not completely clarified in
+     * <a href="https://tools.ietf.org/html/rfc6020#section-6.1.3">RFC6020</a>.
      */
-    RFC6020 {
+    private static final class RFC6020 extends ArgumentContextUtils {
+        private static final @NonNull RFC6020 INSTANCE = new RFC6020();
+
         @Override
         void checkDoubleQuoted(final String str, final StatementSourceReference ref) {
             // No-op
@@ -39,13 +42,18 @@ enum ArgumentContextUtils {
         void checkUnquoted(final String str, final StatementSourceReference ref) {
             // No-op
         }
-    },
+    }
+
     /**
-     * YANG 1.1 version of strings, which were clarified in RFC7950.
+     * YANG 1.1 version of strings, which were clarified in
+     * <a href="https://tools.ietf.org/html/rfc7950#section-6.1.3">RFC7950</a>.
      */
     // NOTE: the differences clarified lead to a proper ability to delegate this to ANTLR lexer, but that does not
     //       understand versions and needs to work with both.
-    RFC7950 {
+    private static final class RFC7950 extends ArgumentContextUtils {
+        private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
+        private static final @NonNull RFC7950 INSTANCE = new RFC7950();
+
         @Override
         void checkDoubleQuoted(final String str, final StatementSourceReference ref) {
             // FIXME: YANGTOOLS-1079: we should forward backslash to this method, so that it does not start from the
@@ -75,24 +83,32 @@ enum ArgumentContextUtils {
             SourceException.throwIf(ANYQUOTE_MATCHER.matchesAnyOf(str), ref,
                 "YANG 1.1: unquoted string (%s) contains illegal characters", str);
         }
-    };
+    }
 
     private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
-    private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
     private static final Pattern ESCAPED_DQUOT = Pattern.compile("\\\"", Pattern.LITERAL);
     private static final Pattern ESCAPED_BACKSLASH = Pattern.compile("\\\\", Pattern.LITERAL);
     private static final Pattern ESCAPED_LF = Pattern.compile("\\n", Pattern.LITERAL);
     private static final Pattern ESCAPED_TAB = Pattern.compile("\\t", Pattern.LITERAL);
 
+    private ArgumentContextUtils() {
+        // Hidden on purpose
+    }
+
     static @NonNull ArgumentContextUtils forVersion(final YangVersion version) {
         switch (version) {
             case VERSION_1:
-                return RFC6020;
+                return RFC6020.INSTANCE;
             case VERSION_1_1:
-                return RFC7950;
+                return RFC7950.INSTANCE;
             default:
                 throw new IllegalStateException("Unhandled version " + version);
         }
+    }
+
+    // TODO: teach the only caller about versions, or provide common-enough idioms for its use case
+    static @NonNull ArgumentContextUtils rfc6020() {
+        return RFC6020.INSTANCE;
     }
 
     /*
