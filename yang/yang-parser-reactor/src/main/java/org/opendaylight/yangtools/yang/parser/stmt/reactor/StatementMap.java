@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 import java.util.AbstractCollection;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,10 +25,26 @@ import org.eclipse.jdt.annotation.Nullable;
  * Simple integer-to-StatementContextBase map optimized for size and restricted in scope of operations. It does not
  * implement {@link java.util.Map} for simplicity's sake.
  *
+ * <p>
+ * Unlike other collections, this view does not detect concurrent modification. Iteration is performed in order of
+ * increasing offset. In face of concurrent modification, number of elements returned through iteration may not match
+ * the size reported via {@link Collection#size()}.
+ *
  * @author Robert Varga
  */
-abstract class StatementMap {
+abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<?, ?, ?>> {
     private static final class Empty extends StatementMap {
+        private static final Iterator<AbstractResumedStatement<?, ?, ?>> EMPTY_ITERATOR;
+
+        static {
+            // This may look weird, but we really want to return two Iterator implementations from StatementMap, so that
+            // users have to deal with bimorphic invocation. Note that we want to invoke hasNext() here, as we want to
+            // initialize state to AbstractIterator.endOfData().
+            final Iterator<AbstractResumedStatement<?, ?, ?>> it = new Regular(0).iterator();
+            verify(!it.hasNext());
+            EMPTY_ITERATOR = it;
+        }
+
         @Override
         AbstractResumedStatement<?, ?, ?> get(final int index) {
             return null;
@@ -40,12 +56,7 @@ abstract class StatementMap {
         }
 
         @Override
-        Collection<AbstractResumedStatement<?, ?, ?>> values() {
-            return ImmutableList.of();
-        }
-
-        @Override
-        int size() {
+        public int size() {
             return 0;
         }
 
@@ -57,6 +68,16 @@ abstract class StatementMap {
         @Override
         int capacity() {
             return 0;
+        }
+
+        @Override
+        public void forEach(final Consumer<? super AbstractResumedStatement<?, ?, ?>> action) {
+            // No-op
+        }
+
+        @Override
+        public Iterator<AbstractResumedStatement<?, ?, ?>> iterator() {
+            return EMPTY_ITERATOR;
         }
     }
 
@@ -105,12 +126,7 @@ abstract class StatementMap {
         }
 
         @Override
-        Collection<AbstractResumedStatement<?, ?, ?>> values() {
-            return new RegularAsCollection<>(elements, size);
-        }
-
-        @Override
-        int size() {
+        public int size() {
             return size;
         }
 
@@ -126,35 +142,16 @@ abstract class StatementMap {
         int capacity() {
             return elements.length;
         }
-    }
-
-    private static final class RegularAsCollection<T> extends AbstractCollection<T> {
-        private final T[] elements;
-        private final int size;
-
-        RegularAsCollection(final T[] elements, final int size) {
-            this.elements = requireNonNull(elements);
-            this.size = size;
-        }
 
         @Override
-        public void forEach(final Consumer<? super T> action) {
-            for (T e : elements) {
-                if (e != null) {
-                    action.accept(e);
-                }
-            }
-        }
-
-        @Override
-        public Iterator<T> iterator() {
+        public Iterator<AbstractResumedStatement<?, ?, ?>> iterator() {
             return new AbstractIterator<>() {
                 private int nextOffset = 0;
 
                 @Override
-                protected T computeNext() {
+                protected AbstractResumedStatement<?, ?, ?> computeNext() {
                     while (nextOffset < elements.length) {
-                        final T ret = elements[nextOffset++];
+                        final AbstractResumedStatement<?, ?, ?> ret = elements[nextOffset++];
                         if (ret != null) {
                             return ret;
                         }
@@ -163,11 +160,6 @@ abstract class StatementMap {
                     return endOfData();
                 }
             };
-        }
-
-        @Override
-        public int size() {
-            return size;
         }
     }
 
@@ -190,12 +182,7 @@ abstract class StatementMap {
         }
 
         @Override
-        Collection<AbstractResumedStatement<?, ?, ?>> values() {
-            return ImmutableList.of(object);
-        }
-
-        @Override
-        int size() {
+        public int size() {
             return 1;
         }
 
@@ -207,6 +194,11 @@ abstract class StatementMap {
         @Override
         int capacity() {
             return 1;
+        }
+
+        @Override
+        public Iterator<AbstractResumedStatement<?, ?, ?>> iterator() {
+            return Iterators.singletonIterator(object);
         }
     }
 
@@ -234,23 +226,7 @@ abstract class StatementMap {
      */
     abstract @NonNull StatementMap put(int index, @NonNull AbstractResumedStatement<?, ?, ?> obj);
 
-    /**
-     * Return a read-only view of the elements in this map. Unlike other maps, this view does not detect concurrent
-     * modification. Iteration is performed in order of increasing offset. In face of concurrent modification, number
-     * of elements returned through iteration may not match the size reported via {@link Collection#size()}.
-     *
-     * @return Read-only view of available statements.
-     */
-    abstract @NonNull Collection<AbstractResumedStatement<?, ?, ?>> values();
-
-    abstract int size();
-
     abstract @NonNull StatementMap ensureCapacity(int expectedLimit);
 
     abstract int capacity();
-
-    @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(StatementMap.class).add("values", values()).toString();
-    }
 }
