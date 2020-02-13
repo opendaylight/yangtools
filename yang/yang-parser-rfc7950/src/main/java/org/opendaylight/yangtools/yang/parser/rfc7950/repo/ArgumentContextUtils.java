@@ -31,12 +31,12 @@ enum ArgumentContextUtils {
      */
     RFC6020 {
         @Override
-        void checkDoubleQuotedString(final String str, final StatementSourceReference ref) {
+        void checkDoubleQuoted(final String str, final StatementSourceReference ref) {
             // No-op
         }
 
         @Override
-        void checkUnquotedString(final String str, final StatementSourceReference ref) {
+        void checkUnquoted(final String str, final StatementSourceReference ref) {
             // No-op
         }
     },
@@ -47,7 +47,7 @@ enum ArgumentContextUtils {
     //       understand versions and needs to work with both.
     RFC7950 {
         @Override
-        void checkDoubleQuotedString(final String str, final StatementSourceReference ref) {
+        void checkDoubleQuoted(final String str, final StatementSourceReference ref) {
             for (int i = 0; i < str.length() - 1; i++) {
                 if (str.charAt(i) == '\\') {
                     switch (str.charAt(i + 1)) {
@@ -67,7 +67,7 @@ enum ArgumentContextUtils {
         }
 
         @Override
-        void checkUnquotedString(final String str, final StatementSourceReference ref) {
+        void checkUnquoted(final String str, final StatementSourceReference ref) {
             SourceException.throwIf(ANYQUOTE_MATCHER.matchesAnyOf(str), ref,
                 "YANG 1.1: unquoted string (%s) contains illegal characters", str);
         }
@@ -135,6 +135,11 @@ enum ArgumentContextUtils {
                     break;
                 case YangStatementParser.STRING:
                     // a lexer string, could be pretty much anything
+                    // FIXME: YANGTOOLS-1079: appendString() is a dispatch based on quotes, which we should be able to
+                    //                        defer to lexer for a dedicated type. That would expand the switch table
+                    //                        here, but since we have it anyway, it would be nice to have the quoting
+                    //                        distinction already taken care of. The performance difference will need to
+                    //                        be benchmarked, though.
                     appendString(sb, childNode, ref);
                     break;
                 default:
@@ -150,34 +155,38 @@ enum ArgumentContextUtils {
         final String str = stringNode.getText();
         final char firstChar = str.charAt(0);
         final char lastChar = str.charAt(str.length() - 1);
-        // NOTE: Enforcement and transformation logic here should certainly be pushed down to the lexer, as ANTLR can
-        //       account the for it with lexer modes. One problem is that lexing here depends on version being lexed,
-        //       hence we really would have to re-parse the YANG file after determining its version. We certainly do not
-        //       want to do that.
-        // FIXME: YANGTOOLS-1079: but since we are performing quoting checks, perhaps at least that part could be lexed?
         if (firstChar == '"' && lastChar == '"') {
-            final String innerStr = str.substring(1, str.length() - 1);
-            /*
-             * Unescape escaped double quotes, tabs, new line and backslash
-             * in the inner string and trim the result.
-             */
-            checkDoubleQuotedString(innerStr, ref);
-            sb.append(unescape(trimWhitespace(innerStr, stringNode.getSymbol().getCharPositionInLine())));
+            sb.append(normalizeDoubleQuoted(str.substring(1, str.length() - 1),
+                stringNode.getSymbol().getCharPositionInLine(), ref));
         } else if (firstChar == '\'' && lastChar == '\'') {
             /*
-             * According to RFC6020 a single quote character cannot occur in
-             * a single-quoted string, even when preceded by a backslash.
+             * According to RFC6020 a single quote character cannot occur in a single-quoted string, even when preceded
+             * by a backslash.
              */
             sb.append(str, 1, str.length() - 1);
         } else {
-            checkUnquotedString(str, ref);
+            checkUnquoted(str, ref);
             sb.append(str);
         }
     }
 
-    abstract void checkDoubleQuotedString(String str, StatementSourceReference ref);
+    /*
+     * NOTE: Enforcement and transformation logic done by these methods should logically reside in the lexer and ANTLR
+     *       account the for it with lexer modes. We do not want to force a re-lexing phase in the parser just because
+     *       we decided to let ANTLR do the work.
+     */
+    // FIXME: YANGTOOLS-1079: Re-evaluate above comment once our integration surface with lexer has been decided
+    private String normalizeDoubleQuoted(final String innerStr, final int dquot, final StatementSourceReference ref) {
+        /*
+         * Unescape escaped double quotes, tabs, new line and backslash in the inner string and trim the result.
+         */
+        checkDoubleQuoted(innerStr, ref);
+        return unescape(trimWhitespace(innerStr, dquot));
+    }
 
-    abstract void checkUnquotedString(String str, StatementSourceReference ref);
+    abstract void checkDoubleQuoted(String str, StatementSourceReference ref);
+
+    abstract void checkUnquoted(String str, StatementSourceReference ref);
 
     private static String unescape(final String str) {
         final int backslash = str.indexOf('\\');
