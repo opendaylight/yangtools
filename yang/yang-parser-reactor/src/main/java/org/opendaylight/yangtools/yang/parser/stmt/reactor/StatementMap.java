@@ -17,6 +17,8 @@ import java.util.AbstractCollection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators.AbstractSpliterator;
 import java.util.function.Consumer;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -35,14 +37,22 @@ import org.eclipse.jdt.annotation.Nullable;
 abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<?, ?, ?>> {
     private static final class Empty extends StatementMap {
         private static final Iterator<AbstractResumedStatement<?, ?, ?>> EMPTY_ITERATOR;
+        private static final Spliterator<AbstractResumedStatement<?, ?, ?>> EMPTY_SPLITERATOR;
 
         static {
             // This may look weird, but we really want to return two Iterator implementations from StatementMap, so that
             // users have to deal with bimorphic invocation. Note that we want to invoke hasNext() here, as we want to
             // initialize state to AbstractIterator.endOfData().
-            final Iterator<AbstractResumedStatement<?, ?, ?>> it = new Regular(0).iterator();
+            final Regular tmp =  new Regular(0);
+
+            final Iterator<AbstractResumedStatement<?, ?, ?>> it = tmp.iterator();
             verify(!it.hasNext());
             EMPTY_ITERATOR = it;
+
+            final Spliterator<AbstractResumedStatement<?, ?, ?>> split = tmp.spliterator();
+            verify(!split.tryAdvance(item -> { }));
+            EMPTY_SPLITERATOR = split;
+
         }
 
         @Override
@@ -73,6 +83,11 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
         @Override
         public Iterator<AbstractResumedStatement<?, ?, ?>> iterator() {
             return EMPTY_ITERATOR;
+        }
+
+        @Override
+        public Spliterator<AbstractResumedStatement<?, ?, ?>> spliterator() {
+            return EMPTY_SPLITERATOR;
         }
     }
 
@@ -151,6 +166,27 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
                 }
             };
         }
+
+        @Override
+        public Spliterator<AbstractResumedStatement<?, ?, ?>> spliterator() {
+            return new AbstractSpliterator<>(size, Spliterator.CONCURRENT | Spliterator.NONNULL) {
+                private int nextOffset = 0;
+
+                @Override
+                public boolean tryAdvance(final Consumer<? super AbstractResumedStatement<?, ?, ?>> action) {
+                    requireNonNull(action);
+                    while (nextOffset < elements.length) {
+                        final AbstractResumedStatement<?, ?, ?> ret = elements[nextOffset++];
+                        if (ret != null) {
+                            action.accept(ret);
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            };
+        }
     }
 
     private static final class Singleton extends StatementMap {
@@ -184,6 +220,40 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
         @Override
         public Iterator<AbstractResumedStatement<?, ?, ?>> iterator() {
             return Iterators.singletonIterator(object);
+        }
+
+        @Override
+        public Spliterator<AbstractResumedStatement<?, ?, ?>> spliterator() {
+            return new Spliterator<>() {
+                private boolean running = true;
+
+                @Override
+                public boolean tryAdvance(final Consumer<? super AbstractResumedStatement<?, ?, ?>> action) {
+                    requireNonNull(action);
+                    if (running) {
+                        running = false;
+                        action.accept(object);
+                        return true;
+                    }
+                    return false;
+                }
+
+                @Override
+                public Spliterator<AbstractResumedStatement<?, ?, ?>> trySplit() {
+                    // No need to split
+                    return null;
+                }
+
+                @Override
+                public long estimateSize() {
+                    return running ? 1 : 0;
+                }
+
+                @Override
+                public int characteristics() {
+                    return DISTINCT | IMMUTABLE | NONNULL | SIZED;
+                }
+            };
         }
     }
 
