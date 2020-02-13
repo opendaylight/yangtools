@@ -66,11 +66,6 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
         }
 
         @Override
-        int capacity() {
-            return 0;
-        }
-
-        @Override
         public void forEach(final Consumer<? super AbstractResumedStatement<?, ?, ?>> action) {
             // No-op
         }
@@ -139,11 +134,6 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
         }
 
         @Override
-        int capacity() {
-            return elements.length;
-        }
-
-        @Override
         public Iterator<AbstractResumedStatement<?, ?, ?>> iterator() {
             return new AbstractIterator<>() {
                 private int nextOffset = 0;
@@ -192,11 +182,6 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
         }
 
         @Override
-        int capacity() {
-            return 1;
-        }
-
-        @Override
         public Iterator<AbstractResumedStatement<?, ?, ?>> iterator() {
             return Iterators.singletonIterator(object);
         }
@@ -227,6 +212,4 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
     abstract @NonNull StatementMap put(int index, @NonNull AbstractResumedStatement<?, ?, ?> obj);
 
     abstract @NonNull StatementMap ensureCapacity(int expectedLimit);
-
-    abstract int capacity();
 }
