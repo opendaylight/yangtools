@@ -91,13 +91,18 @@ class StatementContextVisitor {
         return stmtDef.get(QName.create(module, localName));
     }
 
+    // Normal entry point, checks for potential resume
     private boolean processStatement(final int myOffset, final StatementContext ctx) {
         final Optional<? extends ResumedStatement> optResumed = writer.resumeStatement(myOffset);
         if (optResumed.isPresent()) {
             final ResumedStatement resumed = optResumed.get();
-            return resumed.isFullyDefined() || processStatement(ctx, resumed.getSourceReference());
+            return resumed.isFullyDefined() || doProcessStatement(ctx, resumed.getSourceReference());
         }
+        return slowProcessStatement(ctx, myOffset);
+    }
 
+    // Slow-path allocation of a new statement
+    private boolean slowProcessStatement(final StatementContext ctx, final int myOffset) {
         final String keywordTxt = verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
         final Token start = ctx.getStart();
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, start.getLine(),
@@ -110,10 +115,11 @@ class StatementContextVisitor {
         final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
         final String argument = argumentCtx == null ? null : utils.stringFromStringContext(argumentCtx, ref);
         writer.startStatement(myOffset, def, argument, ref);
-        return processStatement(ctx, ref);
+        return doProcessStatement(ctx, ref);
     }
 
-    private boolean processStatement(final StatementContext ctx, final StatementSourceReference ref) {
+    // Actual processing
+    private boolean doProcessStatement(final StatementContext ctx, final StatementSourceReference ref) {
         int childOffset = 0;
         boolean fullyDefined = true;
         if (ctx.children != null) {
