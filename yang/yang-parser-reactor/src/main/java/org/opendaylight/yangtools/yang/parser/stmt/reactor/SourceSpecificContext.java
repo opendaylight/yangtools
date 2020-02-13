@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -101,21 +100,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     ModelProcessingPhase getInProgressPhase() {
         return inProgressPhase;
-    }
-
-    Optional<AbstractResumedStatement<?, ?, ?>> lookupDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
-            final int childId) {
-        if (current == null) {
-            return Optional.empty();
-        }
-
-        // Fast path: we are entering a statement which was emitted in previous phase
-        AbstractResumedStatement<?, ?, ?> existing = current.lookupSubstatement(childId);
-        while (existing != null && StatementSource.CONTEXT == existing.getStatementSource()) {
-            existing = existing.lookupSubstatement(childId);
-        }
-
-        return Optional.ofNullable(existing);
     }
 
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
