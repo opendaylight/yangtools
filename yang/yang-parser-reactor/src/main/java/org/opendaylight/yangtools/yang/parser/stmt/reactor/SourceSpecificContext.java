@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -36,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
@@ -61,9 +59,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
-
-    public enum PhaseCompletionProgress {
+final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
+    enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
         FINISHED
@@ -94,8 +91,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         this.source = requireNonNull(source);
     }
 
-    boolean isEnabledSemanticVersioning() {
-        return currentContext.isEnabledSemanticVersioning();
+    BuildGlobalContext globalContext() {
+        return currentContext;
     }
 
     ModelProcessingPhase getInProgressPhase() {
@@ -433,14 +430,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
 
         return qnameToStmtDefMap;
-    }
-
-    public Set<YangVersion> getSupportedVersions() {
-        return currentContext.getSupportedVersions();
-    }
-
-    void addMutableStmtToSeal(final MutableStatement mutableStatement) {
-        currentContext.addMutableStmtToSeal(mutableStatement);
     }
 
     Collection<SourceIdentifier> getRequiredSources() {

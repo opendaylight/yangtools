@@ -223,7 +223,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     boolean isEnabledSemanticVersioningImpl() {
-        return sourceContext.isEnabledSemanticVersioning();
+        return sourceContext.globalContext().isEnabledSemanticVersioning();
     }
 
     @NonNull YangVersion getRootVersionImpl() {
@@ -231,7 +231,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     void setRootVersionImpl(final YangVersion version) {
-        checkArgument(sourceContext.getSupportedVersions().contains(version),
+        checkArgument(sourceContext.globalContext().getSupportedVersions().contains(version),
                 "Unsupported yang version %s in %s", version, getStatementSourceReference());
         checkState(this.rootVersion == null, "Version of root %s has been already set to %s", argument,
                 this.rootVersion);
@@ -239,7 +239,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     void addMutableStmtToSealImpl(final MutableStatement mutableStatement) {
-        sourceContext.addMutableStmtToSeal(mutableStatement);
+        sourceContext.globalContext().addMutableStmtToSeal(mutableStatement);
     }
 
     void addRequiredSourceImpl(final SourceIdentifier dependency) {
