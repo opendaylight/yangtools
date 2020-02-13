@@ -31,12 +31,12 @@ enum ArgumentContextUtils {
      */
     RFC6020 {
         @Override
-        void checkDoubleQuotedString(final String str, final StatementSourceReference ref) {
+        void checkDoubleQuoted(final String str, final StatementSourceReference ref) {
             // No-op
         }
 
         @Override
-        void checkUnquotedString(final String str, final StatementSourceReference ref) {
+        void checkUnquoted(final String str, final StatementSourceReference ref) {
             // No-op
         }
     },
@@ -47,7 +47,11 @@ enum ArgumentContextUtils {
     //       understand versions and needs to work with both.
     RFC7950 {
         @Override
-        void checkDoubleQuotedString(final String str, final StatementSourceReference ref) {
+        void checkDoubleQuoted(final String str, final StatementSourceReference ref) {
+            // FIXME: YANGTOOLS-1079: we should forward backslash to this method, so that it does not start from the
+            //                        start from the start of the string. Furthermore this logic should operate on spans
+            //                        of characters -- i.e. the check for backslash should be a search instead -- as
+            //                        String knows how to do that and can do it more efficiently than this loop.
             for (int i = 0; i < str.length() - 1; i++) {
                 if (str.charAt(i) == '\\') {
                     switch (str.charAt(i + 1)) {
@@ -67,7 +71,7 @@ enum ArgumentContextUtils {
         }
 
         @Override
-        void checkUnquotedString(final String str, final StatementSourceReference ref) {
+        void checkUnquoted(final String str, final StatementSourceReference ref) {
             SourceException.throwIf(ANYQUOTE_MATCHER.matchesAnyOf(str), ref,
                 "YANG 1.1: unquoted string (%s) contains illegal characters", str);
         }
@@ -135,6 +139,11 @@ enum ArgumentContextUtils {
                     break;
                 case YangStatementParser.STRING:
                     // a lexer string, could be pretty much anything
+                    // FIXME: YANGTOOLS-1079: appendString() is a dispatch based on quotes, which we should be able to
+                    //                        defer to lexer for a dedicated type. That would expand the switch table
+                    //                        here, but since we have it anyway, it would be nice to have the quoting
+                    //                        distinction already taken care of. The performance difference will need to
+                    //                        be benchmarked, though.
                     appendString(sb, childNode, ref);
                     break;
                 default:
@@ -146,44 +155,49 @@ enum ArgumentContextUtils {
 
     private void appendString(final StringBuilder sb, final TerminalNode stringNode,
             final StatementSourceReference ref) {
-
         final String str = stringNode.getText();
         final char firstChar = str.charAt(0);
         final char lastChar = str.charAt(str.length() - 1);
-        // NOTE: Enforcement and transformation logic here should certainly be pushed down to the lexer, as ANTLR can
-        //       account the for it with lexer modes. One problem is that lexing here depends on version being lexed,
-        //       hence we really would have to re-parse the YANG file after determining its version. We certainly do not
-        //       want to do that.
-        // FIXME: YANGTOOLS-1079: but since we are performing quoting checks, perhaps at least that part could be lexed?
         if (firstChar == '"' && lastChar == '"') {
-            final String innerStr = str.substring(1, str.length() - 1);
-            /*
-             * Unescape escaped double quotes, tabs, new line and backslash
-             * in the inner string and trim the result.
-             */
-            checkDoubleQuotedString(innerStr, ref);
-            sb.append(unescape(trimWhitespace(innerStr, stringNode.getSymbol().getCharPositionInLine())));
+            sb.append(normalizeDoubleQuoted(str.substring(1, str.length() - 1),
+                stringNode.getSymbol().getCharPositionInLine(), ref));
         } else if (firstChar == '\'' && lastChar == '\'') {
             /*
-             * According to RFC6020 a single quote character cannot occur in
-             * a single-quoted string, even when preceded by a backslash.
+             * According to RFC6020 a single quote character cannot occur in a single-quoted string, even when preceded
+             * by a backslash.
              */
             sb.append(str, 1, str.length() - 1);
         } else {
-            checkUnquotedString(str, ref);
+            checkUnquoted(str, ref);
             sb.append(str);
         }
     }
 
-    abstract void checkDoubleQuotedString(String str, StatementSourceReference ref);
+    private String normalizeDoubleQuoted(final String str, final int dquot, final StatementSourceReference ref) {
+        // Whitespace normalization happens irrespective of further handling and has no effect on the result
+        final String stripped = trimWhitespace(str, dquot);
 
-    abstract void checkUnquotedString(String str, StatementSourceReference ref);
+        // Now we need to perform some amount of unescaping. This serves as a pre-check before we dispatch
+        // validation and processing (which will reuse the work we have done)
+        final int backslash = stripped.indexOf('\\');
+        return backslash == -1 ? stripped : unescape(stripped, backslash, ref);
+    }
 
-    private static String unescape(final String str) {
-        final int backslash = str.indexOf('\\');
-        if (backslash == -1) {
-            return str;
-        }
+    /*
+     * NOTE: Enforcement and transformation logic done by these methods should logically reside in the lexer and ANTLR
+     *       account the for it with lexer modes. We do not want to force a re-lexing phase in the parser just because
+     *       we decided to let ANTLR do the work.
+     */
+    // FIXME: YANGTOOLS-1079: Re-evaluate above comment once our integration surface with lexer has been decided
+    abstract void checkDoubleQuoted(String str, StatementSourceReference ref);
+
+    abstract void checkUnquoted(String str, StatementSourceReference ref);
+
+    /*
+     * Unescape escaped double quotes, tabs, new line and backslash in the inner string and trim the result.
+     */
+    private String unescape(final String str, final int backslash, final StatementSourceReference ref) {
+        checkDoubleQuoted(str, ref);
 
         // FIXME: YANGTOOLS-1079: given we the leading backslash, it would be more efficient to walk the string and
         //                        unescape in one go
@@ -198,9 +212,8 @@ enum ArgumentContextUtils {
 
     @VisibleForTesting
     static String trimWhitespace(final String str, final int dquot) {
-        int brk = str.indexOf('\n');
-        if (brk == -1) {
-            // No need to trim whitespace
+        final int firstBrk = str.indexOf('\n');
+        if (firstBrk == -1) {
             return str;
         }
 
@@ -209,13 +222,13 @@ enum ArgumentContextUtils {
         final StringBuilder sb = new StringBuilder(length);
 
         // Append first segment, which needs only tail-trimming
-        sb.append(str, 0, trimTrailing(str, 0, brk)).append('\n');
+        sb.append(str, 0, trimTrailing(str, 0, firstBrk)).append('\n');
 
         // With that out of the way, setup our iteration state. The string segment we are looking at is
         // str.substring(start, end), which is guaranteed not to include any line breaks, i.e. end <= brk unless we are
         // at the last segment.
-        int start = brk + 1;
-        brk = str.indexOf('\n', start);
+        int start = firstBrk + 1;
+        int brk = str.indexOf('\n', start);
 
         // Loop over inner strings
         while (brk != -1) {
