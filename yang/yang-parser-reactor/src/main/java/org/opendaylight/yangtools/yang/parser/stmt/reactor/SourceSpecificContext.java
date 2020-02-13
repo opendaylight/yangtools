@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -36,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
@@ -61,9 +59,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
-
-    public enum PhaseCompletionProgress {
+final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
+    enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
         FINISHED
@@ -74,7 +71,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final QNameToStatementDefinitionMap qnameToStmtDefMap = new QNameToStatementDefinitionMap();
     private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
-    private final BuildGlobalContext currentContext;
+    private final @NonNull BuildGlobalContext globalContext;
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
     private StatementStreamSource source;
@@ -89,13 +86,13 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     private ModelProcessingPhase inProgressPhase;
     private RootStatementContext<?, ?, ?> root;
 
-    SourceSpecificContext(final BuildGlobalContext currentContext, final StatementStreamSource source) {
-        this.currentContext = requireNonNull(currentContext);
+    SourceSpecificContext(final BuildGlobalContext globalContext, final StatementStreamSource source) {
+        this.globalContext = requireNonNull(globalContext);
         this.source = requireNonNull(source);
     }
 
-    boolean isEnabledSemanticVersioning() {
-        return currentContext.isEnabledSemanticVersioning();
+    @NonNull BuildGlobalContext globalContext() {
+        return globalContext;
     }
 
     ModelProcessingPhase getInProgressPhase() {
@@ -104,14 +101,14 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
             final int childId, final QName name, final String argument, final StatementSourceReference ref) {
-        StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(getRootVersion(), name);
+        StatementDefinitionContext<?, ?, ?> def = globalContext.getStatementDefinition(getRootVersion(), name);
         if (def == null) {
-            def = currentContext.getModelDefinedStatementDefinition(name);
+            def = globalContext.getModelDefinedStatementDefinition(name);
             if (def == null) {
                 final StatementSupport<?, ?, ?> extension = qnameToStmtDefMap.get(name);
                 if (extension != null) {
                     def = new StatementDefinitionContext<>(extension);
-                    currentContext.putModelDefinedStatementDefinition(name, def);
+                    globalContext.putModelDefinedStatementDefinition(name, def);
                 }
             }
         } else if (current != null && StmtContextUtils.isUnrecognizedStatement(current)) {
@@ -273,12 +270,12 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
             final Class<N> type) {
-        return currentContext.getNamespaceBehaviour(type);
+        return globalContext.getNamespaceBehaviour(type);
     }
 
     @Override
     public NamespaceStorageNode getParentNamespaceStorage() {
-        return currentContext;
+        return globalContext;
     }
 
     PhaseCompletionProgress tryToCompletePhase(final ModelProcessingPhase phase) {
@@ -409,7 +406,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     private QNameToStatementDefinition stmtDef() {
         // regular YANG statements and extension supports added
-        final StatementSupportBundle supportsForPhase = currentContext.getSupportsForPhase(inProgressPhase);
+        final StatementSupportBundle supportsForPhase = globalContext.getSupportsForPhase(inProgressPhase);
         qnameToStmtDefMap.putAll(supportsForPhase.getCommonDefinitions());
         qnameToStmtDefMap.putAll(supportsForPhase.getDefinitionsSpecificForVersion(getRootVersion()));
 
@@ -419,7 +416,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
 
         // We need to any and all extension statements which have been declared in the context
-        final Map<QName, StatementSupport<?, ?, ?>> extensions = currentContext.getNamespace(
+        final Map<QName, StatementSupport<?, ?, ?>> extensions = globalContext.getNamespace(
                 StatementDefinitionNamespace.class);
         if (extensions != null) {
             extensions.forEach((qname, support) -> {
@@ -433,14 +430,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
 
         return qnameToStmtDefMap;
-    }
-
-    public Set<YangVersion> getSupportedVersions() {
-        return currentContext.getSupportedVersions();
-    }
-
-    void addMutableStmtToSeal(final MutableStatement mutableStatement) {
-        currentContext.addMutableStmtToSeal(mutableStatement);
     }
 
     Collection<SourceIdentifier> getRequiredSources() {
