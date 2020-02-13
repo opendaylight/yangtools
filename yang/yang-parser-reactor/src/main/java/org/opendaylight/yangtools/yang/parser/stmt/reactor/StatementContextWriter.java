@@ -14,6 +14,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -33,9 +34,12 @@ final class StatementContextWriter implements StatementWriter {
 
     @Override
     public Optional<? extends ResumedStatement> resumeStatement(final int childId) {
-        final Optional<AbstractResumedStatement<?, ?, ?>> existing = ctx.lookupDeclaredChild(current, childId);
-        existing.ifPresent(this::resumeStatement);
-        return existing;
+        final AbstractResumedStatement<?, ?, ?> existing = lookupDeclaredChild(childId);
+        if (existing != null) {
+            resumeStatement(existing);
+            return Optional.of(existing);
+        }
+        return Optional.empty();
     }
 
     private void resumeStatement(final AbstractResumedStatement<?, ?, ?> child) {
@@ -61,9 +65,9 @@ final class StatementContextWriter implements StatementWriter {
     @Override
     public void startStatement(final int childId, final QName name, final String argument,
             final StatementSourceReference ref) {
-        final Optional<AbstractResumedStatement<?, ?, ?>> existing = ctx.lookupDeclaredChild(current, childId);
-        current = existing.isPresent() ? existing.get()
-                :  verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
+        final AbstractResumedStatement<?, ?, ?> existing = lookupDeclaredChild(childId);
+        current = existing != null ? existing
+                : verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
     }
 
     @Override
@@ -94,5 +98,19 @@ final class StatementContextWriter implements StatementWriter {
         } else {
             current = null;
         }
+    }
+
+    private @Nullable AbstractResumedStatement<?, ?, ?> lookupDeclaredChild(final int childId) {
+        if (current == null) {
+            return null;
+        }
+
+        // Fast path: we are entering a statement which was emitted in previous phase
+        AbstractResumedStatement<?, ?, ?> existing = current.lookupSubstatement(childId);
+        while (existing != null && StatementSource.CONTEXT == existing.getStatementSource()) {
+            existing = existing.lookupSubstatement(childId);
+        }
+
+        return existing;
     }
 }
