@@ -87,7 +87,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     public Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements() {
-        return substatements.values();
+        return substatements;
     }
 
     @Override
@@ -172,7 +172,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     final void walkChildren(final ModelProcessingPhase phase) {
         checkState(isFullyDefined());
-        substatements.values().forEach(stmt -> {
+        substatements.forEach(stmt -> {
             stmt.walkChildren(phase);
             stmt.endDeclared(phase);
         });
