@@ -33,9 +33,12 @@ final class StatementContextWriter implements StatementWriter {
 
     @Override
     public Optional<? extends ResumedStatement> resumeStatement(final int childId) {
-        final Optional<AbstractResumedStatement<?, ?, ?>> existing = ctx.lookupDeclaredChild(current, childId);
-        existing.ifPresent(this::resumeStatement);
-        return existing;
+        final AbstractResumedStatement<?, ?, ?> existing = ctx.lookupDeclaredChild(current, childId);
+        if (existing != null) {
+            resumeStatement(existing);
+            return Optional.of(existing);
+        }
+        return Optional.empty();
     }
 
     private void resumeStatement(final AbstractResumedStatement<?, ?, ?> child) {
@@ -61,9 +64,9 @@ final class StatementContextWriter implements StatementWriter {
     @Override
     public void startStatement(final int childId, final QName name, final String argument,
             final StatementSourceReference ref) {
-        final Optional<AbstractResumedStatement<?, ?, ?>> existing = ctx.lookupDeclaredChild(current, childId);
-        current = existing.isPresent() ? existing.get()
-                :  verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
+        final AbstractResumedStatement<?, ?, ?> existing = ctx.lookupDeclaredChild(current, childId);
+        current = existing != null ? existing
+                : verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
     }
 
     @Override
