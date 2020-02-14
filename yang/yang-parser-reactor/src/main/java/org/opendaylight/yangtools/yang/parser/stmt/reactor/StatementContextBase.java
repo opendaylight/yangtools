@@ -606,10 +606,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         completedPhase = phase;
 
         final Collection<OnPhaseFinished> listeners = phaseListeners.get(phase);
-        if (listeners.isEmpty()) {
-            return;
+        if (!listeners.isEmpty()) {
+            runPhaseListeners(phase, listeners);
         }
+    }
 
+    private void runPhaseListeners(final ModelProcessingPhase phase, final Collection<OnPhaseFinished> listeners) {
         final Iterator<OnPhaseFinished> listener = listeners.iterator();
         while (listener.hasNext()) {
             final OnPhaseFinished next = listener.next();
