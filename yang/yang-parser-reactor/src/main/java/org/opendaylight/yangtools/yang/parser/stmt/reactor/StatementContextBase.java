@@ -68,6 +68,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
@@ -471,7 +472,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
         verifyStatement(substatement);
         beforeAddEffectiveStatement(1);
-        effective.add((StatementContextBase<?, ?, ?>) substatement);
+
+        final StatementContextBase<?, ?, ?> stmt = (StatementContextBase<?, ?, ?>) substatement;
+        final ModelProcessingPhase phase = completedPhase;
+        if (phase != null) {
+            ensureCompletedPhase(stmt, phase);
+        }
+        effective.add(stmt);
     }
 
     /**
@@ -487,8 +494,26 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         if (!statements.isEmpty()) {
             statements.forEach(StatementContextBase::verifyStatement);
             beforeAddEffectiveStatement(statements.size());
-            effective.addAll((Collection<? extends StatementContextBase<?, ?, ?>>) statements);
+
+            final Collection<? extends StatementContextBase<?, ?, ?>> casted =
+                    (Collection<? extends StatementContextBase<?, ?, ?>>) statements;
+            final ModelProcessingPhase phase = completedPhase;
+            if (phase != null) {
+                for (StatementContextBase<?, ?, ?> stmt : casted) {
+                    ensureCompletedPhase(stmt, phase);
+                }
+            }
+
+            effective.addAll(casted);
         }
+    }
+
+    // Make sure target statement has transitioned at least to specified phase. This method is just before we take
+    // allow a statement to become our substatement. This is needed to ensure that every statement tree does not contain
+    // any statements which did not complete the same phase as the root statement.
+    private static void ensureCompletedPhase(final StatementContextBase<?, ?, ?> stmt,
+            final ModelProcessingPhase phase) {
+        verify(stmt.tryToCompletePhase(phase), "Statement %s cannot complete phase %s", stmt, phase);
     }
 
     private static void verifyStatement(final Mutable<?, ?, ?> stmt) {
@@ -496,10 +521,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private void beforeAddEffectiveStatement(final int toAdd) {
+        // We cannot allow statement to be further mutated
+        final StatementSourceReference ref = getStatementSourceReference();
+        verify(completedPhase != ModelProcessingPhase.EFFECTIVE_MODEL, "Cannot modify finished statement at %s", ref);
+
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
                 || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Effective statement cannot be added in declared phase at: %s", getStatementSourceReference());
+                "Effective statement cannot be added in declared phase at: %s", ref);
 
         if (effective.isEmpty()) {
             effective = new ArrayList<>(toAdd);
@@ -527,13 +556,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * Try to execute current {@link ModelProcessingPhase} of source parsing.
+     * Try to execute current {@link ModelProcessingPhase} of source parsing. If the phase has already been executed,
+     * this method does nothing.
      *
      * @param phase to be executed (completed)
-     * @return if phase was successfully completed
+     * @return true if phase was successfully completed
      * @throws SourceException when an error occurred in source parsing
      */
     final boolean tryToCompletePhase(final ModelProcessingPhase phase) {
+        return phase.isCompletedBy(completedPhase) || doTryToCompletePhase(phase);
+    }
+
+    private boolean doTryToCompletePhase(final ModelProcessingPhase phase) {
         final boolean finished = phaseMutation.isEmpty() ? true : runMutations(phase);
         if (completeChildren(phase) && finished) {
             onPhaseCompleted(phase);
