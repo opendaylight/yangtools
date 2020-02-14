@@ -165,8 +165,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
-        this.copyHistory = original.copyHistory;
         this.definition = original.definition;
+        this.copyHistory = original.copyHistory;
 
         this.isSupportedToBuildEffective = original.isSupportedToBuildEffective;
         this.fullyDefined = original.fullyDefined;
@@ -174,11 +174,21 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.flags = original.flags;
     }
 
+    // Constructor for declared statements (without completed phase)
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
         this.definition = requireNonNull(def);
         this.copyHistory = CopyHistory.original();
     }
 
+    // Constructor for implicit declared statements (inherits completed phase)
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementContextBase<A, ?, ?> original,
+            final CopyType copyType) {
+        this.definition = requireNonNull(def);
+        this.copyHistory = CopyHistory.of(copyType, CopyHistory.original());
+        this.completedPhase = original.completedPhase;
+    }
+
+    // Constructor for inferred statements
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyHistory copyHistory) {
         this.definition = requireNonNull(def);
         this.copyHistory = requireNonNull(copyHistory);
@@ -258,12 +268,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public ModelProcessingPhase getCompletedPhase() {
         return completedPhase;
-    }
-
-    // FIXME: this should be propagated through a correct constructor
-    @Deprecated
-    final void setCompletedPhase(final ModelProcessingPhase completedPhase) {
-        this.completedPhase = completedPhase;
     }
 
     @Override
@@ -807,8 +811,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         if (implicitParent.isPresent()) {
             final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent.get());
-            result = new SubstatementContext(this, def, original.getStatementSourceReference(),
-                original.rawStatementArgument(), original.getStatementArgument(), type);
+            result = new SubstatementContext(this, def, original, type);
 
             final CopyType childCopyType;
             switch (type) {
@@ -855,12 +858,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(optImplicit.get());
         final CopyType type = original.getCopyHistory().getLastOperation();
-        final SubstatementContext<?, ?, ?> result = new SubstatementContext(original.getParentContext(), def,
-            original.getStatementSourceReference(), original.rawStatementArgument(), original.getStatementArgument(),
+        final SubstatementContext<?, ?, ?> result = new SubstatementContext(original.getParentContext(), def, original,
             type);
 
         result.addEffectiveSubstatement(original.reparent(result));
-        result.setCompletedPhase(original.getCompletedPhase());
         return result;
     }
 

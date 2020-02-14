@@ -40,10 +40,10 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     // FIXME: YANGTOOLS-784: this constructor is only called in contexts where a different implementation
     //                       would be more appropriate
     SubstatementContext(final StatementContextBase<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
-            final StatementSourceReference ref, final String rawArgument, final A argument, final CopyType copyType) {
-        super(def, ref, rawArgument, copyType);
+            final StatementContextBase<A, ?, ?> original, final CopyType copyType) {
+        super(def, original, copyType);
         this.parent = requireNonNull(parent, "Parent must not be null");
-        this.argument = argument;
+        this.argument = original.getStatementArgument();
     }
 
     @Override
