@@ -45,7 +45,24 @@ public enum ModelProcessingPhase {
         this.previousPhase = previous;
     }
 
+    /**
+     * Return the preceding phase, or null if this phase is the first one.
+     *
+     * @return Preceding phase, if there is one
+     */
     public @Nullable ModelProcessingPhase getPreviousPhase() {
         return previousPhase;
+    }
+
+    /**
+     * Determine whether this processing phase is implied to have completed by completion of some other phase.
+     * Algebraically this means that other is not null and is either this phase or its {@link #getPreviousPhase()} chain
+     * contains this phase.
+     *
+     * @param other Other phase
+     * @return True if this phase completes no later than specified phase.
+     */
+    public boolean isCompletedBy(final @Nullable ModelProcessingPhase other) {
+        return other != null && ordinal() <= other.ordinal();
     }
 }
