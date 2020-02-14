@@ -69,6 +69,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
@@ -435,12 +436,19 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Beta
     public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> @NonNull Mutable<X, Y, Z>
             appendImplicitSubstatement(final StatementSupport<X, Y, Z> support, final String rawArg) {
+        // Enforce lifecycle early, as we are not a normal user
+        beforeAddEffectiveStatement(1);
+
         // FIXME: YANGTOOLS-652: This does not need to be a SubstatementContext, in can be a specialized
         //                       StatementContextBase subclass.
-        final Mutable<X, Y, Z> ret = new SubstatementContext<>(this, new StatementDefinitionContext<>(support),
-                ImplicitSubstatement.of(getStatementSourceReference()), rawArg);
+        final StatementContextBase<X, Y, Z> ret = new SubstatementContext<>(this,
+                new StatementDefinitionContext<>(support), ImplicitSubstatement.of(getStatementSourceReference()),
+                rawArg);
         support.onStatementAdded(ret);
-        addEffectiveSubstatement(ret);
+
+        // Make sure added statement has completed our current phase, as it may be a latercomer to it
+        verify(ret.tryToCompletePhase(completedPhase), "Failed to complete phase %s on %s", completedPhase, ret);
+        effective.add(ret);
         return ret;
     }
 
@@ -481,10 +489,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private void beforeAddEffectiveStatement(final int toAdd) {
+        // We cannot allow statement to be further mutated
+        final StatementSourceReference ref = getStatementSourceReference();
+        verify(completedPhase != ModelProcessingPhase.EFFECTIVE_MODEL, "Cannot modify finished statement at %s", ref);
+
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
                 || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Effective statement cannot be added in declared phase at: %s", getStatementSourceReference());
+                "Effective statement cannot be added in declared phase at: %s", ref);
 
         if (effective.isEmpty()) {
             effective = new ArrayList<>(toAdd);
@@ -515,6 +527,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws SourceException when an error occurred in source parsing
      */
     final boolean tryToCompletePhase(final ModelProcessingPhase phase) {
+        return completedPhase == phase || doTryToCompletePhase(phase);
+    }
+
+    private boolean doTryToCompletePhase(final ModelProcessingPhase phase) {
         final boolean finished = phaseMutation.isEmpty() ? true : runMutations(phase);
         if (completeChildren(phase) && finished) {
             onPhaseCompleted(phase);
