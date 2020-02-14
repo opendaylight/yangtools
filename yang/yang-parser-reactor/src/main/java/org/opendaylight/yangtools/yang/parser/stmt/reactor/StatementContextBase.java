@@ -513,6 +513,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws SourceException when an error occurred in source parsing
      */
     final boolean tryToCompletePhase(final ModelProcessingPhase phase) {
+        return completedPhase == phase || doTryToCompletePhase(phase);
+    }
+
+    private boolean doTryToCompletePhase(final ModelProcessingPhase phase) {
         final boolean finished = phaseMutation.isEmpty() ? true : runMutations(phase);
         if (completeChildren(phase) && finished) {
             onPhaseCompleted(phase);
