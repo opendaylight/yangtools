@@ -30,7 +30,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -70,6 +69,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
@@ -456,6 +456,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
         beforeAddEffectiveStatement(1);
+        verifyStatement(substatement);
         effective.add(substatement);
     }
 
@@ -469,20 +470,26 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             if statement parameter is null
      */
     public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
-        if (statements.isEmpty()) {
-            return;
+        if (!statements.isEmpty()) {
+            beforeAddEffectiveStatement(statements.size());
+            statements.forEach(StatementContextBase::verifyStatement);
+            effective.addAll(statements);
         }
+    }
 
-        statements.forEach(Objects::requireNonNull);
-        beforeAddEffectiveStatement(statements.size());
-        effective.addAll(statements);
+    private static void verifyStatement(final Mutable<?, ?, ?> stmt) {
+        verify(stmt instanceof StatementContextBase, "Unexpected statement %s", stmt);
     }
 
     private void beforeAddEffectiveStatement(final int toAdd) {
+        // We cannot allow statement to be further mutated
+        final StatementSourceReference ref = getStatementSourceReference();
+        verify(completedPhase != ModelProcessingPhase.EFFECTIVE_MODEL, "Cannot modify finished statement at %s", ref);
+
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
                 || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Effective statement cannot be added in declared phase at: %s", getStatementSourceReference());
+                "Effective statement cannot be added in declared phase at: %s", ref);
 
         if (effective.isEmpty()) {
             effective = new ArrayList<>(toAdd);
@@ -513,6 +520,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws SourceException when an error occurred in source parsing
      */
     final boolean tryToCompletePhase(final ModelProcessingPhase phase) {
+        return completedPhase == phase || doTryToCompletePhase(phase);
+    }
+
+    private boolean doTryToCompletePhase(final ModelProcessingPhase phase) {
         final boolean finished = phaseMutation.isEmpty() ? true : runMutations(phase);
         if (completeChildren(phase) && finished) {
             onPhaseCompleted(phase);
