@@ -506,37 +506,23 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * tries to execute current {@link ModelProcessingPhase} of source parsing.
+     * Try to execute current {@link ModelProcessingPhase} of source parsing.
      *
-     * @param phase
-     *            to be executed (completed)
+     * @param phase to be executed (completed)
      * @return if phase was successfully completed
-     * @throws SourceException
-     *             when an error occurred in source parsing
+     * @throws SourceException when an error occurred in source parsing
      */
-    boolean tryToCompletePhase(final ModelProcessingPhase phase) {
-
-        boolean finished = true;
-        final Collection<ContextMutation> openMutations = phaseMutation.get(phase);
-        if (!openMutations.isEmpty()) {
-            final Iterator<ContextMutation> it = openMutations.iterator();
-            while (it.hasNext()) {
-                final ContextMutation current = it.next();
-                if (current.isFinished()) {
-                    it.remove();
-                } else {
-                    finished = false;
-                }
-            }
-
-            if (openMutations.isEmpty()) {
-                phaseMutation.removeAll(phase);
-                if (phaseMutation.isEmpty()) {
-                    phaseMutation = ImmutableMultimap.of();
-                }
-            }
+    final boolean tryToCompletePhase(final ModelProcessingPhase phase) {
+        final boolean finished = phaseMutation.isEmpty() ? true : runMutations(phase);
+        if (completeChildren(phase) && finished) {
+            onPhaseCompleted(phase);
+            return true;
         }
+        return false;
+    }
 
+    private boolean completeChildren(final ModelProcessingPhase phase) {
+        boolean finished = true;
         for (final StatementContextBase<?, ?, ?> child : mutableDeclaredSubstatements()) {
             finished &= child.tryToCompletePhase(phase);
         }
@@ -545,12 +531,33 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 finished &= ((StatementContextBase<?, ?, ?>) child).tryToCompletePhase(phase);
             }
         }
+        return finished;
+    }
 
-        if (finished) {
-            onPhaseCompleted(phase);
-            return true;
+    private boolean runMutations(final ModelProcessingPhase phase) {
+        final Collection<ContextMutation> openMutations = phaseMutation.get(phase);
+        return openMutations.isEmpty() ? true : runMutations(phase, openMutations);
+    }
+
+    private boolean runMutations(final ModelProcessingPhase phase, final Collection<ContextMutation> openMutations) {
+        boolean finished = true;
+        final Iterator<ContextMutation> it = openMutations.iterator();
+        while (it.hasNext()) {
+            final ContextMutation current = it.next();
+            if (current.isFinished()) {
+                it.remove();
+            } else {
+                finished = false;
+            }
         }
-        return false;
+
+        if (openMutations.isEmpty()) {
+            phaseMutation.removeAll(phase);
+            if (phaseMutation.isEmpty()) {
+                phaseMutation = ImmutableMultimap.of();
+            }
+        }
+        return finished;
     }
 
     /**
