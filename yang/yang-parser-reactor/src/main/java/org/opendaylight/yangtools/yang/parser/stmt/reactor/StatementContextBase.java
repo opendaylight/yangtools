@@ -516,8 +516,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public E buildEffective() {
-        final E existing = effectiveInstance;
-        return existing != null ? existing : (effectiveInstance = definition.getFactory().createEffective(this));
+        final E existing;
+        return (existing = effectiveInstance) != null ? existing : loadEffective();
+    }
+
+    private E loadEffective() {
+        return effectiveInstance = definition.getFactory().createEffective(this);
     }
 
     /**
