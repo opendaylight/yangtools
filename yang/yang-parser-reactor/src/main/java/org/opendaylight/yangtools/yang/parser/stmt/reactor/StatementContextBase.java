@@ -30,7 +30,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -141,7 +140,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
-    private List<Mutable<?, ?, ?>> effective = ImmutableList.of();
+    private List<StatementContextBase<?, ?, ?>> effective = ImmutableList.of();
     private List<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
 
     private @Nullable ModelProcessingPhase completedPhase;
@@ -421,7 +420,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return;
         }
 
-        final Iterator<Mutable<?, ?, ?>> iterator = effective.iterator();
+        final Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
         while (iterator.hasNext()) {
             final Mutable<?, ?, ?> next = iterator.next();
             if (statementDef.equals(next.getPublicDefinition()) && statementArg.equals(next.rawStatementArgument())) {
@@ -455,8 +454,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             if statement parameter is null
      */
     public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
+        verifyStatement(substatement);
         beforeAddEffectiveStatement(1);
-        effective.add(substatement);
+        effective.add((StatementContextBase<?, ?, ?>) substatement);
     }
 
     /**
@@ -469,13 +469,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             if statement parameter is null
      */
     public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
-        if (statements.isEmpty()) {
-            return;
+        if (!statements.isEmpty()) {
+            statements.forEach(StatementContextBase::verifyStatement);
+            beforeAddEffectiveStatement(statements.size());
+            effective.addAll((Collection<? extends StatementContextBase<?, ?, ?>>) statements);
         }
+    }
 
-        statements.forEach(Objects::requireNonNull);
-        beforeAddEffectiveStatement(statements.size());
-        effective.addAll(statements);
+    private static void verifyStatement(final Mutable<?, ?, ?> stmt) {
+        verify(stmt instanceof StatementContextBase, "Unexpected statement %s", stmt);
     }
 
     private void beforeAddEffectiveStatement(final int toAdd) {
@@ -526,10 +528,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         for (final StatementContextBase<?, ?, ?> child : mutableDeclaredSubstatements()) {
             finished &= child.tryToCompletePhase(phase);
         }
-        for (final Mutable<?, ?, ?> child : effective) {
-            if (child instanceof StatementContextBase) {
-                finished &= ((StatementContextBase<?, ?, ?>) child).tryToCompletePhase(phase);
-            }
+        for (final StatementContextBase<?, ?, ?> child : effective) {
+            finished &= child.tryToCompletePhase(phase);
         }
         return finished;
     }
