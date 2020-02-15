@@ -92,10 +92,11 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     public final D buildDeclared() {
-        final D existing = declaredInstance;
-        if (existing != null) {
-            return existing;
-        }
+        final D existing;
+        return (existing = declaredInstance) != null ? existing : loadDeclared();
+    }
+
+    private @NonNull D loadDeclared() {
         final ModelProcessingPhase phase = getCompletedPhase();
         checkState(phase == ModelProcessingPhase.FULL_DECLARATION || phase == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Cannot build declared instance after phase %s", phase);
