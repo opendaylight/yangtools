@@ -1,0 +1,96 @@
+// FIXME: convert to a structured format and package this
+
+A quick guide to patterns that may seem weird at first sight.
+
+Ternary operators
+=================
+Let's start by saying that:
+
+          NESTED TERNARY OPERATORS ARE PURE EVIL
+
+NEVER EVER EVER nest ternary operators, as that makes code
+utterly and completely opaque. That means not only do they
+overload the brain, they are also hard to refactor.
+
+That having been said, there are cases where using a ternary
+operator aides performance to no small extent. The reason for
+that is simple: a ternary operator has a result, which can
+be passed on.
+
+A lot of times you will see a construct like this:
+
+  Object doSomething(Object param) {
+      return param == null ? DEFAULT : createSomething(param);
+  }
+
+This construct should be immediately obvious to anyone trying
+to read YANG Tools (or really any Java) code. Compare this to
+the more obvious version:
+
+  Object doSomething(Object param) {
+      if (param == null) {
+          return DEFAULT;
+      }
+      return createSomething(param);
+  }
+
+Both are doing the same thing, but one takes up 3 lines, while
+the other one takes 6 -- meaning less code (sans folding) fits
+on your screen. If you are deeply reasoning about code, folding
+does not count anyway.
+
+From performance perspective, expressions end up being more
+expressive at bytecode level. This would not matter, except
+HotSpot counts bytes to determine inlining. That is not going
+to change: https://bugs.openjdk.java.net/browse/JDK-6316156.
+If a method is proven to be hot and can be reasonably
+expressed in terms of an expression, we want to do that, just
+to aid JIT.
+
+Hot cache fields
+================
+It is very common to have lazily-initiated or memoized objects.
+These typically involve some field being initially null and
+then becoming non-null for the rest of its life.
+
+Access to these fields is mediated through an accessor method,
+which has a general shape of (sans threads):
+
+  private @Nullable Foo foo;
+
+  public Foo foo() {
+    if (foo == null) {
+      foo = computeFoo();
+    }
+    return foo;
+  }
+
+If performance is critial, the general shape (sans threads)
+will become:
+
+  public Foo foo() {
+    final Foo existing;
+    return (existing = foo) == null ? existing : loadFoo();
+  }
+
+  private Foo loadFoo() {
+    return effectiveInstance = createFoo();
+  }
+
+While the code is less readable, it also heavily relies on
+bytecode expressiveness, leading to a few bytes being knocked
+off from the resulting bytecode. At runtime this helps Hotspot
+to inline more aggressively -- which helps performance.
+
+Thread-safe cache fields
+========================
+If multiple threads are at play, cache fields become way more
+interesting. In general, we want to perform the equivalent of
+double checked locking -- and note we have JDK9+ at our
+disposal.
+
+TBD: volatile vs. double-checked loading with immutables
+TBD: getAcquire() + compareAndExchangeRelease()
+TBD: getAcqiore() + setRelease()
+
+
