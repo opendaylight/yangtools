@@ -222,7 +222,7 @@ public class YangParserSimpleTest {
         final Collection<? extends UsesNode> uses = nodes.getUses();
         assertEquals(1, uses.size());
         final UsesNode use = uses.iterator().next();
-        assertEquals(nodeGroupPath, use.getGroupingPath());
+        assertEquals(nodeGroup, use.getSourceGrouping());
     }
 
 

@@ -16,9 +16,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -41,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -223,11 +220,8 @@ public class YangParserWithContextTest {
         final UsesNode usesNode = usesNodes.iterator().next();
 
         // test grouping path
-        final List<QName> path = new ArrayList<>();
-        final QName qname = QName.create(URI.create("urn:opendaylight.baz"), Revision.of("2013-02-27"), "target");
-        path.add(qname);
-        final SchemaPath expectedPath = SchemaPath.create(path, true);
-        assertEquals(expectedPath, usesNode.getGroupingPath());
+        assertEquals(QName.create(URI.create("urn:opendaylight.baz"), Revision.of("2013-02-27"), "target"),
+            usesNode.getSourceGrouping().getQName());
 
         // test refine
         final Map<Descendant, SchemaNode> refines = usesNode.getRefines();

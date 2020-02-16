@@ -122,8 +122,7 @@ public class ControllerStmtParserTest {
         final UsesNode uses = schemaServiceContainer.getUses().iterator().next();
         final QName groupingQName = QName.create("urn:opendaylight:params:xml:ns:yang:controller:config", "2013-04-05",
             "service-ref");
-        final QName usesGroupingPathLastComponent = uses.getGroupingPath().getLastComponent();
-        assertEquals(groupingQName, usesGroupingPathLastComponent);
+        assertEquals(groupingQName, uses.getSourceGrouping().getQName());
         assertEquals(0, getChildNodeSizeWithoutUses(schemaServiceContainer));
 
         final DataSchemaNode type = schemaServiceContainer.getDataChildByName(QName.create(module.getQNameModule(),
