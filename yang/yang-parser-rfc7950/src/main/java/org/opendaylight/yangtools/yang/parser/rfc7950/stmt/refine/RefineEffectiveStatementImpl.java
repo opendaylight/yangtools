@@ -14,20 +14,20 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 // FIXME: 5.0.0: hide this class
 public final class RefineEffectiveStatementImpl
-        extends AbstractEffectiveDocumentedNode<SchemaNodeIdentifier, RefineStatement>
+        extends AbstractEffectiveDocumentedNode<Descendant, RefineStatement>
         implements RefineEffectiveStatement, SchemaNode {
 
     private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
     private final SchemaNode refineTargetNode;
 
-    RefineEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
+    RefineEffectiveStatementImpl(final StmtContext<Descendant, RefineStatement, ?> ctx) {
         super(ctx);
         qname = Iterables.getLast(ctx.coerceStatementArgument().getNodeIdentifiers());
         path = ctx.getSchemaPath().get();
