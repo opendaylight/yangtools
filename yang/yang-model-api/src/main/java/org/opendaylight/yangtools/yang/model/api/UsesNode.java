@@ -17,12 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
  */
 public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode {
     /**
-     * Returns the schema path to used grouping.
+     * Returns the {code grouping} which this node acted upon.
      *
-     * @return schema path to 'grouping' on which this 'uses' statement points
+     * @return Source grouping
      */
-    // FIXME: 5.0.0: this is effective model, hence we should return GroupingDefinition
-    @NonNull SchemaPath getGroupingPath();
+    @NonNull GroupingDefinition getSourceGrouping();
 
     /**
      * Returns augmentations which were specified in this uses node.
@@ -36,6 +35,8 @@ public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode {
      *
      * @return Map, where key is schema path of refined node and value is refined node
      */
-    // FIXME: 5.0.0: this should probably be SchemaPath.RelativeSchemaPath (which needs to be exposed)
+    // FIXME: 5.0.0: this really would like to be a collection of RefineEffectiveStatetements, each of which has
+    //               a SchemaNodeIdentifier.Descendant and the result node.
+    // FIXME: I am not sure I understand why do we need to track these, though
     @NonNull Map<SchemaPath, SchemaNode> getRefines();
 }
