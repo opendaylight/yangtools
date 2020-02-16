@@ -7,27 +7,27 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
-import java.util.Collection;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
 
 abstract class AbstractKeyEffectiveStatement
-        extends AbstractDeclaredEffectiveStatement.Default<Collection<SchemaNodeIdentifier>, KeyStatement>
+        extends AbstractDeclaredEffectiveStatement.Default<Set<QName>, KeyStatement>
         implements KeyEffectiveStatement {
     abstract static class Foreign extends AbstractKeyEffectiveStatement {
         // Polymorphic, with single value or a collection
         private final Object argument;
 
-        Foreign(final KeyStatement declared, final Collection<SchemaNodeIdentifier> argument) {
+        Foreign(final KeyStatement declared, final Set<QName> argument) {
             super(declared);
-            this.argument = KeyStatementSupport.maskCollection(argument);
+            this.argument = KeyStatementSupport.maskSet(argument);
         }
 
         @Override
-        public final Collection<SchemaNodeIdentifier> argument() {
-            return KeyStatementSupport.unmaskCollection(argument);
+        public final Set<QName> argument() {
+            return KeyStatementSupport.unmaskSet(argument);
         }
     }
 
@@ -37,7 +37,7 @@ abstract class AbstractKeyEffectiveStatement
         }
 
         @Override
-        public final Collection<SchemaNodeIdentifier> argument() {
+        public final Set<QName> argument() {
             return getDeclared().argument();
         }
     }

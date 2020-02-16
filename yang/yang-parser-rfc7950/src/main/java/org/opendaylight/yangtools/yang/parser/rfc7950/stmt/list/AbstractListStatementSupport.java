@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
@@ -88,9 +87,7 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
                     possibleLeafQNamesForKey.add(((LeafSchemaNode) effectiveStatement).getQName());
                 }
             }
-            for (final SchemaNodeIdentifier key : keyStmt.argument()) {
-                final QName keyQName = key.getNodeIdentifiers().get(0);
-
+            for (final QName keyQName : keyStmt.argument()) {
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
                     throw new InferenceException(ref, "Key '%s' misses node '%s' in list '%s'",
                         keyStmt.getDeclared().rawArgument(), keyQName.getLocalName(), ctx.getStatementArgument());
