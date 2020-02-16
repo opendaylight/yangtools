@@ -85,6 +85,11 @@ public final class ArgumentUtils {
         return PATH_ABS.matcher(path).matches();
     }
 
+    public static Absolute parseAbsoluteSchemaNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
+        // FIXME: this does accept check for a leading slash
+        return Absolute.of(parseNodeIdentifiers(ctx, str));
+    }
+
     public static Descendant parseDescendantSchemaNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
         // FIXME: this does accept a leading slash
         return Descendant.of(parseNodeIdentifiers(ctx, str));
