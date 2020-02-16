@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -446,7 +447,7 @@ public final class StmtContextUtils {
     private static boolean isListKey(final StmtContext<?, ?, ?> leafStmtCtx,
             final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> keyStmtCtx) {
         for (final SchemaNodeIdentifier keyIdentifier : keyStmtCtx.coerceStatementArgument()) {
-            if (leafStmtCtx.getStatementArgument().equals(keyIdentifier.getLastComponent())) {
+            if (leafStmtCtx.getStatementArgument().equals(Iterables.getLast(keyIdentifier.getNodeIdentifiers()))) {
                 return true;
             }
         }
