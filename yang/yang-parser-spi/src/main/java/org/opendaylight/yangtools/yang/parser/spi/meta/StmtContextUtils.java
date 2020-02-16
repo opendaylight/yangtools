@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -32,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -423,8 +421,7 @@ public final class StmtContextUtils {
         }
 
         final StmtContext<?, ?, ?> listStmtCtx = ctx.getParentContext();
-        final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> keyStmtCtx = findFirstDeclaredSubstatement(
-            listStmtCtx, KeyStatement.class);
+        final StmtContext<Set<QName>, ?, ?> keyStmtCtx = findFirstDeclaredSubstatement(listStmtCtx, KeyStatement.class);
 
         if (YangStmtMapping.LEAF.equals(ctx.getPublicDefinition())) {
             if (isListKey(ctx, keyStmtCtx)) {
@@ -445,14 +442,8 @@ public final class StmtContextUtils {
     }
 
     private static boolean isListKey(final StmtContext<?, ?, ?> leafStmtCtx,
-            final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> keyStmtCtx) {
-        for (final SchemaNodeIdentifier keyIdentifier : keyStmtCtx.coerceStatementArgument()) {
-            if (leafStmtCtx.getStatementArgument().equals(Iterables.getLast(keyIdentifier.getNodeIdentifiers()))) {
-                return true;
-            }
-        }
-
-        return false;
+            final StmtContext<Set<QName>, ?, ?> keyStmtCtx) {
+        return keyStmtCtx.coerceStatementArgument().contains(leafStmtCtx.getStatementArgument());
     }
 
     private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> leafStmtCtx) {

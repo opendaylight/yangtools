@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
-import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyKeyStatement extends AbstractKeyStatement {
-    EmptyKeyStatement(final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> context) {
+    EmptyKeyStatement(final StmtContext<Set<QName>, ?, ?> context) {
         super(context);
     }
 }
