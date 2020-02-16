@@ -8,6 +8,8 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -282,7 +284,7 @@ public class DeviationResolutionTest {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause().getCause();
             assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("Deviation target 'Absolute{path=[(bar?revision=2017-01-20)"
+            assertThat(cause.getMessage(), startsWith("Deviation target 'Absolute{qnames=[(bar?revision=2017-01-20)"
                     + "invalid, (bar?revision=2017-01-20)path]}' not found"));
         }
     }

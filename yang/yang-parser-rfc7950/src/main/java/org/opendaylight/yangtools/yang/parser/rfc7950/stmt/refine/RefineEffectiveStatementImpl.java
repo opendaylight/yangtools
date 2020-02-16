@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
+import com.google.common.collect.Iterables;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -30,7 +29,7 @@ public final class RefineEffectiveStatementImpl
 
     RefineEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
         super(ctx);
-        qname = verifyNotNull(ctx.coerceStatementArgument().getLastComponent());
+        qname = Iterables.getLast(ctx.coerceStatementArgument().getNodeIdentifiers());
         path = ctx.getSchemaPath().get();
         refineTargetNode = (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective();
     }

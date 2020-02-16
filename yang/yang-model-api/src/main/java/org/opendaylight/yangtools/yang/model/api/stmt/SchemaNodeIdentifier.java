@@ -11,14 +11,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.UnmodifiableIterator;
 import java.util.Arrays;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -32,18 +30,29 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      * An absolute schema node identifier.
      */
     public static final class Absolute extends SchemaNodeIdentifier {
-        private Absolute(final SchemaNodeIdentifier parent, final QName qname) {
-            super(parent, qname);
+        Absolute(final QName qname) {
+            super(qname);
+        }
+
+        Absolute(final Collection<QName> qnames) {
+            super(qnames);
+        }
+
+        public static Absolute of(final QName nodeIdentifier) {
+            return new Absolute(nodeIdentifier);
+        }
+
+        public static Absolute of(final QName... nodeIdentifiers) {
+            return new Absolute(Arrays.asList(nodeIdentifiers));
+        }
+
+        public static Absolute of(final Collection<QName> nodeIdentifiers) {
+            return new Absolute(ImmutableList.copyOf(nodeIdentifiers));
         }
 
         @Override
-        public boolean isAbsolute() {
-            return true;
-        }
-
-        @Override
-        public Absolute createChild(final QName element) {
-            return new Absolute(this, requireNonNull(element));
+        SchemaPath implicitSchemaPathParent() {
+            return SchemaPath.ROOT;
         }
     }
 
@@ -51,235 +60,54 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      * A descendant schema node identifier.
      */
     public static final class Descendant extends SchemaNodeIdentifier {
-        private Descendant(final SchemaNodeIdentifier parent, final QName qname) {
-            super(parent, qname);
+        Descendant(final QName qname) {
+            super(qname);
+        }
+
+        Descendant(final Collection<QName> qnames) {
+            super(qnames);
+        }
+
+        public static Descendant of(final QName nodeIdentifier) {
+            return new Descendant(nodeIdentifier);
+        }
+
+        public static Descendant of(final QName... nodeIdentifiers) {
+            return new Descendant(Arrays.asList(nodeIdentifiers));
+        }
+
+        public static Descendant of(final Collection<QName> nodeIdentifiers) {
+            return new Descendant(nodeIdentifiers);
         }
 
         @Override
-        public boolean isAbsolute() {
-            return false;
-        }
-
-        @Override
-        public Descendant createChild(final QName element) {
-            return new Descendant(this, requireNonNull(element));
+        SchemaPath implicitSchemaPathParent() {
+            return SchemaPath.SAME;
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<SchemaNodeIdentifier, ImmutableList> LEGACYPATH_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(SchemaNodeIdentifier.class, ImmutableList.class, "legacyPath");
     private static final AtomicReferenceFieldUpdater<SchemaNodeIdentifier, SchemaPath> SCHEMAPATH_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(SchemaNodeIdentifier.class, SchemaPath.class, "schemaPath");
-    /**
-     * Shared instance of the conceptual root schema node.
-     */
-    public static final Absolute ROOT = new Absolute(null, null);
 
-    /**
-     * Shared instance of the "same" relative schema node.
-     */
-    public static final Descendant SAME = new Descendant(null, null);
+    private final @NonNull Object qnames;
 
-    /**
-     * Parent path.
-     */
-    private final SchemaNodeIdentifier parent;
-
-    /**
-     * This component.
-     */
-    private final QName qname;
-
-    /**
-     * Cached hash code. We can use this since we are immutable.
-     */
-    private final int hash;
-
-    /**
-     * Cached legacy path, filled-in when {@link #getPath()} or {@link #getPathTowardsRoot()}
-     * is invoked.
-     */
-    private volatile ImmutableList<QName> legacyPath;
-
-    /**
-     * Cached SchemaPath.
-     */
+    // Cached SchemaPath.
     private volatile SchemaPath schemaPath;
+    // Cached hashCode
+    private volatile int hash;
 
-    SchemaNodeIdentifier(final SchemaNodeIdentifier parent, final QName qname) {
-        this.parent = parent;
-        this.qname = qname;
-
-        int tmp = Objects.hashCode(parent);
-        if (qname != null) {
-            tmp = tmp * 31 + qname.hashCode();
-        }
-
-        hash = tmp;
+    SchemaNodeIdentifier(final QName qname) {
+        this.qnames = requireNonNull(qname);
     }
 
-    private ImmutableList<QName> getLegacyPath() {
-        ImmutableList<QName> ret = legacyPath;
-        if (ret == null) {
-            ret = ImmutableList.copyOf(getPathTowardsRoot()).reverse();
-            LEGACYPATH_UPDATER.lazySet(this, ret);
-        }
-
-        return ret;
+    SchemaNodeIdentifier(final Collection<QName> qnames) {
+        final ImmutableList<QName> tmp = ImmutableList.copyOf(qnames);
+        checkArgument(!tmp.isEmpty());
+        this.qnames = tmp.size() == 1 ? tmp.get(0) : tmp;
     }
 
-    /**
-     * Constructs new instance of this class with the concrete path.
-     *
-     * @param path
-     *            list of QName instances which specifies exact path to the
-     *            module node
-     * @param absolute
-     *            boolean value which specifies if the path is absolute or
-     *            relative
-     *
-     * @return A SchemaNodeIdentifier instance.
-     */
-    public static SchemaNodeIdentifier create(final Iterable<QName> path, final boolean absolute) {
-        final SchemaNodeIdentifier parent = absolute ? ROOT : SAME;
-        return parent.createChild(path);
-    }
-
-    /**
-     * Constructs new instance of this class with the concrete path.
-     *
-     * @param absolute
-     *            boolean value which specifies if the path is absolute or
-     *            relative
-     * @param path
-     *            one or more QName instances which specifies exact path to the
-     *            module node
-     *
-     * @return A SchemaPath instance.
-     */
-    public static SchemaNodeIdentifier create(final boolean absolute, final QName... path) {
-        return create(Arrays.asList(path), absolute);
-    }
-
-    /**
-     * Create a child path based on concatenation of this path and a relative path.
-     *
-     * @param relative Relative path
-     * @return A new child path
-     */
-    public SchemaNodeIdentifier createChild(final Iterable<QName> relative) {
-        if (Iterables.isEmpty(relative)) {
-            return this;
-        }
-
-        SchemaNodeIdentifier parentNode = this;
-        for (QName item : relative) {
-            parentNode = parentNode.createChild(item);
-        }
-
-        return parentNode;
-    }
-
-    /**
-     * Create a child path based on concatenation of this path and a relative path.
-     *
-     * @param relative Relative SchemaPath
-     * @return A new child path
-     */
-    public SchemaNodeIdentifier createChild(final SchemaNodeIdentifier relative) {
-        checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
-        return createChild(relative.getPathFromRoot());
-    }
-
-    /**
-     * Create a child path based on concatenation of this path and an additional path element.
-     *
-     * @param element Next SchemaPath element
-     * @return A new child path
-     */
-    public abstract SchemaNodeIdentifier createChild(QName element);
-
-    /**
-     * Create a child path based on concatenation of this path and additional
-     * path elements.
-     *
-     * @param elements Relative SchemaPath elements
-     * @return A new child path
-     */
-    public SchemaNodeIdentifier createChild(final QName... elements) {
-        return createChild(Arrays.asList(elements));
-    }
-
-    /**
-     * Returns the list of nodes which need to be traversed to get from the
-     * starting point (root for absolute SchemaPaths) to the node represented
-     * by this object.
-     *
-     * @return list of <code>qname</code> instances which represents
-     *         path from the root to the schema node.
-     */
-    public Iterable<QName> getPathFromRoot() {
-        return getLegacyPath();
-    }
-
-    /**
-     * Returns the list of nodes which need to be traversed to get from this
-     * node to the starting point (root for absolute SchemaPaths).
-     *
-     * @return list of <code>qname</code> instances which represents
-     *         path from the schema node towards the root.
-     */
-    public Iterable<QName> getPathTowardsRoot() {
-        return () -> new UnmodifiableIterator<>() {
-            private SchemaNodeIdentifier current = SchemaNodeIdentifier.this;
-
-            @Override
-            public boolean hasNext() {
-                return current.parent != null;
-            }
-
-            @Override
-            public QName next() {
-                if (current.parent != null) {
-                    final QName ret = current.qname;
-                    current = current.parent;
-                    return ret;
-                } else {
-                    throw new NoSuchElementException("No more elements available");
-                }
-            }
-        };
-    }
-
-    /**
-     * Returns the immediate parent SchemaPath.
-     *
-     * @return Parent path, null if this SchemaPath is already toplevel.
-     */
-    public SchemaNodeIdentifier getParent() {
-        return parent;
-    }
-
-    /**
-     * Get the last component of this path.
-     *
-     * @return The last component of this path.
-     */
-    public final QName getLastComponent() {
-        return qname;
-    }
-
-    private SchemaPath createSchemaPath() {
-        final SchemaPath newPath;
-        if (parent == null) {
-            final SchemaPath parentPath = isAbsolute() ? SchemaPath.ROOT : SchemaPath.SAME;
-            newPath = qname == null ? parentPath : parentPath.createChild(qname);
-        } else {
-            newPath = parent.asSchemaPath().createChild(qname);
-        }
-
-        return SCHEMAPATH_UPDATER.compareAndSet(this, null, newPath) ? newPath : schemaPath;
+    public @NonNull List<QName> getNodeIdentifiers() {
+        return qnames instanceof QName ? ImmutableList.of((QName) qnames) : (ImmutableList<QName>) qnames;
     }
 
     /**
@@ -287,22 +115,22 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      *
      * @return SchemaPath equivalent.
      */
-    public final SchemaPath asSchemaPath() {
+    public final @NonNull SchemaPath asSchemaPath() {
         final SchemaPath ret = schemaPath;
-        return ret != null ? ret : createSchemaPath();
+        return ret != null ? ret : loadSchemaPath();
     }
 
-    /**
-     * Describes whether schema node identifier is|isn't absolute.
-     *
-     * @return boolean value which is <code>true</code> if schema path is
-     *         absolute.
-     */
-    public abstract boolean isAbsolute();
+    private SchemaPath loadSchemaPath() {
+        final SchemaPath newPath = implicitSchemaPathParent().createChild(getNodeIdentifiers());
+        return SCHEMAPATH_UPDATER.compareAndSet(this, null, newPath) ? newPath : schemaPath;
+    }
+
+    abstract SchemaPath implicitSchemaPathParent();
 
     @Override
     public final int hashCode() {
-        return hash;
+        final int local;
+        return (local = hash) != 0 ? local : (hash = qnames.hashCode());
     }
 
     @Override
@@ -310,22 +138,14 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final SchemaNodeIdentifier other = (SchemaNodeIdentifier) obj;
-        return Objects.equals(qname, other.qname) && Objects.equals(parent, other.parent);
+        return qnames.equals(((SchemaNodeIdentifier) obj).qnames);
     }
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-    }
-
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("path", getPathFromRoot());
+        return MoreObjects.toStringHelper(this).add("qnames", qnames).toString();
     }
 }
