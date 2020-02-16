@@ -10,31 +10,31 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractRefineStatementSupport
-        extends AbstractStatementSupport<SchemaNodeIdentifier, RefineStatement, RefineEffectiveStatement> {
+        extends AbstractStatementSupport<Descendant, RefineStatement, RefineEffectiveStatement> {
 
     AbstractRefineStatementSupport() {
         super(YangStmtMapping.REFINE);
     }
 
     @Override
-    public final SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ArgumentUtils.nodeIdentifierFromPath(ctx, value);
+    public final Descendant parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return ArgumentUtils.parseDescendantSchemaNodeIdentifier(ctx, value);
     }
 
     @Override
-    public final RefineStatement createDeclared(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
+    public final RefineStatement createDeclared(final StmtContext<Descendant, RefineStatement, ?> ctx) {
         return new RefineStatementImpl(ctx);
     }
 
     @Override
     public final RefineEffectiveStatement createEffective(
-            final StmtContext<SchemaNodeIdentifier, RefineStatement, RefineEffectiveStatement> ctx) {
+            final StmtContext<Descendant, RefineStatement, RefineEffectiveStatement> ctx) {
         return new RefineEffectiveStatementImpl(ctx);
     }
 }
