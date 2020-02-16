@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
@@ -40,7 +40,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         implements UsesEffectiveStatement, UsesNode {
     private final @NonNull SchemaPath groupingPath;
     private final boolean addedByUses;
-    private final @NonNull ImmutableMap<SchemaPath, SchemaNode> refines;
+    private final @NonNull ImmutableMap<Descendant, SchemaNode> refines;
     private final @NonNull ImmutableSet<AugmentationSchemaNode> augmentations;
     private final @Nullable RevisionAwareXPath whenCondition;
 
@@ -57,7 +57,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
 
         // initSubstatementCollections
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
-        final Map<SchemaPath, SchemaNode> refinesInit = new HashMap<>();
+        final Map<Descendant, SchemaNode> refinesInit = new HashMap<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof AugmentationSchemaNode) {
                 final AugmentationSchemaNode augmentationSchema = (AugmentationSchemaNode) effectiveStatement;
@@ -65,8 +65,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
             }
             if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
                 final RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
-                final SchemaNodeIdentifier identifier = refineStmt.argument();
-                refinesInit.put(identifier.asSchemaPath(), refineStmt.getRefineTargetNode());
+                refinesInit.put(refineStmt.argument(), refineStmt.getRefineTargetNode());
             }
         }
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
@@ -98,7 +97,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     }
 
     @Override
-    public Map<SchemaPath, SchemaNode> getRefines() {
+    public Map<Descendant, SchemaNode> getRefines() {
         return refines;
     }
 
