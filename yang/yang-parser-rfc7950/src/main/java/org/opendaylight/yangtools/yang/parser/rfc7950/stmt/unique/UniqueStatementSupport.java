@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
@@ -80,7 +81,7 @@ public final class UniqueStatementSupport
         final Set<Descendant> uniqueConstraintNodes = new HashSet<>();
         for (final String uniqueArgToken : SEP_SPLITTER.split(nocrlf)) {
             final SchemaNodeIdentifier nodeIdentifier = ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken);
-            SourceException.throwIf(nodeIdentifier.isAbsolute(), ctx.getStatementSourceReference(),
+            SourceException.throwIf(nodeIdentifier instanceof Absolute, ctx.getStatementSourceReference(),
                     "Unique statement argument '%s' contains schema node identifier '%s' "
                             + "which is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
             uniqueConstraintNodes.add((Descendant) nodeIdentifier);
