@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -96,7 +98,7 @@ public final class ArgumentUtils {
             }
         }
 
-        return SchemaNodeIdentifier.create(qNames, PATH_ABS.matcher(path).matches());
+        return PATH_ABS.matcher(path).matches() ? Absolute.of(qNames) : Descendant.of(qNames);
     }
 
     private static String trimSingleLastSlashFromXPath(final String path) {
