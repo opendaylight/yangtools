@@ -24,10 +24,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
- * Represents unique path to the every schema node inside the schema node identifier namespace.
+ * Represents unique path to the every schema node inside the schema node identifier namespace. This concept is defined
+ * in <a href="https://tools.ietf.org/html/rfc7950#section-6.5">RFC7950</a>.
  */
 public abstract class SchemaNodeIdentifier implements Immutable {
-
     /**
      * An absolute schema node identifier.
      */
@@ -48,10 +48,10 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     }
 
     /**
-     * A relative schema node identifier.
+     * A descendant schema node identifier.
      */
-    public static final class Relative extends SchemaNodeIdentifier {
-        private Relative(final SchemaNodeIdentifier parent, final QName qname) {
+    public static final class Descendant extends SchemaNodeIdentifier {
+        private Descendant(final SchemaNodeIdentifier parent, final QName qname) {
             super(parent, qname);
         }
 
@@ -61,8 +61,8 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         @Override
-        public Relative createChild(final QName element) {
-            return new Relative(this, requireNonNull(element));
+        public Descendant createChild(final QName element) {
+            return new Descendant(this, requireNonNull(element));
         }
     }
 
@@ -79,7 +79,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     /**
      * Shared instance of the "same" relative schema node.
      */
-    public static final Relative SAME = new Relative(null, null);
+    public static final Descendant SAME = new Descendant(null, null);
 
     /**
      * Parent path.
@@ -231,7 +231,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      *         path from the schema node towards the root.
      */
     public Iterable<QName> getPathTowardsRoot() {
-        return () -> new UnmodifiableIterator<QName>() {
+        return () -> new UnmodifiableIterator<>() {
             private SchemaNodeIdentifier current = SchemaNodeIdentifier.this;
 
             @Override

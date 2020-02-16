@@ -92,7 +92,7 @@ public class YangParserNegativeTest {
             fail("ReactorException should be thrown");
         } catch (final ReactorException e) {
             assertThat(e.getCause().getMessage(), containsString("Error in module 'test4' in the refine of uses "
-                    + "'Relative{path=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for"
+                    + "'Descendant{path=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for"
                     + " the target 'LEAF_LIST'."));
         }
     }

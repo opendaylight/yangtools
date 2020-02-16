@@ -11,20 +11,20 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class UniqueEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Set<Relative>, UniqueStatement>
+final class UniqueEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Set<Descendant>, UniqueStatement>
         implements UniqueConstraint, UniqueEffectiveStatement {
-    UniqueEffectiveStatementImpl(final StmtContext<Set<Relative>, UniqueStatement, ?> ctx) {
+    UniqueEffectiveStatementImpl(final StmtContext<Set<Descendant>, UniqueStatement, ?> ctx) {
         super(ctx);
     }
 
     @Override
-    public Set<Relative> getTag() {
+    public Set<Descendant> getTag() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
     }
