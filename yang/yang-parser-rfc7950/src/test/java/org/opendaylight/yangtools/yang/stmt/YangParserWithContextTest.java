@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -228,13 +229,13 @@ public class YangParserWithContextTest {
         assertEquals(expectedPath, usesNode.getGroupingPath());
 
         // test refine
-        final Map<SchemaPath, SchemaNode> refines = usesNode.getRefines();
+        final Map<Descendant, SchemaNode> refines = usesNode.getRefines();
         assertEquals(3, refines.size());
 
         LeafSchemaNode refineLeaf = null;
         ContainerSchemaNode refineContainer = null;
         ListSchemaNode refineList = null;
-        for (final Map.Entry<SchemaPath, SchemaNode> entry : refines.entrySet()) {
+        for (final Map.Entry<Descendant, SchemaNode> entry : refines.entrySet()) {
             final SchemaNode value = entry.getValue();
             if (value instanceof LeafSchemaNode) {
                 refineLeaf = (LeafSchemaNode) value;

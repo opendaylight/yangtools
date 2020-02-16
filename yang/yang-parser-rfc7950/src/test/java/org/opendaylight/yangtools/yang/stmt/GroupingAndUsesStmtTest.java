@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,9 +27,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -96,7 +95,6 @@ public class GroupingAndUsesStmtTest {
         assertNotNull(result);
 
         final Module testModule = result.findModules("foo").iterator().next();
-        assertNotNull(testModule);
 
         final Collection<? extends UsesNode> usesNodes = testModule.getUses();
         assertEquals(1, usesNodes.size());
@@ -105,27 +103,23 @@ public class GroupingAndUsesStmtTest {
         assertEquals("target", usesNode.getGroupingPath().getLastComponent().getLocalName());
         assertEquals(1, usesNode.getAugmentations().size());
 
-        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(
-            QName.create(testModule.getQNameModule(), "peer"));
+        QName peer = QName.create(testModule.getQNameModule(), "peer");
+        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(peer);
         assertNotNull(container);
-        container = (ContainerSchemaNode) container.getDataChildByName(QName.create(testModule.getQNameModule(),
-            "destination"));
+        container = (ContainerSchemaNode) container.getDataChildByName(QName.create(peer, "destination"));
         assertEquals(1, container.getUses().size());
 
         usesNode = container.getUses().iterator().next();
         assertEquals("target", usesNode.getGroupingPath().getLastComponent().getLocalName());
 
-        final Map<SchemaPath, SchemaNode> refines = usesNode.getRefines();
+        final Map<Descendant, SchemaNode> refines = usesNode.getRefines();
         assertEquals(4, refines.size());
 
-        final Iterator<SchemaPath> refinesKeysIterator = refines.keySet().iterator();
-        SchemaPath path = refinesKeysIterator.next();
-        assertThat(path.getLastComponent().getLocalName(), anyOf(is("port"), is("address"), is("addresses"), is("id")));
-        path = refinesKeysIterator.next();
-        assertThat(path.getLastComponent().getLocalName(), anyOf(is("port"), is("address"), is("addresses"), is("id")));
-        path = refinesKeysIterator.next();
-        assertThat(path.getLastComponent().getLocalName(), anyOf(is("port"), is("address"), is("addresses"), is("id")));
-        path = refinesKeysIterator.next();
-        assertThat(path.getLastComponent().getLocalName(), anyOf(is("port"), is("address"), is("addresses"), is("id")));
+        assertEquals(ImmutableList.of(
+            Descendant.of(QName.create(peer, "port")),
+            Descendant.of(QName.create(peer, "address")),
+            Descendant.of(QName.create(peer, "addresses")),
+            Descendant.of(QName.create(peer, "addresses"), QName.create(peer, "id"))),
+            new ArrayList<>(refines.keySet()));
     }
 }

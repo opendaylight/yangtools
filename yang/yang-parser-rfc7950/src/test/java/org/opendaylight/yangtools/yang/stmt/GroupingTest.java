@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -70,14 +71,14 @@ public class GroupingTest {
         final Collection<? extends UsesNode> usesNodes = destination.getUses();
         assertEquals(1, usesNodes.size());
         final UsesNode usesNode = usesNodes.iterator().next();
-        final Map<SchemaPath, SchemaNode> refines = usesNode.getRefines();
+        final Map<Descendant, SchemaNode> refines = usesNode.getRefines();
         assertEquals(4, refines.size());
 
         LeafSchemaNode refineLeaf = null;
         ContainerSchemaNode refineContainer = null;
         ListSchemaNode refineList = null;
         LeafSchemaNode refineInnerLeaf = null;
-        for (final Map.Entry<SchemaPath, SchemaNode> entry : refines.entrySet()) {
+        for (final Map.Entry<Descendant, SchemaNode> entry : refines.entrySet()) {
             final SchemaNode value = entry.getValue();
             if ("address".equals(value.getQName().getLocalName())) {
                 refineLeaf = (LeafSchemaNode) destination.getDataChildByName(value.getQName());
@@ -89,7 +90,7 @@ public class GroupingTest {
         }
 
         assertNotNull(refineList);
-        for (final Map.Entry<SchemaPath, SchemaNode> entry : refines.entrySet()) {
+        for (final Map.Entry<Descendant, SchemaNode> entry : refines.entrySet()) {
             final SchemaNode value = entry.getValue();
             if ("id".equals(value.getQName().getLocalName())) {
                 refineInnerLeaf = (LeafSchemaNode) refineList.getDataChildByName(value.getQName());
