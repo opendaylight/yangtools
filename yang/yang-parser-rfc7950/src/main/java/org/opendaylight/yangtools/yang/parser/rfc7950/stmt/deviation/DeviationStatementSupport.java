@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 public final class DeviationStatementSupport
-        extends BaseStatementSupport<SchemaNodeIdentifier, DeviationStatement, DeviationEffectiveStatement> {
+        extends BaseStatementSupport<Absolute, DeviationStatement, DeviationEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .DEVIATION)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -43,13 +43,13 @@ public final class DeviationStatementSupport
     }
 
     @Override
-    public SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ArgumentUtils.nodeIdentifierFromPath(ctx, value);
+    public Absolute parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return ArgumentUtils.parseAbsoluteSchemaNodeIdentifier(ctx, value);
     }
 
     @Override
     public void onFullDefinitionDeclared(
-            final Mutable<SchemaNodeIdentifier, DeviationStatement, DeviationEffectiveStatement> ctx) {
+            final Mutable<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx) {
         final QNameModule currentModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class,
                 ctx.getRoot());
         final QNameModule targetModule = Iterables.getLast(ctx.coerceStatementArgument().getNodeIdentifiers())
@@ -67,27 +67,27 @@ public final class DeviationStatementSupport
     }
 
     @Override
-    protected DeviationStatement createDeclared(final StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> ctx,
+    protected DeviationStatement createDeclared(final StmtContext<Absolute, DeviationStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new DeviationStatementImpl(ctx, substatements);
     }
 
     @Override
     protected DeviationStatement createEmptyDeclared(
-            final StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> ctx) {
+            final StmtContext<Absolute, DeviationStatement, ?> ctx) {
         return new DeviationStatementImpl(ctx, ImmutableList.of());
     }
 
     @Override
     protected DeviationEffectiveStatement createEffective(
-            final StmtContext<SchemaNodeIdentifier, DeviationStatement, DeviationEffectiveStatement> ctx,
+            final StmtContext<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx,
             final DeviationStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new DeviationEffectiveStatementImpl(declared, substatements);
     }
 
     @Override
     protected DeviationEffectiveStatement createEmptyEffective(
-            final StmtContext<SchemaNodeIdentifier, DeviationStatement, DeviationEffectiveStatement> ctx,
+            final StmtContext<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx,
             final DeviationStatement declared) {
         return new DeviationEffectiveStatementImpl(declared, ImmutableList.of());
     }
