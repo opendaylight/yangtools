@@ -14,6 +14,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -51,7 +52,7 @@ public final class KeyStatementSupport
         final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
         int tokens = 0;
         for (String keyToken : LIST_KEY_SPLITTER.split(value)) {
-            builder.add(SchemaNodeIdentifier.SAME.createChild(StmtContextUtils.parseNodeIdentifier(ctx, keyToken)));
+            builder.add(SchemaNodeIdentifier.Descendant.of(StmtContextUtils.parseNodeIdentifier(ctx, keyToken)));
             tokens++;
         }
 
@@ -69,10 +70,10 @@ public final class KeyStatementSupport
         final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
         boolean replaced = false;
         for (final SchemaNodeIdentifier arg : ctx.coerceStatementArgument()) {
-            final QName qname = arg.getLastComponent();
+            final QName qname = Iterables.getLast(arg.getNodeIdentifiers());
             if (!targetModule.equals(qname.getModule())) {
                 final QName newQname = qname.bindTo(targetModule).intern();
-                builder.add(SchemaNodeIdentifier.SAME.createChild(newQname));
+                builder.add(SchemaNodeIdentifier.Descendant.of(newQname));
                 replaced = true;
             } else {
                 builder.add(arg);

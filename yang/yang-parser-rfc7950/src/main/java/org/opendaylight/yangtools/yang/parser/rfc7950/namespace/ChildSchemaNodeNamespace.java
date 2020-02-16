@@ -77,7 +77,7 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
      */
     public static Optional<StmtContext<?, ?, ?>> findNode(final StmtContext<?, ?, ?> root,
             final SchemaNodeIdentifier identifier) {
-        final Iterator<QName> iterator = identifier.getPathFromRoot().iterator();
+        final Iterator<QName> iterator = identifier.getNodeIdentifiers().iterator();
         if (!iterator.hasNext()) {
             return Optional.of(root);
         }

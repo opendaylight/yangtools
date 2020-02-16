@@ -89,7 +89,7 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
                 }
             }
             for (final SchemaNodeIdentifier key : keyStmt.argument()) {
-                final QName keyQName = key.getLastComponent();
+                final QName keyQName = key.getNodeIdentifiers().get(0);
 
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
                     throw new InferenceException(ref, "Key '%s' misses node '%s' in list '%s'",
