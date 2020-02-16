@@ -15,13 +15,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 
-final class DeviationEffectiveStatementImpl extends WithSubstatements<SchemaNodeIdentifier, DeviationStatement>
-        implements DeviationEffectiveStatement, Deviation,
-            DocumentedNodeMixin<SchemaNodeIdentifier, DeviationStatement> {
+final class DeviationEffectiveStatementImpl extends WithSubstatements<Absolute, DeviationStatement>
+        implements DeviationEffectiveStatement, Deviation, DocumentedNodeMixin<Absolute, DeviationStatement> {
     DeviationEffectiveStatementImpl(final DeviationStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);

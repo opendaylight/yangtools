@@ -11,9 +11,10 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 @Beta
-public interface DeviationEffectiveStatement extends EffectiveStatement<SchemaNodeIdentifier, DeviationStatement> {
+public interface DeviationEffectiveStatement extends EffectiveStatement<Absolute, DeviationStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.DEVIATION;
