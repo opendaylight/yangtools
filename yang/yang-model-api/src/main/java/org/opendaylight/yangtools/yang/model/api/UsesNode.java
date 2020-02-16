@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * Contains the methods for getting data and checking properties of the YANG <code>uses</code> substatement.
@@ -36,6 +37,5 @@ public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode {
      *
      * @return Map, where key is schema path of refined node and value is refined node
      */
-    // FIXME: 5.0.0: this should probably be SchemaPath.RelativeSchemaPath (which needs to be exposed)
-    @NonNull Map<SchemaPath, SchemaNode> getRefines();
+    @NonNull Map<Descendant, SchemaNode> getRefines();
 }
