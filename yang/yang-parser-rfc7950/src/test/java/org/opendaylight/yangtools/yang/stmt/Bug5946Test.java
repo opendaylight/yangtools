@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class Bug5946Test {
@@ -52,7 +52,7 @@ public class Bug5946Test {
         Collection<? extends UniqueConstraint> simpleUniqueConstraints = getListConstraints(context, SIMPLE_UNIQUE);
         assertNotNull(simpleUniqueConstraints);
         assertEquals(1, simpleUniqueConstraints.size());
-        Collection<Relative> simpleUniqueConstraintTag = simpleUniqueConstraints.iterator().next().getTag();
+        Collection<Descendant> simpleUniqueConstraintTag = simpleUniqueConstraints.iterator().next().getTag();
         assertTrue(simpleUniqueConstraintTag.contains(L1_ID));
         assertTrue(simpleUniqueConstraintTag.contains(C_L3_ID));
 
@@ -63,7 +63,7 @@ public class Bug5946Test {
         boolean l1cl3 = false;
         boolean cl3l2 = false;
         for (UniqueConstraint uniqueConstraint : multipleUniqueConstraints) {
-            Collection<Relative> uniqueConstraintTag = uniqueConstraint.getTag();
+            Collection<Descendant> uniqueConstraintTag = uniqueConstraint.getTag();
             if (uniqueConstraintTag.contains(L1_ID) && uniqueConstraintTag.contains(L2_ID)) {
                 l1l2 = true;
             } else if (uniqueConstraintTag.contains(L1_ID) && uniqueConstraintTag.contains(C_L3_ID)) {

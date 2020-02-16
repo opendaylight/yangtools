@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class UniqueStatementSupport
-        extends AbstractStatementSupport<Set<Relative>, UniqueStatement, UniqueEffectiveStatement> {
+        extends AbstractStatementSupport<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> {
     /**
      * Support 'sep' ABNF rule in RFC7950 section 14. CRLF pattern is used to squash line-break from CRLF to LF form
      * and then we use SEP_SPLITTER, which can operate on single characters.
@@ -48,8 +48,8 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    public Set<Relative> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final Set<Relative> uniqueConstraints = parseUniqueConstraintArgument(ctx, value);
+    public Set<Descendant> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        final Set<Descendant> uniqueConstraints = parseUniqueConstraintArgument(ctx, value);
         SourceException.throwIf(uniqueConstraints.isEmpty(), ctx.getStatementSourceReference(),
                 "Invalid argument value '%s' of unique statement. The value must contains at least "
                         + "one descendant schema node identifier.", value);
@@ -57,13 +57,13 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    public UniqueStatement createDeclared(final StmtContext<Set<Relative>, UniqueStatement, ?> ctx) {
+    public UniqueStatement createDeclared(final StmtContext<Set<Descendant>, UniqueStatement, ?> ctx) {
         return new UniqueStatementImpl(ctx);
     }
 
     @Override
     public UniqueEffectiveStatement createEffective(
-            final StmtContext<Set<Relative>, UniqueStatement, UniqueEffectiveStatement> ctx) {
+            final StmtContext<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> ctx) {
         return new UniqueEffectiveStatementImpl(ctx);
     }
 
@@ -72,18 +72,18 @@ public final class UniqueStatementSupport
         return SUBSTATEMENT_VALIDATOR;
     }
 
-    private static Set<Relative> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
+    private static Set<Descendant> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
             final String argumentValue) {
         // deal with 'line-break' rule, which is either "\n" or "\r\n", but not "\r"
         final String nocrlf = CRLF_PATTERN.matcher(argumentValue).replaceAll("\n");
 
-        final Set<Relative> uniqueConstraintNodes = new HashSet<>();
+        final Set<Descendant> uniqueConstraintNodes = new HashSet<>();
         for (final String uniqueArgToken : SEP_SPLITTER.split(nocrlf)) {
             final SchemaNodeIdentifier nodeIdentifier = ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken);
             SourceException.throwIf(nodeIdentifier.isAbsolute(), ctx.getStatementSourceReference(),
                     "Unique statement argument '%s' contains schema node identifier '%s' "
                             + "which is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
-            uniqueConstraintNodes.add((Relative) nodeIdentifier);
+            uniqueConstraintNodes.add((Descendant) nodeIdentifier);
         }
         return ImmutableSet.copyOf(uniqueConstraintNodes);
     }

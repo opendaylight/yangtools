@@ -11,11 +11,11 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
-public interface UniqueStatement extends DeclaredStatement<Set<SchemaNodeIdentifier.Relative>> {
+public interface UniqueStatement extends DeclaredStatement<Set<SchemaNodeIdentifier.Descendant>> {
 
-    default Set<Relative> getTag() {
+    default Set<Descendant> getTag() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
     }
