@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 import com.google.common.annotations.Beta;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * Interface describing YANG 'unique' constraint.
@@ -22,5 +22,5 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relat
  */
 @Beta
 public interface UniqueConstraint {
-    @NonNull Set<Relative> getTag();
+    @NonNull Set<Descendant> getTag();
 }
