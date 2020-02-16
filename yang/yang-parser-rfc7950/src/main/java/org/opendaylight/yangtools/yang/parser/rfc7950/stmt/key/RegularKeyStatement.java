@@ -9,15 +9,16 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularKeyStatement extends AbstractKeyStatement {
     private final @NonNull Object substatements;
 
-    RegularKeyStatement(final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> context,
+    RegularKeyStatement(final StmtContext<Set<QName>, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(context);
         this.substatements = maskList(substatements);
