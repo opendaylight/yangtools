@@ -7,23 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
-import java.util.Collection;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-abstract class AbstractKeyStatement extends WithRawArgument<Collection<SchemaNodeIdentifier>> implements KeyStatement {
+abstract class AbstractKeyStatement extends WithRawArgument<Set<QName>> implements KeyStatement {
     final @NonNull Object argument;
 
-    AbstractKeyStatement(final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> context) {
+    AbstractKeyStatement(final StmtContext<Set<QName>, ?, ?> context) {
         super(context);
-        this.argument = KeyStatementSupport.maskCollection(context.coerceStatementArgument());
+        this.argument = KeyStatementSupport.maskSet(context.coerceStatementArgument());
     }
 
     @Override
-    public final @NonNull Collection<SchemaNodeIdentifier> argument() {
-        return KeyStatementSupport.unmaskCollection(argument);
+    public final @NonNull Set<QName> argument() {
+        return KeyStatementSupport.unmaskSet(argument);
     }
 }

@@ -8,13 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import java.util.Collection;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
-public interface KeyEffectiveStatement extends EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement> {
+public interface KeyEffectiveStatement extends EffectiveStatement<Set<QName>, KeyStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
         return YangStmtMapping.KEY;
