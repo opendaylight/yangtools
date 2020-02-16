@@ -1050,7 +1050,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                         || StmtContextUtils.producesDeclared(this, RefineStatement.class)
                         || StmtContextUtils.producesDeclared(this, DeviationStatement.class))) {
 
-            return parentPath.createChild(((SchemaNodeIdentifier) argument).getPathFromRoot());
+            return parentPath.createChild(((SchemaNodeIdentifier) argument).getNodeIdentifiers());
         }
 
         // FIXME: this does not look right

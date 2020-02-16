@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
@@ -75,10 +74,8 @@ public class AugmentArgumentParsingTest {
     public void invalidAugEmptyTest() throws ReactorException {
         final ReactorException ex = assertReactorThrows(INVALID_EMPTY);
         final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(IllegalArgumentException.class));
-        assertEquals(
-            "Namespace class org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace keys may"
-            + " not be empty", cause.getMessage());
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Schema node identifier must not be empty"));
     }
 
     @Test

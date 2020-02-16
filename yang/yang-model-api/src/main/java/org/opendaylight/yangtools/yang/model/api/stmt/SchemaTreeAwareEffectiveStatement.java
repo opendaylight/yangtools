@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * Interface implemented by all {@link EffectiveStatement}s which can contain a {@code schema tree} child. This tree
  * can be walked using {@link SchemaNodeIdentifier}, looking up each component of
- * {@link SchemaNodeIdentifier#getPathFromRoot()} using {@link #findSchemaTreeNode(QName)}.
+ * {@link SchemaNodeIdentifier#getNodeIdentifiers()} using {@link #findSchemaTreeNode(QName)}.
  *
  * @param <A> Argument type
  * @param <D> Class representing declared version of this statement.
