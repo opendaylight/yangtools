@@ -9,8 +9,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 @Beta
-public interface RefineEffectiveStatement extends EffectiveStatement<SchemaNodeIdentifier, RefineStatement> {
+public interface RefineEffectiveStatement extends EffectiveStatement<Descendant, RefineStatement> {
 
 }

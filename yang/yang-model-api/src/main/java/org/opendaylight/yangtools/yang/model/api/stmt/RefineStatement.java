@@ -13,11 +13,12 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
-public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
-        DocumentedDeclaredStatement<SchemaNodeIdentifier>, IfFeatureAwareDeclaredStatement<SchemaNodeIdentifier>,
-        MandatoryStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
-        MustStatementAwareDeclaredStatement<SchemaNodeIdentifier> {
+public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<Descendant>,
+        DocumentedDeclaredStatement<Descendant>, IfFeatureAwareDeclaredStatement<Descendant>,
+        MandatoryStatementAwareDeclaredStatement<Descendant>,
+        MustStatementAwareDeclaredStatement<Descendant> {
     default @NonNull String getTargetNode() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(rawArgument());

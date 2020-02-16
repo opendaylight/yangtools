@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements RefineStatement {
-    RefineStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> context) {
+final class RefineStatementImpl extends AbstractDeclaredStatement<Descendant> implements RefineStatement {
+    RefineStatementImpl(final StmtContext<Descendant, RefineStatement, ?> context) {
         super(context);
     }
 }
