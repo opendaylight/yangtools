@@ -8,14 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Iterables;
-import java.util.Collection;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -24,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -32,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class KeyStatementSupport
-        extends BaseStatementSupport<Collection<SchemaNodeIdentifier>, KeyStatement, KeyEffectiveStatement> {
+        extends BaseStatementSupport<Set<QName>, KeyStatement, KeyEffectiveStatement> {
     private static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.KEY)
@@ -48,35 +45,33 @@ public final class KeyStatementSupport
     }
 
     @Override
-    public Collection<SchemaNodeIdentifier> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
+    public ImmutableSet<QName> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        final Builder<QName> builder = ImmutableSet.builder();
         int tokens = 0;
         for (String keyToken : LIST_KEY_SPLITTER.split(value)) {
-            builder.add(SchemaNodeIdentifier.Descendant.of(StmtContextUtils.parseNodeIdentifier(ctx, keyToken)));
+            builder.add(StmtContextUtils.parseNodeIdentifier(ctx, keyToken));
             tokens++;
         }
 
         // Throws NPE on nulls, retains first inserted value, cannot be modified
-        final Collection<SchemaNodeIdentifier> ret = builder.build();
+        final ImmutableSet<QName> ret = builder.build();
         SourceException.throwIf(ret.size() != tokens, ctx.getStatementSourceReference(),
                 "Key argument '%s' contains duplicates", value);
         return ret;
     }
 
     @Override
-    public Collection<SchemaNodeIdentifier> adaptArgumentValue(
-            final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, KeyEffectiveStatement> ctx,
+    public Set<QName> adaptArgumentValue(final StmtContext<Set<QName>, KeyStatement, KeyEffectiveStatement> ctx,
             final QNameModule targetModule) {
-        final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
+        final Builder<QName> builder = ImmutableSet.builder();
         boolean replaced = false;
-        for (final SchemaNodeIdentifier arg : ctx.coerceStatementArgument()) {
-            final QName qname = Iterables.getLast(arg.getNodeIdentifiers());
+        for (final QName qname : ctx.coerceStatementArgument()) {
             if (!targetModule.equals(qname.getModule())) {
                 final QName newQname = qname.bindTo(targetModule).intern();
-                builder.add(SchemaNodeIdentifier.Descendant.of(newQname));
+                builder.add(newQname);
                 replaced = true;
             } else {
-                builder.add(arg);
+                builder.add(qname);
             }
         }
 
@@ -91,45 +86,43 @@ public final class KeyStatementSupport
     }
 
     @Override
-    protected KeyStatement createDeclared(final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> ctx,
+    protected KeyStatement createDeclared(final StmtContext<Set<QName>, KeyStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularKeyStatement(ctx, substatements);
     }
 
     @Override
-    protected KeyStatement createEmptyDeclared(
-            final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> ctx) {
+    protected KeyStatement createEmptyDeclared(final StmtContext<Set<QName>, KeyStatement, ?> ctx) {
         return new EmptyKeyStatement(ctx);
     }
 
     @Override
     protected KeyEffectiveStatement createEffective(
-            final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, KeyEffectiveStatement> ctx,
-            final KeyStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final Collection<SchemaNodeIdentifier> arg = ctx.coerceStatementArgument();
+            final StmtContext<Set<QName>, KeyStatement, KeyEffectiveStatement> ctx, final KeyStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final Set<QName> arg = ctx.coerceStatementArgument();
         return arg.equals(declared.argument()) ? new RegularLocalKeyEffectiveStatement(declared, substatements)
                 : new RegularForeignKeyEffectiveStatement(declared, arg, substatements);
     }
 
     @Override
     protected KeyEffectiveStatement createEmptyEffective(
-            final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, KeyEffectiveStatement> ctx,
-            final KeyStatement declared) {
-        final Collection<SchemaNodeIdentifier> arg = ctx.coerceStatementArgument();
+            final StmtContext<Set<QName>, KeyStatement, KeyEffectiveStatement> ctx, final KeyStatement declared) {
+        final Set<QName> arg = ctx.coerceStatementArgument();
         return arg.equals(declared.argument()) ? new EmptyLocalKeyEffectiveStatement(declared)
                 : new EmptyForeignKeyEffectiveStatement(declared, arg);
     }
 
-    static @NonNull Object maskCollection(final @NonNull Collection<SchemaNodeIdentifier> coll) {
-        return coll.size() == 1 ? verifyNotNull(coll.iterator().next()) : coll;
+    static @NonNull Object maskSet(final @NonNull Set<QName> set) {
+        return set.size() == 1 ? set.iterator().next() : set;
     }
 
     @SuppressWarnings("unchecked")
-    static @NonNull Collection<SchemaNodeIdentifier> unmaskCollection(final @NonNull Object masked) {
-        if (masked instanceof Collection) {
-            return (Collection<SchemaNodeIdentifier>) masked;
+    static @NonNull Set<QName> unmaskSet(final @NonNull Object masked) {
+        if (masked instanceof Set) {
+            return (Set<QName>) masked;
         }
-        verify(masked instanceof SchemaNodeIdentifier, "Unexpected argument %s", masked);
-        return ImmutableSet.of((SchemaNodeIdentifier) masked);
+        verify(masked instanceof QName, "Unexpected argument %s", masked);
+        return ImmutableSet.of((QName) masked);
     }
 }
