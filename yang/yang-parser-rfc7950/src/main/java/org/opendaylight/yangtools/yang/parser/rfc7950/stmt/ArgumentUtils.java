@@ -85,24 +85,33 @@ public final class ArgumentUtils {
         return PATH_ABS.matcher(path).matches();
     }
 
+    public static Descendant parseDescendantSchemaNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
+        // FIXME: this does accept a leading slash
+        return Descendant.of(parseNodeIdentifiers(ctx, str));
+    }
+
     @SuppressWarnings("checkstyle:illegalCatch")
     public static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
+        final List<QName> qnames = parseNodeIdentifiers(ctx, path);
+        return PATH_ABS.matcher(path).matches() ? Absolute.of(qnames) : Descendant.of(qnames);
+    }
+
+    private static  List<QName> parseNodeIdentifiers(final StmtContext<?, ?, ?> ctx, final String path) {
         // FIXME: is the path trimming really necessary??
-        final List<QName> qNames = new ArrayList<>();
+        final List<QName> qnames = new ArrayList<>();
         for (final String nodeName : SLASH_SPLITTER.split(trimSingleLastSlashFromXPath(path))) {
             try {
-                qNames.add(StmtContextUtils.parseNodeIdentifier(ctx, nodeName));
+                qnames.add(StmtContextUtils.parseNodeIdentifier(ctx, nodeName));
             } catch (final RuntimeException e) {
                 throw new SourceException(ctx.getStatementSourceReference(), e,
                         "Failed to parse node '%s' in path '%s'", nodeName, path);
             }
         }
 
-        if (qNames.isEmpty()) {
+        if (qnames.isEmpty()) {
             throw new SourceException("Schema node identifier must not be empty", ctx.getStatementSourceReference());
         }
-
-        return PATH_ABS.matcher(path).matches() ? Absolute.of(qNames) : Descendant.of(qNames);
+        return qnames;
     }
 
     private static String trimSingleLastSlashFromXPath(final String path) {
