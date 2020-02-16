@@ -13,14 +13,15 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
-public interface DeviationStatement extends DocumentedDeclaredStatement<SchemaNodeIdentifier> {
+public interface DeviationStatement extends DocumentedDeclaredStatement<Absolute> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.DEVIATION;
     }
 
-    default @NonNull SchemaNodeIdentifier getTargetNode() {
+    default @NonNull Absolute getTargetNode() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
     }
