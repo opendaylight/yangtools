@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviation;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -51,7 +52,8 @@ public final class DeviationStatementSupport
             final Mutable<SchemaNodeIdentifier, DeviationStatement, DeviationEffectiveStatement> ctx) {
         final QNameModule currentModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class,
                 ctx.getRoot());
-        final QNameModule targetModule = ctx.coerceStatementArgument().getLastComponent().getModule();
+        final QNameModule targetModule = Iterables.getLast(ctx.coerceStatementArgument().getNodeIdentifiers())
+                .getModule();
 
         if (currentModule.equals(targetModule)) {
             throw new InferenceException(ctx.getStatementSourceReference(),

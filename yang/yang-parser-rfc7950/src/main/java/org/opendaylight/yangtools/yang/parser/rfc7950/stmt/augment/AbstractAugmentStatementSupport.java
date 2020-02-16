@@ -91,7 +91,7 @@ abstract class AbstractAugmentStatementSupport
         augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target = augmentAction.mutatesEffectiveCtxPath(
             getSearchRoot(augmentNode), ChildSchemaNodeNamespace.class,
-            augmentNode.coerceStatementArgument().getPathFromRoot());
+            augmentNode.coerceStatementArgument().getNodeIdentifiers());
 
         augmentAction.apply(new InferenceAction() {
             @Override

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -138,7 +139,7 @@ abstract class AbstractDeviateStatementSupport
 
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> targetCtxPrerequisite =
                 deviateAction.mutatesEffectiveCtxPath(deviateStmtCtx.getRoot(),
-                    ChildSchemaNodeNamespace.class, deviationTarget.getPathFromRoot());
+                    ChildSchemaNodeNamespace.class, deviationTarget.getNodeIdentifiers());
 
         deviateAction.apply(new InferenceAction() {
             @Override
@@ -222,7 +223,7 @@ abstract class AbstractDeviateStatementSupport
 
         final QNameModule currentModule = deviateStmtCtx.getFromNamespace(ModuleCtxToModuleQName.class,
                 deviateStmtCtx.getRoot());
-        final QNameModule targetModule = deviationTarget.getLastComponent().getModule();
+        final QNameModule targetModule = Iterables.getLast(deviationTarget.getNodeIdentifiers()).getModule();
 
         final Set<QNameModule> deviationModulesSupportedByTargetModule = modulesDeviatedByModules.get(targetModule);
         if (deviationModulesSupportedByTargetModule != null) {
