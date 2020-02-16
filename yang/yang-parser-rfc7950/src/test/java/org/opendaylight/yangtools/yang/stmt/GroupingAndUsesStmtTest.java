@@ -100,7 +100,7 @@ public class GroupingAndUsesStmtTest {
         assertEquals(1, usesNodes.size());
 
         UsesNode usesNode = usesNodes.iterator().next();
-        assertEquals("target", usesNode.getGroupingPath().getLastComponent().getLocalName());
+        assertEquals("target", usesNode.getSourceGrouping().getQName().getLocalName());
         assertEquals(1, usesNode.getAugmentations().size());
 
         QName peer = QName.create(testModule.getQNameModule(), "peer");
@@ -110,7 +110,7 @@ public class GroupingAndUsesStmtTest {
         assertEquals(1, container.getUses().size());
 
         usesNode = container.getUses().iterator().next();
-        assertEquals("target", usesNode.getGroupingPath().getLastComponent().getLocalName());
+        assertEquals("target", usesNode.getSourceGrouping().getQName().getLocalName());
 
         final Map<Descendant, SchemaNode> refines = usesNode.getRefines();
         assertEquals(4, refines.size());

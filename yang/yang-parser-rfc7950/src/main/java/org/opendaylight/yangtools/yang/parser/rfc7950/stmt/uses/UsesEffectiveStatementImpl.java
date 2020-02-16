@@ -19,9 +19,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, UsesStatement>
         implements UsesEffectiveStatement, UsesNode {
-    private final @NonNull SchemaPath groupingPath;
+    private final @NonNull GroupingDefinition sourceGrouping;
     private final boolean addedByUses;
     private final @NonNull ImmutableMap<Descendant, SchemaNode> refines;
     private final @NonNull ImmutableSet<AugmentationSchemaNode> augmentations;
@@ -50,7 +50,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         // initGroupingPath
         final StmtContext<?, GroupingStatement, GroupingEffectiveStatement> grpCtx =
                 ctx.getFromNamespace(GroupingNamespace.class, ctx.coerceStatementArgument());
-        this.groupingPath = grpCtx.getSchemaPath().get();
+        this.sourceGrouping = (GroupingDefinition) grpCtx.buildEffective();
 
         // initCopyType
         addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
@@ -75,8 +75,8 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     }
 
     @Override
-    public SchemaPath getGroupingPath() {
-        return groupingPath;
+    public GroupingDefinition getSourceGrouping() {
+        return sourceGrouping;
     }
 
     @Override
@@ -108,6 +108,6 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
 
     @Override
     public String toString() {
-        return UsesEffectiveStatementImpl.class.getSimpleName() + "[groupingPath=" + groupingPath + "]";
+        return UsesEffectiveStatementImpl.class.getSimpleName() + "[sourceGrouping=" + sourceGrouping.getQName() + "]";
     }
 }

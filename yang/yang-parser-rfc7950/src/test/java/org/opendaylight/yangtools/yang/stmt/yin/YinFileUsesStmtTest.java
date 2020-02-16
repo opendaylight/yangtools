@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -23,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileUsesStmtTest extends AbstractYinModulesTest {
-
     @Test
     public void testUses() {
         final Module testModule = TestUtils.findModule(context, "main-impl").get();
@@ -41,8 +38,8 @@ public class YinFileUsesStmtTest extends AbstractYinModulesTest {
         assertEquals(1, container.getUses().size());
         final UsesNode usesNode = container.getUses().iterator().next();
         assertNotNull(usesNode);
-        assertThat(usesNode.getGroupingPath().toString(), containsString(
-            "[(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)service-ref]"));
+        assertEquals("(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)service-ref",
+            usesNode.getSourceGrouping().getQName().toString());
         assertEquals(1, usesNode.getRefines().size());
     }
 }
