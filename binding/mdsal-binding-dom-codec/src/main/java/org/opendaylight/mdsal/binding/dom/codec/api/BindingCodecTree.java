@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 /**
  * Navigable tree representing hierarchy of Binding to Normalized Node codecs. This navigable tree is associated to
@@ -27,7 +27,7 @@ public interface BindingCodecTree {
 
     @Nullable BindingCodecTreeNode getSubtreeCodec(YangInstanceIdentifier path);
 
-    @Nullable BindingCodecTreeNode getSubtreeCodec(SchemaPath path);
+    @Nullable BindingCodecTreeNode getSubtreeCodec(Absolute path);
 
     /**
      * Get the BindingIdentityCodec associated with this tree.
