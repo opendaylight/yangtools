@@ -12,7 +12,6 @@ import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public interface BindingCodecTreeFactory {
-
     /**
      * Creates Binding Codec Tree for specified Binding runtime context.
      *
@@ -36,6 +35,5 @@ public interface BindingCodecTreeFactory {
      * @return Binding Codec Tree for specified Binding runtime context.
      */
     @Beta
-   BindingCodecTree create(SchemaContext context, Class<?>... bindingClasses);
-
+    BindingCodecTree create(SchemaContext context, Class<?>... bindingClasses);
 }
