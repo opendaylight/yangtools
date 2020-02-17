@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 /**
  * Abstract base class for implementing {@link NormalizedNodeDataOutput} contract. This class uses
@@ -165,11 +167,18 @@ abstract class AbstractNormalizedNodeDataOutput implements NormalizedNodeDataOut
 
     @Override
     public final void writeSchemaPath(final SchemaPath path) throws IOException {
+        writeSchemaNodeIdentifier(path.isAbsolute(), path.getPathFromRoot());
+    }
+
+    @Override
+    public final void writeSchemaNodeIdentifier(final SchemaNodeIdentifier path) throws IOException {
+        writeSchemaNodeIdentifier(path instanceof Absolute, path.getNodeIdentifiers());
+    }
+
+    private void writeSchemaNodeIdentifier(final boolean absolute, final Iterable<QName> qnames) throws IOException {
         ensureHeaderWritten();
 
-        output.writeBoolean(path.isAbsolute());
-
-        final Iterable<QName> qnames = path.getPathFromRoot();
+        output.writeBoolean(absolute);
         output.writeInt(Iterables.size(qnames));
         for (QName qname : qnames) {
             writeQNameInternal(qname);
