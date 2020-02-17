@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 /**
  * AugmentationSchema represents augment definition. The "augment" statement allows a module or submodule to add
@@ -20,13 +21,13 @@ public interface AugmentationSchemaNode extends DataNodeContainer, NotificationN
     /**
      * Returns augmentation schema path.
      *
-     * @return SchemaPath that identifies a node in the schema tree. This node
+     * @return SchemaNodeIdentifier that identifies a node in the schema tree. This node
      *         is called the augment's target node. The target node MUST be
      *         either a container, list, choice, case, input, output, or
      *         notification node. It is augmented with the nodes defined as
      *         child nodes of this AugmentationSchema.
      */
-    SchemaPath getTargetPath();
+    SchemaNodeIdentifier getTargetPath();
 
     /**
      * Returns Augmentation Definition from which this augmentation is derived
