@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableCollection;
@@ -16,17 +17,26 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
+import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
+import org.opendaylight.mdsal.binding.dom.codec.api.MissingClassInLoadingStrategyException;
+import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaException;
+import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaForClassException;
+import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
+import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
@@ -158,30 +168,67 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
 
     protected final <V> @NonNull V childNonNull(final @Nullable V nullable,
             final YangInstanceIdentifier.PathArgument child, final String message, final Object... args) {
-        if (nullable != null) {
-            return nullable;
+        if (nullable == null) {
+            throw childNullException(extractName(child), message, args);
         }
-        MissingSchemaException.checkModulePresent(factory().getRuntimeContext().getSchemaContext(), child);
-        throw IncorrectNestingException.create(message, args);
+        return nullable;
     }
 
     protected final <V> @NonNull V childNonNull(final @Nullable V nullable, final QName child, final String message,
             final Object... args) {
-        if (nullable != null) {
-            return nullable;
+        if (nullable == null) {
+            throw childNullException(child, message, args);
         }
-        MissingSchemaException.checkModulePresent(factory().getRuntimeContext().getSchemaContext(), child);
-        throw IncorrectNestingException.create(message, args);
+        return nullable;
     }
 
     protected final <V> @NonNull V childNonNull(final @Nullable V nullable, final Class<?> childClass,
             final String message, final Object... args) {
-        if (nullable != null) {
-            return nullable;
+        if (nullable == null) {
+            throw childNullException(childClass, message, args);
         }
-        MissingSchemaForClassException.check(factory().getRuntimeContext(), childClass);
-        MissingClassInLoadingStrategyException.check(factory().getRuntimeContext().getStrategy(), childClass);
+        return nullable;
+    }
+
+    private IllegalArgumentException childNullException(final QName child, final String message, final Object... args) {
+        final QNameModule module = child.getModule();
+        if (!factory().getRuntimeContext().getSchemaContext().findModule(module).isPresent()) {
+            throw new MissingSchemaException("Module " + module + " is not present in current schema context.");
+        }
         throw IncorrectNestingException.create(message, args);
+    }
+
+    private IllegalArgumentException childNullException(final Class<?> childClass, final String message,
+            final Object... args) {
+        final BindingRuntimeContext runtimeContext = factory().getRuntimeContext();
+        final WithStatus schema;
+        if (Augmentation.class.isAssignableFrom(childClass)) {
+            schema = runtimeContext.getAugmentationDefinition(childClass);
+        } else {
+            schema = runtimeContext.getSchemaDefinition(childClass);
+        }
+        if (schema == null) {
+            throw new MissingSchemaForClassException(childClass);
+        }
+
+        final ClassLoadingStrategy strategy = runtimeContext.getStrategy();
+        try {
+            strategy.loadClass(childClass.getName());
+        } catch (final ClassNotFoundException e) {
+            throw new MissingClassInLoadingStrategyException(
+                "User supplied class " + childClass.getName() + " is not available in " + strategy, e);
+        }
+
+        throw IncorrectNestingException.create(message, args);
+    }
+
+    private static QName extractName(final YangInstanceIdentifier.PathArgument child) {
+        if (child instanceof AugmentationIdentifier) {
+            final Set<QName> children = ((AugmentationIdentifier) child).getPossibleChildNames();
+            checkArgument(!children.isEmpty(), "Augmentation without childs must not be used in data");
+            return children.iterator().next();
+        }
+        return child.getNodeType();
     }
 
     final DataObjectSerializer eventStreamSerializer() {

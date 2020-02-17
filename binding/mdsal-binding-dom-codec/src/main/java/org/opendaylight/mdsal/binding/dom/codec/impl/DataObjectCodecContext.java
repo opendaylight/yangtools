@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
 import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
@@ -335,7 +336,10 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
 
     protected final ValueNodeCodecContext getLeafChild(final String name) {
         final ValueNodeCodecContext value = leafChild.get(name);
-        return IncorrectNestingException.checkNonNull(value, "Leaf %s is not valid for %s", name, getBindingClass());
+        if (value == null) {
+            throw IncorrectNestingException.create("Leaf %s is not valid for %s", name, getBindingClass());
+        }
+        return value;
     }
 
     private DataContainerCodecPrototype<?> loadChildPrototype(final Class<?> childClass) {

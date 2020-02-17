@@ -8,10 +8,10 @@
 package org.opendaylight.mdsal.binding.dom.codec.test;
 
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
+import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaException;
+import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaForClassException;
 import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.mdsal.binding.dom.codec.impl.IncorrectNestingException;
-import org.opendaylight.mdsal.binding.dom.codec.impl.MissingSchemaException;
-import org.opendaylight.mdsal.binding.dom.codec.impl.MissingSchemaForClassException;
 import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
