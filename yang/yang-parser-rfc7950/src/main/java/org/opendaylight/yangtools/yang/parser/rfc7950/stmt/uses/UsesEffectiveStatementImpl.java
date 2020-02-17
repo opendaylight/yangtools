@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -57,7 +57,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
 
         // initSubstatementCollections
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
-        final Map<Descendant, SchemaNode> refinesInit = new HashMap<>();
+        final Map<Descendant, SchemaNode> refinesInit = new LinkedHashMap<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof AugmentationSchemaNode) {
                 final AugmentationSchemaNode augmentationSchema = (AugmentationSchemaNode) effectiveStatement;

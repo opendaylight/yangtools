@@ -35,7 +35,7 @@ public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode {
     /**
      * Some of the properties of each node in the grouping can be refined with the "refine" statement.
      *
-     * @return Map, where key is schema path of refined node and value is refined node
+     * @return Map, where key is schema node identifier of refined node and value is refined node.
      */
     @NonNull Map<Descendant, SchemaNode> getRefines();
 }

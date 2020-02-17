@@ -116,8 +116,8 @@ public class GroupingAndUsesStmtTest {
         assertEquals(4, refines.size());
 
         assertEquals(ImmutableList.of(
-            Descendant.of(QName.create(peer, "port")),
             Descendant.of(QName.create(peer, "address")),
+            Descendant.of(QName.create(peer, "port")),
             Descendant.of(QName.create(peer, "addresses")),
             Descendant.of(QName.create(peer, "addresses"), QName.create(peer, "id"))),
             new ArrayList<>(refines.keySet()));
