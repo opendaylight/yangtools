@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -18,7 +19,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -50,8 +50,9 @@ final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<Schem
     }
 
     @Override
-    public SchemaNodeIdentifier argument() {
-        return getDeclared().argument();
+    public @NonNull SchemaNodeIdentifier argument() {
+        // FIXME: YANGTOOLS-1065: this is not okay, as this can actually have different namespaces
+        return verifyNotNull(getDeclared().argument());
     }
 
     @Override
@@ -60,8 +61,8 @@ final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<Schem
     }
 
     @Override
-    public SchemaPath getTargetPath() {
-        return argument().asSchemaPath();
+    public SchemaNodeIdentifier getTargetPath() {
+        return argument();
     }
 
     @Override
