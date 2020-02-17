@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.mdsal.binding.model.api.CodeGenerator;
+import org.opendaylight.mdsal.binding.model.api.DefaultType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -30,7 +31,6 @@ import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
-import org.opendaylight.mdsal.binding.model.util.ReferencedTypeImpl;
 import org.opendaylight.mdsal.binding.model.util.Types;
 import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTypeBuilder;
@@ -54,7 +54,7 @@ public final class BuilderGenerator implements CodeGenerator {
             throw new ExceptionInInitializerError(e);
         }
 
-        AUGMENTATION_RET_TYPE = new ReferencedTypeImpl(JavaTypeName.create(m.getReturnType()));
+        AUGMENTATION_RET_TYPE = DefaultType.of(JavaTypeName.create(m.getReturnType()));
     }
 
     /**
@@ -161,8 +161,7 @@ public final class BuilderGenerator implements CodeGenerator {
                     augmentType = t;
                 }
             } else if (Augmentable.class.getName().equals(implementedIfc.getFullyQualifiedName())) {
-                augmentType = Types.parameterizedTypeFor(AUGMENTATION_RET_TYPE,
-                    new ReferencedTypeImpl(type.getIdentifier()));
+                augmentType = Types.parameterizedTypeFor(AUGMENTATION_RET_TYPE, DefaultType.of(type.getIdentifier()));
             }
         }
 
