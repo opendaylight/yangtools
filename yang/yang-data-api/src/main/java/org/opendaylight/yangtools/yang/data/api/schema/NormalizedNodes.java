@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * A set of utility methods for interacting with {@link NormalizedNode} objects.
@@ -80,6 +81,11 @@ public final class NormalizedNodes {
         checkArgument(!relativePath.isAbsolute(), "%s is not a relative path", relativePath);
         return findNode(Optional.ofNullable(parent), Iterables.transform(relativePath.getPathFromRoot(),
             NodeIdentifier::new));
+    }
+
+    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent, final Descendant path) {
+        return findNode(Optional.ofNullable(parent),
+            Iterables.transform(path.getNodeIdentifiers(), NodeIdentifier::new));
     }
 
     public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent,
