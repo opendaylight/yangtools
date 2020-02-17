@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ReusableStreamReceiver;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 abstract class ForwardingNormalizedNodeDataInput extends ForwardingDataInput implements NormalizedNodeDataInput {
 
@@ -55,6 +56,11 @@ abstract class ForwardingNormalizedNodeDataInput extends ForwardingDataInput imp
     @Override
     public final SchemaPath readSchemaPath() throws IOException {
         return delegate().readSchemaPath();
+    }
+
+    @Override
+    public final SchemaNodeIdentifier readSchemaNodeIdentifier() throws IOException {
+        return delegate().readSchemaNodeIdentifier();
     }
 
     @Override
