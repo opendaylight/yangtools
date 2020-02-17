@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(forRemoval = true)
 public final class ChoiceDispatchSerializer implements DataObjectSerializerImplementation {
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceDispatchSerializer.class);
 

@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
  * Dispatch serializer, which emits {@link BindingStreamEventWriter#startAugmentationNode(Class)}
  * events for supplied augmentation node.
  */
+@Deprecated(forRemoval = true)
 public class AugmentableDispatchSerializer implements DataObjectSerializerImplementation {
 
     private static final Logger LOG = LoggerFactory.getLogger(AugmentableDispatchSerializer.class);
