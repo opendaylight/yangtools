@@ -31,9 +31,7 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSeriali
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.mdsal.binding.dom.codec.util.AbstractBindingLazyContainerNode;
-import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
-import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
+import org.opendaylight.mdsal.binding.generator.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -54,7 +52,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -307,23 +304,6 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     public BindingCodecTree create(final BindingRuntimeContext context) {
         return new BindingCodecContext(context, this);
     }
-
-    @Override
-    @SuppressWarnings("checkstyle:illegalCatch")
-    public BindingCodecTree create(final SchemaContext context, final Class<?>... bindingClasses) {
-        final ModuleInfoBackedContext strategy = ModuleInfoBackedContext.create();
-        for (final Class<?> bindingCls : bindingClasses) {
-            try {
-                strategy.registerModuleInfo(BindingReflections.getModuleInfo(bindingCls));
-            } catch (final Exception e) {
-                throw new IllegalStateException(
-                        "Could not create BindingRuntimeContext from class " + bindingCls.getName(), e);
-            }
-        }
-        final BindingRuntimeContext runtimeCtx = BindingRuntimeContext.create(strategy, context);
-        return create(runtimeCtx);
-    }
-
 
     private static final class DeserializeFunction<T> implements Function<Optional<NormalizedNode<?, ?>>, Optional<T>> {
         private final DataObjectCodecContext<?,?> ctx;

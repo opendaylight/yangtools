@@ -7,9 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
-import com.google.common.annotations.Beta;
-import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.mdsal.binding.generator.api.BindingRuntimeContext;
 
 public interface BindingCodecTreeFactory {
     /**
@@ -21,19 +19,4 @@ public interface BindingCodecTreeFactory {
      * @return Binding Codec Tree for specified Binding runtime context.
      */
     BindingCodecTree create(BindingRuntimeContext context);
-
-    /**
-     * Creates Binding Codec Tree for specified Binding runtime context.
-     *
-     * @param context
-     *            Binding Runtime Context for which Binding codecs should be
-     *            instantiated.
-     * @param bindingClasses
-     *            Binding Runtime Context will be constructed using bindings
-     *            which contains specified classes, in order to support
-     *            deserialization in multi-classloader environment.
-     * @return Binding Codec Tree for specified Binding runtime context.
-     */
-    @Beta
-    BindingCodecTree create(SchemaContext context, Class<?>... bindingClasses);
 }
