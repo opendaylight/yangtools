@@ -53,7 +53,6 @@ public class EffectiveModuleTest {
     private static final QName CONT = QName.create(ROOT_MODULE_QNAME, "cont");
     private static final QName FEATURE1 = QName.create(ROOT_MODULE_QNAME, "feature1");
 
-    private static final SchemaPath CONT_SCHEMA_PATH = SchemaPath.create(true, CONT);
     private static final SchemaPath FEATURE1_SCHEMA_PATH = SchemaPath.create(true, FEATURE1);
 
     private static final Revision REVISION = Revision.of("2000-01-01");
@@ -79,7 +78,7 @@ public class EffectiveModuleTest {
 
         final Collection<? extends AugmentationSchemaNode> augmentations = rootModule.getAugmentations();
         assertEquals(1, augmentations.size());
-        assertEquals(CONT_SCHEMA_PATH, augmentations.iterator().next().getTargetPath());
+        assertEquals(Absolute.of(CONT), augmentations.iterator().next().getTargetPath());
 
         final Collection<? extends ModuleImport> imports = rootModule.getImports();
         assertEquals(1, imports.size());

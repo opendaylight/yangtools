@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
 public class AugmentTest {
@@ -63,8 +64,7 @@ public class AugmentTest {
         final AugmentationSchemaNode augment = augmentations.iterator().next();
         assertNotNull(augment);
 
-        SchemaPath expectedSchemaPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedSchemaPath, augment.getTargetPath());
+        assertEquals(Absolute.of(qnames), augment.getTargetPath());
 
         final Collection<? extends DataSchemaNode> augmentChildren = augment.getChildNodes();
         assertEquals(4, augmentChildren.size());
@@ -90,7 +90,7 @@ public class AugmentTest {
         QName qname = QName.create(FOO, "ds0ChannelNumber");
         qnames.add(qname);
         assertEquals(qname, ds0ChannelNumber.getQName());
-        expectedSchemaPath = SchemaPath.create(qnames, true);
+        SchemaPath expectedSchemaPath = SchemaPath.create(qnames, true);
         assertEquals(expectedSchemaPath, ds0ChannelNumber.getPath());
         assertFalse(ds0ChannelNumber.isAugmenting());
         // type of leaf ds0ChannelNumber
