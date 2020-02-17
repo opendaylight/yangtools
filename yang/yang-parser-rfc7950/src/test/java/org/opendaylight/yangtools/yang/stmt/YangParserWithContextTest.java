@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
@@ -377,13 +378,10 @@ public class YangParserWithContextTest {
 
         final URI expectedNS = URI.create("urn:opendaylight.bar");
         final Revision expectedRev = Revision.of("2013-07-03");
-        final List<QName> path = new ArrayList<>();
-        path.add(QName.create(expectedNS, expectedRev, "interfaces"));
-        path.add(QName.create(expectedNS, expectedRev, "ifEntry"));
-        final SchemaPath expectedPath = SchemaPath.create(path, true);
 
-        assertEquals(expectedPath, dev.getTargetPath());
+        assertEquals(Absolute.of(
+            QName.create(expectedNS, expectedRev, "interfaces"), QName.create(expectedNS, expectedRev, "ifEntry")),
+            dev.getTargetPath());
         assertEquals(DeviateKind.ADD, dev.getDeviates().iterator().next().getDeviateType());
     }
-
 }

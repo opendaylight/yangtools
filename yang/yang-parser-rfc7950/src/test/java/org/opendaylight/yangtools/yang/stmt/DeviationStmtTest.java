@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Optional;
 import org.junit.Test;
@@ -47,7 +48,9 @@ public class DeviationStmtTest {
 
         for (Deviation deviation : deviations) {
             final Collection<? extends DeviateDefinition> deviates = deviation.getDeviates();
-            final String targetLocalName = deviation.getTargetPath().getLastComponent().getLocalName();
+
+            final String targetLocalName = Iterables.getLast(deviation.getTargetPath().getNodeIdentifiers())
+                    .getLocalName();
             if ("test-leaf".equals(targetLocalName)) {
                 assertEquals(Optional.of("test-leaf is not supported"), deviation.getDescription());
                 assertEquals(1, deviates.size());
@@ -94,7 +97,8 @@ public class DeviationStmtTest {
 
         for (Deviation deviation : deviations) {
             final Collection<? extends DeviateDefinition> deviates = deviation.getDeviates();
-            final String targetLocalName = deviation.getTargetPath().getLastComponent().getLocalName();
+            final String targetLocalName = Iterables.getLast(deviation.getTargetPath().getNodeIdentifiers())
+                    .getLocalName();
 
             if ("bar-container-1".equals(targetLocalName)) {
                 deviation1 = deviation;
