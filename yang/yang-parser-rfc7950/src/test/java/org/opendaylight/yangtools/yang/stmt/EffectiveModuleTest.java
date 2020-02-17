@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -106,8 +107,7 @@ public class EffectiveModuleTest {
         assertNotNull(deviationStmt);
         final QNameModule importedModuleQName = QNameModule.create(URI.create("imported"), REVISION);
         final QName importedContQName = QName.create(importedModuleQName, "cont");
-        final SchemaPath importedContSchemaPath = SchemaPath.create(true, importedContQName);
-        assertEquals(importedContSchemaPath, deviationStmt.getTargetPath());
+        assertEquals(Absolute.of(importedContQName), deviationStmt.getTargetPath());
         assertEquals(DeviateKind.ADD, deviationStmt.getDeviates().iterator().next().getDeviateType());
         assertEquals(Optional.of("deviate reference"), deviationStmt.getReference());
 

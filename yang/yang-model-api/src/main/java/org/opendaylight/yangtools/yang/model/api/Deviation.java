@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 /**
  * Interface describing YANG 'deviation' statement.
@@ -18,13 +19,12 @@ import org.eclipse.jdt.annotation.NonNull;
  * define the way a device deviate from a standard.
  */
 public interface Deviation extends DocumentedNode {
-
     /**
-     * Returns target schema path.
+     * Returns target node absolute schema node identifier.
      *
-     * @return SchemaPath that identifies the node in the schema tree where a deviation from the module occurs.
+     * @return An identifier that points to the node in the schema tree where a deviation from the module occurs.
      */
-    SchemaPath getTargetPath();
+    @NonNull Absolute getTargetPath();
 
     /**
      * Returns deviate children.

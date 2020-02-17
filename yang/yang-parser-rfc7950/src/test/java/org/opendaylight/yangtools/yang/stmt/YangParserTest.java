@@ -54,6 +54,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
@@ -547,11 +548,7 @@ public class YangParserTest {
         final Deviation dev = deviations.iterator().next();
         assertEquals(Optional.of("system/user ref"), dev.getReference());
 
-        final SchemaPath expectedPath = SchemaPath.create(true,
-            QName.create(BAR, "interfaces"),
-            QName.create(BAR, "ifEntry"));
-
-        assertEquals(expectedPath, dev.getTargetPath());
+        assertEquals(Absolute.of(QName.create(BAR, "interfaces"), QName.create(BAR, "ifEntry")), dev.getTargetPath());
         assertEquals(DeviateKind.ADD, dev.getDeviates().iterator().next().getDeviateType());
     }
 

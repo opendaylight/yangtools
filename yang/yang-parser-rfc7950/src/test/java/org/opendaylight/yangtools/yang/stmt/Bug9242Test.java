@@ -5,12 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
+import com.google.common.collect.Iterables;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public class Bug9242Test {
-
     @Test
     public void testDeviateReplaceWithUserDefinedTypes() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug9242/");
@@ -35,13 +34,12 @@ public class Bug9242Test {
         TypeDefinition<?> deviatedMyLeaf2Type = null;
 
         for (final Deviation deviation : rootModule.getDeviations()) {
-            if (deviation.getTargetPath().getLastComponent().equals(QName.create(
-                    impModule.getQNameModule(), "my-leaf"))) {
+            final QName last = Iterables.getLast(deviation.getTargetPath().getNodeIdentifiers());
+            if (last.equals(QName.create(impModule.getQNameModule(), "my-leaf"))) {
                 deviatedMyLeafType = deviation.getDeviates().iterator().next().getDeviatedType();
             }
 
-            if (deviation.getTargetPath().getLastComponent().equals(QName.create(
-                    impModule.getQNameModule(), "my-leaf-2"))) {
+            if (last.equals(QName.create(impModule.getQNameModule(), "my-leaf-2"))) {
                 deviatedMyLeaf2Type = deviation.getDeviates().iterator().next().getDeviatedType();
             }
         }

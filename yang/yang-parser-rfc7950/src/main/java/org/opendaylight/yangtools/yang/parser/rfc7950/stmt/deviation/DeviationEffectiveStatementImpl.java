@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviation;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
@@ -27,8 +28,8 @@ final class DeviationEffectiveStatementImpl extends WithSubstatements<Absolute, 
     }
 
     @Override
-    public SchemaPath getTargetPath() {
-        return argument().asSchemaPath();
+    public Absolute getTargetPath() {
+        return verifyNotNull(argument());
     }
 
     @Override
