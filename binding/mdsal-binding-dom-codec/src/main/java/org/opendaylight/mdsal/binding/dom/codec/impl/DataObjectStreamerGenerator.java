@@ -52,7 +52,7 @@ import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecConte
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader.ClassGenerator;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader.GeneratorResult;
-import org.opendaylight.mdsal.binding.dom.codec.util.BindingSchemaMapping;
+import org.opendaylight.mdsal.binding.dom.codec.spi.BindingSchemaMapping;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;

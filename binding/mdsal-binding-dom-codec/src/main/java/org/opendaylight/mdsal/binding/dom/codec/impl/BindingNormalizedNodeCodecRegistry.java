@@ -30,7 +30,7 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
-import org.opendaylight.mdsal.binding.dom.codec.util.AbstractBindingLazyContainerNode;
+import org.opendaylight.mdsal.binding.dom.codec.spi.AbstractBindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.generator.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
