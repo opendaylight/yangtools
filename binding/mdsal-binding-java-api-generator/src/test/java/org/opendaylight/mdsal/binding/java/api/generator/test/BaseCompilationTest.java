@@ -19,11 +19,10 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.function.Supplier;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.opendaylight.mdsal.binding.generator.api.BindingGenerator;
-import org.opendaylight.mdsal.binding.generator.impl.BindingGeneratorImpl;
 import org.opendaylight.mdsal.binding.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.mdsal.binding.java.api.generator.YangModuleInfoTemplate;
 import org.opendaylight.mdsal.binding.model.api.Type;
@@ -34,7 +33,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public abstract class BaseCompilationTest {
 
-    protected BindingGenerator bindingGenerator;
+    private static BindingGenerator BINDING_GENERATOR;
 
     @BeforeClass
     public static void createTestDirs() {
@@ -43,11 +42,8 @@ public abstract class BaseCompilationTest {
         }
         assertTrue(CompilationTestUtils.GENERATOR_OUTPUT_DIR.mkdirs());
         assertTrue(CompilationTestUtils.COMPILER_OUTPUT_DIR.mkdirs());
-    }
 
-    @Before
-    public void init() {
-        bindingGenerator = new BindingGeneratorImpl();
+        BINDING_GENERATOR = ServiceLoader.load(BindingGenerator.class).findFirst().orElseThrow();
     }
 
     protected static final void generateTestSources(final List<Type> types, final File sourcesOutputDir)
@@ -63,11 +59,11 @@ public abstract class BaseCompilationTest {
         }
     }
 
-    protected final List<Type> generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
+    protected static final List<Type> generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
             throws IOException, URISyntaxException {
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
         final EffectiveModelContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
-        final List<Type> types = bindingGenerator.generateTypes(context);
+        final List<Type> types = BINDING_GENERATOR.generateTypes(context);
         generateTestSources(types, sourcesOutputDir);
 
         // Also generate YangModuleInfo
