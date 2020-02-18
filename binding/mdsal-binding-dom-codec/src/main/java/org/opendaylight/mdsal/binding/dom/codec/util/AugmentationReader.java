@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.util;
 
 import java.util.Map;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 
 /**
  * Interface which sould be implemented by proxy {@link java.lang.reflect.InvocationHandler} to obtain augmentations
@@ -16,7 +17,10 @@ import org.opendaylight.yangtools.yang.binding.Augmentation;
  *
  * <p>
  * If implemented proxy does not implement this interface, its augmentations are not properly serialized / deserialized.
+ *
+ * @deprecated Use {@link AugmentationHolder} instead.
  */
+@Deprecated(forRemoval = true)
 public interface AugmentationReader {
 
     Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(Object obj);
