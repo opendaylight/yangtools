@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -20,12 +20,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
  * @author Robert Varga
  */
 @Beta
-@NonNullByDefault
-public interface BindingLazyContainerNode<T> extends ContainerNode, Delegator<ContainerNode> {
+public interface BindingLazyContainerNode<T extends DataObject> extends ContainerNode, Delegator<ContainerNode> {
     /**
      * Returns the underlying DataObject.
      *
      * @return underlying DataObject.
      */
-    T getDataObject();
+    @NonNull T getDataObject();
 }
