@@ -5,13 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.dom.codec.test;
+package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaForClassException;
-import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
@@ -28,8 +27,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class ExceptionReportingTest {
-
-
     private static final BindingNormalizedNodeCodecRegistry CODEC_WITHOUT_TOP = codec(LowestLevel1.class);
     private static final BindingNormalizedNodeCodecRegistry ONLY_TOP_CODEC = codec(Top.class);
     private static final BindingNormalizedNodeCodecRegistry FULL_CODEC = codec(TreeComplexUsesAugment.class);
