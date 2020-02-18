@@ -11,16 +11,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableClassToInstanceMap;
 import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
-import org.opendaylight.mdsal.binding.dom.codec.util.AugmentationReader;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -62,25 +58,11 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
 
     protected static final void streamAugmentations(final DataObjectSerializerRegistry registry,
             final BindingStreamEventWriter writer, final Augmentable<?> obj) throws IOException {
-        final Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations;
-        if (registry instanceof AugmentationReader) {
-            augmentations = ((AugmentationReader) registry).getAugmentations(obj);
-        } else if (Proxy.isProxyClass(obj.getClass())) {
-            augmentations = getFromProxy(obj);
-        } else {
-            augmentations = BindingReflections.getAugmentations(obj);
-        }
+        final Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations =
+                BindingReflections.getAugmentations(obj);
         for (final Entry<Class<? extends Augmentation<?>>, Augmentation<?>> aug : augmentations.entrySet()) {
             emitAugmentation(aug.getKey(), aug.getValue(), writer, registry);
         }
-    }
-
-    private static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getFromProxy(final Augmentable<?> obj) {
-        final InvocationHandler proxy = Proxy.getInvocationHandler(obj);
-        if (proxy instanceof AugmentationReader) {
-            return ((AugmentationReader) proxy).getAugmentations(obj);
-        }
-        return ImmutableClassToInstanceMap.of();
     }
 
     protected static final <C extends DataContainer> void streamChoice(final Class<C> choiceClass,

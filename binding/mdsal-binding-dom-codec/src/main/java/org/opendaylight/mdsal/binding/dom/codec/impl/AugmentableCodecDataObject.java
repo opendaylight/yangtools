@@ -13,10 +13,8 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.dom.codec.util.AugmentationReader;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -97,7 +95,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
 
     @Override
     final boolean codecAugmentedEquals(final T other) {
-        return super.codecAugmentedEquals(other) && augmentations().equals(getAllAugmentations(other));
+        return super.codecAugmentedEquals(other) && augmentations().equals(BindingReflections.getAugmentations(other));
     }
 
     @Override
@@ -115,11 +113,5 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
             codecContext().getAllAugmentationsFrom(codecData()));
         final Object witness = CACHED_AUGMENTATIONS.compareAndExchangeRelease(this, null, ret);
         return witness == null ? ret : (ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>>) witness;
-    }
-
-    private static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentations(
-            final Augmentable<?> dataObject) {
-        return dataObject instanceof AugmentationReader ? ((AugmentationReader) dataObject).getAugmentations(dataObject)
-                : BindingReflections.getAugmentations(dataObject);
     }
 }
