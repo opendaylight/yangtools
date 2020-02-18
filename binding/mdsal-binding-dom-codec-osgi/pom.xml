@@ -25,6 +25,13 @@
             <artifactId>mdsal-binding-dom-codec</artifactId>
         </dependency>
         <dependency>
+            <!-- FIXME: MDSAL-392: this is ugly, we should be looking this up,
+                 but then we may want to end up doing something
+                 completely different in this artifact -->
+            <groupId>org.opendaylight.mdsal</groupId>
+            <artifactId>mdsal-binding-generator-impl</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
         </dependency>
