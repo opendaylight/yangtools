@@ -64,9 +64,7 @@ public final class BindingRuntimeHelpers {
     }
 
     private static ModuleInfoBackedContext prepareContext(final Iterable<? extends YangModuleInfo> moduleInfos) {
-        final ModuleInfoBackedContext ctx = ModuleInfoBackedContext.create(
-            // FIXME: This is the fallback strategy, it should not be needed
-            GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy());
+        final ModuleInfoBackedContext ctx = ModuleInfoBackedContext.create();
         ctx.addModuleInfos(moduleInfos);
         return ctx;
     }

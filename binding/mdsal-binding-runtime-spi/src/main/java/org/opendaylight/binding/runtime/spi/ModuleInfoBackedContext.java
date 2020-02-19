@@ -55,8 +55,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Beta
-public final class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
+public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
         implements ModuleInfoRegistry, EffectiveModelContextProvider, SchemaSourceProvider<YangTextSchemaSource> {
+    private static final class WithFallback extends ModuleInfoBackedContext {
+        private final @NonNull ClassLoadingStrategy fallback;
+
+        WithFallback(final ClassLoadingStrategy fallback) {
+            this.fallback = requireNonNull(fallback);
+        }
+
+        @Override
+        Class<?> loadUnknownClass(final String fullyQualifiedName) throws ClassNotFoundException {
+            // We have not found a matching registration, consult the backing strategy
+            final Class<?> cls = fallback.loadClass(fullyQualifiedName);
+            registerImplicitModuleInfo(BindingRuntimeHelpers.extractYangModuleInfo(cls));
+            return cls;
+        }
+    }
+
     private abstract static class AbstractRegisteredModuleInfo {
         final YangTextSchemaSourceRegistration reg;
         final YangModuleInfo info;
@@ -138,10 +154,8 @@ public final class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
     private final ListMultimap<SourceIdentifier, AbstractRegisteredModuleInfo> sourceToInfoReg =
             MultimapBuilder.hashKeys().arrayListValues().build();
 
-    private final ClassLoadingStrategy backingLoadingStrategy;
-
-    private ModuleInfoBackedContext(final ClassLoadingStrategy loadingStrategy) {
-        this.backingLoadingStrategy = loadingStrategy;
+    ModuleInfoBackedContext() {
+        // Hidden on purpose
     }
 
     @Beta
@@ -150,12 +164,16 @@ public final class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
         return CONTEXT_CACHES.getUnchecked(loadingStrategy).getUnchecked(infos);
     }
 
+    public static ModuleInfoBackedContext create() {
+        return new ModuleInfoBackedContext();
+    }
+
     public static ModuleInfoBackedContext create(final ClassLoadingStrategy loadingStrategy) {
-        return new ModuleInfoBackedContext(loadingStrategy);
+        return new WithFallback(loadingStrategy);
     }
 
     @Override
-    public EffectiveModelContext getEffectiveModelContext() {
+    public final EffectiveModelContext getEffectiveModelContext() {
         final Optional<? extends EffectiveModelContext> contextOptional = tryToCreateModelContext();
         checkState(contextOptional.isPresent(), "Unable to recreate SchemaContext, error while parsing");
         return contextOptional.get();
@@ -163,7 +181,7 @@ public final class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
-    public Class<?> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
+    public final Class<?> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
         // This performs an explicit check for binding classes
         final String modulePackageName = BindingReflections.getModelRootPackageName(fullyQualifiedName);
 
@@ -174,35 +192,34 @@ public final class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
                 return ClassLoaderUtils.loadClass(reg.loader, fullyQualifiedName);
             }
 
-            // We have not found a matching registration, consult the backing strategy
-            if (backingLoadingStrategy == null) {
-                throw new ClassNotFoundException(fullyQualifiedName);
-            }
-
-            final Class<?> cls = backingLoadingStrategy.loadClass(fullyQualifiedName);
-            registerImplicitModuleInfo(BindingRuntimeHelpers.extractYangModuleInfo(cls));
-            return cls;
+            return loadUnknownClass(fullyQualifiedName);
         }
     }
 
+    @Holding("this")
+    Class<?> loadUnknownClass(final String fullyQualifiedName) throws ClassNotFoundException {
+        throw new ClassNotFoundException(fullyQualifiedName);
+    }
+
     @Override
-    public synchronized ObjectRegistration<YangModuleInfo> registerModuleInfo(final YangModuleInfo yangModuleInfo) {
+    public final synchronized ObjectRegistration<YangModuleInfo> registerModuleInfo(
+            final YangModuleInfo yangModuleInfo) {
         return register(requireNonNull(yangModuleInfo));
     }
 
     @Override
-    public ListenableFuture<? extends YangTextSchemaSource> getSource(final SourceIdentifier sourceIdentifier) {
+    public final ListenableFuture<? extends YangTextSchemaSource> getSource(final SourceIdentifier sourceIdentifier) {
         return ctxResolver.getSource(sourceIdentifier);
     }
 
-    public synchronized void addModuleInfos(final Iterable<? extends YangModuleInfo> moduleInfos) {
+    final synchronized void addModuleInfos(final Iterable<? extends YangModuleInfo> moduleInfos) {
         for (YangModuleInfo yangModuleInfo : moduleInfos) {
             register(requireNonNull(yangModuleInfo));
         }
     }
 
     @Beta
-    public @NonNull BindingRuntimeContext createRuntimeContext(final BindingRuntimeGenerator generator) {
+    public final @NonNull BindingRuntimeContext createRuntimeContext(final BindingRuntimeGenerator generator) {
         return BindingRuntimeContext.create(generator.generateTypeMapping(tryToCreateModelContext().orElseThrow()),
             this);
     }
@@ -210,7 +227,7 @@ public final class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
     // TODO finish schema parsing and expose as SchemaService
     // Unite with current SchemaService
 
-    public Optional<? extends EffectiveModelContext> tryToCreateModelContext() {
+    public final Optional<? extends EffectiveModelContext> tryToCreateModelContext() {
         return ctxResolver.getEffectiveModelContext();
     }
 
@@ -235,7 +252,7 @@ public final class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
      * a particular source, we do not create a duplicate registration.
      */
     @Holding("this")
-    private void registerImplicitModuleInfo(final @NonNull YangModuleInfo moduleInfo) {
+    final void registerImplicitModuleInfo(final @NonNull YangModuleInfo moduleInfo) {
         for (YangModuleInfo info : flatDependencies(moduleInfo)) {
             final Class<?> infoClass = info.getClass();
             final SourceIdentifier sourceId = sourceIdentifierFrom(info);
@@ -298,7 +315,7 @@ public final class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
         return regInfo;
     }
 
-    synchronized void unregister(final ImmutableList<ExplicitRegisteredModuleInfo> regInfos) {
+    final synchronized void unregister(final ImmutableList<ExplicitRegisteredModuleInfo> regInfos) {
         for (ExplicitRegisteredModuleInfo regInfo : regInfos) {
             if (!regInfo.decRef()) {
                 LOG.debug("Registration {} has references, not removing it", regInfo);
