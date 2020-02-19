@@ -15,12 +15,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.binding.runtime.api.ClassLoadingStrategy;
+import org.opendaylight.binding.runtime.spi.BindingRuntimeHelpers;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingClassInLoadingStrategyException;
-import org.opendaylight.mdsal.binding.generator.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingRuntimeGenerator;
-import org.opendaylight.mdsal.binding.generator.impl.GeneratedClassLoadingStrategy;
-import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugmentBuilder;
@@ -31,7 +30,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * This sets of tests are designed in way, that schema context contains models for all augmentations, but backing class
@@ -41,21 +39,18 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  * The idea of this suite is to test that codecs will work even if situation like this happens.
  */
 public class AugmentationClassDiscoveredAfterCodecTest {
-
-    private EffectiveModelContext schemaContext;
-    private BindingRuntimeContext runtimeContext;
-    private ClassExcludingClassLoadingStrategy mockedContext;
     private BindingNormalizedNodeCodecRegistry registry;
+    private FilteringClassLoadingStrategy filter;
 
     @Before
     public void setup() {
-        final ModuleInfoBackedContext ctx = ModuleInfoBackedContext.create();
-        ctx.addModuleInfos(BindingReflections.loadModuleInfos());
-        mockedContext = new ClassExcludingClassLoadingStrategy(ctx);
-        schemaContext = ctx.tryToCreateModelContext().get();
-        runtimeContext = BindingRuntimeContext.create(
-            new DefaultBindingRuntimeGenerator().generateTypeMapping(schemaContext), mockedContext);
-        registry = new BindingNormalizedNodeCodecRegistry(runtimeContext);
+        // Baseline state: strategy is cognizant of the classes
+        final BindingRuntimeContext delegate = BindingRuntimeHelpers.createRuntimeContext(
+            new DefaultBindingRuntimeGenerator());
+
+        // Class loading filter, manipulated by tests
+        filter = new FilteringClassLoadingStrategy(delegate.getStrategy());
+        registry = new BindingNormalizedNodeCodecRegistry(BindingRuntimeContext.create(delegate.getTypes(), filter));
     }
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
@@ -64,19 +59,16 @@ public class AugmentationClassDiscoveredAfterCodecTest {
     private static final InstanceIdentifier<TreeLeafOnlyAugment> BA_TREE_LEAF_ONLY = BA_TOP_LEVEL_LIST
             .augmentation(TreeLeafOnlyAugment.class);
 
-
-
     @Test(expected = MissingClassInLoadingStrategyException.class)
     public void testCorrectExceptionThrown() {
         materializeWithExclusions(TreeLeafOnlyAugment.class, TreeComplexUsesAugment.class);
         registry.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
     }
 
-
     @Test
     public void testUsingBindingInstanceIdentifier() {
         materializeWithExclusions(TreeLeafOnlyAugment.class, TreeComplexUsesAugment.class);
-        mockedContext.includeClass(TreeLeafOnlyAugment.class);
+        filter.includeClass(TreeLeafOnlyAugment.class);
         final YangInstanceIdentifier domYY = registry.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
         assertNotNull(domYY);
     }
@@ -84,7 +76,7 @@ public class AugmentationClassDiscoveredAfterCodecTest {
     @Test
     public void testUsingBindingData() {
         materializeWithExclusions(TreeLeafOnlyAugment.class, TreeComplexUsesAugment.class);
-        mockedContext.includeClass(TreeLeafOnlyAugment.class);
+        filter.includeClass(TreeLeafOnlyAugment.class);
         final TopLevelList data =
                 new TopLevelListBuilder()
                         .withKey(TOP_FOO_KEY)
@@ -95,18 +87,20 @@ public class AugmentationClassDiscoveredAfterCodecTest {
         assertNotNull(domData);
     }
 
-
     private void materializeWithExclusions(final Class<?>... clzToExclude) {
         for (final Class<?> clz : clzToExclude) {
-            mockedContext.excludeClass(clz);
+            filter.excludeClass(clz);
         }
         registry.toYangInstanceIdentifier(BA_TOP_LEVEL_LIST);
     }
 
-    private static class ClassExcludingClassLoadingStrategy extends GeneratedClassLoadingStrategy {
-
+    private static final class FilteringClassLoadingStrategy implements ClassLoadingStrategy {
         private final Set<String> exclusions = new HashSet<>();
-        private final GeneratedClassLoadingStrategy delegate;
+        private final ClassLoadingStrategy delegate;
+
+        FilteringClassLoadingStrategy(final ClassLoadingStrategy delegate) {
+            this.delegate = requireNonNull(delegate);
+        }
 
         void excludeClass(final Class<?> clz) {
             exclusions.add(clz.getName());
@@ -114,10 +108,6 @@ public class AugmentationClassDiscoveredAfterCodecTest {
 
         void includeClass(final Class<?> clz) {
             exclusions.remove(clz.getName());
-        }
-
-        protected ClassExcludingClassLoadingStrategy(final GeneratedClassLoadingStrategy delegate) {
-            this.delegate = requireNonNull(delegate);
         }
 
         @Override

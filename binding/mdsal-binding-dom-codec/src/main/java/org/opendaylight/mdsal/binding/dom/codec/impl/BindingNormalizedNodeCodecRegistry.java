@@ -23,6 +23,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeFactory;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
@@ -31,7 +32,6 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSeriali
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.mdsal.binding.dom.codec.spi.AbstractBindingLazyContainerNode;
-import org.opendaylight.mdsal.binding.generator.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;

@@ -8,13 +8,11 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import org.junit.Test;
+import org.opendaylight.binding.runtime.spi.BindingRuntimeHelpers;
 import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaForClassException;
-import org.opendaylight.mdsal.binding.generator.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingRuntimeGenerator;
-import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
@@ -22,10 +20,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.union.rev150121.LowestLevel1;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 public class ExceptionReportingTest {
     private static final BindingNormalizedNodeCodecRegistry CODEC_WITHOUT_TOP = codec(LowestLevel1.class);
@@ -77,20 +73,7 @@ public class ExceptionReportingTest {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private static BindingNormalizedNodeCodecRegistry codec(final Class<?>... classes) {
-        final ModuleInfoBackedContext ctx = ModuleInfoBackedContext.create();
-        for (final Class<?> clazz : classes) {
-            YangModuleInfo modInfo;
-            try {
-                modInfo = BindingReflections.getModuleInfo(clazz);
-                ctx.registerModuleInfo(modInfo);
-            } catch (final Exception e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        final EffectiveModelContext schema = ctx.tryToCreateModelContext().get();
-        final BindingRuntimeContext runtimeCtx = BindingRuntimeContext.create(
-            new DefaultBindingRuntimeGenerator().generateTypeMapping(schema), ctx);
-        final BindingNormalizedNodeCodecRegistry registry = new BindingNormalizedNodeCodecRegistry(runtimeCtx);
-        return registry;
+        return new BindingNormalizedNodeCodecRegistry(BindingRuntimeHelpers.createRuntimeContext(
+            new DefaultBindingRuntimeGenerator(), classes));
     }
 }

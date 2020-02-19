@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.osgi;
 
 import java.util.EventListener;
-import org.opendaylight.mdsal.binding.generator.api.BindingRuntimeContext;
+import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 
 @Deprecated
 public interface BindingRuntimeContextListener extends EventListener {

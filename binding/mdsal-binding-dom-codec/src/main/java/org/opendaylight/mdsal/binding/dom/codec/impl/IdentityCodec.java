@@ -10,8 +10,8 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingIdentityCodec;
-import org.opendaylight.mdsal.binding.generator.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;

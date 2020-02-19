@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.osgi.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.checkerframework.checker.lock.qual.GuardedBy;
-import org.opendaylight.mdsal.binding.generator.api.ModuleInfoRegistry;
+import org.opendaylight.binding.runtime.spi.ModuleInfoRegistry;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;

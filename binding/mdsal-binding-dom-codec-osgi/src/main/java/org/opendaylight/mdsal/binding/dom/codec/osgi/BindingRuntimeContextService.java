@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.osgi;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.mdsal.binding.generator.api.BindingRuntimeContext;
+import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 

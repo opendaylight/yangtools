@@ -9,9 +9,10 @@ package org.opendaylight.mdsal.binding.dom.codec.osgi.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.opendaylight.binding.runtime.api.ClassLoadingStrategy;
+import org.opendaylight.binding.runtime.spi.GeneratedClassLoadingStrategy;
+import org.opendaylight.binding.runtime.spi.ModuleInfoBackedContext;
 import org.opendaylight.mdsal.binding.dom.codec.osgi.BindingRuntimeContextService;
-import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
-import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -30,8 +31,9 @@ public final class Activator implements BundleActivator {
     public void start(final BundleContext context) {
         LOG.info("Binding-DOM codec starting");
 
-        // XXX: this will use thread-context class loader, which is probably appropriate
-        final ModuleInfoBackedContext moduleInfoBackedContext = ModuleInfoBackedContext.create();
+        final ModuleInfoBackedContext moduleInfoBackedContext = ModuleInfoBackedContext.create(
+            // FIXME: This is the fallback strategy, it should not be needed
+            GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy());
 
         service = new SimpleBindingRuntimeContextService(context, moduleInfoBackedContext, moduleInfoBackedContext);
 
