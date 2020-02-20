@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 
+import static java.util.Objects.requireNonNull;
+
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -25,19 +28,21 @@ public final class MustStatementSupport
         .addOptional(YangStmtMapping.ERROR_MESSAGE)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
-    private static final MustStatementSupport INSTANCE = new MustStatementSupport();
 
-    private MustStatementSupport() {
+    private final @NonNull XPathSupport xpathSupport;
+
+    private MustStatementSupport(final XPathSupport xpathSupport) {
         super(YangStmtMapping.MUST);
+        this.xpathSupport = requireNonNull(xpathSupport);
     }
 
-    public static MustStatementSupport getInstance() {
-        return INSTANCE;
+    public static MustStatementSupport createInstance(final XPathSupport xpathSupport) {
+        return new MustStatementSupport(xpathSupport);
     }
 
     @Override
     public RevisionAwareXPath parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ArgumentUtils.parseXPath(ctx, value);
+        return xpathSupport.parseXPath(ctx, value);
     }
 
     @Override
