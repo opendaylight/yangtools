@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.when;
 
+import static java.util.Objects.requireNonNull;
+
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -23,19 +26,21 @@ public final class WhenStatementSupport
         .addOptional(YangStmtMapping.DESCRIPTION)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
-    private static final WhenStatementSupport INSTANCE = new WhenStatementSupport();
 
-    private WhenStatementSupport() {
+    private final @NonNull XPathSupport xpathSupport;
+
+    private WhenStatementSupport(final XPathSupport xpathSupport) {
         super(YangStmtMapping.WHEN);
+        this.xpathSupport = requireNonNull(xpathSupport);
     }
 
-    public static WhenStatementSupport getInstance() {
-        return INSTANCE;
+    public static WhenStatementSupport createInstance(final XPathSupport xpathSupport) {
+        return new WhenStatementSupport(xpathSupport);
     }
 
     @Override
     public RevisionAwareXPath parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ArgumentUtils.parseXPath(ctx, value);
+        return xpathSupport.parseXPath(ctx, value);
     }
 
     @Override
