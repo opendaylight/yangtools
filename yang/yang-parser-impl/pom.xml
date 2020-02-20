@@ -122,16 +122,18 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>
             <artifactId>metainf-services</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <artifactId>osgi.cmpn</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -144,7 +146,6 @@
                 <configuration>
                     <instructions>
                         <Automatic-Module-Name>org.opendaylight.yangtools.yang.parser.impl</Automatic-Module-Name>
-                        <Bundle-Activator>org.opendaylight.yangtools.yang.parser.impl.osgi.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>

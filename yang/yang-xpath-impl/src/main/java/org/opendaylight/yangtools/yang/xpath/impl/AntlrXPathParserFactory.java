@@ -16,10 +16,18 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser.QualifiedBound;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser.UnqualifiedBound;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @MetaInfServices
 @Singleton
+@Component(immediate = true)
 public final class AntlrXPathParserFactory implements YangXPathParserFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(AntlrXPathParserFactory.class);
+
     @Override
     public YangXPathParser newParser(final YangXPathMathMode mathMode) {
         return new AntlrXPathParser.Base(mathMode);
@@ -34,5 +42,17 @@ public final class AntlrXPathParserFactory implements YangXPathParserFactory {
     public UnqualifiedBound newParser(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext,
             final QNameModule defaultNamespace) {
         return new AntlrXPathParser.Unqualified(mathMode, namespaceContext, defaultNamespace);
+    }
+
+    @Activate
+    @SuppressWarnings("static-method")
+    void activate() {
+        LOG.info("XPath Parser activated");
+    }
+
+    @Deactivate
+    @SuppressWarnings("static-method")
+    void deactivate() {
+        LOG.info("XPath Parser deactivated");
     }
 }

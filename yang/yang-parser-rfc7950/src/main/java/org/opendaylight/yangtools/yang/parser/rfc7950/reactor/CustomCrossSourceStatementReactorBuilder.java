@@ -50,31 +50,31 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
                 .put(ModelProcessingPhase.EFFECTIVE_MODEL, StatementSupportBundle.builder(supportedVersions)).build();
     }
 
-    public CustomCrossSourceStatementReactorBuilder addStatementSupport(final ModelProcessingPhase phase,
+    public @NonNull CustomCrossSourceStatementReactorBuilder addStatementSupport(final ModelProcessingPhase phase,
             final StatementSupport<?, ?, ?> stmtSupport) {
         reactorSupportBundles.get(phase).addSupport(stmtSupport);
         return this;
     }
 
-    public CustomCrossSourceStatementReactorBuilder overrideStatementSupport(final ModelProcessingPhase phase,
+    public @NonNull CustomCrossSourceStatementReactorBuilder overrideStatementSupport(final ModelProcessingPhase phase,
             final StatementSupport<?, ?, ?> stmtSupport) {
         reactorSupportBundles.get(phase).overrideSupport(stmtSupport);
         return this;
     }
 
-    public CustomCrossSourceStatementReactorBuilder addNamespaceSupport(final ModelProcessingPhase phase,
+    public @NonNull CustomCrossSourceStatementReactorBuilder addNamespaceSupport(final ModelProcessingPhase phase,
             final NamespaceBehaviour<?, ?, ?> namespaceSupport) {
         reactorSupportBundles.get(phase).addSupport(namespaceSupport);
         return this;
     }
 
-    public CustomCrossSourceStatementReactorBuilder addValidationBundle(final ValidationBundleType validationBundleType,
-            final Collection<StatementDefinition> validationBundle) {
+    public @NonNull CustomCrossSourceStatementReactorBuilder addValidationBundle(
+            final ValidationBundleType validationBundleType, final Collection<StatementDefinition> validationBundle) {
         reactorValidationBundles.put(validationBundleType, validationBundle);
         return this;
     }
 
-    public CustomCrossSourceStatementReactorBuilder addAllSupports(final ModelProcessingPhase phase,
+    public @NonNull CustomCrossSourceStatementReactorBuilder addAllSupports(final ModelProcessingPhase phase,
             final StatementSupportBundle stmtSupportBundle) {
         addAllCommonStatementSupports(phase, stmtSupportBundle.getCommonDefinitions().values());
         addAllVersionSpecificSupports(phase, stmtSupportBundle.getAllVersionSpecificDefinitions());
@@ -82,7 +82,7 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
         return this;
     }
 
-    public CustomCrossSourceStatementReactorBuilder addAllNamespaceSupports(final ModelProcessingPhase phase,
+    public @NonNull CustomCrossSourceStatementReactorBuilder addAllNamespaceSupports(final ModelProcessingPhase phase,
             final Collection<NamespaceBehaviour<?, ?, ?>> namespaceSupports) {
         final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
         for (final NamespaceBehaviour<?, ?, ?> namespaceSupport : namespaceSupports) {
@@ -91,8 +91,8 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
         return this;
     }
 
-    public CustomCrossSourceStatementReactorBuilder addAllCommonStatementSupports(final ModelProcessingPhase phase,
-            final Collection<StatementSupport<?, ?, ?>> statementSupports) {
+    public @NonNull CustomCrossSourceStatementReactorBuilder addAllCommonStatementSupports(
+            final ModelProcessingPhase phase, final Collection<StatementSupport<?, ?, ?>> statementSupports) {
         final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
         for (final StatementSupport<?, ?, ?> statementSupport : statementSupports) {
             stmtBundleBuilder.addSupport(statementSupport);
@@ -100,7 +100,8 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
         return this;
     }
 
-    public CustomCrossSourceStatementReactorBuilder addAllVersionSpecificSupports(final ModelProcessingPhase phase,
+    public @NonNull CustomCrossSourceStatementReactorBuilder addAllVersionSpecificSupports(
+            final ModelProcessingPhase phase,
             final Table<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificSupports) {
         final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
         for (final Cell<YangVersion, QName, StatementSupport<?, ?, ?>> cell : versionSpecificSupports.cellSet()) {

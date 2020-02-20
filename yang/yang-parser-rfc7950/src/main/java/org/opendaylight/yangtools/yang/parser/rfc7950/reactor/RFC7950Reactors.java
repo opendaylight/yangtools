@@ -11,17 +11,15 @@ import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1;
 import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1_1;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import java.util.Collection;
-import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action.ActionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata.AnydataStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml.AnyxmlStatementSupport;
@@ -149,6 +147,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamesp
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
  * Utility class holding entrypoints for assembling RFC6020/RFC7950 statement {@link CrossSourceStatementReactor}s.
@@ -262,68 +261,6 @@ public final class RFC7950Reactors {
             .addSupport(StatementDefinitionNamespace.BEHAVIOUR)
             .build();
 
-    private static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
-            .derivedFrom(STMT_DEF_BUNDLE)
-            .addSupport(LeafStatementSupport.getInstance())
-            .addSupport(ConfigStatementSupport.getInstance())
-            .addSupport(DeviationStatementSupport.getInstance())
-            .addVersionSpecificSupport(VERSION_1, DeviateStatementRFC6020Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1_1, DeviateStatementRFC7950Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1, ChoiceStatementRFC6020Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1_1, ChoiceStatementRFC7950Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1, CaseStatementRFC6020Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1_1, CaseStatementRFC7950Support.getInstance())
-            .addSupport(MustStatementSupport.getInstance())
-            .addSupport(MandatoryStatementSupport.getInstance())
-            .addSupport(AnyxmlStatementSupport.getInstance())
-            .addVersionSpecificSupport(VERSION_1_1, AnydataStatementSupport.getInstance())
-            .addSupport(FeatureNamespace.BEHAVIOUR)
-            .addSupport(IfFeatureStatementSupport.getInstance())
-            .addSupport(UsesStatementSupport.getInstance())
-            .addSupport(GroupingNamespace.BEHAVIOUR)
-            .addSupport(ErrorMessageStatementSupport.getInstance())
-            .addSupport(ErrorAppTagStatementSupport.getInstance())
-            .addVersionSpecificSupport(VERSION_1, LeafListStatementRFC6020Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1_1, LeafListStatementRFC7950Support.getInstance())
-            .addSupport(PresenceStatementSupport.getInstance())
-            .addSupport(MaxElementsStatementSupport.getInstance())
-            .addSupport(MinElementsStatementSupport.getInstance())
-            .addSupport(OrderedByStatementSupport.getInstance())
-            .addSupport(WhenStatementSupport.getInstance())
-            .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
-            .addVersionSpecificSupport(VERSION_1, AugmentStatementRFC6020Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1_1, AugmentStatementRFC7950Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1, RefineStatementRFC6020Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1_1, RefineStatementRFC7950Support.getInstance())
-            .addSupport(FeatureStatementSupport.getInstance())
-            .addSupport(PositionStatementSupport.getInstance())
-            .addSupport(ValueStatementSupport.getInstance())
-            .build();
-
-    private static final Map<ModelProcessingPhase, StatementSupportBundle> RFC7950_BUNDLES =
-            ImmutableMap.<ModelProcessingPhase, StatementSupportBundle>builder()
-            .put(ModelProcessingPhase.INIT, INIT_BUNDLE)
-            .put(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
-            .put(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
-            .put(ModelProcessingPhase.STATEMENT_DEFINITION, STMT_DEF_BUNDLE)
-            .put(ModelProcessingPhase.FULL_DECLARATION, FULL_DECL_BUNDLE)
-            .put(ModelProcessingPhase.EFFECTIVE_MODEL, FULL_DECL_BUNDLE)
-            .build();
-
-    private static final Map<ValidationBundleType, Collection<StatementDefinition>> RFC6020_VALIDATION_BUNDLE =
-            ImmutableMap.<ValidationBundleType, Collection<StatementDefinition>>builder()
-            .put(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
-                YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
-            .put(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS, YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
-
-            // FIXME: 5.0.0: we do not seem to need this validation bundle
-            .put(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS, YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
-
-            .put(ValidationBundleType.SUPPORTED_DATA_NODES, YangValidationBundles.SUPPORTED_DATA_NODES)
-            .build();
-
-    private static final CrossSourceStatementReactor DEFAULT_RFC6020_RFC7950_REACTOR = defaultReactorBuilder().build();
-    private static final CrossSourceStatementReactor VANILLA_RFC6020_RFC7950_REACTOR = vanillaReactorBuilder().build();
 
     private RFC7950Reactors() {
         // Hidden on purpose
@@ -336,8 +273,8 @@ public final class RFC7950Reactors {
      *
      * @return A shared reactor instance.
      */
-    public static CrossSourceStatementReactor defaultReactor() {
-        return DEFAULT_RFC6020_RFC7950_REACTOR;
+    public static @NonNull CrossSourceStatementReactor defaultReactor() {
+        return ServiceLoaderState.DefaultReactor.INSTANCE;
     }
 
     /**
@@ -346,8 +283,18 @@ public final class RFC7950Reactors {
      *
      * @return A new {@link CustomCrossSourceStatementReactorBuilder}.
      */
-    public static CustomCrossSourceStatementReactorBuilder defaultReactorBuilder() {
-        return vanillaReactorBuilder()
+    public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder() {
+        return addExtensions(vanillaReactorBuilder());
+    }
+
+    public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
+            final YangXPathParserFactory xpathFactory) {
+        return addExtensions(vanillaReactorBuilder(xpathFactory));
+    }
+
+    private static @NonNull CustomCrossSourceStatementReactorBuilder addExtensions(
+            final @NonNull CustomCrossSourceStatementReactorBuilder builder) {
+        return builder
                 // Semantic version support
                 .addStatementSupport(ModelProcessingPhase.SOURCE_LINKAGE, OpenConfigVersionSupport.getInstance())
                 .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionNamespace.BEHAVIOUR)
@@ -363,8 +310,8 @@ public final class RFC7950Reactors {
      *
      * @return A shared reactor instance.
      */
-    public static CrossSourceStatementReactor vanillaReactor() {
-        return VANILLA_RFC6020_RFC7950_REACTOR;
+    public static @NonNull CrossSourceStatementReactor vanillaReactor() {
+        return ServiceLoaderState.VanillaReactor.INSTANCE;
     }
 
     /**
@@ -373,15 +320,75 @@ public final class RFC7950Reactors {
      *
      * @return A new {@link CustomCrossSourceStatementReactorBuilder}.
      */
-    public static CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder() {
-        return addDefaultRFC7950Bundles(new CustomCrossSourceStatementReactorBuilder(SUPPORTED_VERSIONS));
+    public static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder() {
+        return vanillaReactorBuilder(ServiceLoaderState.XPath.INSTANCE);
     }
 
-    private static CustomCrossSourceStatementReactorBuilder addDefaultRFC7950Bundles(
-            final CustomCrossSourceStatementReactorBuilder builder) {
-        RFC7950_BUNDLES.entrySet().forEach(entry -> builder.addAllSupports(entry.getKey(), entry.getValue()));
-        RFC6020_VALIDATION_BUNDLE.entrySet().forEach(
-            entry -> builder.addValidationBundle(entry.getKey(), entry.getValue()));
-        return builder;
+    public static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder(
+            final @NonNull YangXPathParserFactory xpathFactory) {
+        return vanillaReactorBuilder(new XPathSupport(xpathFactory));
+    }
+
+    private static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder(
+            final @NonNull XPathSupport xpathSupport) {
+        final StatementSupportBundle fullDeclarationBundle = fullDeclarationBundle(xpathSupport);
+        return new CustomCrossSourceStatementReactorBuilder(SUPPORTED_VERSIONS)
+                .addAllSupports(ModelProcessingPhase.INIT, INIT_BUNDLE)
+                .addAllSupports(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
+                .addAllSupports(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
+                .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION, STMT_DEF_BUNDLE)
+                .addAllSupports(ModelProcessingPhase.FULL_DECLARATION, fullDeclarationBundle)
+                .addAllSupports(ModelProcessingPhase.EFFECTIVE_MODEL, fullDeclarationBundle)
+                .addValidationBundle(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
+                    YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
+                .addValidationBundle(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS,
+                    YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
+
+                // FIXME: 5.0.0: we do not seem to need this validation bundle
+                .addValidationBundle(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS,
+                    YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
+
+                .addValidationBundle(ValidationBundleType.SUPPORTED_DATA_NODES,
+                    YangValidationBundles.SUPPORTED_DATA_NODES);
+    }
+
+    private static @NonNull StatementSupportBundle fullDeclarationBundle(final XPathSupport xpathSupport) {
+        return StatementSupportBundle
+            .derivedFrom(STMT_DEF_BUNDLE)
+            .addSupport(LeafStatementSupport.getInstance())
+            .addSupport(ConfigStatementSupport.getInstance())
+            .addSupport(DeviationStatementSupport.getInstance())
+            .addVersionSpecificSupport(VERSION_1, DeviateStatementRFC6020Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1_1, DeviateStatementRFC7950Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1, ChoiceStatementRFC6020Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1_1, ChoiceStatementRFC7950Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1, CaseStatementRFC6020Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1_1, CaseStatementRFC7950Support.getInstance())
+            .addSupport(MustStatementSupport.createInstance(xpathSupport))
+            .addSupport(MandatoryStatementSupport.getInstance())
+            .addSupport(AnyxmlStatementSupport.getInstance())
+            .addVersionSpecificSupport(VERSION_1_1, AnydataStatementSupport.getInstance())
+            .addSupport(FeatureNamespace.BEHAVIOUR)
+            .addSupport(IfFeatureStatementSupport.getInstance())
+            .addSupport(UsesStatementSupport.getInstance())
+            .addSupport(GroupingNamespace.BEHAVIOUR)
+            .addSupport(ErrorMessageStatementSupport.getInstance())
+            .addSupport(ErrorAppTagStatementSupport.getInstance())
+            .addVersionSpecificSupport(VERSION_1, LeafListStatementRFC6020Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1_1, LeafListStatementRFC7950Support.getInstance())
+            .addSupport(PresenceStatementSupport.getInstance())
+            .addSupport(MaxElementsStatementSupport.getInstance())
+            .addSupport(MinElementsStatementSupport.getInstance())
+            .addSupport(OrderedByStatementSupport.getInstance())
+            .addSupport(WhenStatementSupport.createInstance(xpathSupport))
+            .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
+            .addVersionSpecificSupport(VERSION_1, AugmentStatementRFC6020Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1_1, AugmentStatementRFC7950Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1, RefineStatementRFC6020Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1_1, RefineStatementRFC7950Support.getInstance())
+            .addSupport(FeatureStatementSupport.getInstance())
+            .addSupport(PositionStatementSupport.getInstance())
+            .addSupport(ValueStatementSupport.getInstance())
+            .build();
     }
 }
