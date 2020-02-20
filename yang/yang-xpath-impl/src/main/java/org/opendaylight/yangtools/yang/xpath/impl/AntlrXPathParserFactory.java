@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.xpath.impl;
 
+import javax.inject.Singleton;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser.UnqualifiedBoun
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 @MetaInfServices
+@Singleton
 public final class AntlrXPathParserFactory implements YangXPathParserFactory {
     @Override
     public YangXPathParser newParser(final YangXPathMathMode mathMode) {

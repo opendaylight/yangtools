@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Optional;
+import javax.inject.Singleton;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -39,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * A factory for creating in-memory data trees.
  */
 @MetaInfServices
+@Singleton
 public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static final NormalizedNode<?, ?> ROOT_CONTAINER = ImmutableNodes.containerNode(SchemaContext.NAME);
 
