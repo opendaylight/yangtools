@@ -12,12 +12,15 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
  * Reference {@link YangParserFactory} implementation.
@@ -26,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
  */
 @Beta
 @MetaInfServices
+@Singleton
 public final class YangParserFactoryImpl implements YangParserFactory {
     private static final ImmutableList<StatementParserMode> SUPPORTED_MODES = ImmutableList.of(
         StatementParserMode.DEFAULT_MODE, StatementParserMode.SEMVER_MODE);
@@ -39,12 +43,17 @@ public final class YangParserFactoryImpl implements YangParserFactory {
         this(DefaultReactors.defaultReactor());
     }
 
+    @Inject
+    public YangParserFactoryImpl(final YangXPathParserFactory xpathFactory) {
+        this(DefaultReactors.defaultReactorBuilder(xpathFactory).build());
+    }
+
     /**
      * Construct a new {@link YangParserFactory} backed by specified reactor.
      *
      * @param reactor Backing reactor
      */
-    public YangParserFactoryImpl(@NonNull final CrossSourceStatementReactor reactor) {
+    public YangParserFactoryImpl(final @NonNull CrossSourceStatementReactor reactor) {
         this.reactor = requireNonNull(reactor);
     }
 

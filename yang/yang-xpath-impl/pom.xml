@@ -55,7 +55,7 @@
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <artifactId>osgi.cmpn</artifactId>
         </dependency>
     </dependencies>
 
@@ -68,7 +68,6 @@
                 <configuration>
                     <instructions>
                         <Automatic-Module-Name>org.opendaylight.yangtools.yang.xpath.impl</Automatic-Module-Name>
-                        <Bundle-Activator>org.opendaylight.yangtools.yang.xpath.impl.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
