@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -75,10 +74,6 @@ public final class ArgumentUtils {
                 "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
                 def.getStatementName(), def.getArgumentDefinition().get().getArgumentName(), input);
         }
-    }
-
-    public static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
-        return XPathSupport.parseXPath(ctx, path);
     }
 
     public static boolean isAbsoluteXPath(final String path) {

@@ -16,9 +16,11 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser.QualifiedBound;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser.UnqualifiedBound;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
+import org.osgi.service.component.annotations.Component;
 
 @MetaInfServices
 @Singleton
+@Component
 public final class AntlrXPathParserFactory implements YangXPathParserFactory {
     @Override
     public YangXPathParser newParser(final YangXPathMathMode mathMode) {

@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
  * Utility class for instantiating default-configured {@link CrossSourceStatementReactor}s.
@@ -33,7 +34,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
  */
 @Beta
 public final class DefaultReactors {
-    private static final @NonNull CrossSourceStatementReactor DEFAULT_REACTOR = defaultReactorBuilder().build();
+    private static final class DefaultReactor {
+        // Thread-safe lazy init
+        static final @NonNull CrossSourceStatementReactor INSTANCE = defaultReactorBuilder().build();
+    }
 
     private DefaultReactors() {
         // Hidden on purpose
@@ -53,7 +57,7 @@ public final class DefaultReactors {
      * @return a shared default-configured reactor instance.
      */
     public static @NonNull CrossSourceStatementReactor defaultReactor() {
-        return DEFAULT_REACTOR;
+        return DefaultReactor.INSTANCE;
     }
 
     /**
@@ -62,8 +66,24 @@ public final class DefaultReactors {
      *
      * @return A populated CrossSourceStatementReactor builder.
      */
-    public static CustomCrossSourceStatementReactorBuilder defaultReactorBuilder() {
-        return RFC7950Reactors.defaultReactorBuilder()
+    public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder() {
+        return addExtensions(RFC7950Reactors.defaultReactorBuilder());
+    }
+
+    /**
+     * Return a baseline CrossSourceStatementReactor {@link Builder}. The builder is initialized to the equivalent
+     * of the reactor returned via {@link #defaultReactor()}, but can be further customized before use.
+     *
+     * @return A populated CrossSourceStatementReactor builder.
+     */
+    public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
+            final YangXPathParserFactory xpathFactory) {
+        return addExtensions(RFC7950Reactors.defaultReactorBuilder(xpathFactory));
+    }
+
+    private static @NonNull CustomCrossSourceStatementReactorBuilder addExtensions(
+            final @NonNull CustomCrossSourceStatementReactorBuilder builder) {
+        return builder
                 // AnyxmlSchemaLocation support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     AnyxmlSchemaLocationStatementSupport.getInstance())
