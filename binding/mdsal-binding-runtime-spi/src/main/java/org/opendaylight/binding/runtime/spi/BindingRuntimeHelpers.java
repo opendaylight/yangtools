@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.binding.runtime.api.BindingRuntimeGenerator;
+import org.opendaylight.binding.runtime.api.DefaultBindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -41,8 +42,8 @@ public final class BindingRuntimeHelpers {
 
     public static @NonNull BindingRuntimeContext createRuntimeContext(final BindingRuntimeGenerator generator) {
         final ModuleInfoBackedContext ctx = prepareContext(BindingReflections.loadModuleInfos());
-        return BindingRuntimeContext.create(generator.generateTypeMapping(ctx.tryToCreateModelContext().orElseThrow()),
-            ctx);
+        return DefaultBindingRuntimeContext.create(generator.generateTypeMapping(
+            ctx.tryToCreateModelContext().orElseThrow()), ctx);
     }
 
     public static @NonNull BindingRuntimeContext createRuntimeContext(final BindingRuntimeGenerator generator,
@@ -50,8 +51,8 @@ public final class BindingRuntimeHelpers {
         final ModuleInfoBackedContext ctx = prepareContext(Arrays.stream(classes)
             .map(BindingRuntimeHelpers::extractYangModuleInfo)
             .collect(Collectors.toList()));
-        return BindingRuntimeContext.create(generator.generateTypeMapping(ctx.tryToCreateModelContext().orElseThrow()),
-            ctx);
+        return DefaultBindingRuntimeContext.create(
+            generator.generateTypeMapping(ctx.tryToCreateModelContext().orElseThrow()), ctx);
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")

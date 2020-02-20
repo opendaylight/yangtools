@@ -14,6 +14,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.binding.runtime.api.ClassLoadingStrategy;
+import org.opendaylight.binding.runtime.api.DefaultBindingRuntimeContext;
 import org.opendaylight.mdsal.binding.dom.codec.osgi.BindingRuntimeContextListener;
 import org.opendaylight.mdsal.binding.dom.codec.osgi.BindingRuntimeContextService;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingRuntimeGenerator;
@@ -57,7 +58,7 @@ final class SimpleBindingRuntimeContextService extends
     }
 
     void updateBindingRuntimeContext(final SchemaContext schemaContext) {
-        final BindingRuntimeContext next = BindingRuntimeContext.create(
+        final BindingRuntimeContext next = DefaultBindingRuntimeContext.create(
             new DefaultBindingRuntimeGenerator().generateTypeMapping(schemaContext), strategy);
 
         final BindingRuntimeContextListener[] listeners;

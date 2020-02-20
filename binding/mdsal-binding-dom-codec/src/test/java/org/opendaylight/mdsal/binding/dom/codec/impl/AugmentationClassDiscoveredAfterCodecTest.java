@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.binding.runtime.api.ClassLoadingStrategy;
+import org.opendaylight.binding.runtime.api.DefaultBindingRuntimeContext;
 import org.opendaylight.binding.runtime.spi.BindingRuntimeHelpers;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingClassInLoadingStrategyException;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingRuntimeGenerator;
@@ -50,7 +51,8 @@ public class AugmentationClassDiscoveredAfterCodecTest {
 
         // Class loading filter, manipulated by tests
         filter = new FilteringClassLoadingStrategy(delegate.getStrategy());
-        registry = new BindingNormalizedNodeCodecRegistry(BindingRuntimeContext.create(delegate.getTypes(), filter));
+        registry = new BindingNormalizedNodeCodecRegistry(DefaultBindingRuntimeContext.create(delegate.getTypes(),
+            filter));
     }
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");

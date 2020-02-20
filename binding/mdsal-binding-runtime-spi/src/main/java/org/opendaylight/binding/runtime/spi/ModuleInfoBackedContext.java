@@ -35,6 +35,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.binding.runtime.api.BindingRuntimeGenerator;
 import org.opendaylight.binding.runtime.api.ClassLoadingStrategy;
+import org.opendaylight.binding.runtime.api.DefaultBindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
@@ -220,8 +221,8 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
 
     @Beta
     public final @NonNull BindingRuntimeContext createRuntimeContext(final BindingRuntimeGenerator generator) {
-        return BindingRuntimeContext.create(generator.generateTypeMapping(tryToCreateModelContext().orElseThrow()),
-            this);
+        return DefaultBindingRuntimeContext.create(
+            generator.generateTypeMapping(tryToCreateModelContext().orElseThrow()), this);
     }
 
     // TODO finish schema parsing and expose as SchemaService
