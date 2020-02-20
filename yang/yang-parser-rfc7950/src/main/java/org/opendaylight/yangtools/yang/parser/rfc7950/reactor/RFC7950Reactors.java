@@ -16,12 +16,14 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.Map;
+import java.util.ServiceLoader;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action.ActionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata.AnydataStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml.AnyxmlStatementSupport;
@@ -149,6 +151,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamesp
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
  * Utility class holding entrypoints for assembling RFC6020/RFC7950 statement {@link CrossSourceStatementReactor}s.
@@ -262,6 +265,9 @@ public final class RFC7950Reactors {
             .addSupport(StatementDefinitionNamespace.BEHAVIOUR)
             .build();
 
+    private static final XPathSupport XPATH_SUPPORT = new XPathSupport(ServiceLoader.load(YangXPathParserFactory.class)
+        .findFirst().orElseThrow(() -> new ExceptionInInitializerError("No YangXPathParserFactory found")));
+
     private static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
             .derivedFrom(STMT_DEF_BUNDLE)
             .addSupport(LeafStatementSupport.getInstance())
@@ -273,7 +279,7 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1_1, ChoiceStatementRFC7950Support.getInstance())
             .addVersionSpecificSupport(VERSION_1, CaseStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, CaseStatementRFC7950Support.getInstance())
-            .addSupport(MustStatementSupport.getInstance())
+            .addSupport(MustStatementSupport.createInstance(XPATH_SUPPORT))
             .addSupport(MandatoryStatementSupport.getInstance())
             .addSupport(AnyxmlStatementSupport.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, AnydataStatementSupport.getInstance())
@@ -289,7 +295,7 @@ public final class RFC7950Reactors {
             .addSupport(MaxElementsStatementSupport.getInstance())
             .addSupport(MinElementsStatementSupport.getInstance())
             .addSupport(OrderedByStatementSupport.getInstance())
-            .addSupport(WhenStatementSupport.getInstance())
+            .addSupport(WhenStatementSupport.createInstance(XPATH_SUPPORT))
             .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, AugmentStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, AugmentStatementRFC7950Support.getInstance())
