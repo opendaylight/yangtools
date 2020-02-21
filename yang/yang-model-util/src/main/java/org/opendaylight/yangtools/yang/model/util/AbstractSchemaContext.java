@@ -194,6 +194,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
 
     @Override
     public QName getQName() {
+        // FIXME: YANGTOOLS-1074: we do not want this name
         return SchemaContext.NAME;
     }
 

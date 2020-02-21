@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public final class ImmutableNodes {
+    // FIXME: YANGTOOLS-1074: we do not want this name
     private static final NodeIdentifier SCHEMACONTEXT_NAME = NodeIdentifier.create(SchemaContext.NAME);
 
     private ImmutableNodes() {

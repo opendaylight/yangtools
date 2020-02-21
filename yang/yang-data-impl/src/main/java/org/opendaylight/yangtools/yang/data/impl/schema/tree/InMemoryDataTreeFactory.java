@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 @MetaInfServices
 @Singleton
 public final class InMemoryDataTreeFactory implements DataTreeFactory {
+    // FIXME: YANGTOOLS-1074: we do not want this name
     private static final NormalizedNode<?, ?> ROOT_CONTAINER = ImmutableNodes.containerNode(SchemaContext.NAME);
 
     @Override

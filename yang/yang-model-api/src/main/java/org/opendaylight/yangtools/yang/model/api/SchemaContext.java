@@ -37,6 +37,7 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
     /**
      * QName of NETCONF top-level data node.
      */
+    // FIXME: YANGTOOLS-1074: we do not want this name
     @NonNull QName NAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), "data").intern();
 
     /**
