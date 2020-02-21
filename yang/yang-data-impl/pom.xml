@@ -27,12 +27,12 @@
                 <configuration>
                     <instructions>
                         <Automatic-Module-Name>org.opendaylight.yangtools.yang.data.impl</Automatic-Module-Name>
+                        <!-- FIXME: do not export data.impl -->
                         <Export-Package>
                             {local-packages},
                             org.opendaylight.yangtools.yang.data.impl.*,
                             ;-split-package:=error
                         </Export-Package>
-                        <Bundle-Activator>org.opendaylight.yangtools.yang.data.impl.osgi.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
@@ -92,7 +92,7 @@
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <artifactId>osgi.cmpn</artifactId>
         </dependency>
 
         <dependency>

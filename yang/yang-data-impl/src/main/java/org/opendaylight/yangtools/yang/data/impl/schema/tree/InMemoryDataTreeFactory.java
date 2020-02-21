@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Optional;
 import javax.inject.Singleton;
+import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -35,15 +36,23 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A factory for creating in-memory data trees.
  */
 @MetaInfServices
 @Singleton
+@Component(immediate = true)
 public final class InMemoryDataTreeFactory implements DataTreeFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeFactory.class);
     // FIXME: YANGTOOLS-1074: we do not want this name
-    private static final NormalizedNode<?, ?> ROOT_CONTAINER = ImmutableNodes.containerNode(SchemaContext.NAME);
+    private static final @NonNull NormalizedNode<?, ?> ROOT_CONTAINER =
+            ImmutableNodes.containerNode(SchemaContext.NAME);
 
     @Override
     public DataTree create(final DataTreeConfiguration treeConfig) {
@@ -53,13 +62,13 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
     @Override
     public DataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext) {
-        return create(treeConfig, initialSchemaContext, true);
+        return createDataTree(treeConfig, initialSchemaContext, true);
     }
 
     @Override
     public DataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext,
             final NormalizedNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException {
-        final DataTree ret = create(treeConfig, initialSchemaContext, false);
+        final DataTree ret = createDataTree(treeConfig, initialSchemaContext, false);
 
         final DataTreeModification mod = ret.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.empty(), initialRoot);
@@ -71,8 +80,20 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         return ret;
     }
 
-    private static DataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext,
-            final boolean maskMandatory) {
+    @Activate
+    @SuppressWarnings("static-method")
+    void activate() {
+        LOG.info("In-memory Data Tree activated");
+    }
+
+    @Deactivate
+    @SuppressWarnings("static-method")
+    void deactivate() {
+        LOG.info("In-memory Data Tree deactivated");
+    }
+
+    private static @NonNull DataTree createDataTree(final DataTreeConfiguration treeConfig,
+            final SchemaContext initialSchemaContext, final boolean maskMandatory) {
         final DataSchemaNode rootSchemaNode = getRootSchemaNode(initialSchemaContext, treeConfig.getRootPath());
         final NormalizedNode<?, ?> rootDataNode = createRoot((DataNodeContainer)rootSchemaNode,
             treeConfig.getRootPath());
@@ -80,19 +101,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
             initialSchemaContext, rootSchemaNode, maskMandatory);
     }
 
-    private static DataSchemaNode getRootSchemaNode(final SchemaContext schemaContext,
-            final YangInstanceIdentifier rootPath) {
-        final DataSchemaContextTree contextTree = DataSchemaContextTree.from(schemaContext);
-        final Optional<DataSchemaContextNode<?>> rootContextNode = contextTree.findChild(rootPath);
-        checkArgument(rootContextNode.isPresent(), "Failed to find root %s in schema context", rootPath);
-
-        final DataSchemaNode rootSchemaNode = rootContextNode.get().getDataSchemaNode();
-        checkArgument(rootSchemaNode instanceof DataNodeContainer, "Root %s resolves to non-container type %s",
-            rootPath, rootSchemaNode);
-        return rootSchemaNode;
-    }
-
-    private static NormalizedNode<?, ?> createRoot(final DataNodeContainer schemaNode,
+    private static @NonNull NormalizedNode<?, ?> createRoot(final DataNodeContainer schemaNode,
             final YangInstanceIdentifier path) {
         if (path.isEmpty()) {
             checkArgument(schemaNode instanceof ContainerSchemaNode,
@@ -116,7 +125,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         }
     }
 
-    private static NormalizedNode<?, ?> createRoot(final YangInstanceIdentifier path) {
+    private static @NonNull NormalizedNode<?, ?> createRoot(final YangInstanceIdentifier path) {
         if (path.isEmpty()) {
             return ROOT_CONTAINER;
         }
@@ -131,5 +140,17 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
         // FIXME: implement augmentations and leaf-lists
         throw new IllegalArgumentException("Unsupported root node " + arg);
+    }
+
+    private static DataSchemaNode getRootSchemaNode(final SchemaContext schemaContext,
+            final YangInstanceIdentifier rootPath) {
+        final DataSchemaContextTree contextTree = DataSchemaContextTree.from(schemaContext);
+        final Optional<DataSchemaContextNode<?>> rootContextNode = contextTree.findChild(rootPath);
+        checkArgument(rootContextNode.isPresent(), "Failed to find root %s in schema context", rootPath);
+
+        final DataSchemaNode rootSchemaNode = rootContextNode.get().getDataSchemaNode();
+        checkArgument(rootSchemaNode instanceof DataNodeContainer, "Root %s resolves to non-container type %s",
+            rootPath, rootSchemaNode);
+        return rootSchemaNode;
     }
 }
