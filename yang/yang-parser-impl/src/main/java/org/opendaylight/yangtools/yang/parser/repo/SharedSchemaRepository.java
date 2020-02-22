@@ -17,11 +17,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.util.AbstractSchemaRepository;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserFactoryImpl;
 
 /**
  * A {@link SchemaRepository} which allows sharing of {@link SchemaContext} as long as their specification is the same.
@@ -42,9 +44,19 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
             });
 
     private final @NonNull String id;
+    private final @NonNull YangParserFactory factory;
+
+    public SharedSchemaRepository() {
+        this("unnamed");
+    }
 
     public SharedSchemaRepository(final String id) {
+        this(id, new YangParserFactoryImpl());
+    }
+
+    public SharedSchemaRepository(final String id, final YangParserFactory factory) {
         this.id = requireNonNull(id);
+        this.factory = requireNonNull(factory);
     }
 
     @Override
@@ -56,6 +68,10 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
     public @NonNull EffectiveModelContextFactory createEffectiveModelContextFactory(
             final @NonNull SchemaContextFactoryConfiguration config) {
         return cacheByConfig.getUnchecked(config);
+    }
+
+    @NonNull YangParserFactory factory() {
+        return factory;
     }
 
     @Override
