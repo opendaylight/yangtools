@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -63,46 +63,11 @@ public class ConstantArrayCollectionTest {
     public void testProtection() {
         final Collection<?> c = create();
 
-        try {
-            c.add(null);
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            c.remove(null);
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            c.addAll(null);
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            c.removeAll(null);
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            c.retainAll(null);
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            c.clear();
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
+        assertThrows(UnsupportedOperationException.class, () -> c.add(null));
+        assertThrows(UnsupportedOperationException.class, () -> c.remove(null));
+        assertThrows(UnsupportedOperationException.class, () -> c.addAll(null));
+        assertThrows(UnsupportedOperationException.class, () -> c.removeAll(null));
+        assertThrows(UnsupportedOperationException.class, () -> c.retainAll(null));
+        assertThrows(UnsupportedOperationException.class, () -> c.clear());
     }
 }
