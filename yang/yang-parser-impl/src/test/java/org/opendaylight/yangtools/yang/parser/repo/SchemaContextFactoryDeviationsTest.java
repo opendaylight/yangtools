@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -109,15 +113,12 @@ public class SchemaContextFactoryDeviationsTest {
     public void shouldFailOnAttemptToDeviateTheSameModule2() throws Exception {
         final ListenableFuture<EffectiveModelContext> lf = createSchemaContext(null, BAR_INVALID, BAZ_INVALID);
         assertTrue(lf.isDone());
-        try {
-            lf.get();
-            fail("Deviation that targets the same module as the one it is defined is forbidden.");
-        } catch (final ExecutionException ex) {
-            final Throwable cause = ex.getCause().getCause().getCause();
-            assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage()
-                    .startsWith("Deviation must not target the same module as the one it is defined in"));
-        }
+
+        final ExecutionException ex = assertThrows(ExecutionException.class, lf::get);
+        final Throwable cause = Throwables.getRootCause(ex);
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(),
+            startsWith("Deviation must not target the same module as the one it is defined in"));
     }
 
     private static SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(

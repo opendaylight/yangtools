@@ -25,6 +25,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -37,19 +38,19 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.eclipse.jdt.annotation.NonNull;
 import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,11 +61,11 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
             .weakValues().build();
     private final Cache<Collection<SourceIdentifier>, EffectiveModelContext> semVerCache = CacheBuilder.newBuilder()
             .weakValues().build();
-    private final @NonNull SchemaRepository repository;
+    private final @NonNull SharedSchemaRepository repository;
     private final @NonNull SchemaContextFactoryConfiguration config;
 
-    SharedSchemaContextFactory(final @NonNull SchemaRepository repository,
-        final @NonNull SchemaContextFactoryConfiguration config) {
+    SharedSchemaContextFactory(final @NonNull SharedSchemaRepository repository,
+            final @NonNull SchemaContextFactoryConfiguration config) {
         this.repository = requireNonNull(repository);
         this.config = requireNonNull(config);
     }
@@ -74,7 +75,7 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
             final @NonNull Collection<SourceIdentifier> requiredSources) {
         return createSchemaContext(requiredSources,
                 config.getStatementParserMode() == StatementParserMode.SEMVER_MODE ? semVerCache : revisionCache,
-                new AssembleSources(config));
+                new AssembleSources(repository.factory(), config));
     }
 
     private @NonNull ListenableFuture<EffectiveModelContext> createSchemaContext(
@@ -188,10 +189,13 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
     }
 
     private static final class AssembleSources implements AsyncFunction<List<ASTSchemaSource>, EffectiveModelContext> {
+        private final @NonNull YangParserFactory parserFactory;
         private final @NonNull SchemaContextFactoryConfiguration config;
         private final @NonNull Function<ASTSchemaSource, SourceIdentifier> getIdentifier;
 
-        private AssembleSources(final @NonNull SchemaContextFactoryConfiguration config) {
+        private AssembleSources(final @NonNull YangParserFactory parserFactory,
+                final @NonNull SchemaContextFactoryConfiguration config) {
+            this.parserFactory = parserFactory;
             this.config = config;
             switch (config.getStatementParserMode()) {
                 case SEMVER_MODE:
@@ -221,25 +225,28 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
                         res.getResolvedSources(), res.getUnsatisfiedImports());
             }
 
-            final BuildAction reactor = DefaultReactors.defaultReactor().newBuild(statementParserMode);
-            config.getSupportedFeatures().ifPresent(reactor::setSupportedFeatures);
-            config.getModulesDeviatedByModules().ifPresent(reactor::setModulesWithSupportedDeviations);
+            final YangParser parser = parserFactory.createParser(statementParserMode);
+            config.getSupportedFeatures().ifPresent(parser::setSupportedFeatures);
+            config.getModulesDeviatedByModules().ifPresent(parser::setModulesWithSupportedDeviations);
 
-            for (final Entry<SourceIdentifier, ASTSchemaSource> e : srcs.entrySet()) {
-                final ASTSchemaSource ast = e.getValue();
+            for (final Entry<SourceIdentifier, ASTSchemaSource> entry : srcs.entrySet()) {
+                final ASTSchemaSource ast = entry.getValue();
                 final ParserRuleContext parserRuleCtx = ast.getAST();
                 checkArgument(parserRuleCtx instanceof StatementContext, "Unsupported context class %s for source %s",
-                    parserRuleCtx.getClass(), e.getKey());
+                    parserRuleCtx.getClass(), entry.getKey());
 
-                reactor.addSource(YangStatementStreamSource.create(e.getKey(), (StatementContext) parserRuleCtx,
-                    ast.getSymbolicName().orElse(null)));
+                try {
+                    parser.addSource(entry.getValue());
+                } catch (YangSyntaxErrorException | IOException e) {
+                    throw new SchemaResolutionException("Failed to add source " + entry.getKey(), e);
+                }
             }
 
             final EffectiveModelContext schemaContext;
             try {
-                schemaContext = reactor.buildEffective();
-            } catch (final ReactorException ex) {
-                throw new SchemaResolutionException("Failed to resolve required models", ex.getSourceIdentifier(), ex);
+                schemaContext = parser.buildEffectiveModel();
+            } catch (final YangParserException e) {
+                throw new SchemaResolutionException("Failed to resolve required models", e);
             }
 
             return immediateFluentFuture(schemaContext);
