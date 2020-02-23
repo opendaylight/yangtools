@@ -34,6 +34,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -83,8 +84,13 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             TimeUnit.SECONDS);
     }
 
-    public static YangTextSchemaContextResolver create(final String name) {
+    public static @NonNull YangTextSchemaContextResolver create(final String name) {
         final SharedSchemaRepository sharedRepo = new SharedSchemaRepository(name);
+        return new YangTextSchemaContextResolver(sharedRepo, sharedRepo);
+    }
+
+    public static @NonNull YangTextSchemaContextResolver create(final String name, final YangParserFactory factory) {
+        final SharedSchemaRepository sharedRepo = new SharedSchemaRepository(name, factory);
         return new YangTextSchemaContextResolver(sharedRepo, sharedRepo);
     }
 
