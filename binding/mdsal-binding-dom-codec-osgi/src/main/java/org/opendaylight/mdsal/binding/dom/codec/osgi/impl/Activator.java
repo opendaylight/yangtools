@@ -12,7 +12,6 @@ import java.util.List;
 import org.opendaylight.binding.runtime.api.ClassLoadingStrategy;
 import org.opendaylight.binding.runtime.spi.GeneratedClassLoadingStrategy;
 import org.opendaylight.binding.runtime.spi.ModuleInfoBackedContext;
-import org.opendaylight.mdsal.binding.dom.codec.osgi.BindingRuntimeContextService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -25,7 +24,6 @@ public final class Activator implements BundleActivator {
     private final List<ServiceRegistration<?>> registrations = new ArrayList<>(2);
 
     private ModuleInfoBundleTracker bundleTracker = null;
-    private SimpleBindingRuntimeContextService service = null;
 
     @Override
     public void start(final BundleContext context) {
@@ -35,20 +33,14 @@ public final class Activator implements BundleActivator {
             // FIXME: This is the fallback strategy, it should not be needed
             GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy());
 
-        service = new SimpleBindingRuntimeContextService(context, moduleInfoBackedContext, moduleInfoBackedContext);
-
         final OsgiModuleInfoRegistry registry = new OsgiModuleInfoRegistry(moduleInfoBackedContext,
-                moduleInfoBackedContext, service);
+                moduleInfoBackedContext);
 
         LOG.debug("Starting Binding-DOM codec bundle tracker");
         bundleTracker = new ModuleInfoBundleTracker(context, registry);
         bundleTracker.open();
 
-        LOG.debug("Starting Binding-DOM runtime context service");
-        service.open();
-
         LOG.debug("Registering Binding-DOM codec services");
-        registrations.add(context.registerService(BindingRuntimeContextService.class, service, null));
         registrations.add(context.registerService(ClassLoadingStrategy.class, moduleInfoBackedContext, null));
 
         LOG.info("Binding-DOM codec started");
@@ -64,9 +56,6 @@ public final class Activator implements BundleActivator {
 
         LOG.debug("Stopping Binding-DOM codec bundle tracker");
         bundleTracker.close();
-
-        LOG.debug("Stoping Binding-DOM runtime context service");
-        service.close();
 
         LOG.info("Binding-DOM codec stopped");
     }

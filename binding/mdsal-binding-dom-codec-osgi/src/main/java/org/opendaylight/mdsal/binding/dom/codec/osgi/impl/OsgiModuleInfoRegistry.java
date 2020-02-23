@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.osgi.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.checkerframework.checker.lock.qual.GuardedBy;
+import org.opendaylight.binding.runtime.spi.ModuleInfoBackedContext;
 import org.opendaylight.binding.runtime.spi.ModuleInfoRegistry;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
@@ -25,21 +26,19 @@ import org.slf4j.LoggerFactory;
 final class OsgiModuleInfoRegistry implements ModuleInfoRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(OsgiModuleInfoRegistry.class);
 
-    private final SimpleBindingRuntimeContextService runtimeContext;
     private final SchemaContextProvider schemaContextProvider;
-    private final ModuleInfoRegistry moduleInfoRegistry;
+    private final ModuleInfoBackedContext moduleInfoRegistry;
 
     @GuardedBy("this")
     private ServiceRegistration<?> registration;
     @GuardedBy("this")
     private long generation;
 
-    OsgiModuleInfoRegistry(final ModuleInfoRegistry moduleInfoRegistry,
-        final SchemaContextProvider schemaContextProvider, final SimpleBindingRuntimeContextService runtimeContext) {
+    OsgiModuleInfoRegistry(final ModuleInfoBackedContext moduleInfoRegistry,
+        final SchemaContextProvider schemaContextProvider) {
 
         this.moduleInfoRegistry = requireNonNull(moduleInfoRegistry);
         this.schemaContextProvider = requireNonNull(schemaContextProvider);
-        this.runtimeContext = requireNonNull(runtimeContext);
     }
 
     @Override
@@ -57,13 +56,13 @@ final class OsgiModuleInfoRegistry implements ModuleInfoRegistry {
             LOG.error("Error updating the schema context", e);
             return;
         }
+        LOG.trace("Assembled context {}", context);
 
-        try {
-            runtimeContext.updateBindingRuntimeContext(context);
-        } catch (final RuntimeException e) {
-            LOG.error("Error updating binding runtime context", e);
-            return;
-        }
+        //        // FIXME: MDSAL-392: UGH, this should be a snapshot
+        //        final BindingRuntimeContext next = DefaultBindingRuntimeContext.create(
+        //            new DefaultBindingRuntimeGenerator().generateTypeMapping(context), moduleInfoRegistry);
+
+        // FIXME: publish new the new context, remove the old one
     }
 
     ObjectRegistration<YangModuleInfo> registerInfo(final YangModuleInfo yangModuleInfo) {
