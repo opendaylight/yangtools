@@ -11,7 +11,7 @@ import org.opendaylight.binding.runtime.api.ClassLoadingStrategy;
 import org.opendaylight.binding.runtime.spi.GeneratedClassLoadingStrategy;
 import org.opendaylight.binding.runtime.spi.ModuleInfoBackedContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
-import org.osgi.service.component.ComponentContext;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -30,7 +30,7 @@ public final class BindingClassLoadingStrategy implements ClassLoadingStrategy {
     private ModuleInfoBackedContext moduleInfoBackedContext = null;
 
     @Activate
-    void activate(final ComponentContext ctx) {
+    void activate(final BundleContext ctx) {
         LOG.info("Binding-DOM codec starting");
 
         moduleInfoBackedContext = ModuleInfoBackedContext.create("binding-dom-codec", factory,
@@ -41,7 +41,7 @@ public final class BindingClassLoadingStrategy implements ClassLoadingStrategy {
                 moduleInfoBackedContext);
 
         LOG.debug("Starting Binding-DOM codec bundle tracker");
-        bundleTracker = new ModuleInfoBundleTracker(ctx.getBundleContext(), registry);
+        bundleTracker = new ModuleInfoBundleTracker(ctx, registry);
         bundleTracker.open();
 
         LOG.info("Binding-DOM codec started");
