@@ -56,7 +56,7 @@ public final class BindingRuntimeHelpers {
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
-    static YangModuleInfo extractYangModuleInfo(final Class<?> clazz) {
+    static @NonNull YangModuleInfo extractYangModuleInfo(final Class<?> clazz) {
         try {
             return BindingReflections.getModuleInfo(clazz);
         } catch (Exception e) {
@@ -66,7 +66,7 @@ public final class BindingRuntimeHelpers {
 
     private static ModuleInfoBackedContext prepareContext(final Iterable<? extends YangModuleInfo> moduleInfos) {
         final ModuleInfoBackedContext ctx = ModuleInfoBackedContext.create();
-        ctx.addModuleInfos(moduleInfos);
+        ctx.registerModuleInfos(moduleInfos);
         return ctx;
     }
 }

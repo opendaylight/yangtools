@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- vi: set et smarttab sw=4 tabstop=4: -->
 <!--
- Copyright (c) 2017 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
 
  This program and the accompanying materials are made available under the
  terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -16,26 +16,17 @@
         <relativePath>../../dom/dom-parent</relativePath>
     </parent>
 
-    <artifactId>mdsal-binding-dom-codec-osgi</artifactId>
+    <artifactId>mdsal-binding-runtime-osgi</artifactId>
     <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.mdsal</groupId>
-            <artifactId>mdsal-binding-dom-codec</artifactId>
-        </dependency>
-
-        <!-- FIXME: MDSAL-392: this is ugly, we should be looking this up,
-                               but then we may want to end up doing something
-                               completely different in thes artifacts -->
-        <dependency>
-            <groupId>org.opendaylight.mdsal</groupId>
-            <artifactId>mdsal-binding-generator-impl</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.opendaylight.mdsal</groupId>
             <artifactId>mdsal-binding-runtime-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.mdsal</groupId>
+            <artifactId>mdsal-dom-schema-osgi</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -51,8 +42,13 @@
             <artifactId>mockito-configuration</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-test-util</artifactId>
+            <groupId>org.opendaylight.mdsal</groupId>
+            <artifactId>mdsal-binding-test-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.mdsal</groupId>
+            <artifactId>mdsal-binding-generator-impl</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -61,10 +57,11 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
                 <configuration>
+                    <Automatic-Module-Name>org.opendaylight.mdsal.binding.runtime.osgi</Automatic-Module-Name>
                     <instructions>
-                        <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                        <!-- Karaf cannot handle Factory Component requirements, see https://issues.apache.org/jira/browse/KARAF-6625 -->
+                        <_dsannotations-options>norequirements</_dsannotations-options>
                     </instructions>
                 </configuration>
             </plugin>
