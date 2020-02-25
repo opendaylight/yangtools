@@ -28,7 +28,7 @@ public final class DefaultBindingCodecTreeFactory implements BindingCodecTreeFac
 
     @Override
     public BindingCodecTree create(final BindingRuntimeContext context) {
-        return new BindingCodecContext(context, new BindingNormalizedNodeCodecRegistry(context));
+        return new BindingCodecContext(context);
     }
 
     @Activate

@@ -90,7 +90,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
             return;
         }
 
-        final BindingCodecContext updated = new BindingCodecContext(context, this);
+        final BindingCodecContext updated = new BindingCodecContext(context);
         if (!UPDATER.compareAndSet(this, current, updated)) {
             LOG.warn("Concurrent update of runtime context (expected={} current={}) detected at ", current,
                 codecContext, new Throwable());

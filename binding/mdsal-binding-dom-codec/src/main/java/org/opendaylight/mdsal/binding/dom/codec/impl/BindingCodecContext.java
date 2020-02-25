@@ -120,16 +120,14 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     private final @NonNull CodecClassLoader loader = CodecClassLoader.create();
     private final InstanceIdentifierCodec instanceIdentifierCodec;
     private final @NonNull IdentityCodec identityCodec;
-    private final BindingNormalizedNodeCodecRegistry registry;
     private final BindingRuntimeContext context;
     private final SchemaRootCodecContext<?> root;
 
-    BindingCodecContext(final BindingRuntimeContext context, final BindingNormalizedNodeCodecRegistry registry) {
+    BindingCodecContext(final BindingRuntimeContext context) {
         this.context = requireNonNull(context, "Binding Runtime Context is required.");
         this.root = SchemaRootCodecContext.create(this);
         this.identityCodec = new IdentityCodec(context);
         this.instanceIdentifierCodec = new InstanceIdentifierCodec(this);
-        this.registry = requireNonNull(registry);
     }
 
     @Override
@@ -151,10 +149,9 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return identityCodec;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public DataObjectSerializer getEventStreamSerializer(final Class<?> type) {
-        return registry.getSerializer((Class) type);
+        return serializers.getUnchecked(type);
     }
 
     @Override
