@@ -47,6 +47,19 @@
             <groupId>org.opendaylight.mdsal</groupId>
             <artifactId>mdsal-binding-dom-codec-spi</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>

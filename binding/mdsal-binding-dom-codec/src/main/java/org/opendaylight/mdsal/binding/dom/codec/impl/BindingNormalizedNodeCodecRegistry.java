@@ -25,7 +25,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeFactory;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
@@ -57,7 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerRegistry,
-        BindingCodecTreeFactory, BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer {
+        BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer {
     private static final Logger LOG = LoggerFactory.getLogger(BindingNormalizedNodeCodecRegistry.class);
 
     private static final AtomicReferenceFieldUpdater<BindingNormalizedNodeCodecRegistry, BindingCodecContext> UPDATER =
@@ -298,11 +297,6 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         final DataObjectCodecContext<?,?> ctx = (DataObjectCodecContext<?,?>) codecContext.getCodecContextNode(path,
             null);
         return new DeserializeFunction<>(ctx);
-    }
-
-    @Override
-    public BindingCodecTree create(final BindingRuntimeContext context) {
-        return new BindingCodecContext(context, this);
     }
 
     private static final class DeserializeFunction<T> implements Function<Optional<NormalizedNode<?, ?>>, Optional<T>> {
