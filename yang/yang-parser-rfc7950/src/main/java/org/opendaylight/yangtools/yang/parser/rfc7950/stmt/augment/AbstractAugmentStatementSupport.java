@@ -178,8 +178,8 @@ abstract class AbstractAugmentStatementSupport
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .toFlags();
 
-        return new AugmentEffectiveStatementImpl(declared, flags, StmtContextUtils.getRootModuleQName(ctx),
-            substatements, ctx.getStatementSourceReference(),
+        return new AugmentEffectiveStatementImpl(declared, ctx.coerceStatementArgument(), flags,
+            StmtContextUtils.getRootModuleQName(ctx), substatements, ctx.getStatementSourceReference(),
             (AugmentationSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null));
     }
 

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -37,13 +36,15 @@ final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<Schem
             NotificationNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             WhenConditionMixin<SchemaNodeIdentifier, AugmentStatement> {
     private final @Nullable AugmentationSchemaNode original;
+    private final @NonNull SchemaNodeIdentifier argument;
     private final @NonNull QNameModule rootModuleQName;
     private final int flags;
 
-    AugmentEffectiveStatementImpl(final AugmentStatement declared, final int flags, final QNameModule rootModuleQName,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final StatementSourceReference ref,
-            final @Nullable AugmentationSchemaNode original) {
+    AugmentEffectiveStatementImpl(final AugmentStatement declared, final SchemaNodeIdentifier argument, final int flags,
+            final QNameModule rootModuleQName, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final StatementSourceReference ref, final @Nullable AugmentationSchemaNode original) {
         super(declared, ref, substatements);
+        this.argument = requireNonNull(argument);
         this.rootModuleQName = requireNonNull(rootModuleQName);
         this.flags = flags;
         this.original = original;
@@ -51,8 +52,7 @@ final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<Schem
 
     @Override
     public @NonNull SchemaNodeIdentifier argument() {
-        // FIXME: YANGTOOLS-1065: this is not okay, as this can actually have different namespaces
-        return verifyNotNull(getDeclared().argument());
+        return argument;
     }
 
     @Override
