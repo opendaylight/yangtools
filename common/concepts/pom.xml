@@ -27,6 +27,11 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>mockito-configuration</artifactId>
         </dependency>

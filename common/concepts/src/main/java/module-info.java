@@ -11,6 +11,9 @@ module org.opendaylight.yangtools.concepts {
     requires transitive com.google.common;
     requires org.slf4j;
 
+    // Optional OSGi integration
+    requires static transitive org.osgi.core;
+
     // Annotations
     requires static com.github.spotbugs.annotations;
     requires static org.eclipse.jdt.annotation;
