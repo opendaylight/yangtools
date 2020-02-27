@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.spec.reflect;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -266,13 +267,13 @@ public final class BindingReflections {
      * @return Instance of {@link YangModuleInfo} associated with model, from
      *         which this class was derived.
      */
-    public static YangModuleInfo getModuleInfo(final Class<?> cls) throws Exception {
+    public static @NonNull YangModuleInfo getModuleInfo(final Class<?> cls) throws Exception {
         checkArgument(cls != null);
         String packageName = getModelRootPackageName(cls.getPackage());
         final String potentialClassName = getModuleInfoClassName(packageName);
         return ClassLoaderUtils.callWithClassLoader(cls.getClassLoader(), () -> {
             Class<?> moduleInfoClass = Thread.currentThread().getContextClassLoader().loadClass(potentialClassName);
-            return (YangModuleInfo) moduleInfoClass.getMethod("getInstance").invoke(null);
+            return (YangModuleInfo) verifyNotNull(moduleInfoClass.getMethod("getInstance").invoke(null));
         });
     }
 
