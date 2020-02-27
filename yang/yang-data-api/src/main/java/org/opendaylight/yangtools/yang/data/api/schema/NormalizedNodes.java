@@ -76,6 +76,12 @@ public final class NormalizedNodes {
         return findNode(Optional.ofNullable(parent), relativePath);
     }
 
+    /**
+     * Lookup a node based on relative SchemaPath.
+     *
+     * @deprecated Use {@link #findNode(NormalizedNode, Descendant)} instead.
+     */
+    @Deprecated(forRemoval = true)
     public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent,
             final SchemaPath relativePath) {
         checkArgument(!relativePath.isAbsolute(), "%s is not a relative path", relativePath);
