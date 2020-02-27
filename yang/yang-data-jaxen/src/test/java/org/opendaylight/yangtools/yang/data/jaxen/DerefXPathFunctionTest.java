@@ -35,10 +35,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathDocument;
-import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContext;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations;
+import org.opendaylight.yangtools.yang.data.jaxen.api.XPathDocument;
+import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 

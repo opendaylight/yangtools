@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.jaxen;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContext;
-import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContextFactory;
+import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
+import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 @MetaInfServices

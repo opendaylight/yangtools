@@ -14,4 +14,4 @@
  * {@code org.opendaylight.yang.data.api.xpath} package.
  */
 @java.lang.Deprecated
-package org.opendaylight.yangtools.yang.data.api.schema.xpath;
+package org.opendaylight.yangtools.yang.data.jaxen.api;

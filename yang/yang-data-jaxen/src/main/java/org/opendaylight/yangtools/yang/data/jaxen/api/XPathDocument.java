@@ -5,21 +5,22 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.api.schema.xpath;
+package org.opendaylight.yangtools.yang.data.jaxen.api;
 
 import com.google.common.annotations.Beta;
-import java.util.Collection;
-import java.util.Map.Entry;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
- * An {@link XPathResult} containing a set of nodes. Resulting nodes are identified by their
- * {@link YangInstanceIdentifier}.
+ * The notion of a document, modeled as a {@link NormalizedNode}.
  */
 @Beta
 @Deprecated
-public interface XPathNodesetResult
-    extends XPathResult<Collection<Entry<YangInstanceIdentifier, NormalizedNode<?, ?>>>> {
-
+public interface XPathDocument {
+    /**
+     * Return the root node of this document.
+     *
+     * @return This document's root node.
+     */
+    @NonNull NormalizedNode<?, ?> getRootNode();
 }

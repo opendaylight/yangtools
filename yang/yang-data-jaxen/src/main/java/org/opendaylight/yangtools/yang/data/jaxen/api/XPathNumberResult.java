@@ -5,15 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.api.schema.xpath;
+package org.opendaylight.yangtools.yang.data.jaxen.api;
 
 import com.google.common.annotations.Beta;
 
 /**
- * An {@link XPathResult} containing a String.
+ * An {@link XPathResult} containing a Number.
  */
 @Beta
 @Deprecated
-public interface XPathStringResult extends XPathResult<String> {
+public interface XPathNumberResult extends XPathResult<Number> {
 
 }
