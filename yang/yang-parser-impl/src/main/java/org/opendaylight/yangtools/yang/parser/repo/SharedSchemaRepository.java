@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFacto
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.util.AbstractSchemaRepository;
+import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaRepository;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserFactoryImpl;
 
 /**

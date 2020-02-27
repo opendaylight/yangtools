@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
-import org.opendaylight.yangtools.yang.model.repo.util.SchemaSourceTransformer;
+import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

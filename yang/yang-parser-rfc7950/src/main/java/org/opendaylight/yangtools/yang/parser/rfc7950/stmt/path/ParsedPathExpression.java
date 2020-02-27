@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.util.AbstractPathExpression;
+import org.opendaylight.yangtools.yang.model.spi.AbstractPathExpression;
 
 @NonNullByDefault
 final class ParsedPathExpression extends AbstractPathExpression {

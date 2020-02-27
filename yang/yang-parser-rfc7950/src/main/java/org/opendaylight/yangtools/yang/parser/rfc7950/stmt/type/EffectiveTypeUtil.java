@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
-import org.opendaylight.yangtools.yang.model.util.type.BitBuilder;
-import org.opendaylight.yangtools.yang.model.util.type.EnumPairBuilder;
+import org.opendaylight.yangtools.yang.model.spi.type.BitBuilder;
+import org.opendaylight.yangtools.yang.model.spi.type.EnumPairBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_.EnumEffectiveStatementImpl;
 
 @Beta
