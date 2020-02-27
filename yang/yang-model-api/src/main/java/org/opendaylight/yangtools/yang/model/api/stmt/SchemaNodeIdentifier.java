@@ -38,15 +38,15 @@ public abstract class SchemaNodeIdentifier implements Immutable {
             super(qnames);
         }
 
-        public static Absolute of(final QName nodeIdentifier) {
+        public static @NonNull Absolute of(final QName nodeIdentifier) {
             return new Absolute(nodeIdentifier);
         }
 
-        public static Absolute of(final QName... nodeIdentifiers) {
+        public static @NonNull Absolute of(final QName... nodeIdentifiers) {
             return new Absolute(Arrays.asList(nodeIdentifiers));
         }
 
-        public static Absolute of(final Collection<QName> nodeIdentifiers) {
+        public static @NonNull Absolute of(final Collection<QName> nodeIdentifiers) {
             return new Absolute(ImmutableList.copyOf(nodeIdentifiers));
         }
 
@@ -68,15 +68,15 @@ public abstract class SchemaNodeIdentifier implements Immutable {
             super(qnames);
         }
 
-        public static Descendant of(final QName nodeIdentifier) {
+        public static @NonNull Descendant of(final QName nodeIdentifier) {
             return new Descendant(nodeIdentifier);
         }
 
-        public static Descendant of(final QName... nodeIdentifiers) {
+        public static @NonNull Descendant of(final QName... nodeIdentifiers) {
             return new Descendant(Arrays.asList(nodeIdentifiers));
         }
 
-        public static Descendant of(final Collection<QName> nodeIdentifiers) {
+        public static @NonNull Descendant of(final Collection<QName> nodeIdentifiers) {
             return new Descendant(nodeIdentifiers);
         }
 
