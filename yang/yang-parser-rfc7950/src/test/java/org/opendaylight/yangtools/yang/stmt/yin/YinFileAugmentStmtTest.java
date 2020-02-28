@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,10 +36,9 @@ public class YinFileAugmentStmtTest extends AbstractYinModulesTest {
         final Iterator<? extends AugmentationSchemaNode> augmentIterator = augmentations.iterator();
         final AugmentationSchemaNode augment = augmentIterator.next();
         assertNotNull(augment);
-        assertTrue(augment.getTargetPath().toString().contains(
-                "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)modules, "
-                        + "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)module, "
-                        + "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)configuration"));
+        assertThat(augment.getTargetPath().toString(), containsString(
+            "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)modules, module, "
+                    + "configuration"));
 
         assertEquals(1, augment.getChildNodes().size());
         final DataSchemaNode caseNode = augment.findDataChildByName(

@@ -5,21 +5,23 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -71,7 +73,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void testDeviateAdd() throws Exception {
+    public void testDeviateAdd() throws ReactorException {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
                 sourceForResource("/deviation-resolution-test/deviation-add/foo.yang"),
                 sourceForResource("/deviation-resolution-test/deviation-add/bar.yang"));
@@ -123,7 +125,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void testDeviateReplace() throws Exception {
+    public void testDeviateReplace() throws ReactorException {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
                 sourceForResource("/deviation-resolution-test/deviation-replace/foo.yang"),
                 sourceForResource("/deviation-resolution-test/deviation-replace/bar.yang"));
@@ -136,7 +138,7 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-leaf"));
         assertNotNull(myLeaf);
 
-        assertTrue(myLeaf.getType() instanceof Uint32TypeDefinition);
+        assertThat(myLeaf.getType(), instanceOf(Uint32TypeDefinition.class));
         assertEquals(Optional.of("bytes"), myLeaf.getType().getUnits());
         assertEquals(Optional.of("10"), myLeaf.getType().getDefaultValue());
 
@@ -164,7 +166,7 @@ public class DeviationResolutionTest {
         final LeafSchemaNode myAugLeaf = (LeafSchemaNode) myCont.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-aug-leaf"));
         assertNotNull(myAugLeaf);
-        assertTrue(myAugLeaf.getType() instanceof Uint32TypeDefinition);
+        assertThat(myAugLeaf.getType(), instanceOf(Uint32TypeDefinition.class));
         assertEquals(Optional.of("seconds"), myAugLeaf.getType().getUnits());
         assertEquals(Optional.of("new-def-val"), myAugLeaf.getType().getDefaultValue());
         assertEquals(1, myAugLeaf.getUnknownSchemaNodes().size());
@@ -173,7 +175,7 @@ public class DeviationResolutionTest {
         final LeafSchemaNode myUsedLeaf = (LeafSchemaNode) myCont.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-used-leaf"));
         assertNotNull(myUsedLeaf);
-        assertTrue(myUsedLeaf.getType() instanceof Uint32TypeDefinition);
+        assertThat(myUsedLeaf.getType(), instanceOf(Uint32TypeDefinition.class));
         assertEquals(Optional.of("weeks"), myUsedLeaf.getType().getUnits());
         assertEquals(Optional.of("new-def-val"), myUsedLeaf.getType().getDefaultValue());
         assertEquals(1, myUsedLeaf.getUnknownSchemaNodes().size());
@@ -181,7 +183,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void testDeviateDelete() throws Exception {
+    public void testDeviateDelete() throws ReactorException {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
                 sourceForResource("/deviation-resolution-test/deviation-delete/foo.yang"),
                 sourceForResource("/deviation-resolution-test/deviation-delete/bar.yang"));
@@ -232,206 +234,163 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidYang10Model() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(
-                    sourceForResource("/deviation-resolution-test/deviation-add/foo10-invalid.yang"),
-                    sourceForResource("/deviation-resolution-test/deviation-add/bar10-invalid.yang"));
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidSubstatementException);
-            assertTrue(cause.getMessage().startsWith("Maximal count of DEFAULT for DEVIATE is 1, detected 2."));
-        }
+    public void shouldFailOnInvalidYang10Model() {
+        final ReactorException ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            sourceForResource("/deviation-resolution-test/deviation-add/foo10-invalid.yang"),
+            sourceForResource("/deviation-resolution-test/deviation-add/bar10-invalid.yang")));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidSubstatementException.class));
+        assertThat(cause.getMessage(), startsWith("Maximal count of DEFAULT for DEVIATE is 1, detected 2."));
     }
 
     @Test
-    public void shouldFailOnInvalidYang10Model2() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(
-                    sourceForResource("/deviation-resolution-test/deviation-delete/foo10-invalid.yang"),
-                    sourceForResource("/deviation-resolution-test/deviation-delete/bar10-invalid.yang"));
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidSubstatementException);
-            assertTrue(cause.getMessage().startsWith("Maximal count of DEFAULT for DEVIATE is 1, detected 2."));
-        }
+    public void shouldFailOnInvalidYang10Model2() {
+        final ReactorException ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            sourceForResource("/deviation-resolution-test/deviation-delete/foo10-invalid.yang"),
+            sourceForResource("/deviation-resolution-test/deviation-delete/bar10-invalid.yang")));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidSubstatementException.class));
+        assertThat(cause.getMessage(), startsWith("Maximal count of DEFAULT for DEVIATE is 1, detected 2."));
     }
 
     @Test
-    public void shouldFailOnInvalidDeviationTarget() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(sourceForResource(
-                    "/deviation-resolution-test/foo-invalid-deviation-target.yang"),
-                    sourceForResource("/deviation-resolution-test/bar.yang"));
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("(bar?revision=2017-01-20)my-cont is not a valid deviation "
-                    + "target for substatement (urn:ietf:params:xml:ns:yang:yin:1)max-elements."));
-        }
+    public void shouldFailOnInvalidDeviationTarget() {
+        final ReactorException ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            sourceForResource("/deviation-resolution-test/foo-invalid-deviation-target.yang"),
+            sourceForResource("/deviation-resolution-test/bar.yang")));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith("(bar?revision=2017-01-20)my-cont is not a valid deviation "
+                + "target for substatement (urn:ietf:params:xml:ns:yang:yin:1)max-elements."));
     }
 
     @Test
-    public void shouldFailOnInvalidDeviationPath() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(
-                    sourceForResource("/deviation-resolution-test/foo-invalid-deviation-path.yang"),
-                    sourceForResource("/deviation-resolution-test/bar.yang"));
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause().getCause();
-            assertTrue(cause instanceof InferenceException);
-            assertThat(cause.getMessage(), startsWith("Deviation target 'Absolute{qnames=[(bar?revision=2017-01-20)"
-                    + "invalid, (bar?revision=2017-01-20)path]}' not found"));
-        }
+    public void shouldFailOnInvalidDeviationPath() {
+        final ReactorException ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            sourceForResource("/deviation-resolution-test/foo-invalid-deviation-path.yang"),
+            sourceForResource("/deviation-resolution-test/bar.yang")));
+        final Throwable cause = ex.getCause().getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith(
+            "Deviation target 'Absolute{qnames=[(bar?revision=2017-01-20)invalid, path]}' not found"));
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateAdd() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(
-                    sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid.yang"),
-                    sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid.yang"));
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
-                    + ":yin:1)config to target node (bar?revision=2017-01-20)my-leaf because it is already defined in"
-                    + " target and can appear only once."));
-        }
+    public void shouldFailOnInvalidDeviateAdd() {
+        final ReactorException ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid.yang"),
+            sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid.yang")));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
+                + ":yin:1)config to target node (bar?revision=2017-01-20)my-leaf because it is already defined in"
+                + " target and can appear only once."));
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateAdd2() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(
-                    sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid-2.yang"),
-                    sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid-2.yang"));
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
-                    + ":yin:1)default to target node (bar?revision=2017-01-20)my-leaf because it is already defined in"
-                    + " target and can appear only once."));
-        }
+    public void shouldFailOnInvalidDeviateAdd2() {
+        final ReactorException ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid-2.yang"),
+            sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid-2.yang")));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
+                + ":yin:1)default to target node (bar?revision=2017-01-20)my-leaf because it is already defined in"
+                + " target and can appear only once."));
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateAdd3() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(
-                    sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid-4.yang"),
-                    sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid-4.yang"));
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
-                    + ":yin:1)default to target node (bar?revision=2017-02-01)my-used-leaf because it is already "
-                    + "defined in target and can appear only once."));
-        }
+    public void shouldFailOnInvalidDeviateAdd3() {
+        final ReactorException ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid-4.yang"),
+            sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid-4.yang")));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
+                + ":yin:1)default to target node (bar?revision=2017-02-01)my-used-leaf because it is already "
+                + "defined in target and can appear only once."));
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateReplace() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(
-                    sourceForResource("/deviation-resolution-test/deviation-replace/foo-invalid.yang"),
-                    sourceForResource("/deviation-resolution-test/deviation-replace/bar-invalid.yang"));
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("Deviation cannot replace substatement "
-                    + "(urn:ietf:params:xml:ns:yang:yin:1)units in target node (bar?revision=2017-01-20)my-leaf "
-                    + "because it does not exist in target node."));
-        }
+    public void shouldFailOnInvalidDeviateReplace() {
+        final ReactorException ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            sourceForResource("/deviation-resolution-test/deviation-replace/foo-invalid.yang"),
+            sourceForResource("/deviation-resolution-test/deviation-replace/bar-invalid.yang")));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith("Deviation cannot replace substatement "
+                + "(urn:ietf:params:xml:ns:yang:yin:1)units in target node (bar?revision=2017-01-20)my-leaf "
+                + "because it does not exist in target node."));
     }
 
     @Test
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
-    public void shouldLogInvalidDeviateReplaceAttempt() throws Exception {
+    public void shouldLogInvalidDeviateReplaceAttempt() throws ReactorException {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final String testLog;
 
-        System.setOut(new PrintStream(output, true, "UTF-8"));
+        System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
 
         StmtTestUtils.parseYangSources(
-                sourceForResource("/deviation-resolution-test/deviation-replace/foo-invalid-2.yang"),
-                sourceForResource("/deviation-resolution-test/deviation-replace/bar-invalid-2.yang"));
+            sourceForResource("/deviation-resolution-test/deviation-replace/foo-invalid-2.yang"),
+            sourceForResource("/deviation-resolution-test/deviation-replace/bar-invalid-2.yang"));
 
         testLog = output.toString();
         System.setOut(stdout);
-        assertTrue(testLog.contains("Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)default"
-                + " in target leaf-list (bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple "
-                + "default statements."));
+        assertThat(testLog, containsString(
+            "Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)default in target leaf-list "
+                    + "(bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple "
+                    + "default statements."));
     }
 
     @Test
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
-    public void shouldLogInvalidDeviateDeleteAttempt() throws Exception {
+    public void shouldLogInvalidDeviateDeleteAttempt() throws ReactorException {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final String testLog;
 
-        System.setOut(new PrintStream(output, true, "UTF-8"));
+        System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
 
         StmtTestUtils.parseYangSources(
-                sourceForResource("/deviation-resolution-test/deviation-delete/foo-invalid.yang"),
-                sourceForResource("/deviation-resolution-test/deviation-delete/bar-invalid.yang"));
+            sourceForResource("/deviation-resolution-test/deviation-delete/foo-invalid.yang"),
+            sourceForResource("/deviation-resolution-test/deviation-delete/bar-invalid.yang"));
 
         testLog = output.toString();
         System.setOut(stdout);
-        assertTrue(testLog.contains("Deviation cannot delete substatement (urn:ietf:params:xml:ns:yang:yin:1)units "
-                + "with argument 'seconds' in target node (bar?revision=2017-01-20)my-leaf because it does not exist "
-                + "in the target node."));
+        assertThat(testLog, containsString(
+            "Deviation cannot delete substatement (urn:ietf:params:xml:ns:yang:yin:1)units with argument 'seconds' in "
+                    + "target node (bar?revision=2017-01-20)my-leaf because it does not exist in the target node."));
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateAddSubstatement() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(
-                    sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid-3.yang"),
-                    sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid-3.yang"));
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidSubstatementException);
-            assertTrue(cause.getMessage().startsWith("TYPE is not valid for DEVIATE."));
-        }
+    public void shouldFailOnInvalidDeviateAddSubstatement() {
+        final ReactorException ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid-3.yang"),
+            sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid-3.yang")));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidSubstatementException.class));
+        assertThat(cause.getMessage(), startsWith("TYPE is not valid for DEVIATE."));
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateReplaceSubstatement() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(
-                    sourceForResource("/deviation-resolution-test/deviation-replace/foo-invalid-3.yang"),
-                    sourceForResource("/deviation-resolution-test/deviation-replace/bar-invalid-3.yang"));
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidSubstatementException);
-            assertTrue(cause.getMessage().startsWith("MUST is not valid for DEVIATE."));
-        }
+    public void shouldFailOnInvalidDeviateReplaceSubstatement() {
+        final ReactorException ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            sourceForResource("/deviation-resolution-test/deviation-replace/foo-invalid-3.yang"),
+            sourceForResource("/deviation-resolution-test/deviation-replace/bar-invalid-3.yang")));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidSubstatementException.class));
+        assertThat(cause.getMessage(), startsWith("MUST is not valid for DEVIATE."));
     }
 
     @Test
     public void shouldFailOnInvalidDeviateDeleteSubstatement() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(
-                    sourceForResource("/deviation-resolution-test/deviation-delete/foo-invalid-2.yang"),
-                    sourceForResource("/deviation-resolution-test/deviation-delete/bar-invalid-2.yang"));
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidSubstatementException);
-            assertTrue(cause.getMessage().startsWith("CONFIG is not valid for DEVIATE."));
-        }
+        final ReactorException ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            sourceForResource("/deviation-resolution-test/deviation-delete/foo-invalid-2.yang"),
+            sourceForResource("/deviation-resolution-test/deviation-delete/bar-invalid-2.yang")));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidSubstatementException.class));
+        assertThat(cause.getMessage(), startsWith("CONFIG is not valid for DEVIATE."));
     }
 }
