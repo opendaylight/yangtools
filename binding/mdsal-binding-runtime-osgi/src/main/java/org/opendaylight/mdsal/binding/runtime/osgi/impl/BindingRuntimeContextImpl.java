@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.runtime.osgi.impl;
 
+import com.google.common.primitives.UnsignedLong;
 import org.opendaylight.binding.runtime.api.AbstractBindingRuntimeContext;
 import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.binding.runtime.api.BindingRuntimeGenerator;
@@ -33,8 +34,8 @@ public final class BindingRuntimeContextImpl extends AbstractBindingRuntimeConte
     @Reference
     BindingRuntimeGenerator generator = null;
 
-    private BindingRuntimeContext delegate = null;
-    private long generation;
+    private BindingRuntimeContext delegate;
+    private UnsignedLong generation;
 
     @Override
     public ClassLoadingStrategy getStrategy() {
