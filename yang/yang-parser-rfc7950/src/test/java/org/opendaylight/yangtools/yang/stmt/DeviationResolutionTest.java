@@ -284,8 +284,8 @@ public class DeviationResolutionTest {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause().getCause();
             assertTrue(cause instanceof InferenceException);
-            assertThat(cause.getMessage(), startsWith("Deviation target 'Absolute{qnames=[(bar?revision=2017-01-20)"
-                    + "invalid, (bar?revision=2017-01-20)path]}' not found"));
+            assertThat(cause.getMessage(), startsWith(
+                "Deviation target 'Absolute{qnames=[(bar?revision=2017-01-20)invalid, path]}' not found"));
         }
     }
 

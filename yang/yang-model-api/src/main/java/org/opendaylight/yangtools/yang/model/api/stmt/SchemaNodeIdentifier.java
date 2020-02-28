@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
@@ -146,6 +148,24 @@ public abstract class SchemaNodeIdentifier implements Immutable {
 
     @Override
     public final String toString() {
-        return MoreObjects.toStringHelper(this).add("qnames", qnames).toString();
+        return MoreObjects.toStringHelper(this).add("qnames", toStringQNames()).toString();
+    }
+
+    private List<?> toStringQNames() {
+        final List<QName> ids = getNodeIdentifiers();
+        return ids.size() < 2 ? ids : simplifyQNames(ids);
+    }
+
+    private static List<?> simplifyQNames(final List<QName> qnames) {
+        final List<Object> ret = new ArrayList<>(qnames.size());
+
+        QNameModule prev = null;
+        for (QName qname : qnames) {
+            final QNameModule module = qname.getModule();
+            ret.add(module.equals(prev) ? qname.getLocalName() : qname);
+            prev = module;
+        }
+
+        return ret;
     }
 }

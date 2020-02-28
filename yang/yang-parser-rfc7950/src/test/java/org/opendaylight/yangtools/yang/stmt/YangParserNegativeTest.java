@@ -81,7 +81,7 @@ public class YangParserNegativeTest {
             final Throwable rootCause = Throwables.getRootCause(e);
             assertThat(rootCause, isA(InferenceException.class));
             assertThat(rootCause.getMessage(), startsWith(
-                "Augment target 'Absolute{qnames=(urn:simple.container.demo)unknown}' not found"));
+                "Augment target 'Absolute{qnames=[(urn:simple.container.demo)unknown]}' not found"));
         }
     }
 
@@ -92,7 +92,7 @@ public class YangParserNegativeTest {
             fail("ReactorException should be thrown");
         } catch (final ReactorException e) {
             assertThat(e.getCause().getMessage(), containsString("Error in module 'test4' in the refine of uses "
-                    + "'Descendant{qnames=(urn:simple.container.demo)node}': can not perform refine of 'PRESENCE' for"
+                    + "'Descendant{qnames=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for"
                     + " the target 'LEAF_LIST'."));
         }
     }
