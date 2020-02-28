@@ -164,14 +164,14 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return serializers.getUnchecked(type);
     }
 
-    public Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriter(final InstanceIdentifier<?> path,
+    Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriter(final InstanceIdentifier<?> path,
             final NormalizedNodeStreamWriter domWriter) {
         final List<YangInstanceIdentifier.PathArgument> yangArgs = new LinkedList<>();
         final DataContainerCodecContext<?,?> codecContext = getCodecContextNode(path, yangArgs);
         return new SimpleEntry<>(YangInstanceIdentifier.create(yangArgs), codecContext.createWriter(domWriter));
     }
 
-    public BindingStreamEventWriter newWriterWithoutIdentifier(final InstanceIdentifier<?> path,
+    BindingStreamEventWriter newWriterWithoutIdentifier(final InstanceIdentifier<?> path,
             final NormalizedNodeStreamWriter domWriter) {
         return getCodecContextNode(path, null).createWriter(domWriter);
     }
@@ -186,7 +186,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return root.getNotification(notification).createWriter(domWriter);
     }
 
-    public DataContainerCodecContext<?,?> getCodecContextNode(final InstanceIdentifier<?> binding,
+    DataContainerCodecContext<?,?> getCodecContextNode(final InstanceIdentifier<?> binding,
             final List<YangInstanceIdentifier.PathArgument> builder) {
         DataContainerCodecContext<?,?> currentNode = root;
         for (final InstanceIdentifier.PathArgument bindingArg : binding.getPathArguments()) {
