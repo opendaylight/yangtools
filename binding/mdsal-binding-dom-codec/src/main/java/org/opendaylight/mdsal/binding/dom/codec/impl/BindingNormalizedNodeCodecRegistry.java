@@ -55,8 +55,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerRegistry,
-        BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer {
+public class BindingNormalizedNodeCodecRegistry
+        implements BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer {
     private static final Logger LOG = LoggerFactory.getLogger(BindingNormalizedNodeCodecRegistry.class);
 
     private static final AtomicReferenceFieldUpdater<BindingNormalizedNodeCodecRegistry, BindingCodecContext> UPDATER =
@@ -71,11 +71,6 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     public BindingNormalizedNodeCodecRegistry(final BindingRuntimeContext codecContext) {
         this();
         onBindingRuntimeContextUpdated(codecContext);
-    }
-
-    @Override
-    public DataObjectSerializer getSerializer(final Class<? extends DataObject> type) {
-        return codecContext().getSerializer(type);
     }
 
     public BindingCodecTree getCodecContext() {
@@ -126,7 +121,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
 
         // We get serializer which reads binding data and uses Binding To Normalized Node writer to write result
         try {
-            getSerializer(path.getTargetType()).serialize(data, writeCtx.getValue());
+            codecContext.getSerializer(path.getTargetType()).serialize(data, writeCtx.getValue());
         } catch (final IOException e) {
             LOG.error("Unexpected failure while serializing path {} data {}", path, data, e);
             throw new IllegalStateException("Failed to create normalized node", e);
@@ -183,7 +178,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         @SuppressWarnings("unchecked")
         final BindingStreamEventWriter writer = newWriter.apply((Class<T>)type, domWriter);
         try {
-            getSerializer(type).serialize(data, writer);
+            codecContext.getSerializer(type).serialize(data, writer);
         } catch (final IOException e) {
             LOG.error("Unexpected failure while serializing data {}", data, e);
             throw new IllegalStateException("Failed to create normalized node", e);
