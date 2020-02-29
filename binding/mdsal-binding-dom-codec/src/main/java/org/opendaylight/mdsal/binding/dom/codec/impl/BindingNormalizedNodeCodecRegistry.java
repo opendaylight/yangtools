@@ -310,12 +310,12 @@ public class BindingNormalizedNodeCodecRegistry
 
     @NonNullByDefault
     private abstract static class AbstractLazyActionContainerNode<T extends DataObject>
-            extends AbstractBindingLazyContainerNode<T, BindingNormalizedNodeCodecRegistry> {
+            extends AbstractBindingLazyContainerNode<T, BindingNormalizedNodeSerializer> {
         protected final Class<? extends Action<?, ?, ?>> action;
 
         AbstractLazyActionContainerNode(final NodeIdentifier identifier, final T bindingData,
-            final BindingNormalizedNodeCodecRegistry context, final Class<? extends Action<?, ?, ?>> action) {
-            super(identifier, bindingData, context);
+                final BindingNormalizedNodeSerializer codec, final Class<? extends Action<?, ?, ?>> action) {
+            super(identifier, bindingData, codec);
             this.action = requireNonNull(action);
         }
     }
@@ -323,12 +323,12 @@ public class BindingNormalizedNodeCodecRegistry
     @NonNullByDefault
     private static final class LazyActionInputContainerNode extends AbstractLazyActionContainerNode<RpcInput> {
         LazyActionInputContainerNode(final NodeIdentifier identifier, final RpcInput bindingData,
-                final BindingNormalizedNodeCodecRegistry context, final Class<? extends Action<?, ?, ?>> action) {
-            super(identifier, bindingData, context, action);
+                final BindingNormalizedNodeSerializer codec, final Class<? extends Action<?, ?, ?>> action) {
+            super(identifier, bindingData, codec, action);
         }
 
         @Override
-        protected ContainerNode computeContainerNode(final BindingNormalizedNodeCodecRegistry context) {
+        protected ContainerNode computeContainerNode(final BindingNormalizedNodeSerializer context) {
             return context.toNormalizedNodeActionInput(action, getDataObject());
         }
     }
@@ -336,12 +336,12 @@ public class BindingNormalizedNodeCodecRegistry
     @NonNullByDefault
     private static final class LazyActionOutputContainerNode extends AbstractLazyActionContainerNode<RpcOutput> {
         LazyActionOutputContainerNode(final NodeIdentifier identifier, final RpcOutput bindingData,
-                final BindingNormalizedNodeCodecRegistry context, final Class<? extends Action<?, ?, ?>> action) {
-            super(identifier, bindingData, context, action);
+                final BindingNormalizedNodeSerializer codec, final Class<? extends Action<?, ?, ?>> action) {
+            super(identifier, bindingData, codec, action);
         }
 
         @Override
-        protected ContainerNode computeContainerNode(final BindingNormalizedNodeCodecRegistry context) {
+        protected ContainerNode computeContainerNode(final BindingNormalizedNodeSerializer context) {
             return context.toNormalizedNodeActionOutput(action, getDataObject());
         }
     }
