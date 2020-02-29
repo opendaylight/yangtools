@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
  * This class is thread-safe.
  *
  * @param <T> Binding DataObject type
+ * @param <C> Context type
  * @author Robert Varga
  */
 @Beta
