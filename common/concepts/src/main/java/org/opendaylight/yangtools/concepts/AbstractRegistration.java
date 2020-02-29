@@ -27,12 +27,21 @@ public abstract class AbstractRegistration implements Registration {
     protected abstract void removeRegistration();
 
     /**
-     * Query the state of this registration. Returns true if it was closed.
+     * Query the state of this registration. Returns true if it was closed. Equivalent of {@code !notClosed()}.
      *
      * @return true if the registration was closed, false otherwise.
      */
     public final boolean isClosed() {
         return closed != 0;
+    }
+
+    /**
+     * Query the state of this registration. Returns false if it was closed. Equivalent of {@code !isClosed()}.
+     *
+     * @return false if the registration was closed, true otherwise.
+     */
+    public final boolean notClosed() {
+        return closed == 0;
     }
 
     @Override
