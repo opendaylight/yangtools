@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import java.util.Collection;
 import java.util.EventListener;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractListenerRegistration;
@@ -54,7 +54,7 @@ public final class ListenerRegistry<T extends EventListener> implements Mutable 
     }
 
     public <L extends T> @NonNull ListenerRegistration<L> register(final L listener) {
-        final ListenerRegistration<L> ret = new ListenerRegistrationImpl<>(listener, listeners::remove);
+        final ListenerRegistration<L> ret = new ListenerRegistrationImpl<>(listener, listeners);
         listeners.add(ret);
         return ret;
     }
@@ -69,18 +69,18 @@ public final class ListenerRegistry<T extends EventListener> implements Mutable 
 
     private static final class ListenerRegistrationImpl<T extends EventListener>
             extends AbstractListenerRegistration<T> {
-        private Consumer<ListenerRegistration<? super T>> removeCall;
+        private Collection<?> removeFrom;
 
-        ListenerRegistrationImpl(final T instance, final Consumer<ListenerRegistration<? super T>> removeCall) {
+        ListenerRegistrationImpl(final T instance, final Collection<?> removeFrom) {
             super(instance);
-            this.removeCall = requireNonNull(removeCall);
+            this.removeFrom = requireNonNull(removeFrom);
         }
 
         @Override
         protected void removeRegistration() {
-            removeCall.accept(this);
+            removeFrom.remove(this);
             // Do not retain reference to that state
-            removeCall = null;
+            removeFrom = null;
         }
     }
 }
