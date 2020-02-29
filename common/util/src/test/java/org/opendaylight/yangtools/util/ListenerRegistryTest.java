@@ -19,8 +19,6 @@ import org.junit.rules.ExpectedException;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 
 public class ListenerRegistryTest {
-
-    private TestEventListener testEventListener;
     private ExtendedTestEventListener extendedTestEventListener;
     private ListenerRegistry<TestEventListener> registry;
 
@@ -29,7 +27,6 @@ public class ListenerRegistryTest {
 
     @Before
     public void init() {
-        testEventListener = new TestEventListener() {};
         extendedTestEventListener = new ExtendedTestEventListener() {};
         registry = ListenerRegistry.create();
     }
@@ -40,7 +37,7 @@ public class ListenerRegistryTest {
     }
 
     @Test
-    public void tetGetListenersMethod() {
+    public void testGetListenersMethod() {
         assertEquals("Listener registry should have any listeners.", ImmutableSet.of(), registry.getRegistrations());
     }
 
