@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.EventListener;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +32,7 @@ public class ListenerRegistryTest {
 
     @Test
     public void testGetListenersMethod() {
-        assertEquals("Listener registry should have any listeners.", ImmutableSet.of(), registry.getRegistrations());
+        assertEquals("Listener registry should not have any listeners.", 0, registry.streamListeners().count());
     }
 
     @Test

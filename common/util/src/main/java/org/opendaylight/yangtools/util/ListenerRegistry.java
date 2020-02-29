@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import java.util.Collections;
 import java.util.EventListener;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,12 +26,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * @param <T> Type of listeners this registry handles
  */
 public final class ListenerRegistry<T extends EventListener> implements Mutable {
-
     private final Set<ListenerRegistration<? extends T>> listeners = ConcurrentHashMap.newKeySet();
-    // This conversion is known to be safe.
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private final Set<ListenerRegistration<T>> unmodifiableView = (Set) Collections.unmodifiableSet(listeners);
-
     private final String name;
 
     private ListenerRegistry(final String name) {
@@ -45,11 +39,6 @@ public final class ListenerRegistry<T extends EventListener> implements Mutable 
 
     public static <T extends EventListener> @NonNull ListenerRegistry<T> create(final @NonNull String name) {
         return new ListenerRegistry<>(requireNonNull(name));
-    }
-
-    @Deprecated(forRemoval = true)
-    public @NonNull Set<? extends ListenerRegistration<? extends T>> getRegistrations() {
-        return unmodifiableView;
     }
 
     public void clear() {
