@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * @param <T> Type of listeners this registry handles
  */
 public final class ListenerRegistry<T extends EventListener> implements Mutable {
-    private final Set<ListenerRegistration<? extends T>> listeners = ConcurrentHashMap.newKeySet();
+    private final Set<RegistrationImpl<? extends T>> listeners = ConcurrentHashMap.newKeySet();
     private final String name;
 
     private ListenerRegistry(final String name) {
@@ -42,7 +42,7 @@ public final class ListenerRegistry<T extends EventListener> implements Mutable 
     }
 
     public void clear() {
-        listeners.stream().forEach(ListenerRegistration::close);
+        listeners.stream().forEach(RegistrationImpl::close);
     }
 
     public boolean isEmpty() {
@@ -50,11 +50,11 @@ public final class ListenerRegistry<T extends EventListener> implements Mutable 
     }
 
     public Stream<? extends T> streamListeners() {
-        return listeners.stream().map(ListenerRegistration::getInstance);
+        return listeners.stream().filter(RegistrationImpl::notClosed).map(RegistrationImpl::getInstance);
     }
 
     public <L extends T> @NonNull ListenerRegistration<L> register(final L listener) {
-        final ListenerRegistration<L> ret = new ListenerRegistrationImpl<>(listener, listeners);
+        final RegistrationImpl<L> ret = new RegistrationImpl<>(listener, listeners);
         listeners.add(ret);
         return ret;
     }
@@ -67,11 +67,10 @@ public final class ListenerRegistry<T extends EventListener> implements Mutable 
                 .toString();
     }
 
-    private static final class ListenerRegistrationImpl<T extends EventListener>
-            extends AbstractListenerRegistration<T> {
+    private static final class RegistrationImpl<T extends EventListener> extends AbstractListenerRegistration<T> {
         private Collection<?> removeFrom;
 
-        ListenerRegistrationImpl(final T instance, final Collection<?> removeFrom) {
+        RegistrationImpl(final T instance, final Collection<?> removeFrom) {
             super(instance);
             this.removeFrom = requireNonNull(removeFrom);
         }
