@@ -47,8 +47,13 @@ public final class ListenerRegistry<T extends EventListener> implements Mutable 
         return new ListenerRegistry<>(requireNonNull(name));
     }
 
+    @Deprecated(forRemoval = true)
     public @NonNull Set<? extends ListenerRegistration<? extends T>> getRegistrations() {
         return unmodifiableView;
+    }
+
+    public void clear() {
+        listeners.stream().forEach(ListenerRegistration::close);
     }
 
     public boolean isEmpty() {
@@ -59,7 +64,7 @@ public final class ListenerRegistry<T extends EventListener> implements Mutable 
         return listeners.stream().map(ListenerRegistration::getInstance);
     }
 
-    public <L extends T> @NonNull  ListenerRegistration<L> register(final L listener) {
+    public <L extends T> @NonNull ListenerRegistration<L> register(final L listener) {
         final ListenerRegistration<L> ret = new ListenerRegistrationImpl<>(listener, listeners::remove);
         listeners.add(ret);
         return ret;
