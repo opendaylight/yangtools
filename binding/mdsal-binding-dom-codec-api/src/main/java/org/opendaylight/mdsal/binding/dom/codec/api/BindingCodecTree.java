@@ -30,10 +30,18 @@ public interface BindingCodecTree {
     @Nullable BindingCodecTreeNode getSubtreeCodec(Absolute path);
 
     /**
-     * Get the BindingIdentityCodec associated with this tree.
+     * Get the {@link BindingIdentityCodec} associated with this tree.
      *
      * @return A BindingIdentityCodec instance.
      */
     @Beta
     @NonNull BindingIdentityCodec getIdentityCodec();
+
+    /**
+     * Get the {@link BindingInstanceIdentifierCodec} associated with this tree.
+     *
+     * @return A BindingInstanceIdentifierCodec instance.
+     */
+    @Beta
+    @NonNull BindingInstanceIdentifierCodec getInstanceIdentifierCodec();
 }

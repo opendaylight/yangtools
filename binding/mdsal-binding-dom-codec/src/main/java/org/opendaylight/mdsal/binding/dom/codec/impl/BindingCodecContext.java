@@ -37,6 +37,7 @@ import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader;
@@ -118,7 +119,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         });
 
     private final @NonNull CodecClassLoader loader = CodecClassLoader.create();
-    private final InstanceIdentifierCodec instanceIdentifierCodec;
+    private final @NonNull InstanceIdentifierCodec instanceIdentifierCodec;
     private final @NonNull IdentityCodec identityCodec;
     private final BindingRuntimeContext context;
     private final SchemaRootCodecContext<?> root;
@@ -140,13 +141,14 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return loader;
     }
 
-    InstanceIdentifierCodec getInstanceIdentifierCodec() {
-        return instanceIdentifierCodec;
-    }
-
     @Override
     public IdentityCodec getIdentityCodec() {
         return identityCodec;
+    }
+
+    @Override
+    public BindingInstanceIdentifierCodec getInstanceIdentifierCodec() {
+        return instanceIdentifierCodec;
     }
 
     @Override

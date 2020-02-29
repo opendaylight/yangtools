@@ -39,7 +39,8 @@ public interface BindingNormalizedNodeSerializer {
      * @return DOM Instance Identifier
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    YangInstanceIdentifier toYangInstanceIdentifier(@NonNull InstanceIdentifier<?> binding);
+    // FIXME: MDSAL-525: reconcile this with BindingInstanceIdentifierCodec
+    @NonNull YangInstanceIdentifier toYangInstanceIdentifier(@NonNull InstanceIdentifier<?> binding);
 
     /**
      * Translates supplied YANG Instance Identifier into Binding instance identifier.
@@ -47,6 +48,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param dom YANG Instance Identifier
      * @return Binding Instance Identifier, or null if the instance identifier is not representable.
      */
+    // FIXME: MDSAL-525: reconcile this with BindingInstanceIdentifierCodec
     <T extends DataObject> @Nullable InstanceIdentifier<T> fromYangInstanceIdentifier(
             @NonNull YangInstanceIdentifier dom);
 
@@ -58,7 +60,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return NormalizedNode representation
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    <T extends DataObject> Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> toNormalizedNode(
+    <T extends DataObject> @NonNull Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> toNormalizedNode(
             InstanceIdentifier<T> path, T data);
 
     /**

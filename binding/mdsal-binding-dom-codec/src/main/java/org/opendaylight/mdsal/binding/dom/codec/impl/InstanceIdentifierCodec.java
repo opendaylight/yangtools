@@ -12,14 +12,18 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-// FIXME: this is not really an IllegalArgumentCodec, as it can legally return null from deserialize()
-final class InstanceIdentifierCodec implements IllegalArgumentCodec<YangInstanceIdentifier, InstanceIdentifier<?>> {
+final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
+        //FIXME: this is not really an IllegalArgumentCodec, as it can legally return null from deserialize()
+        IllegalArgumentCodec<YangInstanceIdentifier, InstanceIdentifier<?>> {
     private final BindingCodecContext context;
 
     InstanceIdentifierCodec(final BindingCodecContext context) {
@@ -27,16 +31,9 @@ final class InstanceIdentifierCodec implements IllegalArgumentCodec<YangInstance
     }
 
     @Override
-    public YangInstanceIdentifier serialize(final InstanceIdentifier<?> input) {
-        final List<PathArgument> domArgs = new ArrayList<>();
-        context.getCodecContextNode(input, domArgs);
-        return YangInstanceIdentifier.create(domArgs);
-    }
-
-    @Override
-    public InstanceIdentifier<?> deserialize(final YangInstanceIdentifier input) {
+    public <T extends DataObject> InstanceIdentifier<T> toBinding(final YangInstanceIdentifier domPath) {
         final List<InstanceIdentifier.PathArgument> builder = new ArrayList<>();
-        final BindingDataObjectCodecTreeNode<?> codec = context.getCodecContextNode(input, builder);
+        final BindingDataObjectCodecTreeNode<?> codec = context.getCodecContextNode(domPath, builder);
         if (codec == null) {
             return null;
         }
@@ -45,6 +42,27 @@ final class InstanceIdentifierCodec implements IllegalArgumentCodec<YangInstance
             // which is not binding representable.
             return null;
         }
-        return InstanceIdentifier.create(builder);
+        @SuppressWarnings("unchecked")
+        final InstanceIdentifier<T> ret = (InstanceIdentifier<T>) InstanceIdentifier.create(builder);
+        return ret;
+    }
+
+    @Override
+    public @NonNull YangInstanceIdentifier fromBinding(@NonNull final InstanceIdentifier<?> bindingPath) {
+        final List<PathArgument> domArgs = new ArrayList<>();
+        context.getCodecContextNode(bindingPath, domArgs);
+        return YangInstanceIdentifier.create(domArgs);
+    }
+
+    @Override
+    @Deprecated
+    public YangInstanceIdentifier serialize(final InstanceIdentifier<?> input) {
+        return fromBinding(input);
+    }
+
+    @Override
+    @Deprecated
+    public InstanceIdentifier<?> deserialize(final YangInstanceIdentifier input) {
+        return toBinding(input);
     }
 }
