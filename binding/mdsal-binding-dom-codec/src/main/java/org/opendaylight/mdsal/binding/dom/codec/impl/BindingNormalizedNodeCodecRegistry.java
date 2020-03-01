@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
@@ -30,7 +29,8 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
-import org.opendaylight.mdsal.binding.dom.codec.spi.AbstractBindingLazyContainerNode;
+import org.opendaylight.mdsal.binding.dom.codec.spi.LazyActionInputContainerNode;
+import org.opendaylight.mdsal.binding.dom.codec.spi.LazyActionOutputContainerNode;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -305,44 +305,6 @@ public class BindingNormalizedNodeCodecRegistry
         @Override
         public Optional<T> apply(final Optional<NormalizedNode<?, ?>> input) {
             return input.map(data -> (T) ctx.deserialize(data));
-        }
-    }
-
-    @NonNullByDefault
-    private abstract static class AbstractLazyActionContainerNode<T extends DataObject>
-            extends AbstractBindingLazyContainerNode<T, BindingNormalizedNodeSerializer> {
-        protected final Class<? extends Action<?, ?, ?>> action;
-
-        AbstractLazyActionContainerNode(final NodeIdentifier identifier, final T bindingData,
-                final BindingNormalizedNodeSerializer codec, final Class<? extends Action<?, ?, ?>> action) {
-            super(identifier, bindingData, codec);
-            this.action = requireNonNull(action);
-        }
-    }
-
-    @NonNullByDefault
-    private static final class LazyActionInputContainerNode extends AbstractLazyActionContainerNode<RpcInput> {
-        LazyActionInputContainerNode(final NodeIdentifier identifier, final RpcInput bindingData,
-                final BindingNormalizedNodeSerializer codec, final Class<? extends Action<?, ?, ?>> action) {
-            super(identifier, bindingData, codec, action);
-        }
-
-        @Override
-        protected ContainerNode computeContainerNode(final BindingNormalizedNodeSerializer context) {
-            return context.toNormalizedNodeActionInput(action, getDataObject());
-        }
-    }
-
-    @NonNullByDefault
-    private static final class LazyActionOutputContainerNode extends AbstractLazyActionContainerNode<RpcOutput> {
-        LazyActionOutputContainerNode(final NodeIdentifier identifier, final RpcOutput bindingData,
-                final BindingNormalizedNodeSerializer codec, final Class<? extends Action<?, ?, ?>> action) {
-            super(identifier, bindingData, codec, action);
-        }
-
-        @Override
-        protected ContainerNode computeContainerNode(final BindingNormalizedNodeSerializer context) {
-            return context.toNormalizedNodeActionOutput(action, getDataObject());
         }
     }
 }
