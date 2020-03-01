@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
@@ -116,8 +115,8 @@ public class BindingNormalizedNodeCodecRegistry
         final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         // We create Binding Stream Writer which translates from Binding to Normalized Nodes
-        final Entry<YangInstanceIdentifier, BindingStreamEventWriter> writeCtx = codecContext.newWriter(path,
-            domWriter);
+        final Entry<YangInstanceIdentifier, BindingStreamEventWriter> writeCtx =
+                codecContext.newWriterAndIdentifier(path, domWriter);
 
         // We get serializer which reads binding data and uses Binding To Normalized Node writer to write result
         try {
@@ -133,28 +132,30 @@ public class BindingNormalizedNodeCodecRegistry
     @SuppressFBWarnings("BC_UNCONFIRMED_CAST")
     public ContainerNode toNormalizedNodeNotification(final Notification data) {
         // FIXME: Should the cast to DataObject be necessary?
-        return serializeDataObject((DataObject) data,
-            // javac does not like a methodhandle here
-            (iface, domWriter) -> newNotificationWriter(iface.asSubclass(Notification.class), domWriter));
+        return serializeDataObject(codecContext, (DataObject) data,
+            (ctx, iface, domWriter) -> ctx.newNotificationWriter(iface.asSubclass(Notification.class), domWriter));
     }
 
     @Override
     @SuppressFBWarnings("BC_UNCONFIRMED_CAST")
     public ContainerNode toNormalizedNodeRpcData(final DataContainer data) {
         // FIXME: Should the cast to DataObject be necessary?
-        return serializeDataObject((DataObject) data, this::newRpcWriter);
+        return serializeDataObject(codecContext, (DataObject) data,
+            (ctx, iface, domWriter) -> ctx.newRpcWriter(iface, domWriter));
     }
 
     @Override
     public ContainerNode toNormalizedNodeActionInput(final Class<? extends Action<?, ?, ?>> action,
             final RpcInput input) {
-        return serializeDataObject(input, (iface, domWriter) -> newActionInputWriter(action, domWriter));
+        return serializeDataObject(codecContext, input,
+            (ctx, iface, domWriter) -> ctx.newActionInputWriter(action, domWriter));
     }
 
     @Override
     public ContainerNode toNormalizedNodeActionOutput(final Class<? extends Action<?, ?, ?>> action,
             final RpcOutput output) {
-        return serializeDataObject(output, (iface, domWriter) -> newActionOutputWriter(action, domWriter));
+        return serializeDataObject(codecContext, output,
+            (ctx, iface, domWriter) -> ctx.newActionOutputWriter(action, domWriter));
     }
 
     @Override
@@ -169,14 +170,14 @@ public class BindingNormalizedNodeCodecRegistry
         return new LazyActionOutputContainerNode(identifier, output, this, action);
     }
 
-    private <T extends DataContainer> ContainerNode serializeDataObject(final DataObject data,
-            final BiFunction<Class<? extends T>, NormalizedNodeStreamWriter, BindingStreamEventWriter> newWriter) {
+    private static <T extends DataContainer> ContainerNode serializeDataObject(final BindingCodecContext codecContext,
+            final DataObject data, final WriterFactoryMethod<T> newWriter) {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         // We create DOM stream writer which produces normalized nodes
         final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final Class<? extends DataObject> type = data.implementedInterface();
         @SuppressWarnings("unchecked")
-        final BindingStreamEventWriter writer = newWriter.apply((Class<T>)type, domWriter);
+        final BindingStreamEventWriter writer = newWriter.createWriter(codecContext, (Class<T>) type, domWriter);
         try {
             codecContext.getSerializer(type).serialize(data, writer);
         } catch (final IOException e) {
@@ -254,13 +255,13 @@ public class BindingNormalizedNodeCodecRegistry
     @Override
     public Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(
             final InstanceIdentifier<?> path, final NormalizedNodeStreamWriter domWriter) {
-        return codecContext.newWriter(path, domWriter);
+        return codecContext.newWriterAndIdentifier(path, domWriter);
     }
 
     @Override
     public BindingStreamEventWriter newWriter(final InstanceIdentifier<?> path,
             final NormalizedNodeStreamWriter domWriter) {
-        return codecContext.newWriterWithoutIdentifier(path, domWriter);
+        return codecContext.newWriter(path, domWriter);
     }
 
     @Override
@@ -272,13 +273,13 @@ public class BindingNormalizedNodeCodecRegistry
     @Override
     public BindingStreamEventWriter newActionInputWriter(final Class<? extends Action<?, ?, ?>> action,
             final NormalizedNodeStreamWriter domWriter) {
-        return codecContext.getActionCodec(action).input().createWriter(domWriter);
+        return codecContext.newActionInputWriter(action, domWriter);
     }
 
     @Override
     public BindingStreamEventWriter newActionOutputWriter(final Class<? extends Action<?, ?, ?>> action,
             final NormalizedNodeStreamWriter domWriter) {
-        return codecContext.getActionCodec(action).output().createWriter(domWriter);
+        return codecContext.newActionOutputWriter(action, domWriter);
     }
 
     @Override
@@ -306,5 +307,11 @@ public class BindingNormalizedNodeCodecRegistry
         public Optional<T> apply(final Optional<NormalizedNode<?, ?>> input) {
             return input.map(data -> (T) ctx.deserialize(data));
         }
+    }
+
+    @FunctionalInterface
+    private interface WriterFactoryMethod<T extends DataContainer> {
+        BindingStreamEventWriter createWriter(BindingNormalizedNodeWriterFactory factory,
+                Class<? extends T> bindingClass, NormalizedNodeStreamWriter domWriter);
     }
 }

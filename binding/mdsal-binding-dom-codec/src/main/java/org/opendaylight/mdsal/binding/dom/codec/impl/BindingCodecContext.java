@@ -38,6 +38,7 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingInstanceIdentifierCodec;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader;
@@ -78,8 +79,8 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class BindingCodecContext implements CodecContextFactory, BindingCodecTree, DataObjectSerializerRegistry,
-        Immutable {
+final class BindingCodecContext implements CodecContextFactory, BindingCodecTree, BindingNormalizedNodeWriterFactory,
+        DataObjectSerializerRegistry, Immutable {
     private final class DataObjectSerializerProxy implements DataObjectSerializer, Delegator<DataObjectStreamer<?>> {
         private final @NonNull DataObjectStreamer<?> delegate;
 
@@ -166,26 +167,42 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return serializers.getUnchecked(type);
     }
 
-    Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriter(final InstanceIdentifier<?> path,
-            final NormalizedNodeStreamWriter domWriter) {
+    @Override
+    public Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(
+            final InstanceIdentifier<?> path, final NormalizedNodeStreamWriter domWriter) {
         final List<YangInstanceIdentifier.PathArgument> yangArgs = new LinkedList<>();
         final DataContainerCodecContext<?,?> codecContext = getCodecContextNode(path, yangArgs);
         return new SimpleEntry<>(YangInstanceIdentifier.create(yangArgs), codecContext.createWriter(domWriter));
     }
 
-    BindingStreamEventWriter newWriterWithoutIdentifier(final InstanceIdentifier<?> path,
+    @Override
+    public BindingStreamEventWriter newWriter(final InstanceIdentifier<?> path,
             final NormalizedNodeStreamWriter domWriter) {
         return getCodecContextNode(path, null).createWriter(domWriter);
     }
 
-    BindingStreamEventWriter newRpcWriter(final Class<? extends DataContainer> rpcInputOrOutput,
+    @Override
+    public BindingStreamEventWriter newRpcWriter(final Class<? extends DataContainer> rpcInputOrOutput,
             final NormalizedNodeStreamWriter domWriter) {
         return root.getRpc(rpcInputOrOutput).createWriter(domWriter);
     }
 
-    BindingStreamEventWriter newNotificationWriter(final Class<? extends Notification> notification,
+    @Override
+    public BindingStreamEventWriter newNotificationWriter(final Class<? extends Notification> notification,
             final NormalizedNodeStreamWriter domWriter) {
         return root.getNotification(notification).createWriter(domWriter);
+    }
+
+    @Override
+    public BindingStreamEventWriter newActionInputWriter(final Class<? extends Action<?, ?, ?>> action,
+            final NormalizedNodeStreamWriter domWriter) {
+        return getActionCodec(action).input().createWriter(domWriter);
+    }
+
+    @Override
+    public BindingStreamEventWriter newActionOutputWriter(final Class<? extends Action<?, ?, ?>> action,
+            final NormalizedNodeStreamWriter domWriter) {
+        return getActionCodec(action).output().createWriter(domWriter);
     }
 
     DataContainerCodecContext<?,?> getCodecContextNode(final InstanceIdentifier<?> binding,
