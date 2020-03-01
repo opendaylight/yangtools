@@ -17,6 +17,7 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -43,7 +44,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
         this.delegate = requireNonNull(delegate);
     }
 
-    static BindingToNormalizedStreamWriter create(final NodeCodecContext schema,
+    static @NonNull BindingToNormalizedStreamWriter create(final NodeCodecContext schema,
             final NormalizedNodeStreamWriter delegate) {
         return new BindingToNormalizedStreamWriter(schema, delegate);
     }

@@ -162,7 +162,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
         return new CachingNormalizedNodeCodec<>(this, ImmutableSet.copyOf(cacheSpecifier));
     }
 
-    BindingStreamEventWriter createWriter(final NormalizedNodeStreamWriter domWriter) {
+    @NonNull BindingStreamEventWriter createWriter(final NormalizedNodeStreamWriter domWriter) {
         return BindingToNormalizedStreamWriter.create(this, domWriter);
     }
 
