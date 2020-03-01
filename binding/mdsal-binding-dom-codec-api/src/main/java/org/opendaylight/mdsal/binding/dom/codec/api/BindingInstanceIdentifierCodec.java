@@ -23,7 +23,10 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
      * @param domPath YANG Instance Identifier
      * @return Binding Instance Identifier, or null if the instance identifier is not representable.
      * @throws NullPointerException if domPath is null
+     * @throws IllegalArgumentException if domPath is not valid.
      */
+    // FIXME: Document MissingSchemaException being thrown?
+    // FIXME: Document MissingSchemaForClassException being thrown?
     <T extends DataObject> @Nullable InstanceIdentifier<T> toBinding(@NonNull YangInstanceIdentifier domPath);
 
     /**
@@ -34,5 +37,7 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
      * @throws NullPointerException if bindingPath is null
      * @throws IllegalArgumentException if bindingPath is not valid.
      */
+    // FIXME: Document MissingSchemaException being thrown
+    // FIXME: Document MissingSchemaForClassException being thrown
     @NonNull YangInstanceIdentifier fromBinding(@NonNull InstanceIdentifier<?> bindingPath);
 }
