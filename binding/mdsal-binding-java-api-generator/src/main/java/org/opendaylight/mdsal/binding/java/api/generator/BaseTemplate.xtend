@@ -33,6 +33,7 @@ import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.TypeMember
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple
+import org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
@@ -289,7 +290,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
     def private static void appendYangSnippet(StringBuilder sb, ModuleEffectiveStatement module,
             DeclaredStatement<?> stmt) {
         for (String str : YANG_FORMATTER.toYangTextSnippet(module, stmt)) {
-            sb.append(encodeAngleBrackets(encodeJavadocSymbols(str)))
+            sb.append(BindingGeneratorUtil.replaceAllIllegalChars(encodeAngleBrackets(encodeJavadocSymbols(str))))
         }
     }
 

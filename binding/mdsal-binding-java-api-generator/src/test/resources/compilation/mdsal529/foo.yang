@@ -1,0 +1,25 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  leaf foo {
+    type string;
+    default "\\u@\\h\\M% ";
+  }
+
+  leaf bar {
+    type string;
+    default "\\uu";
+  }
+
+  leaf baz {
+    type string;
+    default "\\a\\uu";
+  }
+
+  leaf xyzzy {
+    type string;
+    default '\uuuaaa';
+  }
+}
+
