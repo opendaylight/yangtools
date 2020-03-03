@@ -17,20 +17,12 @@ import java.util.concurrent.ExecutionException;
 import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 
 /**
- * Utility exception mapper which translates an Exception to a specified type of
- * Exception.
- *
- * <p>
- * This mapper is intended to be used with
- * {@link com.google.common.util.concurrent.Futures#makeChecked(
- * com.google.common.util.concurrent.ListenableFuture, Function)}
+ * Utility exception mapper which translates an Exception to a specified type of Exception. This mapper is intended to
+ * be primarily used with {@code com.google.common.util.concurrent.Futures.makeChecked()}
  * <ul>
- * <li>if exception is the specified type or one of its subclasses, it returns
- * original exception.
- * <li>if exception is {@link ExecutionException} and the cause is of the
- * specified type, it returns the cause
- * <li>otherwise returns an instance of the specified exception type with
- * original exception as the cause.
+ *   <li>if exception is the specified type or one of its subclasses, it returns original exception.
+ *   <li>if exception is {@link ExecutionException} and the cause is of the specified type, it returns the cause
+ *   <li>otherwise returns an instance of the specified exception type with original exception as the cause.
  * </ul>
  *
  * @param <X> the exception type
