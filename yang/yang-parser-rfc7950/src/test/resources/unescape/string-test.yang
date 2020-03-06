@@ -1,0 +1,8 @@
+module string-test {
+    namespace "test";
+    prefix test;
+
+    description "  Unescaping examples:" +
+                " \\,\n,\t  \"string enclosed in double quotes\" end
+                abc \\\\\\ \\t \\\nnn";
+}
