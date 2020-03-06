@@ -1,0 +1,8 @@
+Code-Review+1: Jamo Luhrsen <jluhrsen@gmail.com>
+Code-Review+2: Robert Varga <nite@hq.sk>
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Fri, 06 Mar 2020 19:57:02 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/c/yangtools/+/88335
+Project: yangtools
+Branch: refs/heads/v3.0.x
