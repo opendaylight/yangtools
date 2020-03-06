@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verify;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
-import java.util.regex.Pattern;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
@@ -34,7 +33,7 @@ abstract class ArgumentContextUtils {
         private static final @NonNull RFC6020 INSTANCE = new RFC6020();
 
         @Override
-        void checkDoubleQuoted(final String str, final StatementSourceReference ref) {
+        void checkDoubleQuoted(final String str, final StatementSourceReference ref, final int backslash) {
             // No-op
         }
 
@@ -55,24 +54,25 @@ abstract class ArgumentContextUtils {
         private static final @NonNull RFC7950 INSTANCE = new RFC7950();
 
         @Override
-        void checkDoubleQuoted(final String str, final StatementSourceReference ref) {
+        void checkDoubleQuoted(final String str, final StatementSourceReference ref, final int backslash) {
             // FIXME: YANGTOOLS-1079: we should forward backslash to this method, so that it does not start from the
             //                        start from the start of the string. Furthermore this logic should operate on spans
             //                        of characters -- i.e. the check for backslash should be a search instead -- as
             //                        String knows how to do that and can do it more efficiently than this loop.
-            for (int i = 0; i < str.length() - 1; i++) {
-                if (str.charAt(i) == '\\') {
-                    switch (str.charAt(i + 1)) {
+            if (backslash < str.length() - 1) {
+                int index = backslash;
+                while (index != -1) {
+                    switch (str.charAt(index + 1)) {
                         case 'n':
                         case 't':
                         case '\\':
                         case '\"':
-                            i++;
+                            index = str.indexOf('\\', index + 2);
                             break;
                         default:
                             throw new SourceException(ref, "YANG 1.1: illegal double quoted string (%s). In double "
-                                    + "quoted string the backslash must be followed by one of the following character "
-                                    + "[n,t,\",\\], but was '%s'.", str, str.charAt(i + 1));
+                                + "quoted string the backslash must be followed by one of the following character "
+                                + "[n,t,\",\\], but was '%s'.", str, str.charAt(index + 1));
                     }
                 }
             }
@@ -86,10 +86,6 @@ abstract class ArgumentContextUtils {
     }
 
     private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
-    private static final Pattern ESCAPED_DQUOT = Pattern.compile("\\\"", Pattern.LITERAL);
-    private static final Pattern ESCAPED_BACKSLASH = Pattern.compile("\\\\", Pattern.LITERAL);
-    private static final Pattern ESCAPED_LF = Pattern.compile("\\n", Pattern.LITERAL);
-    private static final Pattern ESCAPED_TAB = Pattern.compile("\\t", Pattern.LITERAL);
 
     private ArgumentContextUtils() {
         // Hidden on purpose
@@ -196,7 +192,12 @@ abstract class ArgumentContextUtils {
         // Now we need to perform some amount of unescaping. This serves as a pre-check before we dispatch
         // validation and processing (which will reuse the work we have done)
         final int backslash = stripped.indexOf('\\');
-        return backslash == -1 ? stripped : unescape(stripped, backslash, ref);
+        if (backslash == -1) {
+            return stripped;
+        } else {
+            checkDoubleQuoted(str, ref, backslash);
+            return unescape(stripped, backslash);
+        }
     }
 
     /*
@@ -205,25 +206,52 @@ abstract class ArgumentContextUtils {
      *       we decided to let ANTLR do the work.
      */
     // FIXME: YANGTOOLS-1079: Re-evaluate above comment once our integration surface with lexer has been decided
-    abstract void checkDoubleQuoted(String str, StatementSourceReference ref);
+    abstract void checkDoubleQuoted(String str, StatementSourceReference ref, int backslash);
 
     abstract void checkUnquoted(String str, StatementSourceReference ref);
 
     /*
      * Unescape escaped double quotes, tabs, new line and backslash in the inner string and trim the result.
      */
-    private String unescape(final String str, final int backslash, final StatementSourceReference ref) {
-        checkDoubleQuoted(str, ref);
+    @VisibleForTesting
+    static String unescape(final String str, final int backslash) {
+        StringBuilder sb = new StringBuilder(str.length());
+        unascapeBackslash(sb, str, backslash);
+        return sb.toString();
+    }
 
-        // FIXME: YANGTOOLS-1079: given we the leading backslash, it would be more efficient to walk the string and
-        //                        unescape in one go
-        return ESCAPED_TAB.matcher(
-                    ESCAPED_LF.matcher(
-                        ESCAPED_BACKSLASH.matcher(
-                            ESCAPED_DQUOT.matcher(str).replaceAll("\\\""))
-                        .replaceAll("\\\\"))
-                    .replaceAll("\\\n"))
-               .replaceAll("\\\t");
+    private static void unascapeBackslash(final StringBuilder sb, final String str, final int backslash) {
+        int nextIndex = backslash + 1;
+        if (nextIndex < str.length()) {
+            sb.append(str, 0, backslash);
+            char next = str.charAt(nextIndex);
+            if (next == '\\') {
+                sb.append("\\");
+            } else if (next == 't') {
+                sb.append("\t");
+            } else if (next == 'n') {
+                sb.append("\n");
+            } else if (next == '\"') {
+                sb.append("\"");
+            } else {
+                sb.append(str, backslash, nextIndex + 1);
+            }
+            findNextBackslash(sb, str, nextIndex);
+        } else {
+            sb.append(str);
+        }
+    }
+
+    private static void findNextBackslash(StringBuilder sb, String str, int backslashIndex) {
+        String substring = str.substring(backslashIndex + 1);
+        if (substring.length() > 0) {
+            final int index = substring.indexOf('\\');
+            if (index != -1) {
+                unascapeBackslash(sb, substring, index);
+            } else {
+                sb.append(substring);
+            }
+        }
     }
 
     @VisibleForTesting
