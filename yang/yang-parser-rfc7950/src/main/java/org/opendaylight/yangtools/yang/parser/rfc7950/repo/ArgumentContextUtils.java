@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verify;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
-import java.util.regex.Pattern;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
@@ -34,7 +33,7 @@ abstract class ArgumentContextUtils {
         private static final @NonNull RFC6020 INSTANCE = new RFC6020();
 
         @Override
-        void checkDoubleQuoted(final String str, final StatementSourceReference ref) {
+        void checkDoubleQuoted(final String str, final StatementSourceReference ref, final int backslash) {
             // No-op
         }
 
@@ -55,24 +54,21 @@ abstract class ArgumentContextUtils {
         private static final @NonNull RFC7950 INSTANCE = new RFC7950();
 
         @Override
-        void checkDoubleQuoted(final String str, final StatementSourceReference ref) {
-            // FIXME: YANGTOOLS-1079: we should forward backslash to this method, so that it does not start from the
-            //                        start from the start of the string. Furthermore this logic should operate on spans
-            //                        of characters -- i.e. the check for backslash should be a search instead -- as
-            //                        String knows how to do that and can do it more efficiently than this loop.
-            for (int i = 0; i < str.length() - 1; i++) {
-                if (str.charAt(i) == '\\') {
-                    switch (str.charAt(i + 1)) {
+        void checkDoubleQuoted(final String str, final StatementSourceReference ref, final int backslash) {
+            if (backslash < str.length() - 1) {
+                int index = backslash;
+                while (index != -1) {
+                    switch (str.charAt(index + 1)) {
                         case 'n':
                         case 't':
                         case '\\':
                         case '\"':
-                            i++;
+                            index = str.indexOf('\\', index + 2);
                             break;
                         default:
                             throw new SourceException(ref, "YANG 1.1: illegal double quoted string (%s). In double "
-                                    + "quoted string the backslash must be followed by one of the following character "
-                                    + "[n,t,\",\\], but was '%s'.", str, str.charAt(i + 1));
+                                + "quoted string the backslash must be followed by one of the following character "
+                                + "[n,t,\",\\], but was '%s'.", str, str.charAt(index + 1));
                     }
                 }
             }
@@ -86,10 +82,6 @@ abstract class ArgumentContextUtils {
     }
 
     private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
-    private static final Pattern ESCAPED_DQUOT = Pattern.compile("\\\"", Pattern.LITERAL);
-    private static final Pattern ESCAPED_BACKSLASH = Pattern.compile("\\\\", Pattern.LITERAL);
-    private static final Pattern ESCAPED_LF = Pattern.compile("\\n", Pattern.LITERAL);
-    private static final Pattern ESCAPED_TAB = Pattern.compile("\\t", Pattern.LITERAL);
 
     private ArgumentContextUtils() {
         // Hidden on purpose
@@ -155,11 +147,10 @@ abstract class ArgumentContextUtils {
                     break;
                 case YangStatementParser.STRING:
                     // a lexer string, could be pretty much anything
-                    // FIXME: YANGTOOLS-1079: appendString() is a dispatch based on quotes, which we should be able to
-                    //                        defer to lexer for a dedicated type. That would expand the switch table
-                    //                        here, but since we have it anyway, it would be nice to have the quoting
-                    //                        distinction already taken care of. The performance difference will need to
-                    //                        be benchmarked, though.
+                    // TODO: appendString() is a dispatch based on quotes, which we should be able to defer to lexer for
+                    //       a dedicated type. That would expand the switch table here, but since we have it anyway, it
+                    //       would be nice to have the quoting distinction already taken care of. The performance
+                    //       difference will need to be benchmarked, though.
                     appendString(sb, childNode, ref);
                     break;
                 default:
@@ -196,7 +187,7 @@ abstract class ArgumentContextUtils {
         // Now we need to perform some amount of unescaping. This serves as a pre-check before we dispatch
         // validation and processing (which will reuse the work we have done)
         final int backslash = stripped.indexOf('\\');
-        return backslash == -1 ? stripped : unescape(stripped, backslash, ref);
+        return backslash == -1 ? stripped : unescape(ref, stripped, backslash);
     }
 
     /*
@@ -204,26 +195,59 @@ abstract class ArgumentContextUtils {
      *       account the for it with lexer modes. We do not want to force a re-lexing phase in the parser just because
      *       we decided to let ANTLR do the work.
      */
-    // FIXME: YANGTOOLS-1079: Re-evaluate above comment once our integration surface with lexer has been decided
-    abstract void checkDoubleQuoted(String str, StatementSourceReference ref);
+    abstract void checkDoubleQuoted(String str, StatementSourceReference ref, int backslash);
 
     abstract void checkUnquoted(String str, StatementSourceReference ref);
 
     /*
      * Unescape escaped double quotes, tabs, new line and backslash in the inner string and trim the result.
      */
-    private String unescape(final String str, final int backslash, final StatementSourceReference ref) {
-        checkDoubleQuoted(str, ref);
+    private String unescape(final StatementSourceReference ref, final String str, final int backslash) {
+        checkDoubleQuoted(str, ref, backslash);
+        StringBuilder sb = new StringBuilder(str.length());
+        unescapeBackslash(sb, str, backslash);
+        return sb.toString();
+    }
 
-        // FIXME: YANGTOOLS-1079: given we the leading backslash, it would be more efficient to walk the string and
-        //                        unescape in one go
-        return ESCAPED_TAB.matcher(
-                    ESCAPED_LF.matcher(
-                        ESCAPED_BACKSLASH.matcher(
-                            ESCAPED_DQUOT.matcher(str).replaceAll("\\\""))
-                        .replaceAll("\\\\"))
-                    .replaceAll("\\\n"))
-               .replaceAll("\\\t");
+    @VisibleForTesting
+    static void unescapeBackslash(final StringBuilder sb, final String str, final int backslash) {
+        String substring = str;
+        int backslashIndex = backslash;
+        while (true) {
+            int nextIndex = backslashIndex + 1;
+            if (backslashIndex != -1 && nextIndex < substring.length()) {
+                replaceBackslash(sb, substring, nextIndex);
+                substring = substring.substring(nextIndex + 1);
+                if (substring.length() > 0) {
+                    backslashIndex = substring.indexOf('\\');
+                } else {
+                    break;
+                }
+            } else {
+                sb.append(substring);
+                break;
+            }
+        }
+    }
+
+    private static void replaceBackslash(final StringBuilder sb, final String str, final int nextAfterBackslash) {
+        int backslash = nextAfterBackslash - 1;
+        sb.append(str, 0, backslash);
+        final char c = str.charAt(nextAfterBackslash);
+        switch (c) {
+            case '\\':
+            case '"':
+                sb.append(c);
+                break;
+            case 't':
+                sb.append('\t');
+                break;
+            case 'n':
+                sb.append('\n');
+                break;
+            default:
+                sb.append(str, backslash, nextAfterBackslash + 1);
+        }
     }
 
     @VisibleForTesting
