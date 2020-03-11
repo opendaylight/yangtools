@@ -410,6 +410,48 @@ public final class CodeHelpers {
     }
 
     /**
+     * Utility method for checking whether a target object is compatible.
+     *
+     * @param requiredClass Required class
+     * @param fieldName name of the field being filled
+     * @param obj Object to check, may be null
+     * @return Object cast to required class, if its class matches requirement, or null
+     * @throws IllegalArgumentException if {@code obj} is not an instance of {@code requiredClass}
+     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is null
+     */
+    public static <T> @Nullable T checkFieldCast(final @NonNull Class<T> requiredClass, final @NonNull String fieldName,
+            final @Nullable Object obj) {
+        try {
+            return requiredClass.cast(obj);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Invalid input value for property \"" + fieldName + "\"", e);
+        }
+    }
+
+    /**
+     * Utility method for checking whether the items of target list is compatible.
+     *
+     * @param requiredClass Required item class
+     * @param fieldName name of the field being filled
+     * @param list List, which items should be checked
+     * @throws IllegalArgumentException if a list item is not instance of {@code requiredItemClass}
+     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is null
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> @Nullable List<T> checkListFieldCast(final @NonNull Class<?> requiredClass,
+            final @NonNull String fieldName, final @Nullable List<?> list) {
+        if (list != null) {
+            try {
+                list.forEach(item -> requiredClass.cast(requireNonNull(item)));
+            } catch (ClassCastException | NullPointerException e) {
+                throw new IllegalArgumentException("Invalid input list item for property \"" + requireNonNull(fieldName)
+                    + "\"", e);
+            }
+        }
+        return (List<T>) list;
+    }
+
+    /**
      * The constant '31' is the result of folding this code:
      * <pre>
      *     final int prime = 31;

@@ -1,0 +1,66 @@
+module mdsal426 {
+  yang-version 1;
+  namespace "mdsal426";
+  prefix "mdsal426";
+
+  grouping foo-grp {
+    leaf leaf1 {
+      type leafref {
+        path "../mdsal426:name";
+      }
+    }
+    leaf-list leaf-list1 {
+       type leafref {
+         path "../mdsal426:name";
+       }
+    }
+    leaf leaf2 {
+      type string;
+    }
+  }
+
+  grouping resolved-leaf-grp {
+    uses foo-grp;
+    leaf name {
+        type string;
+    }
+  }
+
+  grouping resolved-leaf-list-grp {
+      uses foo-grp;
+      leaf-list name {
+          type string;
+      }
+  }
+
+  container bar-cont {
+    uses resolved-leaf-grp;
+  }
+
+  container bar-lst {
+    uses resolved-leaf-grp;
+  }
+
+  grouping baz-grp {
+    uses resolved-leaf-grp;
+  }
+
+  grouping transitive-group {
+    uses foo-grp;
+  }
+
+  grouping unresolved-grouping {
+    leaf leaf1 {
+      type leafref {
+        path "../mdsal426:is-foo";
+      }
+    }
+  }
+
+  container boolean-cont {
+    uses unresolved-grouping;
+    leaf is-foo {
+      type boolean;
+    }
+  }
+}

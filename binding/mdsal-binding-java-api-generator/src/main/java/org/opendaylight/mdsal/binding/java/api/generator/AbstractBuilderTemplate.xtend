@@ -172,4 +172,12 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         }
         return null
     }
+
+    package static def hasNonDefaultMethods(GeneratedType type) {
+        !type.methodDefinitions.isEmpty && type.methodDefinitions.exists([def | !def.isDefault])
+    }
+
+    package static def nonDefaultMethods(GeneratedType type) {
+        type.methodDefinitions.filter([def | !def.isDefault])
+    }
 }

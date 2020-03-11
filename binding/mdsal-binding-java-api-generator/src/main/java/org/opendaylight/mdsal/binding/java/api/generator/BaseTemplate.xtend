@@ -102,18 +102,6 @@ abstract class BaseTemplate extends JavaFileTemplate {
         "_" + property.name
     }
 
-    final protected static def propertyNameFromGetter(MethodSignature getter) {
-        var String prefix;
-        if (BindingMapping.isGetterMethodName(getter.name)) {
-            prefix = BindingMapping.GETTER_PREFIX
-        } else if (BindingMapping.isNonnullMethodName(getter.name)) {
-            prefix = BindingMapping.NONNULL_PREFIX
-        } else {
-            throw new IllegalArgumentException(getter + " is not a getter")
-        }
-        return getter.name.substring(prefix.length).toFirstLower;
-    }
-
     /**
      * Template method which generates the getter method for <code>field</code>
      *

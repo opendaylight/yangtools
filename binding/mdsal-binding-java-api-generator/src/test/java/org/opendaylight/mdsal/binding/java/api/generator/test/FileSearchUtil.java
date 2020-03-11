@@ -7,6 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator.test;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,20 +27,18 @@ final class FileSearchUtil {
     }
 
     static void assertFileContains(final File file, final String searchText) throws IOException {
-        assertFileContains(file, Files.readString(file.toPath()), searchText);
+        assertFileContains(Files.readString(file.toPath()), searchText);
     }
 
-    static void assertFileContains(final File file, final String fileContent, final String searchText) {
-        if (!fileContent.contains(searchText)) {
-            throw new AssertionError("File " + file + " does not contain '" + searchText + "'");
-        }
+    static void assertFileContains(final String fileContent, final String searchText) {
+        assertThat(fileContent, containsString(searchText));
     }
 
     static void assertFileContainsConsecutiveLines(final File file, final String fileContent, final String ... lines) {
         for (final String line : lines) {
-            assertFileContains(file, fileContent, line);
+            assertFileContains(fileContent, line);
         }
-        assertFileContains(file, fileContent, String.join(LS, lines));
+        assertFileContains(fileContent, String.join(LS, lines));
     }
 
     static Map<String, File> getFiles(final File path) {

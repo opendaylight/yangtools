@@ -359,7 +359,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             final Class<?> parentClass, final Map<String, DataSchemaNode> getterToLeafSchema) {
         final Map<Method, ValueNodeCodecContext> leaves = new HashMap<>();
         for (final Method method : parentClass.getMethods()) {
-            if (method.getParameterCount() == 0) {
+            // Only consider non-bridge methods with no arguments
+            if (method.getParameterCount() == 0 && !method.isBridge()) {
                 final DataSchemaNode schema = getterToLeafSchema.get(method.getName());
 
                 final ValueNodeCodecContext valueNode;

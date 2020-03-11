@@ -1,0 +1,36 @@
+module mdsal533 {
+  yang-version 1;
+  namespace "mdsal533";
+  prefix "mdsal533";
+
+  grouping foo_grp {
+    leaf key_leaf1 {
+      type leafref {
+        path "../../../mdsal533:foo_list/mdsal533:name";
+      }
+    }
+    leaf key_leaf2 {
+      type string;
+    }
+    leaf key_leaf3 {
+      type string;
+    }
+  }
+
+  container foo_cont {
+    list foo_list {
+      key "name";
+      leaf name {
+        type string {
+          length "1..255";
+        }
+      }
+    }
+    container foo_cont2 {
+      list foo_list2 {
+        key "key_leaf1 key_leaf2 key_leaf3";
+        uses foo_grp;
+      }
+    }
+  }
+}

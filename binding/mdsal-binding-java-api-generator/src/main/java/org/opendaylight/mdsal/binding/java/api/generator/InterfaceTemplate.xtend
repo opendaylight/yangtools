@@ -10,7 +10,8 @@ package org.opendaylight.mdsal.binding.java.api.generator
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.getGetterMethodForNonnull
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isGetterMethodName
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isNonnullMethodName
-import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
+import static org.opendaylight.mdsal.binding.model.util.Types.BOOLEAN
+import static org.opendaylight.mdsal.binding.model.util.Types.STRING
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_EQUALS_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_HASHCODE_NAME
@@ -104,6 +105,17 @@ class InterfaceTemplate extends BaseTemplate {
             «FOR annotation : annotations»
                 «annotation.generateAnnotation»
             «ENDFOR»
+        «ENDIF»
+    '''
+
+    def private generateAccessorAnnotations(MethodSignature method) '''
+         «val annotations = method.annotations»
+         «IF annotations !== null && !annotations.empty»
+             «FOR annotation : annotations»
+                  «IF method.returnType != BOOLEAN || !(annotation.identifier == OVERRIDE)»
+                      «annotation.generateAnnotation»
+                  «ENDIF»
+             «ENDFOR»
         «ENDIF»
     '''
 
@@ -245,7 +257,7 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateAccessorMethod(MethodSignature method) {
         return '''
             «accessorJavadoc(method, "{@code null}")»
-            «method.annotations.generateAnnotations»
+            «method.generateAccessorAnnotations»
             «method.returnType.nullableType» «method.name»();
         '''
     }

@@ -14,6 +14,7 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTA
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 
 import com.google.common.collect.ImmutableList
+import com.google.common.collect.Sets
 import java.util.ArrayList
 import java.util.Collection
 import java.util.HashSet
@@ -25,12 +26,14 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName
+import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.concepts.Builder
+import com.google.common.collect.ImmutableSet
 
 /**
  * Template for generating JAVA builder classes.
@@ -43,12 +46,15 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
     static val BUILDER = JavaTypeName.create(Builder)
 
+    val BuilderImplTemplate implTemplate
+
     /**
      * Constructs new instance of this class.
      * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
      */
     new(GeneratedType genType, GeneratedType targetType, Type keyType) {
         super(genType, targetType, keyType)
+        implTemplate = new BuilderImplTemplate(this, type.enclosedTypes.get(0))
     }
 
     override isLocalInnerClass(JavaTypeName name) {
@@ -93,7 +99,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                 return new «type.enclosedTypes.get(0).importedName»(this);
             }
 
-            «new BuilderImplTemplate(this, type.enclosedTypes.get(0)).body»
+            «implTemplate.body»
         }
     '''
 
@@ -111,8 +117,9 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private generateConstructorsFromIfcs() '''
         public «type.name»() {
         }
+
         «IF (!(targetType instanceof GeneratedTransferObject))»
-            «FOR impl : targetType.implements»
+            «FOR impl : targetType.implements SEPARATOR "\n"»
                 «generateConstructorFromIfc(impl)»
             «ENDFOR»
         «ENDIF»
@@ -139,14 +146,40 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «val ifc = implementedIfc as GeneratedType»
             «FOR getter : ifc.nonDefaultMethods»
                 «IF BindingMapping.isGetterMethodName(getter.name)»
-                    this._«getter.propertyNameFromGetter» = arg.«getter.name»();
+                    «val propertyName = getter.propertyNameFromGetter»
+                    «printPropertySetter(getter, '''arg.«getter.name»()''', propertyName)»;
                 «ENDIF»
             «ENDFOR»
             «FOR impl : ifc.implements»
-                «printConstructorPropertySetter(impl)»
+                «printConstructorPropertySetter(impl, getSpecifiedGetters(ifc))»
             «ENDFOR»
         «ENDIF»
     '''
+
+    def private Object printConstructorPropertySetter(Type implementedIfc, Set<MethodSignature> alreadySetProperties) '''
+        «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
+            «val ifc = implementedIfc as GeneratedType»
+            «FOR getter : ifc.nonDefaultMethods»
+                «IF BindingMapping.isGetterMethodName(getter.name) && getterByName(alreadySetProperties, getter.name).isEmpty»
+                    «val propertyName = getter.propertyNameFromGetter»
+                    «printPropertySetter(getter, '''arg.«getter.name»()''', propertyName)»;
+                «ENDIF»
+            «ENDFOR»
+            «FOR descendant : ifc.implements»
+                «printConstructorPropertySetter(descendant, Sets.union(alreadySetProperties, getSpecifiedGetters(ifc)))»
+            «ENDFOR»
+        «ENDIF»
+    '''
+
+    def static Set<MethodSignature> getSpecifiedGetters(GeneratedType type) {
+        val ImmutableSet.Builder<MethodSignature> setBuilder = new ImmutableSet.Builder
+        for (MethodSignature method : type.getMethodDefinitions()) {
+            if (method.hasOverrideAnnotation) {
+                setBuilder.add(method)
+            }
+        }
+        return setBuilder.build()
+    }
 
     /**
      * Generate 'fieldsFrom' method to set builder properties based on type of given argument.
@@ -177,7 +210,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
          * </ul>
          *
          * @param arg grouping object
-         * @throws IllegalArgumentException if given argument is none of valid types
+         * @throws IllegalArgumentException if given argument is none of valid types or has property with incompatible value
         */
     '''
 
@@ -208,12 +241,27 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
         «val ifc = implementedIfc as GeneratedType»
         «FOR getter : ifc.nonDefaultMethods»
-            «IF BindingMapping.isGetterMethodName(getter.name)»
-                this._«getter.propertyNameFromGetter» = ((«implementedIfc.fullyQualifiedName»)arg).«getter.name»();
+            «IF BindingMapping.isGetterMethodName(getter.name) && !hasOverrideAnnotation(getter)»
+                «printPropertySetter(getter, '''((«ifc.fullyQualifiedName»)arg).«getter.name»()''', getter.propertyNameFromGetter)»;
             «ENDIF»
         «ENDFOR»
         «ENDIF»
     '''
+
+    def private printPropertySetter(MethodSignature getter, String retrieveProperty, String propertyName) {
+        val ownGetter = implTemplate.findGetter(getter.name)
+        val ownGetterType = ownGetter.returnType
+        if (Types.strictTypeEquals(getter.returnType, ownGetterType)) {
+            return "this._" + propertyName + " = " + retrieveProperty
+        }
+        if (Types.isListType(ownGetterType)) {
+            val itemType = (ownGetterType as ParameterizedType).actualTypeArguments.get(0)
+            return '''
+                this._«propertyName» = «CODEHELPERS.importedName».checkListFieldCast(«itemType.fullyQualifiedName».class, "«propertyName»", «retrieveProperty»)'''
+        }
+        return '''
+            this._«propertyName» = «CODEHELPERS.importedName».checkFieldCast(«ownGetter.returnType.fullyQualifiedName».class, "«propertyName»", «retrieveProperty»)'''
+    }
 
     private def List<Type> getBaseIfcs(GeneratedType type) {
         val List<Type> baseIfcs = new ArrayList();
@@ -507,13 +555,5 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                 this.«AUGMENTATION_FIELD» = new «hashMapRef»<>(aug);
             }
         '''
-    }
-
-    private static def hasNonDefaultMethods(GeneratedType type) {
-        !type.methodDefinitions.isEmpty && type.methodDefinitions.exists([def | !def.isDefault])
-    }
-
-    private static def nonDefaultMethods(GeneratedType type) {
-        type.methodDefinitions.filter([def | !def.isDefault])
     }
 }

@@ -686,6 +686,15 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
+    public void testMdsal426() throws Exception {
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal426");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal426");
+        generateTestSources("/compilation/mdsal426", sourcesOutputDir);
+        CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
+        CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    @Test
     public void testMdsal529() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal529");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal529");
@@ -699,6 +708,14 @@ public class CompilationTest extends BaseCompilationTest {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal589");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal589");
         generateTestSources("/compilation/mdsal589", sourcesOutputDir);
+        CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
+        CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    public void testMdsal533() throws Exception {
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal533");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal533");
+        generateTestSources("/compilation/mdsal533", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

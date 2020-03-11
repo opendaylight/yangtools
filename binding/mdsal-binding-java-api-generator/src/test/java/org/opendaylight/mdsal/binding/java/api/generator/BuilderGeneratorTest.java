@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -341,6 +342,7 @@ public class BuilderGeneratorTest {
         final MethodSignature methSign = mock(MethodSignature.class);
         doReturn(methodeName).when(methSign).getName();
         final Type methType = mock(Type.class);
+        when(methType.getFullyQualifiedName()).thenCallRealMethod();
         doReturn(TYPE_NAME).when(methType).getIdentifier();
         doReturn(TEST).when(methType).getName();
         doReturn(methType).when(methSign).getReturnType();

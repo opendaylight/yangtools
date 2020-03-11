@@ -15,9 +15,11 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_
 
 import java.util.Collection
 import java.util.List
+import java.util.Optional
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
+import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.Types
@@ -25,12 +27,12 @@ import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.binding.AbstractAugmentable
 
 class BuilderImplTemplate extends AbstractBuilderTemplate {
-    val Type builderType;
+    val BuilderTemplate builder;
 
     new(BuilderTemplate builder, GeneratedType type) {
         super(builder.javaType.getEnclosedType(type.identifier), type, builder.targetType, builder.properties,
             builder.augmentType, builder.keyType)
-        this.builderType = builder.type
+        this.builder = builder
     }
 
     override body() '''
@@ -44,9 +46,9 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
 
             «generateFields(true)»
 
-            «generateCopyConstructor(builderType, type)»
+            «generateCopyConstructor(builder.type, type)»
 
-            «generateGetters(true)»
+            «generateGetters()»
 
             «generateHashCode()»
 
@@ -58,6 +60,67 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
 
     override generateDeprecatedAnnotation(AnnotationType ann) {
         return generateAnnotation(ann)
+    }
+
+    def private generateGetters() '''
+        «IF keyType !== null»
+            @«OVERRIDE.importedName»
+            public «keyType.importedName» «BindingMapping.IDENTIFIABLE_KEY_NAME»() {
+                return key;
+            }
+
+        «ENDIF»
+        «IF !properties.empty»
+            «FOR field : properties SEPARATOR '\n'»
+                «field.getterMethod»
+            «ENDFOR»
+        «ENDIF»
+    '''
+
+    private static def Optional<MethodSignature> findGetter(GeneratedType implType, String getterName) {
+        val getter = getterByName(implType.nonDefaultMethods, getterName);
+        if (getter.isPresent) {
+            return getter;
+        }
+        for (ifc : implType.implements) {
+            if (ifc instanceof GeneratedType) {
+                val getterImpl = findGetter(ifc, getterName)
+                if (getterImpl.isPresent) {
+                    return (getterImpl)
+                }
+            }
+        }
+        return Optional.empty
+    }
+
+    override getterMethod(GeneratedProperty field) '''
+        @«OVERRIDE.importedName»
+        public «field.returnType.importedName» «field.getterMethodName»() {
+            «val fieldName = field.fieldName»
+            «IF field.returnType.name.endsWith("[]")»
+                return «fieldName» == null ? null : «fieldName».clone();
+            «ELSE»
+                return «fieldName»;
+            «ENDIF»
+        }
+    '''
+
+    package def findGetter(String getterName) {
+        val ownGetter = getterByName(type.nonDefaultMethods, getterName);
+        if (ownGetter.isPresent) {
+            return ownGetter.get;
+        }
+        for (ifc : type.implements) {
+            if (ifc instanceof GeneratedType) {
+                val getter = findGetter(ifc, getterName)
+                if (getter.isPresent) {
+                    return (getter.get)
+                }
+            }
+        }
+        throw new IllegalStateException(
+                String.format("%s should be present in %s type or in one of its ancestors as getter",
+                        getterName.propertyNameFromGetter, type));
     }
 
     /**

@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.opendaylight.mdsal.binding.model.api.AnnotationType;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.DefaultType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
@@ -283,7 +284,7 @@ class JavaFileTemplate {
         for (Type implementedIfc : implementedIfcs) {
             if (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject)) {
                 final GeneratedType ifc = (GeneratedType) implementedIfc;
-                methods.addAll(ifc.getMethodDefinitions());
+                addImplMethods(methods, ifc);
 
                 final ParameterizedType t = collectImplementedMethods(type, methods, ifc.getImplements());
                 if (t != null && augmentType == null) {
@@ -295,6 +296,69 @@ class JavaFileTemplate {
         }
 
         return augmentType;
+    }
+
+    private static void addImplMethods(final Set<MethodSignature> methods, final GeneratedType implType) {
+        for (final MethodSignature implMethod : implType.getMethodDefinitions()) {
+            if (hasOverrideAnnotation(implMethod)) {
+                methods.add(implMethod);
+            } else {
+                final String implMethodName = implMethod.getName();
+                if (BindingMapping.isGetterMethodName(implMethodName)
+                        && getterByName(methods, implMethodName).isEmpty()) {
+
+                    methods.add(implMethod);
+                }
+            }
+        }
+    }
+
+    protected static Optional<MethodSignature> getterByName(final Iterable<MethodSignature> methods,
+            final String implMethodName) {
+        for (MethodSignature method : methods) {
+            final String methodName = method.getName();
+            if (BindingMapping.isGetterMethodName(methodName)) {
+                if (isSameProperty(method.getName(), implMethodName)) {
+                    return Optional.of(method);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    protected static String propertyNameFromGetter(final MethodSignature getter) {
+        return propertyNameFromGetter(getter.getName());
+    }
+
+    protected static String propertyNameFromGetter(final String getterName) {
+        final String prefix;
+        if (BindingMapping.isGetterMethodName(getterName)) {
+            prefix = BindingMapping.GETTER_PREFIX;
+        } else if (BindingMapping.isNonnullMethodName(getterName)) {
+            prefix = BindingMapping.NONNULL_PREFIX;
+        } else {
+            throw new IllegalArgumentException(getterName + " is not a getter");
+        }
+        return StringExtensions.toFirstLower(getterName.substring(prefix.length()));
+    }
+
+    /**
+     * Check whether specified method has an attached annotation which corresponds to {@code @Override}.
+     *
+     * @param method Method to examine
+     * @return True if there is an override annotation
+     */
+    static boolean hasOverrideAnnotation(final MethodSignature method) {
+        for (final AnnotationType annotation : method.getAnnotations()) {
+            if (OVERRIDE.equals(annotation.getIdentifier())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isSameProperty(final String getterName1, final String getterName2) {
+        return propertyNameFromGetter(getterName1).equals(propertyNameFromGetter(getterName2));
     }
 
     /**
