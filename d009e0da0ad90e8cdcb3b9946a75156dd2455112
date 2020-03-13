@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c919aedf_9e6214a6",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/repo/ArgumentContextUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-03-13T15:16:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b96b544a_f86b84a5",
+      "range": {
+        "startLine": 197,
+        "startChar": 9,
+        "endLine": 197,
+        "endChar": 16
+      },
+      "revId": "d009e0da0ad90e8cdcb3b9946a75156dd2455112",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "309f953d_91a5cf44",
         "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/repo/ArgumentContextUtils.java",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "d009e0da0ad90e8cdcb3b9946a75156dd2455112",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df418463_fc0aa224",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/repo/ArgumentContextUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-03-13T15:16:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "309f953d_91a5cf44",
+      "range": {
+        "startLine": 233,
+        "startChar": 26,
+        "endLine": 233,
+        "endChar": 30
+      },
+      "revId": "d009e0da0ad90e8cdcb3b9946a75156dd2455112",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
