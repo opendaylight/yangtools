@@ -16,6 +16,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -647,8 +648,8 @@ public final class SchemaContextUtil {
      *            Schema Context
      * @param module
      *            Yang Module
-     * @param relativeXPath
-     *            Non conditional Revision Aware Relative XPath
+     * @param pathStr
+     *            xPath of leafref
      * @param actualSchemaNode
      *            actual schema node
      * @return target schema node
@@ -669,13 +670,45 @@ public final class SchemaContextUtil {
         final int colCount = normalizeXPath(steps);
         final List<String> xpaths = colCount == 0 ? steps : steps.subList(colCount, steps.size());
 
-        final Iterable<QName> schemaNodePath = actualSchemaNode.getPath().getPathFromRoot();
-        if (Iterables.size(schemaNodePath) - colCount >= 0) {
-            return Iterables.concat(Iterables.limit(schemaNodePath, Iterables.size(schemaNodePath) - colCount),
-                Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
+        final List<QName> walkablePath = createWalkablePath(actualSchemaNode.getPath().getPathFromRoot(),
+                context, colCount);
+
+        if (walkablePath.size() - colCount >= 0) {
+            return Iterables.concat(Iterables.limit(walkablePath, walkablePath.size() - colCount),
+                    Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
         }
-        return Iterables.concat(schemaNodePath,
+        return Iterables.concat(walkablePath,
                 Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
+    }
+
+    /**
+     * Return List of qNames that are walkable using xPath. When getting a path from schema node it will return path
+     * with parents like CaseSchemaNode and ChoiceSchemaNode as well if they are parents of the node. We need to get
+     * rid of these in order to find the node that xPath is pointing to. Also we can not remove any node beyond the
+     * amount of "../" because we will not be able to find the correct schema node from schema context
+     *
+     * @param schemaNodePath list of qNames as a path to the leaf of type leafref
+     * @param context        create schema context
+     * @param colCount       amount of "../" in the xPath expression
+     * @return list of QNames as a path where we should be able to find referenced node
+     */
+    private static List<QName> createWalkablePath(final Iterable<QName> schemaNodePath, final SchemaContext context,
+            final int colCount) {
+        final List<Integer> indexToRemove = new ArrayList<>();
+        List<QName> schemaNodePathRet = Lists.newArrayList(schemaNodePath);
+        for (int j = 0, i = schemaNodePathRet.size() - 1; i >= 0 && j != colCount; i--, j++) {
+            final SchemaNode nodeIn = findTargetNode(context, schemaNodePathRet);
+            if (nodeIn instanceof CaseSchemaNode || nodeIn instanceof ChoiceSchemaNode) {
+                indexToRemove.add(i);
+                j--;
+            }
+            schemaNodePathRet.remove(i);
+        }
+        schemaNodePathRet = Lists.newArrayList(schemaNodePath);
+        for (int i : indexToRemove) {
+            schemaNodePathRet.remove(i);
+        }
+        return schemaNodePathRet;
     }
 
     private static SchemaNode resolveDerefPath(final SchemaContext context, final Module module,
