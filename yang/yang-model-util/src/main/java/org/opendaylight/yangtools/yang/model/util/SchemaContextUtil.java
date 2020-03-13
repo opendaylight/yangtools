@@ -15,6 +15,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -642,8 +643,8 @@ public final class SchemaContextUtil {
      *            Schema Context
      * @param module
      *            Yang Module
-     * @param relativeXPath
-     *            Non conditional Revision Aware Relative XPath
+     * @param pathStr
+     *            xPath of leafref
      * @param actualSchemaNode
      *            actual schema node
      * @return target schema node
@@ -664,13 +665,38 @@ public final class SchemaContextUtil {
         final int colCount = normalizeXPath(steps);
         final List<String> xpaths = colCount == 0 ? steps : steps.subList(colCount, steps.size());
 
-        final Iterable<QName> schemaNodePath = actualSchemaNode.getPath().getPathFromRoot();
-        if (Iterables.size(schemaNodePath) - colCount >= 0) {
-            return Iterables.concat(Iterables.limit(schemaNodePath, Iterables.size(schemaNodePath) - colCount),
+        final ArrayList<QName> walkablePath = createWalkablePath(actualSchemaNode.getPath().getPathFromRoot(),
+                context, colCount);
+
+        if (Iterables.size(walkablePath) - colCount >= 0) {
+            return Iterables.concat(Iterables.limit(walkablePath, Iterables.size(walkablePath) - colCount),
                 Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
         }
-        return Iterables.concat(schemaNodePath,
+        return Iterables.concat(walkablePath,
                 Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
+    }
+
+    private static ArrayList<QName> createWalkablePath(final Iterable<QName> schemaNodePath,
+                                                       final SchemaContext context,
+                                                       final int colCount) {
+        final List<Integer> indexToRemove = new ArrayList<>();
+        ArrayList<QName> schemaNodePathRet = Lists.newArrayList(schemaNodePath);
+        for (int j = 0, i = schemaNodePathRet.size() - 1; i >= 0; i--, j++) {
+            if (j == colCount) {
+                break;
+            }
+            final SchemaNode nodeIn = findTargetNode(context, schemaNodePathRet);
+            if (nodeIn instanceof CaseSchemaNode || nodeIn instanceof ChoiceSchemaNode) {
+                indexToRemove.add(i);
+                j--;
+            }
+            schemaNodePathRet.remove(i);
+        }
+        schemaNodePathRet = Lists.newArrayList(schemaNodePath);
+        for (int i : indexToRemove) {
+            schemaNodePathRet.remove(i);
+        }
+        return schemaNodePathRet;
     }
 
     private static SchemaNode resolveDerefPath(final SchemaContext context, final Module module,
