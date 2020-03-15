@@ -143,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "93dea29c_237856b8",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 8125
+      },
+      "writtenOn": "2020-03-15T13:09:40Z",
+      "side": 1,
+      "message": "I have explained the method with a javadoc so everyone would be able to understand the method.",
+      "parentUuid": "6fce5326_d36f90a0",
+      "range": {
+        "startLine": 679,
+        "startChar": 36,
+        "endLine": 679,
+        "endChar": 54
+      },
+      "revId": "d76c25a210a64074ae5cd1d04c0923272411379b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fb68f113_bdc14dc3",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
         "patchSetId": 1
