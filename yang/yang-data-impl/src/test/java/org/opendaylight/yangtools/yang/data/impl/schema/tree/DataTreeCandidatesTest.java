@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -176,6 +178,61 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
 
         // 'non-presence' and 'test'
         assertUnmodified(2, node.getChildNodes());
+    }
+
+    @Test
+    public void testAggregateWithoutChanges() throws DataValidationFailedException {
+        DataTreeModification modification1 = dataTree.takeSnapshot().newModification();
+        modification1.write(
+                TestModel.INNER_CONTAINER_PATH.node(QName.create(TestModel.INNER_CONTAINER_QNAME,"value")),
+                ImmutableNodes.leafNode(QName.create(TestModel.INNER_CONTAINER_QNAME,"value"),"value1"));
+        modification1.ready();
+        dataTree.validate(modification1);
+        DataTreeCandidate candidate1 = dataTree.prepare(modification1);
+        dataTree.commit(candidate1);
+
+        DataTreeModification modification2 = dataTree.takeSnapshot().newModification();
+        modification2.delete(TestModel.INNER_CONTAINER_PATH);
+        modification2.ready();
+        dataTree.validate(modification2);
+        DataTreeCandidate candidate2 = dataTree.prepare(modification2);
+        dataTree.commit(candidate2);
+
+        DataTreeCandidate aggregateCandidate = DataTreeCandidates.aggregate(Arrays.asList(candidate1,candidate2));
+
+        assertEquals(ModificationType.UNMODIFIED,aggregateCandidate.getRootNode().getModificationType());
+    }
+
+    @Test
+    public void testAggregate() throws DataValidationFailedException {
+        DataTreeModification modification = dataTree.takeSnapshot().newModification();
+        modification.write(
+                TestModel.INNER_CONTAINER_PATH.node(QName.create(TestModel.INNER_CONTAINER_QNAME,"value")),
+                ImmutableNodes.leafNode(QName.create(TestModel.INNER_CONTAINER_QNAME,"value"),"value1"));
+        modification.ready();
+        dataTree.validate(modification);
+        DataTreeCandidate candidate = dataTree.prepare(modification);
+        dataTree.commit(candidate);
+
+        DataTreeModification modification1 = dataTree.takeSnapshot().newModification();
+        modification1.delete(TestModel.INNER_CONTAINER_PATH);
+        modification1.ready();
+        dataTree.validate(modification1);
+        DataTreeCandidate candidate1 = dataTree.prepare(modification1);
+        dataTree.commit(candidate1);
+
+        DataTreeModification modification2 = dataTree.takeSnapshot().newModification();
+        modification2.write(
+                TestModel.INNER_CONTAINER_PATH.node(QName.create(TestModel.INNER_CONTAINER_QNAME,"value")),
+                ImmutableNodes.leafNode(QName.create(TestModel.INNER_CONTAINER_QNAME,"value"),"value2"));
+        modification2.ready();
+        dataTree.validate(modification2);
+        DataTreeCandidate candidate2 = dataTree.prepare(modification2);
+        dataTree.commit(candidate2);
+
+        DataTreeCandidate aggregateCandidate = DataTreeCandidates.aggregate(Arrays.asList(candidate1,candidate2));
+
+        assertEquals(ModificationType.SUBTREE_MODIFIED,aggregateCandidate.getRootNode().getModificationType());
     }
 
     private static void assertUnmodified(final int expSize, final Collection<DataTreeCandidateNode> nodes) {
