@@ -1,0 +1,613 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b6c37918_d3af96bb",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "should be final, return should be @NonNull",
+      "range": {
+        "startLine": 88,
+        "startChar": 46,
+        "endLine": 88,
+        "endChar": 50
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b6c6bd7_160ace4d",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "split this into a separate method, as the check above does not make sense when this method is invoked from aggregate() above.",
+      "range": {
+        "startLine": 114,
+        "startChar": 8,
+        "endLine": 114,
+        "endChar": 59
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c590248b_162107e4",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "same call twice?",
+      "range": {
+        "startLine": 165,
+        "startChar": 16,
+        "endLine": 165,
+        "endChar": 50
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca42b48b_d8bdc1b7",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "superfluous braces",
+      "range": {
+        "startLine": 167,
+        "startChar": 29,
+        "endLine": 167,
+        "endChar": 31
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8c58c97_fd240341",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "just import PathArgument, it is a well-known concept in this API",
+      "range": {
+        "startLine": 176,
+        "startChar": 8,
+        "endLine": 176,
+        "endChar": 43
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c6d2b740_e4e682bc",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "This is a very complicated way of writing \"isEmpty()\"",
+      "range": {
+        "startLine": 178,
+        "startChar": 42,
+        "endLine": 178,
+        "endChar": 66
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3dcf377d_18071271",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": ".orElseThrow() is the preferred name of .get(). What is ensuring that Optional is present? There needs to be a comment explaining that.",
+      "range": {
+        "startLine": 179,
+        "startChar": 55,
+        "endLine": 179,
+        "endChar": 87
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "10804320_ed89b978",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "same as above, plus this will probably fit into two line safterwards",
+      "range": {
+        "startLine": 184,
+        "startChar": 20,
+        "endLine": 184,
+        "endChar": 53
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ae30670_b5c1f1d0",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "store this into a local variable and reuse it",
+      "range": {
+        "startLine": 189,
+        "startChar": 16,
+        "endLine": 189,
+        "endChar": 42
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3008894f_f73ad36a",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "let\u0027s invert the condition here and the comment, and pull the iteration into the condition -- that will save having to have two breaks.",
+      "range": {
+        "startLine": 203,
+        "startChar": 20,
+        "endLine": 203,
+        "endChar": 82
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "814141e0_ecaea9c6",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "hmm, this is actually recursive invocation on a Collection, I think it would be better done through a for() loop",
+      "range": {
+        "startLine": 207,
+        "startChar": 16,
+        "endLine": 209,
+        "endChar": 19
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e36a8587_127f28d9",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "this method needs some amount of comments about what it is actually sopposed to do",
+      "range": {
+        "startLine": 221,
+        "startChar": 41,
+        "endLine": 221,
+        "endChar": 52
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20bb161d_e3adddd8",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "Which case are we targeting here? equals() here can be *very* expensive!",
+      "range": {
+        "startLine": 240,
+        "startChar": 20,
+        "endLine": 240,
+        "endChar": 82
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25566643_570b4fed",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "this should really be a utility method, which would format the two modifications together, which would be useful below",
+      "range": {
+        "startLine": 317,
+        "startChar": 30,
+        "endLine": 318,
+        "endChar": 95
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ca6eb36_b50fe518",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "this is an IllegalState, really",
+      "range": {
+        "startLine": 320,
+        "startChar": 34,
+        "endLine": 320,
+        "endChar": 63
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d44e7115_778fe611",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "So there are three distinct cases which ware doing the same thing except the string is different. Just reuse the the utility method from above and squash the cases, leading to better performance",
+      "range": {
+        "startLine": 331,
+        "startChar": 33,
+        "endLine": 331,
+        "endChar": 39
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d5f66b2_8639c692",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "we definitely do not want to make this public",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 6
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22647405_da702e7d",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "requireNonNull() as appropriate, here and elsewhere",
+      "range": {
+        "startLine": 31,
+        "startChar": 23,
+        "endLine": 31,
+        "endChar": 37
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5133531c_1f17ee75",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "why are we creating a copy of childNodes.values()?",
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "267920cc_58a621ed",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "err, this means if \u0027id\u0027 node does not exist we\u0027ll throw. Do you mean to say\n\ngetNode(id).flatMap(TerminalDataTreeCandidateNode::getDataBefore)\n\nhere and similar things in other places?",
+      "range": {
+        "startLine": 81,
+        "startChar": 45,
+        "endLine": 81,
+        "endChar": 62
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1085425_b1e32311",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "definitely not public. Does this implementation ever leak to the user, or is this just something we use internally because it is convenient?",
+      "range": {
+        "startLine": 97,
+        "startChar": 4,
+        "endLine": 97,
+        "endChar": 10
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "335c7adb_2b104844",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidatesAggregateTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "20 PANTHEON.tech, s.r.o",
+      "range": {
+        "startLine": 2,
+        "startChar": 19,
+        "endLine": 2,
+        "endChar": 40
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5a687d5_50e8f967",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidatesAggregateTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "extra empty line",
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "165e8358_2d5395df",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidatesAggregateTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "Can you also create an integration-style test in yang-data-impl, where these methods will be tested on products of InMemoryDataTree.prepare(), please?\n\nThat way it will be much easier to express what sort of DataTree transactions are being aggregated() to what equivalents.",
+      "range": {
+        "startLine": 23,
+        "startChar": 13,
+        "endLine": 23,
+        "endChar": 44
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57f5cfe6_4aefe7a1",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidatesAggregateTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "general comment: prefer @Mock annotations with @RunWith(MockitoJUnitRunner.StrictStubs.class)\n\nAlso, YangInstanceIdentifier and its inner classes are part of API contract to the point of no contestation. Do not ever ever ever mock them, but rather use them directly.",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 25,
+        "endChar": 47
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4efa121e_07b0577a",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidatesAggregateTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "please use proper spaces",
+      "range": {
+        "startLine": 46,
+        "startChar": 36,
+        "endLine": 46,
+        "endChar": 38
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aef1f0bb_436221b1",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidatesAggregateTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-03-17T17:59:57Z",
+      "side": 1,
+      "message": "import static org.junit.Assert.assertEquals;\n\nand others, of course",
+      "range": {
+        "startLine": 47,
+        "startChar": 8,
+        "endLine": 47,
+        "endChar": 27
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
