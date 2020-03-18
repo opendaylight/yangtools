@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.meta;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Model statement. There are two base types of model statements:
@@ -41,8 +40,7 @@ public interface ModelStatement<A> {
      *
      * @return statement argument or null if statement does not have argument.
      */
-    // FIXME: figure out @NonNull argument override in subclasses and switch to JDT @Nullable
-    @Nullable A argument();
+    A argument();
 
     /**
      * Returns statement source, which denotes if statement was
