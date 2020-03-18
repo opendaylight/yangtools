@@ -364,12 +364,13 @@ public final class DataTreeCandidates {
     private static void applyToCursorAwareModification(final CursorAwareDataTreeModification modification,
                                                        final DataTreeCandidate candidate) {
         final YangInstanceIdentifier candidatePath = candidate.getRootPath();
-        if (candidatePath.isEmpty()) {
+        final YangInstanceIdentifier parent = candidatePath.getParent();
+        if (parent == null) {
             try (DataTreeModificationCursor cursor = modification.openCursor()) {
                 DataTreeCandidateNodes.applyRootToCursor(cursor, candidate.getRootNode());
             }
         } else {
-            try (DataTreeModificationCursor cursor = modification.openCursor(candidatePath.getParent()).get()) {
+            try (DataTreeModificationCursor cursor = modification.openCursor(parent).orElseThrow()) {
                 DataTreeCandidateNodes.applyRootedNodeToCursor(cursor, candidatePath, candidate.getRootNode());
             }
         }
