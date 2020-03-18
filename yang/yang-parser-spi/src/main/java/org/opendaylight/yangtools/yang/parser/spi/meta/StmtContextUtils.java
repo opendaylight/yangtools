@@ -199,14 +199,17 @@ public final class StmtContextUtils {
 
     public static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
         StmtContext<?, ?, ?> current = stmtCtx;
-        while (current.coerceParentContext().getParentContext() != null) {
-            current = current.getParentContext();
-            if (isUnknownStatement(current)) {
+
+        while (true) {
+            final StmtContext<?, ?, ?> parent = current.coerceParentContext();
+            if (parent.getParentContext() == null) {
+                return false;
+            }
+            if (isUnknownStatement(parent)) {
                 return true;
             }
+            current = parent;
         }
-
-        return false;
     }
 
     /**
@@ -420,7 +423,7 @@ public final class StmtContextUtils {
             return;
         }
 
-        final StmtContext<?, ?, ?> listStmtCtx = ctx.getParentContext();
+        final StmtContext<?, ?, ?> listStmtCtx = ctx.coerceParentContext();
         final StmtContext<Set<QName>, ?, ?> keyStmtCtx = findFirstDeclaredSubstatement(listStmtCtx, KeyStatement.class);
 
         if (YangStmtMapping.LEAF.equals(ctx.getPublicDefinition())) {
