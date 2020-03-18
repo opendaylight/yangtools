@@ -78,7 +78,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
         }
         if (depth == path.size() - 1) {
             // Use the parent cache
-            return getParent();
+            return verifyNotNull(getParent());
         }
         return YangInstanceIdentifier.create(path.subList(0, depth));
     }
