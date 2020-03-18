@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -77,24 +78,36 @@ public class DataTreeCandidatesTest {
 
         final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
         doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
+        final YangInstanceIdentifier mockedRootPathParent = mock(YangInstanceIdentifier.class);
+        doReturn(mockedRootPathParent).when(mockedRootPath).getParent();
+
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
-        doReturn(Optional.of(mockedCursor)).when(mockedModification).openCursor(isNull());
+        doReturn(Optional.of(mockedCursor)).when(mockedModification).openCursor(mockedRootPathParent);
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
 
         doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
 
         DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate);
-        verify(mockedModification, times(1)).openCursor(isNull());
+        verify(mockedRootPath, times(1)).getParent();
+        verify(mockedModification, times(1)).openCursor(mockedRootPathParent);
         verify(mockedCursor, times(1)).delete(isNull());
+    }
 
-        doReturn(Boolean.TRUE).when(mockedRootPath).isEmpty();
-        try {
-            DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate);
-            fail("An IllegalArgumentException should have been thrown!");
-        } catch (IllegalArgumentException ex) {
-            assertTrue(ex.getMessage().contains("Can not delete root"));
-        }
+    @Test
+    public void testApplyToCursorAwareModificationRoot() {
+        final DataTreeCandidate mockedDataTreeCandidate = mock(DataTreeCandidate.class);
+        final CursorAwareDataTreeModification mockedModification = mock(CursorAwareDataTreeModification.class);
+        final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
+        final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
+        doReturn(null).when(mockedRootPath).getParent();
+        doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
+        doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate));
+        assertEquals("Can not delete root.", thrown.getMessage());
     }
 
     @Test
