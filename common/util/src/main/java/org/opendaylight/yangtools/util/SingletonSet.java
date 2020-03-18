@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static final SingletonSet<?> NULL_SINGLETON = new SingletonSet<Object>() {
+    private static final SingletonSet<?> NULL_SINGLETON = new SingletonSet<>() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -69,7 +69,12 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         return element == null ? (SingletonSet<E>) NULL_SINGLETON : new RegularSingletonSet<>(element);
     }
 
-    public abstract @Nullable E getElement();
+    /**
+     * Return the single element contained in this set.
+     *
+     * @return This set's element.
+     */
+    public abstract E getElement();
 
     @Override
     public final int size() {
