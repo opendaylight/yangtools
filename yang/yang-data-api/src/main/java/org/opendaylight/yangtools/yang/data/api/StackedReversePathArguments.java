@@ -14,6 +14,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.Collection;
 import java.util.Iterator;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 final class StackedReversePathArguments extends PathArgumentList {
@@ -25,7 +26,7 @@ final class StackedReversePathArguments extends PathArgumentList {
         this.identifier = requireNonNull(identifier);
     }
 
-    private static int calculateSize(final YangInstanceIdentifier parent) {
+    private static int calculateSize(final @NonNull YangInstanceIdentifier parent) {
         YangInstanceIdentifier current = parent;
         for (int i = 1;; ++i) {
             final Collection<PathArgument> args = current.tryReversePathArguments();
@@ -34,7 +35,7 @@ final class StackedReversePathArguments extends PathArgumentList {
             }
 
             verify(current instanceof StackedYangInstanceIdentifier);
-            current = current.getParent();
+            current = ((StackedYangInstanceIdentifier) current).getParent();
         }
     }
 

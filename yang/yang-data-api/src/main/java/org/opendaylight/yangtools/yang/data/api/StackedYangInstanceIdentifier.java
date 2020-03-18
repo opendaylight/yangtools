@@ -21,6 +21,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 
 final class StackedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     private static final long serialVersionUID = 1L;
@@ -42,8 +43,8 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
         PARENT_FIELD = f;
     }
 
-    private final YangInstanceIdentifier parent;
-    private final PathArgument pathArgument;
+    private final @NonNull YangInstanceIdentifier parent;
+    private final @NonNull PathArgument pathArgument;
 
     private transient volatile StackedPathArguments pathArguments;
     private transient volatile StackedReversePathArguments reversePathArguments;
@@ -65,7 +66,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     }
 
     @Override
-    public YangInstanceIdentifier getParent() {
+    public @NonNull YangInstanceIdentifier getParent() {
         return parent;
     }
 
