@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
@@ -25,5 +26,5 @@ abstract class RangeRestrictedTypeBuilderWithBase<T extends RangeRestrictedTypeD
         return buildType(calculateRangeConstraint(getBaseType().getRangeConstraint().get()));
     }
 
-    abstract T buildType(RangeConstraint<N> rangeConstraints);
+    abstract @NonNull T buildType(RangeConstraint<N> rangeConstraints);
 }
