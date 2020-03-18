@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import com.google.common.annotations.Beta;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.Nullable;
  * @author Robert Varga
  */
 @Beta
-@NonNullByDefault
 public final class YangNames {
     private YangNames() {
         // Hidden on purpose
@@ -33,7 +32,7 @@ public final class YangNames {
      * @return A tuple containing the module name and parsed revision, if present.
      * @throws NullPointerException if {@code baseName} is null
      */
-    public static Entry<String, @Nullable String> parseFilename(final String baseName) {
+    public static @NonNull Entry<String, @Nullable String> parseFilename(final String baseName) {
         final int zavinac = baseName.lastIndexOf('@');
         if (zavinac < 0) {
             return new SimpleEntry<>(baseName, null);
