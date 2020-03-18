@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -72,7 +73,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
         }
         if (depth == path.size() - 1) {
             // Use the parent cache
-            return getParent();
+            return verifyNotNull(getParent());
         }
         return YangInstanceIdentifier.create(path.subList(0, depth));
     }
