@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -26,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
     private final ModificationType type;
 
-    protected AbstractDataTreeCandidateNode(final ModificationType type) {
+    AbstractDataTreeCandidateNode(final ModificationType type) {
         this.type = requireNonNull(type);
     }
 
@@ -43,24 +42,5 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
     @Override
     public final Optional<NormalizedNode<?, ?>> getDataBefore() {
         throw new UnsupportedOperationException("Before-image not available after serialization");
-    }
-
-    static DataTreeCandidateNode createUnmodified() {
-        return new AbstractDataTreeCandidateNode(ModificationType.UNMODIFIED) {
-            @Override
-            public PathArgument getIdentifier() {
-                throw new UnsupportedOperationException("Root node does not have an identifier");
-            }
-
-            @Override
-            public Optional<NormalizedNode<?, ?>> getDataAfter() {
-                throw new UnsupportedOperationException("After-image not available after serialization");
-            }
-
-            @Override
-            public Collection<DataTreeCandidateNode> getChildNodes() {
-                throw new UnsupportedOperationException("Children not available after serialization");
-            }
-        };
     }
 }

@@ -75,7 +75,7 @@ public final class DataTreeCandidateInputOutput {
                 rootNode = DataTreeCandidateNodes.written(in.readNormalizedNode(receiver));
                 break;
             case UNMODIFIED:
-                rootNode = AbstractDataTreeCandidateNode.createUnmodified();
+                rootNode = UnmodifiedRootDataTreeCandidateNode.INSTANCE;
                 break;
             default:
                 throw new IllegalArgumentException("Unhandled node type " + type);
