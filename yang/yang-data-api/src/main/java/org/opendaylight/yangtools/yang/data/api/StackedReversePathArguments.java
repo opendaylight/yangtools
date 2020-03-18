@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 
 final class StackedReversePathArguments extends PathArgumentList {
     private final StackedYangInstanceIdentifier identifier;
-    private int size;
-    private volatile boolean haveSize;
+
+    private volatile int size;
 
     StackedReversePathArguments(final StackedYangInstanceIdentifier identifier) {
         this.identifier = requireNonNull(identifier);
@@ -42,10 +42,9 @@ final class StackedReversePathArguments extends PathArgumentList {
     @Override
     public int size() {
         int ret = size;
-        if (!haveSize) {
+        if (ret == 0) {
             ret = calculateSize(identifier.getParent());
             size = ret;
-            haveSize = true;
         }
 
         return ret;
