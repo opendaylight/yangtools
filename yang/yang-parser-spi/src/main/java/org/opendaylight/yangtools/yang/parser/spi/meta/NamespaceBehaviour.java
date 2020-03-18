@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -270,7 +271,8 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         public Map<K, V> getAllFrom(final NamespaceStorageNode storage) {
             NamespaceStorageNode current = storage;
             while (current.getStorageNodeType() != storageType) {
-                current = current.getParentNamespaceStorage();
+                current = verifyNotNull(current.getParentNamespaceStorage(), "Failed to find storage node for %s",
+                    storageType);
             }
 
             return getAllFromLocalStorage(current);
