@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.data.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -29,7 +31,7 @@ public class PathArgumentListTest {
     private static final class TestClass extends PathArgumentList {
         @Override
         public UnmodifiableIterator<PathArgument> iterator() {
-            return new UnmodifiableIterator<PathArgument>() {
+            return new UnmodifiableIterator<>() {
                 @Override
                 public boolean hasNext() {
                     return false;
@@ -146,12 +148,10 @@ public class PathArgumentListTest {
         final YangInstanceIdentifier yangInstanceIdentifier1 = stackedYangInstanceIdentifier.getAncestor(4);
         assertEquals(stackedYangInstanceIdentifier, stackedYangInstanceIdentifierClone);
         assertEquals(stackedReversePathArguments, yangInstanceIdentifier1.getReversePathArguments());
+        assertSame(stackedYangInstanceIdentifier.getParent(), stackedYangInstanceIdentifier.getAncestor(3));
 
-        try {
-            stackedYangInstanceIdentifier.getAncestor(12);
-            fail();
-        } catch (IllegalArgumentException e) {
-            // Expected
-        }
+        final IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+            () -> stackedYangInstanceIdentifier.getAncestor(12));
+        assertEquals("Depth 12 exceeds maximum depth 4", thrown.getMessage());
     }
 }

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Iterables;
@@ -101,7 +102,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
         final int toWalk = ourDepth - depth;
         YangInstanceIdentifier result = this;
         for (int i = 0; i < toWalk; ++i) {
-            result = result.getParent();
+            result = verifyNotNull(result.getParent());
         }
 
         return result;
