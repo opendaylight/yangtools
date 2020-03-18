@@ -32,14 +32,35 @@ import org.slf4j.LoggerFactory;
  * @author Robert Varga
  */
 @Beta
+
 public final class DataTreeCandidateInputOutput {
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidateInputOutput.class);
-    private static final byte DELETE = 0;
-    private static final byte SUBTREE_MODIFIED = 1;
-    private static final byte UNMODIFIED = 2;
-    private static final byte WRITE = 3;
-    private static final byte APPEARED = 4;
-    private static final byte DISAPPEARED = 5;
+
+    /*
+     * A denser layout can be achieved when we consider split the single byte into two logical field. Bottom-most three
+     * bits are used to indicate which ModificationType has occured and the top-most five bits indicate how many
+     * children the node has.
+     *
+     * In case there are fewer than 29 children, the number of children is directly encoded in the bits.
+     * If there are 29-284 children, '29' is encoded in the field and an additional unsigned byte is appended.
+     * If there are 285-65820 children, '30' is encoded in the field and an additional unsigned short is appended.
+     * If there are more than 655820, '31' is encoded in the and an additional signed int is appended.
+     */
+    private static final byte UNMODIFIED       = 0x00;
+    private static final byte SUBTREE_MODIFIED = 0x01;
+    private static final byte WRITE            = 0x02;
+    private static final byte DELETE           = 0x03;
+    private static final byte APPEARED         = 0x04;
+    private static final byte DISAPPEARED      = 0x05;
+
+    private static final byte TYPE_MASK        = 0x07;
+    private static final byte SIZE_SHIFT       = 3;
+
+    private static final byte SIZE_0           = 0;
+    private static final byte SIZE_28          = 28;
+    private static final byte SIZE_1B          = 29;
+    private static final byte SIZE_2B          = 30;
+    private static final byte SIZE_4B          = 31;
 
     private DataTreeCandidateInputOutput() {
 
