@@ -721,8 +721,10 @@ public final class SchemaContextUtil {
         // Look up the node which we need to reference
         final SchemaNode derefTarget = findTargetNode(context, resolveRelativePath(context, module, actualSchemaNode,
             doSplitXPath(derefArg)));
-        checkArgument(derefTarget != null, "Cannot find deref(%s) target node %s in context of %s", derefArg,
-                actualSchemaNode);
+        if (derefTarget == null) {
+            throw new IllegalArgumentException("Cannot find deref(" + derefArg + ") target node in context of "
+                    + actualSchemaNode);
+        }
         checkArgument(derefTarget instanceof TypedDataSchemaNode, "deref(%s) resolved to non-typed %s", derefArg,
             derefTarget);
 
@@ -916,6 +918,10 @@ public final class SchemaContextUtil {
 
         final DataSchemaNode dataSchemaNode = (DataSchemaNode) findTargetNode(schemaContext,
             xpathToQNamePath(schemaContext, parentModule.get(), stripConditionsFromXPathString(pathStatement)));
+        if (dataSchemaNode == null) {
+            throw new IllegalArgumentException("Failed to find target node for " + pathStatement.getOriginalString());
+        }
+
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
             return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode);
