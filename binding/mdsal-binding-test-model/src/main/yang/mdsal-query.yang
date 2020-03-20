@@ -1,0 +1,55 @@
+module mdsal-query {
+  namespace "mdsal-query";
+  prefix mq;
+
+  grouping first-grp {
+    list system {
+      key name;
+
+      leaf name {
+        type string;
+      }
+
+      leaf alias {
+        type string;
+      }
+
+      uses second-grp;
+    }
+  }
+
+  grouping second-grp {
+    list alarms {
+      key id;
+
+      leaf id {
+        type uint64;
+      }
+
+      leaf critical {
+        type empty;
+      }
+
+      uses third-grp;
+    }
+  }
+
+  grouping third-grp {
+    list affected-users {
+      key uid;
+
+      leaf uid {
+        type uint64;
+      }
+
+      leaf attr {
+        type uint8;
+      }
+    }
+  }
+
+  container foo {
+    uses first-grp;
+  }
+}
+
