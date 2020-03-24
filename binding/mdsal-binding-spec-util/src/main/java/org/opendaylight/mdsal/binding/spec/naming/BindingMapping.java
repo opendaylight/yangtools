@@ -26,6 +26,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
+import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -78,6 +79,11 @@ public final class BindingMapping {
      * Name of {@link DataContainer#implementedInterface()}.
      */
     public static final @NonNull String DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME = "implementedInterface";
+
+    /**
+     * Name of {@link ScalarTypeObject#getValue()}.
+     */
+    public static final @NonNull String SCALAR_TYPE_OBJECT_GET_VALUE_NAME = "getValue";
 
     /**
      * Prefix for getter methods working on top of boolean.
