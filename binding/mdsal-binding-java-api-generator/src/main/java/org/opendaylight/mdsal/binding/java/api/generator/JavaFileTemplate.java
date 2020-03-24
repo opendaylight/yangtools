@@ -106,17 +106,6 @@ class JavaFileTemplate {
         return type;
     }
 
-    static final GeneratedProperty findProperty(final GeneratedTransferObject gto, final String name) {
-        final Optional<GeneratedProperty> optProp = gto.getProperties().stream()
-                .filter(prop -> prop.getName().equals(name)).findFirst();
-        if (optProp.isPresent()) {
-            return optProp.get();
-        }
-
-        final GeneratedTransferObject parent = gto.getSuperType();
-        return parent != null ? findProperty(parent, name) : null;
-    }
-
     final String generateImportBlock() {
         verify(javaType instanceof TopLevelJavaGeneratedType);
         return ((TopLevelJavaGeneratedType) javaType).imports().map(name -> "import " + name + ";\n")

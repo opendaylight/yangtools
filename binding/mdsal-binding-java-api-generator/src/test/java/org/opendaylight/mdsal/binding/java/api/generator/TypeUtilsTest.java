@@ -8,14 +8,10 @@
 package org.opendaylight.mdsal.binding.java.api.generator;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
@@ -49,17 +45,5 @@ public class TypeUtilsTest {
         doReturn(rootType).when(innerType).getSuperType();
         doReturn(ImmutableList.of(property)).when(rootType).getProperties();
         TypeUtils.getBaseYangType(innerType);
-    }
-
-    @Test
-    public void constructTest() throws ReflectiveOperationException {
-        final Constructor<TypeUtils> constructor = TypeUtils.class.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        try {
-            constructor.newInstance();
-            fail();
-        } catch (InvocationTargetException e) {
-            assertTrue(e.getCause() instanceof UnsupportedOperationException);
-        }
     }
 }

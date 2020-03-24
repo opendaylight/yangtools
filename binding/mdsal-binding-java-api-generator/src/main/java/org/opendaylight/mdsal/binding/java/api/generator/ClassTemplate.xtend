@@ -99,7 +99,7 @@ class ClassTemplate extends BaseTemplate {
         this.consts = genType.constantDefinitions
 
         if (restrictions !== null && restrictions.rangeConstraint.present) {
-            rangeGenerator = requireNonNull(AbstractRangeGenerator.forType(findProperty(genType, "value").returnType))
+            rangeGenerator = requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(genType)))
         } else {
             rangeGenerator = null
         }
@@ -136,7 +136,8 @@ class ClassTemplate extends BaseTemplate {
 
             «IF restrictions !== null»
                 «IF restrictions.lengthConstraint.present»
-                    «LengthGenerator.generateLengthChecker("_value", findProperty(genTO, "value").returnType, restrictions.lengthConstraint.get, this)»
+                    «LengthGenerator.generateLengthChecker("_value", TypeUtils.encapsulatedValueType(genTO),
+                        restrictions.lengthConstraint.get, this)»
                 «ENDIF»
                 «IF restrictions.rangeConstraint.present»
                     «rangeGenerator.generateRangeChecker("_value", restrictions.rangeConstraint.get, this)»
@@ -200,7 +201,7 @@ class ClassTemplate extends BaseTemplate {
     def protected constructors() '''
         «IF genTO.unionType»
             «genUnionConstructor»
-        «ELSEIF genTO.typedef && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
+        «ELSEIF genTO.typedef && allProperties.size == 1 && allProperties.get(0).name.equals(TypeConstants.VALUE_PROP)»
             «typedefConstructor»
         «ELSE»
             «allValuesConstructor»
@@ -235,8 +236,8 @@ class ClassTemplate extends BaseTemplate {
     '''
 
     def private typedefConstructor() '''
-    @«ConstructorParameters.importedName»("value")
-    @«ConstructorProperties.importedName»("value")
+    @«ConstructorParameters.importedName»("«TypeConstants.VALUE_PROP»")
+    @«ConstructorProperties.importedName»("«TypeConstants.VALUE_PROP»")
     public «type.name»(«allProperties.asArgumentsDeclaration») {
         «IF false == parentProperties.empty»
             super(«parentProperties.asArguments»);

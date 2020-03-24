@@ -14,15 +14,14 @@ import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.util.TypeConstants;
 
 /**
  * Random utility methods for dealing with {@link Type} objects.
  */
 final class TypeUtils {
-    private static final String VALUE_PROP = "value";
-
     private TypeUtils() {
-        throw new UnsupportedOperationException();
+
     }
 
     /**
@@ -48,13 +47,17 @@ final class TypeUtils {
 
         // Look for the 'value' property and return its type
         for (GeneratedProperty s : rootGto.getProperties()) {
-            if (VALUE_PROP.equals(s.getName())) {
+            if (TypeConstants.VALUE_PROP.equals(s.getName())) {
                 return (ConcreteType) s.getReturnType();
             }
         }
 
         // Should never happen
         throw new IllegalArgumentException(String.format("Type %s root %s properties %s do not include \"%s\"",
-            type, rootGto, rootGto.getProperties(), VALUE_PROP));
+            type, rootGto, rootGto.getProperties(), TypeConstants.VALUE_PROP));
+    }
+
+    static Type encapsulatedValueType(final GeneratedTransferObject gto) {
+        return gto.findProperty(TypeConstants.VALUE_PROP).orElseThrow().getReturnType();
     }
 }
