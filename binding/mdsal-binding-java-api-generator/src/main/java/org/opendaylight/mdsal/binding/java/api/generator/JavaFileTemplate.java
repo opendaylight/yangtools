@@ -106,7 +106,7 @@ class JavaFileTemplate {
         return type;
     }
 
-    final GeneratedProperty findProperty(final GeneratedTransferObject gto, final String name) {
+    static final GeneratedProperty findProperty(final GeneratedTransferObject gto, final String name) {
         final Optional<GeneratedProperty> optProp = gto.getProperties().stream()
                 .filter(prop -> prop.getName().equals(name)).findFirst();
         if (optProp.isPresent()) {
