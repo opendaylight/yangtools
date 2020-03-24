@@ -39,6 +39,8 @@ import org.opendaylight.yangtools.yang.common.Uint32
 import org.opendaylight.yangtools.yang.common.Uint64
 import org.opendaylight.yangtools.yang.common.Uint8
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
+import org.opendaylight.mdsal.binding.model.util.BindingTypes
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 
 /**
  * Template for generating JAVA class.
@@ -148,12 +150,7 @@ class ClassTemplate extends BaseTemplate {
 
             «defaultInstance»
 
-            «FOR field : properties SEPARATOR "\n"»
-                «field.getterMethod»
-                «IF !field.readOnly»
-                    «field.setterMethod»
-                «ENDIF»
-            «ENDFOR»
+            «propertyMethods»
 
             «IF (genTO.isTypedef() && genTO.getBaseType instanceof BitsTypeDefinition)»
                 «generateGetValueForBitsTypeDef»
@@ -166,6 +163,38 @@ class ClassTemplate extends BaseTemplate {
             «generateToString(genTO.toStringIdentifiers)»
         }
 
+    '''
+
+    def private propertyMethods() {
+        if (properties.empty) {
+            return ""
+        }
+        isScalarTypeObject ? scalarTypeObjectValue(properties.get(0)) : defaultProperties
+    }
+
+    def private isScalarTypeObject() {
+        for (impl : genTO.implements) {
+            if (BindingTypes.SCALAR_TYPE_OBJECT.identifier.equals(impl.identifier)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    def private defaultProperties() '''
+        «FOR field : properties SEPARATOR "\n"»
+            «field.getterMethod»
+            «IF !field.readOnly»
+                «field.setterMethod»
+            «ENDIF»
+        «ENDFOR»
+    '''
+
+    def private scalarTypeObjectValue(GeneratedProperty field) '''
+        @«OVERRIDE.importedName»
+        public «field.returnType.importedName» «BindingMapping.SCALAR_TYPE_OBJECT_GET_VALUE_NAME»() {
+            return «field.fieldName»«IF field.returnType.name.endsWith("[]")».clone()«ENDIF»;
+        }
     '''
 
     /**

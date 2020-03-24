@@ -124,7 +124,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsMethod(int32Ext1Class, Integer.class, GET_VAL);
         defInst = CompilationTestUtils.assertContainsMethod(int32Ext1Class, int32Ext1Class, "getDefaultInstance",
             String.class);
-        assertEquals(6, int32Ext1Class.getDeclaredMethods().length);
+        assertEquals(7, int32Ext1Class.getDeclaredMethods().length);
 
         List<Range<Integer>> rangeConstraints = new ArrayList<>();
         rangeConstraints.add(Range.closed(2, 2147483647));
@@ -173,7 +173,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         defInst = CompilationTestUtils.assertContainsMethod(stringExt1Class, stringExt1Class, "getDefaultInstance",
             String.class);
         CompilationTestUtils.assertContainsDefaultMethods(stringExt1Class);
-        assertEquals(6, stringExt1Class.getDeclaredMethods().length);
+        assertEquals(7, stringExt1Class.getDeclaredMethods().length);
 
         List<Range<Integer>> lengthConstraints = new ArrayList<>();
         lengthConstraints.add(Range.closed(5, 11));
@@ -235,7 +235,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsDefaultMethods(myDecimalTypeClass);
         defInst = CompilationTestUtils.assertContainsMethod(myDecimalTypeClass, myDecimalTypeClass,
             "getDefaultInstance", String.class);
-        assertEquals(6, myDecimalTypeClass.getDeclaredMethods().length);
+        assertEquals(7, myDecimalTypeClass.getDeclaredMethods().length);
 
         List<Range<BigDecimal>> decimalRangeConstraints = new ArrayList<>();
         decimalRangeConstraints.add(Range.closed(new BigDecimal("1.5"), new BigDecimal("5.5")));
@@ -259,7 +259,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsDefaultMethods(myDecimalType2Class);
         defInst = CompilationTestUtils.assertContainsMethod(myDecimalType2Class, myDecimalType2Class,
             "getDefaultInstance", String.class);
-        assertEquals(6, myDecimalType2Class.getDeclaredMethods().length);
+        assertEquals(7, myDecimalType2Class.getDeclaredMethods().length);
 
         List<Range<BigDecimal>> decimal2RangeConstraints = new ArrayList<>();
         decimal2RangeConstraints.add(Range.closed(new BigDecimal("0"), new BigDecimal("1")));
