@@ -217,7 +217,7 @@ class ClassTemplate extends BaseTemplate {
 
     def private allValuesConstructor() '''
     public «type.name»(«allProperties.asArgumentsDeclaration») {
-        «IF false == parentProperties.empty»
+        «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
         «ENDIF»
         «FOR p : allProperties»
@@ -239,7 +239,7 @@ class ClassTemplate extends BaseTemplate {
     @«ConstructorParameters.importedName»("«TypeConstants.VALUE_PROP»")
     @«ConstructorProperties.importedName»("«TypeConstants.VALUE_PROP»")
     public «type.name»(«allProperties.asArgumentsDeclaration») {
-        «IF false == parentProperties.empty»
+        «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
         «ENDIF»
         «FOR p : allProperties»
@@ -274,7 +274,7 @@ class ClassTemplate extends BaseTemplate {
 
     def protected genConstructor(GeneratedProperty property, Iterable<GeneratedProperty> other) '''
     public «type.name»(«property.returnType.importedName + " " + property.name») {
-        «IF false == parentProperties.empty»
+        «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
         «ENDIF»
 
@@ -327,7 +327,7 @@ class ClassTemplate extends BaseTemplate {
      * @param source Source object
      */
     public «type.name»(«type.name» source) {
-        «IF false == parentProperties.empty»
+        «IF !parentProperties.empty»
             super(source);
         «ENDIF»
         «FOR p : properties»
