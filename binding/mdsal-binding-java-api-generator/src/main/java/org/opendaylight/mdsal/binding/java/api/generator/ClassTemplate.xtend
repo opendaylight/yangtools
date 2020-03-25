@@ -16,6 +16,7 @@ import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Lists
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import java.beans.ConstructorProperties
 import java.util.ArrayList
 import java.util.Base64;
@@ -38,7 +39,6 @@ import org.opendaylight.yangtools.yang.common.Uint32
 import org.opendaylight.yangtools.yang.common.Uint64
 import org.opendaylight.yangtools.yang.common.Uint8
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 
 /**
  * Template for generating JAVA class.
