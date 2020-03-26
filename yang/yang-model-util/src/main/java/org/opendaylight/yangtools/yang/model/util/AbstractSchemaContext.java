@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -33,7 +32,6 @@ import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -42,11 +40,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public abstract class AbstractSchemaContext implements SchemaContext {
     /**
@@ -175,40 +170,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
         return getNameToModules().get(name);
     }
 
-    @Deprecated
-    @Override
-    public boolean isAugmenting() {
-        return false;
-    }
-
-    @Deprecated
-    @Override
-    public boolean isAddedByUses() {
-        return false;
-    }
-
-    @Override
-    public boolean isConfiguration() {
-        return false;
-    }
-
-    @Override
-    public QName getQName() {
-        // FIXME: YANGTOOLS-1074: we do not want this name
-        return SchemaContext.NAME;
-    }
-
-    @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaPath.ROOT;
-    }
-
-    @Override
-    public Status getStatus() {
-        return Status.CURRENT;
-    }
-
     @Override
     public Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
         final List<UnknownSchemaNode> result = new ArrayList<>();
@@ -255,21 +216,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
             }
         }
         return Optional.empty();
-    }
-
-    @Override
-    public Collection<? extends UsesNode> getUses() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public boolean isPresenceContainer() {
-        return false;
-    }
-
-    @Override
-    public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
-        return Collections.emptySet();
     }
 
     @Override

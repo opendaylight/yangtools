@@ -14,6 +14,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -30,9 +31,9 @@ import org.opendaylight.yangtools.yang.common.Revision;
  * Instances MUST be immutable and thus usage in multi threaded
  * environment is safe.
  */
-// FIXME: 5.0.0: ContainerSchemaNode is far too broad. A combination of DataNodeContainer, NotificationNodeContainer
+// FIXME: 6.0.0: ContainerSchemaNode is far too broad. A combination of DataNodeContainer, NotificationNodeContainer
 //               and possibly DataSchemaNode would reflect SchemaContext traits better.
-// FIXME: 5.0.0: consider deprecating this class in favor of EffectiveModelContext
+// FIXME: 6.0.0: consider deprecating this class in favor of EffectiveModelContext
 public interface SchemaContext extends ContainerSchemaNode, Immutable {
     /**
      * QName of NETCONF top-level data node.
@@ -186,11 +187,13 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
     }
 
     @Override
+    @Deprecated
     default Collection<? extends ActionDefinition> getActions() {
         return ImmutableSet.of();
     }
 
     @Override
+    @Deprecated
     default Optional<ActionDefinition> findAction(final QName qname) {
         requireNonNull(qname);
         return Optional.empty();
@@ -211,23 +214,82 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
     }
 
     @Override
+    @Deprecated
     default Optional<String> getDescription() {
         return Optional.empty();
     }
 
     @Override
+    @Deprecated
     default Optional<String> getReference() {
         return Optional.empty();
     }
 
     @Override
+    @Deprecated
     default Collection<? extends MustDefinition> getMustConstraints() {
         return ImmutableSet.of();
     }
 
     @Override
+    @Deprecated
     default Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.empty();
+    }
+
+    @Override
+    @Deprecated
+    default boolean isAugmenting() {
+        return false;
+    }
+
+    @Override
+    @Deprecated
+    default boolean isAddedByUses() {
+        return false;
+    }
+
+    @Override
+    @Deprecated
+    default boolean isConfiguration() {
+        return false;
+    }
+
+    @Override
+    @Deprecated
+    default QName getQName() {
+        // FIXME: YANGTOOLS-1074: we do not want this name
+        return NAME;
+    }
+
+    @Override
+    @Deprecated
+    default SchemaPath getPath() {
+        return SchemaPath.ROOT;
+    }
+
+    @Override
+    @Deprecated
+    default Status getStatus() {
+        return Status.CURRENT;
+    }
+
+    @Override
+    @Deprecated
+    default Collection<? extends UsesNode> getUses() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    @Deprecated
+    default boolean isPresenceContainer() {
+        return false;
+    }
+
+    @Override
+    @Deprecated
+    default Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
+        return Collections.emptySet();
     }
 
     @Beta
