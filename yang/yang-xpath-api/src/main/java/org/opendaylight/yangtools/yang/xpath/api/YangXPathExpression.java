@@ -74,15 +74,11 @@ public interface YangXPathExpression extends Immutable {
     YangXPathMathMode getMathMode();
 
     /**
-     * Return the minimum YangVersion runtime required to interpret this expression. The default implementation returns
-     * {@link YangVersion#VERSION_1_1}. Implementations are encouraged to provide a less conservative estimate.
+     * Return the minimum YangVersion runtime required to interpret this expression.
      *
      * @return YangVersion runtime version compatibility level required to accurately interpret this expression.
      */
-    // FIXME: 5.0.0: make this method non-default.
-    default YangVersion getYangVersion() {
-        return YangVersion.VERSION_1_1;
-    }
+    YangVersion getYangVersion();
 
     /**
      * Attempt to interpret a {@link YangLiteralExpr} referenced by this expression as a {@link QName}. This method
