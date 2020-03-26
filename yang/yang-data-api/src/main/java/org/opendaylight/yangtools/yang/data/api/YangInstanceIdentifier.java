@@ -83,7 +83,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
-// FIXME: 5.0.0: this concept needs to be moved to yang-common, as parser components need the ability to refer
+// FIXME: 6.0.0: this concept needs to be moved to yang-common, as parser components need the ability to refer
 //               to data nodes -- most notably XPath expressions and {@code default} statement arguments need to be able
 //               to represent these.
 public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
@@ -806,7 +806,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          */
         @Beta
         @Deprecated
-        // FIXME: 5.0.0: evaluate the real usefulness of this. The problem here is Map.hashCode() and Map.equals(),
+        // FIXME: 6.0.0: evaluate the real usefulness of this. The problem here is Map.hashCode() and Map.equals(),
         //               which limits our options.
         public abstract @NonNull Map<QName, Object> asMap();
 
