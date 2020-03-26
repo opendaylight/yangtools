@@ -34,7 +34,8 @@ final class DeclaredOutputEffectiveStatement extends WithSubstatements<QName, Ou
     }
 
     @Override
-    public @NonNull SchemaPath getPath() {
+    @Deprecated
+    public SchemaPath getPath() {
         return path;
     }
 

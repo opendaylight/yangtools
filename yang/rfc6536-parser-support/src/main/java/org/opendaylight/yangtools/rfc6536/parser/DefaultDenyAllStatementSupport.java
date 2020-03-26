@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
@@ -36,8 +37,7 @@ public final class DefaultDenyAllStatementSupport
 
     private static final class Effective extends UnknownEffectiveStatementBase<Void, DefaultDenyAllStatement>
             implements DefaultDenyAllEffectiveStatement, DefaultDenyAllSchemaNode {
-
-        private final SchemaPath path;
+        private final @NonNull SchemaPath path;
 
         Effective(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx) {
             super(ctx);
@@ -51,6 +51,7 @@ public final class DefaultDenyAllStatementSupport
         }
 
         @Override
+        @Deprecated
         public SchemaPath getPath() {
             return path;
         }

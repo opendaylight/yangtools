@@ -35,7 +35,8 @@ final class RpcEffectiveStatementImpl extends WithSubstatements<QName, RpcStatem
     }
 
     @Override
-    public @NonNull SchemaPath getPath() {
+    @Deprecated
+    public SchemaPath getPath() {
         return path;
     }
 

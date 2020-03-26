@@ -55,6 +55,7 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
     }

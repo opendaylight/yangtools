@@ -37,6 +37,7 @@ final class ThirdPartyExtensionEffectiveStatementImpl
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
     }

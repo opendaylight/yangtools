@@ -199,6 +199,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return SchemaPath.ROOT;
     }

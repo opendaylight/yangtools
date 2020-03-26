@@ -40,6 +40,7 @@ class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatement>
     }
 
     @Override
+    @Deprecated
     public final SchemaPath getPath() {
         return path;
     }

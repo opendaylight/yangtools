@@ -37,7 +37,8 @@ final class ActionEffectiveStatementImpl extends WithSubstatements<QName, Action
     }
 
     @Override
-    public @NonNull SchemaPath getPath() {
+    @Deprecated
+    public SchemaPath getPath() {
         return path;
     }
 

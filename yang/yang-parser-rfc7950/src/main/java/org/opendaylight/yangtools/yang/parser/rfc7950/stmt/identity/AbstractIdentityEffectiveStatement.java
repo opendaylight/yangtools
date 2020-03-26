@@ -29,6 +29,7 @@ abstract class AbstractIdentityEffectiveStatement extends DefaultArgument<QName,
     }
 
     @Override
+    @Deprecated
     public final SchemaPath getPath() {
         return path;
     }

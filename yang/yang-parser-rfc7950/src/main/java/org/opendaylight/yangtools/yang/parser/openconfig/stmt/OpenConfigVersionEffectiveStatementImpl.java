@@ -33,6 +33,7 @@ final class OpenConfigVersionEffectiveStatementImpl extends
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
     }

@@ -34,7 +34,8 @@ final class DeclaredInputEffectiveStatement extends WithSubstatements<QName, Inp
     }
 
     @Override
-    public @NonNull SchemaPath getPath() {
+    @Deprecated
+    public SchemaPath getPath() {
         return path;
     }
 

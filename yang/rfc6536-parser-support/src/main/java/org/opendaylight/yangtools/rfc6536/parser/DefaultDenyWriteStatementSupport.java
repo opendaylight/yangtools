@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteStatement;
@@ -36,8 +37,7 @@ public final class DefaultDenyWriteStatementSupport
 
     private static final class Effective extends UnknownEffectiveStatementBase<Void, DefaultDenyWriteStatement>
             implements DefaultDenyWriteEffectiveStatement, DefaultDenyWriteSchemaNode {
-
-        private final SchemaPath path;
+        private final @NonNull SchemaPath path;
 
         Effective(final StmtContext<Void, DefaultDenyWriteStatement, ?> ctx) {
             super(ctx);
@@ -51,6 +51,7 @@ public final class DefaultDenyWriteStatementSupport
         }
 
         @Override
+        @Deprecated
         public SchemaPath getPath() {
             return path;
         }

@@ -74,6 +74,7 @@ final class ContainerEffectiveStatementImpl
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
     }

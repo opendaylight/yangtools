@@ -67,7 +67,8 @@ abstract class AbstractLeafListEffectiveStatement
     }
 
     @Override
-    public final @NonNull SchemaPath getPath() {
+    @Deprecated
+    public final SchemaPath getPath() {
         return path;
     }
 

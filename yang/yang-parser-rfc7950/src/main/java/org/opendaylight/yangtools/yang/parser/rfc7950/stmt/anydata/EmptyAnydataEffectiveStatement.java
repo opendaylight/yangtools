@@ -37,7 +37,8 @@ class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
     }
 
     @Override
-    public final @NonNull SchemaPath getPath() {
+    @Deprecated
+    public final SchemaPath getPath() {
         return path;
     }
 

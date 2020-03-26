@@ -127,6 +127,7 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return schemaPath;
     }

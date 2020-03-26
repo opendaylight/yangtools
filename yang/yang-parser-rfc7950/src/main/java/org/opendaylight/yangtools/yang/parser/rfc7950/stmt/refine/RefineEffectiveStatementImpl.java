@@ -44,6 +44,7 @@ public final class RefineEffectiveStatementImpl
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
     }

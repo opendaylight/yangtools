@@ -56,6 +56,7 @@ public final class MountPointStatementSupport
         }
 
         @Override
+        @Deprecated
         public SchemaPath getPath() {
             return path;
         }

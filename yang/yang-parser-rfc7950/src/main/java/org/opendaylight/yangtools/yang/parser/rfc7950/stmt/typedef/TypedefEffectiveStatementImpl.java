@@ -84,6 +84,7 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
     }

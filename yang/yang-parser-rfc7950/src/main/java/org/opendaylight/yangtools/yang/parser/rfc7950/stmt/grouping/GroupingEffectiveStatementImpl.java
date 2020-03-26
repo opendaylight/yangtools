@@ -51,6 +51,7 @@ final class GroupingEffectiveStatementImpl
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
     }

@@ -63,6 +63,7 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
     }

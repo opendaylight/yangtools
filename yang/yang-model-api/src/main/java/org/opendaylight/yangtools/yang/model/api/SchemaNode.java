@@ -38,5 +38,5 @@ public interface SchemaNode extends DocumentedNode.WithStatus {
      *             </ul>
      */
     @Deprecated
-    @NonNull SchemaPath getPath() throws UnsupportedOperationException;
+    @NonNull SchemaPath getPath();
 }

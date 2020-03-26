@@ -33,6 +33,7 @@ abstract class AbstractTypeDefinition<T extends TypeDefinition<T>> implements Im
     }
 
     @Override
+    @Deprecated
     public final SchemaPath getPath() {
         return path;
     }

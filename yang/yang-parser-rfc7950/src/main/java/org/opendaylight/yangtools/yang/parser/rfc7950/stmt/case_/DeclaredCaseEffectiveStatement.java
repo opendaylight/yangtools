@@ -43,6 +43,7 @@ final class DeclaredCaseEffectiveStatement extends WithSubstatements<QName, Case
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
     }

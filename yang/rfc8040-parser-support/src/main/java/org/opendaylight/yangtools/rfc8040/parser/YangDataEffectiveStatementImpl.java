@@ -55,7 +55,8 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
     }
 
     @Override
-    public @NonNull SchemaPath getPath() {
+    @Deprecated
+    public SchemaPath getPath() {
         return path;
     }
 

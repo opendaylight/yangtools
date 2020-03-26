@@ -74,6 +74,7 @@ public final class AnnotationStatementSupport
         }
 
         @Override
+        @Deprecated
         public SchemaPath getPath() {
             return path;
         }

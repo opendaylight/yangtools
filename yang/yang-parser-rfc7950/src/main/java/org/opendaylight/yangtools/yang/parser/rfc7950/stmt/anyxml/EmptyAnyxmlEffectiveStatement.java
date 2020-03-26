@@ -36,7 +36,8 @@ class EmptyAnyxmlEffectiveStatement extends Default<QName, AnyxmlStatement>
     }
 
     @Override
-    public final @NonNull SchemaPath getPath() {
+    @Deprecated
+    public final SchemaPath getPath() {
         return path;
     }
 

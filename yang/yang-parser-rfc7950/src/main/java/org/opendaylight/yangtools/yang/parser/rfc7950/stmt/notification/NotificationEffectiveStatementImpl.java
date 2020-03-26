@@ -59,6 +59,7 @@ final class NotificationEffectiveStatementImpl
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
     }

@@ -35,7 +35,8 @@ final class UndeclaredOutputEffectiveStatement
     }
 
     @Override
-    public @NonNull SchemaPath getPath() {
+    @Deprecated
+    public SchemaPath getPath() {
         return path;
     }
 
