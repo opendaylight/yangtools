@@ -110,8 +110,7 @@ public interface NormalizedNodeDataInput extends DataInput {
      * @return a new {@link NormalizedNodeDataInput} instance
      * @deprecated Use {@link #newDataInput(DataInput)} instead.
      */
-    // FIXME: 5.0.0: deprecate for removal
-    @Deprecated
+    @Deprecated(forRemoval = true)
     static @NonNull NormalizedNodeDataInput newDataInputWithoutValidation(final @NonNull DataInput input) {
         return new VersionedNormalizedNodeDataInput(input);
     }
