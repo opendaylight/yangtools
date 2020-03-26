@@ -68,13 +68,10 @@ abstract class AbstractGroupingStatementSupport
     protected final GroupingEffectiveStatement createEffective(
             final StmtContext<QName, GroupingStatement, GroupingEffectiveStatement> ctx,
             final GroupingStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final int flags = new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .toFlags();
-
-        return new GroupingEffectiveStatementImpl(declared, ctx.getSchemaPath().get(), flags, substatements,
-            ctx.getStatementSourceReference());
+        return new GroupingEffectiveStatementImpl(declared, ctx, substatements, new FlagsBuilder()
+            .setHistory(ctx.getCopyHistory())
+            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+            .toFlags());
     }
 
     @Override
