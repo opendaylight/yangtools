@@ -90,6 +90,7 @@ public class OperationAsContainer extends ForwardingObject implements ContainerS
     }
 
     @Override
+    @Deprecated
     public final SchemaPath getPath() {
         return delegate.getPath();
     }

@@ -36,7 +36,8 @@ public final class AnyxmlSchemaLocationEffectiveStatementImpl
     }
 
     @Override
-    public @NonNull SchemaPath getPath() {
+    @Deprecated
+    public SchemaPath getPath() {
         return path;
     }
 }

@@ -87,6 +87,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
+        @Deprecated
         public SchemaPath getPath() {
             return schemaNode.getPath();
         }

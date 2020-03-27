@@ -196,6 +196,7 @@ public class YangModeledAnyXMLDeserializationTest {
         }
 
         @Override
+        @Deprecated
         public SchemaPath getPath() {
             return null;
         }

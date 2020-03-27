@@ -62,6 +62,7 @@ final class YangModeledAnyxmlEffectiveStatementImpl
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return delegateSchemaNode().getPath();
     }

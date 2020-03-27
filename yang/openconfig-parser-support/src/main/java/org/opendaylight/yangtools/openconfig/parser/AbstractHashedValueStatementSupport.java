@@ -52,6 +52,7 @@ abstract class AbstractHashedValueStatementSupport
         }
 
         @Override
+        @Deprecated
         public SchemaPath getPath() {
             return path;
         }
