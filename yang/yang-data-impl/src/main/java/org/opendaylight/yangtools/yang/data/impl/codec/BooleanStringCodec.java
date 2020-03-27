@@ -11,7 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.IllegalYangValueException;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
 /**
@@ -36,8 +38,11 @@ public final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, 
         } else if ("false".equalsIgnoreCase(product)) {
             return Boolean.FALSE;
         } else {
-            throw new IllegalArgumentException("Invalid value '" + product + "' for boolean type. Allowed values are "
-                    + "'true' and 'false'");
+            throw new IllegalYangValueException(
+                    RpcError.ErrorSeverity.ERROR,
+                    RpcError.ErrorType.PROTOCOL,
+                    "bad-element",
+                    "Invalid value '" + product + "' for boolean type. Allowed values are 'true' and 'false'");
         }
     }
 
