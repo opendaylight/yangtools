@@ -20,6 +20,8 @@ import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.common.Uint8;
+import org.opendaylight.yangtools.yang.common.RpcError;
+import org.opendaylight.yangtools.yang.data.api.codec.IllegalYangValueException;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
@@ -106,8 +108,11 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         if (rangeConstraint != null) {
             final RangeSet<N> ranges = rangeConstraint.getAllowedRanges();
             if (!ranges.contains(deserialized)) {
-                // FIXME: YANGTOOLS-763: throw a dedicated exception
-                throw new IllegalArgumentException("Value '" + deserialized + "'  is not in required ranges " + ranges);
+                throw new IllegalYangValueException(
+                         RpcError.ErrorSeverity.ERROR,
+                         RpcError.ErrorType.PROTOCOL,
+                         "bad-element",
+                         "Value '" + deserialized + "'  is not in required ranges " + ranges);
             }
         }
         return deserialized;

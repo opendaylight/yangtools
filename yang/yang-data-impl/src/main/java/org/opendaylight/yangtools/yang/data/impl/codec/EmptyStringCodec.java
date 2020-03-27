@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.data.api.codec.EmptyCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.IllegalYangValueException;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 final class EmptyStringCodec extends TypeDefinitionAwareCodec<Empty, EmptyTypeDefinition>
@@ -24,7 +24,13 @@ final class EmptyStringCodec extends TypeDefinitionAwareCodec<Empty, EmptyTypeDe
 
     @Override
     protected Empty deserializeImpl(final String product) {
-        checkArgument(product.isEmpty(), "The value must be empty");
+        if (!product.isEmpty()) {
+            throw new IllegalYangValueException(
+                    RpcError.ErrorSeverity.ERROR,
+                    RpcError.ErrorType.PROTOCOL,
+                    "bad-element",
+                    "The value must be empty");
+        }
         return Empty.getInstance();
     }
 

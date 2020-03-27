@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Base64;
+import org.opendaylight.yangtools.yang.common.RpcError;
+import org.opendaylight.yangtools.yang.data.api.codec.IllegalYangValueException;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -49,7 +51,11 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
             }
         }
 
-        throw new IllegalArgumentException("Invalid value \"" + stringRepresentation + "\" for union type.");
+        throw new IllegalYangValueException(
+                RpcError.ErrorSeverity.ERROR,
+                RpcError.ErrorType.PROTOCOL,
+                "bad-element",
+                "Invalid value '" + stringRepresentation + "' for union type.");
     }
 
     @Override
