@@ -16,7 +16,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.IllegalYangValueException;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 /**
@@ -45,8 +47,13 @@ public final class EnumStringCodec extends TypeDefinitionAwareCodec<String, Enum
         // Lookup the serialized string in the values. Returned string is the interned instance, which we want
         // to use as the result.
         final String result = values.get(product);
-        checkArgument(result != null, "Invalid value '%s' for enum type. Allowed values are: %s", product,
-                values.keySet());
+        if (result == null) {
+            throw new IllegalYangValueException(
+                    RpcError.ErrorSeverity.ERROR,
+                    RpcError.ErrorType.PROTOCOL,
+                    "bad-element",
+                    "Invalid value '" + product + "' for enum type. Allowed values are: " + values.keySet());
+        }
         return result;
     }
 

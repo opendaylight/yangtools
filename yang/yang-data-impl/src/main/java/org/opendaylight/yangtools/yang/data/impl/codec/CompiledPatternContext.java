@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
+
+import org.opendaylight.yangtools.yang.common.RpcError;
+import org.opendaylight.yangtools.yang.data.api.codec.IllegalYangValueException;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
@@ -42,12 +45,19 @@ class CompiledPatternContext {
     void validate(final String str) {
         if (pattern.matcher(str).matches() == invert) {
             if (errorMessage != null) {
-                // FIXME: YANGTOOLS-763: throw a dedicated exception
-                throw new IllegalArgumentException(errorMessage);
+                throw new IllegalYangValueException(
+                        RpcError.ErrorSeverity.ERROR,
+                        RpcError.ErrorType.PROTOCOL,
+                        "bad-element",
+                        errorMessage);
             }
 
-            throw new IllegalArgumentException("Value '" + str + "' " + (invert ? "matches" : "does not match")
-                    + " regular expression '" + regEx + "'");
+            throw new IllegalYangValueException(
+                    RpcError.ErrorSeverity.ERROR,
+                    RpcError.ErrorType.PROTOCOL,
+                    "bad-element",
+                    "Value '" + str + "' " + (invert ? "matches" : "does not match")
+                            + " regular expression '" + regEx + "'");
         }
     }
 }
