@@ -212,8 +212,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> ex
         } else if (type instanceof LeafrefTypeDefinition) {
             final TypeDefinition<?> target = SchemaContextUtil.getBaseTypeForLeafRef((LeafrefTypeDefinition) type,
                 getSchemaContext(), schema);
-            verifyNotNull(target, "Unable to find base type for leafref node %s type %s.", schema.getPath(),
-                    target);
+            verifyNotNull(target, "Unable to find base type for leafref node %s type %s.", schema, target);
 
             final T ret = getSimpleCodecFor(target);
             return ret != null ? ret : createComplexCodecFor(schema, target);

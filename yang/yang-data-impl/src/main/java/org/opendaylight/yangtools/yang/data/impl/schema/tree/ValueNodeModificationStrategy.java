@@ -38,8 +38,7 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode> extends Sche
 
     @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        throw new UnsupportedOperationException("Node " + schema.getPath()
-                + " is leaf type node. Child nodes not allowed");
+        throw new UnsupportedOperationException("Node " + schema + " is leaf type node. Child nodes not allowed");
     }
 
     @Override
@@ -50,8 +49,8 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode> extends Sche
     @Override
     protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
-        throw new UnsupportedOperationException("Node " + schema.getPath()
-                + " is leaf type node. Subtree change is not allowed.");
+        throw new UnsupportedOperationException("Node " + schema + " is leaf type node. "
+            + " Subtree change is not allowed.");
     }
 
     @Override

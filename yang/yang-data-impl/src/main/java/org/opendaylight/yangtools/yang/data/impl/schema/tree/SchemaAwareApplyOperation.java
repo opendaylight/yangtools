@@ -45,7 +45,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
             final DataTreeConfiguration treeConfig) {
         if (treeConfig.getTreeType() == TreeType.CONFIGURATION) {
             checkArgument(schemaNode.isConfiguration(), "Supplied %s does not belongs to configuration tree.",
-                schemaNode.getPath());
+                schemaNode);
         }
         if (schemaNode instanceof ContainerSchemaNode) {
             return ContainerModificationStrategy.of((ContainerSchemaNode) schemaNode, treeConfig);
