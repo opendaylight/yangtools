@@ -32,7 +32,7 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils impleme
     @Override
     TypeDefinition<?> getBaseTypeForLeafRef(final SchemaNode schemaNode, final LeafrefTypeDefinition type) {
         final TypeDefinition<?> ret = SchemaContextUtil.getBaseTypeForLeafRef(type, schemaContext, schemaNode);
-        return verifyNotNull(ret, "Unable to find base type for leafref node '%s'.", schemaNode.getPath());
+        return verifyNotNull(ret, "Unable to find base type for leafref node '%s'.", schemaNode);
     }
 
     @Override

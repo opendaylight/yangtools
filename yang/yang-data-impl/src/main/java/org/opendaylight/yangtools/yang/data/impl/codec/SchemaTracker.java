@@ -146,7 +146,7 @@ public final class SchemaTracker {
 
     public void startList(final PathArgument name) {
         final SchemaNode schema = getSchema(name);
-        checkArgument(schema instanceof ListSchemaNode, "Node %s is not a list", schema.getPath());
+        checkArgument(schema instanceof ListSchemaNode, "Node %s is not a list", schema);
         schemaStack.push(schema);
     }
 
@@ -158,8 +158,7 @@ public final class SchemaTracker {
 
     public LeafSchemaNode leafNode(final NodeIdentifier name) throws IOException {
         final SchemaNode schema = getSchema(name);
-
-        checkArgument(schema instanceof LeafSchemaNode, "Node %s is not a leaf", schema.getPath());
+        checkArgument(schema instanceof LeafSchemaNode, "Node %s is not a leaf", schema);
         return (LeafSchemaNode) schema;
     }
 
@@ -169,10 +168,9 @@ public final class SchemaTracker {
 
     public LeafListSchemaNode startLeafSet(final NodeIdentifier name) {
         final SchemaNode schema = getSchema(name);
-
-        checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list", schema.getPath());
+        checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list", schema);
         schemaStack.push(schema);
-        return (LeafListSchemaNode)schema;
+        return (LeafListSchemaNode) schema;
     }
 
     public LeafListSchemaNode leafSetEntryNode(final QName qname) {
@@ -183,7 +181,7 @@ public final class SchemaTracker {
 
         final SchemaNode child = SchemaUtils.findDataChildSchemaByQName((SchemaNode) parent, qname);
         checkArgument(child instanceof LeafListSchemaNode,
-            "Node %s is neither a leaf-list nor currently in a leaf-list", child.getPath());
+            "Node %s is neither a leaf-list nor currently in a leaf-list", child);
         return (LeafListSchemaNode) child;
     }
 
@@ -195,7 +193,7 @@ public final class SchemaTracker {
         LOG.debug("Enter choice {}", name);
         final SchemaNode schema = getSchema(name);
 
-        checkArgument(schema instanceof ChoiceSchemaNode, "Node %s is not a choice", schema.getPath());
+        checkArgument(schema instanceof ChoiceSchemaNode, "Node %s is not a choice", schema);
         schemaStack.push(schema);
         return (ChoiceSchemaNode)schema;
     }
@@ -207,9 +205,8 @@ public final class SchemaTracker {
         boolean isAllowed = schema instanceof ContainerSchemaNode;
         isAllowed |= schema instanceof NotificationDefinition;
 
-        checkArgument(isAllowed, "Node %s is not a container nor a notification", schema.getPath());
+        checkArgument(isAllowed, "Node %s is not a container nor a notification", schema);
         schemaStack.push(schema);
-
         return schema;
     }
 
@@ -217,11 +214,8 @@ public final class SchemaTracker {
         LOG.debug("Enter yang modeled anyXml {}", name);
         final SchemaNode schema = getSchema(name);
 
-        checkArgument(schema instanceof YangModeledAnyxmlSchemaNode, "Node %s is not an yang modeled anyXml.",
-            schema.getPath());
-
+        checkArgument(schema instanceof YangModeledAnyxmlSchemaNode, "Node %s is not an yang modeled anyXml.", schema);
         schemaStack.push(((YangModeledAnyxmlSchemaNode) schema).getSchemaOfAnyXmlData());
-
         return schema;
     }
 
@@ -245,7 +239,7 @@ public final class SchemaTracker {
 
     public AnyxmlSchemaNode anyxmlNode(final NodeIdentifier name) {
         final SchemaNode schema = getSchema(name);
-        checkArgument(schema instanceof AnyxmlSchemaNode, "Node %s is not anyxml", schema.getPath());
+        checkArgument(schema instanceof AnyxmlSchemaNode, "Node %s is not anyxml", schema);
         return (AnyxmlSchemaNode)schema;
     }
 
@@ -255,7 +249,7 @@ public final class SchemaTracker {
 
     public AnydataSchemaNode anydataNode(final NodeIdentifier name) {
         final SchemaNode schema = getSchema(name);
-        checkArgument(schema instanceof AnydataSchemaNode, "Node %s is not anydata", schema.getPath());
+        checkArgument(schema instanceof AnydataSchemaNode, "Node %s is not anydata", schema);
         return (AnydataSchemaNode)schema;
     }
 
