@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 import org.opendaylight.yangtools.yang.common.YangError;
 
 @Beta
-public class IllegalYangValueException extends IllegalAccessException implements YangError {
+public class IllegalYangValueException extends IllegalArgumentException implements YangError {
     private static final long serialVersionUID = 1L;
 
     private final @NonNull ErrorSeverity severity;
