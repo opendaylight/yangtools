@@ -17,7 +17,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -103,7 +103,7 @@ public class CheckedValueTest {
         final Consumer<Object> consumer = mock(Consumer.class);
         doNothing().when(consumer).accept(any(Object.class));
         CheckedValue.ofException(new NullPointerException()).ifPresent(consumer);
-        verifyZeroInteractions(consumer);
+        verifyNoInteractions(consumer);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class CheckedValueTest {
         final Function<Object, Object> mapper = mock(Function.class);
         doReturn(null).when(mapper).apply(any(Object.class));
         assertSame(errVal, errVal.map(mapper));
-        verifyZeroInteractions(mapper);
+        verifyNoInteractions(mapper);
     }
 
     @Test
@@ -157,7 +157,7 @@ public class CheckedValueTest {
         final Supplier<String> supplier = mock(Supplier.class);
         doReturn(null).when(supplier).get();
         assertSame(foo, CheckedValue.ofValue(foo).orElseGet(supplier));
-        verifyZeroInteractions(supplier);
+        verifyNoInteractions(supplier);
     }
 
     @Test
