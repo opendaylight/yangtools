@@ -45,11 +45,11 @@ final class BitsTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBas
 
                 // FIXME: this looks like a duplicate of BitsSpecificationEffectiveStatement
                 final Optional<Uint32> declared = bitSubStmt.getDeclaredPosition();
-                final long effectivePos;
+                final Uint32 effectivePos;
                 if (declared.isEmpty()) {
                     effectivePos = getBaseTypeBitPosition(bitSubStmt.argument(), baseType, ctx);
                 } else {
-                    effectivePos = declared.get().toJava();
+                    effectivePos = declared.get();
                 }
 
                 builder.addBit(EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos));
@@ -61,7 +61,7 @@ final class BitsTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBas
         typeDefinition = builder.build();
     }
 
-    private static long getBaseTypeBitPosition(final String bitName, final BitsTypeDefinition baseType,
+    private static Uint32 getBaseTypeBitPosition(final String bitName, final BitsTypeDefinition baseType,
             final StmtContext<?, ?, ?> ctx) {
         for (Bit baseTypeBit : baseType.getBits()) {
             if (bitName.equals(baseTypeBit.getName())) {

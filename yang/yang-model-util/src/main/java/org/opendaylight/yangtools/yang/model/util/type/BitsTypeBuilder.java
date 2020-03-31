@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
 import java.util.TreeMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -61,7 +62,7 @@ public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTyp
     @Override
     public BitsTypeDefinition buildType() {
         final Map<String, Bit> map = builder.build();
-        final Map<Long, Bit> positionMap = new TreeMap<>();
+        final Map<Uint32, Bit> positionMap = new TreeMap<>();
 
         for (Bit b : map.values()) {
             final Bit conflict = positionMap.put(b.getPosition(), b);

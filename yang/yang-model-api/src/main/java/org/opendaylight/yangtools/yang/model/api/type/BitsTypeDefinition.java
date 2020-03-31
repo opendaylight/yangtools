@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -62,6 +63,6 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
          *
          * @return The position value of bit in range from 0 to 4294967295.
          */
-        long getPosition();
+        @NonNull Uint32 getPosition();
     }
 }

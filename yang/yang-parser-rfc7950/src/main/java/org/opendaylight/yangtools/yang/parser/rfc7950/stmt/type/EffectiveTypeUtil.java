@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
@@ -26,7 +27,7 @@ final class EffectiveTypeUtil {
         // Hidden on purpose
     }
 
-    static @NonNull Bit buildBit(final @NonNull BitEffectiveStatement stmt, final long effectivePos) {
+    static @NonNull Bit buildBit(final @NonNull BitEffectiveStatement stmt, final Uint32 effectivePos) {
         verify(stmt instanceof DocumentedNode.WithStatus);
         final DocumentedNode.WithStatus bit = (WithStatus) stmt;
 

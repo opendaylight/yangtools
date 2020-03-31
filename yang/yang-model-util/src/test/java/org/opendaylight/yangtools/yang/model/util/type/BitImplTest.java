@@ -14,9 +14,11 @@ import static org.junit.Assert.assertFalse;
 import java.net.URISyntaxException;
 import java.util.Optional;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
 public class BitImplTest {
+    private static final Uint32 FIFTY_FIVE = Uint32.valueOf(55);
 
     @Test
     // We're testing equals()
@@ -25,30 +27,30 @@ public class BitImplTest {
 
         // hashCode method test
 
-        BitImpl biA = new BitImpl("someNameA2", 55L, "description", "reference", Status.CURRENT, emptyList());
+        BitImpl biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, emptyList());
 
         assertEquals("biA should equals to itsefl", biA, biA);
         assertFalse("biA shouldn't equal to null", biA.equals(null));
         assertFalse("biA shouldn't equal to object of other type", biA.equals("str"));
 
          // // test schemaPath
-        biA = new BitImpl("someNameA2", 55L, "description", "reference", Status.CURRENT, emptyList());
-        BitImpl biB = new BitImpl("someNameB2", 55L, "description", "reference", Status.CURRENT, emptyList());
+        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, emptyList());
+        BitImpl biB = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT, emptyList());
         assertFalse("biA shouldn't equal to biB", biA.equals(biB));
 
-        biA = new BitImpl("someNameB2", 55L, "description", "reference", Status.CURRENT, emptyList());
-        biB = new BitImpl("someNameB2", 55L, "description", "reference", Status.CURRENT, emptyList());
+        biA = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT, emptyList());
+        biB = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT, emptyList());
         assertEquals("biA should equal to biB", biA, biB);
 
-        biA = new BitImpl("someNameA2", 55L, "description", "reference", Status.CURRENT, emptyList());
-        biB = new BitImpl("someNameB2", 55L, "description", "reference", Status.CURRENT, emptyList());
+        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, emptyList());
+        biB = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT, emptyList());
         assertFalse("biA shouldn't equal to biB", biA.equals(biB));
 
-        biA = new BitImpl("someNameA2", 55L, "description", "reference", Status.CURRENT, emptyList());
-        biB = new BitImpl("someNameA2", 55L, "description", "reference", Status.CURRENT, emptyList());
+        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, emptyList());
+        biB = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, emptyList());
         assertEquals("biA should equal to biB", biA, biB);
 
-        biA = new BitImpl("someNameA2", 55L, "description", "reference", Status.CURRENT, emptyList());
+        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, emptyList());
 
         // test of getter methods
         assertEquals("Incorrect value for qname.", "someNameA2", biA.getName());
