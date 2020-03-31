@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,8 @@ import org.slf4j.LoggerFactory;
 
 abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<ListStatement, ListEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractListStatementSupport.class);
+    private static final ImmutableSet<YangStmtMapping> UNINSTANTIATED_DATATREE_STATEMENTS = ImmutableSet.of(
+        YangStmtMapping.GROUPING, YangStmtMapping.NOTIFICATION, YangStmtMapping.INPUT, YangStmtMapping.OUTPUT);
 
     AbstractListStatementSupport() {
         super(YangStmtMapping.LIST);
@@ -108,7 +111,7 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
                 .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
                     .equals(Ordering.USER))
                 .toFlags();
-        if (configuration && keyDefinition.isEmpty() && !inGrouping(ctx)) {
+        if (configuration && keyDefinition.isEmpty() && isInstantied(ctx)) {
             LOG.info("Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While "
                     + " this is fine with OpenDaylight, it can cause interoperability issues with other systems "
                     + "[at {}]", ctx.getStatementArgument(), ref);
@@ -122,15 +125,13 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
                             elementCountConstraint.orElse(null), original);
     }
 
-    private static boolean inGrouping(final StmtContext<?, ?, ?> ctx) {
-        StmtContext<?, ?, ?> parent = ctx.getParentContext();
-        while (parent != null) {
-            if (parent.getPublicDefinition() == YangStmtMapping.GROUPING) {
-                return true;
+    private static boolean isInstantied(final StmtContext<?, ?, ?> ctx) {
+        for (StmtContext<?, ?, ?> parent = ctx.getParentContext(); parent != null; parent = parent.getParentContext()) {
+            if (UNINSTANTIATED_DATATREE_STATEMENTS.contains(parent.getPublicDefinition())) {
+                return false;
             }
-            parent = parent.getParentContext();
         }
-        return false;
+        return true;
     }
 
     @Override
