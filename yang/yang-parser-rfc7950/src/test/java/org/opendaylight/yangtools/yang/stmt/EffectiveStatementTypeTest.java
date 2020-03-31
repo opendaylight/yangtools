@@ -22,6 +22,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -129,7 +130,7 @@ public class EffectiveStatementTypeTest {
         assertFalse(bitEff.equals(bitEffSecond));
         assertNotNull(bitEff.toString());
         assertEquals("one", bitEff.getName());
-        assertEquals(0, bitEff.getPosition());
+        assertEquals(Uint32.ZERO, bitEff.getPosition());
     }
 
     @Test

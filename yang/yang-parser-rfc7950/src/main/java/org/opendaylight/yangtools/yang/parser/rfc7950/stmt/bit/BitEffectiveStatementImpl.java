@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, BitStatement>
         implements BitEffectiveStatement {
-
     BitEffectiveStatementImpl(final StmtContext<String, BitStatement, ?> ctx) {
         super(ctx);
     }

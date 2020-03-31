@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -230,15 +231,15 @@ public class TypesResolutionTest {
 
         Bit bit1 = bits.next();
         assertEquals("disable-nagle", bit1.getName());
-        assertEquals(0L, bit1.getPosition());
+        assertEquals(Uint32.ZERO, bit1.getPosition());
 
         Bit bit2 = bits.next();
         assertEquals("auto-sense-speed", bit2.getName());
-        assertEquals(1L, bit2.getPosition());
+        assertEquals(Uint32.ONE, bit2.getPosition());
 
         Bit bit3 = bits.next();
         assertEquals("only-10-Mb", bit3.getName());
-        assertEquals(2L, bit3.getPosition());
+        assertEquals(Uint32.TWO, bit3.getPosition());
 
         assertFalse(bits.hasNext());
     }
@@ -254,23 +255,23 @@ public class TypesResolutionTest {
 
         Bit bit0 = bits.next();
         assertEquals("create", bit0.getName());
-        assertEquals(0L, bit0.getPosition());
+        assertEquals(Uint32.ZERO, bit0.getPosition());
 
         Bit bit1 = bits.next();
         assertEquals("delete", bit1.getName());
-        assertEquals(365L, bit1.getPosition());
+        assertEquals(Uint32.valueOf(365), bit1.getPosition());
 
         Bit bit2 = bits.next();
         assertEquals("read", bit2.getName());
-        assertEquals(500L, bit2.getPosition());
+        assertEquals(Uint32.valueOf(500), bit2.getPosition());
 
         Bit bit3 = bits.next();
         assertEquals("update", bit3.getName());
-        assertEquals(501L, bit3.getPosition());
+        assertEquals(Uint32.valueOf(501), bit3.getPosition());
 
         Bit bit4 = bits.next();
         assertEquals("exec", bit4.getName());
-        assertEquals(502L, bit4.getPosition());
+        assertEquals(Uint32.valueOf(502), bit4.getPosition());
 
         assertFalse(bits.hasNext());
     }

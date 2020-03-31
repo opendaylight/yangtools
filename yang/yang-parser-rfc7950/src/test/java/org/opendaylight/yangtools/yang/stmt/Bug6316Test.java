@@ -15,6 +15,7 @@ import static org.junit.Assert.fail;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -76,19 +77,19 @@ public class Bug6316Test {
             final String name = bit.getName();
             switch (name) {
                 case "zero":
-                    assertEquals(0, bit.getPosition());
+                    assertEquals(Uint32.ZERO, bit.getPosition());
                     break;
                 case "twenty":
-                    assertEquals(20, bit.getPosition());
+                    assertEquals(Uint32.valueOf(20), bit.getPosition());
                     break;
                 case "twenty-one":
-                    assertEquals(21, bit.getPosition());
+                    assertEquals(Uint32.valueOf(21), bit.getPosition());
                     break;
                 case "two":
-                    assertEquals(2, bit.getPosition());
+                    assertEquals(Uint32.TWO, bit.getPosition());
                     break;
                 case "twenty-two":
-                    assertEquals(22, bit.getPosition());
+                    assertEquals(Uint32.valueOf(22), bit.getPosition());
                     break;
                 default:
                     fail("Unexpected bit name.");

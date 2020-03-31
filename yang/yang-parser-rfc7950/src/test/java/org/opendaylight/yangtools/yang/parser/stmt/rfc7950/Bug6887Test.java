@@ -18,6 +18,7 @@ import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -302,7 +303,7 @@ public class Bug6887Test {
     }
 
     private static Bit createBit(final String name, final long position) {
-        return BitBuilder.create(name, position).build();
+        return BitBuilder.create(name, Uint32.valueOf(position)).build();
     }
 
     private static void assertContainsBits(final Collection<? extends Bit> bitList, final Bit... bits) {
