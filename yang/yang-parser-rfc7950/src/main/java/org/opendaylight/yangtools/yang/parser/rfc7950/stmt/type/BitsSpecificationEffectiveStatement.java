@@ -33,30 +33,27 @@ final class BitsSpecificationEffectiveStatement extends DeclaredEffectiveStateme
         super(ctx);
 
         final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(ctx.getSchemaPath().get());
-        Long highestPosition = null;
+        Uint32 highestPosition = null;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof BitEffectiveStatement) {
                 final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) stmt;
 
                 final Optional<Uint32> declaredPosition = bitSubStmt.getDeclaredPosition();
-                final long effectivePos;
+                final Uint32 effectivePos;
                 if (declaredPosition.isEmpty()) {
                     if (highestPosition != null) {
-                        SourceException.throwIf(highestPosition == 4294967295L, ctx.getStatementSourceReference(),
-                                "Bit %s must have a position statement", bitSubStmt);
-                        effectivePos = highestPosition + 1;
+                        SourceException.throwIf(Uint32.MAX_VALUE.equals(highestPosition),
+                            ctx.getStatementSourceReference(), "Bit %s must have a position statement", bitSubStmt);
+                        effectivePos = Uint32.fromIntBits(highestPosition.intValue() + 1);
                     } else {
-                        effectivePos = 0L;
+                        effectivePos = Uint32.ZERO;
                     }
                 } else {
-                    effectivePos = declaredPosition.get().toJava();
+                    effectivePos = declaredPosition.get();
                 }
 
                 final Bit bit = EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos);
-                SourceException.throwIf(bit.getPosition() < 0L && bit.getPosition() > 4294967295L,
-                        ctx.getStatementSourceReference(), "Bit %s has illegal position", bit);
-
-                if (highestPosition == null || highestPosition < bit.getPosition()) {
+                if (highestPosition == null || highestPosition.compareTo(bit.getPosition()) < 0) {
                     highestPosition = bit.getPosition();
                 }
 

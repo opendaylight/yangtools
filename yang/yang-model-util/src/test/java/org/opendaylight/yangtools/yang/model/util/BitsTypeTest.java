@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -33,7 +34,7 @@ public class BitsTypeTest {
     @Test
     public void canCreateBitsType() {
         doReturn("test").when(bit).getName();
-        doReturn(0L).when(bit).getPosition();
+        doReturn(Uint32.ZERO).when(bit).getPosition();
         doReturn("toString").when(bit).toString();
 
         QName qname = QName.create("namespace", "localname");

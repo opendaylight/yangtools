@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -26,13 +26,12 @@ final class BitImpl implements Bit, Immutable {
     private final String description;
     private final String reference;
     private final @NonNull Status status;
-    private final long position;
+    private final @NonNull Uint32 position;
 
-    BitImpl(final String name, final long position, final String description,
+    BitImpl(final String name, final Uint32 position, final String description,
             final String reference, final Status status, final List<UnknownSchemaNode> unknownNodes) {
         this.name = requireNonNull(name);
-        checkArgument(position >= 0L && position <= 4294967295L, "Invalid position %s", position);
-        this.position = position;
+        this.position = requireNonNull(position);
         this.description = description;
         this.reference = reference;
         this.status = requireNonNull(status);
@@ -60,7 +59,7 @@ final class BitImpl implements Bit, Immutable {
     }
 
     @Override
-    public long getPosition() {
+    public Uint32 getPosition() {
         return position;
     }
 
@@ -71,7 +70,7 @@ final class BitImpl implements Bit, Immutable {
 
     @Override
     public int hashCode() {
-        return 31 * name.hashCode() + Long.hashCode(position);
+        return 31 * name.hashCode() + position.hashCode();
     }
 
     @Override
