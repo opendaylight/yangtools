@@ -613,6 +613,30 @@
     },
     {
       "key": {
+        "uuid": "1a3de76e_1b6fce37",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 8548
+      },
+      "writtenOn": "2020-03-31T15:55:09Z",
+      "side": 1,
+      "message": "case when after aggregation modification type is WRITE but actual data hasn`t changed",
+      "parentUuid": "408893c5_6ab961a8",
+      "range": {
+        "startLine": 240,
+        "startChar": 20,
+        "endLine": 240,
+        "endChar": 82
+      },
+      "revId": "b5b7e0799382e7e48a9800a0bf326ac2198b2295",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "72bc540b_d64c21f1",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
         "patchSetId": 9
