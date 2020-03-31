@@ -7,16 +7,31 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, BitStatement>
-        implements BitEffectiveStatement {
+        implements BitEffectiveStatement, Bit {
+    private final Uint32 position;
 
     BitEffectiveStatementImpl(final StmtContext<String, BitStatement, ?> ctx) {
         super(ctx);
+        this.position = findFirstEffectiveSubstatementArgument(PositionEffectiveStatement.class).orElseThrow();
+    }
+
+    @Override
+    public String getName() {
+        return argument();
+    }
+
+    @Override
+    public Uint32 getPosition() {
+        return position;
     }
 
     @Override

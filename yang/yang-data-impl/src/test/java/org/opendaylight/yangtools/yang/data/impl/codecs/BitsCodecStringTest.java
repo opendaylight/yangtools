@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -37,7 +38,7 @@ public class BitsCodecStringTest {
         for (String bit : bits) {
             BitsTypeDefinition.Bit mockBit = mock(BitsTypeDefinition.Bit.class);
             when(mockBit.getName()).thenReturn(bit);
-            when(mockBit.getPosition()).thenReturn(pos);
+            when(mockBit.getPosition()).thenReturn(Uint32.valueOf(pos));
             b.addBit(mockBit);
             ++pos;
         }
