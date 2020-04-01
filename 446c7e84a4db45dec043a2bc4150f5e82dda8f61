@@ -22,6 +22,30 @@
       "revId": "446c7e84a4db45dec043a2bc4150f5e82dda8f61",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb326d9f_171be924",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/repo/ArgumentContextUtils.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-01T07:19:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e2d8e5cc_1d96e87c",
+      "range": {
+        "startLine": 240,
+        "startChar": 12,
+        "endLine": 240,
+        "endChar": 29
+      },
+      "revId": "446c7e84a4db45dec043a2bc4150f5e82dda8f61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
