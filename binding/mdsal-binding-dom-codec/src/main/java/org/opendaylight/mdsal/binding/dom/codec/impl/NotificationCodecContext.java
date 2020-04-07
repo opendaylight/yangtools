@@ -43,7 +43,16 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 final class NotificationCodecContext<D extends DataObject & Notification>
         extends DataObjectCodecContext<D, NotificationDefinition> {
     private static final Generic EVENT_INSTANT_AWARE = TypeDefinition.Sort.describe(EventInstantAware.class);
-    private static final MethodDescription EVENT_INSTANT = EVENT_INSTANT_AWARE.getDeclaredMethods().getOnly();
+
+    private static final String EVENT_INSTANT_NAME;
+    private static final Generic EVENT_INSTANT_RETTYPE;
+
+    static {
+        final MethodDescription eventInstance = EVENT_INSTANT_AWARE.getDeclaredMethods().getOnly();
+        EVENT_INSTANT_NAME = eventInstance.getName();
+        EVENT_INSTANT_RETTYPE = eventInstance.getReturnType();
+    }
+
     private static final Generic BB_DOCC = TypeDefinition.Sort.describe(DataObjectCodecContext.class);
     private static final Generic BB_NNC = TypeDefinition.Sort.describe(NormalizedNodeContainer.class);
     private static final Generic BB_I = TypeDefinition.Sort.describe(Instant.class);
@@ -73,7 +82,8 @@ final class NotificationCodecContext<D extends DataObject & Notification>
                     .defineConstructor(Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC)
                         .withParameters(BB_DOCC, BB_NNC, BB_I)
                         .intercept(ConstructorImplementation.INSTANCE)
-                    .define(EVENT_INSTANT).intercept(EventInstantImplementation.INSTANCE)
+                    .defineMethod(EVENT_INSTANT_NAME, EVENT_INSTANT_RETTYPE, Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC)
+                        .intercept(EventInstantImplementation.INSTANCE)
                     .make());
             });
 
