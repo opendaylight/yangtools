@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -37,7 +40,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +77,6 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
     protected final ListEffectiveStatement createEffective(
             final StmtContext<QName, ListStatement, ListEffectiveStatement> ctx,
             final ListStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final StatementSourceReference ref = ctx.getStatementSourceReference();
         final SchemaPath path = ctx.getSchemaPath().get();
         final ListSchemaNode original = (ListSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
                 .orElse(null);
@@ -92,8 +93,9 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
             }
             for (final QName keyQName : keyStmt.argument()) {
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
-                    throw new InferenceException(ref, "Key '%s' misses node '%s' in list '%s'",
-                        keyStmt.getDeclared().rawArgument(), keyQName.getLocalName(), ctx.getStatementArgument());
+                    throw new InferenceException(ctx.getStatementSourceReference(),
+                        "Key '%s' misses node '%s' in list '%s'", keyStmt.getDeclared().rawArgument(),
+                        keyQName.getLocalName(), ctx.getStatementArgument());
                 }
                 keyDefinitionInit.add(keyQName);
             }
@@ -112,9 +114,7 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
                     .equals(Ordering.USER))
                 .toFlags();
         if (configuration && keyDefinition.isEmpty() && isInstantied(ctx)) {
-            LOG.info("Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While "
-                    + " this is fine with OpenDaylight, it can cause interoperability issues with other systems "
-                    + "[at {}]", ctx.getStatementArgument(), ref);
+            warnConfigList(ctx);
         }
 
         final Optional<ElementCountConstraint> elementCountConstraint =
@@ -123,6 +123,19 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
                 ? new EmptyListEffectiveStatement(declared, path, flags, ctx, substatements, keyDefinition)
                         : new RegularListEffectiveStatement(declared, path, flags, ctx, substatements, keyDefinition,
                             elementCountConstraint.orElse(null), original);
+    }
+
+    private static void warnConfigList(final @NonNull StmtContext<QName, ListStatement, ListEffectiveStatement> ctx) {
+        final StmtContext<QName, ListStatement, ListEffectiveStatement> warnCtx = ctx.getOriginalCtx().orElse(ctx);
+        final Boolean warned = warnCtx.getFromNamespace(ConfigListWarningNamespace.class, Boolean.TRUE);
+        // Hacky check if we have issued a warning for the original statement
+        if (warned == null) {
+            verify(warnCtx instanceof Mutable, "Unexpected context %s", warnCtx);
+            ((Mutable<?, ?, ?>) warnCtx).addToNs(ConfigListWarningNamespace.class, Boolean.TRUE, Boolean.TRUE);
+            LOG.info("Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While "
+                    + "this is fine with OpenDaylight, it can cause interoperability issues with other systems "
+                    + "[defined at {}]", ctx.getStatementArgument(), warnCtx.getStatementSourceReference());
+        }
     }
 
     private static boolean isInstantied(final StmtContext<?, ?, ?> ctx) {
