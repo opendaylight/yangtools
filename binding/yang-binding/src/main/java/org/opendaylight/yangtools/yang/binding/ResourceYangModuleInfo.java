@@ -26,10 +26,15 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public abstract class ResourceYangModuleInfo implements YangModuleInfo {
     @Override
     public final InputStream openYangTextStream() throws IOException {
-        final InputStream ret = ResourceYangModuleInfo.this.getClass()
-                .getResourceAsStream(verifyNotNull(resourceName()));
+        final Class<?> subclass = getClass();
+        final InputStream ret = subclass.getResourceAsStream(verifyNotNull(resourceName()));
         if (ret == null) {
-            throw new IOException("Failed to open resource " + resourceName());
+            String message = "Failed to open resource " + resourceName() + " in context of " + subclass;
+            final ClassLoader loader = subclass.getClassLoader();
+            if (!ResourceYangModuleInfo.class.getClassLoader().equals(loader)) {
+                message = message + " (loaded in " + loader + ")";
+            }
+            throw new IOException(message);
         }
         return ret;
     }
