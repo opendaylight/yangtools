@@ -7,35 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 
 /**
  * Reference of statement source present in textual source format. Utility implementation
- * of {@link StatementSourceReference} for textual sources, this is prefered {@link StatementSourceReference}
+ * of {@link StatementSourceReference} for textual sources, this is preferred {@link StatementSourceReference}
  * for implementations of YANG / YIN statement stream sources.
  *
  * <p>
  * To create source reference use one of this static factories:
  * <ul>
- * <li>{@link #atPosition(String, int, int)} - provides most specific reference of statement location,
- * this is most prefered since it provides most context to debug YANG model.
- * </li>
- * <li>{@link #atLine(String, int)}- provides source and line of statement location.
- * </li>
- * <li>{@link #inSource(String)} - least specific reference, should be used only if any of previous
- * references are unable to create / derive from source.
- * </li>
+ *   <li>{@link #atPosition(String, int, int)} - provides most specific reference of statement location, this is most
+ *       preferred since it provides most context to debug YANG model.</li>
+ *   <li>{@link #atLine(String, int)}- provides source and line of statement location.</li>
+ *   <li>{@link #inSource(String)} - least specific reference, should be used only if any of previous references are
+ *       unable to create / derive from source.</li>
  * </ul>
  */
 public abstract class DeclarationInTextSource implements StatementSourceReference {
     private static class InSource extends DeclarationInTextSource {
         InSource(final String sourceName) {
             super(sourceName);
-        }
-
-        @Override
-        public String toString() {
-            return getSourceName();
         }
     }
 
@@ -48,12 +42,18 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
         }
 
         @Override
-        public String toString() {
-            return getSourceName() + ':' + line;
+        int hashCodeImpl() {
+            return super.hashCodeImpl() * 31 + line;
         }
 
-        int getLine() {
-            return line;
+        @Override
+        boolean equalsImpl(final DeclarationInTextSource obj) {
+            return line == ((AtLine) obj).line && super.equalsImpl(obj);
+        }
+
+        @Override
+        public String toString() {
+            return super.toString() + ':' + line;
         }
     }
 
@@ -66,8 +66,18 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
         }
 
         @Override
+        int hashCodeImpl() {
+            return super.hashCodeImpl() * 31 + character;
+        }
+
+        @Override
+        boolean equalsImpl(final DeclarationInTextSource obj) {
+            return character == ((AtPosition) obj).character && super.equalsImpl(obj);
+        }
+
+        @Override
         public String toString() {
-            return getSourceName() + ':' + getLine() + ':' + character;
+            return super.toString() + ':' + character;
         }
     }
 
@@ -77,27 +87,49 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
         this.sourceName = sourceName;
     }
 
-    public static DeclarationInTextSource inSource(final String sourceName) {
+    public static @NonNull DeclarationInTextSource inSource(final String sourceName) {
         return new InSource(sourceName);
     }
 
-    public static DeclarationInTextSource atLine(final String sourceName, final int line) {
+    public static @NonNull DeclarationInTextSource atLine(final String sourceName, final int line) {
         return new AtLine(sourceName, line);
     }
 
-    public static DeclarationInTextSource atPosition(final String sourceName, final int line, final int position) {
+    public static @NonNull DeclarationInTextSource atPosition(final String sourceName, final int line,
+            final int position) {
         return new AtPosition(sourceName, line, position);
     }
 
-    public String getSourceName() {
+    public final String getSourceName() {
         return sourceName;
     }
 
     @Override
-    public StatementSource getStatementSource() {
+    public final StatementSource getStatementSource() {
         return StatementSource.DECLARATION;
     }
 
     @Override
-    public abstract String toString();
+    public final int hashCode() {
+        return hashCodeImpl();
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return this == obj
+                || obj != null && getClass().equals(obj.getClass()) && equalsImpl((DeclarationInTextSource) obj);
+    }
+
+    @Override
+    public String toString() {
+        return sourceName == null ? "null" : sourceName;
+    }
+
+    int hashCodeImpl() {
+        return Objects.hashCode(sourceName);
+    }
+
+    boolean equalsImpl(final DeclarationInTextSource obj) {
+        return Objects.equals(sourceName, obj.sourceName);
+    }
 }
