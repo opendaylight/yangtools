@@ -91,7 +91,7 @@
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.opendaylight.mdsal.binding.dom.codec.*,
+                            org.opendaylight.mdsal.binding.dom.codec.impl,
                             ;-split-package:=error
                         </Export-Package>
                         <Private-Package>
