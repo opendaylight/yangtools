@@ -27,9 +27,10 @@ public abstract class ResourceYangModuleInfo implements YangModuleInfo {
     @Override
     public final InputStream openYangTextStream() throws IOException {
         final Class<?> subclass = getClass();
-        final InputStream ret = subclass.getResourceAsStream(verifyNotNull(resourceName()));
+        final String name = verifyNotNull(resourceName(), "%s provided a null resource name", subclass);
+        final InputStream ret = subclass.getResourceAsStream(name);
         if (ret == null) {
-            String message = "Failed to open resource " + resourceName() + " in context of " + subclass;
+            String message = "Failed to open resource " + name + " in context of " + subclass;
             final ClassLoader loader = subclass.getClassLoader();
             if (!ResourceYangModuleInfo.class.getClassLoader().equals(loader)) {
                 message = message + " (loaded in " + loader + ")";
