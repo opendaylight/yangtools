@@ -65,35 +65,35 @@ public class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
 
     @Test
     public void testSerialization() {
-        assertEquals(DOM_FOO_INPUT, registry.toLazyNormalizedNodeActionInput(Foo.class, BINDING_FOO_INPUT)
+        assertEquals(DOM_FOO_INPUT, codecContext.toLazyNormalizedNodeActionInput(Foo.class, BINDING_FOO_INPUT)
                 .getDelegate());
-        assertEquals(DOM_BAR_INPUT, registry.toLazyNormalizedNodeActionInput(Bar.class, BINDING_BAR_INPUT)
+        assertEquals(DOM_BAR_INPUT, codecContext.toLazyNormalizedNodeActionInput(Bar.class, BINDING_BAR_INPUT)
                 .getDelegate());
-        assertEquals(DOM_FOO_OUTPUT, registry.toLazyNormalizedNodeActionOutput(Foo.class, BINDING_FOO_OUTPUT)
+        assertEquals(DOM_FOO_OUTPUT, codecContext.toLazyNormalizedNodeActionOutput(Foo.class, BINDING_FOO_OUTPUT)
                 .getDelegate());
-        assertEquals(DOM_BAR_OUTPUT, registry.toLazyNormalizedNodeActionOutput(Bar.class, BINDING_BAR_OUTPUT)
+        assertEquals(DOM_BAR_OUTPUT, codecContext.toLazyNormalizedNodeActionOutput(Bar.class, BINDING_BAR_OUTPUT)
                 .getDelegate());
     }
 
     @Test
     public void testKeyedListActionSerialization() {
-        assertEquals(DOM_FOOIO_INPUT, registry.toLazyNormalizedNodeActionInput(Fooio.class, BINDING_FOOIO_INPUT)
+        assertEquals(DOM_FOOIO_INPUT, codecContext.toLazyNormalizedNodeActionInput(Fooio.class, BINDING_FOOIO_INPUT)
                 .getDelegate());
-        assertEquals(DOM_FOOIO_OUTPUT, registry.toLazyNormalizedNodeActionOutput(Fooio.class, BINDING_FOOIO_OUTPUT)
+        assertEquals(DOM_FOOIO_OUTPUT, codecContext.toLazyNormalizedNodeActionOutput(Fooio.class, BINDING_FOOIO_OUTPUT)
                 .getDelegate());
     }
 
     @Test
     public void testDeserialization() {
-        assertEquals(BINDING_FOO_INPUT, registry.fromNormalizedNodeActionInput(Foo.class, DOM_FOO_INPUT));
-        assertEquals(BINDING_BAR_INPUT, registry.fromNormalizedNodeActionInput(Bar.class, DOM_FOO_INPUT));
-        assertEquals(BINDING_FOO_OUTPUT, registry.fromNormalizedNodeActionOutput(Foo.class, DOM_FOO_OUTPUT));
-        assertEquals(BINDING_BAR_OUTPUT, registry.fromNormalizedNodeActionOutput(Bar.class, DOM_FOO_INPUT));
+        assertEquals(BINDING_FOO_INPUT, codecContext.fromNormalizedNodeActionInput(Foo.class, DOM_FOO_INPUT));
+        assertEquals(BINDING_BAR_INPUT, codecContext.fromNormalizedNodeActionInput(Bar.class, DOM_FOO_INPUT));
+        assertEquals(BINDING_FOO_OUTPUT, codecContext.fromNormalizedNodeActionOutput(Foo.class, DOM_FOO_OUTPUT));
+        assertEquals(BINDING_BAR_OUTPUT, codecContext.fromNormalizedNodeActionOutput(Bar.class, DOM_FOO_INPUT));
     }
 
     @Test
     public void testKeyedListActionDeserialization() {
-        assertEquals(BINDING_FOOIO_INPUT, registry.fromNormalizedNodeActionInput(Fooio.class, DOM_FOOIO_INPUT));
-        assertEquals(BINDING_FOOIO_OUTPUT, registry.fromNormalizedNodeActionOutput(Fooio.class, DOM_FOOIO_OUTPUT));
+        assertEquals(BINDING_FOOIO_INPUT, codecContext.fromNormalizedNodeActionInput(Fooio.class, DOM_FOOIO_INPUT));
+        assertEquals(BINDING_FOOIO_OUTPUT, codecContext.fromNormalizedNodeActionOutput(Fooio.class, DOM_FOOIO_OUTPUT));
     }
 }

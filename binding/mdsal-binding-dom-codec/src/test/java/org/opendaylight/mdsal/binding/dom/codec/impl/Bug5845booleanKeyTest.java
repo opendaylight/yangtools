@@ -11,7 +11,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Collections;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101.BooleanContainer;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101.BooleanContainerBuilder;
@@ -42,7 +41,6 @@ public class Bug5845booleanKeyTest extends AbstractBindingCodecTest {
                         .build()))
                 .build();
 
-        final BindingCodecTree codecContext = registry.getCodecContext();
         final BindingDataObjectCodecTreeNode<BooleanContainer> subtreeCodec = codecContext.getSubtreeCodec(
                 InstanceIdentifier.create(BooleanContainer.class));
         final NormalizedNode<?, ?> serializedInt = subtreeCodec.serialize(booleanContainerInt);

@@ -52,13 +52,13 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
 
     @Test
     public void testNotificationToNormalized() {
-        final ContainerNode dom = registry.toNormalizedNodeNotification(createTestBindingData());
+        final ContainerNode dom = codecContext.toNormalizedNodeNotification(createTestBindingData());
         assertEquals(createTestDomData(), dom);
     }
 
     @Test
     public void testNormalizedToNotification() {
-        final Notification bindingDeserialized = registry.fromNormalizedNodeNotification(SchemaPath.ROOT.createChild(
+        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(SchemaPath.create(true,
             TwoLevelListChanged.QNAME), createTestDomData());
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);
@@ -67,7 +67,7 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
     @Test
     public void testNormalizedToNotificationWithInstant() {
         final Instant instant = Instant.now();
-        final Notification bindingDeserialized = registry.fromNormalizedNodeNotification(SchemaPath.ROOT.createChild(
+        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(SchemaPath.create(true,
             TwoLevelListChanged.QNAME), createTestDomData(), instant);
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);
@@ -77,7 +77,7 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
 
     @Test
     public void testNormalizedToNotificationWithNull() {
-        final Notification bindingDeserialized = registry.fromNormalizedNodeNotification(SchemaPath.ROOT.createChild(
+        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(SchemaPath.create(true,
             TwoLevelListChanged.QNAME), createTestDomData(), null);
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);

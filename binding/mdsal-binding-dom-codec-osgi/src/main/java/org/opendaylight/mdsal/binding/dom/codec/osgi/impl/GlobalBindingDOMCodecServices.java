@@ -12,10 +12,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.annotations.Beta;
 import com.google.common.primitives.UnsignedLong;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingIdentityCodec;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
@@ -25,13 +21,9 @@ import org.opendaylight.mdsal.binding.dom.codec.spi.ForwardingBindingDOMCodecSer
 import org.opendaylight.mdsal.binding.dom.codec.spi.LazyActionInputContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.spi.LazyActionOutputContainerNode;
 import org.opendaylight.yangtools.yang.binding.Action;
-import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -69,31 +61,6 @@ public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCod
     public BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
             final Class<? extends Action<?, ?, ?>> action, final NodeIdentifier identifier, final RpcOutput output) {
         return new LazyActionOutputContainerNode(identifier, output, this, action);
-    }
-
-    @Override
-    public <T extends DataObject> BindingDataObjectCodecTreeNode<T> getSubtreeCodec(final InstanceIdentifier<T> path) {
-        return delegate.getSubtreeCodec(path);
-    }
-
-    @Override
-    public BindingCodecTreeNode getSubtreeCodec(final YangInstanceIdentifier path) {
-        return delegate.getSubtreeCodec(path);
-    }
-
-    @Override
-    public BindingCodecTreeNode getSubtreeCodec(final Absolute path) {
-        return delegate.getSubtreeCodec(path);
-    }
-
-    @Override
-    public BindingIdentityCodec getIdentityCodec() {
-        return delegate.getIdentityCodec();
-    }
-
-    @Override
-    public BindingInstanceIdentifierCodec getInstanceIdentifierCodec() {
-        return delegate.getInstanceIdentifierCodec();
     }
 
     @Override

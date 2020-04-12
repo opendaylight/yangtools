@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import org.junit.Test;
 import org.opendaylight.binding.runtime.spi.BindingRuntimeHelpers;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaForClassException;
@@ -24,9 +25,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 public class ExceptionReportingTest {
-    private static final BindingNormalizedNodeCodecRegistry CODEC_WITHOUT_TOP = codec(LowestLevel1.class);
-    private static final BindingNormalizedNodeCodecRegistry ONLY_TOP_CODEC = codec(Top.class);
-    private static final BindingNormalizedNodeCodecRegistry FULL_CODEC = codec(TreeComplexUsesAugment.class);
+    private static final BindingNormalizedNodeSerializer CODEC_WITHOUT_TOP = codec(LowestLevel1.class);
+    private static final BindingNormalizedNodeSerializer ONLY_TOP_CODEC = codec(Top.class);
+    private static final BindingNormalizedNodeSerializer FULL_CODEC = codec(TreeComplexUsesAugment.class);
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier
@@ -71,9 +72,8 @@ public class ExceptionReportingTest {
             (Class) TreeComplexUsesAugment.class));
     }
 
-    @SuppressWarnings("checkstyle:illegalCatch")
-    private static BindingNormalizedNodeCodecRegistry codec(final Class<?>... classes) {
-        return new BindingNormalizedNodeCodecRegistry(BindingRuntimeHelpers.createRuntimeContext(
+    private static BindingNormalizedNodeSerializer codec(final Class<?>... classes) {
+        return new BindingCodecContext(BindingRuntimeHelpers.createRuntimeContext(
             new DefaultBindingRuntimeGenerator(), classes));
     }
 }

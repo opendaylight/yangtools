@@ -11,6 +11,12 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
 import java.time.Instant;
 import java.util.Map.Entry;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingIdentityCodec;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.Action;
@@ -26,11 +32,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 @Beta
 public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject implements BindingDOMCodecServices {
     @Override
-    protected abstract BindingDOMCodecServices delegate();
+    protected abstract @NonNull BindingDOMCodecServices delegate();
 
     @Override
     public BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
@@ -51,7 +58,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
 
     @Override
     public <T extends DataObject> InstanceIdentifier<T> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
-        return delegate().getInstanceIdentifierCodec().toBinding(dom);
+        return delegate().fromYangInstanceIdentifier(dom);
     }
 
     @Override
@@ -150,5 +157,35 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     public BindingStreamEventWriter newRpcWriter(final Class<? extends DataContainer> rpcInputOrOutput,
             final NormalizedNodeStreamWriter streamWriter) {
         return delegate().newRpcWriter(rpcInputOrOutput,streamWriter);
+    }
+
+    @Override
+    public <T extends DataObject> BindingDataObjectCodecTreeNode<T> getSubtreeCodec(final InstanceIdentifier<T> path) {
+        return delegate().getSubtreeCodec(path);
+    }
+
+    @Override
+    public BindingCodecTreeNode getSubtreeCodec(final YangInstanceIdentifier path) {
+        return delegate().getSubtreeCodec(path);
+    }
+
+    @Override
+    public BindingCodecTreeNode getSubtreeCodec(final Absolute path) {
+        return delegate().getSubtreeCodec(path);
+    }
+
+    @Override
+    public BindingIdentityCodec getIdentityCodec() {
+        return delegate().getIdentityCodec();
+    }
+
+    @Override
+    public BindingInstanceIdentifierCodec getInstanceIdentifierCodec() {
+        return delegate().getInstanceIdentifierCodec();
+    }
+
+    @Override
+    public BindingRuntimeContext getRuntimeContext() {
+        return delegate().getRuntimeContext();
     }
 }

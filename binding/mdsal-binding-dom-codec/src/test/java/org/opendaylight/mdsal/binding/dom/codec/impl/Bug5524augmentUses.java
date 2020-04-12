@@ -11,7 +11,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Collections;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev160101.grouping.module1.ListModule11Builder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev160101.grouping.module1.list.module1._1.ListModule12Builder;
@@ -61,7 +60,6 @@ public class Bug5524augmentUses extends AbstractBindingCodecTest {
                                                 new ContainerManualContainerModule2Builder().build()).build())
                                         .build())).build())).build()).build();
 
-        final BindingCodecTree codecContext = registry.getCodecContext();
         final BindingDataObjectCodecTreeNode<Module4Main> subtreeCodec = codecContext.getSubtreeCodec(
                 InstanceIdentifier.create(Module4Main.class));
         final NormalizedNode<?, ?> serialized = subtreeCodec.serialize(module4Main);

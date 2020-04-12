@@ -22,7 +22,7 @@ public class TopLevelContainerViaUsesTest extends AbstractBindingCodecTest {
 
     @Test
     public void testBindingToDomFirst() {
-        final YangInstanceIdentifier yangII = registry.toYangInstanceIdentifier(TOP_LEVEL_CONTAINER_FROM_USES);
+        final YangInstanceIdentifier yangII = codecContext.toYangInstanceIdentifier(TOP_LEVEL_CONTAINER_FROM_USES);
         final PathArgument lastArg = yangII.getLastPathArgument();
         assertEquals(ContainerTop.QNAME, lastArg.getNodeType());
     }
@@ -31,7 +31,7 @@ public class TopLevelContainerViaUsesTest extends AbstractBindingCodecTest {
     @Test
     public void testDomToBindingFirst() {
         final YangInstanceIdentifier yangII = YangInstanceIdentifier.of(ContainerTop.QNAME);
-        InstanceIdentifier<?> bindingII = registry.fromYangInstanceIdentifier(yangII);
+        InstanceIdentifier<?> bindingII = codecContext.fromYangInstanceIdentifier(yangII);
         assertEquals(TOP_LEVEL_CONTAINER_FROM_USES, bindingII);
     }
 

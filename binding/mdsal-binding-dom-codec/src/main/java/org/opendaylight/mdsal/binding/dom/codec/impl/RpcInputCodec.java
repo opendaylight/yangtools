@@ -8,12 +8,13 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCodec;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 
 /**
  * Marker interface for codecs dealing with RPC input being potentially unmapped. We use this interface to mark both
  * {@link UnmappedRpcInputCodec} and {@link ContainerNodeCodecContext}, which results in bimorphic invocation in
- * {@link BindingNormalizedNodeCodecRegistry#fromNormalizedNodeRpcData()}.
+ * {@link BindingNormalizedNodeSerializer#fromNormalizedNodeRpcData()}.
  *
  * <p>
  * Without this interface we could end up with megamorphic invocation, as the two implementations cannot share class

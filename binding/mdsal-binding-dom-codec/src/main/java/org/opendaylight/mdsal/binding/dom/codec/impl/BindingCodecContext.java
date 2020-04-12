@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -32,10 +33,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.kohsuke.MetaInfServices;
 import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
@@ -95,8 +100,11 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class BindingCodecContext extends AbstractBindingNormalizedNodeSerializer implements BindingDOMCodecServices,
-        Immutable, CodecContextFactory, DataObjectSerializerRegistry {
+@Beta
+@MetaInfServices(value = BindingDOMCodecServices.class)
+@Singleton
+public final class BindingCodecContext extends AbstractBindingNormalizedNodeSerializer
+        implements BindingDOMCodecServices, Immutable, CodecContextFactory, DataObjectSerializerRegistry {
     private final class DataObjectSerializerProxy implements DataObjectSerializer, Delegator<DataObjectStreamer<?>> {
         private final @NonNull DataObjectStreamer<?> delegate;
 
@@ -138,10 +146,16 @@ final class BindingCodecContext extends AbstractBindingNormalizedNodeSerializer 
     private final @NonNull CodecClassLoader loader = CodecClassLoader.create();
     private final @NonNull InstanceIdentifierCodec instanceIdentifierCodec;
     private final @NonNull IdentityCodec identityCodec;
-    private final BindingRuntimeContext context;
+    private final @NonNull BindingRuntimeContext context;
     private final SchemaRootCodecContext<?> root;
 
-    BindingCodecContext(final BindingRuntimeContext context) {
+    public BindingCodecContext() {
+        this(ServiceLoader.load(BindingRuntimeContext.class).findFirst()
+            .orElseThrow(() -> new IllegalStateException("Failed to load BindingRuntimeContext")));
+    }
+
+    @Inject
+    public BindingCodecContext(final BindingRuntimeContext context) {
         this.context = requireNonNull(context, "Binding Runtime Context is required.");
         this.root = SchemaRootCodecContext.create(this);
         this.identityCodec = new IdentityCodec(context);

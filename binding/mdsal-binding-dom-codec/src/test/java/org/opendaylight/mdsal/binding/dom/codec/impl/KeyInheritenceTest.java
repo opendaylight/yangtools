@@ -37,25 +37,25 @@ public class KeyInheritenceTest extends AbstractBindingCodecTest {
 
     @Test
     public void testFromBinding() {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> domDef = registry.toNormalizedNode(DEF_IID, DEF);
-        Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(domDef.getKey(),
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> domDef = codecContext.toNormalizedNode(DEF_IID, DEF);
+        Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(domDef.getKey(),
             domDef.getValue());
         assertEquals(DEF_IID, entry.getKey());
         final Def codecDef = (Def) entry.getValue();
 
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> domUse = registry.toNormalizedNode(USE_IID, USE);
-        entry = registry.fromNormalizedNode(domUse.getKey(), domUse.getValue());
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> domUse = codecContext.toNormalizedNode(USE_IID, USE);
+        entry = codecContext.fromNormalizedNode(domUse.getKey(), domUse.getValue());
         assertEquals(USE_IID, entry.getKey());
         final Use codecUse = (Use) entry.getValue();
 
         Use copiedUse = new UseBuilder(DEF).build();
         assertEquals(USE, copiedUse);
-        assertEquals(domUse.getValue(), registry.toNormalizedNode(USE_IID, copiedUse).getValue());
+        assertEquals(domUse.getValue(), codecContext.toNormalizedNode(USE_IID, copiedUse).getValue());
         copiedUse = new UseBuilder(codecDef).build();
         assertEquals(USE, copiedUse);
-        assertEquals(domUse.getValue(), registry.toNormalizedNode(USE_IID, copiedUse).getValue());
+        assertEquals(domUse.getValue(), codecContext.toNormalizedNode(USE_IID, copiedUse).getValue());
         copiedUse = new UseBuilder(codecUse).build();
         assertEquals(USE, copiedUse);
-        assertEquals(domUse.getValue(), registry.toNormalizedNode(USE_IID, copiedUse).getValue());
+        assertEquals(domUse.getValue(), codecContext.toNormalizedNode(USE_IID, copiedUse).getValue());
     }
 }

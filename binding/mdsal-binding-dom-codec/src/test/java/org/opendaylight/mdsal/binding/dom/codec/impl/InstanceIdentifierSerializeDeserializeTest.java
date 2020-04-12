@@ -60,19 +60,21 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
     @Test
     public void testYangIIToBindingAwareII() {
-        final InstanceIdentifier<?> instanceIdentifier = registry.fromYangInstanceIdentifier(BI_TOP_PATH);
+        final InstanceIdentifier<?> instanceIdentifier = codecContext.fromYangInstanceIdentifier(BI_TOP_PATH);
         assertEquals(Top.class, instanceIdentifier.getTargetType());
     }
 
     @Test
     public void testYangIIToBindingAwareIIListWildcarded() {
-        final InstanceIdentifier<?> instanceIdentifier = registry.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_PATH);
+        final InstanceIdentifier<?> instanceIdentifier = codecContext.fromYangInstanceIdentifier(
+            BI_TOP_LEVEL_LIST_PATH);
         assertNull(instanceIdentifier);
     }
 
     @Test
     public void testYangIIToBindingAwareIIListWithKey() {
-        final InstanceIdentifier<?> instanceIdentifier = registry.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_1_PATH);
+        final InstanceIdentifier<?> instanceIdentifier = codecContext.fromYangInstanceIdentifier(
+            BI_TOP_LEVEL_LIST_1_PATH);
         final InstanceIdentifier.PathArgument last = Iterables.getLast(instanceIdentifier.getPathArguments());
         assertEquals(TopLevelList.class, instanceIdentifier.getTargetType());
         assertFalse(instanceIdentifier.isWildcarded());
@@ -84,7 +86,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
     @Test
     public void testBindingAwareIIToYangIContainer() {
-        final YangInstanceIdentifier yangInstanceIdentifier = registry.toYangInstanceIdentifier(
+        final YangInstanceIdentifier yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
                 InstanceIdentifier.create(Top.class).child(TopLevelList.class));
         final PathArgument lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
         assertTrue(lastPathArgument instanceof NodeIdentifier);
@@ -93,7 +95,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
     @Test
     public void testBindingAwareIIToYangIIWildcard() {
-        final YangInstanceIdentifier yangInstanceIdentifier = registry.toYangInstanceIdentifier(
+        final YangInstanceIdentifier yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
                 InstanceIdentifier.create(Top.class).child(TopLevelList.class));
         final PathArgument lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
         assertTrue(lastPathArgument instanceof NodeIdentifier);
@@ -102,7 +104,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
     @Test
     public void testBindingAwareIIToYangIIListWithKey() {
-        final YangInstanceIdentifier yangInstanceIdentifier = registry.toYangInstanceIdentifier(
+        final YangInstanceIdentifier yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
                 InstanceIdentifier.create(Top.class).child(TopLevelList.class, TOP_FOO_KEY));
         final PathArgument lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
         assertTrue(lastPathArgument instanceof NodeIdentifierWithPredicates);
@@ -112,25 +114,26 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
     @Test
     public void testBindingAwareIIToYangIIAugmentation() {
-        final PathArgument lastArg = registry.toYangInstanceIdentifier(BA_TREE_COMPLEX_USES).getLastPathArgument();
+        final PathArgument lastArg = codecContext.toYangInstanceIdentifier(BA_TREE_COMPLEX_USES).getLastPathArgument();
         assertTrue(lastArg instanceof AugmentationIdentifier);
     }
 
     @Test
     public void testBindingAwareIIToYangIILeafOnlyAugmentation() {
-        final PathArgument leafOnlyLastArg = registry.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY).getLastPathArgument();
+        final PathArgument leafOnlyLastArg = codecContext.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY)
+                .getLastPathArgument();
         assertTrue(leafOnlyLastArg instanceof AugmentationIdentifier);
         assertTrue(((AugmentationIdentifier) leafOnlyLastArg).getPossibleChildNames().contains(SIMPLE_VALUE_QNAME));
     }
 
     @Test
     public void testChoiceCaseGroupingFromBinding() {
-        final YangInstanceIdentifier contBase = registry.toYangInstanceIdentifier(
+        final YangInstanceIdentifier contBase = codecContext.toYangInstanceIdentifier(
             InstanceIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
             NodeIdentifier.create(ContChoice.QNAME), NodeIdentifier.create(GrpCont.QNAME)), contBase);
 
-        final YangInstanceIdentifier contAug = registry.toYangInstanceIdentifier(
+        final YangInstanceIdentifier contAug = codecContext.toYangInstanceIdentifier(
             InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
             NodeIdentifier.create(ContChoice.QNAME),
@@ -139,16 +142,16 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
         // Legacy: downcast the child to Class, losing type safety but still working. Faced with ambiguity, it will
         //         select the lexically-lower class
         assertEquals(1, ContBase.class.getCanonicalName().compareTo(ContAug.class.getCanonicalName()));
-        final YangInstanceIdentifier contAugLegacy = registry.toYangInstanceIdentifier(
+        final YangInstanceIdentifier contAugLegacy = codecContext.toYangInstanceIdentifier(
             InstanceIdentifier.builder(Cont.class).child((Class) GrpCont.class).build());
         assertEquals(contAug, contAugLegacy);
 
-        final YangInstanceIdentifier rootBase = registry.toYangInstanceIdentifier(
+        final YangInstanceIdentifier rootBase = codecContext.toYangInstanceIdentifier(
             InstanceIdentifier.builder(RootBase.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
             NodeIdentifier.create(GrpCont.QNAME)), rootBase);
 
-        final YangInstanceIdentifier rootAug = registry.toYangInstanceIdentifier(
+        final YangInstanceIdentifier rootAug = codecContext.toYangInstanceIdentifier(
             InstanceIdentifier.builder(RootAug.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
             NodeIdentifier.create(GrpCont.QNAME.withModule(RootAug.QNAME.getModule()))), rootAug);
@@ -156,21 +159,21 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
     @Test
     public void testChoiceCaseGroupingToBinding() {
-        final InstanceIdentifier<?> contBase = registry.fromYangInstanceIdentifier(
+        final InstanceIdentifier<?> contBase = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
             NodeIdentifier.create(ContChoice.QNAME), NodeIdentifier.create(GrpCont.QNAME)));
         assertEquals(InstanceIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build(), contBase);
 
-        final InstanceIdentifier<?> contAug = registry.fromYangInstanceIdentifier(
+        final InstanceIdentifier<?> contAug = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME), NodeIdentifier.create(ContChoice.QNAME),
                 NodeIdentifier.create(GrpCont.QNAME.withModule(ContAug.QNAME.getModule()))));
         assertEquals(InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build(), contAug);
 
-        final InstanceIdentifier<?> rootBase = registry.fromYangInstanceIdentifier(
+        final InstanceIdentifier<?> rootBase = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME), NodeIdentifier.create(GrpCont.QNAME)));
         assertEquals(InstanceIdentifier.builder(RootBase.class, GrpCont.class).build(), rootBase);
 
-        final InstanceIdentifier<?> rootAug = registry.fromYangInstanceIdentifier(
+        final InstanceIdentifier<?> rootAug = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
                 NodeIdentifier.create(GrpCont.QNAME.withModule(RootAug.QNAME.getModule()))));
         assertEquals(InstanceIdentifier.builder(RootAug.class, GrpCont.class).build(), rootAug);

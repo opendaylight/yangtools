@@ -9,32 +9,25 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Optional;
+import java.util.Map.Entry;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugmentBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.complex.from.grouping.ContainerWithUsesBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
-
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier.builder(Top.class)
             .child(TopLevelList.class, TOP_FOO_KEY).build();
-    private static final InstanceIdentifier<TreeLeafOnlyAugment> BA_TREE_LEAF_ONLY = BA_TOP_LEVEL_LIST
-            .augmentation(TreeLeafOnlyAugment.class);
-    private static final InstanceIdentifier<TreeComplexUsesAugment> BA_TREE_COMPLEX_USES = BA_TOP_LEVEL_LIST
-            .augmentation(TreeComplexUsesAugment.class);
-    private static final QName SIMPLE_VALUE_QNAME = QName.create(TreeComplexUsesAugment.QNAME, "simple-value");
 
     @Test
     public void augmentationInGroupingSubstituted() {
@@ -47,8 +40,8 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
             .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData())
                 .build())
             .build();
-        final NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, baTree).getValue();
-        final NormalizedNode<?, ?> domRpcEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, baRpc).getValue();
+        final NormalizedNode<?, ?> domTreeEntry = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, baTree).getValue();
+        final NormalizedNode<?, ?> domRpcEntry = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, baRpc).getValue();
         assertEquals(domTreeEntry, domRpcEntry);
     }
 
@@ -59,10 +52,11 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
             .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData())
                 .build())
             .build();
-        final NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, manuallyConstructed)
-                .getValue();
-        final TopLevelList deserialized = registry.deserializeFunction(BA_TOP_LEVEL_LIST)
-                .apply(Optional.of(domTreeEntry)).get();
+
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+            BA_TOP_LEVEL_LIST, manuallyConstructed);
+        final TopLevelList deserialized = (TopLevelList) codecContext.fromNormalizedNode(entry.getKey(),
+            entry.getValue()).getValue();
         assertEquals(manuallyConstructed, deserialized);
         final TopLevelList copiedFromDeserialized = new TopLevelListBuilder(deserialized).build();
         assertEquals(manuallyConstructed, copiedFromDeserialized);

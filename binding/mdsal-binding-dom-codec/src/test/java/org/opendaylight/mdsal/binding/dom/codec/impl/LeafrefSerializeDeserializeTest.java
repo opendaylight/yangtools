@@ -29,18 +29,18 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
     @Test
     public void listReferenceTest() {
         final YangInstanceIdentifier contYII = YangInstanceIdentifier.builder().node(Cont.QNAME).build();
-        final InstanceIdentifier<?> fromYangInstanceIdentifier = this.registry.fromYangInstanceIdentifier(contYII);
+        final InstanceIdentifier<?> fromYangInstanceIdentifier = this.codecContext.fromYangInstanceIdentifier(contYII);
         assertNotNull(fromYangInstanceIdentifier);
 
         final InstanceIdentifier<Cont> BA_II_CONT = InstanceIdentifier.builder(Cont.class).build();
         final Ref refVal = new Ref("myvalue");
         final Cont data = new ContBuilder().setRef(refVal).build();
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> normalizedNode =
-                this.registry.toNormalizedNode(BA_II_CONT, data);
+                this.codecContext.toNormalizedNode(BA_II_CONT, data);
         assertNotNull(normalizedNode);
 
         final Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode =
-                this.registry.fromNormalizedNode(contYII, normalizedNode.getValue());
+                this.codecContext.fromNormalizedNode(contYII, normalizedNode.getValue());
         assertNotNull(fromNormalizedNode);
         final Cont value = (Cont) fromNormalizedNode.getValue();
         assertEquals(refVal, value.getRef());
@@ -49,18 +49,18 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
     @Test
     public void uint32LeafrefTest() {
         final YangInstanceIdentifier contYII = YangInstanceIdentifier.builder().node(ContInt32.QNAME).build();
-        final InstanceIdentifier<?> fromYangInstanceIdentifier = this.registry.fromYangInstanceIdentifier(contYII);
+        final InstanceIdentifier<?> fromYangInstanceIdentifier = this.codecContext.fromYangInstanceIdentifier(contYII);
         assertNotNull(fromYangInstanceIdentifier);
 
         final InstanceIdentifier<ContInt32> BA_II_CONT = InstanceIdentifier.builder(ContInt32.class).build();
         final RefUnionInt32 refVal = new RefUnionInt32(Uint32.valueOf(5));
         final ContInt32 data = new ContInt32Builder().setRefUnionInt32(refVal).build();
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> normalizedNode =
-                this.registry.toNormalizedNode(BA_II_CONT, data);
+                this.codecContext.toNormalizedNode(BA_II_CONT, data);
         assertNotNull(normalizedNode);
 
         final Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode =
-                this.registry.fromNormalizedNode(contYII, normalizedNode.getValue());
+                this.codecContext.fromNormalizedNode(contYII, normalizedNode.getValue());
         assertNotNull(fromNormalizedNode);
         final ContInt32 value = (ContInt32) fromNormalizedNode.getValue();
         assertEquals(refVal, value.getRefUnionInt32());

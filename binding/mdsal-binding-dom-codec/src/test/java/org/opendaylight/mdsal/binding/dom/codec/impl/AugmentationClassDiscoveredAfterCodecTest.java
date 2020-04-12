@@ -19,6 +19,7 @@ import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.binding.runtime.api.ClassLoadingStrategy;
 import org.opendaylight.binding.runtime.api.DefaultBindingRuntimeContext;
 import org.opendaylight.binding.runtime.spi.BindingRuntimeHelpers;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingClassInLoadingStrategyException;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingRuntimeGenerator;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
@@ -40,7 +41,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * The idea of this suite is to test that codecs will work even if situation like this happens.
  */
 public class AugmentationClassDiscoveredAfterCodecTest {
-    private BindingNormalizedNodeCodecRegistry registry;
+    private BindingNormalizedNodeSerializer serializer;
     private FilteringClassLoadingStrategy filter;
 
     @Before
@@ -51,8 +52,7 @@ public class AugmentationClassDiscoveredAfterCodecTest {
 
         // Class loading filter, manipulated by tests
         filter = new FilteringClassLoadingStrategy(delegate.getStrategy());
-        registry = new BindingNormalizedNodeCodecRegistry(DefaultBindingRuntimeContext.create(delegate.getTypes(),
-            filter));
+        serializer = new BindingCodecContext(DefaultBindingRuntimeContext.create(delegate.getTypes(), filter));
     }
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
@@ -64,14 +64,14 @@ public class AugmentationClassDiscoveredAfterCodecTest {
     @Test(expected = MissingClassInLoadingStrategyException.class)
     public void testCorrectExceptionThrown() {
         materializeWithExclusions(TreeLeafOnlyAugment.class, TreeComplexUsesAugment.class);
-        registry.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
+        serializer.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
     }
 
     @Test
     public void testUsingBindingInstanceIdentifier() {
         materializeWithExclusions(TreeLeafOnlyAugment.class, TreeComplexUsesAugment.class);
         filter.includeClass(TreeLeafOnlyAugment.class);
-        final YangInstanceIdentifier domYY = registry.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
+        final YangInstanceIdentifier domYY = serializer.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
         assertNotNull(domYY);
     }
 
@@ -85,7 +85,7 @@ public class AugmentationClassDiscoveredAfterCodecTest {
                         .addAugmentation(TreeLeafOnlyAugment.class,
                                 new TreeLeafOnlyAugmentBuilder().setSimpleValue("foo").build()).build();
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> domData =
-                registry.toNormalizedNode(BA_TOP_LEVEL_LIST, data);
+                serializer.toNormalizedNode(BA_TOP_LEVEL_LIST, data);
         assertNotNull(domData);
     }
 
@@ -93,7 +93,7 @@ public class AugmentationClassDiscoveredAfterCodecTest {
         for (final Class<?> clz : clzToExclude) {
             filter.excludeClass(clz);
         }
-        registry.toYangInstanceIdentifier(BA_TOP_LEVEL_LIST);
+        serializer.toYangInstanceIdentifier(BA_TOP_LEVEL_LIST);
     }
 
     private static final class FilteringClassLoadingStrategy implements ClassLoadingStrategy {

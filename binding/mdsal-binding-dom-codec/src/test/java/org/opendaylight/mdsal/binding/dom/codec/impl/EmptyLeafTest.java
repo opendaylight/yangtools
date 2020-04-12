@@ -49,9 +49,9 @@ public class EmptyLeafTest extends AbstractBindingCodecTest {
             .withKey(TOP_FOO_KEY)
             .setChoiceInList(new EmptyLeafBuilder().setEmptyType(Empty.getInstance()).build())
             .build();
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom = registry.toNormalizedNode(BA_TOP_LEVEL_LIST,
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST,
             withEmptyCase);
-        final Entry<InstanceIdentifier<?>, DataObject> readed = registry.fromNormalizedNode(dom.getKey(),
+        final Entry<InstanceIdentifier<?>, DataObject> readed = codecContext.fromNormalizedNode(dom.getKey(),
             dom.getValue());
         final ChoiceInList list = ((TopLevelList) readed.getValue()).getChoiceInList();
         assertTrue(list instanceof EmptyLeaf);

@@ -121,7 +121,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void containerToNormalized() {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Top.class), top());
         final ContainerNode topNormalized = getEmptyTop();
         assertEquals(topNormalized, entry.getValue());
@@ -130,7 +130,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     @Test
     public void containerFromNormalized() {
         final ContainerNode topNormalized = getEmptyTop();
-        final Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_PATH, topNormalized);
+        final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(BI_TOP_PATH,
+            topNormalized);
         assertEquals(top(), entry.getValue());
     }
 
@@ -154,8 +155,9 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                 .build());
         final ContainerNode topNormalized = getEmptyTop();
 
-        final Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_PATH, topNormalized);
-        final Entry<InstanceIdentifier<?>, DataObject> entryWithAugments = registry.fromNormalizedNode(BI_TOP_PATH,
+        final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(BI_TOP_PATH,
+            topNormalized);
+        final Entry<InstanceIdentifier<?>, DataObject> entryWithAugments = codecContext.fromNormalizedNode(BI_TOP_PATH,
             topNormalizedWithAugments);
 
         // Equals on other with no augmentation should be false
@@ -195,7 +197,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                 .withChild(ImmutableNodes.leafNode(AUGMENT_INT_Q, AUGMENT_INT_VALUE))
                 .build());
 
-        final Entry<InstanceIdentifier<?>, DataObject> entryWithAugments = registry.fromNormalizedNode(BI_TOP_PATH,
+        final Entry<InstanceIdentifier<?>, DataObject> entryWithAugments = codecContext.fromNormalizedNode(BI_TOP_PATH,
             topNormalizedWithAugments);
         Map<Class<? extends Augmentation<Top>>, Augmentation<Top>> augments = new HashMap<>();
         augments.put(Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build());
@@ -235,8 +237,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void listWithKeysToNormalized() {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST,
-            topLevelList(TOP_LEVEL_LIST_FOO_KEY));
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+            BA_TOP_LEVEL_LIST, topLevelList(TOP_LEVEL_LIST_FOO_KEY));
         final MapEntryNode topLevelListNormalized = ImmutableMapEntryNodeBuilder.create()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
                     TOP_LEVEL_LIST_FOO_KEY_VALUE))
@@ -252,15 +254,15 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                     TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .build();
-        final Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH,
-            topLevelListNormalized);
+        final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(
+            BI_TOP_LEVEL_LIST_FOO_PATH, topLevelListNormalized);
         assertEquals(topLevelList(TOP_LEVEL_LIST_FOO_KEY), entry.getValue());
     }
 
     @Test
     public void leafOnlyAugmentationToNormalized() {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(BA_TREE_LEAF_ONLY,
-            new TreeLeafOnlyAugmentBuilder().setSimpleValue("simpleValue").build());
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+            BA_TREE_LEAF_ONLY, new TreeLeafOnlyAugmentBuilder().setSimpleValue("simpleValue").build());
         final Set<QName> augmentationChildren = new HashSet<>();
         augmentationChildren.add(SIMPLE_VALUE_QNAME);
         final AugmentationNode augmentationNode = ImmutableAugmentationNodeBuilder.create()
@@ -278,7 +280,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                 .withNodeIdentifier(new AugmentationIdentifier(augmentationChildren))
                 .withChild(leafNode(SIMPLE_VALUE_QNAME, "simpleValue"))
                 .build();
-        final Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(
+        final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(
             BI_TOP_LEVEL_LIST_FOO_PATH.node(new AugmentationIdentifier(augmentationChildren)),
             augmentationNode);
         assertEquals(new TreeLeafOnlyAugmentBuilder().setSimpleValue("simpleValue").build(), entry.getValue());
@@ -290,7 +292,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         topLevelLeafList.add("foo");
         Top top = new TopBuilder().setTopLevelOrderedLeafList(topLevelLeafList).build();
 
-        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(
+        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Top.class), top);
         ContainerNode containerNode = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
@@ -313,7 +315,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         topLevelLeafList.add("foo");
         final Top top = new TopBuilder().setTopLevelLeafList(topLevelLeafList).build();
 
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Top.class), top);
         final ContainerNode containerNode = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
@@ -339,7 +341,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                         .withNodeIdentifier(new NodeWithValue<>(TOP_LEVEL_LEAF_LIST_QNAME, "foo"))
                         .withValue("foo").build()).build())
                 .build();
-        final Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_PATH,
+        final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(BI_TOP_PATH,
             topWithLeafList);
         final List<String> topLevelLeafList = new ArrayList<>();
         topLevelLeafList.add("foo");
@@ -357,7 +359,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                         new NodeWithValue<>(TOP_LEVEL_ORDERED_LEAF_LIST_QNAME, "foo")).withValue("foo").build())
                     .build())
                 .build();
-        Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_PATH, topWithLeafList);
+        Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(BI_TOP_PATH, topWithLeafList);
         List<String> topLevelLeafList = new ArrayList<>();
         topLevelLeafList.add("foo");
         Top top = new TopBuilder().setTopLevelOrderedLeafList(topLevelLeafList).build();
@@ -368,7 +370,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     public void choiceToNormalized() {
         final ChoiceContainer choiceContainerBA = new ChoiceContainerBuilder().setIdentifier(new ExtendedBuilder()
             .setExtendedId(new ExtendedIdBuilder().setId("identifier_value").build()).build()).build();
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(ChoiceContainer.class), choiceContainerBA);
         final ContainerNode choiceContainer = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(CHOICE_CONTAINER_QNAME))
@@ -401,7 +403,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                         .withChild(leafNode(nestedContainerLeafOuterQname, "bar"))
                         .build())
                 .build();
-        final Entry<InstanceIdentifier<?>, DataObject> entryContainer = registry.fromNormalizedNode(
+        final Entry<InstanceIdentifier<?>, DataObject> entryContainer = codecContext.fromNormalizedNode(
             yangInstanceIdentifierOuter, containerNodeOuter);
         assertNotNull(entryContainer.getValue());
         assertNotNull(entryContainer.getKey());
@@ -435,7 +437,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                         .build())
                 .build();
         try {
-            registry.fromNormalizedNode(yangInstanceIdentifierValid, containerNodeValid);
+            codecContext.fromNormalizedNode(yangInstanceIdentifierValid, containerNodeValid);
             fail("Incorect YangInstanceIdentifier should fail");
         } catch (IllegalStateException e) {
             // Expected
@@ -453,7 +455,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                         .build())
                 .build();
         try {
-            registry.fromNormalizedNode(yangInstanceIdentifier4798, containerNode4798);
+            codecContext.fromNormalizedNode(yangInstanceIdentifier4798, containerNode4798);
             fail("Incorect YangInstanceIdentifier should fail");
         } catch (IllegalStateException e) {
             // Expected
@@ -470,7 +472,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                         .withNodeIdentifier(new NodeIdentifier(EXTENDED_ID_QNAME))
                         .withChild(leafNode(CHOICE_IDENTIFIER_ID_QNAME, "identifier_value")).build()).build())
                 .build();
-        final Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_CHOICE_CONTAINER_PATH,
+        final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(BI_CHOICE_CONTAINER_PATH,
             choiceContainerBI);
         final ChoiceContainer choiceContainerBA = new ChoiceContainerBuilder().setIdentifier(new ExtendedBuilder()
             .setExtendedId(new ExtendedIdBuilder().setId("identifier_value").build()).build()).build();
@@ -485,7 +487,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("bar")).build());
         final TopLevelList topLevelList = new TopLevelListBuilder().withKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(
             nestedLists).build();
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(ii, topLevelList);
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(ii,
+            topLevelList);
         final MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(
                 TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
@@ -505,8 +508,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                     .withNodeIdentifier(new NodeIdentifier(NESTED_LIST_QNAME))
                     .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "foo"))
                     .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "bar")).build()).build();
-        final Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH,
-            foo);
+        final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(
+            BI_TOP_LEVEL_LIST_FOO_PATH, foo);
         final List<NestedList> nestedLists = new ArrayList<>();
         nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("foo")).build());
         nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("bar")).build());
@@ -542,7 +545,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         tBuilder.addAugmentation(TopChoiceAugment1.class, tca1Builder.build());
         final Top top = tBuilder.build();
 
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> biResult = registry.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> biResult = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Top.class), top);
 
         final NormalizedNode<?, ?> topNormalized =
@@ -562,7 +565,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         assertEquals(BI_TOP_PATH, biResult.getKey());
         assertEquals(topNormalized, biResult.getValue());
 
-        final Entry<InstanceIdentifier<?>, DataObject> baResult = registry.fromNormalizedNode(BI_TOP_PATH,
+        final Entry<InstanceIdentifier<?>, DataObject> baResult = codecContext.fromNormalizedNode(BI_TOP_PATH,
             topNormalized);
 
         assertEquals(InstanceIdentifier.create(Top.class), baResult.getKey());

@@ -38,11 +38,11 @@ public class RpcDataSerializationTest extends AbstractBindingCodecTest {
         final PutTopInput bindingOriginal = new PutTopInputBuilder()
                 .setTopLevelList(ImmutableMap.of(LIST_KEY, new TopLevelListBuilder().withKey(LIST_KEY).build()))
                 .build();
-        final ContainerNode dom = registry.toNormalizedNodeRpcData(bindingOriginal);
+        final ContainerNode dom = codecContext.toNormalizedNodeRpcData(bindingOriginal);
         assertNotNull(dom);
         assertEquals(PutTopInput.QNAME, dom.getIdentifier().getNodeType());
 
-        final DataObject bindingDeserialized = registry.fromNormalizedNodeRpcData(PUT_TOP_INPUT, dom);
+        final DataObject bindingDeserialized = codecContext.fromNormalizedNodeRpcData(PUT_TOP_INPUT, dom);
         assertEquals(bindingOriginal, bindingDeserialized);
     }
 
@@ -51,11 +51,11 @@ public class RpcDataSerializationTest extends AbstractBindingCodecTest {
         final GetTopOutput bindingOriginal = new GetTopOutputBuilder()
                 .setTopLevelList(ImmutableMap.of(LIST_KEY, new TopLevelListBuilder().withKey(LIST_KEY).build()))
                 .build();
-        final ContainerNode dom = registry.toNormalizedNodeRpcData(bindingOriginal);
+        final ContainerNode dom = codecContext.toNormalizedNodeRpcData(bindingOriginal);
         assertNotNull(dom);
         assertEquals(GetTopOutput.QNAME, dom.getIdentifier().getNodeType());
 
-        final DataObject bindingDeserialized = registry.fromNormalizedNodeRpcData(GET_TOP_OUTPUT, dom);
+        final DataObject bindingDeserialized = codecContext.fromNormalizedNodeRpcData(GET_TOP_OUTPUT, dom);
         assertEquals(bindingOriginal, bindingDeserialized);
     }
 }

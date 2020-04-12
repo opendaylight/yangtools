@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 public abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTest {
-    protected BindingNormalizedNodeCodecRegistry registry;
+    protected BindingCodecContext codecContext;
 
     @BeforeClass
     public static void beforeClass() {
@@ -26,6 +26,6 @@ public abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTes
 
     @Before
     public void before() {
-        this.registry = new BindingNormalizedNodeCodecRegistry(getRuntimeContext());
+        this.codecContext = new BindingCodecContext(getRuntimeContext());
     }
 }
