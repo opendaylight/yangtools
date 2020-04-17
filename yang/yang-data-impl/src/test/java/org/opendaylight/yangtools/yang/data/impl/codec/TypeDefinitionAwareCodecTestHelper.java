@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,12 +26,10 @@ public final class TypeDefinitionAwareCodecTestHelper {
         throw new UnsupportedOperationException();
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T getCodec(final TypeDefinition<?> def, final Class<T> clazz) {
-        Object codec = TypeDefinitionAwareCodec.fromType(def);
-        assertNotNull(codec);
-        assertTrue(clazz.isAssignableFrom(codec.getClass()));
-        return (T)codec;
+        TypeDefinitionAwareCodec<?, ?> codec = TypeDefinitionAwareCodec.fromType(def);
+        assertThat(codec, instanceOf(clazz));
+        return clazz.cast(codec);
     }
 
     public static void deserializeWithExpectedIllegalArgEx(final Codec<String, ?, IllegalArgumentException> codec,
