@@ -30,14 +30,14 @@ public final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, 
 
     @Override
     protected Boolean deserializeImpl(final String product) {
-        // FIXME: should forbid "TRUE" ?
-        if ("true".equalsIgnoreCase(product)) {
-            return Boolean.TRUE;
-        } else if ("false".equalsIgnoreCase(product)) {
-            return Boolean.FALSE;
-        } else {
-            throw new IllegalArgumentException("Invalid value '" + product + "' for boolean type. Allowed values are "
-                    + "'true' and 'false'");
+        switch (product) {
+            case "true":
+                return Boolean.TRUE;
+            case "false":
+                return Boolean.FALSE;
+            default:
+                throw new IllegalArgumentException("Invalid value '" + product + "' for boolean type. Allowed values "
+                    + "are 'true' and 'false'");
         }
     }
 
