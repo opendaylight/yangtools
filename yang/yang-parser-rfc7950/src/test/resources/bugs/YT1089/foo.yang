@@ -1,0 +1,6 @@
+module foo {
+    namespace urn:foo;
+    prefix foo;
+
+    description +something;
+}
