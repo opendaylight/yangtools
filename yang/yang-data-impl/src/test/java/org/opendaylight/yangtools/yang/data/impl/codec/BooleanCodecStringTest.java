@@ -36,9 +36,9 @@ public class BooleanCodecStringTest {
             BooleanCodec.class);
 
         assertEquals("deserialize", Boolean.TRUE, codec.deserialize("true"));
-        assertEquals("deserialize", Boolean.TRUE, codec.deserialize("TRUE"));
-        assertEquals("deserialize", Boolean.FALSE, codec.deserialize("FALSE"));
         assertEquals("deserialize", Boolean.FALSE, codec.deserialize("false"));
+        TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "TRUE");
+        TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "FALSE");
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "foo");
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "");
     }
