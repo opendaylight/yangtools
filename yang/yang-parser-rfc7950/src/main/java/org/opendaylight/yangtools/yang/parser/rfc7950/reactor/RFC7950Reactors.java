@@ -346,7 +346,7 @@ public final class RFC7950Reactors {
                 .addValidationBundle(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS,
                     YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
 
-                // FIXME: 5.0.0: we do not seem to need this validation bundle
+                // FIXME: 6.0.0: we do not seem to need this validation bundle
                 .addValidationBundle(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS,
                     YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
 

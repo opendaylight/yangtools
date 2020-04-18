@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  * Effective view of a {@link ModuleStatement}.
  */
 @Beta
-// FIXME: 5.0.0: we should reshuffle the String here, as module name is in reality a YANG identifier, e.g. not just
+// FIXME: 6.0.0: we should reshuffle the String here, as module name is in reality a YANG identifier, e.g. not just
 //               an ordinary String. We really want this to be a QName, so that we do not need the localQNameModule
 //               bit, but that may be problematic with ModuleStatement, which is getting created before we even know
 //               the namespace :( A type capture of the string may just be sufficient.
