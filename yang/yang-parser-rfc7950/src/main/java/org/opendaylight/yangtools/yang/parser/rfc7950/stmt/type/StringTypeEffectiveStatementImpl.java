@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -19,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintEx
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.model.util.type.StringTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.length.LengthEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
@@ -40,8 +40,8 @@ final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveStatementB
             AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx));
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof LengthEffectiveStatementImpl) {
-                final LengthEffectiveStatementImpl length = (LengthEffectiveStatementImpl)stmt;
+            if (stmt instanceof LengthEffectiveStatement) {
+                final LengthEffectiveStatement length = (LengthEffectiveStatement)stmt;
 
                 try {
                     builder.setLengthConstraint(length, length.argument());

@@ -14,9 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractListConstraintEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: 5.0.0: hide this class
-public final class LengthEffectiveStatementImpl
-        extends AbstractListConstraintEffectiveStatement<ValueRange, LengthStatement>
+final class LengthEffectiveStatementImpl extends AbstractListConstraintEffectiveStatement<ValueRange, LengthStatement>
         implements LengthEffectiveStatement {
     LengthEffectiveStatementImpl(final StmtContext<List<ValueRange>, LengthStatement, ?> ctx) {
         super(ctx);
