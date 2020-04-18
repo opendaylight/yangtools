@@ -66,7 +66,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>,
         E extends DataTreeAwareEffectiveStatement<String, D>>
-        extends AbstractEffectiveDocumentedNode<String, D>
+        extends AbstractEffectiveDocumentedNodeWithStatus<String, D>
         implements Module, NotificationNodeContainerCompat<String, D, E> {
     private final String name;
     private final String prefix;

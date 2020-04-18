@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNodeWithStatus;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, BitStatement>
+final class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNodeWithStatus<String, BitStatement>
         implements BitEffectiveStatement {
     BitEffectiveStatementImpl(final StmtContext<String, BitStatement, ?> ctx) {
         super(ctx);

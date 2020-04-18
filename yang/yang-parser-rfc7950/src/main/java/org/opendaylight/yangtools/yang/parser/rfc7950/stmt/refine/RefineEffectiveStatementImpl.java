@@ -15,12 +15,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNodeWithStatus;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 // FIXME: 6.0.0: hide this class
 public final class RefineEffectiveStatementImpl
-        extends AbstractEffectiveDocumentedNode<Descendant, RefineStatement>
+        extends AbstractEffectiveDocumentedNodeWithStatus<Descendant, RefineStatement>
         implements RefineEffectiveStatement, SchemaNode {
 
     private final @NonNull QName qname;

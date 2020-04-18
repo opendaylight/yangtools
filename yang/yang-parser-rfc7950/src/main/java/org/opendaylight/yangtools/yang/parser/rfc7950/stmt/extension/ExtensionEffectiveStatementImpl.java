@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNodeWithStatus;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
+final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNodeWithStatus<QName, ExtensionStatement>
         implements ExtensionDefinition, ExtensionEffectiveStatement {
     private static final class RecursionDetector extends ThreadLocal<Deque<ExtensionEffectiveStatementImpl>> {
         boolean check(final ExtensionEffectiveStatementImpl current) {

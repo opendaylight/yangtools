@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2019 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,74 +7,42 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.collect.ImmutableList;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import com.google.common.annotations.Beta;
+import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: 5.0.0: rename to AbstractEffectiveDocumentedNodeWithStatus
+@Beta
 public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
-        extends AbstractEffectiveDocumentedNodeWithoutStatus<A, D> implements DocumentedNode.WithStatus {
-    private static final VarHandle UNKNOWN_NODES;
+        extends DeclaredEffectiveStatementBase<A, D> implements DocumentedNode {
+    private final @Nullable String description;
+    private final @Nullable String reference;
 
-    static {
-        try {
-            UNKNOWN_NODES = MethodHandles.lookup().findVarHandle(AbstractEffectiveDocumentedNode.class,
-                "unknownNodes", ImmutableList.class);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
-
-    private final @NonNull Status status;
-
-    @SuppressWarnings("unused")
-    private volatile ImmutableList<UnknownSchemaNode> unknownNodes;
-
-    /**
-     * Constructor.
-     *
-     * @param ctx
-     *            context of statement.
-     */
     protected AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
         super(ctx);
-        status = findFirstEffectiveSubstatementArgument(StatusEffectiveStatement.class).orElse(Status.CURRENT);
+        description = findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class).orElse(null);
+        reference = findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class).orElse(null);
     }
 
     @Override
-    public final Status getStatus() {
-        return status;
+    public final Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     @Override
-    public final Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
-        final ImmutableList<UnknownSchemaNode> existing =
-                (ImmutableList<UnknownSchemaNode>) UNKNOWN_NODES.getAcquire(this);
-        return existing != null ? existing : loadUnknownSchemaNodes();
+    public final Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
-    @SuppressWarnings("unchecked")
-    private @NonNull ImmutableList<UnknownSchemaNode> loadUnknownSchemaNodes() {
-        final List<UnknownSchemaNode> init = new ArrayList<>();
-        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof UnknownSchemaNode) {
-                init.add((UnknownSchemaNode) stmt);
-            }
-        }
+    protected final @Nullable String nullableDescription() {
+        return description;
+    }
 
-        final ImmutableList<UnknownSchemaNode> computed = ImmutableList.copyOf(init);
-        final Object witness = UNKNOWN_NODES.compareAndExchangeRelease(this, null, computed);
-        return witness == null ? computed : (ImmutableList<UnknownSchemaNode>) witness;
+    protected final @Nullable String nullableReference() {
+        return reference;
     }
 }

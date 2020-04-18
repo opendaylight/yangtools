@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
 public abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStatement<A>> extends
-        AbstractEffectiveDocumentedNodeWithoutStatus<A, D> implements ConstraintMetaDefinition {
+        AbstractEffectiveDocumentedNode<A, D> implements ConstraintMetaDefinition {
     private final String errorAppTag;
     private final String errorMessage;
     private final ModifierKind modifier;

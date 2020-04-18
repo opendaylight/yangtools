@@ -30,13 +30,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNodeWithStatus;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, UsesStatement>
+final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNodeWithStatus<QName, UsesStatement>
         implements UsesEffectiveStatement, UsesNode {
     private final @NonNull GroupingDefinition sourceGrouping;
     private final boolean addedByUses;
