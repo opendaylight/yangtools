@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Revision;
 
-// FIXME: 5.0.0: this really is QNameModuleAware (or some such)
+// FIXME: 6.0.0: this really is QNameModuleAware (or some such)
 public interface NamespaceRevisionAware {
 
     URI getNamespace();

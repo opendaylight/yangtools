@@ -61,7 +61,7 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
             return config;
         }
 
-        // FIXME: 5.0.0: make this return a set of XPath expressions
+        // FIXME: 6.0.0: make this return a set of XPath expressions
         public ImmutableSet<String> getParentReferences() {
             return parentReferences;
         }

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * Abstract base class for dynamic resolvers.
  */
 @Beta
-// FIXME: 5.0.0: consider integrating into AbstractMountPointContextFactory
+// FIXME: 6.0.0: consider integrating into AbstractMountPointContextFactory
 public abstract class AbstractDynamicMountPointContextFactory extends AbstractIdentifiable<MountPointIdentifier>
         implements MountPointContextFactory {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDynamicMountPointContextFactory.class);

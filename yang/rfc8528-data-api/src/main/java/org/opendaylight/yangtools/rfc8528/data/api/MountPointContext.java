@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
  * operates w.r.t. mount points. Further evolution is expected.
  */
 /*
- * FIXME: 5.0.0: consider yang-data-api integration
+ * FIXME: 6.0.0: consider yang-data-api integration
  *
  * The above note does not give the subject enough attention. RFC8528 redefines the YANG data metamodel is significant
  * ways in that it ties it with RFC8525/RFC7895. The content of 'schema-mounts' is critical to interpreting

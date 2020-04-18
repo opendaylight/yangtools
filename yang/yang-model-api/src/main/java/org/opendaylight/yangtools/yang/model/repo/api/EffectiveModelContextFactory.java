@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * {@link SourceIdentifier}s are required and dynamic recursive resolution.
  */
 @Beta
-//FIXME: 5.0.0: evaluate if we still need to extend SchemaContext here
+// FIXME: 6.0.0: evaluate if we still need to extend SchemaContext here
 public interface EffectiveModelContextFactory extends SchemaContextFactory {
     /**
      * Create a new schema context containing specified sources, pulling in any dependencies they may have.

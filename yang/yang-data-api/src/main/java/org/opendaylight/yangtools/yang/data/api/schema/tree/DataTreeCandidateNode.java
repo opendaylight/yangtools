@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * the modification from which this candidate was created. The node itself exposes the before- and after-image
  * of the tree restricted to the modified nodes.
  */
-// FIXME: 5.0.0: Use @NonNullByDefault
 public interface DataTreeCandidateNode {
     /**
      * Get the node identifier.

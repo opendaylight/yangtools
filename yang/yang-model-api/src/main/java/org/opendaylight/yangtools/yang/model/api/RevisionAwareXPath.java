@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 /**
  * Contains methods for getting data (concrete XPath) and metadata (is XPath absolute) from XPath instance.
  */
-// FIXME: 5.0.0: find a better name for this interface
+// FIXME: 6.0.0: find a better name for this interface
 public interface RevisionAwareXPath {
     /**
      * Returns <code>true</code> if the XPapth starts in root of Yang model, otherwise returns <code>false</code>.
@@ -33,7 +33,7 @@ public interface RevisionAwareXPath {
     @NonNull String getOriginalString();
 
     @Beta
-    // FIXME: 5.0.0: integrate this interface into RevisionAwareXPath
+    // FIXME: 6.0.0: integrate this interface into RevisionAwareXPath
     interface WithExpression extends RevisionAwareXPath {
         /**
          * Return the {@link YangXPathExpression} of this XPath. The expression is required to be at least

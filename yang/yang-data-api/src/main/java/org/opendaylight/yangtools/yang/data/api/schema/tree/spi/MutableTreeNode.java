@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
  * A mutable tree node. This is a transient view materialized from a pre-existing node. Modifications are isolated. Once
  * this object is {@link #seal()}ed, any interactions with it will result in undefined behavior.
  */
-// FIXME: 5.0.0: Use @NonNullByDefault
 public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
     /**
      * Set the data component of the node.
