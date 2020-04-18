@@ -23,31 +23,40 @@ public enum NormalizedNodeStreamVersion {
     /**
      * Original stream version, as shipped in OpenDaylight Lithium simultaneous release. The caveat here is that this
      * version has augmented in OpenDaylight Oxygen to retrofit a non-null representation of the empty type.
+     *
+     * @deprecated This version is a historic one and should not be used in code. It does not support current mapping
+     *             of {@code Uint8} et al. and hence results in a stream which needs to be further adapted to current
+     *             definition of LeafNode.
      */
-    // FIXME: 5.0.0: consider deprecating this version
+    @Deprecated
     LITHIUM {
         @Override
-        public NormalizedNodeDataOutput newDataOutput(DataOutput output) {
+        public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
             return new LithiumNormalizedNodeOutputStreamWriter(output);
         }
     },
     /**
      * Updated stream version, as shipped in OpenDaylight Neon SR2 release. Improves identifier encoding over
      * {@link #LITHIUM}, so that QName caching is more effective.
+     *
+     * @deprecated This version is a historic one and should not be used in code. It does not support current mapping
+     *             of {@code Uint8} et al. and hence results in a stream which needs to be further adapted to current
+     *             definition of LeafNode.
      */
+    @Deprecated
     NEON_SR2 {
         @Override
-        public NormalizedNodeDataOutput newDataOutput(DataOutput output) {
+        public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
             return new NeonSR2NormalizedNodeOutputStreamWriter(output);
         }
     },
     /**
      * First shipping in Sodium SR1. Improved stream coding to eliminate redundancies present in {@link #NEON_SR2}.
-     * Supports {code Uint8} et al. as well as {@link BigInteger}.
+     * Supports {@code Uint8} et al. as well as {@link BigInteger}.
      */
     SODIUM_SR1 {
         @Override
-        public NormalizedNodeDataOutput newDataOutput(DataOutput output) {
+        public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
             return new SodiumSR1DataOutput(output);
         }
     },
@@ -57,7 +66,7 @@ public enum NormalizedNodeStreamVersion {
      */
     MAGNESIUM {
         @Override
-        public NormalizedNodeDataOutput newDataOutput(DataOutput output) {
+        public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
             return new MagnesiumDataOutput(output);
         }
     };
