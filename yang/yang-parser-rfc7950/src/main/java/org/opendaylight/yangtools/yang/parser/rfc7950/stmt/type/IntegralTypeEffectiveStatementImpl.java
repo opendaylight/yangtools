@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidRangeConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.range.RangeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -32,8 +32,8 @@ final class IntegralTypeEffectiveStatementImpl<T extends RangeRestrictedTypeDefi
         super(ctx);
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof RangeEffectiveStatementImpl) {
-                final RangeEffectiveStatementImpl rangeStmt = (RangeEffectiveStatementImpl)stmt;
+            if (stmt instanceof RangeEffectiveStatement) {
+                final RangeEffectiveStatement rangeStmt = (RangeEffectiveStatement)stmt;
                 builder.setRangeConstraint(rangeStmt, rangeStmt.argument());
             }
             if (stmt instanceof UnknownSchemaNode) {
