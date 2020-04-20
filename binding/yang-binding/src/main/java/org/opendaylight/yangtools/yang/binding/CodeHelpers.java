@@ -248,6 +248,7 @@ public final class CodeHelpers {
      * Check whether specified List is null and if so return an immutable list instead. This method supports
      * non-null default getter methods.
      *
+     * @param <T> list element type
      * @param input input list, may be null
      * @return Input list or an empty list.
      */
@@ -259,6 +260,8 @@ public final class CodeHelpers {
      * Check whether specified Map is null and if so return an immutable map instead. This method supports
      * non-null default getter methods.
      *
+     * @param <K> key type
+     * @param <V> value type
      * @param input input map, may be null
      * @return Input map or an empty map.
      */
