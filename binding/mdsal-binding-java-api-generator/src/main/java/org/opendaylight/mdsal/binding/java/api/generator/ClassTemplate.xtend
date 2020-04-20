@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static java.util.Objects.requireNonNull
-import static org.opendaylight.mdsal.binding.generator.util.BaseYangTypes.EMPTY_TYPE;
+import static org.opendaylight.mdsal.binding.model.util.BaseYangTypes.EMPTY_TYPE;
 import static org.opendaylight.mdsal.binding.model.util.Types.BOOLEAN;
 import static org.opendaylight.mdsal.binding.model.util.Types.BYTE_ARRAY;
 import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
