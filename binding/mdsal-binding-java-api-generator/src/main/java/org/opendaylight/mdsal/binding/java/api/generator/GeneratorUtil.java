@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.java.api.generator;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.opendaylight.mdsal.binding.java.api.generator.Constants.COMMA;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -271,18 +270,16 @@ public final class GeneratorUtil {
         for (int i = 0; i < paramTypes.length; i++) {
             final Type t = paramTypes[i];
 
-            String separator = COMMA;
-            if (i == paramTypes.length - 1) {
-                separator = "";
-            }
-
             if (Types.voidType().equals(t)) {
-                builder.append("java.lang.Void").append(separator);
+                builder.append("java.lang.Void");
             } else {
                 if (t instanceof WildcardType) {
                     builder.append("? extends ");
                 }
-                builder.append(getExplicitType(parentGenType, t, availableImports)).append(separator);
+                builder.append(getExplicitType(parentGenType, t, availableImports));
+            }
+            if (i != paramTypes.length - 1) {
+                builder.append(',');
             }
         }
         return builder.toString();

@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static java.util.Objects.requireNonNull
+import static org.opendaylight.mdsal.binding.generator.util.BaseYangTypes.EMPTY_TYPE;
 import static org.opendaylight.mdsal.binding.model.util.Types.BOOLEAN;
 import static org.opendaylight.mdsal.binding.model.util.Types.BYTE_ARRAY;
 import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
@@ -387,7 +388,7 @@ class ClassTemplate extends BaseTemplate {
                     return new «genTO.name»(«Base64.importedName».getDecoder().decode(defaultValue));
                 «ELSEIF STRING.equals(prop.returnType)»
                     return new «genTO.name»(defaultValue);
-                «ELSEIF Constants.EMPTY.equals(prop.returnType)»
+                «ELSEIF EMPTY_TYPE.equals(prop.returnType)»
                     «Preconditions.importedName».checkArgument(defaultValue.isEmpty(), "Invalid value %s", defaultValue);
                     return new «genTO.name»(«Empty.importedName».getInstance());
                 «ELSEIF allProperties.size > 1»
