@@ -402,21 +402,19 @@ class ClassTemplate extends BaseTemplate {
             «val propType = prop.returnType»
             «IF !(INSTANCE_IDENTIFIER.identifier.equals(propType.identifier))»
             public static «genTO.name» getDefaultInstance(final String defaultValue) {
-                «IF BINARY_TYPE.equals(propType)»
-                    return new «genTO.name»(«Base64.importedName».getDecoder().decode(defaultValue));
+                «IF allProperties.size > 1»
+                    «bitsArgs»
+                «ELSEIF VALUEOF_TYPES.contains(propType)»
+                    return new «genTO.name»(«propType.importedName».valueOf(defaultValue));
                 «ELSEIF STRING_TYPE.equals(propType)»
                     return new «genTO.name»(defaultValue);
+                «ELSEIF BINARY_TYPE.equals(propType)»
+                    return new «genTO.name»(«Base64.importedName».getDecoder().decode(defaultValue));
                 «ELSEIF EMPTY_TYPE.equals(propType)»
                     «Preconditions.importedName».checkArgument(defaultValue.isEmpty(), "Invalid value %s", defaultValue);
                     return new «genTO.name»(«Empty.importedName».getInstance());
-                «ELSEIF allProperties.size > 1»
-                    «bitsArgs»
                 «ELSE»
-                    «IF VALUEOF_TYPES.contains(propType)»
-                        return new «genTO.name»(«propType.importedName».valueOf(defaultValue));
-                    «ELSE»
-                        return new «genTO.name»(new «propType.importedName»(defaultValue));
-                    «ENDIF»
+                    return new «genTO.name»(new «propType.importedName»(defaultValue));
                 «ENDIF»
             }
             «ENDIF»
