@@ -45,7 +45,7 @@ public abstract class AbstractAugmentable<T extends Augmentable<T>> implements A
     @SuppressWarnings("unchecked")
     @Override
     public final <A extends Augmentation<T>> A augmentation(final Class<A> augmentationType) {
-        return (A) augmentations.get(CodeHelpers.nonNullValue(augmentationType, "augmentationType"));
+        return (A) augmentations.get(requireNonNull(augmentationType));
     }
 
     @Override

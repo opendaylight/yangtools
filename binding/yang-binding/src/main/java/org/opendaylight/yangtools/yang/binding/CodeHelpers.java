@@ -48,28 +48,6 @@ public final class CodeHelpers {
     }
 
     /**
-     * Require an argument being received. This is similar to {@link java.util.Objects#requireNonNull(Object)}, but
-     * throws an IllegalArgumentException.
-     *
-     * <p>
-     * Implementation note: we expect argName to be a string literal or a constant, so that it's non-nullness can be
-     *                      quickly discovered for a call site (where we are going to be inlined).
-     *
-     * @param value Value itself
-     * @param name Symbolic name
-     * @return non-null value
-     * @throws IllegalArgumentException if value is null
-     * @throws NullPointerException if name is null
-     */
-    // FIXME: another advantage is that it is JDT-annotated, but we could live without that. At some point we should
-    //        schedule a big ISE-to-NPE conversion and just use Objects.requireNonNull() instead.
-    public static <T> @NonNull T nonNullValue(@Nullable final T value, final @NonNull String name) {
-        requireNonNull(name);
-        checkArgument(value != null, "%s must not be null", name);
-        return value;
-    }
-
-    /**
      * A shortcut for {@code Objects.requireNonNull(value, "Supplied value may not be null")}.
      *
      * @param value Value itself
