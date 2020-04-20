@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import org.opendaylight.mdsal.binding.generator.util.BaseYangTypes;
+import org.opendaylight.mdsal.binding.generator.util.BaseYangTypesProvider;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -87,7 +87,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         final LeafSchemaNode typeNode = (LeafSchemaNode) dataNode;
 
         // prepare name of type form return type of referenced leaf
-        final String typeName = BindingMapping.getClassName(BaseYangTypes.BASE_YANG_TYPES_PROVIDER
+        final String typeName = BindingMapping.getClassName(BaseYangTypesProvider.INSTANCE
                 .javaTypeForSchemaDefinitionType(typeNode.getType(), typeNode).getName());
 
         // get method via reflection from generated code according to
