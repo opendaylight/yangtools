@@ -11,6 +11,7 @@ import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.opendaylight.mdsal.binding.model.util.BindingTypes.DATA_OBJECT
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 
 import com.google.common.collect.ImmutableList
 import java.util.ArrayList
@@ -341,6 +342,10 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «val augmentTypeRef = augmentType.importedName»
             «val jlClassRef = CLASS.importedName»
             «val hashMapRef = JU_HASHMAP.importedName»
+            public «type.name» add«AUGMENTATION_FIELD_UPPER»(«augmentTypeRef» augmentation) {
+                return add«AUGMENTATION_FIELD_UPPER»(augmentation.«DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»(), augmentation);
+            }
+
             public «type.name» add«AUGMENTATION_FIELD_UPPER»(«jlClassRef»<? extends «augmentTypeRef»> augmentationType, «augmentTypeRef» augmentationValue) {
                 if (augmentationValue == null) {
                     return remove«AUGMENTATION_FIELD_UPPER»(augmentationType);

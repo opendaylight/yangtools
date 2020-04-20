@@ -302,14 +302,11 @@ public final class DataObjectReadingUtil {
         }
 
         @Override
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         public DataContainer read(final DataContainer parent, final Class<?> child) {
             checkArgument(Augmentation.class.isAssignableFrom(child), "Child must be Augmentation.");
             checkArgument(parent instanceof Augmentable<?>, "Parent must be Augmentable.");
-
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            Augmentation potential = ((Augmentable) parent).augmentation(child);
-            checkState(potential instanceof DataContainer, "Readed augmention must be data object");
-            return (DataContainer) potential;
+            return ((Augmentable) parent).augmentation(child);
         }
     }
 

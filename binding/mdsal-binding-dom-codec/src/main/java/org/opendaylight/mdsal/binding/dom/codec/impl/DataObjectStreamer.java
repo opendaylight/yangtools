@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
@@ -165,20 +164,16 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
         writer.endNode();
     }
 
-    @SuppressWarnings("rawtypes")
-    private static void emitAugmentation(final Class type, final Augmentation<?> value,
+    private static void emitAugmentation(final Class<? extends Augmentation<?>> type, final Augmentation<?> value,
             final BindingStreamEventWriter writer, final DataObjectSerializerRegistry registry) throws IOException {
         /*
-         * Binding Specification allowed to insert augmentation with null for
-         * value, which effectively could be used to remove augmentation
-         * from builder / DTO.
+         * Binding Specification allowed to insert augmentation with null for value, which effectively could be used to
+         * remove augmentation from builder / DTO.
          */
         if (value != null) {
-            checkArgument(value instanceof DataObject);
-            @SuppressWarnings("unchecked")
             final DataObjectSerializer serializer = registry.getSerializer(type);
             if (serializer != null) {
-                serializer.serialize((DataObject) value, writer);
+                serializer.serialize(value, writer);
             } else {
                 LOG.warn("DataObjectSerializer is not present for {} in registry {}", type, registry);
             }
