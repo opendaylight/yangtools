@@ -14,7 +14,6 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.binding.CodeHelpers;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,8 +82,8 @@ final class LengthGenerator {
                 sb.append("    }\n");
             }
 
-            sb.append("    ").append(template.importedName(CodeHelpers.class)).append(".throwInvalidLength(\"")
-            .append(createLengthString(constraint)).append("\", value);\n");
+            sb.append("    ").append(template.importedName(JavaFileTemplate.CODEHELPERS))
+            .append(".throwInvalidLength(\"").append(createLengthString(constraint)).append("\", value);\n");
         }
 
         return sb.append("}\n").toString();
@@ -106,8 +105,8 @@ final class LengthGenerator {
                 sb.append("    }\n");
             }
 
-            sb.append("    ").append(template.importedName(CodeHelpers.class)).append(".throwInvalidLength(\"")
-            .append(createLengthString(constraint)).append("\", value);\n");
+            sb.append("    ").append(template.importedName(JavaFileTemplate.CODEHELPERS))
+            .append(".throwInvalidLength(\"").append(createLengthString(constraint)).append("\", value);\n");
         }
 
         return sb.append("}\n").toString();

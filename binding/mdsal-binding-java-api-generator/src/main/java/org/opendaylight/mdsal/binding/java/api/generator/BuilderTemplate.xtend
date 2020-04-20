@@ -8,13 +8,13 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
+import static org.opendaylight.mdsal.binding.model.util.BindingTypes.DATA_OBJECT
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 
 import com.google.common.collect.ImmutableList
 import java.util.ArrayList
 import java.util.Collection
-import java.util.HashMap
 import java.util.HashSet
 import java.util.List
 import java.util.Map
@@ -31,7 +31,6 @@ import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder
-import org.opendaylight.yangtools.yang.binding.DataObject
 
 /**
  * Template for generating JAVA builder classes.
@@ -40,9 +39,10 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     /**
      * Constant used as suffix for builder name.
      */
-    public static val BUILDER = "Builder";
+    package static val BUILDER_STR = "Builder";
 
     static val AUGMENTATION_FIELD_UPPER = AUGMENTATION_FIELD.toFirstUpper
+    static val BUILDER = JavaTypeName.create(Builder)
 
     /**
      * Constructs new instance of this class.
@@ -66,7 +66,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     override body() '''
         «wrapToDocumentation(formatDataForJavaDoc(targetType))»
         «targetType.annotations.generateDeprecatedAnnotation»
-        public class «type.name» implements «Builder.importedName»<«targetType.importedName»> {
+        public class «type.name» implements «BUILDER.importedName»<«targetType.importedName»> {
 
             «generateFields(false)»
 
@@ -158,7 +158,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «IF targetType.hasImplementsFromUses»
                 «val List<Type> done = targetType.getBaseIfcs»
                 «generateMethodFieldsFromComment(targetType)»
-                public void fieldsFrom(«DataObject.importedName» arg) {
+                public void fieldsFrom(«DATA_OBJECT.importedName» arg) {
                     boolean isValidArg = false;
                     «FOR impl : targetType.getAllIfcs»
                         «generateIfCheck(impl, done)»
@@ -340,13 +340,14 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         «IF augmentType !== null»
             «val augmentTypeRef = augmentType.importedName»
             «val jlClassRef = CLASS.importedName»
+            «val hashMapRef = JU_HASHMAP.importedName»
             public «type.name» add«AUGMENTATION_FIELD_UPPER»(«jlClassRef»<? extends «augmentTypeRef»> augmentationType, «augmentTypeRef» augmentationValue) {
                 if (augmentationValue == null) {
                     return remove«AUGMENTATION_FIELD_UPPER»(augmentationType);
                 }
 
-                if (!(this.«AUGMENTATION_FIELD» instanceof «HashMap.importedName»)) {
-                    this.«AUGMENTATION_FIELD» = new «HashMap.importedName»<>();
+                if (!(this.«AUGMENTATION_FIELD» instanceof «hashMapRef»)) {
+                    this.«AUGMENTATION_FIELD» = new «hashMapRef»<>();
                 }
 
                 this.«AUGMENTATION_FIELD».put(augmentationType, augmentationValue);
@@ -354,7 +355,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             }
 
             public «type.name» remove«AUGMENTATION_FIELD_UPPER»(«jlClassRef»<? extends «augmentTypeRef»> augmentationType) {
-                if (this.«AUGMENTATION_FIELD» instanceof «HashMap.importedName») {
+                if (this.«AUGMENTATION_FIELD» instanceof «hashMapRef») {
                     this.«AUGMENTATION_FIELD».remove(augmentationType);
                 }
                 return this;
@@ -400,7 +401,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         </ul>
 
         @see «target»
-        @see «Builder.importedName»
+        @see «BUILDER.importedName»
     '''
     }
 
@@ -431,7 +432,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     override protected generateCopyAugmentation(Type implType) {
         val augmentationHolderRef = AugmentationHolder.importedName
         val typeRef = targetType.importedName
-        val hashMapRef = HashMap.importedName
+        val hashMapRef = JU_HASHMAP.importedName
         val augmentTypeRef = augmentType.importedName
         return '''
             if (base instanceof «augmentationHolderRef») {

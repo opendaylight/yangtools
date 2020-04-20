@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
+import static org.opendaylight.mdsal.binding.model.util.BindingTypes.DATA_OBJECT
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
@@ -16,9 +17,9 @@ import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.Type
+import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.binding.AbstractAugmentable
-import org.opendaylight.yangtools.yang.binding.DataObject
 
 class BuilderImplTemplate extends AbstractBuilderTemplate {
     val Type builderType;
@@ -92,14 +93,14 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     def protected generateEquals() '''
         «IF !properties.empty || augmentType !== null»
             @«OVERRIDE.importedName»
-            public boolean equals(«Object.importedName» obj) {
+            public boolean equals(«Types.objectType().importedName» obj) {
                 if (this == obj) {
                     return true;
                 }
-                if (!(obj instanceof «DataObject.importedName»)) {
+                if (!(obj instanceof «DATA_OBJECT.importedName»)) {
                     return false;
                 }
-                if (!«targetType.importedName».class.equals(((«DataObject.importedName»)obj).«DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»())) {
+                if (!«targetType.importedName».class.equals(((«DATA_OBJECT.importedName»)obj).«DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»())) {
                     return false;
                 }
                 «targetType.importedName» other = («targetType.importedName»)obj;

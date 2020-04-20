@@ -22,6 +22,7 @@ import static org.opendaylight.mdsal.binding.model.util.BaseYangTypes.UINT32_TYP
 import static org.opendaylight.mdsal.binding.model.util.BaseYangTypes.UINT64_TYPE
 import static org.opendaylight.mdsal.binding.model.util.BaseYangTypes.UINT8_TYPE
 import static org.opendaylight.mdsal.binding.model.util.BindingTypes.SCALAR_TYPE_OBJECT
+import static org.opendaylight.mdsal.binding.model.util.Types.BOOLEAN
 import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
@@ -430,7 +431,7 @@ class ClassTemplate extends BaseTemplate {
         int i = 0;
         return new «genTO.name»(
         «FOR prop : allProperties SEPARATOR ","»
-            properties.get(i++).equals(defaultValue) ? «Boolean.importedName».TRUE : null
+            properties.get(i++).equals(defaultValue) ? «BOOLEAN.importedName».TRUE : null
         «ENDFOR»
         );
     '''

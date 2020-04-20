@@ -93,7 +93,7 @@ public final class BuilderGenerator implements CodeGenerator {
 
     @Override
     public String getUnitName(final Type type) {
-        return type.getName() + BuilderTemplate.BUILDER;
+        return type.getName() + BuilderTemplate.BUILDER_STR;
     }
 
     @VisibleForTesting
@@ -107,7 +107,7 @@ public final class BuilderGenerator implements CodeGenerator {
                 .addAll(methods).build();
 
         final GeneratedTypeBuilder builderTypeBuilder = new CodegenGeneratedTypeBuilder(
-            origName.createSibling(origName.simpleName() + BuilderTemplate.BUILDER));
+            origName.createSibling(origName.simpleName() + BuilderTemplate.BUILDER_STR));
 
         final GeneratedTOBuilder implTypeBuilder = builderTypeBuilder.addEnclosingTransferObject(
             origName.simpleName() + "Impl");

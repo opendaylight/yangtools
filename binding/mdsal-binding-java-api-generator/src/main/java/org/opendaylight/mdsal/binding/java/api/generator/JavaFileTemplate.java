@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -55,6 +56,10 @@ class JavaFileTemplate {
      * {@code java.util.Arrays} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName JU_ARRAYS = JavaTypeName.create(Arrays.class);
+    /**
+     * {@code java.util.HashMap} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName JU_HASHMAP = JavaTypeName.create(HashMap.class);
     /**
      * {@code java.util.List} as a JavaTypeName.
      */
