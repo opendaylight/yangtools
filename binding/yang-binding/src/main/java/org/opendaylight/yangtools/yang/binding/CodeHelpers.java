@@ -248,6 +248,31 @@ public final class CodeHelpers {
     }
 
     /**
+     * Check whether specified List is empty and if so return null, otherwise return input list. This method supports
+     * Builder/implementation list handover.
+     *
+     * @param <T> list element type
+     * @param input input list, may be null
+     * @return Input list or null.
+     */
+    public static <T> @Nullable List<T> emptyToNull(final @Nullable List<T> input) {
+        return input != null && input.isEmpty() ? null : input;
+    }
+
+    /**
+     * Check whether specified Map is empty and if so return null, otherwise return input map. This method supports
+     * Builder/implementation list handover.
+     *
+     * @param <K> key type
+     * @param <V> value type
+     * @param input input map, may be null
+     * @return Input map or null.
+     */
+    public static <K, V> @Nullable Map<K, V> emptyToNull(final @Nullable Map<K, V> input) {
+        return input != null && input.isEmpty() ? null : input;
+    }
+
+    /**
      * Return hash code of a single-property wrapper class. Since the wrapper is not null, we really want to discern
      * this object being present, hence {@link Objects#hashCode()} is not really useful we would end up with {@code 0}
      * for both non-present and present-with-null objects.
