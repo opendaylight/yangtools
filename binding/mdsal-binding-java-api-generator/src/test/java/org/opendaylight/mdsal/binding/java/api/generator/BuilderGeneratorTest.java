@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
+import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.mdsal.binding.model.api.Type;
 
 public class BuilderGeneratorTest {
@@ -148,6 +149,7 @@ public class BuilderGeneratorTest {
         final Type methType = mock(Type.class);
         doReturn(TYPE_NAME).when(methType).getIdentifier();
         doReturn(methType).when(methSign).getReturnType();
+        doReturn(ValueMechanics.NORMAL).when(methSign).getMechanics();
         return methSign;
     }
 }

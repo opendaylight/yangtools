@@ -29,6 +29,7 @@ import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.util.Types;
@@ -215,7 +216,14 @@ public final class BuilderGenerator implements CodeGenerator {
 
         final String fieldName = StringExtensions.toFirstLower(method.getName().substring(prefix.length()));
         final GeneratedTOBuilder tmpGenTO = new CodegenGeneratedTOBuilder(JavaTypeName.create("foo", "foo"));
-        tmpGenTO.addProperty(fieldName).setReturnType(method.getReturnType());
+        final GeneratedPropertyBuilder builder = tmpGenTO.addProperty(fieldName).setReturnType(method.getReturnType());
+        switch (method.getMechanics()) {
+            case NULLIFY_EMPTY:
+                builder.setNullifyEmpty(true);
+                break;
+            default:
+                break;
+        }
         return tmpGenTO.build().getProperties().get(0);
     }
 }

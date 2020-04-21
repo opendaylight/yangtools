@@ -432,6 +432,13 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         «generateCopyNonKeys(keyProps)»
     '''
 
+
+    override protected  CharSequence generateCopyNonKeys(Collection<GeneratedProperty> props) '''
+        «FOR field : props»
+            this.«field.fieldName» = base.«field.getterMethodName»();
+        «ENDFOR»
+    '''
+
     override protected generateCopyAugmentation(Type implType) {
         val augmentationHolderRef = AugmentationHolder.importedName
         val typeRef = targetType.importedName

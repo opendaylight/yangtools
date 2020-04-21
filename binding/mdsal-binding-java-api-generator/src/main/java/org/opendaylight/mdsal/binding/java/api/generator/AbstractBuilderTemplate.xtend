@@ -152,13 +152,9 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         return generateDeprecatedAnnotation(found)
     }
 
-    def protected final CharSequence generateCopyNonKeys(Collection<GeneratedProperty> props) '''
-        «FOR field : props»
-            this.«field.fieldName» = base.«field.getterMethodName»();
-        «ENDFOR»
-    '''
-
     def protected abstract CharSequence generateCopyKeys(List<GeneratedProperty> keyProps)
+
+    def protected abstract CharSequence generateCopyNonKeys(Collection<GeneratedProperty> props)
 
     def protected abstract CharSequence generateCopyAugmentation(Type implType)
 

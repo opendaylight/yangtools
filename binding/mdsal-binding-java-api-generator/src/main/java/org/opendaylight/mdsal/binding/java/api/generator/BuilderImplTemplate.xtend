@@ -147,6 +147,16 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         «ENDFOR»
     '''
 
+    override protected  CharSequence generateCopyNonKeys(Collection<GeneratedProperty> props) '''
+        «FOR field : props»
+            «IF field.nullifyEmpty»
+                this.«field.fieldName» = «CODEHELPERS.importedName».emptyToNull(base.«field.getterMethodName»());
+            «ELSE»
+                this.«field.fieldName» = base.«field.getterMethodName»();
+            «ENDIF»
+        «ENDFOR»
+    '''
+
     override protected generateCopyAugmentation(Type implType) '''
         super(base.«AUGMENTATION_FIELD»);
     '''
