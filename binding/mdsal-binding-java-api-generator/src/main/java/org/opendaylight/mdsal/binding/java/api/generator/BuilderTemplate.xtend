@@ -42,7 +42,6 @@ class BuilderTemplate extends AbstractBuilderTemplate {
      */
     package static val BUILDER_STR = "Builder";
 
-    static val AUGMENTATION_FIELD_UPPER = AUGMENTATION_FIELD.toFirstUpper
     static val BUILDER = JavaTypeName.create(Builder)
 
     /**
@@ -342,27 +341,50 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «val augmentTypeRef = augmentType.importedName»
             «val jlClassRef = CLASS.importedName»
             «val hashMapRef = JU_HASHMAP.importedName»
-            public «type.name» add«AUGMENTATION_FIELD_UPPER»(«augmentTypeRef» augmentation) {
-                return add«AUGMENTATION_FIELD_UPPER»(augmentation.«DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»(), augmentation);
+            /**
+              * Add an augmentation to this builder's product.
+              *
+              * @param augmentation augmentation to be added
+              * @return this builder
+              * @throws NullPointerException if {@code augmentation} is null
+              */
+            public «type.name» addAugmentation(«augmentTypeRef» augmentation) {
+                return doAddAugmentation(augmentation.«DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»(), augmentation);
             }
 
-            public «type.name» add«AUGMENTATION_FIELD_UPPER»(«jlClassRef»<? extends «augmentTypeRef»> augmentationType, «augmentTypeRef» augmentationValue) {
-                if (augmentationValue == null) {
-                    return remove«AUGMENTATION_FIELD_UPPER»(augmentationType);
-                }
+            /**
+              * Add or remove an augmentation to this builder's product.
+              *
+              * @param augmentationType augmentation type to be added or removed
+              * @param augmentationValue augmentation value, null if the augmentation type should be removed
+              * @return this builder
+              * @deprecated Use either {@link #addAugmentation(«augmentType.importedJavadocName»)} or {@link #removeAugmentation(«CLASS.importedName»)} instead.
+              */
+            @«DEPRECATED.importedName»
+            public «type.name» addAugmentation(«jlClassRef»<? extends «augmentTypeRef»> augmentationType, «augmentTypeRef» augmentationValue) {
+                return augmentationValue == null ? removeAugmentation(augmentationType) : doAddAugmentation(augmentationType, augmentationValue);
+            }
 
+            /**
+              * Remove an augmentation from this builder's product. If this builder does not track such an augmentation
+              * type, this method does nothing.
+              *
+              * @param augmentationType augmentation type to be removed
+              * @return this builder
+              */
+            public «type.name» removeAugmentation(«jlClassRef»<? extends «augmentTypeRef»> augmentationType) {
+                if (this.«AUGMENTATION_FIELD» instanceof «hashMapRef») {
+                    this.«AUGMENTATION_FIELD».remove(augmentationType);
+                }
+                return this;
+            }
+
+            private «type.name» doAddAugmentation(«jlClassRef»<? extends «augmentTypeRef»> augmentationType, «augmentTypeRef» augmentationValue) {
                 if (!(this.«AUGMENTATION_FIELD» instanceof «hashMapRef»)) {
                     this.«AUGMENTATION_FIELD» = new «hashMapRef»<>();
                 }
 
                 this.«AUGMENTATION_FIELD».put(augmentationType, augmentationValue);
-                return this;
-            }
-
-            public «type.name» remove«AUGMENTATION_FIELD_UPPER»(«jlClassRef»<? extends «augmentTypeRef»> augmentationType) {
-                if (this.«AUGMENTATION_FIELD» instanceof «hashMapRef») {
-                    this.«AUGMENTATION_FIELD».remove(augmentationType);
-                }
                 return this;
             }
         «ENDIF»
