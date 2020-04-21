@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList.Builder;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -71,11 +72,11 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
         return builder.build();
     }
 
-    final D fromMapEntry(final MapEntryNode node) {
+    final @NonNull D fromMapEntry(final MapEntryNode node) {
         return createBindingProxy(node);
     }
 
-    private D fromUnkeyedListEntry(final UnkeyedListEntryNode node) {
+    private @NonNull D fromUnkeyedListEntry(final UnkeyedListEntryNode node) {
         return createBindingProxy(node);
     }
 

@@ -506,7 +506,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    protected final D createBindingProxy(final NormalizedNodeContainer<?, ?, ?> node) {
+    protected final @NonNull D createBindingProxy(final NormalizedNodeContainer<?, ?, ?> node) {
         try {
             return (D) proxyConstructor.invokeExact(this, node);
         } catch (final Throwable e) {
