@@ -429,9 +429,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
     override protected generateCopyKeys(List<GeneratedProperty> keyProps) '''
         this.key = base.«BindingMapping.IDENTIFIABLE_KEY_NAME»();
-        «FOR field : keyProps»
-            this.«field.fieldName» = base.«field.getterMethodName»();
-        «ENDFOR»
+        «generateCopyNonKeys(keyProps)»
     '''
 
     override protected generateCopyAugmentation(Type implType) {
