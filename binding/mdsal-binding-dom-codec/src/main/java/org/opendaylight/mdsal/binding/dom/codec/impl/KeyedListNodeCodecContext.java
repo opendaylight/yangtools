@@ -19,7 +19,6 @@ import java.lang.invoke.WrongMethodTypeException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
@@ -57,10 +56,9 @@ abstract class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>>
         }
 
         @Override
-        Map<?, D> fromMap(final MapNode nodes) {
-            final Collection<MapEntryNode> value = nodes.getValue();
-            final Builder<Object, D> builder = ImmutableMap.builderWithExpectedSize(value.size());
+        Object fromMap(final MapNode map, final Collection<MapEntryNode> value) {
             // FIXME: Could be this lazy transformed map?
+            final Builder<Object, D> builder = ImmutableMap.builderWithExpectedSize(value.size());
             for (MapEntryNode node : value) {
                 final D entry = fromMapEntry(node);
                 builder.put(getKey(entry), entry);
