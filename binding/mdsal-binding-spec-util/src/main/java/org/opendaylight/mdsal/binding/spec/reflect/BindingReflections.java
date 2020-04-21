@@ -82,7 +82,7 @@ public final class BindingReflections {
                 });
 
     private BindingReflections() {
-        throw new UnsupportedOperationException("Utility class.");
+        // Hidden on purpose
     }
 
     /**

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.spec.util;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -17,8 +16,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.UnmodifiableIterator;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Before;
@@ -97,18 +94,5 @@ public class DataObjectReadingUtilTest {
     @Test(expected = NullPointerException.class)
     public void testReadDataWithTwoParams() {
         readData(mockedDataObject, DataObject.class);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    @SuppressWarnings({ "checkstyle:illegalThrows", "checkstyle:avoidHidingCauseException" })
-    public void testPrivateConstructor() throws Throwable {
-        assertFalse(DataObjectReadingUtil.class.getDeclaredConstructor().isAccessible());
-        final Constructor<?> constructor = DataObjectReadingUtil.class.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        try {
-            constructor.newInstance();
-        } catch (InvocationTargetException e) {
-            throw e.getCause();
-        }
     }
 }

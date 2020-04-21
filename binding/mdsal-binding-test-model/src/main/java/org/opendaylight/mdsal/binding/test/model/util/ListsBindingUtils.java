@@ -29,18 +29,16 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 public final class ListsBindingUtils {
-
     private static final InstanceIdentifier<Top> TOP_PATH = InstanceIdentifier.create(Top.class);
-
-    private ListsBindingUtils() {
-        throw new UnsupportedOperationException();
-    }
 
     public static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     public static final TopLevelListKey TOP_BAR_KEY = new TopLevelListKey("bar");
     public static final ListViaUsesKey USES_ONE_KEY = new ListViaUsesKey("one");
     public static final ListViaUsesKey USES_TWO_KEY = new ListViaUsesKey("two");
 
+    private ListsBindingUtils() {
+        // Hidden on purpose
+    }
 
     public static InstanceIdentifier<TopLevelList> path(final TopLevelListKey key) {
         return TOP_PATH.child(TopLevelList.class, key);

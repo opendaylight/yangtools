@@ -41,7 +41,7 @@ public final class DataObjectReadingUtil {
             new AugmentationReadingStrategy();
 
     private DataObjectReadingUtil() {
-        throw new UnsupportedOperationException("Utility class. Instantion is not allowed.");
+        // Hidden on purpose
     }
 
     /**

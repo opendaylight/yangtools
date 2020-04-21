@@ -16,8 +16,6 @@ import static org.mockito.Mockito.mock;
 import static org.opendaylight.mdsal.binding.spec.reflect.BindingReflections.findHierarchicalParent;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
@@ -61,35 +59,20 @@ public class BindingReflectionsTest {
         assertEquals(QName.create("test", "test"), BindingReflections.getQName(TestIdentity.class));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    @SuppressWarnings({ "checkstyle:illegalThrows", "checkstyle:avoidHidingCauseException" })
-    public void testPrivateConstructor() throws Throwable {
-        assertFalse(BindingReflections.class.getDeclaredConstructor().isAccessible());
-        final Constructor<?> constructor = BindingReflections.class.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        try {
-            constructor.newInstance();
-        } catch (InvocationTargetException e) {
-            throw e.getCause();
-        }
-    }
-
-    private interface TestIdentity extends BaseIdentity {
-        @SuppressWarnings("unused")
+    interface TestIdentity extends BaseIdentity {
         QName QNAME = QName.create("test", "test");
 
     }
 
-    private static final class TestImplementation implements Augmentation<TestImplementation>, RpcService {
-        @SuppressWarnings("unused")
+    static final class TestImplementation implements Augmentation<TestImplementation>, RpcService {
         public static final QName QNAME = QName.create("test", "test");
 
-        @SuppressWarnings({ "unused", "static-method" })
+        @SuppressWarnings("static-method")
         ListenableFuture<List<Object>> rpcMethodTest() {
             return null;
         }
 
-        @SuppressWarnings({ "unused", "static-method" })
+        @SuppressWarnings("static-method")
         ListenableFuture<?> rpcMethodTest2() {
             return null;
         }

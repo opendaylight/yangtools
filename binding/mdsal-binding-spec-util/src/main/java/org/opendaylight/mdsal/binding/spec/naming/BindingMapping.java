@@ -106,7 +106,7 @@ public final class BindingMapping {
     private static final Interner<String> PACKAGE_INTERNER = Interners.newWeakInterner();
 
     private BindingMapping() {
-        throw new UnsupportedOperationException("Utility class should not be instantiated");
+        // Hidden on purpose
     }
 
     public static @NonNull String getRootPackageName(final QName module) {
