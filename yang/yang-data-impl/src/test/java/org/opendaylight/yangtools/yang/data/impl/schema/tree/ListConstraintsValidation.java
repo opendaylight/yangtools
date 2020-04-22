@@ -120,7 +120,7 @@ public class ListConstraintsValidation {
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 2);
+        assertEquals(2, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
     }
 
     @Test(expected = DataValidationFailedException.class)
@@ -151,7 +151,7 @@ public class ListConstraintsValidation {
         DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 2);
+        assertEquals(2, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
 
         modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(gooPath, gooEntryNode);
@@ -164,7 +164,7 @@ public class ListConstraintsValidation {
         snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 3);
+        assertEquals(3, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
 
         modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
@@ -209,7 +209,7 @@ public class ListConstraintsValidation {
         final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get())
                 .getChild(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
         assertTrue(leafList.isPresent());
-        assertTrue(leafList.get().getValue().size() == 2);
+        assertEquals(2, leafList.get().size());
     }
 
     @Test

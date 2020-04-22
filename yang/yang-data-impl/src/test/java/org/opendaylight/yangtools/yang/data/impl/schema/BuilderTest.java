@@ -131,7 +131,7 @@ public class BuilderTest {
         assertEquals(orderedMapNodeCreateNode.getSize(), orderedMapNodeCreateNull.getSize() - 1);
         assertEquals(NODE_IDENTIFIER_LIST, orderedMapNodeCreateSize.getIdentifier());
         assertEquals(LIST_MAIN_CHILD_1, orderedMapNodeCreateNull.getChild(0));
-        assertEquals(SIZE, orderedMapNodeCreateNull.getValue().size());
+        assertEquals(SIZE, orderedMapNodeCreateNull.size());
         assertEquals(orderedMapNodeSchemaAware.getChild(0), orderedMapNodeSchemaAwareMapNodeConst.getChild(0));
     }
 

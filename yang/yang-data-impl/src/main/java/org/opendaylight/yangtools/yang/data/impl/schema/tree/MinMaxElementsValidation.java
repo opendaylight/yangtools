@@ -150,7 +150,7 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
 
     private static int numOfChildrenFromValue(final NormalizedNode<?, ?> value) {
         if (value instanceof NormalizedNodeContainer) {
-            return ((NormalizedNodeContainer<?, ?, ?>) value).getValue().size();
+            return ((NormalizedNodeContainer<?, ?, ?>) value).size();
         } else if (value instanceof UnkeyedListNode) {
             return ((UnkeyedListNode) value).getSize();
         }
