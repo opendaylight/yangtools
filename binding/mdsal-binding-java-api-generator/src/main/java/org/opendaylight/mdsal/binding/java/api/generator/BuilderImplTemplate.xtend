@@ -108,7 +108,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
                 «targetType.importedName» other = («targetType.importedName»)obj;
                 «FOR property : properties»
                     «val fieldName = property.fieldName»
-                    if (!«property.importedUtilClass».equals(«fieldName», other.«property.getterMethodName»())) {
+                    if (!«property.importedUtilClass».equals(«fieldName», other.«property.getterName»())) {
                         return false;
                     }
                 «ENDFOR»
@@ -151,9 +151,9 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     override protected CharSequence generateCopyNonKeys(Collection<BuilderGeneratedProperty> props) '''
         «FOR field : props»
             «IF field.mechanics === ValueMechanics.NULLIFY_EMPTY»
-                this.«field.fieldName» = «CODEHELPERS.importedName».emptyToNull(base.«field.getterMethodName»());
+                this.«field.fieldName» = «CODEHELPERS.importedName».emptyToNull(base.«field.getterName»());
             «ELSE»
-                this.«field.fieldName» = base.«field.getterMethodName»();
+                this.«field.fieldName» = base.«field.getterName»();
             «ENDIF»
         «ENDFOR»
     '''

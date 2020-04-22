@@ -458,7 +458,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
     override protected CharSequence generateCopyNonKeys(Collection<BuilderGeneratedProperty> props) '''
         «FOR field : props»
-            this.«field.fieldName» = base.«field.getterMethodName»();
+            this.«field.fieldName» = base.«field.getterName»();
         «ENDFOR»
     '''
 

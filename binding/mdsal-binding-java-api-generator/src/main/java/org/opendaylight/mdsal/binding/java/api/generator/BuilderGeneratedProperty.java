@@ -18,12 +18,12 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.mdsal.binding.model.api.Type;
 
 final class BuilderGeneratedProperty implements GeneratedProperty {
-    private final MethodSignature method;
+    private final MethodSignature getter;
     private final String name;
 
-    BuilderGeneratedProperty(final String name, final MethodSignature method) {
+    BuilderGeneratedProperty(final String name, final MethodSignature getter) {
         this.name = requireNonNull(name);
-        this.method = requireNonNull(method);
+        this.getter = requireNonNull(getter);
     }
 
     @Override
@@ -33,11 +33,15 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
 
     @Override
     public Type getReturnType() {
-        return method.getReturnType();
+        return getter.getReturnType();
     }
 
     ValueMechanics getMechanics() {
-        return method.getMechanics();
+        return getter.getMechanics();
+    }
+
+    String getGetterName() {
+        return getter.getName();
     }
 
     @Override
@@ -54,7 +58,7 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
             return false;
         }
         final BuilderGeneratedProperty other = (BuilderGeneratedProperty) obj;
-        return name.equals(other.name) && method.equals(other.method);
+        return name.equals(other.name) && getter.equals(other.getter);
     }
 
     @Override
