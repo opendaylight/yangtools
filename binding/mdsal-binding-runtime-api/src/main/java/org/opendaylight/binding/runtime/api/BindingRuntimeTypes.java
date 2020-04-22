@@ -25,21 +25,21 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 
 /**
  * The result of BindingGenerator run. Contains mapping between Types and SchemaNodes.
  */
 @Beta
-public final class BindingRuntimeTypes implements SchemaContextProvider, Immutable {
-    private final @NonNull SchemaContext schemaContext;
+public final class BindingRuntimeTypes implements EffectiveModelContextProvider, Immutable {
+    private final @NonNull EffectiveModelContext schemaContext;
     private final ImmutableMap<Type, AugmentationSchemaNode> typeToAugmentation;
     private final ImmutableBiMap<Type, WithStatus> typeToSchema;
     private final ImmutableMultimap<Type, Type> choiceToCases;
     private final ImmutableMap<QName, Type> identities;
 
-    public BindingRuntimeTypes(final SchemaContext schemaContext,
+    public BindingRuntimeTypes(final EffectiveModelContext schemaContext,
             final Map<Type, AugmentationSchemaNode> typeToAugmentation,
             final BiMap<Type, WithStatus> typeToDefiningSchema, final Multimap<Type, Type> choiceToCases,
             final Map<QName, Type> identities) {
@@ -51,7 +51,7 @@ public final class BindingRuntimeTypes implements SchemaContextProvider, Immutab
     }
 
     @Override
-    public SchemaContext getSchemaContext() {
+    public EffectiveModelContext getEffectiveModelContext() {
         return schemaContext;
     }
 

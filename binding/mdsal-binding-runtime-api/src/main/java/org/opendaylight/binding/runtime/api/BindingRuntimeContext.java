@@ -29,8 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * by additional models. Same goes for all possible augmentations.
  */
 @Beta
-public interface BindingRuntimeContext extends SchemaContextProvider, Immutable {
+public interface BindingRuntimeContext extends EffectiveModelContextProvider, Immutable {
     /**
      * Returns a class loading strategy associated with this binding runtime context
      * which is used to load classes.
@@ -55,8 +55,8 @@ public interface BindingRuntimeContext extends SchemaContextProvider, Immutable 
     @NonNull BindingRuntimeTypes getTypes();
 
     @Override
-    default SchemaContext getSchemaContext() {
-        return getTypes().getSchemaContext();
+    default EffectiveModelContext getEffectiveModelContext() {
+        return getTypes().getEffectiveModelContext();
     }
 
     /**

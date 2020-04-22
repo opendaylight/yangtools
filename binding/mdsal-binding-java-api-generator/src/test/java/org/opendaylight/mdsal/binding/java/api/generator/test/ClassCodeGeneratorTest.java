@@ -25,17 +25,13 @@ import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBu
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.util.Types;
 import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTOBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class ClassCodeGeneratorTest {
     @Test
     public void compositeKeyClassTest() {
-
-        final SchemaContext context = YangParserTestUtils.parseYangResource("/list-composite-key.yang");
-
-        assertNotNull(context);
-        final List<Type> genTypes = new DefaultBindingGenerator().generateTypes(context);
+        final List<Type> genTypes = new DefaultBindingGenerator().generateTypes(YangParserTestUtils.parseYangResource(
+            "/list-composite-key.yang"));
 
         assertTrue(genTypes != null);
         assertEquals(7, genTypes.size());
