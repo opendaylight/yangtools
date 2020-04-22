@@ -35,14 +35,13 @@ final class LazyContainerNode extends AbstractModifiedContainerNode {
         if (snapshot.size() == castData().getValue().size()) {
             return new MaterializedMutableContainerNode(this, snapshot);
         }
-
         return new LazyMutableContainerNode(this, snapshot);
     }
 
     @Override
     public Optional<TreeNode> getChild(final PathArgument childId) {
-        final TreeNode modified = getModifiedChild(childId);
-        return modified == null ? getChildFromData(childId) : Optional.of(modified);
+        final TreeNode modified;
+        return (modified = getModifiedChild(childId)) == null ? getChildFromData(childId) : Optional.of(modified);
     }
 
     @Override
