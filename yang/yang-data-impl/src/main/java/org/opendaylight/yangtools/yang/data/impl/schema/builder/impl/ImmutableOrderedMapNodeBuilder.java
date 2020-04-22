@@ -147,6 +147,11 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
         }
 
         @Override
+        public int size() {
+            return children.size();
+        }
+
+        @Override
         protected int valueHashCode() {
             return children.hashCode();
         }

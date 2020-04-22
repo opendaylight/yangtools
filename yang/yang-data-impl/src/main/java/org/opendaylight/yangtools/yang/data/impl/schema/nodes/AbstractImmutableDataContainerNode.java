@@ -37,6 +37,11 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
     }
 
     @Override
+    public final int size() {
+        return children.size();
+    }
+
+    @Override
     protected int valueHashCode() {
         return children.hashCode();
     }
