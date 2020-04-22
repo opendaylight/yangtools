@@ -84,7 +84,7 @@ public class Bug890Test {
         assertTrue(outgoingLabelsList.orElse(null) instanceof MapNode);
         MapNode outgoingLabelsMap = (MapNode) outgoingLabelsList.get();
 
-        assertEquals(2, outgoingLabelsMap.getValue().size());
+        assertEquals(2, outgoingLabelsMap.size());
         Collection<MapEntryNode> labels = outgoingLabelsMap.getValue();
         NodeIdentifierWithPredicates firstNodeId =
                 NodeIdentifierWithPredicates.of(OUTGOING_LABELS_QNAME, INDEX_QNAME, 0);

@@ -120,6 +120,11 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         }
 
         @Override
+        public int size() {
+            return children.size();
+        }
+
+        @Override
         protected int valueHashCode() {
             return children.hashCode();
         }
