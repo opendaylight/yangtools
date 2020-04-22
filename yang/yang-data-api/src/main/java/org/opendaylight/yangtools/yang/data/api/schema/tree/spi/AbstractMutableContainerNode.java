@@ -81,10 +81,11 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
          */
         if (!version.equals(subtreeVersion)) {
             final Map<PathArgument, TreeNode> newChildren = MapAdaptor.getDefaultInstance().optimize(children);
-            final int dataSize = getData().getValue().size();
-            if (dataSize != newChildren.size()) {
-                verify(dataSize > newChildren.size(), "Detected %s modified children, data has only %s",
-                    newChildren.size(), dataSize);
+            final int dataSize = getData().size();
+            final int childrenSize = newChildren.size();
+            if (dataSize != childrenSize) {
+                verify(dataSize > childrenSize, "Detected %s modified children, data has only %s",
+                    childrenSize, dataSize);
                 ret = new LazyContainerNode(data, version, newChildren, subtreeVersion);
             } else {
                 ret = new MaterializedContainerNode(data, version, newChildren, subtreeVersion);

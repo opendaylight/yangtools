@@ -230,7 +230,7 @@ public class Bug4454Test {
         DataTreeSnapshot test2 = inMemoryDataTree.takeSnapshot();
         minMaxListRead = test2.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 3);
+        assertEquals(3, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
 
         DataTreeModification tempMod2 = test2.newModification();
         tempMod2.write(MIN_MAX_LIST_PATH, mapNodeBaz);
@@ -244,7 +244,7 @@ public class Bug4454Test {
         DataTreeSnapshot test3 = inMemoryDataTree.takeSnapshot();
         minMaxListRead = test3.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 1);
+        assertEquals(1, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
         assertTrue(minMaxListRead.get().getValue().toString().contains("test2"));
 
         DataTreeModification tempMod3 = test3.newModification();
@@ -303,7 +303,7 @@ public class Bug4454Test {
         final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get())
                 .getChild(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
         assertTrue(leafList.isPresent());
-        assertTrue(leafList.get().getValue().size() == 3);
+        assertEquals(3, leafList.get().size());
     }
 
     @Test
@@ -346,7 +346,7 @@ public class Bug4454Test {
         final NormalizedNode<?, ?> data = inMemoryDataTree.takeSnapshot()
                 .readNode(YangInstanceIdentifier.empty()).get();
         assertTrue(data instanceof ContainerNode);
-        assertEquals(0, ((ContainerNode) data).getValue().size());
+        assertEquals(0, ((ContainerNode) data).size());
     }
 
     @Test
@@ -434,7 +434,7 @@ public class Bug4454Test {
     private static void testLoop(final DataTreeSnapshot snapshot, final String first, final String second) {
         Optional<NormalizedNode<?, ?>> minMaxListRead = snapshot.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 2);
+        assertEquals(2, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
         UnmodifiableCollection<?> collectionChildren = (UnmodifiableCollection<?>) minMaxListRead.get().getValue();
 
         for (Object collectionChild : collectionChildren) {

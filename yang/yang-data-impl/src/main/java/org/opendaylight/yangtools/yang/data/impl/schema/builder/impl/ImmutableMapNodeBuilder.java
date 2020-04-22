@@ -102,7 +102,6 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         return withChild(child);
     }
 
-
     @Override
     public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, MapEntryNode, MapNode> removeChild(
             final PathArgument key) {
@@ -128,6 +127,11 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         @Override
         public Collection<MapEntryNode> getValue() {
             return UnmodifiableCollection.create(children.values());
+        }
+
+        @Override
+        public int size() {
+            return children.size();
         }
 
         @Override

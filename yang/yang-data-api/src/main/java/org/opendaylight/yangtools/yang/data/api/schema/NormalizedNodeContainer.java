@@ -12,23 +12,19 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
- * Node which is not leaf, but has child {@link NormalizedNode}s as its valzue.
+ * Node which is not leaf, but has child {@link NormalizedNode}s as its value.
  *
  * <p>
- * NormalizedNodeContainer does not have a value, but it has a child
- * nodes. Definition of possible and valid child nodes is introduced
- * in subclasses of this interface.
+ * NormalizedNodeContainer does not have a value, but it has a child nodes. Definition of possible and valid child nodes
+ * is introduced in subclasses of this interface.
  *
  * <p>
- * This interface should not be used directly, but rather use of of derived subinterfaces
- * such as {@link DataContainerNode}, {@link MapNode}, {@link LeafSetNode}.
+ * This interface should not be used directly, but rather use of of derived subclasses such as
+ * {@link DataContainerNode}, {@link MapNode}, {@link LeafSetNode}.
  *
- * @param <I>
- *            Node Identifier type
- * @param <K>
- *            Child Node Identifier type
- * @param <V>
- *            Child Node type
+ * @param <I> Node Identifier type
+ * @param <K> Child Node Identifier type
+ * @param <V> Child Node type
  */
 public interface NormalizedNodeContainer<I extends PathArgument, K extends PathArgument,
        V extends NormalizedNode<? extends K, ?>> extends NormalizedNode<I, Collection<V>> {
@@ -38,18 +34,29 @@ public interface NormalizedNodeContainer<I extends PathArgument, K extends PathA
 
     /**
      * Returns immutable iteration of child nodes of this node.
-     *
      */
     @Override
     Collection<V> getValue();
 
     /**
+     * Return the logical size of this container, i.e. the number of children in contains.
+     *
+     * <p>
+     * Default implementation defers to the collection returned by {@link #getValue()}. Implementations are strongly
+     * encouraged to provide a more efficient implementation of this method.
+     *
+     * @return Number of child nodes in this container.
+     */
+    // FIXME: 6.0.0: consider making this method non-default
+    default int size() {
+        return getValue().size();
+    }
+
+    /**
      * Returns child node identified by provided key.
      *
-     * @param child
-     *            Path argument identifying child node
-     * @return Optional with child node if child exists.
-     *         {@link Optional#empty()} if child does not exists.
+     * @param child Path argument identifying child node
+     * @return Optional with child node if child exists. {@link Optional#empty()} if child does not exist.
      */
     Optional<V> getChild(K child);
 }
