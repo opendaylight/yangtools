@@ -49,7 +49,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
      * Constructs new instance of this class.
      * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
      */
-    new(GeneratedType genType, GeneratedType targetType, Set<GeneratedProperty> properties, Type augmentType,
+    new(GeneratedType genType, GeneratedType targetType, Set<BuilderGeneratedProperty> properties, Type augmentType,
             Type keyType) {
         super(genType, targetType, properties, augmentType, keyType)
     }
@@ -429,11 +429,12 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
     override protected generateCopyKeys(List<GeneratedProperty> keyProps) '''
         this.key = base.«BindingMapping.IDENTIFIABLE_KEY_NAME»();
-        «generateCopyNonKeys(keyProps)»
+        «FOR field : keyProps»
+            this.«field.fieldName» = base.«field.getterMethodName»();
+        «ENDFOR»
     '''
 
-
-    override protected  CharSequence generateCopyNonKeys(Collection<GeneratedProperty> props) '''
+    override protected CharSequence generateCopyNonKeys(Collection<BuilderGeneratedProperty> props) '''
         «FOR field : props»
             this.«field.fieldName» = base.«field.getterMethodName»();
         «ENDFOR»

@@ -22,18 +22,15 @@ import java.util.Set;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.mdsal.binding.model.api.CodeGenerator;
 import org.opendaylight.mdsal.binding.model.api.DefaultType;
-import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.util.Types;
-import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -175,13 +172,13 @@ public final class BuilderGenerator implements CodeGenerator {
      * @param set of method signature instances which should be transformed to list of properties
      * @return set of generated property instances which represents the getter <code>methods</code>
      */
-    private static Set<GeneratedProperty> propertiesFromMethods(final Collection<MethodSignature> methods) {
+    private static Set<BuilderGeneratedProperty> propertiesFromMethods(final Collection<MethodSignature> methods) {
         if (methods == null || methods.isEmpty()) {
             return Collections.emptySet();
         }
-        final Set<GeneratedProperty> result = new LinkedHashSet<>();
+        final Set<BuilderGeneratedProperty> result = new LinkedHashSet<>();
         for (MethodSignature m : methods) {
-            final GeneratedProperty createdField = propertyFromGetter(m);
+            final BuilderGeneratedProperty createdField = propertyFromGetter(m);
             if (createdField != null) {
                 result.add(createdField);
             }
@@ -201,7 +198,7 @@ public final class BuilderGenerator implements CodeGenerator {
      *  <li>if the return type of the <code>method</code> equals <code>null</code></li>
      * </ul>
      */
-    private static GeneratedProperty propertyFromGetter(final MethodSignature method) {
+    private static BuilderGeneratedProperty propertyFromGetter(final MethodSignature method) {
         checkArgument(method != null);
         checkArgument(method.getReturnType() != null);
         checkArgument(method.getName() != null);
@@ -209,21 +206,13 @@ public final class BuilderGenerator implements CodeGenerator {
         if (method.isDefault()) {
             return null;
         }
+
         final String prefix = BindingMapping.getGetterPrefix(Types.BOOLEAN.equals(method.getReturnType()));
         if (!method.getName().startsWith(prefix)) {
             return null;
         }
 
-        final String fieldName = StringExtensions.toFirstLower(method.getName().substring(prefix.length()));
-        final GeneratedTOBuilder tmpGenTO = new CodegenGeneratedTOBuilder(JavaTypeName.create("foo", "foo"));
-        final GeneratedPropertyBuilder builder = tmpGenTO.addProperty(fieldName).setReturnType(method.getReturnType());
-        switch (method.getMechanics()) {
-            case NULLIFY_EMPTY:
-                builder.setNullifyEmpty(true);
-                break;
-            default:
-                break;
-        }
-        return tmpGenTO.build().getProperties().get(0);
+        return new BuilderGeneratedProperty(StringExtensions.toFirstLower(method.getName().substring(prefix.length())),
+            method);
     }
 }

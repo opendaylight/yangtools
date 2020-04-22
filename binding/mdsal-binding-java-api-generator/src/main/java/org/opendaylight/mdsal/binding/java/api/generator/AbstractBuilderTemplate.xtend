@@ -36,7 +36,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     /**
      * Set of class attributes (fields) which are derived from the getter methods names.
      */
-    protected val Set<GeneratedProperty> properties
+    protected val Set<BuilderGeneratedProperty> properties
 
     /**
      * GeneratedType for key type, null if this type does not have a key.
@@ -46,7 +46,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     protected val GeneratedType targetType;
 
     new(AbstractJavaGeneratedType javaType, GeneratedType type, GeneratedType targetType,
-            Set<GeneratedProperty> properties, Type augmentType, Type keyType) {
+            Set<BuilderGeneratedProperty> properties, Type augmentType, Type keyType) {
         super(javaType, type)
         this.targetType = targetType
         this.properties = properties
@@ -54,7 +54,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         this.keyType = keyType
     }
 
-    new(GeneratedType type, GeneratedType targetType, Set<GeneratedProperty> properties, Type augmentType,
+    new(GeneratedType type, GeneratedType targetType, Set<BuilderGeneratedProperty> properties, Type augmentType,
             Type keyType) {
         super(type)
         this.targetType = targetType
@@ -87,7 +87,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         '''
     }
 
-    override generateToString(Collection<GeneratedProperty> properties) '''
+    override generateToString(Collection<? extends GeneratedProperty> properties) '''
         «IF properties !== null»
             @«OVERRIDE.importedName»
             public «STRING.importedName» toString() {
@@ -154,7 +154,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
 
     def protected abstract CharSequence generateCopyKeys(List<GeneratedProperty> keyProps)
 
-    def protected abstract CharSequence generateCopyNonKeys(Collection<GeneratedProperty> props)
+    def protected abstract CharSequence generateCopyNonKeys(Collection<BuilderGeneratedProperty> props)
 
     def protected abstract CharSequence generateCopyAugmentation(Type implType)
 
@@ -169,7 +169,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         return false;
     }
 
-    private def void removeProperty(Collection<GeneratedProperty> props, String name) {
+    private def void removeProperty(Collection<BuilderGeneratedProperty> props, String name) {
         val iter = props.iterator
         while (iter.hasNext) {
             if (name.equals(iter.next.name)) {

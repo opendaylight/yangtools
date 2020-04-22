@@ -21,6 +21,7 @@ import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.binding.AbstractAugmentable
+import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics
 
 class BuilderImplTemplate extends AbstractBuilderTemplate {
     val Type builderType;
@@ -147,9 +148,9 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         «ENDFOR»
     '''
 
-    override protected  CharSequence generateCopyNonKeys(Collection<GeneratedProperty> props) '''
+    override protected CharSequence generateCopyNonKeys(Collection<BuilderGeneratedProperty> props) '''
         «FOR field : props»
-            «IF field.nullifyEmpty»
+            «IF field.mechanics === ValueMechanics.NULLIFY_EMPTY»
                 this.«field.fieldName» = «CODEHELPERS.importedName».emptyToNull(base.«field.getterMethodName»());
             «ELSE»
                 this.«field.fieldName» = base.«field.getterMethodName»();

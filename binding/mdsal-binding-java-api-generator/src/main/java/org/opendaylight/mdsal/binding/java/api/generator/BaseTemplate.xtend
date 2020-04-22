@@ -401,7 +401,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         return sb.append(lineBuilder).append(NEW_LINE).toString
     }
 
-    def protected generateToString(Collection<GeneratedProperty> properties) '''
+    def protected generateToString(Collection<? extends GeneratedProperty> properties) '''
         «IF !properties.empty»
             @«OVERRIDE.importedName»
             public «STRING.importedName» toString() {
@@ -474,7 +474,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
        «ENDFOR»
     '''
 
-    def protected hashCodeResult(Collection<GeneratedProperty> properties) '''
+    def protected hashCodeResult(Collection<? extends GeneratedProperty> properties) '''
         final int prime = 31;
         int result = 1;
         «FOR property : properties»
