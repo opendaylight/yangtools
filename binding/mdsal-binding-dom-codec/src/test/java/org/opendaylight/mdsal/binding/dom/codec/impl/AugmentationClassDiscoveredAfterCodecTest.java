@@ -21,7 +21,6 @@ import org.opendaylight.binding.runtime.api.DefaultBindingRuntimeContext;
 import org.opendaylight.binding.runtime.spi.BindingRuntimeHelpers;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingClassInLoadingStrategyException;
-import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingRuntimeGenerator;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugmentBuilder;
@@ -47,8 +46,7 @@ public class AugmentationClassDiscoveredAfterCodecTest {
     @Before
     public void setup() {
         // Baseline state: strategy is cognizant of the classes
-        final BindingRuntimeContext delegate = BindingRuntimeHelpers.createRuntimeContext(
-            new DefaultBindingRuntimeGenerator());
+        final BindingRuntimeContext delegate = BindingRuntimeHelpers.createRuntimeContext();
 
         // Class loading filter, manipulated by tests
         filter = new FilteringClassLoadingStrategy(delegate.getStrategy());

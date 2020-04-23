@@ -11,14 +11,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.binding.runtime.spi.BindingRuntimeHelpers;
-import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingRuntimeGenerator;
 
 public abstract class AbstractBindingRuntimeTest {
     private static BindingRuntimeContext runtimeContext;
 
     @BeforeClass
     public static void beforeClass() {
-        runtimeContext = BindingRuntimeHelpers.createRuntimeContext(new DefaultBindingRuntimeGenerator());
+        runtimeContext = BindingRuntimeHelpers.createRuntimeContext();
     }
 
     @AfterClass

@@ -8,7 +8,9 @@
 package org.opendaylight.binding.runtime.spi;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Throwables;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
@@ -17,6 +19,7 @@ import org.opendaylight.binding.runtime.api.DefaultBindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 
 /**
  * Simple helpers to help with reconstruction of BindingRuntimeContext from generated binding classes. These involve
@@ -37,18 +40,34 @@ public final class BindingRuntimeHelpers {
 
     public static @NonNull EffectiveModelContext createEffectiveModel(
             final Iterable<? extends YangModuleInfo> moduleInfos) {
-        return prepareContext(moduleInfos).tryToCreateModelContext().orElseThrow();
+        return createEffectiveModel(ServiceLoaderState.ParserFactory.INSTANCE, moduleInfos);
     }
 
-    public static @NonNull BindingRuntimeContext createRuntimeContext(final BindingRuntimeGenerator generator) {
-        final ModuleInfoBackedContext ctx = prepareContext(BindingReflections.loadModuleInfos());
-        return DefaultBindingRuntimeContext.create(generator.generateTypeMapping(
+    public static @NonNull EffectiveModelContext createEffectiveModel(final YangParserFactory parserFactory,
+            final Iterable<? extends YangModuleInfo> moduleInfos) {
+        return prepareContext(parserFactory, moduleInfos).tryToCreateModelContext().orElseThrow();
+    }
+
+    public static @NonNull BindingRuntimeContext createRuntimeContext() {
+        final ModuleInfoBackedContext ctx = prepareContext(ServiceLoaderState.ParserFactory.INSTANCE,
+            BindingReflections.loadModuleInfos());
+        return DefaultBindingRuntimeContext.create(ServiceLoaderState.Generator.INSTANCE.generateTypeMapping(
             ctx.tryToCreateModelContext().orElseThrow()), ctx);
     }
 
-    public static @NonNull BindingRuntimeContext createRuntimeContext(final BindingRuntimeGenerator generator,
-            final Class<?>... classes) {
-        final ModuleInfoBackedContext ctx = prepareContext(Arrays.stream(classes)
+    public static @NonNull BindingRuntimeContext createRuntimeContext(final Class<?>... classes) {
+        return createRuntimeContext(ServiceLoaderState.ParserFactory.INSTANCE, ServiceLoaderState.Generator.INSTANCE,
+            classes);
+    }
+
+    public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
+            final BindingRuntimeGenerator generator, final Class<?>... classes) {
+        return createRuntimeContext(parserFactory, generator, Arrays.asList(classes));
+    }
+
+    public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
+            final BindingRuntimeGenerator generator, final Collection<Class<?>> classes) {
+        final ModuleInfoBackedContext ctx = prepareContext(parserFactory, classes.stream()
             .map(BindingRuntimeHelpers::extractYangModuleInfo)
             .collect(Collectors.toList()));
         return DefaultBindingRuntimeContext.create(
@@ -60,12 +79,14 @@ public final class BindingRuntimeHelpers {
         try {
             return BindingReflections.getModuleInfo(clazz);
         } catch (Exception e) {
+            Throwables.throwIfUnchecked(e);
             throw new IllegalStateException("Failed to extract module info from " + clazz, e);
         }
     }
 
-    private static ModuleInfoBackedContext prepareContext(final Iterable<? extends YangModuleInfo> moduleInfos) {
-        final ModuleInfoBackedContext ctx = ModuleInfoBackedContext.create();
+    private static @NonNull ModuleInfoBackedContext prepareContext(final YangParserFactory parserFactory,
+            final Iterable<? extends YangModuleInfo> moduleInfos) {
+        final ModuleInfoBackedContext ctx = ModuleInfoBackedContext.create("helper", parserFactory);
         ctx.registerModuleInfos(moduleInfos);
         return ctx;
     }
