@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants.ContainerName;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractId
 
         for (Entry<ContainerName, MountPointChild> entry : libraryContainers.entrySet()) {
             // Context for the specific code word
-            final Optional<SchemaContext> optLibContext = findSchemaForLibrary(entry.getKey());
+            final Optional<EffectiveModelContext> optLibContext = findSchemaForLibrary(entry.getKey());
             if (optLibContext.isEmpty()) {
                 LOG.debug("YANG Library context for mount point {} container {} not found", getIdentifier(),
                     entry.getKey());
@@ -62,7 +62,7 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractId
                 throw new YangParserException("Invalid yang-library non-container " + libData);
             }
 
-            final SchemaContext schemaContext = bindLibrary(entry.getKey(), (ContainerNode) libData);
+            final EffectiveModelContext schemaContext = bindLibrary(entry.getKey(), (ContainerNode) libData);
             if (schemaMounts == null) {
                 return new EmptyMountPointContext(schemaContext);
             }
@@ -83,7 +83,7 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractId
         throw new YangParserException("Failed to interpret " + libraryContainers);
     }
 
-    protected abstract @NonNull MountPointContext createMountPointContext(@NonNull SchemaContext schemaContext,
+    protected abstract @NonNull MountPointContext createMountPointContext(@NonNull EffectiveModelContext schemaContext,
             @NonNull ContainerNode mountData);
 
     /**
@@ -95,7 +95,7 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractId
      * @throws NullPointerException if container is null
      * @throws YangParserException if the schema context cannot be assembled
      */
-    protected abstract @NonNull SchemaContext bindLibrary(@NonNull ContainerName containerName,
+    protected abstract @NonNull EffectiveModelContext bindLibrary(@NonNull ContainerName containerName,
             @NonNull ContainerNode libData) throws YangParserException;
 
     /**
@@ -108,5 +108,5 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractId
      * @return The LibraryContext to use when interpreting the specified YANG Library container, or empty
      * @throws NullPointerException if container is null
      */
-    protected abstract Optional<SchemaContext> findSchemaForLibrary(@NonNull ContainerName containerName);
+    protected abstract Optional<EffectiveModelContext> findSchemaForLibrary(@NonNull ContainerName containerName);
 }

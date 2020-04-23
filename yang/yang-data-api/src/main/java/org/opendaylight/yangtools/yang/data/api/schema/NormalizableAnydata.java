@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * An {@link AnydataNode#getValueObjectModel() anydata value object model} which can be normalized to
@@ -28,6 +28,6 @@ public interface NormalizableAnydata {
      * @throws NullPointerException if any argument is null
      * @throws AnydataNormalizationException if this data cannot be interpreted in the requested context
      */
-    NormalizedAnydata normalizeTo(SchemaContext schemaContext, DataSchemaNode contextNode)
+    NormalizedAnydata normalizeTo(EffectiveModelContext schemaContext, DataSchemaNode contextNode)
             throws AnydataNormalizationException;
 }

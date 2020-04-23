@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizableAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * Abstract base class for implementing the NormalizableAnydata interface. This class provides the binding to
@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 @NonNullByDefault
 public abstract class AbstractNormalizableAnydata implements NormalizableAnydata {
     @Override
-    public final ImmutableNormalizedAnydata normalizeTo(final SchemaContext schemaContext,
+    public final ImmutableNormalizedAnydata normalizeTo(final EffectiveModelContext schemaContext,
             final DataSchemaNode contextNode) throws AnydataNormalizationException {
         final NormalizedNodeMetadataResult result = new NormalizedNodeMetadataResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -49,6 +49,6 @@ public abstract class AbstractNormalizableAnydata implements NormalizableAnydata
 
     protected abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
 
-    protected abstract void writeTo(NormalizedNodeStreamWriter streamWriter, SchemaContext schemaContext,
+    protected abstract void writeTo(NormalizedNodeStreamWriter streamWriter, EffectiveModelContext schemaContext,
             DataSchemaNode contextNode) throws IOException;
 }

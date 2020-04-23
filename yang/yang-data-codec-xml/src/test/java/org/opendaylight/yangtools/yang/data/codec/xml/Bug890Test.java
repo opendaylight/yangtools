@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertEquals;
@@ -35,8 +34,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug890Test {
@@ -44,7 +43,7 @@ public class Bug890Test {
     private static final QName OUTGOING_LABELS_QNAME = QName.create(FOO_MODULE, "outgoing-labels");
     private static final QName INDEX_QNAME = QName.create(FOO_MODULE, "index");
 
-    private SchemaContext schemaContext;
+    private EffectiveModelContext schemaContext;
 
     @Before
     public void setUp() throws Exception {

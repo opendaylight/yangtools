@@ -74,12 +74,12 @@ import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.slf4j.Logger;
@@ -190,20 +190,20 @@ public final class XmlParserStream implements Closeable, Flushable {
     /**
      * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
      * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)} instead and
-     * maintain a {@link XmlCodecFactory} to match the current {@link SchemaContext}.
+     * maintain a {@link XmlCodecFactory} to match the current {@link EffectiveModelContext}.
      */
-    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
-            final SchemaNode parentNode) {
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer,
+            final EffectiveModelContext schemaContext, final SchemaNode parentNode) {
         return create(writer, schemaContext, parentNode, true);
     }
 
     /**
      * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
      * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)} instead and
-     * maintain a {@link XmlCodecFactory} to match the current {@link SchemaContext}.
+     * maintain a {@link XmlCodecFactory} to match the current {@link EffectiveModelContext}.
      */
-    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
-            final SchemaNode parentNode, final boolean strictParsing) {
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer,
+            final EffectiveModelContext schemaContext, final SchemaNode parentNode, final boolean strictParsing) {
         return create(writer, XmlCodecFactory.create(schemaContext), parentNode, strictParsing);
     }
 

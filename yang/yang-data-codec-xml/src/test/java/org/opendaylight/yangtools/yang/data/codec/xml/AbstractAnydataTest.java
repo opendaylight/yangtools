@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -48,7 +48,7 @@ public abstract class AbstractAnydataTest {
     static final LeafNode<?> CONT_LEAF = ImmutableLeafNodeBuilder.create().withNodeIdentifier(CONT_LEAF_NODEID)
             .withValue("abc").build();
 
-    static SchemaContext SCHEMA_CONTEXT;
+    static EffectiveModelContext SCHEMA_CONTEXT;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
