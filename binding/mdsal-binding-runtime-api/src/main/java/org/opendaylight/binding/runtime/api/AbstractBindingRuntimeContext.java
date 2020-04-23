@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -313,14 +312,6 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
     @Override
     public final Class<?> getIdentityClass(final QName input) {
         return identityClasses.getUnchecked(input);
-    }
-
-    @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("ClassLoadingStrategy", getStrategy())
-                .add("runtimeTypes", getTypes())
-                .toString();
     }
 
     private static AugmentationIdentifier getAugmentationIdentifier(final AugmentationSchemaNode augment) {
