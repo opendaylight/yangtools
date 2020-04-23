@@ -19,16 +19,18 @@ import org.opendaylight.yangtools.rcf8528.data.util.AbstractMountPointContextFac
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.util.AbstractSchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.util.AbstractEffectiveModelContextProvider;
 
-final class ImmutableMountPointContext extends AbstractSchemaContextProvider implements Immutable, MountPointContext {
+final class ImmutableMountPointContext extends AbstractEffectiveModelContextProvider
+        implements Immutable, MountPointContext {
     private final ImmutableMap<MountPointIdentifier, MountPointDefinition> mountPoints;
     private final Function<MountPointDefinition, MountPointContextFactory> createFactory;
 
-    ImmutableMountPointContext(final SchemaContext schemaContext, final Iterable<MountPointDefinition> mountPoints,
+    ImmutableMountPointContext(final EffectiveModelContext modelContext,
+            final Iterable<MountPointDefinition> mountPoints,
             final Function<MountPointDefinition, MountPointContextFactory> createFactory) {
-        super(schemaContext);
+        super(modelContext);
         this.mountPoints = Maps.uniqueIndex(mountPoints, MountPointDefinition::getIdentifier);
         this.createFactory = requireNonNull(createFactory);
     }

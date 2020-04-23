@@ -13,11 +13,12 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizableAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * An unresolved child within a mount point. This is similar in functionality to {@link NormalizableAnydata}, but
- * rather than normalizing, the data is fed into a combination of a SchemaContext and NormalizedNodeStreamWriter.
+ * rather than normalizing, the data is fed into a combination of a EffectiveModelContext and
+ * NormalizedNodeStreamWriter.
  */
 @Beta
 @NonNullByDefault
@@ -33,12 +34,12 @@ public interface MountPointChild {
     void writeTo(NormalizedNodeStreamWriter writer, MountPointContext mountCtx) throws IOException;
 
     /**
-     * Normalized this child to a particular SchemaContext.
+     * Normalized this child to a particular EffectiveModelContext.
      *
      * @param schemaContext SchemaContext for normalization purposes
      * @return A NormalizedNode representation of this child
      * @throws IOException if an underlying error occurs
      * @throws NullPointerException if any of the arguments is null
      */
-    NormalizedNode<?, ?> normalizeTo(SchemaContext schemaContext) throws IOException;
+    NormalizedNode<?, ?> normalizeTo(EffectiveModelContext schemaContext) throws IOException;
 }

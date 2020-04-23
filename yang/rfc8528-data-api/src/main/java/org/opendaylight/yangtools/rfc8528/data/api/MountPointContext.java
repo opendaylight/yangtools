@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.rfc8528.data.api;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 
 /**
  * A context of either an explicit (RFC8528 Schema Mount instance) or implicit (system root). It encapsulates a data
@@ -47,7 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
  * directly usable anyway.
  */
 @Beta
-public interface MountPointContext extends SchemaContextProvider {
+public interface MountPointContext extends EffectiveModelContextProvider {
     /**
      * Attempt to acquire a {@link MountPointContextFactory} to resolve schemas for the purposes of interpreting
      * this mount point. An empty result indicates the mount point is not attached.
