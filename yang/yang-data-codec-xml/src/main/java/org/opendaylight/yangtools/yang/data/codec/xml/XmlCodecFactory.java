@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -77,7 +77,7 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
      * @param context SchemaContext to which the factory should be bound
      * @return A codec factory instance.
      */
-    public static XmlCodecFactory create(final SchemaContext context) {
+    public static XmlCodecFactory create(final EffectiveModelContext context) {
         return create(new EmptyMountPointContext(context));
     }
 

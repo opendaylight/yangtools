@@ -20,7 +20,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.AbstractNormalizableAnydata;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.xml.sax.SAXException;
 
 /**
@@ -49,7 +49,7 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
     }
 
     @Override
-    protected void writeTo(final NormalizedNodeStreamWriter streamWriter, final SchemaContext schemaContext,
+    protected void writeTo(final NormalizedNodeStreamWriter streamWriter, final EffectiveModelContext schemaContext,
             final DataSchemaNode contextNode) throws IOException {
         final XmlParserStream xmlParser;
         try {

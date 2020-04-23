@@ -34,10 +34,10 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -54,7 +54,7 @@ public class YangModeledAnyXMLDeserializationTest {
     private QName myLeaf1;
     private QName myAnyXMLDataBar;
     private QName myAnyXMLDataFoo;
-    private SchemaContext schemaContext;
+    private EffectiveModelContext schemaContext;
 
     @Before
     public void setUp() {

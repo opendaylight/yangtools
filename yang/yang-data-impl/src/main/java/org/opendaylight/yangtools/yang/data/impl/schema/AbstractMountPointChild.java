@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.rcf8528.data.util.EmptyMountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * Utility base class for implementing {@link MountPointChild} classes.
@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 @Beta
 public abstract class AbstractMountPointChild implements MountPointChild {
     @Override
-    public final NormalizedNode<?, ?> normalizeTo(final SchemaContext schemaContext) throws IOException {
+    public final NormalizedNode<?, ?> normalizeTo(final EffectiveModelContext schemaContext) throws IOException {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         writeTo(streamWriter, new EmptyMountPointContext(schemaContext));

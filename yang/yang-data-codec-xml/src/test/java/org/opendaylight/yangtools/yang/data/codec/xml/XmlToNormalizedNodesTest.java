@@ -46,7 +46,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
@@ -80,7 +80,7 @@ public class XmlToNormalizedNodesTest {
     private static final QName MY_SECOND_KEY_LEAF = QName.create(BAZ_MODULE, "my-second-key-leaf");
     private static final QName MY_LEAF_IN_LIST_3 = QName.create(BAZ_MODULE, "my-leaf-in-list-3");
 
-    private static SchemaContext schemaContext;
+    private static EffectiveModelContext schemaContext;
     private static ContainerSchemaNode outerContainerSchema;
     private static ContainerSchemaNode parentContainerSchema;
 

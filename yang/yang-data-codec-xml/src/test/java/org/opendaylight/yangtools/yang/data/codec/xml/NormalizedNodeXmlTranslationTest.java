@@ -71,6 +71,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -80,7 +81,7 @@ import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
 public class NormalizedNodeXmlTranslationTest {
-    private final SchemaContext schema;
+    private final EffectiveModelContext schema;
 
     @Parameterized.Parameters()
     public static Collection<Object[]> data() {

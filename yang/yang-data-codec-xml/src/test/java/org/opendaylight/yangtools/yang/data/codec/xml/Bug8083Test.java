@@ -20,15 +20,15 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithEmptyListKey() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
         final Module bazModule = schemaContext.getModules().iterator().next();
         final ContainerSchemaNode topCont = (ContainerSchemaNode) bazModule.findDataChildByName(
                 QName.create(bazModule.getQNameModule(), "top-cont")).get();
@@ -48,7 +48,7 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithIdentityrefListKey() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
         final Module zabModule = schemaContext.getModules().iterator().next();
         final ContainerSchemaNode topCont = (ContainerSchemaNode) zabModule.findDataChildByName(
                 QName.create(zabModule.getQNameModule(), "top-cont")).get();
@@ -68,7 +68,7 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
         final Module foobarModule = schemaContext.getModules().iterator().next();
         final ContainerSchemaNode topCont = (ContainerSchemaNode) foobarModule.findDataChildByName(
                 QName.create(foobarModule.getQNameModule(), "top-cont")).get();

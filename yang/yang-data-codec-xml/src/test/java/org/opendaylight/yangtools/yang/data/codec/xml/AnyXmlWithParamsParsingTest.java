@@ -32,8 +32,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
@@ -43,7 +43,7 @@ public class AnyXmlWithParamsParsingTest {
     private static final InputStream EDIT_CONFIG = XmlToNormalizedNodesTest.class.getResourceAsStream(
             "/anyxml-support/params/edit.xml");
 
-    private static final SchemaContext SCHEMA = YangParserTestUtils.parseYangResourceDirectory(
+    private static final EffectiveModelContext SCHEMA = YangParserTestUtils.parseYangResourceDirectory(
             "/anyxml-support/params/");
 
     private static final SchemaNode SCHEMA_NODE = SCHEMA.getOperations().stream()

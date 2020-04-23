@@ -23,8 +23,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class StrictParsingModeTest {
@@ -32,7 +32,7 @@ public class StrictParsingModeTest {
     @Test
     public void testLenientParsing() throws Exception {
         // unknown child nodes in the top-level-container node will be skipped when the strictParsing is set to false
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource(
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource(
                 "/strict-parsing-mode-test/foo.yang");
         final Module fooModule = schemaContext.getModules().iterator().next();
         final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.findDataChildByName(
@@ -57,7 +57,7 @@ public class StrictParsingModeTest {
     public void testStrictParsing() throws Exception {
         // should fail because strictParsing is switched on and the top-level-container node contains child nodes
         // which are not defined in the provided YANG model
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource(
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource(
                 "/strict-parsing-mode-test/foo.yang");
         final Module fooModule = schemaContext.getModules().iterator().next();
         final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.findDataChildByName(
