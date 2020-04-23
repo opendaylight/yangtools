@@ -360,7 +360,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
               * @return this builder
               * @deprecated Use either {@link #addAugmentation(«augmentType.importedJavadocName»)} or {@link #removeAugmentation(«CLASS.importedName»)} instead.
               */
-            @«DEPRECATED.importedName»
+            @«DEPRECATED.importedName»(forRemoval = true)
             public «type.name» addAugmentation(«jlClassRef»<? extends «augmentTypeRef»> augmentationType, «augmentTypeRef» augmentationValue) {
                 return augmentationValue == null ? removeAugmentation(augmentationType) : doAddAugmentation(augmentationType, augmentationValue);
             }
