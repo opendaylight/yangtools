@@ -275,15 +275,15 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         val returnType = field.returnType
         if (returnType instanceof ParameterizedType) {
             if (Types.isListType(returnType)) {
-                return generateListSetter(field, returnType.actualTypeArguments.get(0), "")
+                return generateListSetter(field, returnType.actualTypeArguments.get(0))
             } else if (Types.isMapType(returnType)) {
-                return generateListSetter(field, returnType.actualTypeArguments.get(1), ".values()")
+                return generateMapSetter(field, returnType.actualTypeArguments.get(1))
             }
         }
         return generateSimpleSetter(field, returnType)
     }
 
-    def private generateListSetter(GeneratedProperty field, Type actualType, String extractor) '''
+    def private generateListSetter(GeneratedProperty field, Type actualType) '''
         «val restrictions = restrictionsForSetter(actualType)»
         «IF restrictions !== null»
             «generateCheckers(field, restrictions, actualType)»
@@ -291,7 +291,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         public «type.getName» set«field.getName.toFirstUpper»(final «field.returnType.importedName» values) {
         «IF restrictions !== null»
             if (values != null) {
-               for («actualType.importedName» value : values«extractor») {
+               for («actualType.importedName» value : values) {
                    «checkArgument(field, restrictions, actualType, "value")»
                }
             }
@@ -300,6 +300,45 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             return this;
         }
 
+    '''
+
+    // FIXME: MDSAL-540: remove the migration setter
+    def private generateMapSetter(GeneratedProperty field, Type actualType) '''
+        «val restrictions = restrictionsForSetter(actualType)»
+        «val actualTypeRef = actualType.importedName»
+        «val setterName = "set" + field.name.toFirstUpper»
+        «IF restrictions !== null»
+            «generateCheckers(field, restrictions, actualType)»
+        «ENDIF»
+        public «type.getName» «setterName»(final «field.returnType.importedName» values) {
+        «IF restrictions !== null»
+            if (values != null) {
+               for («actualTypeRef» value : values.values()) {
+                   «checkArgument(field, restrictions, actualType, "value")»
+               }
+            }
+        «ENDIF»
+            this.«field.fieldName» = values;
+            return this;
+        }
+
+        /**
+          * Utility migration setter.
+          *
+          * <b>IMPORTANT NOTE</b>: This method does not completely match previous mechanics, as the list is processed as
+          *                        during this method's execution. Any future modifications of the list are <b>NOT</b>
+          *                        reflected in this builder nor its products.
+          *
+          * @param values Legacy List of values
+          * @return this builder
+          * @throws IllegalArgumentException if the list contains entries with the same key
+          * @throws NullPointerException if the list contains a null entry
+          * @deprecated Use {#link #«setterName»(«JU_MAP.importedName»)} instead.
+          */
+        @«DEPRECATED.importedName»(forRemoval = true)
+        public «type.getName» «setterName»(final «JU_LIST.importedName»<«actualTypeRef»> values) {
+            return «setterName»(«CODEHELPERS.importedName».compatMap(values));
+        }
     '''
 
     def private generateSimpleSetter(GeneratedProperty field, Type actualType) '''
