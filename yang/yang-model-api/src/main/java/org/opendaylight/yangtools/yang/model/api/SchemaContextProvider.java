@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 
-// FIXME: document this API contract
+// FIXME: 6.0.0: remove this contract
 public interface SchemaContextProvider {
     /**
      * Return the {@link SchemaContext} attached to this object.

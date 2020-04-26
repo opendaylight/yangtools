@@ -25,6 +25,12 @@ public interface EffectiveModelContextProvider extends SchemaContextProvider {
      */
     @NonNull EffectiveModelContext getEffectiveModelContext();
 
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated Please use {@link #getEffectiveModelContext()} instead.
+     */
+    @Deprecated
     @Override
     default SchemaContext getSchemaContext() {
         return getEffectiveModelContext();
