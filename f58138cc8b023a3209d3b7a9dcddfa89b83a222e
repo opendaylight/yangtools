@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2232c2d8_9387d4c4",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidates.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3277656_f7e986c3",
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "59796ff4_10945864",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
         "patchSetId": 21
@@ -33,6 +51,24 @@
       "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c679b83f_c8a014e2",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59796ff4_10945864",
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "4eca1011_2471330f",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a891d5c6_44373cff",
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f520ef08_3ec5aaff",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
         "patchSetId": 21
@@ -67,6 +121,24 @@
       "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d32e9e34_d73a7788",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f520ef08_3ec5aaff",
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     },
     {
       "key": {
@@ -93,6 +165,30 @@
     },
     {
       "key": {
+        "uuid": "f676209c_1897335b",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "90408c91_76069b9b",
+      "range": {
+        "startLine": 52,
+        "startChar": 11,
+        "endLine": 52,
+        "endChar": 19
+      },
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d47d2be7_4bc4661c",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
         "patchSetId": 21
@@ -113,6 +209,30 @@
       "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f489a7a_4c4a01ca",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d47d2be7_4bc4661c",
+      "range": {
+        "startLine": 58,
+        "startChar": 15,
+        "endLine": 58,
+        "endChar": 52
+      },
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     },
     {
       "key": {
@@ -139,6 +259,30 @@
     },
     {
       "key": {
+        "uuid": "2378c854_c68b4ddb",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "79de897c_75764b50",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 32
+      },
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3cb70149_e0fa40cf",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
         "patchSetId": 21
@@ -159,6 +303,30 @@
       "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a320964f_4403f12b",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done\nDon\u0027t need this here. Null check is in getNode() method",
+      "parentUuid": "3cb70149_e0fa40cf",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 9
+      },
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     },
     {
       "key": {
@@ -185,6 +353,30 @@
     },
     {
       "key": {
+        "uuid": "8cc98b2c_9e35af0f",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "894bdcdc_7a23f6a1",
+      "range": {
+        "startLine": 162,
+        "startChar": 42,
+        "endLine": 162,
+        "endChar": 45
+      },
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "efec8689_a6bba8bf",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
         "patchSetId": 21
@@ -205,6 +397,30 @@
       "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d004d98_14775e17",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TerminalDataTreeCandidateNode.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "efec8689_a6bba8bf",
+      "range": {
+        "startLine": 174,
+        "startChar": 72,
+        "endLine": 175,
+        "endChar": 17
+      },
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     },
     {
       "key": {
@@ -231,6 +447,30 @@
     },
     {
       "key": {
+        "uuid": "e75083e8_1399a964",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidatesAggregateTest.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "369a4d4c_a564f78e",
+      "range": {
+        "startLine": 32,
+        "startChar": 8,
+        "endLine": 32,
+        "endChar": 22
+      },
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "be785ac0_937a2430",
         "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidatesAggregateTest.java",
         "patchSetId": 21
@@ -251,6 +491,30 @@
       "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7bd8bb9a_7a8168b2",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidatesAggregateTest.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 1231,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-04-27T08:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be785ac0_937a2430",
+      "range": {
+        "startLine": 1231,
+        "startChar": 8,
+        "endLine": 1231,
+        "endChar": 20
+      },
+      "revId": "f58138cc8b023a3209d3b7a9dcddfa89b83a222e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
