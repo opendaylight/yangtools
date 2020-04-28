@@ -75,6 +75,12 @@
                         <artifactId>jacoco-maven-plugin</artifactId>
                         <executions>
                             <execution>
+                                <!-- Step one:
+
+                                    merge all .exec files into a single file into this project's
+                                    ${project.build.directory}/jacoco.exec. Note we are being explicit so as
+                                    to override the odlparent/pom.xml override
+                                -->
                                 <id>merge</id>
                                 <goals>
                                     <goal>merge</goal>
@@ -90,6 +96,21 @@
                                             </includes>
                                         </fileSet>
                                     </fileSets>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <!-- Step two:
+
+                                    pick the merged execution file and produce a complete aggregate report,
+                                    including HTML/XML/CSV.
+                                 -->
+                                <id>report</id>
+                                <goals>
+                                    <goal>report-aggregate</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <dataFileIncludes>${odl.jacoco.aggregateFile}</dataFileIncludes>
                                 </configuration>
                             </execution>
                         </executions>
