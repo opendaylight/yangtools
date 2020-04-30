@@ -110,14 +110,14 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
     private static final StackManipulation END_NODE = invokeMethod(BindingStreamEventWriter.class,
         "endNode");
 
-    // startMapEntryNode(obj.key(), UNKNOWN_SIZE);
+    // startMapEntryNode(obj.key(), UNKNOWN_SIZE)
     private static final StackManipulation START_MAP_ENTRY_NODE = new StackManipulation.Compound(
         OBJ,
         invokeMethod(Identifiable.class, "key"),
         UNKNOWN_SIZE,
         invokeMethod(BindingStreamEventWriter.class, "startMapEntryNode", Identifier.class, int.class));
 
-    // startUnkeyedListItem(UNKNOWN_SIZE);
+    // startUnkeyedListItem(UNKNOWN_SIZE)
     private static final StackManipulation START_UNKEYED_LIST_ITEM = new StackManipulation.Compound(
         UNKNOWN_SIZE,
         invokeMethod(BindingStreamEventWriter.class, "startUnkeyedListItem", int.class));
@@ -149,7 +149,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         "streamOrderedMap", Class.class, DataObjectStreamer.class, DataObjectSerializerRegistry.class,
         BindingStreamEventWriter.class, List.class);
 
-    // streamAugmentations(reg, stream, obj);
+    // streamAugmentations(reg, stream, obj)
     private static final StackManipulation STREAM_AUGMENTATIONS = new StackManipulation.Compound(
         REG,
         STREAM,
@@ -185,7 +185,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             startEvent = ((ListSchemaNode) schema).getKeyDefinition().isEmpty() ? START_UNKEYED_LIST_ITEM
                     : START_MAP_ENTRY_NODE;
         } else if (schema instanceof AugmentationSchemaNode) {
-            // startAugmentationNode(Foo.class);
+            // startAugmentationNode(Foo.class)
             startEvent = new StackManipulation.Compound(
                 ClassConstant.of(Sort.describe(type).asErasure()),
                 START_AUGMENTATION_NODE);
@@ -288,7 +288,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
     }
 
     private static ChildStream choiceChildStream(final Method getter) {
-        // streamChoice(Foo.class, reg, stream, obj.getFoo());
+        // streamChoice(Foo.class, reg, stream, obj.getFoo())
         return new ChildStream(
             ClassConstant.of(Sort.describe(getter.getReturnType()).asErasure()),
             REG,
@@ -302,7 +302,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         final Class<? extends DataObject> itemClass = getter.getReturnType().asSubclass(DataObject.class);
         final DataObjectStreamer<?> streamer = registry.getDataObjectSerializer(itemClass);
 
-        // streamContainer(FooStreamer.INSTANCE, reg, stream, obj.getFoo());
+        // streamContainer(FooStreamer.INSTANCE, reg, stream, obj.getFoo())
         return new ChildStream(streamer,
             streamerInstance(streamer),
             REG,
@@ -322,7 +322,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             method = childSchema.isUserOrdered() ? STREAM_ORDERED_MAP : STREAM_MAP;
         }
 
-        // <METHOD>(Foo.class, FooStreamer.INSTACE, reg, stream, obj.getFoo());
+        // <METHOD>(Foo.class, FooStreamer.INSTACE, reg, stream, obj.getFoo())
         return new ChildStream(streamer,
             ClassConstant.of(Sort.describe(itemClass).asErasure()),
             streamerInstance(streamer),
@@ -335,7 +335,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
 
     private static ChildStream qnameChildStream(final StackManipulation method, final Method getter,
             final DataSchemaNode schema) {
-        // <METHOD>(stream, "foo", obj.getFoo());
+        // <METHOD>(stream, "foo", obj.getFoo())
         return new ChildStream(
             STREAM,
             new TextConstant(schema.getQName().getLocalName()),
@@ -353,7 +353,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
     }
 
     private static StackManipulation classUnknownSizeMethod(final StackManipulation method, final Class<?> type) {
-        // <METHOD>(Foo.class, UNKNOWN_SIZE);
+        // <METHOD>(Foo.class, UNKNOWN_SIZE)
         return new StackManipulation.Compound(
                 ClassConstant.of(Sort.describe(type).asErasure()),
                 UNKNOWN_SIZE,
@@ -400,7 +400,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         @Override
         public InstrumentedType prepare(final InstrumentedType instrumentedType) {
             return instrumentedType
-                    // private static final This INSTANCE = new This();
+                    // private static final This INSTANCE = new This()
                     .withField(new FieldDescription.Token(INSTANCE_FIELD, PUB_CONST, instrumentedType.asGenericType()))
                     .withInitializer(InitializeInstanceField.INSTANCE);
         }
@@ -409,7 +409,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         public ByteCodeAppender appender(final Target implementationTarget) {
             final List<StackManipulation> manipulations = new ArrayList<>(children.size() + 6);
 
-            // stream.<START_EVENT>(...);
+            // stream.<START_EVENT>(...)
             manipulations.add(STREAM);
             manipulations.add(startEvent);
 
@@ -417,14 +417,14 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             manipulations.addAll(children);
 
             if (Augmentable.class.isAssignableFrom(bindingInterface)) {
-                // streamAugmentations(reg, stream, obj);
+                // streamAugmentations(reg, stream, obj)
                 manipulations.add(STREAM_AUGMENTATIONS);
             }
 
-            // stream.endNode();
+            // stream.endNode()
             manipulations.add(STREAM);
             manipulations.add(END_NODE);
-            // return;
+            // return
             manipulations.add(MethodReturn.VOID);
 
             return new ByteCodeAppender.Simple(manipulations);
