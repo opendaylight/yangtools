@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -88,6 +90,20 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      */
     public final @NonNull Class<T> getTargetType() {
         return targetType;
+    }
+
+    /**
+     * Perform a safe target type adaptation of this instance identifier to target type. This method is useful when
+     * dealing with type-squashed instances.
+     *
+     * @return Path argument with target type
+     * @throws VerifyException if this instance identifier cannot be adapted to target type
+     * @throws NullPointerException if {@code target} is null
+     */
+    @SuppressWarnings("unchecked")
+    public final <N extends DataObject> @NonNull InstanceIdentifier<N> verifyTarget(final Class<N> target) {
+        verify(target.equals(targetType), "Cannot adapt %s to %s", this, target);
+        return (InstanceIdentifier<N>) this;
     }
 
     /**
