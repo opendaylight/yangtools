@@ -12,10 +12,6 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.IDENTIFI
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.invoke.WrongMethodTypeException;
 import java.lang.reflect.Method;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -39,19 +35,9 @@ abstract class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>>
     }
 
     private static final class Unordered<D extends DataObject & Identifiable<?>> extends KeyedListNodeCodecContext<D> {
-        private static final MethodType KEY_TYPE = MethodType.methodType(Object.class, DataObject.class);
-
-        private final MethodHandle keyHandle;
-
         Unordered(final DataContainerCodecPrototype<ListSchemaNode> prototype, final Method keyMethod,
                 final IdentifiableItemCodec codec) {
             super(prototype, keyMethod, codec);
-
-            try {
-                this.keyHandle = MethodHandles.publicLookup().unreflect(keyMethod).asType(KEY_TYPE);
-            } catch (IllegalAccessException | WrongMethodTypeException e) {
-                throw new LinkageError("Failed to acquire method " + keyMethod, e);
-            }
         }
 
         @Override
@@ -60,18 +46,9 @@ abstract class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>>
             final Builder<Object, D> builder = ImmutableMap.builderWithExpectedSize(size);
             for (MapEntryNode node : map.getValue()) {
                 final D entry = fromMapEntry(node);
-                builder.put(getKey(entry), entry);
+                builder.put(entry.key(), entry);
             }
             return builder.build();
-        }
-
-        @SuppressWarnings("checkstyle:illegalCatch")
-        private Object getKey(final D entry) {
-            try {
-                return keyHandle.invokeExact(entry);
-            } catch (Throwable e) {
-                throw new LinkageError("Failed to extract key from " + entry, e);
-            }
         }
     }
 
