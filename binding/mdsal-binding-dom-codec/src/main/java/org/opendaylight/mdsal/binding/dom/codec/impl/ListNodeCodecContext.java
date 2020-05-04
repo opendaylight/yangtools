@@ -58,15 +58,15 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
     }
 
     private Object fromMap(final MapNode map) {
-        final Collection<MapEntryNode> value = map.getValue();
+        final int size;
         // This should never happen, but we do need to ensure users never see an empty Map
-        return value.isEmpty() ? null : fromMap(map, value);
+        return (size = map.size()) == 0 ? null : fromMap(map, size);
     }
 
-    Object fromMap(final MapNode map, final Collection<MapEntryNode> value) {
-        // FIXME: Could be this lazy transformed list?
-        final Builder<D> builder = ImmutableList.builderWithExpectedSize(value.size());
-        for (MapEntryNode node : value) {
+    @NonNull Object fromMap(final MapNode map, final int size) {
+        // FIXME: Make this a lazily-populated list
+        final Builder<D> builder = ImmutableList.builderWithExpectedSize(size);
+        for (MapEntryNode node : map.getValue()) {
             builder.add(createBindingProxy(node));
         }
         return builder.build();
