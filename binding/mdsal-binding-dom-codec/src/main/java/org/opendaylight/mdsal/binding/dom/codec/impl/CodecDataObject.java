@@ -154,7 +154,8 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     private @NonNull Object loadKey(final VarHandle handle) {
         verify(data instanceof MapEntryNode, "Unsupported value %s", data);
         verify(context instanceof KeyedListNodeCodecContext, "Unexpected context %s", context);
-        final Object obj = ((KeyedListNodeCodecContext<?>) context).deserialize(((MapEntryNode) data).getIdentifier());
+        final Object obj = ((KeyedListNodeCodecContext<?, ?>) context)
+                .deserialize(((MapEntryNode) data).getIdentifier());
         // key is known to be non-null, no need to mask it
         final Object witness = handle.compareAndExchangeRelease(this, null, obj);
         return witness == null ? obj : witness;

@@ -40,7 +40,9 @@ import org.slf4j.LoggerFactory;
  * @param <E> the type of elements in this list
  */
 final class LazyBindingList<E extends DataObject> extends AbstractList<E> implements Immutable, RandomAccess {
-    private static final VarHandle OBJ_AA = MethodHandles.arrayElementVarHandle(Object[].class);
+    // Object array access variable handle
+    static final VarHandle OBJ_AA = MethodHandles.arrayElementVarHandle(Object[].class);
+
     private static final Logger LOG = LoggerFactory.getLogger(LazyBindingList.class);
     private static final String LAZY_CUTOFF_PROPERTY =
             "org.opendaylight.mdsal.binding.dom.codec.impl.LazyBindingList.max-eager-elements";

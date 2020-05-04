@@ -10,8 +10,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.IDENTIFIABLE_KEY_NAME;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -23,33 +21,29 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-abstract class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> extends ListNodeCodecContext<D> {
-    private static final class Ordered<D extends DataObject & Identifiable<?>> extends KeyedListNodeCodecContext<D> {
+abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
+        extends ListNodeCodecContext<D> {
+    private static final class Ordered<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
+            extends KeyedListNodeCodecContext<I, D> {
         Ordered(final DataContainerCodecPrototype<ListSchemaNode> prototype, final Method keyMethod,
                 final IdentifiableItemCodec codec) {
             super(prototype, keyMethod, codec);
         }
     }
 
-    private static final class Unordered<D extends DataObject & Identifiable<?>> extends KeyedListNodeCodecContext<D> {
+    static final class Unordered<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
+            extends KeyedListNodeCodecContext<I, D> {
         Unordered(final DataContainerCodecPrototype<ListSchemaNode> prototype, final Method keyMethod,
                 final IdentifiableItemCodec codec) {
             super(prototype, keyMethod, codec);
         }
 
         @Override
-        Map<?, D> fromMap(final MapNode map, final int size) {
-            // FIXME: MDSAL-539: Make this a lazily-populated map
-            final Builder<Object, D> builder = ImmutableMap.builderWithExpectedSize(size);
-            for (MapEntryNode node : map.getValue()) {
-                final D entry = createBindingProxy(node);
-                builder.put(entry.key(), entry);
-            }
-            return builder.build();
+        Map<I, D> fromMap(final MapNode map, final int size) {
+            return LazyBindingMap.create(this, map, size);
         }
     }
 
