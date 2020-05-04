@@ -103,7 +103,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         return cached != null ? unmaskNull(cached) : loadMember(handle, supplier.get());
     }
 
-    protected final Object codecKey(final VarHandle handle) {
+    protected final @NonNull Object codecKey(final VarHandle handle) {
         final Object cached = handle.getAcquire(this);
         return cached != null ? cached : loadKey(handle);
     }
@@ -151,7 +151,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     }
 
     // Helper split out of codecKey to aid its inlining
-    private Object loadKey(final VarHandle handle) {
+    private @NonNull Object loadKey(final VarHandle handle) {
         verify(data instanceof MapEntryNode, "Unsupported value %s", data);
         verify(context instanceof KeyedListNodeCodecContext, "Unexpected context %s", context);
         final Object obj = ((KeyedListNodeCodecContext<?>) context).deserialize(((MapEntryNode) data).getIdentifier());
