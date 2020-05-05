@@ -87,6 +87,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
     private final ImmutableMap<AugmentationIdentifier, Type> possibleAugmentations;
+    private final @NonNull Class<? extends CodecDataObject<?>> generatedClass;
     private final MethodHandle proxyConstructor;
 
     // FIXME: the presence of these two volatile fields may be preventing us from being able to improve
@@ -158,7 +159,6 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         this.byBindingArgClass = byStreamClassBuilder.equals(byBindingArgClassBuilder) ? this.byStreamClass
                 : ImmutableMap.copyOf(byBindingArgClassBuilder);
 
-        final Class<? extends CodecDataObject<?>> generatedClass;
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
             this.possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(getSchema());
             generatedClass = CodecDataObjectGenerator.generateAugmentable(prototype.getFactory().getLoader(),
@@ -539,6 +539,10 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
             }
         }
         return map;
+    }
+
+    final @NonNull Class<? extends CodecDataObject<?>> generatedClass() {
+        return generatedClass;
     }
 
     @Override

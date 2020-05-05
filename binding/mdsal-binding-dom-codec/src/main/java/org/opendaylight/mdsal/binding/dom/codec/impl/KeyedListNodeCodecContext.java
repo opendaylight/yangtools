@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
@@ -41,11 +42,11 @@ abstract class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>>
         }
 
         @Override
-        Object fromMap(final MapNode map, final int size) {
+        Map<?, D> fromMap(final MapNode map, final int size) {
             // FIXME: MDSAL-539: Make this a lazily-populated map
             final Builder<Object, D> builder = ImmutableMap.builderWithExpectedSize(size);
             for (MapEntryNode node : map.getValue()) {
-                final D entry = fromMapEntry(node);
+                final D entry = createBindingProxy(node);
                 builder.put(entry.key(), entry);
             }
             return builder.build();

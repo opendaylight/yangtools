@@ -7,10 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -34,9 +31,9 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
     @Override
     public D deserialize(final NormalizedNode<?, ?> node) {
         if (node instanceof MapEntryNode) {
-            return fromMapEntry((MapEntryNode) node);
+            return createBindingProxy((MapEntryNode) node);
         } else if (node instanceof UnkeyedListEntryNode) {
-            return fromUnkeyedListEntry((UnkeyedListEntryNode) node);
+            return createBindingProxy((UnkeyedListEntryNode) node);
         } else {
             throw new IllegalStateException("Unsupported data type " + node.getClass());
         }
@@ -47,14 +44,18 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
         if (node instanceof MapNode) {
             return fromMap((MapNode) node);
         } else if (node instanceof MapEntryNode) {
-            return fromMapEntry((MapEntryNode) node);
+            return createBindingProxy((MapEntryNode) node);
         } else if (node instanceof UnkeyedListNode) {
             return fromUnkeyedList((UnkeyedListNode) node);
         } else if (node instanceof UnkeyedListEntryNode) {
-            return fromUnkeyedListEntry((UnkeyedListEntryNode) node);
+            return createBindingProxy((UnkeyedListEntryNode) node);
         } else {
             throw new IllegalStateException("Unsupported data type " + node.getClass());
         }
+    }
+
+    @NonNull Object fromMap(final MapNode map, final int size) {
+        return LazyBindingList.create(this, size, map.getValue());
     }
 
     private Object fromMap(final MapNode map) {
@@ -63,35 +64,9 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
         return (size = map.size()) == 0 ? null : fromMap(map, size);
     }
 
-    @NonNull Object fromMap(final MapNode map, final int size) {
-        // FIXME: Make this a lazily-populated list
-        final Builder<D> builder = ImmutableList.builderWithExpectedSize(size);
-        for (MapEntryNode node : map.getValue()) {
-            builder.add(createBindingProxy(node));
-        }
-        return builder.build();
-    }
-
-    final @NonNull D fromMapEntry(final MapEntryNode node) {
-        return createBindingProxy(node);
-    }
-
-    private @NonNull D fromUnkeyedListEntry(final UnkeyedListEntryNode node) {
-        return createBindingProxy(node);
-    }
-
-    private List<D> fromUnkeyedList(final UnkeyedListNode nodes) {
-        final Collection<UnkeyedListEntryNode> value = nodes.getValue();
-        if (value.isEmpty()) {
-            // This should never happen, but we do need to ensure users never see an empty List
-            return null;
-        }
-
-        // FIXME: Could be this lazy transformed list?
-        final Builder<D> builder = ImmutableList.builderWithExpectedSize(value.size());
-        for (UnkeyedListEntryNode node : value) {
-            builder.add(fromUnkeyedListEntry(node));
-        }
-        return builder.build();
+    private List<D> fromUnkeyedList(final UnkeyedListNode node) {
+        final int size;
+        // This should never happen, but we do need to ensure users never see an empty List
+        return (size = node.getSize()) == 0 ? null : LazyBindingList.create(this, size, node.getValue());
     }
 }
