@@ -1,0 +1,32 @@
+module mdsal552 {
+  yang-version 1.1;
+  namespace "mdsal552";
+  prefix mdsal552;
+
+  leaf output_a {
+    type enumeration {
+       enum uptest {
+         value 0;
+       }
+       enum down_test {
+         value 1;
+       }
+    }
+  }
+
+  rpc ref_test {
+    description "RPC enum validation using leafref";
+    input {
+      leaf input_a {
+        type uint32;
+      }
+    }
+    output {
+      leaf outputref {
+        type leafref {
+          path "/output_a";
+        }
+      }
+    }
+  }
+}
