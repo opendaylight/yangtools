@@ -14,12 +14,16 @@ import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BuilderGeneratorTest {
     private static final String TEST = "test";
@@ -150,6 +154,34 @@ public class BuilderGeneratorTest {
                 + "    CodeHelpers.appendValue(helper, \"augmentation\", obj.augmentations().values());\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toString());
+    }
+
+    @Test
+    public void builderTemplateGenerateToEqualsComparingOrderTest() {
+        final EffectiveModelContext context = YangParserTestUtils.parseYangResource(
+                "/test-types.yang");
+        final List<Type> types = new DefaultBindingGenerator().generateTypes(context);
+        final BuilderTemplate bt = BuilderGenerator.templateForType((GeneratedType) types.get(19));
+
+        final List<String> sortedProperties = bt.properties.stream()
+                .sorted(ByTypeMemberComparator.getInstance())
+                .map(BuilderGeneratedProperty::getName)
+                .collect(Collectors.toList());
+
+        assertEquals(List.of(
+                // numeric types (boolean, byte, short, int, long, biginteger, bigdecimal), identityrefs, empty
+                "id16", "id16Def", "id32", "id32Def", "id64", "id64Def", "id8", "id8Def", "idBoolean", "idBooleanDef",
+                "idDecimal64", "idDecimal64Def","idEmpty", "idEmptyDef", "idIdentityref", "idIdentityrefDef",
+                "idLeafref", "idLeafrefDef", "idU16", "idU16Def", "idU32", "idU32Def", "idU64", "idU64Def", "idU8",
+                "idU8Def",
+                // string, binary, bits
+                "idBinary", "idBinaryDef", "idBits", "idBitsDef", "idGroupLeafString", "idLeafrefContainer1",
+                "idLeafrefContainer1Def", "idString", "idStringDef",
+                // instance identifier
+                "idInstanceIdentifier", "idInstanceIdentifierDef",
+                // other types
+                "idContainer1", "idContainer2", "idEnumeration", "idEnumerationDef",
+                "idGroupContainer", "idList", "idUnion", "idUnionDef"), sortedProperties);
     }
 
     private static GeneratedType mockAugment(final GeneratedType genType) {

@@ -68,17 +68,16 @@ public final class BuilderGenerator implements CodeGenerator {
 
     @VisibleForTesting
     static BuilderTemplate templateForType(final GeneratedType type) {
-        final GeneratedType genType = type;
-        final JavaTypeName origName = genType.getIdentifier();
+        final JavaTypeName origName = type.getIdentifier();
 
         final GeneratedTypeBuilder builderTypeBuilder = new CodegenGeneratedTypeBuilder(
             origName.createSibling(origName.simpleName() + BuilderTemplate.BUILDER_STR));
 
         final GeneratedTOBuilder implTypeBuilder = builderTypeBuilder.addEnclosingTransferObject(
             origName.simpleName() + "Impl");
-        implTypeBuilder.addImplementsType(genType);
+        implTypeBuilder.addImplementsType(type);
 
-        return new BuilderTemplate(builderTypeBuilder.build(), genType, getKey(genType));
+        return new BuilderTemplate(builderTypeBuilder.build(), type, getKey(type));
     }
 
     private static Type getKey(final GeneratedType type) {

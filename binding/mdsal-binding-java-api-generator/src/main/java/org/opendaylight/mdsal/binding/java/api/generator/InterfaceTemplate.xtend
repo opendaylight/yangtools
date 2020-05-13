@@ -281,7 +281,7 @@ class InterfaceTemplate extends BaseTemplate {
                 if (other == null) {
                     return false;
                 }
-                «FOR property : typeAnalysis.value»
+                «FOR property : ByTypeMemberComparator.sort(typeAnalysis.value)»
                     if (!«property.importedUtilClass».equals(thisObj.«property.getterName»(), other.«property.getterName»())) {
                         return false;
                     }

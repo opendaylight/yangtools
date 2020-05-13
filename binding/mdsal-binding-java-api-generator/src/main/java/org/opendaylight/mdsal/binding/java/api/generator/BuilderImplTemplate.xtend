@@ -18,11 +18,11 @@ import java.util.List
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
+import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.binding.AbstractAugmentable
-import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics
 
 class BuilderImplTemplate extends AbstractBuilderTemplate {
     val Type builderType;

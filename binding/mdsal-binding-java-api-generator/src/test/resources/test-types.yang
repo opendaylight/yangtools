@@ -1,0 +1,298 @@
+/*
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+module test-types {
+    yang-version 1;
+    namespace "urn:opendaylight:test-types";
+    prefix "t";
+
+    revision "2020-05-13" {
+    }
+
+    typedef boolean-def {
+        type boolean;
+    }
+
+    typedef string-def {
+        type string;
+    }
+    typedef int8-def {
+        type int8;
+    }
+    typedef int16-def {
+        type int16;
+    }
+    typedef int32-def {
+        type int32;
+    }
+    typedef int64-def {
+        type int64;
+    }
+    typedef u8-def {
+        type uint8;
+    }
+    typedef u16-def {
+        type uint16;
+    }
+    typedef u32-def {
+        type uint32;
+    }
+    typedef u64-def {
+        type uint64;
+    }
+    typedef union-def {
+        type union {
+            type string;
+            type binary;
+        }
+    }
+    typedef identityref-def {
+        type identityref {
+            base alg;
+        }
+    }
+    typedef binary-def {
+        type binary {
+            length 1..10;
+        }
+    }
+    typedef bits-def {
+        type bits {
+            bit ctrl;
+            bit alt {
+                position 5;
+            }
+            bit delete;
+        }
+    }
+    typedef instance-identifier-def {
+        type instance-identifier;
+    }
+    typedef decimal64-def {
+        type decimal64 {
+            fraction-digits 4;
+            range "1.5..5.5";
+        }
+    }
+    typedef empty-def {
+        type empty;
+    }
+    typedef enumeration-def {
+        type enumeration {
+            enum zero;
+            enum one;
+            enum seven {
+                value 7;
+            }
+        }
+    }
+    typedef leafref-def {
+        type leafref {
+            path "/nodes/id-64";
+        }
+    }
+    typedef leafref-container1-def {
+        type leafref {
+            path "/nodes/id-container1/node-id-string";
+        }
+    }
+    container container1-def {
+        leaf node-id-string {
+            type string;
+        }
+    }
+
+    grouping id-group {
+        container id-group-container {
+            leaf id-group-leaf-16 {
+                type int16;
+            }
+        }
+        leaf id-group-leaf-string {
+            type string;
+        }
+    }
+
+
+    container nodes {
+        leaf id-boolean {
+            type boolean;
+        }
+        leaf id-boolean-def {
+            type boolean-def;
+        }
+        leaf id-string {
+            type string;
+        }
+        leaf id-string-def {
+            type string-def;
+        }
+        leaf id-8 {
+            type int8;
+        }
+        leaf id-8-def {
+            type int8-def;
+        }
+        leaf id-16 {
+            type int16;
+        }
+        leaf id-16-def {
+            type int16-def;
+        }
+        leaf id-32 {
+            type int32;
+        }
+        leaf id-32-def {
+            type int32-def;
+        }
+        leaf id-64 {
+            type int64;
+        }
+        leaf id-64-def {
+            type int64-def;
+        }
+        leaf id-u8 {
+            type uint8;
+        }
+        leaf id-u16 {
+            type uint16;
+        }
+        leaf id-u32 {
+            type uint32;
+        }
+        leaf id-u64 {
+            type uint64;
+        }
+        leaf id-union {
+            type union {
+                type string;
+                type binary;
+            }
+        }
+        leaf id-u8-def {
+            type u8-def;
+        }
+        leaf id-u16-def {
+            type u16-def;
+        }
+        leaf id-u32-def {
+            type u32-def;
+        }
+        leaf id-u64-def {
+            type u64-def;
+        }
+        leaf id-union-def {
+            type union-def;
+        }
+        leaf id-decimal64 {
+            type decimal64 {
+                fraction-digits 4;
+                range "1.5..5.5";
+            }
+        }
+        leaf id-decimal64-def {
+            type decimal64-def;
+        }
+
+        leaf id-identityref {
+            type identityref {
+                base alg;
+            }
+        }
+        leaf id-identityref-def {
+            type identityref-def;
+        }
+        leaf id-binary {
+            type binary {
+                length 1..10;
+            }
+        }
+        leaf id-binary-def {
+            type binary-def;
+        }
+        leaf id-bits {
+            type bits {
+                bit ctrl;
+                bit alt {
+                    position 5;
+                }
+                bit delete;
+            }
+        }
+        leaf id-bits-def {
+            type bits-def;
+        }
+        leaf id-instance-identifier {
+            type instance-identifier;
+        }
+        leaf id-instance-identifier-def {
+            type instance-identifier-def;
+        }
+        leaf id-empty {
+            type empty;
+        }
+        leaf id-empty-def {
+            type empty-def;
+        }
+        leaf id-enumeration {
+            type enumeration {
+                enum zero;
+                enum one;
+                enum seven {
+                    value 7;
+                }
+            }
+        }
+        leaf id-enumeration-def {
+            type enumeration-def;
+        }
+        leaf id-leafref {
+            type leafref {
+                path "/nodes/id-64";
+            }
+        }
+        leaf id-leafref-def {
+            type leafref-def;
+        }
+        leaf id-leafref-container1 {
+            type leafref {
+                path "/nodes/id-container1/node-id-string";
+            }
+        }
+        leaf id-leafref-container1-def {
+            type leafref-container1-def;
+        }
+        container id-container1 {
+            leaf node-id-string {
+                type string;
+            }
+        }
+        container id-container2 {
+            leaf node-id-string {
+                type string;
+            }
+            leaf node-id-int16 {
+                type int16;
+            }
+        }
+        list id-list {
+            key "key1";
+
+            leaf key1 {
+                type int8;
+            }
+
+            leaf key2 {
+                type string;
+            }
+        }
+        uses id-group;
+    }
+
+    identity alg {
+    }
+}
