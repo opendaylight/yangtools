@@ -54,7 +54,7 @@ public final class LazyLeafOperations {
     private static final boolean EXPENDABLE;
 
     static {
-        EXPENDABLE = Boolean.parseBoolean(System.getProperty(EXPENDABLE_PROP_NAME, "true"));
+        EXPENDABLE = Boolean.parseBoolean(System.getProperty(EXPENDABLE_PROP_NAME, "false"));
         LOG.info("Leaf nodes are treated as {} nodes", EXPENDABLE ? "transient" : "regular");
     }
 
