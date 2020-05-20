@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil.encodeAngleBrackets
+import static extension org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil.encodeAngleBrackets
 import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 
 import com.google.common.collect.ImmutableMap
@@ -55,7 +55,9 @@ class EnumTemplate extends BaseTemplate {
     }
 
     def writeEnumItem(String name, String mappedName, int value, String description) '''
-        «asJavadoc(encodeAngleBrackets(description))»
+        «IF description !== null»
+            «description.trim.encodeAngleBrackets.encodeJavadocSymbols.wrapToDocumentation»
+        «ENDIF»
         «mappedName»(«value», "«name»")
     '''
 
@@ -65,7 +67,7 @@ class EnumTemplate extends BaseTemplate {
      * @return string with the enumeration body
      */
     override body() '''
-        «wrapToDocumentation(formatDataForJavaDoc(enums))»
+        «enums.formatDataForJavaDoc.wrapToDocumentation»
         public enum «enums.name» implements «org.opendaylight.yangtools.yang.binding.Enumeration.importedName» {
             «writeEnumeration(enums)»
 

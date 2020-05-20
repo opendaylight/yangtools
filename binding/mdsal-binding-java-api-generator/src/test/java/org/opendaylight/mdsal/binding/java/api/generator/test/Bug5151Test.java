@@ -37,12 +37,12 @@ public class Bug5151Test extends BaseCompilationTest {
         final File fooContainerFile = generatedFiles.get("FooContainer.java");
         assertNotNull(fooContainerFile);
         FileSearchUtil.assertFileContains(fooContainerFile,
-            "@return <code>java.lang.String</code> <code>fooInContainer</code>, or <code>null</code> if not present");
+            "@return {@code java.lang.String} fooInContainer, or {@code null} if it is not present");
 
         final File fooDataFile = generatedFiles.get("FooData.java");
         assertNotNull(fooDataFile);
         FileSearchUtil.assertFileContains(fooDataFile,
-            "FooContainer</code> <code>fooContainer</code>, or <code>null</code> if not present");
+            "FooContainer} fooContainer, or {@code null} if it is not present");
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

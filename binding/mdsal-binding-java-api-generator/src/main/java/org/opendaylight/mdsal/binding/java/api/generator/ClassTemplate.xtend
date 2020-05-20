@@ -148,7 +148,7 @@ class ClassTemplate extends BaseTemplate {
      * @return string with class source code in JAVA format
      */
     def protected generateBody(boolean isInnerClass) '''
-        «wrapToDocumentation(formatDataForJavaDoc(type))»
+        «type.formatDataForJavaDoc.wrapToDocumentation»
         «annotationDeclaration»
         «generateClassDeclaration(isInnerClass)» {
             «suidDeclaration»

@@ -31,6 +31,7 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
+import org.opendaylight.mdsal.binding.model.api.TypeMember
 
 /**
  * Template for generating JAVA interfaces.
@@ -79,7 +80,7 @@ class InterfaceTemplate extends BaseTemplate {
      * @return string with code for interface body in JAVA format
      */
     override body() '''
-        «wrapToDocumentation(formatDataForJavaDoc(type))»
+        «type.formatDataForJavaDoc.wrapToDocumentation»
         «type.annotations.generateAnnotations»
         public interface «type.name»
             «superInterfaces»
@@ -207,12 +208,25 @@ class InterfaceTemplate extends BaseTemplate {
         «method.returnType.importedName» «method.name»(«method.parameters.generateParameters»);
     '''
 
-    def private generateAccessorMethod(MethodSignature method) '''
-        «val ret = method.returnType»
-        «formatDataForJavaDoc(method, "@return " + asCode(ret.fullyQualifiedName) + " " + asCode(propertyNameFromGetter(method)) + ", or " + asCode("null") + " if not present")»
-        «method.annotations.generateAnnotations»
-        «nullableType(ret)» «method.name»();
-    '''
+    def private static accessorJavadoc(MethodSignature method, String orString) {
+        val reference = method.comment?.referenceDescription
+        val propReturn = method.propertyNameFromGetter + ", or " + orString + " if it is not present."
+
+        return wrapToDocumentation('''
+            Return «propReturn».
+
+            «reference.formatReference»
+            @return {@code «method.returnType.fullyQualifiedName»} «propReturn»
+        ''')
+    }
+
+    def private generateAccessorMethod(MethodSignature method) {
+        return '''
+            «accessorJavadoc(method, "{@code null}")»
+            «method.annotations.generateAnnotations»
+            «method.returnType.nullableType» «method.name»();
+        '''
+    }
 
     def private generateDefaultImplementedInterface() '''
         @«OVERRIDE.importedName»
@@ -305,7 +319,7 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateNonnullMethod(MethodSignature method) '''
         «val ret = method.returnType»
         «val name = method.name»
-        «formatDataForJavaDoc(method, "@return " + asCode(ret.fullyQualifiedName) + " " + asCode(propertyNameFromGetter(method)) + ", or an empty list if it is not present")»
+        «accessorJavadoc(method, "an empty list")»
         «method.annotations.generateAnnotations»
         default «ret.importedNonNull» «name»() {
             return «CODEHELPERS.importedName».nonnull(«name.getGetterMethodForNonnull»());
