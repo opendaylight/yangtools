@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -100,17 +101,17 @@ public final class StmtTestUtils {
         }
     }
 
-    public static SchemaContext parseYangSource(final String yangSourcePath) throws ReactorException,
+    public static EffectiveModelContext parseYangSource(final String yangSourcePath) throws ReactorException,
             URISyntaxException, IOException, YangSyntaxErrorException {
         return parseYangSource(yangSourcePath, StatementParserMode.DEFAULT_MODE, null);
     }
 
-    public static SchemaContext parseYangSource(final String yangSourcePath, final Set<QName> supportedFeatures)
+    public static EffectiveModelContext parseYangSource(final String yangSourcePath, final Set<QName> supportedFeatures)
             throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
         return parseYangSource(yangSourcePath, StatementParserMode.DEFAULT_MODE, supportedFeatures);
     }
 
-    public static SchemaContext parseYangSource(final String yangSourcePath,
+    public static EffectiveModelContext parseYangSource(final String yangSourcePath,
             final StatementParserMode statementParserMode, final Set<QName> supportedFeatures)
                     throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
         final URL source = StmtTestUtils.class.getResource(yangSourcePath);
@@ -118,16 +119,17 @@ public final class StmtTestUtils {
         return parseYangSources(statementParserMode, supportedFeatures, sourceFile);
     }
 
-    public static SchemaContext parseYangSources(final StatementStreamSource... sources) throws ReactorException {
+    public static EffectiveModelContext parseYangSources(final StatementStreamSource... sources)
+            throws ReactorException {
         return parseYangSources(StatementParserMode.DEFAULT_MODE, null, sources);
     }
 
-    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode,
+    public static EffectiveModelContext parseYangSources(final StatementParserMode statementParserMode,
             final Set<QName> supportedFeatures, final StatementStreamSource... sources) throws ReactorException {
         return parseYangSources(statementParserMode, supportedFeatures, Arrays.asList(sources));
     }
 
-    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode,
+    public static EffectiveModelContext parseYangSources(final StatementParserMode statementParserMode,
             final Set<QName> supportedFeatures, final Collection<? extends StatementStreamSource> sources)
             throws ReactorException {
         final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild(statementParserMode)
@@ -139,12 +141,12 @@ public final class StmtTestUtils {
         return reactor.buildEffective();
     }
 
-    public static SchemaContext parseYangSources(final File... files) throws ReactorException, IOException,
+    public static EffectiveModelContext parseYangSources(final File... files) throws ReactorException, IOException,
             YangSyntaxErrorException {
         return parseYangSources(StatementParserMode.DEFAULT_MODE, null, files);
     }
 
-    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode,
+    public static EffectiveModelContext parseYangSources(final StatementParserMode statementParserMode,
             final Set<QName> supportedFeatures, final File... files) throws  ReactorException, IOException,
             YangSyntaxErrorException {
 
@@ -156,29 +158,29 @@ public final class StmtTestUtils {
         return parseYangSources(statementParserMode, supportedFeatures, sources);
     }
 
-    public static SchemaContext parseYangSources(final Collection<File> files) throws ReactorException, IOException,
-            YangSyntaxErrorException {
+    public static EffectiveModelContext parseYangSources(final Collection<File> files) throws ReactorException,
+            IOException, YangSyntaxErrorException {
         return parseYangSources(files, StatementParserMode.DEFAULT_MODE);
     }
 
-    public static SchemaContext parseYangSources(final Collection<File> files,
+    public static EffectiveModelContext parseYangSources(final Collection<File> files,
             final StatementParserMode statementParserMode) throws ReactorException, IOException,
             YangSyntaxErrorException {
         return parseYangSources(statementParserMode, null, files.toArray(new File[files.size()]));
     }
 
-    public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath) throws
-            ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
+    public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath)
+            throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
         return parseYangSources(yangSourcesDirectoryPath, StatementParserMode.DEFAULT_MODE);
     }
 
-    public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath,
+    public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath,
             final StatementParserMode statementParserMode) throws ReactorException, URISyntaxException, IOException,
             YangSyntaxErrorException {
         return parseYangSources(yangSourcesDirectoryPath, null, statementParserMode);
     }
 
-    public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath,
+    public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath,
             final Set<QName> supportedFeatures, final StatementParserMode statementParserMode) throws ReactorException,
             URISyntaxException, IOException, YangSyntaxErrorException {
 
@@ -188,13 +190,13 @@ public final class StmtTestUtils {
         return parseYangSources(statementParserMode, supportedFeatures, testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 
-    public static SchemaContext parseYangSources(final String yangFilesDirectoryPath,
+    public static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
             final String yangLibsDirectoryPath)
             throws URISyntaxException, ReactorException, IOException, YangSyntaxErrorException {
         return parseYangSources(yangFilesDirectoryPath, yangLibsDirectoryPath, null);
     }
 
-    public static SchemaContext parseYangSources(final String yangFilesDirectoryPath,
+    public static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
             final String yangLibsDirectoryPath, final Set<QName> supportedFeatures) throws URISyntaxException,
             ReactorException, IOException, YangSyntaxErrorException {
         final File yangsDir = new File(StmtTestUtils.class.getResource(yangFilesDirectoryPath).toURI());
@@ -204,7 +206,7 @@ public final class StmtTestUtils {
                 supportedFeatures);
     }
 
-    private static SchemaContext parseYangSources(final File[] yangFiles, final File[] libFiles,
+    private static EffectiveModelContext parseYangSources(final File[] yangFiles, final File[] libFiles,
             final Set<QName> supportedFeatures) throws ReactorException, IOException, YangSyntaxErrorException {
         final StatementStreamSource[] yangSources = new StatementStreamSource[yangFiles.length];
         for (int i = 0; i < yangFiles.length; i++) {
@@ -219,7 +221,7 @@ public final class StmtTestUtils {
         return parseYangSources(yangSources, libSources, supportedFeatures);
     }
 
-    private static SchemaContext parseYangSources(final StatementStreamSource[] yangSources,
+    private static EffectiveModelContext parseYangSources(final StatementStreamSource[] yangSources,
             final StatementStreamSource[] libSources, final Set<QName> supportedFeatures) throws ReactorException {
 
         final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
@@ -231,7 +233,7 @@ public final class StmtTestUtils {
         return reactor.buildEffective();
     }
 
-    public static SchemaContext parseYinSources(final String yinSourcesDirectoryPath,
+    public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath,
             final StatementParserMode statementParserMode) throws URISyntaxException, SAXException, IOException,
             ReactorException {
         final URL resourceDir = StmtTestUtils.class.getResource(yinSourcesDirectoryPath);
@@ -247,7 +249,7 @@ public final class StmtTestUtils {
         return parseYinSources(statementParserMode, sources);
     }
 
-    public static SchemaContext parseYinSources(final StatementParserMode statementParserMode,
+    public static EffectiveModelContext parseYinSources(final StatementParserMode statementParserMode,
             final StatementStreamSource... sources) throws ReactorException {
         return RFC7950Reactors.defaultReactor().newBuild(statementParserMode).addSources(sources).buildEffective();
     }
