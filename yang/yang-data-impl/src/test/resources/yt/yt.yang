@@ -1,0 +1,62 @@
+module yt {
+  /*
+   * Excerpt from https://tools.ietf.org/html/rfc8639 model.
+   */
+
+  namespace yt;
+  prefix yt;
+
+  feature subtree;
+  feature xpath;
+
+  grouping stream-filter-elements {
+    choice filter-spec {
+      leaf stream-subtree-filter {
+        if-feature "subtree";
+        type string;
+      }
+      leaf stream-xpath-filter {
+        if-feature "xpath";
+        type string;
+      }
+    }
+  }
+
+  grouping subscription-policy-modifiable {
+    choice target {
+      mandatory true;
+      case stream {
+        choice stream-filter {
+          case by-reference {
+            leaf stream-filter-name {
+              type string;
+              mandatory true;
+            }
+          }
+          case within-subscription {
+            uses stream-filter-elements;
+          }
+        }
+      }
+    }
+  }
+
+  container subscriptions {
+    config false;
+
+    list subscription {
+      key "id";
+      leaf id {
+        type string;
+      }
+      uses subscription-policy-modifiable {
+        augment "target/stream" {
+          leaf stream {
+            type string;
+            mandatory true;
+          }
+        }
+      }
+    }
+  }
+}
