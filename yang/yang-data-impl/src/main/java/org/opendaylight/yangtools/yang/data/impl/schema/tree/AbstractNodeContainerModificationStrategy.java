@@ -112,16 +112,14 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     final void verifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
         if (verifyChildrenStructure) {
             final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) writtenValue;
-            for (final Object child : container.getValue()) {
-                checkArgument(child instanceof NormalizedNode);
-                final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
-                final Optional<ModificationApplyOperation> childOp = getChild(castedChild.getIdentifier());
+            for (final NormalizedNode<?, ?> child : container.getValue()) {
+                final Optional<ModificationApplyOperation> childOp = getChild(child.getIdentifier());
                 if (childOp.isPresent()) {
-                    childOp.get().fullVerifyStructure(castedChild);
+                    childOp.get().fullVerifyStructure(child);
                 } else {
                     throw new SchemaValidationFailedException(String.format(
                             "Node %s is not a valid child of %s according to the schema.",
-                            castedChild.getIdentifier(), container.getIdentifier()));
+                            child.getIdentifier(), container.getIdentifier()));
                 }
             }
 
@@ -153,17 +151,15 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     protected final void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) value;
-        for (final Object child : container.getValue()) {
-            checkArgument(child instanceof NormalizedNode);
-            final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
-            final Optional<ModificationApplyOperation> childOp = getChild(castedChild.getIdentifier());
+        for (final NormalizedNode<?, ?> child : container.getValue()) {
+            final Optional<ModificationApplyOperation> childOp = getChild(child.getIdentifier());
             if (!childOp.isPresent()) {
                 throw new SchemaValidationFailedException(
                     String.format("Node %s is not a valid child of %s according to the schema.",
-                        castedChild.getIdentifier(), container.getIdentifier()));
+                        child.getIdentifier(), container.getIdentifier()));
             }
 
-            childOp.get().recursivelyVerifyStructure(castedChild);
+            childOp.get().recursivelyVerifyStructure(child);
         }
     }
 
@@ -248,9 +244,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
         final NormalizedNode<?, ?> value = modification.getWrittenValue();
 
         Verify.verify(value instanceof NormalizedNodeContainer, "Attempted to merge non-container %s", value);
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        final Collection<NormalizedNode<?, ?>> children = ((NormalizedNodeContainer) value).getValue();
-        for (final NormalizedNode<?, ?> c : children) {
+        for (final NormalizedNode<?, ?> c : ((NormalizedNodeContainer<?, ?, ?>) value).getValue()) {
             final PathArgument id = c.getIdentifier();
             modification.modifyChild(id, resolveChildOperation(id), version);
         }
@@ -258,7 +252,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     }
 
     private void mergeChildrenIntoModification(final ModifiedNode modification,
-            final Collection<NormalizedNode<?, ?>> children, final Version version) {
+            final Collection<? extends NormalizedNode<?, ?>> children, final Version version) {
         for (final NormalizedNode<?, ?> c : children) {
             final ModificationApplyOperation childOp = resolveChildOperation(c.getIdentifier());
             final ModifiedNode childNode = modification.modifyChild(c.getIdentifier(), childOp, version);
@@ -269,8 +263,8 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     final void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode<?, ?> value,
             final Version version) {
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        final Collection<NormalizedNode<?, ?>> children = ((NormalizedNodeContainer)value).getValue();
+        final Collection<? extends NormalizedNode<?, ?>> children =
+                ((NormalizedNodeContainer<?, ?, ?>)value).getValue();
 
         switch (modification.getOperation()) {
             case NONE:
