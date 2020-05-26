@@ -91,7 +91,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
                 sources.get(id);
             if (srcs == null) {
                 return immediateFailedFluentFuture(new MissingSchemaSourceException(
-                    "No providers registered for source" + id, id));
+                    "No providers registered for source " + id, id));
             }
 
             sortedSchemaSourceRegistrations = Lists.newArrayList(srcs.get(representation));
