@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b642d389_9514d430",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/RFC8639Test.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2264
+      },
+      "writtenOn": "2020-05-26T19:58:02Z",
+      "side": 1,
+      "message": "line too long. failing checkstyle.",
+      "revId": "2a23cde7c3a8612b1968e8d20254c3916f928100",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33905017_c7ce5895",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/RFC8639Test.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2264
+      },
+      "writtenOn": "2020-05-26T19:58:02Z",
+      "side": 1,
+      "message": "line too long. failing checkstyle.",
+      "revId": "2a23cde7c3a8612b1968e8d20254c3916f928100",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
