@@ -45,11 +45,10 @@ import org.slf4j.LoggerFactory;
 abstract class SchemaAwareApplyOperation<T extends WithStatus> extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
 
-    public static ModificationApplyOperation from(final DataSchemaNode schemaNode,
-            final DataTreeConfiguration treeConfig) {
-        if (treeConfig.getTreeType() == TreeType.CONFIGURATION) {
-            checkArgument(schemaNode.isConfiguration(), "Supplied %s does not belongs to configuration tree.",
-                schemaNode);
+    static ModificationApplyOperation from(final DataSchemaNode schemaNode,
+            final DataTreeConfiguration treeConfig) throws ExcludedDataSchemaNodeException {
+        if (!belongsToTree(treeConfig.getTreeType(), schemaNode)) {
+            throw new ExcludedDataSchemaNodeException(schemaNode + " does not belong to configuration tree");
         }
         if (schemaNode instanceof ContainerSchemaNode) {
             return ContainerModificationStrategy.of((ContainerSchemaNode) schemaNode, treeConfig);
@@ -66,11 +65,12 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
             return new ValueNodeModificationStrategy<>(AnydataNode.class, (AnydataSchemaNode) schemaNode);
         } else if (schemaNode instanceof AnyxmlSchemaNode) {
             return new ValueNodeModificationStrategy<>(AnyxmlNode.class, (AnyxmlSchemaNode) schemaNode);
+        } else {
+            throw new IllegalStateException("Unsupported schema " + schemaNode);
         }
-        throw new IllegalArgumentException("Not supported schema node type for " + schemaNode.getClass());
     }
 
-    public static AugmentationModificationStrategy from(final DataNodeContainer resolvedTree,
+    static AugmentationModificationStrategy from(final DataNodeContainer resolvedTree,
             final AugmentationTarget augSchemas, final AugmentationIdentifier identifier,
             final DataTreeConfiguration treeConfig) {
         for (final AugmentationSchemaNode potential : augSchemas.getAvailableAugmentations()) {

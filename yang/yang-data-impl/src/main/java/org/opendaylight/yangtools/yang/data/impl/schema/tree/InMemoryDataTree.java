@@ -87,7 +87,11 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
             }
         }
 
-        return SchemaAwareApplyOperation.from(rootSchemaNode, treeConfig);
+        try {
+            return SchemaAwareApplyOperation.from(rootSchemaNode, treeConfig);
+        } catch (ExcludedDataSchemaNodeException e) {
+            throw new IllegalArgumentException("Root node does not belong current data tree", e);
+        }
     }
 
     @Deprecated

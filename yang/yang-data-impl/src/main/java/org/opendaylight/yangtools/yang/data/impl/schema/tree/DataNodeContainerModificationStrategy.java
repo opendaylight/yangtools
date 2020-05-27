@@ -78,7 +78,7 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
 
         try {
             return SchemaAwareApplyOperation.from(child.get(), treeConfig);
-        } catch (IllegalArgumentException e) {
+        } catch (ExcludedDataSchemaNodeException e) {
             LOG.trace("Failed to instantiate child {} in container schema {} children {}", identifier, this,
                 schema.getChildNodes(), e);
             return null;
