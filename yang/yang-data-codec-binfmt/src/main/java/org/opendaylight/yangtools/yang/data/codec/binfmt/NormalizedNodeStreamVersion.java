@@ -23,13 +23,16 @@ public enum NormalizedNodeStreamVersion {
     /**
      * Original stream version, as shipped in OpenDaylight Lithium simultaneous release. The caveat here is that this
      * version has augmented in OpenDaylight Oxygen to retrofit a non-null representation of the empty type.
-     *
-     * @deprecated This version is a historic one and should not be used in code. It does not support current mapping
-     *             of {@code Uint8} et al. and hence results in a stream which needs to be further adapted to current
-     *             definition of LeafNode.
      */
-    @Deprecated
     LITHIUM {
+        /**
+         * {@inheritDoc}
+         *
+         * @deprecated This version is a historic one and should not be used in code. It does not support current
+         *             mapping of {@code Uint8} et al. and hence results in a stream which needs to be further adapted
+         *             to current definition of LeafNode.
+         */
+        @Deprecated
         @Override
         public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
             return new LithiumNormalizedNodeOutputStreamWriter(output);
@@ -38,13 +41,16 @@ public enum NormalizedNodeStreamVersion {
     /**
      * Updated stream version, as shipped in OpenDaylight Neon SR2 release. Improves identifier encoding over
      * {@link #LITHIUM}, so that QName caching is more effective.
-     *
-     * @deprecated This version is a historic one and should not be used in code. It does not support current mapping
-     *             of {@code Uint8} et al. and hence results in a stream which needs to be further adapted to current
-     *             definition of LeafNode.
      */
-    @Deprecated
     NEON_SR2 {
+        /**
+         * {@inheritDoc}
+         *
+         * @deprecated This version is a historic one and should not be used in code. It does not support current
+         *             mapping of {@code Uint8} et al. and hence results in a stream which needs to be further adapted
+         *             to current definition of LeafNode.
+         */
+        @Deprecated
         @Override
         public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
             return new NeonSR2NormalizedNodeOutputStreamWriter(output);
