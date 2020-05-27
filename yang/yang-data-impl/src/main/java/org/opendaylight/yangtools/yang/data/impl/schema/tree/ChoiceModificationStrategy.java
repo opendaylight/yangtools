@@ -57,9 +57,17 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
         for (final CaseSchemaNode caze : schema.getCases()) {
             final CaseEnforcer enforcer = CaseEnforcer.forTree(caze, treeConfig);
             if (enforcer != null) {
-                for (final Entry<NodeIdentifier, DataSchemaNode> e : enforcer.getChildEntries()) {
-                    childBuilder.put(e.getKey(), SchemaAwareApplyOperation.from(e.getValue(), treeConfig));
-                    enforcerBuilder.put(e.getKey(), enforcer);
+                for (final Entry<NodeIdentifier, DataSchemaNode> entry : enforcer.getChildEntries()) {
+                    final ModificationApplyOperation childOper;
+                    try {
+                        childOper = SchemaAwareApplyOperation.from(entry.getValue(), treeConfig);
+                    } catch (ExcludedDataSchemaNodeException e) {
+                        // This should never happen as enforcer performs filtering
+                        throw new IllegalStateException("Enforcer references out-of-tree child " + entry, e);
+                    }
+
+                    childBuilder.put(entry.getKey(), childOper);
+                    enforcerBuilder.put(entry.getKey(), enforcer);
                 }
                 for (final Entry<AugmentationIdentifier, AugmentationSchemaNode> e
                         : enforcer.getAugmentationEntries()) {

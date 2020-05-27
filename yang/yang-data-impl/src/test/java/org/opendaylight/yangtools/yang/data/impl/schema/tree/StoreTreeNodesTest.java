@@ -66,7 +66,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     private RootApplyStrategy rootOper;
 
     @Before
-    public void prepare() {
+    public void prepare() throws ExcludedDataSchemaNodeException {
         rootOper = RootApplyStrategy.from(SchemaAwareApplyOperation.from(SCHEMA_CONTEXT,
             DataTreeConfiguration.DEFAULT_OPERATIONAL));
     }
