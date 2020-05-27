@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "11bec98d_7fb927b1",
+        "filename": "yang/yang-data-codec-binfmt/src/main/java/org/opendaylight/yangtools/yang/data/codec/binfmt/NormalizedNodeStreamVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2264
+      },
+      "writtenOn": "2020-05-27T19:27:43Z",
+      "side": 1,
+      "message": "wow! 😊",
+      "range": {
+        "startLine": 27,
+        "startChar": 4,
+        "endLine": 27,
+        "endChar": 11
+      },
+      "revId": "83ade56c076e0b8196393f9cea78654ba3d84052",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
