@@ -16,6 +16,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
@@ -25,6 +27,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -58,6 +62,10 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
                 treeConfig));
         } else if (schemaNode instanceof LeafSchemaNode) {
             return new ValueNodeModificationStrategy<>(LeafNode.class, (LeafSchemaNode) schemaNode);
+        } else if (schemaNode instanceof AnyDataSchemaNode) {
+            return new ValueNodeModificationStrategy<>(AnydataNode.class, (AnyDataSchemaNode) schemaNode);
+        } else if (schemaNode instanceof AnyXmlSchemaNode) {
+            return new ValueNodeModificationStrategy<>(AnyxmlNode.class, (AnyXmlSchemaNode) schemaNode);
         }
         throw new IllegalArgumentException("Not supported schema node type for " + schemaNode.getClass());
     }
