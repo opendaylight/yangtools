@@ -82,6 +82,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -465,11 +466,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                     }
 
                     final String elementNS = in.getNamespaceURI();
-                    if (!namesakes.add(new SimpleImmutableEntry<>(elementNS, xmlElementName))) {
-                        throw new XMLStreamException(String.format(
-                            "Duplicate namespace \"%s\" element \"%s\" in XML input", elementNS, xmlElementName),
-                            in.getLocation());
-                    }
+                    final boolean added = namesakes.add(new SimpleImmutableEntry<>(elementNS, xmlElementName));
 
                     final URI nsUri;
                     try {
@@ -482,6 +479,13 @@ public final class XmlParserStream implements Closeable, Flushable {
                     final Deque<DataSchemaNode> childDataSchemaNodes =
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName, nsUri);
                     if (!childDataSchemaNodes.isEmpty()) {
+                        final DataSchemaNode first = childDataSchemaNodes.getFirst();
+                        if (!(first instanceof ListEffectiveStatement) && !added) {
+                            throw new XMLStreamException(String.format(
+                                "Duplicate element \"%s\" in namespace \"%s\" with parent \"%s\" in XML input",
+                                xmlElementName, elementNS, parent.getSchema()), in.getLocation());
+                        }
+
                         // We have a match, proceed with it
                         read(in, ((CompositeNodeDataWithSchema<?>) parent).addChild(childDataSchemaNodes), rootElement);
                         continue;
