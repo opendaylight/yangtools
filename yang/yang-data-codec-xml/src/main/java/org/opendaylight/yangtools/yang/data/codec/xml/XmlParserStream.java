@@ -59,6 +59,7 @@ import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnydataNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema.ChildReusePolicy;
 import org.opendaylight.yangtools.yang.data.util.ContainerNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
@@ -437,7 +438,9 @@ public final class XmlParserStream implements Closeable, Flushable {
 
         switch (in.nextTag()) {
             case XMLStreamConstants.START_ELEMENT:
-                // FIXME: why do we even need this tracker? either document it or remove it
+                // FIXME: 6.0.0: why do we even need this tracker? either document it or remove it.
+                //               it looks like it is a crude duplicate finder, which should really be handled via
+                //               ChildReusePolicy.REJECT
                 final Set<Entry<String, String>> namesakes = new HashSet<>();
                 while (in.hasNext()) {
                     final String xmlElementName = in.getLocalName();
@@ -466,11 +469,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                     }
 
                     final String elementNS = in.getNamespaceURI();
-                    if (!namesakes.add(new SimpleImmutableEntry<>(elementNS, xmlElementName))) {
-                        throw new XMLStreamException(String.format(
-                            "Duplicate namespace \"%s\" element \"%s\" in XML input", elementNS, xmlElementName),
-                            in.getLocation());
-                    }
+                    final boolean added = namesakes.add(new SimpleImmutableEntry<>(elementNS, xmlElementName));
 
                     final URI nsUri;
                     try {
@@ -483,8 +482,16 @@ public final class XmlParserStream implements Closeable, Flushable {
                     final Deque<DataSchemaNode> childDataSchemaNodes =
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName, nsUri);
                     if (!childDataSchemaNodes.isEmpty()) {
+                        final boolean elementList = isElementList(childDataSchemaNodes);
+                        if (!added && !elementList) {
+                            throw new XMLStreamException(String.format(
+                                "Duplicate element \"%s\" in namespace \"%s\" with parent \"%s\" in XML input",
+                                xmlElementName, elementNS, parent.getSchema()), in.getLocation());
+                        }
+
                         // We have a match, proceed with it
-                        read(in, ((CompositeNodeDataWithSchema<?>) parent).addChild(childDataSchemaNodes), rootElement);
+                        read(in, ((CompositeNodeDataWithSchema<?>) parent).addChild(childDataSchemaNodes,
+                            elementList ? ChildReusePolicy.REUSE : ChildReusePolicy.NOOP), rootElement);
                         continue;
                     }
 
@@ -542,6 +549,13 @@ public final class XmlParserStream implements Closeable, Flushable {
             default:
                 break;
         }
+    }
+
+    // Return true if schema represents a construct which uses multiple sibling elements to represent its content. The
+    // siblings MAY be interleaved as per RFC7950.
+    private static boolean isElementList(final Deque<DataSchemaNode> childDataSchemaNodes) {
+        final DataSchemaNode last = childDataSchemaNodes.getLast();
+        return last instanceof ListSchemaNode || last instanceof LeafListSchemaNode;
     }
 
     private static void addMountPointChild(final MountPointData mount, final URI namespace, final String localName,

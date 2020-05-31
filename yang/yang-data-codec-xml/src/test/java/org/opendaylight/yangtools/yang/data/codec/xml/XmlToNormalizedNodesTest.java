@@ -158,8 +158,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of duplicate leaf.");
         } catch (XMLStreamException ex) {
-            assertThat(ex.getMessage(), containsString("Duplicate namespace \"foo-namespace\" element "
-                    + "\"decimal64-leaf\" in XML input"));
+            assertThat(ex.getMessage(), containsString("Duplicate element \"decimal64-leaf\" in namespace"
+                    + " \"foo-namespace\" with parent \"container leaf-container\" in XML input"));
         }
     }
 
@@ -178,7 +178,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of duplicate anyxml");
         } catch (XMLStreamException ex) {
-            assertThat(ex.getMessage(), containsString("Duplicate namespace \"foo-namespace\" element \"my-anyxml\""));
+            assertThat(ex.getMessage(), containsString("Duplicate element \"my-anyxml\" in namespace"
+                    + " \"foo-namespace\" with parent \"container anyxml-container\" in XML input"));
         }
     }
 
@@ -197,8 +198,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of duplicate container");
         } catch (XMLStreamException ex) {
-            assertThat(ex.getMessage(), containsString("Duplicate namespace \"foo-namespace\" element "
-                    + "\"leaf-container\" in XML input"));
+            assertThat(ex.getMessage(), containsString("Duplicate element \"leaf-container\" in namespace"
+                    + " \"foo-namespace\" with parent \"container parent-container\" in XML input"));
         }
     }
 
