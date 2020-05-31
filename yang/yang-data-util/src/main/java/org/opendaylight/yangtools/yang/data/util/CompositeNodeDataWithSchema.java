@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import java.io.IOException;
@@ -41,6 +42,32 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  */
 public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends AbstractNodeDataWithSchema<T> {
     /**
+     * Policy on how child nodes should be treated when an attempt is made to add them multiple times.
+     */
+    @Beta
+    public enum ChildReusePolicy {
+        /**
+         * Do not consider any existing nodes at all, just perform a straight append. Multiple occurrences of a child
+         * will result in multiple children being emitted. This is almost certainly the wrong policy unless the caller
+         * prevents such a situation from arising via some different mechanism.
+         */
+        NOOP,
+        /**
+         * Do not allow duplicate definition of a child node. This would typically be used when a child cannot be
+         * encountered multiple times, but the caller does not make any provision to detect such a conflict. If a child
+         * node would end up being defined a second time, {@link DuplicateChildNodeRejectedException} is reported.
+         */
+        REJECT,
+        /**
+         * Reuse previously-defined child node. This is most appropriate when a child may be visited multiple times
+         * and the intent is to append content of each visit. A typical usage is list elements with RFC7950 XML
+         * encoding, where there is no encapsulating element and hence list entries may be interleaved with other
+         * children.
+         */
+        REUSE;
+    }
+
+    /**
      * nodes which were added to schema via augmentation and are present in data input.
      */
     private final Multimap<AugmentationSchemaNode, AbstractNodeDataWithSchema<?>> augmentationsToChild =
@@ -55,24 +82,24 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
         super(schema);
     }
 
-    private AbstractNodeDataWithSchema<?> addChild(final DataSchemaNode schema) {
-        AbstractNodeDataWithSchema<?> newChild = addSimpleChild(schema);
-        return newChild == null ? addCompositeChild(schema) : newChild;
-    }
-
     @Deprecated
     public void addChild(final AbstractNodeDataWithSchema<?> newChild) {
         children.add(newChild);
     }
 
+    @Deprecated
     public AbstractNodeDataWithSchema<?> addChild(final Deque<DataSchemaNode> schemas) {
+        return addChild(schemas, ChildReusePolicy.NOOP);
+    }
+
+    public AbstractNodeDataWithSchema<?> addChild(final Deque<DataSchemaNode> schemas, final ChildReusePolicy policy) {
         checkArgument(!schemas.isEmpty(), "Expecting at least one schema");
 
         // Pop the first node...
         final DataSchemaNode schema = schemas.pop();
         if (schemas.isEmpty()) {
             // Simple, direct node
-            return addChild(schema);
+            return addChild(schema, policy);
         }
 
         // The choice/case mess, reuse what we already popped
@@ -108,10 +135,15 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             caseNodeDataWithSchema = choiceNodeDataWithSchema.addCompositeChild(caseNode);
         }
 
-        return caseNodeDataWithSchema.addChild(schemas);
+        return caseNodeDataWithSchema.addChild(schemas, policy);
     }
 
-    private AbstractNodeDataWithSchema<?> addSimpleChild(final DataSchemaNode schema) {
+    private AbstractNodeDataWithSchema<?> addChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
+        AbstractNodeDataWithSchema<?> newChild = addSimpleChild(schema, policy);
+        return newChild == null ? addCompositeChild(schema) : newChild;
+    }
+
+    private AbstractNodeDataWithSchema<?> addSimpleChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
         final SimpleNodeDataWithSchema<?> newChild;
         if (schema instanceof LeafSchemaNode) {
             newChild = new LeafNodeDataWithSchema((LeafSchemaNode) schema);
@@ -176,17 +208,26 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             newChild = new CompositeNodeDataWithSchema<>(schema);
         }
 
-        addCompositeChild(newChild);
-        return newChild;
+        return addCompositeChild(newChild);
     }
 
-    final void addCompositeChild(final CompositeNodeDataWithSchema<?> newChild) {
-        final AugmentationSchemaNode augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
-        if (augSchema != null) {
-            augmentationsToChild.put(augSchema, newChild);
-        } else {
-            addChild(newChild);
+    final AbstractNodeDataWithSchema<?> addCompositeChild(final CompositeNodeDataWithSchema<?> newChild) {
+        final DataSchemaNode childSchema = newChild.getSchema();
+        final AugmentationSchemaNode augSchema = findCorrespondingAugment(getSchema(), childSchema);
+        final Collection<AbstractNodeDataWithSchema<?>> view = augSchema == null ? children
+                : augmentationsToChild.get(augSchema);
+
+        if (childSchema instanceof ListSchemaNode || childSchema instanceof LeafListSchemaNode) {
+            // Reuse existing child if it exists
+            for (AbstractNodeDataWithSchema<?> existing : view) {
+                if (childSchema.equals(existing.getSchema())) {
+                    return existing;
+                }
+            }
         }
+
+        view.add(newChild);
+        return newChild;
     }
 
     /**
