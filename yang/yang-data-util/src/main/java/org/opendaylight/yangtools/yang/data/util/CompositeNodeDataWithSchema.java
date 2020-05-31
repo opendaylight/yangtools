@@ -172,6 +172,8 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             newChild = new CompositeNodeDataWithSchema<>(schema);
         }
 
+        // FIXME: for ListNodeDataWithSchema and LeafListNodeDataWithSchema we do not really want to perform 'add', but
+        //        reuse existing node
         addCompositeChild(newChild);
         return newChild;
     }
