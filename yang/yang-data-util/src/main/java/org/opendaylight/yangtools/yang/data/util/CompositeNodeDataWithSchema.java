@@ -172,17 +172,26 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             newChild = new CompositeNodeDataWithSchema<>(schema);
         }
 
-        addCompositeChild(newChild);
-        return newChild;
+        return addCompositeChild(newChild);
     }
 
-    void addCompositeChild(final CompositeNodeDataWithSchema<?> newChild) {
-        AugmentationSchemaNode augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
-        if (augSchema != null) {
-            augmentationsToChild.put(augSchema, newChild);
-        } else {
-            addChild(newChild);
+    final AbstractNodeDataWithSchema<?> addCompositeChild(final CompositeNodeDataWithSchema<?> newChild) {
+        final DataSchemaNode childSchema = newChild.getSchema();
+        final AugmentationSchemaNode augSchema = findCorrespondingAugment(getSchema(), childSchema);
+        final Collection<AbstractNodeDataWithSchema<?>> view = augSchema == null ? children
+                : augmentationsToChild.get(augSchema);
+
+        if (childSchema instanceof ListSchemaNode || childSchema instanceof LeafListSchemaNode) {
+            // Reuse existing child if it exists
+            for (AbstractNodeDataWithSchema<?> existing : view) {
+                if (childSchema.equals(existing.getSchema())) {
+                    return existing;
+                }
+            }
         }
+
+        view.add(newChild);
+        return newChild;
     }
 
     /**

@@ -466,11 +466,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                     }
 
                     final String elementNS = in.getNamespaceURI();
-                    if (!namesakes.add(new SimpleImmutableEntry<>(elementNS, xmlElementName))) {
-                        throw new XMLStreamException(String.format(
-                            "Duplicate namespace \"%s\" element \"%s\" in XML input", elementNS, xmlElementName),
-                            in.getLocation());
-                    }
+                    final boolean added = namesakes.add(new SimpleImmutableEntry<>(elementNS, xmlElementName));
 
                     final URI nsUri;
                     try {
@@ -483,6 +479,13 @@ public final class XmlParserStream implements Closeable, Flushable {
                     final Deque<DataSchemaNode> childDataSchemaNodes =
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName, nsUri);
                     if (!childDataSchemaNodes.isEmpty()) {
+                        final DataSchemaNode first = childDataSchemaNodes.getFirst();
+                        if (!added && !isElementList(first)) {
+                            throw new XMLStreamException(String.format(
+                                "Duplicate element \"%s\" in namespace \"%s\" with parent \"%s\" in XML input",
+                                xmlElementName, elementNS, parent.getSchema()), in.getLocation());
+                        }
+
                         // We have a match, proceed with it
                         read(in, ((CompositeNodeDataWithSchema<?>) parent).addChild(childDataSchemaNodes), rootElement);
                         continue;
@@ -542,6 +545,12 @@ public final class XmlParserStream implements Closeable, Flushable {
             default:
                 break;
         }
+    }
+
+    // Return true if schema represents a construct which uses multiple sibling elements to represent its content. The
+    // siblings MAY be interleaved as per RFC7950.
+    private static boolean isElementList(final SchemaNode schema) {
+        return schema instanceof ListSchemaNode || schema instanceof LeafListSchemaNode;
     }
 
     private static void addMountPointChild(final MountPointData mount, final URI namespace, final String localName,
