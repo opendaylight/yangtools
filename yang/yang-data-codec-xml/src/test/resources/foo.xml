@@ -3,6 +3,7 @@
 <parent-container xmlns="foo-namespace">
     <leaf-container>
         <union-identityref-leaf xmlns:prefix="foo-namespace">prefix:ident-one</union-identityref-leaf>
+        <identityref-leaf xmlns:prefix="foo-namespace">prefix:ident-one</identityref-leaf>
         <int32-leaf>1500</int32-leaf>
         <decimal64-leaf>150.45</decimal64-leaf>
         <string-leaf>hello world</string-leaf>

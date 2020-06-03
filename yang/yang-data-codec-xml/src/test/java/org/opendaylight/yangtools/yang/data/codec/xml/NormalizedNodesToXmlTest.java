@@ -11,9 +11,11 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,6 +43,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -95,7 +98,25 @@ public class NormalizedNodesToXmlTest {
     private QName mySecondKeyLeaf;
     private QName myLeafInList3;
 
+    private QNameModule fooModule;
+    private QName fooParentContainer;
+    private QName fooLeafContainer;
+    private QName fooIdentity;
+    private QName fooUnionIdentityRefLeaf;
+    private QName fooIdentityRefLeaf;
+    private QName fooInt32Leaf;
+    private QName fooDecimal64Leaf;
+    private QName fooStringLeaf;
+    private QName fooLeafrefLeaf;
+    private QName fooEmptyLeaf;
+    private QName fooBooleanLeaf;
+    private QName fooEnumLeaf;
+    private QName fooAnyxmlContainer;
+    private QName fooAnyxmlNode;
+    private String fooAnyxmlString;
+
     private static SchemaContext SCHEMA_CONTEXT;
+    private static SchemaContext FOO_SCHEMA_CONTEXT;
 
     private final XMLOutputFactory factory;
 
@@ -106,11 +127,13 @@ public class NormalizedNodesToXmlTest {
     @BeforeClass
     public static void beforeClass() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYangResource("/baz.yang");
+        FOO_SCHEMA_CONTEXT = YangParserTestUtils.parseYangResource("/foo.yang");
     }
 
     @AfterClass
     public static void afterClass() {
         SCHEMA_CONTEXT = null;
+        FOO_SCHEMA_CONTEXT = null;
     }
 
     @Before
@@ -139,10 +162,32 @@ public class NormalizedNodesToXmlTest {
         myFirstKeyLeaf = QName.create(bazModule, "my-first-key-leaf");
         mySecondKeyLeaf = QName.create(bazModule, "my-second-key-leaf");
         myLeafInList3 = QName.create(bazModule, "my-leaf-in-list-3");
+
+        fooModule = QNameModule.create(URI.create("foo-namespace"));
+        fooParentContainer = QName.create(fooModule, "parent-container");
+        fooLeafContainer = QName.create(fooModule, "leaf-container");
+
+        fooIdentity = QName.create(fooModule, "ident-one");
+        fooUnionIdentityRefLeaf = QName.create(fooModule, "union-identityref-leaf");
+        fooIdentityRefLeaf = QName.create(fooModule, "identityref-leaf");
+        fooInt32Leaf = QName.create(fooModule, "int32-leaf");
+        fooDecimal64Leaf = QName.create(fooModule, "decimal64-leaf");
+        fooStringLeaf = QName.create(fooModule, "string-leaf");
+        fooLeafrefLeaf = QName.create(fooModule, "leafref-leaf");
+        fooEmptyLeaf = QName.create(fooModule, "empty-leaf");
+        fooBooleanLeaf = QName.create(fooModule, "boolean-leaf");
+        fooEnumLeaf = QName.create(fooModule, "enum-leaf");
+        fooAnyxmlContainer = QName.create(fooModule, "anyxml-container");
+        fooAnyxmlNode = QName.create(fooModule, "my-anyxml");
+        fooAnyxmlString = "<my-anyxml>" +
+                "<my-element>" +
+                "<my-sub-element>&lt; &amp; sub-element value</my-sub-element>" +
+                "</my-element>" +
+                "</my-anyxml>";
     }
 
     @Test
-    public void testNormalizedNodeToXmlSerialization() throws XMLStreamException, IOException, SAXException {
+    public void testNormalizedNodeToXmlSerializationBaz() throws XMLStreamException, IOException, SAXException {
         final Document doc = loadDocument("/baz.xml");
 
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
@@ -155,7 +200,7 @@ public class NormalizedNodesToXmlTest {
         final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
                 xmlNormalizedNodeStreamWriter);
 
-        normalizedNodeWriter.write(buildOuterContainerNode());
+        normalizedNodeWriter.write(buildBazOuterContainerNode());
 
         XMLUnit.setIgnoreWhitespace(true);
         XMLUnit.setNormalize(true);
@@ -170,7 +215,36 @@ public class NormalizedNodesToXmlTest {
         new XMLTestCase() {}.assertXMLEqual(diff, true);
     }
 
-    private NormalizedNode<?, ?> buildOuterContainerNode() {
+    @Test
+    public void testNormalizedNodeToXmlSerializationFoo() throws XMLStreamException, IOException, SAXException {
+        final Document doc = loadDocument("/foo.xml");
+
+        final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
+
+        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
+
+        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
+                xmlStreamWriter, FOO_SCHEMA_CONTEXT);
+
+        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
+                xmlNormalizedNodeStreamWriter);
+
+        normalizedNodeWriter.write(buildFooParentContainerNode());
+
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setNormalize(true);
+
+        final String expectedXml = toString(doc.getDocumentElement());
+        final String serializedXml = toString(domResult.getNode());
+        final Diff diff = new Diff(expectedXml, serializedXml);
+
+        final DifferenceListener differenceListener = new IgnoreTextAndAttributeValuesDifferenceListener();
+        diff.overrideDifferenceListener(differenceListener);
+
+        new XMLTestCase() {}.assertXMLEqual(diff, true);
+    }
+
+    private NormalizedNode<?, ?> buildBazOuterContainerNode() {
         // my-container-1
         MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(myKeyedList))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
@@ -251,6 +325,60 @@ public class NormalizedNodesToXmlTest {
                 .withChild(myContainer3AugNode).build();
 
         return outerContainerNode;
+    }
+
+    private NormalizedNode<?, ?> buildFooParentContainerNode() throws IOException, SAXException {
+        ContainerNode parentContainerNode = Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(fooParentContainer))
+                .withChild(Builders.containerBuilder()
+                        .withNodeIdentifier(NodeIdentifier.create(fooLeafContainer))
+                        .withChild(Builders.leafBuilder()
+                                .withNodeIdentifier(NodeIdentifier.create(fooUnionIdentityRefLeaf))
+                                .withValue(fooIdentity)
+                                .build())
+                        .withChild(Builders.leafBuilder()
+                                .withNodeIdentifier(NodeIdentifier.create(fooIdentityRefLeaf))
+                                .withValue(fooIdentity)
+                                .build())
+                        .withChild(Builders.leafBuilder()
+                                .withNodeIdentifier(NodeIdentifier.create(fooInt32Leaf))
+                                .withValue(1500)
+                                .build())
+                        .withChild(Builders.leafBuilder()
+                                .withNodeIdentifier(NodeIdentifier.create(fooDecimal64Leaf))
+                                .withValue(BigDecimal.valueOf(150.45))
+                                .build())
+                        .withChild(Builders.leafBuilder()
+                                .withNodeIdentifier(NodeIdentifier.create(fooStringLeaf))
+                                .withValue("hello world")
+                                .build())
+                        .withChild(Builders.leafBuilder()
+                                .withNodeIdentifier(NodeIdentifier.create(fooLeafrefLeaf))
+                                .withValue("hello world")
+                                .build())
+                        .withChild(Builders.leafBuilder()
+                                .withNodeIdentifier(NodeIdentifier.create(fooEmptyLeaf))
+                                .withValue(Empty.getInstance())
+                                .build())
+                        .withChild(Builders.leafBuilder()
+                                .withNodeIdentifier(NodeIdentifier.create(fooBooleanLeaf))
+                                .withValue(true)
+                                .build())
+                        .withChild(Builders.leafBuilder()
+                                .withNodeIdentifier(NodeIdentifier.create(fooEnumLeaf))
+                                .withValue("five")
+                                .build())
+                        .build())
+                .withChild(Builders.containerBuilder()
+                        .withNodeIdentifier(NodeIdentifier.create(fooAnyxmlContainer))
+                        .withChild(Builders.anyXmlBuilder()
+                                .withNodeIdentifier(NodeIdentifier.create(fooAnyxmlNode))
+                                .withValue(new DOMSource(readXmlToDocument(new ByteArrayInputStream(fooAnyxmlString
+                                        .getBytes()))))
+                                .build())
+                        .build())
+                .build();
+        return parentContainerNode;
     }
 
     private static Document loadDocument(final String xmlPath) throws IOException, SAXException {

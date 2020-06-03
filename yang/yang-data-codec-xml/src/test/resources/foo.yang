@@ -24,6 +24,12 @@ module foo {
                 type union-type;
             }
 
+            leaf identityref-leaf {
+                type identityref {
+                    base ident-base;
+                }
+            }
+
             leaf int32-leaf {
                 type int32;
             }
