@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4f98e08_85ebd435",
+        "filename": "yang/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/NormalizedNodesToXmlTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 2264
+      },
+      "writtenOn": "2020-06-03T17:46:21Z",
+      "side": 1,
+      "message": "gotta put the + at the beginning of the next line instead of the end of the line\nto avoid checkstyle violation",
+      "range": {
+        "startLine": 182,
+        "startChar": 8,
+        "endLine": 186,
+        "endChar": 31
+      },
+      "revId": "42a39c4ca5bc684dfdce0475cf3e132eae6fffa2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
