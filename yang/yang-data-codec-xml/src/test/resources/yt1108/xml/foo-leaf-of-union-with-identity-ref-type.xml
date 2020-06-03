@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<leaf-container xmlns="foo-namespace">
+    <union-identityref-leaf xmlns:prefix="foo-namespace">ident-one</union-identityref-leaf>
+</leaf-container>
