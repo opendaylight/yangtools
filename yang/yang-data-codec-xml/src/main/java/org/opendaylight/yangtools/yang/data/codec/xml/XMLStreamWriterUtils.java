@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,9 +67,23 @@ abstract class XMLStreamWriterUtils {
             return encode(writer, (IdentityrefTypeDefinition) type, value, parent);
         } else if (type instanceof InstanceIdentifierTypeDefinition) {
             return encode(writer, (InstanceIdentifierTypeDefinition) type, value);
+        } else if (value instanceof QName && type instanceof UnionTypeDefinition && isIdentityrefUnion(type)) {
+            // Ugly special-case form unions with identityrefs
+            return encode(writer, (QName) value, parent);
         } else {
             return serialize(type, value);
         }
+    }
+
+    private static boolean isIdentityrefUnion(final TypeDefinition<?> type) {
+        if (type instanceof UnionTypeDefinition) {
+            for (TypeDefinition<?> subtype : ((UnionTypeDefinition) type).getTypes()) {
+                if (subtype instanceof IdentityrefTypeDefinition || isIdentityrefUnion(subtype)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static String serialize(final @NonNull TypeDefinition<?> type, final @NonNull Object value) {
