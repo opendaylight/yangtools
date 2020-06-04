@@ -76,6 +76,8 @@ abstract class XMLStreamWriterUtils {
         } else if (value instanceof QName && isIdentityrefUnion(type)) {
             // Ugly special-case form unions with identityrefs
             return encode(writer, (QName) value, parent);
+        } else if (value instanceof YangInstanceIdentifier && isInstanceIdentifierUnion(type)) {
+            return encodeInstanceIdentifier(writer, (YangInstanceIdentifier) value);
         } else {
             return serialize(type, value);
         }
@@ -85,6 +87,17 @@ abstract class XMLStreamWriterUtils {
         if (type instanceof UnionTypeDefinition) {
             for (TypeDefinition<?> subtype : ((UnionTypeDefinition) type).getTypes()) {
                 if (subtype instanceof IdentityrefTypeDefinition || isIdentityrefUnion(subtype)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isInstanceIdentifierUnion(final TypeDefinition<?> type) {
+        if (type instanceof UnionTypeDefinition) {
+            for (TypeDefinition<?> subtype : ((UnionTypeDefinition) type).getTypes()) {
+                if (subtype instanceof InstanceIdentifierTypeDefinition || isInstanceIdentifierUnion(subtype)) {
                     return true;
                 }
             }
