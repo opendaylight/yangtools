@@ -108,6 +108,6 @@ abstract class UnionXmlCodec<T> implements XmlCodec<T> {
             }
         }
 
-        throw new IllegalArgumentException("No codecs could serialize" + value);
+        throw new IllegalArgumentException("No codec would accept value \"" + value + "\"");
     }
 }
