@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.annotations.VisibleForTesting;
 import javax.xml.stream.XMLStreamException;
 import org.eclipse.jdt.annotation.NonNull;
@@ -43,13 +41,10 @@ abstract class XMLStreamWriterUtils {
      * @return String characters to be written
      * @throws XMLStreamException if an encoding problem occurs
      */
-    String encodeValue(final @NonNull ValueWriter writer, final @NonNull SchemaNode schemaNode,
-            final @NonNull Object value, final QNameModule parent) throws XMLStreamException {
-        checkArgument(schemaNode instanceof TypeAware,
-            "Unable to write value for node %s, only nodes of type: leaf, leaf-list and annotations can be written "
-                    + "at this point", schemaNode.getQName());
-
-        TypeDefinition<?> type = ((TypeAware) schemaNode).getType();
+    <T extends SchemaNode & TypeAware> String encodeValue(final @NonNull ValueWriter writer,
+            final @NonNull T schemaNode, final @NonNull Object value, final QNameModule parent)
+                    throws XMLStreamException {
+        TypeDefinition<?> type = schemaNode.getType();
         if (type instanceof LeafrefTypeDefinition) {
             type = getBaseTypeForLeafRef(schemaNode, (LeafrefTypeDefinition) type);
         }
