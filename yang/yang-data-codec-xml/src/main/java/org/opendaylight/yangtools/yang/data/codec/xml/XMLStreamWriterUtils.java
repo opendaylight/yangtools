@@ -89,19 +89,22 @@ abstract class XMLStreamWriterUtils {
 
     @VisibleForTesting
     static String encode(final @NonNull ValueWriter writer, final @NonNull IdentityrefTypeDefinition type,
+            final @NonNull QName qname, final QNameModule parent) throws XMLStreamException {
+        //in case parent is present and same as element namespace write value without namespace
+        if (qname.getNamespace().equals(parent.getNamespace())) {
+            return qname.getLocalName();
+        }
+
+        final String ns = qname.getNamespace().toString();
+        final String prefix = "x";
+        writer.writeNamespace(prefix, ns);
+        return prefix + ':' + qname.getLocalName();
+    }
+
+    private static String encode(final @NonNull ValueWriter writer, final @NonNull IdentityrefTypeDefinition type,
             final @NonNull Object value, final QNameModule parent) throws XMLStreamException {
         if (value instanceof QName) {
-            final QName qname = (QName) value;
-
-            //in case parent is present and same as element namespace write value without namespace
-            if (qname.getNamespace().equals(parent.getNamespace())) {
-                return qname.getLocalName();
-            }
-
-            final String ns = qname.getNamespace().toString();
-            final String prefix = "x";
-            writer.writeNamespace(prefix, ns);
-            return prefix + ':' + qname.getLocalName();
+            return encode(writer, type, (QName) value, parent);
         }
 
         final QName qname = type.getQName();
