@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.stream.XMLStreamException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -28,6 +30,10 @@ import org.slf4j.LoggerFactory;
  */
 abstract class XMLStreamWriterUtils {
     private static final Logger LOG = LoggerFactory.getLogger(XMLStreamWriterUtils.class);
+    /**
+     * Warn-once set of identityref nodes which were found to be normalized to a different object than a QName.
+     */
+    private static final Set<QName> IDENTITYREF_WARNED = ConcurrentHashMap.newKeySet();
 
     /**
      * Encode a value into a String in the context of a XML stream writer. This method assumes the start and end of
@@ -108,7 +114,10 @@ abstract class XMLStreamWriterUtils {
         }
 
         final QName qname = type.getQName();
-        LOG.debug("Value of {}:{} is not a QName but {}", qname.getNamespace(), qname.getLocalName(), value.getClass());
+        if (IDENTITYREF_WARNED.add(qname)) {
+            LOG.warn("Value of {}:{} is not a QName but {}. Please the source of this data", qname.getNamespace(),
+                qname.getLocalName(), value.getClass(), new Throwable());
+        }
         return value.toString();
     }
 
