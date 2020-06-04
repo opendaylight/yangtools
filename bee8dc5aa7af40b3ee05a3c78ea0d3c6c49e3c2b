@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca6da2a5_174d94ca",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XMLStreamWriterUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 2264
+      },
+      "writtenOn": "2020-06-04T22:16:57Z",
+      "side": 1,
+      "message": "I don\u0027t know what this should say, but \"Please the source of this data\" does not make sense\nto me? I can push a patch to change it, if you explain what we are trying to get across with\nthis warning.",
+      "range": {
+        "startLine": 118,
+        "startChar": 60,
+        "endLine": 118,
+        "endChar": 90
+      },
+      "revId": "bee8dc5aa7af40b3ee05a3c78ea0d3c6c49e3c2b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
