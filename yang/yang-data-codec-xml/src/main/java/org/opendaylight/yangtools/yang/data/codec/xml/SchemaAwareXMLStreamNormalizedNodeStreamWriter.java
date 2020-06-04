@@ -35,8 +35,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
-final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<SchemaNode>
-        implements SchemaContextProvider {
+final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
+        extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> implements SchemaContextProvider {
     private final SchemaTracker tracker;
     private final SchemaAwareXMLStreamWriterUtils streamUtils;
 
@@ -48,9 +48,10 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    String encodeValue(final ValueWriter xmlWriter, final Object value, final SchemaNode schemaNode)
+    String encodeValue(final ValueWriter xmlWriter, final Object value, final TypedDataSchemaNode schemaNode)
             throws XMLStreamException {
-        return streamUtils.encodeValue(xmlWriter, schemaNode, value, schemaNode.getQName().getModule());
+        return streamUtils.encodeValue(xmlWriter, schemaNode, schemaNode.getType(), value,
+            schemaNode.getQName().getModule());
     }
 
     @Override
@@ -59,7 +60,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
         final Optional<AnnotationSchemaNode> optAnnotation = AnnotationSchemaNode.find(streamUtils.getSchemaContext(),
             qname);
         if (optAnnotation.isPresent()) {
-            return streamUtils.encodeValue(xmlWriter, optAnnotation.get(), value, qname.getModule());
+            final AnnotationSchemaNode schema = optAnnotation.get();
+            return streamUtils.encodeValue(xmlWriter, schema, schema.getType(), value, qname.getModule());
         }
 
         checkArgument(!qname.getRevision().isPresent(), "Failed to find bound annotation %s", qname);
@@ -156,7 +158,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
         if (current instanceof TypedDataSchemaNode) {
-            writeValue(value, (SchemaNode) current);
+            writeValue(value, (TypedDataSchemaNode) current);
         } else if (current instanceof AnydataSchemaNode) {
             anydataValue(value);
         } else {

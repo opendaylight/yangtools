@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.annotations.VisibleForTesting;
 import javax.xml.stream.XMLStreamException;
 import org.eclipse.jdt.annotation.NonNull;
@@ -17,7 +15,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -38,23 +35,18 @@ abstract class XMLStreamWriterUtils {
      *
      * @param writer XML Stream writer
      * @param schemaNode Schema node that describes the value
+     * @param type Schema type definition
      * @param value data value
      * @param parent module QName owning the leaf definition
      * @return String characters to be written
      * @throws XMLStreamException if an encoding problem occurs
      */
-    String encodeValue(final @NonNull ValueWriter writer, final @NonNull SchemaNode schemaNode,
-            final @NonNull Object value, final QNameModule parent) throws XMLStreamException {
-        checkArgument(schemaNode instanceof TypeAware,
-            "Unable to write value for node %s, only nodes of type: leaf, leaf-list and annotations can be written "
-                    + "at this point", schemaNode.getQName());
-
-        TypeDefinition<?> type = ((TypeAware) schemaNode).getType();
-        if (type instanceof LeafrefTypeDefinition) {
-            type = getBaseTypeForLeafRef(schemaNode, (LeafrefTypeDefinition) type);
-        }
-
-        return encodeValue(writer, type, value, parent);
+    String encodeValue(final @NonNull ValueWriter writer,final @NonNull SchemaNode schemaNode,
+            final TypeDefinition<?> type, final @NonNull Object value, final QNameModule parent)
+                    throws XMLStreamException {
+        return type instanceof LeafrefTypeDefinition
+                ? encodeValue(writer, getBaseTypeForLeafRef(schemaNode, (LeafrefTypeDefinition) type), value, parent)
+                        : encodeValue(writer, type, value, parent);
     }
 
     /**
