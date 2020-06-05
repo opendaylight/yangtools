@@ -70,6 +70,11 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     }
 
     @Override
+    public YangInstanceIdentifier coerceParent() {
+        return parent;
+    }
+
+    @Override
     public YangInstanceIdentifier getAncestor(final int depth) {
         checkArgument(depth >= 0, "Steps cannot be negative");
 
