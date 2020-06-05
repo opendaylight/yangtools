@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -60,6 +61,11 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
         }
 
         return ret;
+    }
+
+    @Override
+    public YangInstanceIdentifier coerceParent() {
+        return verifyNotNull(getParent(), "Empty instance identifier does not have a parent");
     }
 
     @Override
