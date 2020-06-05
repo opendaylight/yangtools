@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * <p>
  * Represents a YANG list node.
  */
-public class ListNodeDataWithSchema extends CompositeNodeDataWithSchema<ListSchemaNode> {
-
+public class ListNodeDataWithSchema extends CompositeNodeDataWithSchema<ListSchemaNode>
+        implements MultipleEntryDataWithSchema<ListEntryNodeDataWithSchema> {
     public ListNodeDataWithSchema(final ListSchemaNode schema) {
         super(schema);
     }
@@ -41,4 +41,10 @@ public class ListNodeDataWithSchema extends CompositeNodeDataWithSchema<ListSche
         writer.endNode();
     }
 
+    @Override
+    public final ListEntryNodeDataWithSchema newChildEntry() {
+        final ListEntryNodeDataWithSchema child = ListEntryNodeDataWithSchema.forSchema(getSchema());
+        addChild(child);
+        return child;
+    }
 }

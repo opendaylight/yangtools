@@ -60,6 +60,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
         return newChild == null ? addCompositeChild(schema) : newChild;
     }
 
+    @Deprecated
     public void addChild(final AbstractNodeDataWithSchema<?> newChild) {
         children.add(newChild);
     }

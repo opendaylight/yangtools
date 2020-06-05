@@ -37,11 +37,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.LeafListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
@@ -327,16 +326,10 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private static AbstractNodeDataWithSchema<?> newArrayEntry(final AbstractNodeDataWithSchema<?> parent) {
-        AbstractNodeDataWithSchema<?> newChild;
-        if (parent instanceof ListNodeDataWithSchema) {
-            newChild = ListEntryNodeDataWithSchema.forSchema(((ListNodeDataWithSchema) parent).getSchema());
-        } else if (parent instanceof LeafListNodeDataWithSchema) {
-            newChild = new LeafListEntryNodeDataWithSchema(((LeafListNodeDataWithSchema) parent).getSchema());
-        } else {
+        if (!(parent instanceof MultipleEntryDataWithSchema)) {
             throw new IllegalStateException("Found an unexpected array nested under " + parent.getSchema().getQName());
         }
-        ((CompositeNodeDataWithSchema<?>) parent).addChild(newChild);
-        return newChild;
+        return ((MultipleEntryDataWithSchema<?>) parent).newChildEntry();
     }
 
     private void setValue(final AbstractNodeDataWithSchema<?> parent, final String value) {
