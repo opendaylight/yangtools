@@ -66,6 +66,7 @@ import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.MountPointData;
+import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
@@ -628,15 +629,8 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     private static AbstractNodeDataWithSchema<?> newEntryNode(final AbstractNodeDataWithSchema<?> parent) {
-        final AbstractNodeDataWithSchema<?> newChild;
-        if (parent instanceof ListNodeDataWithSchema) {
-            newChild = ListEntryNodeDataWithSchema.forSchema(((ListNodeDataWithSchema) parent).getSchema());
-        } else {
-            verify(parent instanceof LeafListNodeDataWithSchema, "Unexpected parent %s", parent);
-            newChild = new LeafListEntryNodeDataWithSchema(((LeafListNodeDataWithSchema) parent).getSchema());
-        }
-        ((CompositeNodeDataWithSchema<?>) parent).addChild(newChild);
-        return newChild;
+        verify(parent instanceof MultipleEntryDataWithSchema, "Unexpected parent %s", parent);
+        return ((MultipleEntryDataWithSchema<?>) parent).newChildEntry();
     }
 
     @Override

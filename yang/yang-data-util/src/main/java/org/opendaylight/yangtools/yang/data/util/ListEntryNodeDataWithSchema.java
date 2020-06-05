@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.util.ImmutableMapTemplate;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -86,7 +87,7 @@ public abstract class ListEntryNodeDataWithSchema extends AbstractMountPointData
         super(schema);
     }
 
-    public static ListEntryNodeDataWithSchema forSchema(final ListSchemaNode schema) {
+    public static @NonNull ListEntryNodeDataWithSchema forSchema(final ListSchemaNode schema) {
         final List<QName> keyDef = schema.getKeyDefinition();
         return keyDef.isEmpty() ? new Unkeyed(schema) :  new Keyed(schema, keyDef);
     }
