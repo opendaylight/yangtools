@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -139,6 +140,15 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @return Parent {@link YangInstanceIdentifier}, or null if this object is {@link #empty()}.
      */
     public abstract @Nullable YangInstanceIdentifier getParent();
+
+    /**
+     * Return the conceptual parent {@link YangInstanceIdentifier}, which has one item less in
+     * {@link #getPathArguments()}.
+     *
+     * @return Parent {@link YangInstanceIdentifier}
+     * @throws VerifyException if this object is {@link #empty()}.
+     */
+    public abstract @NonNull YangInstanceIdentifier coerceParent();
 
     /**
      * Return the ancestor {@link YangInstanceIdentifier} with a particular depth, e.g. number of path arguments.
