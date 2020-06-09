@@ -86,9 +86,11 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             caseCandidate.getClass());
         final CaseSchemaNode caseNode = (CaseSchemaNode) caseCandidate;
 
-        AugmentationSchemaNode augSchema = null;
+        final AugmentationSchemaNode augSchema;
         if (choiceCandidate.isAugmenting()) {
             augSchema = findCorrespondingAugment(getSchema(), choiceCandidate);
+        } else {
+            augSchema = null;
         }
 
         // looking for existing choice
@@ -110,7 +112,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
     }
 
     private AbstractNodeDataWithSchema<?> addSimpleChild(final DataSchemaNode schema) {
-        SimpleNodeDataWithSchema<?> newChild = null;
+        final SimpleNodeDataWithSchema<?> newChild;
         if (schema instanceof LeafSchemaNode) {
             newChild = new LeafNodeDataWithSchema((LeafSchemaNode) schema);
         } else if (schema instanceof AnyxmlSchemaNode) {
