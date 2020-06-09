@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static com.google.common.base.Verify.verify;
+
 import java.io.IOException;
 import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -17,22 +19,28 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 /**
  * childs - empty augment - only one element can be.
  */
-class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema<ChoiceSchemaNode> {
+final class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema<ChoiceSchemaNode> {
     private CaseNodeDataWithSchema caseNodeDataWithSchema;
 
     ChoiceNodeDataWithSchema(final ChoiceSchemaNode schema) {
         super(schema);
     }
 
+    // FIXME: 6.0.0: this should be impossible to hit
     @Override
-    protected CaseNodeDataWithSchema addCompositeChild(final DataSchemaNode schema) {
-        CaseNodeDataWithSchema newChild = new CaseNodeDataWithSchema((CaseSchemaNode) schema);
+    CaseNodeDataWithSchema addCompositeChild(final DataSchemaNode schema) {
+        verify(schema instanceof CaseSchemaNode, "Unexpected schema %s", schema);
+        return addCompositeChild((CaseSchemaNode) schema);
+    }
+
+    CaseNodeDataWithSchema addCompositeChild(final CaseSchemaNode schema) {
+        CaseNodeDataWithSchema newChild = new CaseNodeDataWithSchema(schema);
         caseNodeDataWithSchema = newChild;
         addCompositeChild(newChild);
         return newChild;
     }
 
-    public CaseNodeDataWithSchema getCase() {
+    CaseNodeDataWithSchema getCase() {
         return caseNodeDataWithSchema;
     }
 
