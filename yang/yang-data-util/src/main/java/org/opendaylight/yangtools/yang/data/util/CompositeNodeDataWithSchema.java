@@ -86,9 +86,11 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             caseCandidate.getClass());
         final CaseSchemaNode caseNode = (CaseSchemaNode) caseCandidate;
 
-        AugmentationSchemaNode augSchema = null;
+        final AugmentationSchemaNode augSchema;
         if (choiceCandidate.isAugmenting()) {
             augSchema = findCorrespondingAugment(getSchema(), choiceCandidate);
+        } else {
+            augSchema = null;
         }
 
         // looking for existing choice
@@ -110,7 +112,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
     }
 
     private AbstractNodeDataWithSchema<?> addSimpleChild(final DataSchemaNode schema) {
-        SimpleNodeDataWithSchema<?> newChild = null;
+        final SimpleNodeDataWithSchema<?> newChild;
         if (schema instanceof LeafSchemaNode) {
             newChild = new LeafNodeDataWithSchema((LeafSchemaNode) schema);
         } else if (schema instanceof AnyXmlSchemaNode) {
@@ -125,9 +127,11 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             return null;
         }
 
-        AugmentationSchemaNode augSchema = null;
+        final AugmentationSchemaNode augSchema;
         if (schema.isAugmenting()) {
             augSchema = findCorrespondingAugment(getSchema(), schema);
+        } else {
+            augSchema = null;
         }
         if (augSchema != null) {
             augmentationsToChild.put(augSchema, newChild);
@@ -176,8 +180,8 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
         return newChild;
     }
 
-    void addCompositeChild(final CompositeNodeDataWithSchema<?> newChild) {
-        AugmentationSchemaNode augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
+    final void addCompositeChild(final CompositeNodeDataWithSchema<?> newChild) {
+        final AugmentationSchemaNode augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
         if (augSchema != null) {
             augmentationsToChild.put(augSchema, newChild);
         } else {
