@@ -103,9 +103,9 @@ public final class CrossSourceStatementReactor {
         /**
          * Add main source. All main sources are present in resulting SchemaContext.
          *
-         * @param source
-         *            which should be added into main sources
+         * @param source which should be added into main sources
          * @return This build action, for fluent use.
+         * @throws NullPointerException if @{code source} is null
          */
         public @NonNull BuildAction addSource(final StatementStreamSource source) {
             context.addSource(source);
@@ -115,19 +115,42 @@ public final class CrossSourceStatementReactor {
         /**
          * Add main sources. All main sources are present in resulting SchemaContext.
          *
-         * @param sources
-         *            which should be added into main sources
+         * @param sources which should be added into main sources
          * @return This build action, for fluent use.
+         * @throws NullPointerException if @{code sources} is null or contains a null element
          */
         public @NonNull BuildAction addSources(final StatementStreamSource... sources) {
             addSources(Arrays.asList(sources));
             return this;
         }
 
+        /**
+         * Add main sources. All main sources are present in resulting SchemaContext.
+         *
+         * @param sources which should be added into main sources
+         * @return This build action, for fluent use.
+         * @throws NullPointerException if @{code sources} is null or contains a null element
+         */
         public @NonNull BuildAction addSources(final @NonNull Collection<? extends StatementStreamSource> sources) {
             for (final StatementStreamSource source : sources) {
                 context.addSource(requireNonNull(source));
             }
+            return this;
+        }
+
+        /**
+         * Add a library source. Only library sources required by main sources are present in resulting SchemaContext.
+         * Any other library sources are ignored and this also applies to error reporting.
+         *
+         * <p>
+         * Library sources are not supported in semantic version mode currently.
+         *
+         * @param libSource source which should be added into library sources
+         * @return This build action, for fluent use.
+         * @throws NullPointerException if @{code libSource} is null
+         */
+        public @NonNull BuildAction addLibSource(final StatementStreamSource libSource) {
+            context.addLibSource(libSource);
             return this;
         }
 
@@ -138,14 +161,26 @@ public final class CrossSourceStatementReactor {
          * <p>
          * Library sources are not supported in semantic version mode currently.
          *
-         * @param libSources yang sources which should be added into library sources
+         * @param libSources sources which should be added into library sources
          * @return This build action, for fluent use.
+         * @throws NullPointerException if @{code libSources} is null or contains a null element
          */
         public @NonNull BuildAction addLibSources(final StatementStreamSource... libSources) {
             addLibSources(Arrays.asList(libSources));
             return this;
         }
 
+        /**
+         * Add library sources. Only library sources required by main sources are present in resulting SchemaContext.
+         * Any other library sources are ignored and this also applies to error reporting.
+         *
+         * <p>
+         * Library sources are not supported in semantic version mode currently.
+         *
+         * @param libSources sources which should be added into library sources
+         * @return This build action, for fluent use.
+         * @throws NullPointerException if @{code libSources} is null or contains a null element
+         */
         public @NonNull BuildAction addLibSources(final Collection<StatementStreamSource> libSources) {
             for (final StatementStreamSource libSource : libSources) {
                 context.addLibSource(libSource);
