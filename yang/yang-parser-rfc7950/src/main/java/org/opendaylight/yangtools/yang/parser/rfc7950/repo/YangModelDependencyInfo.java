@@ -210,9 +210,7 @@ public abstract class YangModelDependencyInfo {
             throws IOException, YangSyntaxErrorException {
         final YangStatementStreamSource source = YangStatementStreamSource.create(
             YangTextSchemaSource.forResource(refClass, resourceName));
-        final ParserRuleContext ast = source.getYangAST();
-        checkArgument(ast instanceof StatementContext);
-        return parseAST((StatementContext) ast, source.getIdentifier());
+        return parseAST(source.statementContext(), source.getIdentifier());
     }
 
     private static @NonNull YangModelDependencyInfo parseModuleContext(final StatementContext module,

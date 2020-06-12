@@ -5,13 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.Futures;
 import java.io.IOException;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
@@ -41,11 +39,11 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
     public static ASTSchemaSource transformText(final YangTextSchemaSource text) throws SchemaSourceException,
             IOException, YangSyntaxErrorException {
         final YangStatementStreamSource src = YangStatementStreamSource.create(text);
-        final ParserRuleContext ctx = src.getYangAST();
         LOG.debug("Model {} parsed successfully", text);
 
         // TODO: missing validation (YangModelBasicValidationListener should be re-implemented to new parser)
 
-        return ASTSchemaSource.create(text.getIdentifier(), text.getSymbolicName().orElse(null), ctx);
+        return ASTSchemaSource.create(text.getIdentifier(), text.getSymbolicName().orElse(null),
+            src.statementContext());
     }
 }
