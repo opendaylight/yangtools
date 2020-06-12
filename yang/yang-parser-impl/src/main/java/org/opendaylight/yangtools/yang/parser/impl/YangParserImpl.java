@@ -63,7 +63,7 @@ final class YangParserImpl implements YangParser {
     @Override
     public @NonNull YangParser addSource(final SchemaSourceRepresentation source) throws IOException,
             YangSyntaxErrorException {
-        buildAction.addSources(sourceToStatementStream(source));
+        buildAction.addSource(sourceToStatementStream(source));
         return this;
     }
 
