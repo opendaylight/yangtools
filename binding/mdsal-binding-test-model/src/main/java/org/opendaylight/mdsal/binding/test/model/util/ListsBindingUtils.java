@@ -70,7 +70,7 @@ public final class ListsBindingUtils {
     }
 
     public static TopLevelList topLevelList(final TopLevelListKey key, final TreeComplexUsesAugment augment) {
-        return new TopLevelListBuilder().withKey(key).addAugmentation(TreeComplexUsesAugment.class, augment).build();
+        return new TopLevelListBuilder().withKey(key).addAugmentation(augment).build();
     }
 
     public static TreeComplexUsesAugment complexUsesAugment(final ListViaUsesKey... keys) {
@@ -82,8 +82,6 @@ public final class ListsBindingUtils {
     }
 
     public static TreeLeafOnlyUsesAugment leafOnlyUsesAugment(final String leafFromGroupingValue) {
-
         return new TreeLeafOnlyUsesAugmentBuilder().setLeafFromGrouping(leafFromGroupingValue).build();
     }
-
 }
