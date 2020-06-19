@@ -66,6 +66,11 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-data-codec-binfmt</artifactId>
+                <version>3.0.12-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-codec-gson</artifactId>
                 <version>3.0.12-SNAPSHOT</version>
             </dependency>
