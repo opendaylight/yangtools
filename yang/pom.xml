@@ -30,6 +30,7 @@
         <module>yang-data-util</module>
         <module>yang-data-impl</module>
         <module>yang-data-transform</module>
+        <module>yang-data-codec-binfmt</module>
         <module>yang-data-codec-gson</module>
         <module>yang-data-codec-xml</module>
         <module>yang-maven-plugin</module>
