@@ -13,8 +13,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -29,11 +27,10 @@ public final class EnumStringCodec extends TypeDefinitionAwareCodec<String, Enum
 
     private EnumStringCodec(final @NonNull EnumTypeDefinition typeDef) {
         super(typeDef, String.class);
-
-        values = Maps.uniqueIndex(typeDef.getValues().stream()
-            // Intern the String to get wide reuse
-            .map(pair -> pair.getName().intern())
-            .collect(Collectors.toList()), Functions.identity());
+        values = typeDef.getValues().stream()
+                // Intern the String to get wide reuse
+                .map(pair -> pair.getName().intern())
+                .collect(ImmutableMap.toImmutableMap(Functions.identity(), Functions.identity()));
     }
 
     public static EnumStringCodec from(final EnumTypeDefinition normalizedType) {
