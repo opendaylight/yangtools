@@ -34,7 +34,7 @@ public final class YangLiteralExpr implements YangExpr {
 
     private final String literal;
 
-    protected YangLiteralExpr(final String literal) {
+    YangLiteralExpr(final String literal) {
         this.literal = requireNonNull(literal);
     }
 

@@ -22,7 +22,6 @@ import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyTr
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +30,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import javax.xml.xpath.XPathExpressionException;
@@ -111,8 +109,8 @@ abstract class AntlrXPathParser implements YangXPathParser {
 
         @Override
         public YangXPathExpression parseExpression(final String xpath) throws XPathExpressionException {
-            final Entry<YangVersion, YangExpr> result = parseExpr(xpath);
-            return new AntlrYangXPathExpression.Base(mathMode, result.getKey(), result.getValue(), xpath);
+            final ParseExprResult result = parseExpr(xpath);
+            return new AntlrYangXPathExpression.Base(mathMode, result.minimumYangVersion, result.expression, xpath);
         }
 
         @Override
@@ -148,8 +146,8 @@ abstract class AntlrXPathParser implements YangXPathParser {
 
         @Override
         public YangXPathExpression.QualifiedBound parseExpression(final String xpath) throws XPathExpressionException {
-            final Entry<YangVersion, YangExpr> result = parseExpr(xpath);
-            return new AntlrYangXPathExpression.Qualified(mathMode, result.getKey(), result.getValue(), xpath,
+            final ParseExprResult result = parseExpr(xpath);
+            return new AntlrYangXPathExpression.Qualified(mathMode, result.minimumYangVersion, result.expression, xpath,
                 namespaceContext);
         }
 
@@ -177,10 +175,10 @@ abstract class AntlrXPathParser implements YangXPathParser {
         @Override
         public YangXPathExpression.UnqualifiedBound parseExpression(final String xpath)
                 throws XPathExpressionException {
-            final Entry<YangVersion, YangExpr> result = parseExpr(xpath);
+            final ParseExprResult result = parseExpr(xpath);
 
-            return new AntlrYangXPathExpression.Unqualified(mathMode, result.getKey(), result.getValue(), xpath,
-                namespaceContext, defaultNamespace);
+            return new AntlrYangXPathExpression.Unqualified(mathMode, result.minimumYangVersion, result.expression,
+                xpath, namespaceContext, defaultNamespace);
         }
 
         @Override
@@ -192,6 +190,16 @@ abstract class AntlrXPathParser implements YangXPathParser {
         ResolvedQNameStep createStep(final YangXPathAxis axis, final String localName,
                 final List<YangExpr> predicates) {
             return axis.asStep(QName.create(defaultNamespace, localName), predicates);
+        }
+    }
+
+    private static final class ParseExprResult {
+        final YangVersion minimumYangVersion;
+        final YangExpr expression;
+
+        ParseExprResult(final YangVersion minimumYangVersion, final YangExpr expression) {
+            this.minimumYangVersion = requireNonNull(minimumYangVersion);
+            this.expression = requireNonNull(expression);
         }
     }
 
@@ -240,7 +248,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    final Entry<YangVersion, YangExpr> parseExpr(final String xpath) throws XPathExpressionException {
+    final ParseExprResult parseExpr(final String xpath) throws XPathExpressionException {
         // Create a parser and disconnect it from console error output
         final xpathLexer lexer = new xpathLexer(CharStreams.fromString(xpath));
         final xpathParser parser = new xpathParser(new CommonTokenStream(lexer));
@@ -262,7 +270,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
         } catch (RuntimeException e) {
             throw new XPathExpressionException(e);
         }
-        return new SimpleImmutableEntry<>(minimumYangVersion, expr);
+        return new ParseExprResult(minimumYangVersion, expr);
     }
 
     /**

@@ -40,7 +40,7 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
     }
 
     static class Qualified extends AntlrYangXPathExpression implements QualifiedBound {
-        final YangNamespaceContext namespaceContext;
+        private final YangNamespaceContext namespaceContext;
 
         Qualified(final YangXPathMathMode mathMode, final YangVersion yangVersion, final YangExpr rootExpr,
                 final String origStr, final YangNamespaceContext namespaceContext) {
@@ -48,7 +48,7 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
             this.namespaceContext = requireNonNull(namespaceContext);
         }
 
-        YangNamespaceContext getNamespaceContext() {
+        final YangNamespaceContext namespaceContext() {
             return namespaceContext;
         }
 
@@ -74,7 +74,7 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
 
         @Override
         public Resolved interpretAsQName(final YangLiteralExpr expr) throws XPathExpressionException {
-            return Utils.interpretAsQName(getNamespaceContext(), defaultNamespace, expr);
+            return Utils.interpretAsQName(namespaceContext(), defaultNamespace, expr);
         }
     }
 
