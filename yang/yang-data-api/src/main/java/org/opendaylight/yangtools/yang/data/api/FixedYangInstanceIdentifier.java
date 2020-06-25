@@ -25,7 +25,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
     private final ImmutableList<PathArgument> path;
     private transient volatile YangInstanceIdentifier parent;
 
-    private FixedYangInstanceIdentifier(final ImmutableList<PathArgument> path, final int hash) {
+    FixedYangInstanceIdentifier(final ImmutableList<PathArgument> path, final int hash) {
         super(hash);
         this.path = requireNonNull(path, "path must not be null.");
     }
