@@ -195,6 +195,12 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         return FixedYangInstanceIdentifier.create(path, hash.build());
     }
 
+    @Beta
+    public static @NonNull YangInstanceIdentifier create(final PathArgument pathArgument) {
+        return new FixedYangInstanceIdentifier(ImmutableList.of(pathArgument),
+            HashCodeBuilder.nextHashCode(1, pathArgument));
+    }
+
     public static @NonNull YangInstanceIdentifier create(final PathArgument... path) {
         // We are forcing a copy, since we cannot trust the user
         return create(Arrays.asList(path));
