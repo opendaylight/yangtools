@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 /**
  * Event Stream Writer based on Normalized Node tree representation.
  *
- * <h3>Writing Event Stream</h3>
+ * <h2>Writing Event Stream</h2>
  * Each entity is emitted by invoking its corresponding {@code start*} event, optionally followed by interior events and
  * invoking {@link #endNode()}. Some entities supported nested entities, some do not, see below for restrictions.
  *
@@ -392,6 +392,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      * @throws IllegalArgumentException if the argument does not represents a valid value
      * @throws IllegalStateException if a value-bearing node is not open or if it's value has already been set and this
      *                               implementation does not allow resetting the value.
+     * @throws IOException if an underlying IO error occurs
      */
     void scalarValue(@NonNull Object value) throws IOException;
 
