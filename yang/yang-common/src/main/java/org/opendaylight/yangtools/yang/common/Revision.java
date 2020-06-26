@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 /**
  * Dedicated object identifying a YANG module revision.
  *
- * <h3>API design note</h3>
+ * <h2>API design note</h2>
  * This class defines the contents of a revision statement, but modules do not require to have a revision (e.g. they
  * have not started to keep track of revisions).
  *
