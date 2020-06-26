@@ -12,8 +12,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 /**
  * Interface holding the common trait of {@link LeafSetEntryNode} and {@link LeafNode}, which both hold a value.
  *
- * @author Robert Varga
- *
  * @param <K> Local identifier of node
  * @param <V> Value of node
  */
@@ -21,13 +19,11 @@ public interface ValueNode<K extends PathArgument, V> extends NormalizedNode<K, 
     /**
      * Returns value of held by this node.
      *
-     * <h3>Implementation notes</h3> Invocation of {@link #getValue()} must
-     * provides same value as value in {@link #getIdentifier()}.
-     * <code>true == this.getIdentifier().getValue().equals(this.getValue())</code>
+     * <b>Implementation note</b>
+     * Invocation of {@link #getValue()} must provide the same value as value in {@link #getIdentifier()}.
+     * {@code true == this.getIdentifier().getValue().equals(this.getValue())}.
      *
-     * @return Returned value of this node. Value SHOULD meet criteria
-     *         defined by schema.
-     *
+     * @return Returned value of this node. Value SHOULD meet criteria defined by schema.
      */
     @Override
     V getValue();

@@ -53,31 +53,24 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  * Unique identifier of a particular node instance in the data tree.
  *
  * <p>
- * Java representation of YANG Built-in type <code>instance-identifier</code>,
- * which conceptually is XPath expression minimized to uniquely identify element
- * in data tree which conforms to constraints maintained by YANG Model,
+ * Java representation of YANG Built-in type {@code instance-identifier}, which conceptually is XPath expression
+ * minimized to uniquely identify element in data tree which conforms to constraints maintained by YANG Model,
  * effectively this makes Instance Identifier a path to element in data tree.
  *
  * <p>
- * Constraints put in YANG specification on instance-identifier allowed it to be
- * effectively represented in Java and it's evaluation does not require
- * full-blown XPath processor.
+ * Constraints put in YANG specification on instance-identifier allowed it to be effectively represented in Java and its
+ * evaluation does not require a full-blown XPath processor.
  *
- * <p>
- * <h3>Path Arguments</h3>
- * Path to the node represented in instance identifier consists of
- * {@link PathArgument} which carries necessary information to uniquely identify
- * node on particular level in the subtree.
+ * <h2>Path Arguments</h2>
+ * Path to the node represented in instance identifier consists of {@link PathArgument} which carries necessary
+ * information to uniquely identify node on particular level in the subtree.
  *
  * <ul>
- * <li>{@link NodeIdentifier} - Identifier of node, which has cardinality
- * <code>0..1</code> in particular subtree in data tree.</li>
- * <li>{@link NodeIdentifierWithPredicates} - Identifier of node (list item),
- * which has cardinality <code>0..n</code>.</li>
- * <li>{@link NodeWithValue} - Identifier of instance <code>leaf</code> node or
- * <code>leaf-list</code> node.</li>
- * <li>{@link AugmentationIdentifier} - Identifier of instance of
- * <code>augmentation</code> node.</li>
+ *   <li>{@link NodeIdentifier} - Identifier of node, which has cardinality {@code 0..1} in particular subtree in data
+ *       tree</li>
+ *   <li>{@link NodeIdentifierWithPredicates} - Identifier of node (list item), which has cardinality {@code 0..n}</li>
+ *   <li>{@link NodeWithValue} - Identifier of instance {@code leaf} node or {@code leaf-list} node</li>
+ *   <li>{@link AugmentationIdentifier} - Identifier of instance of {@code augmentation} node</li>
  * </ul>
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
