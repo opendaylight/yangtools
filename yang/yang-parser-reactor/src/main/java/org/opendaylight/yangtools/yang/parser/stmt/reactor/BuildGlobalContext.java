@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Verify;
@@ -29,6 +30,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -69,7 +71,6 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
-            ModelProcessingPhase.SOURCE_PRE_LINKAGE,
             ModelProcessingPhase.SOURCE_LINKAGE,
             ModelProcessingPhase.STATEMENT_DEFINITION,
             ModelProcessingPhase.FULL_DECLARATION,
@@ -85,7 +86,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     private final ImmutableSet<YangVersion> supportedVersions;
     private final boolean enabledSemanticVersions;
 
-    private Set<SourceSpecificContext> libSources = new HashSet<>();
+    private final Set<SourceSpecificContext> libSources = new HashSet<>();
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
@@ -213,11 +214,212 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     private void executePhases() throws ReactorException {
+        // Pre-linkage is slightly special and therefore peeled out of the loop in a separate method
+        // Pre-linkage handling. We do not want to touch libSources before we have acquired all requirements from
+        // libraries.
+        executeSourcePreLinkage();
+
         for (final ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase);
             loadPhaseStatements();
             completePhaseActions();
             endPhase(phase);
+        }
+    }
+
+    private void executeSourcePreLinkage() throws ReactorException {
+        // Source pre-linkage. At this stage we need to discover all the sources we have required in the reactor as
+        // well as any sources we need from the library...
+        startPhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE);
+        loadPhaseStatements();
+        completePhaseActions();
+        endPhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE);
+
+        // We have some source in the library, let's see if anything needs to be pulled in
+        if (!libSources.isEmpty()) {
+            populateSourcesFromLibrary();
+        }
+    }
+
+    private void populateSourcesFromLibrary() throws ReactorException {
+        // .. we will then see what are the required sources and remove any exact matches satisfied by sources.
+        final Set<SourceIdentifier> requiredExactSources = new HashSet<>();
+        final Set<SourceIdentifier> requiredInexactSources = new HashSet<>();
+        final Set<SourceIdentifier> currentSources = new HashSet<>();
+        for (SourceSpecificContext source : sources) {
+            addReactorSource(source, currentSources, requiredExactSources, requiredInexactSources);
+        }
+
+        // Pulling a source into the reactor can introduce further dependencies, hence we are looping here. We are
+        // trying to do some guesswork at each step so that we minimize the churn we cause in libSources
+        while (!libSources.isEmpty() && !(requiredExactSources.isEmpty() && requiredInexactSources.isEmpty())) {
+            requiredExactSources.removeAll(currentSources);
+
+            if (populateExactSourcesFromLibrary(currentSources, requiredExactSources, requiredInexactSources)) {
+                // reactor has been modified, run another loop
+                continue;
+            }
+            if (!requiredExactSources.isEmpty()) {
+                // We have an unsatisfied exact requirement, there is no point to go further
+                break;
+            }
+
+            if (populateInexactSourcesFromLibrary(currentSources, requiredExactSources, requiredInexactSources)) {
+                // reactor has been modified, run another loop
+                continue;
+            }
+
+            if (!requiredInexactSources.isEmpty()) {
+                // We have an unsatisfied inexact requirement, there is no point to go further
+                break;
+            }
+        }
+    }
+
+    private static void addReactorSource(final SourceSpecificContext source, final Set<SourceIdentifier> currentSources,
+            final Set<SourceIdentifier> requiredExactSources, final Set<SourceIdentifier> requiredInexactSources) {
+        for (SourceIdentifier req : source.getRequiredSources()) {
+            if (req.getRevision().isPresent()) {
+                requiredExactSources.add(req);
+            } else {
+                requiredInexactSources.add(req);
+            }
+        }
+        currentSources.add(source.getRootIdentifier());
+    }
+
+    private boolean populateExactSourcesFromLibrary(final Set<SourceIdentifier> currentSources,
+            final Set<SourceIdentifier> requiredExactSources, final Set<SourceIdentifier> requiredInexactSources)
+                    throws ReactorException {
+        final Iterator<SourceIdentifier> reqIt = requiredExactSources.iterator();
+        if (reqIt.hasNext()) {
+            final SourceIdentifier toFind = reqIt.next();
+            final Iterator<SourceSpecificContext> sourceIt = libSources.iterator();
+            while (sourceIt.hasNext()) {
+                final SourceSpecificContext source = sourceIt.next();
+                ensurePreLinkage(source);
+                if (toFind.equals(source.getRootIdentifier())) {
+                    reqIt.remove();
+                    sourceIt.remove();
+                    sources.add(source);
+                    addReactorSource(source, currentSources, requiredExactSources, requiredInexactSources);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private void ensurePreLinkage(final SourceSpecificContext source) throws ReactorException {
+        if (source.getFinishedPhase() != ModelProcessingPhase.SOURCE_PRE_LINKAGE) {
+            source.startPhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE);
+            loadPhaseStatements(source);
+
+            final PhaseCompletionProgress progress = source.tryToCompletePhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE);
+            verify(progress == PhaseCompletionProgress.FINISHED, "Unexpected progress %s in source %s", progress,
+                    source);
+        }
+    }
+
+    private boolean populateInexactSourcesFromLibrary(final Set<SourceIdentifier> currentSources,
+            final Set<SourceIdentifier> requiredExactSources, final Set<SourceIdentifier> requiredInexactSources)
+                    throws ReactorException {
+        if (!requiredInexactSources.isEmpty()) {
+            final Set<String> names = currentSources.stream()
+                    .map(SourceIdentifier::getName)
+                    .collect(Collectors.toSet());
+            // Check one: eliminate anything satistified by current sources
+            Iterator<SourceIdentifier> reqIt = requiredInexactSources.iterator();
+            while (reqIt.hasNext()) {
+                if (names.contains(reqIt.next().getName())) {
+                    reqIt.remove();
+                }
+            }
+
+            // Now try to satisfy the first remaining source. If we cannot satisfy one, we'll just give up
+            reqIt = requiredInexactSources.iterator();
+            if (reqIt.hasNext()) {
+                final String toFind = reqIt.next().getName();
+                SourceSpecificContext found = null;
+
+                for (SourceSpecificContext source : libSources) {
+                    ensurePreLinkage(source);
+                    final SourceIdentifier sourceId = source.getRootIdentifier();
+                    if (toFind.equals(sourceId.getName()) && (found == null
+                            || Revision.compare(found.getRootIdentifier().getRevision(), sourceId.getRevision()) > 0)) {
+                        found = source;
+                    }
+                }
+
+                if (found != null) {
+                    libSources.remove(found);
+                    reqIt.remove();
+                    sources.add(found);
+                    addReactorSource(found, currentSources, requiredExactSources, requiredInexactSources);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private Set<SourceSpecificContext> getRequiredSourcesFromLib() {
+        checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+                "Required library sources can be collected only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase,"
+                        + " but current phase was %s", currentPhase);
+        final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable = TreeBasedTable.create(
+            String::compareTo, Revision::compare);
+        for (final SourceSpecificContext libSource : libSources) {
+            final SourceIdentifier libSourceIdentifier = requireNonNull(libSource.getRootIdentifier());
+            libSourcesTable.put(libSourceIdentifier.getName(), libSourceIdentifier.getRevision(), libSource);
+        }
+
+        final Set<SourceSpecificContext> requiredLibs = new HashSet<>();
+        for (final SourceSpecificContext source : sources) {
+            collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, source);
+            removeConflictingLibSources(source, requiredLibs);
+        }
+        return requiredLibs;
+    }
+
+    private void collectRequiredSourcesFromLib(
+            final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable,
+            final Set<SourceSpecificContext> requiredLibs, final SourceSpecificContext source) {
+        for (final SourceIdentifier requiredSource : source.getRequiredSources()) {
+            final SourceSpecificContext libSource = getRequiredLibSource(requiredSource, libSourcesTable);
+            if (libSource != null && requiredLibs.add(libSource)) {
+                collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, libSource);
+            }
+        }
+    }
+
+    private static SourceSpecificContext getRequiredLibSource(final SourceIdentifier requiredSource,
+            final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable) {
+        return requiredSource.getRevision().isPresent()
+                ? libSourcesTable.get(requiredSource.getName(), requiredSource.getRevision())
+                        : getLatestRevision(libSourcesTable.row(requiredSource.getName()));
+    }
+
+    private static SourceSpecificContext getLatestRevision(final SortedMap<Optional<Revision>,
+            SourceSpecificContext> sourceMap) {
+        return sourceMap != null && !sourceMap.isEmpty() ? sourceMap.get(sourceMap.lastKey()) : null;
+    }
+
+    // removes required library sources which would cause namespace/name conflict with one of the main sources
+    // later in the parsing process. this can happen if we add a parent module or a submodule as a main source
+    // and the same parent module or submodule is added as one of the library sources.
+    // such situation may occur when using the yang-system-test artifact - if a parent module/submodule is specified
+    // as its argument and the same dir is specified as one of the library dirs through -p option).
+    private static void removeConflictingLibSources(final SourceSpecificContext source,
+            final Set<SourceSpecificContext> requiredLibs) {
+        final Iterator<SourceSpecificContext> requiredLibsIter = requiredLibs.iterator();
+        while (requiredLibsIter.hasNext()) {
+            final SourceSpecificContext currentReqSource = requiredLibsIter.next();
+            if (source.getRootIdentifier().equals(currentReqSource.getRootIdentifier())) {
+                requiredLibsIter.remove();
+            }
         }
     }
 
@@ -283,7 +485,6 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     private void startPhase(final ModelProcessingPhase phase) {
         checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
         startPhaseFor(phase, sources);
-        startPhaseFor(phase, libSources);
 
         currentPhase = phase;
         LOG.debug("Global phase {} started", phase);
@@ -298,17 +499,20 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     private void loadPhaseStatements() throws ReactorException {
         checkState(currentPhase != null);
         loadPhaseStatementsFor(sources);
-        loadPhaseStatementsFor(libSources);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private void loadPhaseStatementsFor(final Set<SourceSpecificContext> srcs) throws ReactorException {
         for (final SourceSpecificContext source : srcs) {
-            try {
-                source.loadStatements();
-            } catch (final RuntimeException ex) {
-                throw propagateException(source, ex);
-            }
+            loadPhaseStatements(source);
+        }
+    }
+
+    private void loadPhaseStatements(final SourceSpecificContext source) throws ReactorException {
+        try {
+            source.loadStatements();
+        } catch (final RuntimeException ex) {
+            throw propagateException(source, ex);
         }
     }
 
@@ -357,13 +561,6 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     private void completePhaseActions() throws ReactorException {
         checkState(currentPhase != null);
         final List<SourceSpecificContext> sourcesToProgress = new ArrayList<>(sources);
-        if (!libSources.isEmpty()) {
-            checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                    "Yang library sources should be empty after ModelProcessingPhase.SOURCE_PRE_LINKAGE, "
-                            + "but current phase was %s", currentPhase);
-            sourcesToProgress.addAll(libSources);
-        }
-
         boolean progressing = true;
         while (progressing) {
             // We reset progressing to false.
@@ -394,79 +591,10 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
             }
         }
 
-        if (!libSources.isEmpty()) {
-            final Set<SourceSpecificContext> requiredLibs = getRequiredSourcesFromLib();
-            sources.addAll(requiredLibs);
-            libSources = ImmutableSet.of();
-            /*
-             * We want to report errors of relevant sources only, so any others can
-             * be removed.
-             */
-            sourcesToProgress.retainAll(sources);
-        }
-
         if (!sourcesToProgress.isEmpty()) {
             final SomeModifiersUnresolvedException buildFailure = addSourceExceptions(sourcesToProgress);
             if (buildFailure != null) {
                 throw buildFailure;
-            }
-        }
-    }
-
-    private Set<SourceSpecificContext> getRequiredSourcesFromLib() {
-        checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                "Required library sources can be collected only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase,"
-                        + " but current phase was %s", currentPhase);
-        final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable = TreeBasedTable.create(
-            String::compareTo, Revision::compare);
-        for (final SourceSpecificContext libSource : libSources) {
-            final SourceIdentifier libSourceIdentifier = requireNonNull(libSource.getRootIdentifier());
-            libSourcesTable.put(libSourceIdentifier.getName(), libSourceIdentifier.getRevision(), libSource);
-        }
-
-        final Set<SourceSpecificContext> requiredLibs = new HashSet<>();
-        for (final SourceSpecificContext source : sources) {
-            collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, source);
-            removeConflictingLibSources(source, requiredLibs);
-        }
-        return requiredLibs;
-    }
-
-    private void collectRequiredSourcesFromLib(
-            final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable,
-            final Set<SourceSpecificContext> requiredLibs, final SourceSpecificContext source) {
-        for (final SourceIdentifier requiredSource : source.getRequiredSources()) {
-            final SourceSpecificContext libSource = getRequiredLibSource(requiredSource, libSourcesTable);
-            if (libSource != null && requiredLibs.add(libSource)) {
-                collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, libSource);
-            }
-        }
-    }
-
-    private static SourceSpecificContext getRequiredLibSource(final SourceIdentifier requiredSource,
-            final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable) {
-        return requiredSource.getRevision().isPresent()
-                ? libSourcesTable.get(requiredSource.getName(), requiredSource.getRevision())
-                        : getLatestRevision(libSourcesTable.row(requiredSource.getName()));
-    }
-
-    private static SourceSpecificContext getLatestRevision(final SortedMap<Optional<Revision>,
-            SourceSpecificContext> sourceMap) {
-        return sourceMap != null && !sourceMap.isEmpty() ? sourceMap.get(sourceMap.lastKey()) : null;
-    }
-
-    // removes required library sources which would cause namespace/name conflict with one of the main sources
-    // later in the parsing process. this can happen if we add a parent module or a submodule as a main source
-    // and the same parent module or submodule is added as one of the library sources.
-    // such situation may occur when using the yang-system-test artifact - if a parent module/submodule is specified
-    // as its argument and the same dir is specified as one of the library dirs through -p option).
-    private static void removeConflictingLibSources(final SourceSpecificContext source,
-            final Set<SourceSpecificContext> requiredLibs) {
-        final Iterator<SourceSpecificContext> requiredLibsIter = requiredLibs.iterator();
-        while (requiredLibsIter.hasNext()) {
-            final SourceSpecificContext currentReqSource = requiredLibsIter.next();
-            if (source.getRootIdentifier().equals(currentReqSource.getRootIdentifier())) {
-                requiredLibsIter.remove();
             }
         }
     }
