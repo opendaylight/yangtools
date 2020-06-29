@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_PRE_LINKAGE;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.base.Verify;
@@ -57,10 +57,10 @@ abstract class AbstractImportStatementSupport
         stmt.addRequiredSource(RevisionImport.getImportedSourceIdentifier(stmt));
 
         final String moduleName = stmt.coerceStatementArgument();
-        final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
+        final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt,
-                PreLinkageModuleNamespace.class, moduleName, SOURCE_PRE_LINKAGE);
-        importAction.mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
+                PreLinkageModuleNamespace.class, moduleName, SOURCE_LINKAGE);
+        importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
             @Override

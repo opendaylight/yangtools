@@ -95,6 +95,10 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         return globalContext;
     }
 
+    ModelProcessingPhase getFinishedPhase() {
+        return finishedPhase;
+    }
+
     ModelProcessingPhase getInProgressPhase() {
         return inProgressPhase;
     }
