@@ -14,6 +14,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser;
@@ -34,7 +35,8 @@ public final class XPathSupport {
 
     public RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String xpath) {
         final boolean isAbsolute = ArgumentUtils.isAbsoluteXPath(xpath);
-        final YangXPathParser.QualifiedBound parser = factory.newParser(new StmtNamespaceContext(ctx));
+        final YangXPathParser.QualifiedBound parser = factory.newParser(
+            YangNamespaceContextNamespace.computeIfAbsent(ctx));
         final QualifiedBound parsed;
         try {
             parsed = parser.parseExpression(xpath);
