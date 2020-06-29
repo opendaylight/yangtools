@@ -148,7 +148,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
         public YangXPathExpression.QualifiedBound parseExpression(final String xpath) throws XPathExpressionException {
             final ParseExprResult result = parseExpr(xpath);
             return new AntlrYangXPathExpression.Qualified(mathMode, result.minimumYangVersion, result.expression, xpath,
-                namespaceContext);
+                result.haveLiteral ? namespaceContext : null);
         }
 
         @Override
@@ -178,7 +178,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
             final ParseExprResult result = parseExpr(xpath);
 
             return new AntlrYangXPathExpression.Unqualified(mathMode, result.minimumYangVersion, result.expression,
-                xpath, namespaceContext, defaultNamespace);
+                xpath, result.haveLiteral ? namespaceContext : null, defaultNamespace);
         }
 
         @Override
@@ -196,10 +196,12 @@ abstract class AntlrXPathParser implements YangXPathParser {
     private static final class ParseExprResult {
         final YangVersion minimumYangVersion;
         final YangExpr expression;
+        final boolean haveLiteral;
 
-        ParseExprResult(final YangVersion minimumYangVersion, final YangExpr expression) {
+        ParseExprResult(final YangVersion minimumYangVersion, final YangExpr expression, final boolean haveLiteral) {
             this.minimumYangVersion = requireNonNull(minimumYangVersion);
             this.expression = requireNonNull(expression);
+            this.haveLiteral = haveLiteral;
         }
     }
 
@@ -220,6 +222,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
     private final FunctionSupport functionSupport;
 
     private YangVersion minimumYangVersion = YangVersion.VERSION_1;
+    private boolean haveLiteral = false;
 
     AntlrXPathParser(final YangXPathMathMode mathMode) {
         this.mathMode = requireNonNull(mathMode);
@@ -263,6 +266,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
 
         // Reset our internal context
         minimumYangVersion = YangVersion.VERSION_1;
+        haveLiteral = false;
 
         final YangExpr expr;
         try {
@@ -270,7 +274,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
         } catch (RuntimeException e) {
             throw new XPathExpressionException(e);
         }
-        return new ParseExprResult(minimumYangVersion, expr);
+        return new ParseExprResult(minimumYangVersion, expr, haveLiteral);
     }
 
     /**
@@ -349,7 +353,12 @@ abstract class AntlrXPathParser implements YangXPathParser {
             if (minimumYangVersion.compareTo(func.getYangVersion()) < 0) {
                 minimumYangVersion = func.getYangVersion();
             }
-            return functionSupport.functionToExpr(func, args);
+
+            final YangExpr funcExpr = functionSupport.functionToExpr(func, args);
+            if (funcExpr instanceof YangLiteralExpr) {
+                haveLiteral = true;
+            }
+            return funcExpr;
         }
 
         checkArgument(!YangConstants.RFC6020_YIN_MODULE.equals(parsed.getModule()), "Unknown default function %s",
@@ -465,6 +474,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
         switch (term.getSymbol().getType()) {
             case xpathParser.Literal:
                 // We have to strip quotes
+                haveLiteral = true;
                 return YangLiteralExpr.of(text.substring(1, text.length() - 1));
             case xpathParser.Number:
                 return mathSupport.createNumber(text);

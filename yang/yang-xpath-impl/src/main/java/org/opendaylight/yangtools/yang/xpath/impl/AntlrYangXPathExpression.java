@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.xpath.impl;
 import static java.util.Objects.requireNonNull;
 
 import javax.xml.xpath.XPathExpressionException;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -40,26 +41,30 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
     }
 
     static class Qualified extends AntlrYangXPathExpression implements QualifiedBound {
-        private final YangNamespaceContext namespaceContext;
+        private final @Nullable YangNamespaceContext namespaceContext;
 
         Qualified(final YangXPathMathMode mathMode, final YangVersion yangVersion, final YangExpr rootExpr,
-                final String origStr, final YangNamespaceContext namespaceContext) {
+                final String origStr, final @Nullable YangNamespaceContext namespaceContext) {
             super(mathMode, yangVersion, rootExpr, origStr);
-            this.namespaceContext = requireNonNull(namespaceContext);
+            this.namespaceContext = namespaceContext;
         }
 
-        final YangNamespaceContext namespaceContext() {
-            return namespaceContext;
+        final YangNamespaceContext namespaceContext() throws XPathExpressionException {
+            final YangNamespaceContext local = namespaceContext;
+            if (local == null) {
+                throw new XPathExpressionException("Expression does not have a legal literal member");
+            }
+            return local;
         }
 
         @Override
         public YangQNameExpr interpretAsQName(final YangLiteralExpr expr) throws XPathExpressionException {
-            return Utils.interpretAsQName(namespaceContext, expr);
+            return Utils.interpretAsQName(namespaceContext(), expr);
         }
 
         @Override
-        final InstanceIdentifierParser createInstanceIdentifierParser() {
-            return new InstanceIdentifierParser.Qualified(getMathMode(), namespaceContext);
+        final InstanceIdentifierParser createInstanceIdentifierParser() throws XPathExpressionException {
+            return new InstanceIdentifierParser.Qualified(getMathMode(), namespaceContext());
         }
     }
 
@@ -67,7 +72,8 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
         private final QNameModule defaultNamespace;
 
         Unqualified(final YangXPathMathMode mathMode, final YangVersion yangVersion, final YangExpr rootExpr,
-                final String origStr, final YangNamespaceContext namespaceContext, final QNameModule defaultNamespace) {
+                final String origStr, final @Nullable YangNamespaceContext namespaceContext,
+                final QNameModule defaultNamespace) {
             super(mathMode, yangVersion, rootExpr, origStr, namespaceContext);
             this.defaultNamespace = requireNonNull(defaultNamespace);
         }
@@ -117,5 +123,5 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
         return origStr;
     }
 
-    abstract InstanceIdentifierParser createInstanceIdentifierParser();
+    abstract InstanceIdentifierParser createInstanceIdentifierParser() throws XPathExpressionException;
 }
