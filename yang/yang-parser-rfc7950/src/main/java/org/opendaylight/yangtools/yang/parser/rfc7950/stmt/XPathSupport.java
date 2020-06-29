@@ -13,15 +13,17 @@ import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NonNullByDefault
 abstract class XPathSupport {
-    private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(XPathSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XPathSupport.class);
 
     private static final XPathSupport INSTANCE;
 
@@ -58,7 +60,8 @@ abstract class XPathSupport {
         @Override
         RevisionAwareXPath parseXPath(final String xpath, final StmtContext<?, ?, ?> ctx) {
             final boolean isAbsolute = ArgumentUtils.isAbsoluteXPath(xpath);
-            final YangXPathParser.QualifiedBound parser = factory.newParser(new StmtNamespaceContext(ctx));
+            final YangXPathParser.QualifiedBound parser = factory.newParser(
+                YangNamespaceContextNamespace.computeIfAbsent(ctx));
             final QualifiedBound parsed;
             try {
                 parsed = parser.parseExpression(xpath);
