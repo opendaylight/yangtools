@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Verify;
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
@@ -69,10 +68,13 @@ import org.slf4j.LoggerFactory;
 class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
-    private static final List<ModelProcessingPhase> PHASE_EXECUTION_ORDER =
-            ImmutableList.<ModelProcessingPhase>builder().add(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
-            .add(ModelProcessingPhase.SOURCE_LINKAGE).add(ModelProcessingPhase.STATEMENT_DEFINITION)
-            .add(ModelProcessingPhase.FULL_DECLARATION).add(ModelProcessingPhase.EFFECTIVE_MODEL).build();
+    private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
+        ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+        ModelProcessingPhase.SOURCE_LINKAGE,
+        ModelProcessingPhase.STATEMENT_DEFINITION,
+        ModelProcessingPhase.FULL_DECLARATION,
+        ModelProcessingPhase.EFFECTIVE_MODEL
+    };
 
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
