@@ -8,15 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractEnumStatementSupport
@@ -46,9 +43,7 @@ abstract class AbstractEnumStatementSupport
     protected final EnumEffectiveStatement createEffective(
             final StmtContext<String, EnumStatement, EnumEffectiveStatement> ctx, final EnumStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularEnumEffectiveStatement(declared, substatements, new FlagsBuilder()
-            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-            .toFlags());
+        return new RegularEnumEffectiveStatement(declared, substatements);
     }
 
     @Override
