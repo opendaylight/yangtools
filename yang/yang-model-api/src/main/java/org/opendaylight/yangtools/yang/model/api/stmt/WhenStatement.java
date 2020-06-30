@@ -11,8 +11,15 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public interface WhenStatement extends DocumentedDeclaredStatement<RevisionAwareXPath> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.WHEN;
+    }
+
     default @NonNull RevisionAwareXPath getCondition() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
