@@ -7,17 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class MustStatementSupport
-        extends AbstractStatementSupport<RevisionAwareXPath, MustStatement, MustEffectiveStatement> {
+        extends BaseStatementSupport<RevisionAwareXPath, MustStatement, MustEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .MUST)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -41,18 +44,32 @@ public final class MustStatementSupport
     }
 
     @Override
-    public MustStatement createDeclared(final StmtContext<RevisionAwareXPath, MustStatement, ?> ctx) {
-        return new MustStatementImpl(ctx);
-    }
-
-    @Override
-    public MustEffectiveStatement createEffective(
-            final StmtContext<RevisionAwareXPath, MustStatement, MustEffectiveStatement> ctx) {
-        return new MustEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected MustStatement createDeclared(final StmtContext<RevisionAwareXPath, MustStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularMustStatement(ctx, substatements);
+    }
+
+    @Override
+    protected MustStatement createEmptyDeclared(final StmtContext<RevisionAwareXPath, MustStatement, ?> ctx) {
+        return new EmptyMustStatement(ctx);
+    }
+
+    @Override
+    protected MustEffectiveStatement createEffective(
+            final StmtContext<RevisionAwareXPath, MustStatement, MustEffectiveStatement> ctx,
+            final MustStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularMustEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected MustEffectiveStatement createEmptyEffective(
+            final StmtContext<RevisionAwareXPath, MustStatement, MustEffectiveStatement> ctx,
+            final MustStatement declared) {
+        return new EmptyMustEffectiveStatement(declared);
     }
 }

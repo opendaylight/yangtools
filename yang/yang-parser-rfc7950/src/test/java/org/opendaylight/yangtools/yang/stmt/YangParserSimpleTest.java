@@ -83,10 +83,10 @@ public class YangParserSimpleTest {
         boolean found1 = false;
         boolean found2 = false;
         for (final MustDefinition must : mustConstraints) {
-            if (must1.equals(must.toString())) {
+            if (must1.equals(must.getXpath().getOriginalString())) {
                 found1 = true;
                 assertEquals(Optional.of("An ethernet MTU must be 1500"), must.getErrorMessage());
-            } else if (must2.equals(must.toString())) {
+            } else if (must2.equals(must.getXpath().getOriginalString())) {
                 found2 = true;
                 assertEquals(Optional.of("An atm MTU must be  64 .. 17966"), must.getErrorMessage());
                 assertEquals(Optional.of("anyxml data error-app-tag"), must.getErrorAppTag());
@@ -130,10 +130,10 @@ public class YangParserSimpleTest {
         boolean found1 = false;
         boolean found2 = false;
         for (final MustDefinition must : mustConstraints) {
-            if (must1.equals(must.toString())) {
+            if (must1.equals(must.getXpath().getOriginalString())) {
                 found1 = true;
                 assertEquals(Optional.of("An ethernet MTU must be 1500"), must.getErrorMessage());
-            } else if (must2.equals(must.toString())) {
+            } else if (must2.equals(must.getXpath().getOriginalString())) {
                 found2 = true;
                 assertEquals(Optional.of("An atm MTU must be  64 .. 17966"), must.getErrorMessage());
                 assertEquals(Optional.of("anydata data error-app-tag"), must.getErrorAppTag());
@@ -172,10 +172,10 @@ public class YangParserSimpleTest {
         boolean found1 = false;
         boolean found2 = false;
         for (final MustDefinition must : mustConstraints) {
-            if (must1.equals(must.toString())) {
+            if (must1.equals(must.getXpath().getOriginalString())) {
                 found1 = true;
                 assertEquals(Optional.of(errMsg1), must.getErrorMessage());
-            } else if (must2.equals(must.toString())) {
+            } else if (must2.equals(must.getXpath().getOriginalString())) {
                 found2 = true;
                 assertFalse(must.getErrorMessage().isPresent());
                 assertFalse(must.getErrorAppTag().isPresent());

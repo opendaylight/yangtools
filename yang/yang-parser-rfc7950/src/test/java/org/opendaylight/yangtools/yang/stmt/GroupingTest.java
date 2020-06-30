@@ -108,7 +108,8 @@ public class GroupingTest {
         final Collection<MustDefinition> leafMustConstraints = refineLeaf.getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
         final MustDefinition leafMust = leafMustConstraints.iterator().next();
-        assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.toString());
+        assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)",
+            leafMust.getXpath().getOriginalString());
         assertEquals(1, refineLeaf.getUnknownSchemaNodes().size());
 
         // container port
