@@ -14,19 +14,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class LengthStatementSupport
-        extends AbstractStatementSupport<List<ValueRange>, LengthStatement, LengthEffectiveStatement> {
+        extends BaseStatementSupport<List<ValueRange>, LengthStatement, LengthEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .LENGTH)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -45,7 +47,7 @@ public final class LengthStatementSupport
     }
 
     @Override
-    public List<ValueRange> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public ImmutableList<ValueRange> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         final List<ValueRange> ranges = new ArrayList<>();
 
         for (final String singleRange : ArgumentUtils.PIPE_SPLITTER.split(value)) {
@@ -76,19 +78,33 @@ public final class LengthStatementSupport
     }
 
     @Override
-    public LengthStatement createDeclared(final StmtContext<List<ValueRange>, LengthStatement, ?> ctx) {
-        return new LengthStatementImpl(ctx);
-    }
-
-    @Override
-    public LengthEffectiveStatement createEffective(
-            final StmtContext<List<ValueRange>, LengthStatement, LengthEffectiveStatement> ctx) {
-        return new LengthEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected LengthStatement createDeclared(final StmtContext<List<ValueRange>, LengthStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularLengthStatement(ctx, substatements);
+    }
+
+    @Override
+    protected LengthStatement createEmptyDeclared(final StmtContext<List<ValueRange>, LengthStatement, ?> ctx) {
+        return new EmptyLengthStatement(ctx);
+    }
+
+    @Override
+    protected LengthEffectiveStatement createEffective(
+            final StmtContext<List<ValueRange>, LengthStatement, LengthEffectiveStatement> ctx,
+            final LengthStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularLengthEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected LengthEffectiveStatement createEmptyEffective(
+            final StmtContext<List<ValueRange>, LengthStatement, LengthEffectiveStatement> ctx,
+            final LengthStatement declared) {
+        return new EmptyLengthEffectiveStatement(declared);
     }
 
     private static Number parseIntegerConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {
