@@ -10,16 +10,19 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.include;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -32,26 +35,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 
 abstract class AbstractIncludeStatementSupport
-        extends AbstractStatementSupport<String, IncludeStatement, IncludeEffectiveStatement> {
+        extends BaseStringStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
 
     AbstractIncludeStatementSupport() {
         super(YangStmtMapping.INCLUDE);
-    }
-
-    @Override
-    public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
-    }
-
-    @Override
-    public final IncludeStatement createDeclared(final StmtContext<String, IncludeStatement, ?> ctx) {
-        return new IncludeStatementImpl(ctx);
-    }
-
-    @Override
-    public final IncludeEffectiveStatement createEffective(
-            final StmtContext<String, IncludeStatement, IncludeEffectiveStatement> ctx) {
-        return new IncludeEffectiveStatementImpl(ctx);
     }
 
     @Override
@@ -98,5 +85,30 @@ abstract class AbstractIncludeStatementSupport
                     "Included submodule '%s' was not found: ", stmt.getStatementArgument());
             }
         });
+    }
+
+    @Override
+    protected final IncludeStatement createDeclared(final StmtContext<String, IncludeStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularIncludeStatement(ctx, substatements);
+    }
+
+    @Override
+    protected final IncludeStatement createEmptyDeclared(final StmtContext<String, IncludeStatement, ?> ctx) {
+        return new EmptyIncludeStatement(ctx);
+    }
+
+    @Override
+    protected final IncludeEffectiveStatement createEffective(
+            final StmtContext<String, IncludeStatement, IncludeEffectiveStatement> ctx,
+            final IncludeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularIncludeEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected final IncludeEffectiveStatement createEmptyEffective(
+            final StmtContext<String, IncludeStatement, IncludeEffectiveStatement> ctx,
+            final IncludeStatement declared) {
+        return new EmptyIncludeEffectiveStatement(declared);
     }
 }
