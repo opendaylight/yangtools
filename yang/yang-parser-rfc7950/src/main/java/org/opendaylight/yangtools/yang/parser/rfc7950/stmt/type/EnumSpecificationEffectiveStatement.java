@@ -8,17 +8,19 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_.EnumEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -37,11 +39,13 @@ public final class EnumSpecificationEffectiveStatement extends
         final EnumerationTypeBuilder builder = BaseTypes.enumerationTypeBuilder(ctx.getSchemaPath().get());
         Integer highestValue = null;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof EnumEffectiveStatementImpl) {
-                final EnumEffectiveStatementImpl enumSubStmt = (EnumEffectiveStatementImpl) stmt;
+            if (stmt instanceof EnumEffectiveStatement) {
+                final EnumEffectiveStatement enumSubStmt = (EnumEffectiveStatement) stmt;
 
+                final Optional<Integer> declaredValue =
+                        enumSubStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
                 final int effectiveValue;
-                if (enumSubStmt.getDeclaredValue() == null) {
+                if (declaredValue.isEmpty()) {
                     if (highestValue != null) {
                         SourceException.throwIf(highestValue == 2147483647, ctx.getStatementSourceReference(),
                                 "Enum '%s' must have a value statement", enumSubStmt);
@@ -50,7 +54,7 @@ public final class EnumSpecificationEffectiveStatement extends
                         effectiveValue = 0;
                     }
                 } else {
-                    effectiveValue = enumSubStmt.getDeclaredValue();
+                    effectiveValue = declaredValue.orElseThrow();
                 }
 
                 final EnumPair pair = EffectiveTypeUtil.buildEnumPair(enumSubStmt, effectiveValue);
