@@ -7,17 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.modifier;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ModifierStatementSupport
-        extends AbstractStatementSupport<ModifierKind, ModifierStatement, ModifierEffectiveStatement> {
+        extends BaseStatementSupport<ModifierKind, ModifierStatement, ModifierEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.MODIFIER).build();
     private static final ModifierStatementSupport INSTANCE = new ModifierStatementSupport();
@@ -37,17 +40,6 @@ public final class ModifierStatementSupport
     }
 
     @Override
-    public ModifierStatement createDeclared(final StmtContext<ModifierKind, ModifierStatement, ?> ctx) {
-        return new ModifierStatementImpl(ctx);
-    }
-
-    @Override
-    public ModifierEffectiveStatement createEffective(
-            final StmtContext<ModifierKind, ModifierStatement, ModifierEffectiveStatement> ctx) {
-        return new ModifierEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
@@ -55,5 +47,30 @@ public final class ModifierStatementSupport
     @Override
     public String internArgument(final String rawArgument) {
         return "invert-match".equals(rawArgument) ? "invert-match" : rawArgument;
+    }
+
+    @Override
+    protected ModifierStatement createDeclared(final StmtContext<ModifierKind, ModifierStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularModifierStatement(ctx, substatements);
+    }
+
+    @Override
+    protected ModifierStatement createEmptyDeclared(final StmtContext<ModifierKind, ModifierStatement, ?> ctx) {
+        return new EmptyModifierStatement(ctx);
+    }
+
+    @Override
+    protected ModifierEffectiveStatement createEffective(
+            final StmtContext<ModifierKind, ModifierStatement, ModifierEffectiveStatement> ctx,
+            final ModifierStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularModifierEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected ModifierEffectiveStatement createEmptyEffective(
+            final StmtContext<ModifierKind, ModifierStatement, ModifierEffectiveStatement> ctx,
+            final ModifierStatement declared) {
+        return new EmptyModifierEffectiveStatement(declared);
     }
 }
