@@ -7,16 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.base;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -29,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class BaseStatementSupport extends AbstractQNameStatementSupport<BaseStatement, BaseEffectiveStatement> {
+public final class BaseStatementSupport extends BaseQNameStatementSupport<BaseStatement, BaseEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.BASE).build();
     private static final BaseStatementSupport INSTANCE = new BaseStatementSupport();
@@ -45,16 +48,6 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
     @Override
     public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return StmtContextUtils.parseNodeIdentifier(ctx, value);
-    }
-
-    @Override
-    public BaseStatement createDeclared(final StmtContext<QName, BaseStatement, ?> ctx) {
-        return new BaseStatementImpl(ctx);
-    }
-
-    @Override
-    public BaseEffectiveStatement createEffective(final StmtContext<QName, BaseStatement, BaseEffectiveStatement> ctx) {
-        return new BaseEffectiveStatementImpl(ctx);
     }
 
     @Override
@@ -95,5 +88,29 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected BaseStatement createDeclared(final StmtContext<QName, BaseStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularBaseStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected BaseStatement createEmptyDeclared(final StmtContext<QName, BaseStatement, ?> ctx) {
+        return new EmptyBaseStatement(ctx.coerceStatementArgument());
+    }
+
+    @Override
+    protected BaseEffectiveStatement createEffective(
+            final StmtContext<QName, BaseStatement, BaseEffectiveStatement> ctx, final BaseStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularBaseEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected BaseEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, BaseStatement, BaseEffectiveStatement> ctx, final BaseStatement declared) {
+        return new EmptyBaseEffectiveStatement(declared);
     }
 }
