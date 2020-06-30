@@ -9,8 +9,15 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public interface LengthStatement extends ConstrainedDocumentedDeclaredStatement<List<ValueRange>> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.LENGTH;
+    }
+
     @Override
     @NonNull List<ValueRange> argument();
 }
