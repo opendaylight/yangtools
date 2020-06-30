@@ -8,18 +8,20 @@
 
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_.EnumEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -38,17 +40,18 @@ final class EnumTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBas
 
         final YangVersion yangVersion = ctx.getRootVersion();
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof EnumEffectiveStatementImpl) {
+            if (stmt instanceof EnumEffectiveStatement) {
                 SourceException.throwIf(yangVersion != YangVersion.VERSION_1_1, ctx.getStatementSourceReference(),
                         "Restricted enumeration type is allowed only in YANG 1.1 version.");
 
-                final EnumEffectiveStatementImpl enumSubStmt = (EnumEffectiveStatementImpl) stmt;
-
+                final EnumEffectiveStatement enumSubStmt = (EnumEffectiveStatement) stmt;
+                final Optional<Integer> declaredValue =
+                        enumSubStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
                 final int effectiveValue;
-                if (enumSubStmt.getDeclaredValue() == null) {
-                    effectiveValue = getBaseTypeEnumValue(enumSubStmt.getName(), baseType, ctx);
+                if (declaredValue.isEmpty()) {
+                    effectiveValue = getBaseTypeEnumValue(enumSubStmt.getDeclared().rawArgument(), baseType, ctx);
                 } else {
-                    effectiveValue = enumSubStmt.getDeclaredValue();
+                    effectiveValue = declaredValue.orElseThrow();
                 }
 
                 builder.addEnum(EffectiveTypeUtil.buildEnumPair(enumSubStmt, effectiveValue));
