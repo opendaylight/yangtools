@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
+// FIXME: 6.0.0: use DocumentedNodeMixin.WithStatus instead of keeping any state
 public abstract class AbstractEffectiveDocumentedNodeWithStatus<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveDocumentedNode<A, D> implements DocumentedNode.WithStatus {
     private static final VarHandle UNKNOWN_NODES;
