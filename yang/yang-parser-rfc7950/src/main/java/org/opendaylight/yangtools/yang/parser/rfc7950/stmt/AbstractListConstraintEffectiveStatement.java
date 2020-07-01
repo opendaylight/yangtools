@@ -14,6 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
+@Deprecated(forRemoval = true)
+// FIXME: 6.0.0: remove this class
 public abstract class AbstractListConstraintEffectiveStatement<T, D extends DeclaredStatement<List<T>>>
         extends AbstractConstraintEffectiveStatement<List<T>, D> {
 
