@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
+// FIXME: 6.0.0: change the over definition of the argument:
+//               - argument = XSD pattern string
 public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement<PatternConstraint> {
     @Override
     default StatementDefinition statementDefinition() {

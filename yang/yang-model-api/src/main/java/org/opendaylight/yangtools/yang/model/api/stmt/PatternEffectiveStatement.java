@@ -14,6 +14,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
 @Beta
+// FIXME: 6.0.0: change the over definition of the argument:
+//               - argument = XSD pattern string
+//               - the statement *implements* PatternConstraint
 public interface PatternEffectiveStatement extends EffectiveStatement<PatternConstraint, PatternStatement> {
     @Override
     default StatementDefinition statementDefinition() {
