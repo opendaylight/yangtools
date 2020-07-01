@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
 final class PatternConstraintImpl implements PatternConstraint, Immutable {
-
     private final String regEx;
     private final String rawRegEx;
     private final String description;
@@ -26,12 +25,7 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
     private final String errorMessage;
     private final ModifierKind modifier;
 
-    PatternConstraintImpl(final String regex, final String rawRegex,
-            final Optional<String> description, final Optional<String> reference) {
-        this(regex, rawRegex, description.orElse(null), reference.orElse(null), null, null, null);
-    }
-
-    PatternConstraintImpl(final String regex, final String rawRegex, final String description,
+    private PatternConstraintImpl(final String regex, final String rawRegex, final String description,
             final String reference, final String errorAppTag, final String errorMessage, final ModifierKind modifier) {
         this.regEx = requireNonNull(regex, "regex must not be null");
         this.rawRegEx = requireNonNull(rawRegex, "raw regex must not be null");
@@ -40,6 +34,16 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
         this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
         this.errorMessage = errorMessage;
         this.modifier = modifier;
+    }
+
+    PatternConstraintImpl(final String regex, final String rawRegex) {
+        this(regex, rawRegex, null, null, null, null, null);
+    }
+
+    PatternConstraintImpl(final PatternConstraint original, final String description, final String reference,
+            final String errorAppTag, final String errorMessage, final ModifierKind modifier) {
+        this(original.getJavaPatternString(), original.getRegularExpressionString(), description, reference,
+            errorAppTag, errorMessage, modifier);
     }
 
     @Override

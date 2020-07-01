@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
+@Deprecated(forRemoval = true)
+//FIXME: 6.0.0: remove this class
 public abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStatement<A>> extends
         AbstractEffectiveDocumentedNodeWithoutStatus<A, D> implements ConstraintMetaDefinition {
     private final String errorAppTag;
