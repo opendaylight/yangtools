@@ -12,9 +12,16 @@ import static com.google.common.base.Verify.verifyNotNull;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
 public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement<PatternConstraint> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.PATTERN;
+    }
+
     default @NonNull PatternConstraint getValue() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
