@@ -10,12 +10,18 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
 public interface RangeEffectiveStatement extends EffectiveStatement<List<ValueRange>, RangeStatement>,
-    // FIXME: 6.0.0: reconsider this interface extension
-    // FIXME: 6.0.0: if we are keeping it, consider a default implementation (shared with others effective statements)
-    ConstraintMetaDefinition {
-
+        // FIXME: 6.0.0: reconsider this interface extension
+        // FIXME: 6.0.0: if we are keeping it, consider a default implementation (shared with others effective
+        //               statements)
+        ConstraintMetaDefinition {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.RANGE;
+    }
 }
