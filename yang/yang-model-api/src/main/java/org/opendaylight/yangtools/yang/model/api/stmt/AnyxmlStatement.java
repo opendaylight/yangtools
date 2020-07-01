@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -15,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface AnyxmlStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
         MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
     @Override
-    default @NonNull StatementDefinition statementDefinition() {
+    default StatementDefinition statementDefinition() {
         return YangStmtMapping.ANYXML;
     }
 }
