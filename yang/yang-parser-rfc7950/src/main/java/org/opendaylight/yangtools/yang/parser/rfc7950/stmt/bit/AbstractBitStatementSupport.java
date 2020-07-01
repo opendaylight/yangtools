@@ -7,15 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-abstract class AbstractBitStatementSupport
-        extends AbstractStatementSupport<String, BitStatement, BitEffectiveStatement> {
+abstract class AbstractBitStatementSupport extends BaseStatementSupport<String, BitStatement, BitEffectiveStatement> {
     AbstractBitStatementSupport() {
         super(YangStmtMapping.BIT);
     }
@@ -27,13 +29,26 @@ abstract class AbstractBitStatementSupport
     }
 
     @Override
-    public final BitStatement createDeclared(final StmtContext<String, BitStatement, ?> ctx) {
-        return new BitStatementImpl(ctx);
+    protected final BitStatement createDeclared(final StmtContext<String, BitStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularBitStatement(ctx, substatements);
     }
 
     @Override
-    public final BitEffectiveStatement createEffective(
-            final StmtContext<String, BitStatement, BitEffectiveStatement> ctx) {
-        return new BitEffectiveStatementImpl(ctx);
+    protected final BitStatement createEmptyDeclared(final StmtContext<String, BitStatement, ?> ctx) {
+        return new EmptyBitStatement(ctx);
+    }
+
+    @Override
+    protected final BitEffectiveStatement createEffective(
+            final StmtContext<String, BitStatement, BitEffectiveStatement> ctx, final BitStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularBitEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected final BitEffectiveStatement createEmptyEffective(
+            final StmtContext<String, BitStatement, BitEffectiveStatement> ctx, final BitStatement declared) {
+        return new EmptyBitEffectiveStatement(declared);
     }
 }
