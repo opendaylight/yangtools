@@ -7,22 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.max_elements;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class MaxElementsStatementSupport
-        extends AbstractStatementSupport<String, MaxElementsStatement, MaxElementsEffectiveStatement> {
+        extends BaseStringStatementSupport<MaxElementsStatement, MaxElementsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.MAX_ELEMENTS)
         .build();
     private static final MaxElementsStatementSupport INSTANCE = new MaxElementsStatementSupport();
 
     private MaxElementsStatementSupport() {
-        super(YangStmtMapping.MAX_ELEMENTS, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.MAX_ELEMENTS);
     }
 
     public static MaxElementsStatementSupport getInstance() {
@@ -30,20 +33,8 @@ public final class MaxElementsStatementSupport
     }
 
     @Override
-    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
-    }
-
-    @Override
-    public MaxElementsStatement createDeclared(
-            final StmtContext<String, MaxElementsStatement, ?> ctx) {
-        return new MaxElementsStatementImpl(ctx);
-    }
-
-    @Override
-    public MaxElementsEffectiveStatement createEffective(
-            final StmtContext<String, MaxElementsStatement, MaxElementsEffectiveStatement> ctx) {
-        return new MaxElementsEffectiveStatementImpl(ctx);
+    public String internArgument(final String rawArgument) {
+        return "unbounded".equals(rawArgument) ? "unbounded" : rawArgument;
     }
 
     @Override
@@ -52,7 +43,28 @@ public final class MaxElementsStatementSupport
     }
 
     @Override
-    public String internArgument(final String rawArgument) {
-        return "unbounded".equals(rawArgument) ? "unbounded" : rawArgument;
+    protected MaxElementsStatement createDeclared(final StmtContext<String, MaxElementsStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularMaxElementsStatement(ctx, substatements);
+    }
+
+    @Override
+    protected MaxElementsStatement createEmptyDeclared(final StmtContext<String, MaxElementsStatement, ?> ctx) {
+        return new EmptyMaxElementsStatement(ctx);
+    }
+
+    @Override
+    protected MaxElementsEffectiveStatement createEffective(
+            final StmtContext<String, MaxElementsStatement, MaxElementsEffectiveStatement> ctx,
+            final MaxElementsStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularMaxElementsEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected MaxElementsEffectiveStatement createEmptyEffective(
+            final StmtContext<String, MaxElementsStatement, MaxElementsEffectiveStatement> ctx,
+            final MaxElementsStatement declared) {
+        return new EmptyMaxElementsEffectiveStatement(declared);
     }
 }
