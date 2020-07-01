@@ -47,7 +47,7 @@ abstract class AbstractPatternStatementSupport
             return null;
         }
 
-        return new PatternConstraintImpl(pattern, value);
+        return new EmptyPatternConstraint(pattern, value);
     }
 
     @Override
@@ -78,7 +78,7 @@ abstract class AbstractPatternStatementSupport
             return new SimplePatternEffectiveStatement(declared, substatements);
         }
 
-        return new RegularPatternEffectiveStatement(declared, new PatternConstraintImpl(declared.argument(),
+        return new RegularPatternEffectiveStatement(declared, new RegularPatternConstraint(declared.argument(),
             description, reference, errorAppTag, errorMessage, modifier), substatements);
     }
 
