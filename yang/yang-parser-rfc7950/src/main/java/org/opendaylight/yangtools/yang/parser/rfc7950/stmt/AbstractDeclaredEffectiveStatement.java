@@ -210,6 +210,43 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
     }
 
     /**
+     * A building block on top of {@link Default}, which adds an explicit argument value, which is not related to the
+     * context. This is mostly useful when the effective argument value reflects additional statements and similar.
+     *
+     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <D> Class representing declared version of this statement.
+     */
+    public abstract static class DefaultWithArgument<A, D extends DeclaredStatement<A>> extends Default<A, D> {
+        public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>>
+                extends DefaultWithArgument<A, D> {
+            private final @NonNull Object substatements;
+
+            protected WithSubstatements(final D declared, final A argument,
+                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(declared, argument);
+                this.substatements = maskList(substatements);
+            }
+
+            @Override
+            public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+                return unmaskList(substatements);
+            }
+        }
+
+        private final A argument;
+
+        protected DefaultWithArgument(final D declared, final A argument) {
+            super(declared);
+            this.argument = argument;
+        }
+
+        @Override
+        public final A argument() {
+            return argument;
+        }
+    }
+
+    /**
      * Stateful version of {@link WithSchemaTree}. Schema tree namespace is eagerly instantiated (and checked).
      *
      * @param <A> Argument type ({@link Void} if statement does not have argument.)
