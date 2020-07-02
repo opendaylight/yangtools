@@ -227,7 +227,7 @@ abstract class AbstractTypeStatementSupport
         } else if (baseType instanceof EnumTypeDefinition) {
             return new EnumTypeEffectiveStatementImpl(ctx, (EnumTypeDefinition) baseType);
         } else if (baseType instanceof IdentityrefTypeDefinition) {
-            return new IdentityrefTypeEffectiveStatementImpl(ctx, (IdentityrefTypeDefinition) baseType);
+            return createIdentityref(ctx, (IdentityrefTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             return new InstanceIdentifierTypeEffectiveStatementImpl(ctx,
                 (InstanceIdentifierTypeDefinition) baseType);
@@ -366,4 +366,12 @@ abstract class AbstractTypeStatementSupport
         return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newEmptyBuilder(baseType,
             typeEffectiveSchemaPath(ctx)));
     }
+
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createIdentityref(final StmtContext<?, ?, ?> ctx,
+            final IdentityrefTypeDefinition baseType, final TypeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newIdentityrefBuilder(baseType,
+            typeEffectiveSchemaPath(ctx)));
+    }
+
 }
