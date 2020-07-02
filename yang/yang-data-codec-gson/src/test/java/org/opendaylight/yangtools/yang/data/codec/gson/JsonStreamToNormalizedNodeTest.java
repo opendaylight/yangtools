@@ -13,12 +13,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
+import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.normalizedNodesToJsonString;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -31,7 +35,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Each test tests whether json input is correctly transformed to normalized node structure.
@@ -248,6 +255,53 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
         assertEquals(cont1Normalized, transformedInput);
+    }
+
+    @Test
+    public void complexJsonToNormalizedNodesParserTest() throws IOException, URISyntaxException {
+        final String inputJson = loadTextFile("/parser/complex.json");
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/parser/yang");
+        JSONCodecFactory codecFactory = JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(
+            context);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, codecFactory);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final NormalizedNode<?, ?> transformedInput = result.getResult();
+
+        final String serializationResult = normalizedNodesToJsonString(transformedInput, context, SchemaPath.ROOT);
+
+        final JsonParser parser = new JsonParser();
+        final JsonElement expected = parser.parse(inputJson);
+        final JsonElement actual = parser.parse(serializationResult);
+        assertEquals(expected.toString(), actual.toString());
+    }
+
+    @Test
+    public void nestedArrayException() throws IOException, URISyntaxException {
+        final String inputJson = loadTextFile("/parser/nested-array.json");
+        try {
+            //second parameter isn't necessary because error will be raised before it is used.
+            verifyTransformationToNormalizedNode(inputJson, null);
+            fail("Expected exception not raised");
+        } catch (final IllegalStateException e) {
+            final String errorMessage = e.getMessage();
+            assertEquals("Found an unexpected array nested under (ns:complex:json?revision=2014-08-11)lflst11",
+                    errorMessage);
+        }
+    }
+
+    @Test
+    public void duplicateNameException() throws IOException, URISyntaxException {
+        final String inputJson = loadTextFile("/parser/duplicate-name.json");
+        try {
+            //second parameter isn't necessary because error will be raised before it is used.
+            verifyTransformationToNormalizedNode(inputJson, null);
+            fail("Expected exception not raised");
+        } catch (final JsonSyntaxException e) {
+            final String errorMessage = e.getMessage();
+            assertEquals("Duplicate name lflst11 in JSON input.", errorMessage);
+        }
     }
 
     private static void verifyTransformationToNormalizedNode(final String inputJson,
