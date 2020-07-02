@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
@@ -42,6 +43,8 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintException;
+import org.opendaylight.yangtools.yang.model.util.type.LengthRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
@@ -204,7 +207,7 @@ abstract class AbstractTypeStatementSupport
     }
 
     @Override
-    protected final EffectiveStatement<String, TypeStatement> createEffective(
+    protected final TypeEffectiveStatement<TypeStatement> createEffective(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
             final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // First look up the proper base type
@@ -212,7 +215,7 @@ abstract class AbstractTypeStatementSupport
         // Now instantiate the proper effective statement for that type
         final TypeDefinition<?> baseType = typeStmt.getTypeDefinition();
         if (baseType instanceof BinaryTypeDefinition) {
-            return new BinaryTypeEffectiveStatementImpl(ctx, (BinaryTypeDefinition) baseType);
+            return createBinary(ctx, (BinaryTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof BitsTypeDefinition) {
             return new BitsTypeEffectiveStatementImpl(ctx, (BitsTypeDefinition) baseType);
         } else if (baseType instanceof BooleanTypeDefinition) {
@@ -323,5 +326,30 @@ abstract class AbstractTypeStatementSupport
                             ctx.getStatementSourceReference(), "Type '%s' not found", qname);
                 return typedef.buildEffective().asTypeEffectiveStatement();
         }
+    }
+
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createBinary(final StmtContext<?, ?, ?> ctx,
+            final BinaryTypeDefinition baseType, final TypeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final LengthRestrictedTypeBuilder<BinaryTypeDefinition> builder =
+                RestrictedTypes.newBinaryBuilder(baseType, typeEffectiveSchemaPath(ctx));
+
+        for (EffectiveStatement<?, ?> stmt : substatements) {
+            if (stmt instanceof LengthEffectiveStatement) {
+                final LengthEffectiveStatement length = (LengthEffectiveStatement)stmt;
+
+                try {
+                    builder.setLengthConstraint(length, length.argument());
+                } catch (IllegalStateException e) {
+                    throw new SourceException(ctx.getStatementSourceReference(), e,
+                        "Multiple length constraints encountered");
+                } catch (InvalidLengthConstraintException e) {
+                    throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid length constraint %s",
+                        length.argument());
+                }
+            }
+        }
+
+        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 }
