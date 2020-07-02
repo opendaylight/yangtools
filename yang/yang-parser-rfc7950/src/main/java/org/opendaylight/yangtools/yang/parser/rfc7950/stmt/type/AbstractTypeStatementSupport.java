@@ -291,8 +291,8 @@ abstract class AbstractTypeStatementSupport
 
     @Override
     public final String internArgument(final String rawArgument) {
-        final String found = BUILT_IN_TYPES.get(rawArgument);
-        return found != null ? found : rawArgument;
+        final String found;
+        return (found = BUILT_IN_TYPES.get(rawArgument)) != null ? found : rawArgument;
     }
 
     @Override
