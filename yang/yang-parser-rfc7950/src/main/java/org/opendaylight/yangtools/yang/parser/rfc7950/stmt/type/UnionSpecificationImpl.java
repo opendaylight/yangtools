@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
+import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class UnionSpecificationImpl extends AbstractDeclaredStatement<String> implements UnionSpecification {
-    UnionSpecificationImpl(final StmtContext<String, UnionSpecification, ?> context) {
-        super(context);
+final class UnionSpecificationImpl extends WithSubstatements implements UnionSpecification {
+    UnionSpecificationImpl(final StmtContext<String, ?, ?> context,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(context, substatements);
     }
 }
