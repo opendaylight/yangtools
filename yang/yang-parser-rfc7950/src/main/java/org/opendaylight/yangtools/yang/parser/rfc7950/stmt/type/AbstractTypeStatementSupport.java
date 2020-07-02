@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -16,6 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -41,8 +43,8 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -57,7 +59,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractTypeStatementSupport
-        extends AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
+        extends BaseStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.BASE)
@@ -132,11 +134,6 @@ abstract class AbstractTypeStatementSupport
     @Override
     public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return value;
-    }
-
-    @Override
-    public final TypeStatement createDeclared(final StmtContext<String, TypeStatement, ?> ctx) {
-        return BuiltinTypeStatement.maybeReplace(new TypeStatementImpl(ctx));
     }
 
     @Override
@@ -239,11 +236,6 @@ abstract class AbstractTypeStatementSupport
     }
 
     @Override
-    protected final SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
-    }
-
-    @Override
     public final String internArgument(final String rawArgument) {
         final String found;
         return (found = BUILT_IN_TYPES.get(rawArgument)) != null ? found : rawArgument;
@@ -257,6 +249,39 @@ abstract class AbstractTypeStatementSupport
     @Override
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
         return ARGUMENT_SPECIFIC_SUPPORTS.get(argument);
+    }
+
+    @Override
+    protected final SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected final TypeStatement createDeclared(final StmtContext<String, TypeStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularTypeStatement(ctx, substatements);
+    }
+
+    @Override
+    protected final TypeStatement createEmptyDeclared(final StmtContext<String, TypeStatement, ?> ctx) {
+        final TypeStatement builtin;
+        return (builtin = BuiltinTypeStatement.lookup(ctx)) != null ? builtin : new EmptyTypeStatement(ctx);
+    }
+
+    @Override
+    protected final EffectiveStatement<String, TypeStatement> createEffective(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected final EffectiveStatement<String, TypeStatement> createEmptyEffective(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final TypeStatement declared) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     static final SchemaPath typeEffectiveSchemaPath(final StmtContext<?, ?, ?> stmtCtx) {
