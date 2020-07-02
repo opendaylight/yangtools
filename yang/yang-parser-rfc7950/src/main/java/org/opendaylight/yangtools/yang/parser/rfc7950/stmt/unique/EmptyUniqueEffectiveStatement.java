@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -14,17 +14,16 @@ import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class UniqueEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Set<Descendant>, UniqueStatement>
-        implements UniqueConstraint, UniqueEffectiveStatement {
-    UniqueEffectiveStatementImpl(final StmtContext<Set<Descendant>, UniqueStatement, ?> ctx) {
-        super(ctx);
+class EmptyUniqueEffectiveStatement extends DefaultArgument<Set<Descendant>, UniqueStatement>
+        implements UniqueEffectiveStatement, UniqueConstraint {
+    EmptyUniqueEffectiveStatement(final UniqueStatement declared) {
+        super(declared);
     }
 
     @Override
-    public Set<Descendant> getTag() {
+    public final Set<Descendant> getTag() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
     }
