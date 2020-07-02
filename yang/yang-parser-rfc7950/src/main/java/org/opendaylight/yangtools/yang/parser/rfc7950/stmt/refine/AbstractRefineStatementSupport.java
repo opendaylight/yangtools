@@ -7,16 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 
+import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractRefineStatementSupport
-        extends AbstractStatementSupport<Descendant, RefineStatement, RefineEffectiveStatement> {
+        extends BaseStatementSupport<Descendant, RefineStatement, RefineEffectiveStatement> {
 
     AbstractRefineStatementSupport() {
         super(YangStmtMapping.REFINE);
@@ -28,13 +32,30 @@ abstract class AbstractRefineStatementSupport
     }
 
     @Override
-    public final RefineStatement createDeclared(final StmtContext<Descendant, RefineStatement, ?> ctx) {
-        return new RefineStatementImpl(ctx);
+    protected final RefineStatement createDeclared(final StmtContext<Descendant, RefineStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RefineStatementImpl(ctx, substatements);
     }
 
     @Override
-    public final RefineEffectiveStatement createEffective(
-            final StmtContext<Descendant, RefineStatement, RefineEffectiveStatement> ctx) {
-        return new RefineEffectiveStatementImpl(ctx);
+    protected final RefineStatement createEmptyDeclared(final StmtContext<Descendant, RefineStatement, ?> ctx) {
+        // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
+        return new RefineStatementImpl(ctx, ImmutableList.of());
+    }
+
+    @Override
+    protected final RefineEffectiveStatement createEffective(
+            final StmtContext<Descendant, RefineStatement, RefineEffectiveStatement> ctx,
+            final RefineStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RefineEffectiveStatementImpl(declared, substatements, ctx.getSchemaPath().get(),
+            (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective());
+    }
+
+    @Override
+    protected final RefineEffectiveStatement createEmptyEffective(
+            final StmtContext<Descendant, RefineStatement, RefineEffectiveStatement> ctx,
+            final RefineStatement declared) {
+        // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 }
