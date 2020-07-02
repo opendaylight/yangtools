@@ -37,8 +37,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.LeafListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
@@ -157,7 +159,6 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     public JsonParserStream parse(final JsonReader reader) {
         // code copied from gson's JsonParser and Stream classes
-
         final boolean readerLenient = reader.isLenient();
         reader.setLenient(true);
         boolean isEmpty = true;
@@ -187,44 +188,60 @@ public final class JsonParserStream implements Closeable, Flushable {
         }
     }
 
-    private void traverseAnyXmlValue(final JsonReader in, final Document doc, final Element parentElement)
+    private static void traverseAnyXmlValue(final JsonReader in, final Document doc, final Element parent)
             throws IOException {
-        switch (in.peek()) {
-            case STRING:
-            case NUMBER:
-                Text textNode = doc.createTextNode(in.nextString());
-                parentElement.appendChild(textNode);
-                break;
-            case BOOLEAN:
-                textNode = doc.createTextNode(Boolean.toString(in.nextBoolean()));
-                parentElement.appendChild(textNode);
-                break;
-            case NULL:
-                in.nextNull();
-                textNode = doc.createTextNode("null");
-                parentElement.appendChild(textNode);
-                break;
-            case BEGIN_ARRAY:
-                in.beginArray();
-                while (in.hasNext()) {
-                    final Element childElement = doc.createElement(ANYXML_ARRAY_ELEMENT_ID);
-                    parentElement.appendChild(childElement);
-                    traverseAnyXmlValue(in, doc, childElement);
-                }
-                in.endArray();
-                break;
-            case BEGIN_OBJECT:
-                in.beginObject();
-                while (in.hasNext()) {
-                    final Element childElement = doc.createElement(in.nextName());
-                    parentElement.appendChild(childElement);
-                    traverseAnyXmlValue(in, doc, childElement);
-                }
-                in.endObject();
-                break;
-            default:
-                break;
+        final Deque<Element> nodes = new ArrayDeque<>();
+        nodes.push(parent);
+        while (!nodes.isEmpty()) {
+            switch (in.peek()) {
+                case STRING:
+                case NUMBER:
+                    Text textNode = doc.createTextNode(in.nextString());
+                    nodes.getFirst().appendChild(textNode);
+                    break;
+                case BOOLEAN:
+                    textNode = doc.createTextNode(Boolean.toString(in.nextBoolean()));
+                    nodes.getFirst().appendChild(textNode);
+                    break;
+                case NULL:
+                    in.nextNull();
+                    textNode = doc.createTextNode("null");
+                    nodes.getFirst().appendChild(textNode);
+                    break;
+                case BEGIN_ARRAY:
+                    in.beginArray();
+                    if (in.hasNext()) {
+                        createElement(doc, nodes, ANYXML_ARRAY_ELEMENT_ID);
+                    }
+                    continue;
+                case END_ARRAY:
+                    in.endArray();
+                    break;
+                case BEGIN_OBJECT:
+                    in.beginObject();
+                    continue;
+                case NAME:
+                    createElement(doc, nodes, in.nextName());
+                    continue;
+                case END_OBJECT:
+                    in.endObject();
+                    break;
+                case END_DOCUMENT:
+                    return;
+                default:
+                    continue;
+            }
+
+            if (nodes.pop().getTagName().equals(ANYXML_ARRAY_ELEMENT_ID) && in.hasNext()) {
+                createElement(doc, nodes, ANYXML_ARRAY_ELEMENT_ID);
+            }
         }
+    }
+
+    private static void createElement(final Document doc, final Deque<Element> nodes, final String elementName) {
+        final Element childElement = doc.createElement(elementName);
+        nodes.getFirst().appendChild(childElement);
+        nodes.push(childElement);
     }
 
     private void readAnyXmlValue(final JsonReader in, final AnyXmlNodeDataWithSchema parent,
@@ -239,47 +256,69 @@ public final class JsonParserStream implements Closeable, Flushable {
         parent.setValue(domSource);
     }
 
+    private void setNodeValue(final JsonReader in, final Deque<AbstractNodeDataWithSchema> nodes, final String value)
+        throws IOException {
+        setValue(nodes.getFirst(), value);
+        if (nodes.pop() instanceof LeafListEntryNodeDataWithSchema) {
+            if (in.hasNext()) {
+                // if last element was leaf-list and there is more values, create next element
+                nodes.push(newArrayEntry(nodes.getFirst()));
+            }
+        } else {
+            removeNamespace();
+        }
+    }
+
     public void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent) throws IOException {
-        switch (in.peek()) {
-            case STRING:
-            case NUMBER:
-                setValue(parent, in.nextString());
-                break;
-            case BOOLEAN:
-                setValue(parent, Boolean.toString(in.nextBoolean()));
-                break;
-            case NULL:
-                in.nextNull();
-                setValue(parent, null);
-                break;
-            case BEGIN_ARRAY:
-                in.beginArray();
-                while (in.hasNext()) {
-                    if (parent instanceof LeafNodeDataWithSchema) {
-                        read(in, parent);
-                    } else {
-                        final AbstractNodeDataWithSchema<?> newChild = newArrayEntry(parent);
-                        read(in, newChild);
+        final Deque<Set<String>> nodeNamesakes = new ArrayDeque<>();
+        final Deque<AbstractNodeDataWithSchema> nodes = new ArrayDeque<>();
+        nodes.push(parent);
+        while (!nodes.isEmpty()) {
+            switch (in.peek()) {
+                case STRING:
+                case NUMBER:
+                    setNodeValue(in, nodes, in.nextString());
+                    break;
+                case BOOLEAN:
+                    setNodeValue(in, nodes, Boolean.toString(in.nextBoolean()));
+                    break;
+                case NULL:
+                    in.nextNull();
+                    setNodeValue(in, nodes, null);
+                    break;
+                case BEGIN_ARRAY:
+                    in.beginArray();
+                    if (in.hasNext()) {
+                        if (nodes.getFirst() instanceof LeafNodeDataWithSchema) {
+                            nodes.push(nodes.getFirst());
+                        } else {
+                            nodes.push(newArrayEntry(nodes.getFirst()));
+                        }
                     }
-                }
-                in.endArray();
-                return;
-            case BEGIN_OBJECT:
-                final Set<String> namesakes = new HashSet<>();
-                in.beginObject();
-                /*
-                 * This allows parsing of incorrectly /as showcased/
-                 * in testconf nesting of list items - eg.
-                 * lists with one value are sometimes serialized
-                 * without wrapping array.
-                 *
-                 */
-                if (isArray(parent)) {
-                    parent = newArrayEntry(parent);
-                }
-                while (in.hasNext()) {
+                    break;
+                case END_ARRAY:
+                    in.endArray();
+                    if (nodes.pop() instanceof LeafListNodeDataWithSchema) {
+                        removeNamespace();
+                    }
+                    break;
+                case BEGIN_OBJECT:
+                    in.beginObject();
+                    /*
+                     * This allows parsing of incorrectly /as showcased/
+                     * in testconf nesting of list items - eg.
+                     * lists with one value are sometimes serialized
+                     * without wrapping array.
+                     *
+                     */
+                    if (isArray(nodes.getFirst())) {
+                        nodes.push(newArrayEntry(nodes.pop()));
+                    }
+                    nodeNamesakes.push(new HashSet<>());
+                    break;
+                case NAME:
                     final String jsonElementName = in.nextName();
-                    DataSchemaNode parentSchema = parent.getSchema();
+                    DataSchemaNode parentSchema = nodes.getFirst().getSchema();
                     if (parentSchema instanceof YangModeledAnyxmlSchemaNode) {
                         parentSchema = ((YangModeledAnyxmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
                     }
@@ -288,36 +327,47 @@ public final class JsonParserStream implements Closeable, Flushable {
                     final URI namespace = namespaceAndName.getValue();
                     if (lenient && (localName == null || namespace == null)) {
                         LOG.debug("Schema node with name {} was not found under {}", localName,
-                            parentSchema.getQName());
+                                parentSchema.getQName());
                         in.skipValue();
                         continue;
                     }
                     addNamespace(namespace);
-                    if (!namesakes.add(jsonElementName)) {
+                    if (!nodeNamesakes.getFirst().add(jsonElementName)) {
                         throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
                     }
 
                     final Deque<DataSchemaNode> childDataSchemaNodes =
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, localName,
-                                getCurrentNamespace());
+                                    getCurrentNamespace());
                     checkState(!childDataSchemaNodes.isEmpty(),
-                        "Schema for node with name %s and namespace %s does not exist at %s",
-                        localName, getCurrentNamespace(), parentSchema);
+                            "Schema for node with name %s and namespace %s does not exist at %s",
+                            localName, getCurrentNamespace(), parentSchema);
 
-
-                    final AbstractNodeDataWithSchema<?> newChild = ((CompositeNodeDataWithSchema<?>) parent)
-                            .addChild(childDataSchemaNodes);
+                    final AbstractNodeDataWithSchema<?> newChild = ((CompositeNodeDataWithSchema<?>)
+                            nodes.getFirst()).addChild(childDataSchemaNodes);
                     if (newChild instanceof AnyXmlNodeDataWithSchema) {
                         readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
+                        removeNamespace();
                     } else {
-                        read(in, newChild);
+                        nodes.push(newChild);
                     }
-                    removeNamespace();
-                }
-                in.endObject();
-                return;
-            default:
-                break;
+                    break;
+                case END_OBJECT:
+                    in.endObject();
+                    if (nodes.pop() instanceof ListEntryNodeDataWithSchema && in.hasNext()) {
+                        // if last element was list entry node and there is more values, create next element
+                        nodes.push(newArrayEntry(nodes.getFirst()));
+                    } else {
+                        // at the end of the document there is no namespace to remove
+                        if (!nodes.isEmpty()) {
+                            removeNamespace();
+                        }
+                    }
+                    nodeNamesakes.pop();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -406,7 +456,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         if (dataSchemaNode instanceof DataNodeContainer) {
             for (final DataSchemaNode childSchemaNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
                 if (childSchemaNode instanceof ChoiceSchemaNode) {
-                    choices.add((ChoiceSchemaNode)childSchemaNode);
+                    choices.add((ChoiceSchemaNode) childSchemaNode);
                 } else if (childSchemaNode.getQName().getLocalName().equals(elementName)) {
                     potentialUris.add(childSchemaNode.getQName().getNamespace());
                 }

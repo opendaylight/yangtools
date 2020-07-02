@@ -1,0 +1,55 @@
+{
+  "complex:top-cont": {
+    "top-leaf": "top-leaf-value",
+    "inner-container": {
+      "inner-container-leaf-list": [
+        "value1", "value2"
+      ],
+      "inner-container-leaf": 1,
+      "inner-container-list": [
+        {
+          "icl-key": "icl-key-value1",
+          "icl-leaf-list": [
+            "icl-leaf-list-value1"
+          ],
+          "icl-container": {
+            "icl-container-leaf-list": [
+              "icl-container-leaf-list-value11",
+              "icl-container-leaf-list-value12"
+            ],
+            "icl-container-leaf": "icl-container-leaf-value1",
+            "icl-container-list": [
+              {
+                "icl-container-key": "icl-container-key-value1"
+              },
+              {
+                "icl-container-key": "icl-container-key-value2"
+              }
+            ]
+          },
+          "icl-leaf": "icl-leaf-value1"
+        },
+        {
+          "icl-key": "icl-key-value2",
+          "icl-leaf-list": [
+            "icl-leaf-list-value21, icl-leaf-list-value22"
+          ],
+          "icl-container": {
+            "icl-container-leaf-list": [
+              "icl-container-leaf-list-value21",
+              "icl-container-leaf-list-value22"
+            ],
+            "icl-container-leaf": "icl-container-leaf-value2",
+            "icl-container-list": [
+              {
+                "icl-container-key": "icl-container-key-value3"
+              }
+            ]
+          },
+          "icl-leaf": "icl-leaf-value2"
+        }
+      ]
+    },
+    "top-leaf-end": "top-leaf-end"
+  }
+}
