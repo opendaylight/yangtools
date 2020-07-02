@@ -67,7 +67,7 @@ public final class EffectiveStatementMixins {
     // Marker interface requiring all mixins to be derived from EffectiveStatement.
     private interface Mixin<A, D extends DeclaredStatement<A>> extends EffectiveStatement<A, D> {
         @SuppressWarnings("unchecked")
-        default <T> Collection<? extends T> filterEffectiveStatements(final Class<T> type) {
+        default <T> @NonNull Collection<? extends T> filterEffectiveStatements(final Class<T> type) {
             // Yeah, this is not nice, but saves one transformation
             return (Collection<? extends T>) Collections2.filter(effectiveSubstatements(), type::isInstance);
         }

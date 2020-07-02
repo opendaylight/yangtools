@@ -9,8 +9,15 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public interface UsesStatement extends DataDefinitionStatement {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.USES;
+    }
+
     default @NonNull Collection<? extends RefineStatement> getRefines() {
         return declaredSubstatements(RefineStatement.class);
     }
