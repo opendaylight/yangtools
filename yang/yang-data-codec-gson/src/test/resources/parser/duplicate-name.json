@@ -1,0 +1,6 @@
+{
+    "complexjson:cont1": {
+        "lflst11":["lflst11 value1","lflst11 value2"],
+        "lflst11":["lflst11 value1"]
+    }
+}
