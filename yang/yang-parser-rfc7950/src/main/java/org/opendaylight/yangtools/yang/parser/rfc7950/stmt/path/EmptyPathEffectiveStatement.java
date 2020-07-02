@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,12 +10,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class PathEffectiveStatementImpl extends DeclaredEffectiveStatementBase<PathExpression, PathStatement>
+final class EmptyPathEffectiveStatement extends DefaultArgument<PathExpression, PathStatement>
         implements PathEffectiveStatement {
-    PathEffectiveStatementImpl(final StmtContext<PathExpression, PathStatement, ?> ctx) {
-        super(ctx);
+    EmptyPathEffectiveStatement(final PathStatement declared) {
+        super(declared);
     }
 }
