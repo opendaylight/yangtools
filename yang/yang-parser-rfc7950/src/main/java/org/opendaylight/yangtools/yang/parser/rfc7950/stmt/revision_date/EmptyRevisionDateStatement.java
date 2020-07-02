@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision_date;
 
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
-final class EmptyRevisionDateStatement extends WithArgument<Revision> implements RevisionDateStatement {
-    EmptyRevisionDateStatement(final StmtContext<Revision, ?, ?> context) {
-        super(context);
+final class EmptyRevisionDateStatement extends ArgumentToString<Revision> implements RevisionDateStatement {
+    EmptyRevisionDateStatement(final Revision argument) {
+        super(argument);
     }
 }
