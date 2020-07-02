@@ -61,6 +61,7 @@ import org.opendaylight.yangtools.yang.model.util.type.InstanceIdentifierTypeBui
 import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.LengthRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.RequireInstanceRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
@@ -259,7 +260,7 @@ abstract class AbstractTypeStatementSupport
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newInt64Builder((Int64TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof LeafrefTypeDefinition) {
-            return new LeafrefTypeEffectiveStatementImpl(ctx, (LeafrefTypeDefinition) baseType);
+            return createLeafref(ctx, (LeafrefTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof StringTypeDefinition) {
             return new StringTypeEffectiveStatementImpl(ctx, (StringTypeDefinition) baseType);
         } else if (baseType instanceof Uint8TypeDefinition) {
@@ -476,6 +477,21 @@ abstract class AbstractTypeStatementSupport
         for (EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof RequireInstanceEffectiveStatement) {
                 builder.setRequireInstance(((RequireInstanceEffectiveStatement)stmt).argument());
+            }
+        }
+
+        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+    }
+
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createLeafref(final StmtContext<?, ?, ?> ctx,
+            final LeafrefTypeDefinition baseType, final TypeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> builder =
+                RestrictedTypes.newLeafrefBuilder(baseType, AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx));
+
+        for (final EffectiveStatement<?, ?> stmt : substatements) {
+            if (stmt instanceof RequireInstanceEffectiveStatement) {
+                builder.setRequireInstance(((RequireInstanceEffectiveStatement) stmt).argument());
             }
         }
 
