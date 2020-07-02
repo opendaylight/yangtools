@@ -9,16 +9,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 
-final class BuiltinTypeStatement implements TypeStatement {
+final class BuiltinTypeStatement extends WithRawStringArgument implements TypeStatement {
     private static final ImmutableMap<String, BuiltinTypeStatement> BUILTINS;
 
     static {
@@ -43,10 +41,8 @@ final class BuiltinTypeStatement implements TypeStatement {
         builder.put(argument, new BuiltinTypeStatement(argument));
     }
 
-    private final String argument;
-
-    private BuiltinTypeStatement(final String argument) {
-        this.argument = requireNonNull(argument);
+    private BuiltinTypeStatement(final String rawArgument) {
+        super(requireNonNull(rawArgument));
     }
 
     static TypeStatement maybeReplace(final TypeStatementImpl orig) {
@@ -59,25 +55,5 @@ final class BuiltinTypeStatement implements TypeStatement {
         }
 
         return orig;
-    }
-
-    @Override
-    public String argument() {
-        return argument;
-    }
-
-    @Override
-    public String rawArgument() {
-        return argument;
-    }
-
-    @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        return ImmutableList.of();
-    }
-
-    @Override
-    public StatementSource getStatementSource() {
-        return StatementSource.DECLARATION;
     }
 }

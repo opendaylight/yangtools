@@ -57,7 +57,11 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         private final String rawArgument;
 
         protected WithRawArgument(final StmtContext<A, ?, ?> context) {
-            rawArgument = context.rawStatementArgument();
+            this(context.rawStatementArgument());
+        }
+
+        protected WithRawArgument(final String rawArgument) {
+            this.rawArgument = rawArgument;
         }
 
         @Override
@@ -117,6 +121,10 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
 
         protected WithRawStringArgument(final StmtContext<String, ?, ?> context) {
             super(context);
+        }
+
+        protected WithRawStringArgument(final String rawArgument) {
+            super(rawArgument);
         }
 
         @Override
