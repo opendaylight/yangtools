@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
@@ -31,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -38,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
@@ -52,6 +55,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.LengthRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
@@ -235,7 +239,7 @@ abstract class AbstractTypeStatementSupport
         } else if (baseType instanceof EmptyTypeDefinition) {
             return createEmpty(ctx, (EmptyTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof EnumTypeDefinition) {
-            return new EnumTypeEffectiveStatementImpl(ctx, (EnumTypeDefinition) baseType);
+            return createEnum(ctx, (EnumTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof IdentityrefTypeDefinition) {
             return createIdentityref(ctx, (IdentityrefTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
@@ -426,6 +430,35 @@ abstract class AbstractTypeStatementSupport
             typeEffectiveSchemaPath(ctx)));
     }
 
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createEnum(final StmtContext<?, ?, ?> ctx,
+            final EnumTypeDefinition baseType, final TypeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final EnumerationTypeBuilder builder = RestrictedTypes.newEnumerationBuilder(baseType,
+            ctx.getSchemaPath().get());
+
+        final YangVersion yangVersion = ctx.getRootVersion();
+        for (final EffectiveStatement<?, ?> stmt : substatements) {
+            if (stmt instanceof EnumEffectiveStatement) {
+                SourceException.throwIf(yangVersion != YangVersion.VERSION_1_1, ctx.getStatementSourceReference(),
+                        "Restricted enumeration type is allowed only in YANG 1.1 version.");
+
+                final EnumEffectiveStatement enumSubStmt = (EnumEffectiveStatement) stmt;
+                final Optional<Integer> declaredValue =
+                        enumSubStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
+                final int effectiveValue;
+                if (declaredValue.isEmpty()) {
+                    effectiveValue = getBaseTypeEnumValue(enumSubStmt.getDeclared().rawArgument(), baseType, ctx);
+                } else {
+                    effectiveValue = declaredValue.orElseThrow();
+                }
+
+                builder.addEnum(EffectiveTypeUtil.buildEnumPair(enumSubStmt, effectiveValue));
+            }
+        }
+
+        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+    }
+
     private static @NonNull TypeEffectiveStatement<TypeStatement> createIdentityref(final StmtContext<?, ?, ?> ctx,
             final IdentityrefTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
@@ -450,5 +483,17 @@ abstract class AbstractTypeStatementSupport
 
         throw new SourceException(ctx.getStatementSourceReference(),
                 "Bit '%s' is not a subset of its base bits type %s.", bitName, baseType.getQName());
+    }
+
+    private static int getBaseTypeEnumValue(final String enumName, final EnumTypeDefinition baseType,
+            final StmtContext<?, ?, ?> ctx) {
+        for (EnumPair baseTypeEnumPair : baseType.getValues()) {
+            if (enumName.equals(baseTypeEnumPair.getName())) {
+                return baseTypeEnumPair.getValue();
+            }
+        }
+
+        throw new SourceException(ctx.getStatementSourceReference(),
+                "Enum '%s' is not a subset of its base enumeration type %s.", enumName, baseType.getQName());
     }
 }
