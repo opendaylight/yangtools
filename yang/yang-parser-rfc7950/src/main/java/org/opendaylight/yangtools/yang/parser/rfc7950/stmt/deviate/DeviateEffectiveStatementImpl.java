@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class DeviateEffectiveStatementImpl extends DeclaredEffectiveStatementBase<DeviateKind, DeviateStatement>
         implements DeviateDefinition, DeviateEffectiveStatement {
 
-    private final DeviateKind deviateType;
     private final String deviatedDefault;
     private final Integer deviatedMaxElements;
     private final Integer deviatedMinElements;
@@ -47,7 +46,6 @@ final class DeviateEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     DeviateEffectiveStatementImpl(final StmtContext<DeviateKind, DeviateStatement, ?> ctx) {
         super(ctx);
 
-        deviateType = argument();
         deviatedConfig = OptionalBoolean.ofNullable(findFirstEffectiveSubstatementArgument(
             ConfigEffectiveStatement.class).orElse(null));
         deviatedMandatory = OptionalBoolean.ofNullable(findFirstEffectiveSubstatementArgument(
@@ -67,7 +65,7 @@ final class DeviateEffectiveStatementImpl extends DeclaredEffectiveStatementBase
 
     @Override
     public DeviateKind getDeviateType() {
-        return deviateType;
+        return argument();
     }
 
     @Override
