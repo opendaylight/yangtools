@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -23,7 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
@@ -51,6 +54,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.LengthRestrictedTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
@@ -227,7 +231,7 @@ abstract class AbstractTypeStatementSupport
         } else if (baseType instanceof BooleanTypeDefinition) {
             return createBoolean(ctx, (BooleanTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof DecimalTypeDefinition) {
-            return new DecimalTypeEffectiveStatementImpl(ctx, (DecimalTypeDefinition) baseType);
+            return createDecimal(ctx, (DecimalTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof EmptyTypeDefinition) {
             return createEmpty(ctx, (EmptyTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof EnumTypeDefinition) {
@@ -392,6 +396,27 @@ abstract class AbstractTypeStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newBooleanBuilder(baseType,
             typeEffectiveSchemaPath(ctx)));
+    }
+
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createDecimal(final StmtContext<?, ?, ?> ctx,
+            final DecimalTypeDefinition baseType, final TypeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final RangeRestrictedTypeBuilder<DecimalTypeDefinition, BigDecimal> builder =
+                RestrictedTypes.newDecima64Builder(baseType, AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx));
+
+        for (EffectiveStatement<?, ?> stmt : substatements) {
+            if (stmt instanceof RangeEffectiveStatement) {
+                final RangeEffectiveStatement range = (RangeEffectiveStatement) stmt;
+                builder.setRangeConstraint(range, range.argument());
+            }
+            if (stmt instanceof FractionDigitsEffectiveStatement) {
+                final Integer digits = ((FractionDigitsEffectiveStatement)stmt).argument();
+                SourceException.throwIf(baseType.getFractionDigits() != digits, ctx.getStatementSourceReference(),
+                    "Cannot override fraction-digits from base type %s to %s", baseType, digits);
+            }
+        }
+
+        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
     private static @NonNull TypeEffectiveStatement<TypeStatement> createEmpty(final StmtContext<?, ?, ?> ctx,
