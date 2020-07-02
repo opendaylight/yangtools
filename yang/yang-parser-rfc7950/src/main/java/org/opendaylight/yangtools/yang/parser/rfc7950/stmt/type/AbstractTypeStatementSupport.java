@@ -51,6 +51,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
@@ -61,6 +62,7 @@ import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.InstanceIdentifierTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintException;
+import org.opendaylight.yangtools.yang.model.util.type.InvalidRangeConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.LengthRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RequireInstanceRestrictedTypeBuilder;
@@ -255,32 +257,32 @@ abstract class AbstractTypeStatementSupport
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             return createInstanceIdentifier(ctx, (InstanceIdentifierTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof Int8TypeDefinition) {
-            return new IntegralTypeEffectiveStatementImpl<>(ctx,
-                    RestrictedTypes.newInt8Builder((Int8TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
+            return createIntegral(ctx, declared, substatements,
+                RestrictedTypes.newInt8Builder((Int8TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Int16TypeDefinition) {
-            return new IntegralTypeEffectiveStatementImpl<>(ctx,
+            return createIntegral(ctx, declared, substatements,
                     RestrictedTypes.newInt16Builder((Int16TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Int32TypeDefinition) {
-            return new IntegralTypeEffectiveStatementImpl<>(ctx,
+            return createIntegral(ctx, declared, substatements,
                     RestrictedTypes.newInt32Builder((Int32TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Int64TypeDefinition) {
-            return new IntegralTypeEffectiveStatementImpl<>(ctx,
+            return createIntegral(ctx, declared, substatements,
                     RestrictedTypes.newInt64Builder((Int64TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof LeafrefTypeDefinition) {
             return createLeafref(ctx, (LeafrefTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof StringTypeDefinition) {
             return createString(ctx, (StringTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof Uint8TypeDefinition) {
-            return new IntegralTypeEffectiveStatementImpl<>(ctx,
+            return createIntegral(ctx, declared, substatements,
                     RestrictedTypes.newUint8Builder((Uint8TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Uint16TypeDefinition) {
-            return new IntegralTypeEffectiveStatementImpl<>(ctx,
+            return createIntegral(ctx, declared, substatements,
                     RestrictedTypes.newUint16Builder((Uint16TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Uint32TypeDefinition) {
-            return new IntegralTypeEffectiveStatementImpl<>(ctx,
+            return createIntegral(ctx, declared, substatements,
                     RestrictedTypes.newUint32Builder((Uint32TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Uint64TypeDefinition) {
-            return new IntegralTypeEffectiveStatementImpl<>(ctx,
+            return createIntegral(ctx, declared, substatements,
                     RestrictedTypes.newUint64Builder((Uint64TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof UnionTypeDefinition) {
             return createUnion(ctx, (UnionTypeDefinition) baseType, declared, substatements);
@@ -488,6 +490,25 @@ abstract class AbstractTypeStatementSupport
         }
 
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+    }
+
+    private static <T extends RangeRestrictedTypeDefinition<T, N>, N extends Number & Comparable<N>>
+        @NonNull TypeEffectiveStatement<TypeStatement> createIntegral(final StmtContext<?, ?, ?> ctx,
+                final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                final RangeRestrictedTypeBuilder<T, N> builder) {
+        for (EffectiveStatement<?, ?> stmt : substatements) {
+            if (stmt instanceof RangeEffectiveStatement) {
+                final RangeEffectiveStatement rangeStmt = (RangeEffectiveStatement)stmt;
+                builder.setRangeConstraint(rangeStmt, rangeStmt.argument());
+            }
+        }
+
+        try {
+            return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        } catch (InvalidRangeConstraintException e) {
+            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid range constraint: %s",
+                e.getOffendingRanges());
+        }
     }
 
     private static @NonNull TypeEffectiveStatement<TypeStatement> createLeafref(final StmtContext<?, ?, ?> ctx,
