@@ -1,0 +1,49 @@
+module complex {
+    namespace complex-ns;
+    prefix complex-prefix;
+
+    container top-cont {
+        leaf top-leaf {
+            type string;
+        }
+
+        container inner-container {
+            leaf inner-container-leaf {
+                type int32;
+            }
+            leaf-list inner-container-leaf-list {
+                type string;
+            }
+            list inner-container-list {
+                key "icl-key";
+                leaf icl-key {
+                    type string;
+                }
+                leaf icl-leaf {
+                    type string;
+                }
+                leaf-list icl-leaf-list {
+                    type string;
+                }
+                container icl-container {
+                    leaf icl-container-leaf {
+                        type string;
+                    }
+                    leaf-list icl-container-leaf-list {
+                        type string;
+                    }
+                    list icl-container-list {
+                        key "icl-container-key";
+                        leaf icl-container-key {
+                            type string;
+                        }
+                    }
+                }
+            }
+        }
+
+        leaf top-leaf-end {
+            type string;
+        }
+    }
+}
