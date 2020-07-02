@@ -52,12 +52,12 @@ public final class RevisionDateStatementSupport
     @Override
     protected RevisionDateStatement createDeclared(final StmtContext<Revision, RevisionDateStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularRevisionDateStatement(ctx, substatements);
+        return new RegularRevisionDateStatement(ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
     protected RevisionDateStatement createEmptyDeclared(final StmtContext<Revision, RevisionDateStatement, ?> ctx) {
-        return new EmptyRevisionDateStatement(ctx);
+        return new EmptyRevisionDateStatement(ctx.coerceStatementArgument());
     }
 
     @Override
