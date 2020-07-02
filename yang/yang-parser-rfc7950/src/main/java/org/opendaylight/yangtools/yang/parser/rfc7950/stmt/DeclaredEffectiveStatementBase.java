@@ -13,6 +13,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
+/**
+ * A declared {@link EffectiveStatementBase}.
+ *
+ * @deprecated Use {@link AbstractDeclaredEffectiveStatement} and its subclasses instead.
+ */
+@Deprecated(forRemoval = true)
+// FIXME: 6.0.0: fold this into AbstractEffectiveDocumentedNodeWithStatus
 public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatement<A>> extends
         EffectiveStatementBase<A, D> {
 
@@ -23,8 +30,7 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
     /**
      * Constructor.
      *
-     * @param ctx
-     *            context of statement.
+     * @param ctx context of statement.
      */
     protected DeclaredEffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
         super(ctx);
