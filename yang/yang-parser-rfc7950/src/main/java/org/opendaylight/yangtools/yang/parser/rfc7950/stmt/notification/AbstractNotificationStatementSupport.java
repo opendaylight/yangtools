@@ -9,16 +9,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -58,12 +55,8 @@ abstract class AbstractNotificationStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         checkEffective(ctx);
 
-        final int flags = new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .toFlags();
-
-        return new NotificationEffectiveStatementImpl(declared, flags, ctx, substatements);
+        return new NotificationEffectiveStatementImpl(declared, historyAndStatusFlags(ctx, substatements), ctx,
+            substatements);
     }
 
     @Override
