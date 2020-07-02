@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -49,6 +50,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
@@ -63,6 +65,7 @@ import org.opendaylight.yangtools.yang.model.util.type.LengthRestrictedTypeBuild
 import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RequireInstanceRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
+import org.opendaylight.yangtools.yang.model.util.type.StringTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -77,9 +80,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class AbstractTypeStatementSupport
         extends BaseStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractTypeStatementSupport.class);
+
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.BASE)
@@ -262,7 +269,7 @@ abstract class AbstractTypeStatementSupport
         } else if (baseType instanceof LeafrefTypeDefinition) {
             return createLeafref(ctx, (LeafrefTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof StringTypeDefinition) {
-            return new StringTypeEffectiveStatementImpl(ctx, (StringTypeDefinition) baseType);
+            return createString(ctx, (StringTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof Uint8TypeDefinition) {
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newUint8Builder((Uint8TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
@@ -492,6 +499,38 @@ abstract class AbstractTypeStatementSupport
         for (final EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof RequireInstanceEffectiveStatement) {
                 builder.setRequireInstance(((RequireInstanceEffectiveStatement) stmt).argument());
+            }
+        }
+        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+    }
+
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createString(final StmtContext<?, ?, ?> ctx,
+            final StringTypeDefinition baseType, final TypeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final StringTypeBuilder builder = RestrictedTypes.newStringBuilder(baseType,
+            AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx));
+
+        for (EffectiveStatement<?, ?> stmt : substatements) {
+            if (stmt instanceof LengthEffectiveStatement) {
+                final LengthEffectiveStatement length = (LengthEffectiveStatement)stmt;
+
+                try {
+                    builder.setLengthConstraint(length, length.argument());
+                } catch (IllegalStateException e) {
+                    throw new SourceException(ctx.getStatementSourceReference(), e,
+                            "Multiple length constraints encountered");
+                } catch (InvalidLengthConstraintException e) {
+                    throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid length constraint %s",
+                        length.argument());
+                }
+            }
+            if (stmt instanceof PatternEffectiveStatement) {
+                final PatternConstraint pattern = ((PatternEffectiveStatement)stmt).argument();
+                if (pattern != null) {
+                    builder.addPatternConstraint(pattern);
+                } else {
+                    LOG.debug("Ignoring empty pattern statement {}", stmt);
+                }
             }
         }
 
