@@ -12,13 +12,17 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -26,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
@@ -43,6 +48,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.LengthRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
@@ -217,7 +223,7 @@ abstract class AbstractTypeStatementSupport
         if (baseType instanceof BinaryTypeDefinition) {
             return createBinary(ctx, (BinaryTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof BitsTypeDefinition) {
-            return new BitsTypeEffectiveStatementImpl(ctx, (BitsTypeDefinition) baseType);
+            return createBits(ctx, (BitsTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof BooleanTypeDefinition) {
             return createBoolean(ctx, (BooleanTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof DecimalTypeDefinition) {
@@ -353,6 +359,34 @@ abstract class AbstractTypeStatementSupport
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createBits(final StmtContext<?, ?, ?> ctx,
+            final BitsTypeDefinition baseType, final TypeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final BitsTypeBuilder builder = RestrictedTypes.newBitsBuilder(baseType, ctx.getSchemaPath().get());
+
+        final YangVersion yangVersion = ctx.getRootVersion();
+        for (final EffectiveStatement<?, ?> stmt : substatements) {
+            if (stmt instanceof BitEffectiveStatement) {
+                SourceException.throwIf(yangVersion != YangVersion.VERSION_1_1, ctx.getStatementSourceReference(),
+                        "Restricted bits type is allowed only in YANG 1.1 version.");
+                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) stmt;
+
+                // FIXME: this looks like a duplicate of BitsSpecificationEffectiveStatement
+                final Optional<Uint32> declaredPosition = bitSubStmt.getDeclaredPosition();
+                final Uint32 effectivePos;
+                if (declaredPosition.isEmpty()) {
+                    effectivePos = getBaseTypeBitPosition(bitSubStmt.argument(), baseType, ctx);
+                } else {
+                    effectivePos = declaredPosition.get();
+                }
+
+                builder.addBit(EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos));
+            }
+        }
+
+        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+    }
+
     private static @NonNull TypeEffectiveStatement<TypeStatement> createBoolean(final StmtContext<?, ?, ?> ctx,
             final BooleanTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
@@ -379,5 +413,17 @@ abstract class AbstractTypeStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newUnionBuilder(baseType,
             typeEffectiveSchemaPath(ctx)));
+    }
+
+    private static Uint32 getBaseTypeBitPosition(final String bitName, final BitsTypeDefinition baseType,
+            final StmtContext<?, ?, ?> ctx) {
+        for (Bit baseTypeBit : baseType.getBits()) {
+            if (bitName.equals(baseTypeBit.getName())) {
+                return baseTypeBit.getPosition();
+            }
+        }
+
+        throw new SourceException(ctx.getStatementSourceReference(),
+                "Bit '%s' is not a subset of its base bits type %s.", bitName, baseType.getQName());
     }
 }
