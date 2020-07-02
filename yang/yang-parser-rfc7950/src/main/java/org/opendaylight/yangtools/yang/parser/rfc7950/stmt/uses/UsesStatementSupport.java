@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -32,13 +31,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -147,7 +144,7 @@ public final class UsesStatementSupport
             final StmtContext<QName, UsesStatement, UsesEffectiveStatement> ctx, final UsesStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final GroupingDefinition sourceGrouping = getSourceGrouping(ctx);
-        final int flags = computeFlags(ctx, substatements);
+        final int flags = historyAndStatusFlags(ctx, substatements);
         final QName argument = ctx.coerceStatementArgument();
         if (declared.argument().equals(argument)) {
             return new RegularLocalUsesEffectiveStatement(declared, sourceGrouping, flags, substatements);
@@ -162,7 +159,7 @@ public final class UsesStatementSupport
     protected UsesEffectiveStatement createEmptyEffective(
             final StmtContext<QName, UsesStatement, UsesEffectiveStatement> ctx, final UsesStatement declared) {
         final GroupingDefinition sourceGrouping = getSourceGrouping(ctx);
-        final int flags = computeFlags(ctx, ImmutableList.of());
+        final int flags = historyAndStatusFlags(ctx, ImmutableList.of());
         final QName argument = ctx.coerceStatementArgument();
         return argument.equals(declared.argument())
                 ? new EmptyLocalUsesEffectiveStatement(declared, sourceGrouping, flags)
@@ -186,14 +183,6 @@ public final class UsesStatementSupport
     private static GroupingDefinition getSourceGrouping(final StmtContext<QName, ?, ?> ctx) {
         return (GroupingDefinition) ctx.getFromNamespace(GroupingNamespace.class, ctx.coerceStatementArgument())
                 .buildEffective();
-    }
-
-    private static int computeFlags(final StmtContext<QName, UsesStatement, UsesEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .toFlags();
     }
 
     /**

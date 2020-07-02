@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -19,10 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -114,8 +111,8 @@ public final class ActionStatementSupport extends BaseQNameStatementSupport<Acti
         SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.MODULE), ref,
             "Action %s is defined at the top level of a module", argument);
 
-        return new ActionEffectiveStatementImpl(declared, ctx.getSchemaPath().get(), computeFlags(ctx, substatements),
-            ctx, substatements);
+        return new ActionEffectiveStatementImpl(declared, ctx.getSchemaPath().get(),
+            historyAndStatusFlags(ctx, substatements), ctx, substatements);
     }
 
     @Override
@@ -124,13 +121,4 @@ public final class ActionStatementSupport extends BaseQNameStatementSupport<Acti
         throw new IllegalStateException("Missing implicit input/output statements at "
             + ctx.getStatementSourceReference());
     }
-
-    private static int computeFlags(final StmtContext<?, ?, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .toFlags();
-    }
-
 }
