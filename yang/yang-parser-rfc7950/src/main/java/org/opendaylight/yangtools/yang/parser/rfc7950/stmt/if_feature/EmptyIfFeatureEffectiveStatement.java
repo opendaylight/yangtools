@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,12 +10,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class IfFeatureEffectiveStatementImpl extends DeclaredEffectiveStatementBase<IfFeatureExpr, IfFeatureStatement>
+final class EmptyIfFeatureEffectiveStatement extends DefaultArgument<IfFeatureExpr, IfFeatureStatement>
         implements IfFeatureEffectiveStatement {
-    IfFeatureEffectiveStatementImpl(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx) {
-        super(ctx);
+    EmptyIfFeatureEffectiveStatement(final IfFeatureStatement declared) {
+        super(declared);
     }
 }

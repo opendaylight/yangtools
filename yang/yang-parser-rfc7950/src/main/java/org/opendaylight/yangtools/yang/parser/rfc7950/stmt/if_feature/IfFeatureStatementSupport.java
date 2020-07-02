@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,11 +18,13 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -36,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class IfFeatureStatementSupport
-        extends AbstractStatementSupport<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> {
+        extends BaseStatementSupport<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(IfFeatureStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.IF_FEATURE)
@@ -92,18 +95,32 @@ public final class IfFeatureStatementSupport
     }
 
     @Override
-    public IfFeatureStatement createDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx) {
-        return new IfFeatureStatementImpl(ctx);
-    }
-
-    @Override
-    public IfFeatureEffectiveStatement createEffective(
-            final StmtContext<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> ctx) {
-        return new IfFeatureEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected IfFeatureStatement createDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularIfFeatureStatement(ctx, substatements);
+    }
+
+    @Override
+    protected IfFeatureStatement createEmptyDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx) {
+        return new EmptyIfFeatureStatement(ctx);
+    }
+
+    @Override
+    protected IfFeatureEffectiveStatement createEffective(
+            final StmtContext<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> ctx,
+            final IfFeatureStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularIfFeatureEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected IfFeatureEffectiveStatement createEmptyEffective(
+            final StmtContext<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> ctx,
+            final IfFeatureStatement declared) {
+        return new EmptyIfFeatureEffectiveStatement(declared);
     }
 }
