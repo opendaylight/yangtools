@@ -14,6 +14,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
+/**
+ * A base class for context-implied statements.
+ *
+ * @deprecated Use {@link AbstractUndeclaredEffectiveStatement} instead.
+ */
+@Deprecated(forRemoval = true)
+// FIXME: 6.0.0: remove this class
 public abstract class UndeclaredEffectiveStatementBase<A, D extends DeclaredStatement<A>>
         extends EffectiveStatementBase<A, D> {
 
