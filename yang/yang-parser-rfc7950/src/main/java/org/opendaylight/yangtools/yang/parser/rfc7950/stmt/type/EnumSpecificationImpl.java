@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
+import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class EnumSpecificationImpl extends AbstractDeclaredStatement<String> implements EnumSpecification {
-    EnumSpecificationImpl(final StmtContext<String, EnumSpecification, ?> context) {
-        super(context);
+final class EnumSpecificationImpl extends WithSubstatements implements EnumSpecification {
+    EnumSpecificationImpl(final StmtContext<String, ?, ?> context,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(context, substatements);
     }
 }
