@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class Decimal64SpecificationImpl extends WithSubstatements implements Decimal64Specification {
-    Decimal64SpecificationImpl(final StmtContext<String, Decimal64Specification, ?> context,
+    Decimal64SpecificationImpl(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(context, substatements);
     }
