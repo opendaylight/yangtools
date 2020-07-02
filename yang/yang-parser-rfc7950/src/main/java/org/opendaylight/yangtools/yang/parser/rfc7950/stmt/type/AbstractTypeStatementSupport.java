@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -143,54 +144,7 @@ abstract class AbstractTypeStatementSupport
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
 
         // First look up the proper base type
-        final TypeEffectiveStatement<TypeStatement> typeStmt;
-        switch (ctx.coerceStatementArgument()) {
-            case BINARY:
-                typeStmt = BuiltinEffectiveStatement.BINARY;
-                break;
-            case BOOLEAN:
-                typeStmt = BuiltinEffectiveStatement.BOOLEAN;
-                break;
-            case EMPTY:
-                typeStmt = BuiltinEffectiveStatement.EMPTY;
-                break;
-            case INSTANCE_IDENTIFIER:
-                typeStmt = BuiltinEffectiveStatement.INSTANCE_IDENTIFIER;
-                break;
-            case INT8:
-                typeStmt = BuiltinEffectiveStatement.INT8;
-                break;
-            case INT16:
-                typeStmt = BuiltinEffectiveStatement.INT16;
-                break;
-            case INT32:
-                typeStmt = BuiltinEffectiveStatement.INT32;
-                break;
-            case INT64:
-                typeStmt = BuiltinEffectiveStatement.INT64;
-                break;
-            case STRING:
-                typeStmt = BuiltinEffectiveStatement.STRING;
-                break;
-            case UINT8:
-                typeStmt = BuiltinEffectiveStatement.UINT8;
-                break;
-            case UINT16:
-                typeStmt = BuiltinEffectiveStatement.UINT16;
-                break;
-            case UINT32:
-                typeStmt = BuiltinEffectiveStatement.UINT32;
-                break;
-            case UINT64:
-                typeStmt = BuiltinEffectiveStatement.UINT64;
-                break;
-            default:
-                final QName qname = StmtContextUtils.parseNodeIdentifier(ctx, ctx.getStatementArgument());
-                final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
-                        SourceException.throwIfNull(ctx.getFromNamespace(TypeNamespace.class, qname),
-                            ctx.getStatementSourceReference(), "Type '%s' not found", qname);
-                typeStmt = typedef.buildEffective().asTypeEffectiveStatement();
-        }
+        final TypeEffectiveStatement<TypeStatement> typeStmt = resolveType(ctx);
 
         if (ctx.declaredSubstatements().isEmpty() && ctx.effectiveSubstatements().isEmpty()) {
             return typeStmt;
@@ -313,5 +267,50 @@ abstract class AbstractTypeStatementSupport
 
         final QName qname = path.getLastComponent().bindTo(parentQName.getModule()).intern();
         return parent.createChild(qname);
+    }
+
+    /**
+     * Resolve type reference, as pointed to by the context's argument.
+     *
+     * @param ctx Statement context
+     * @return Resolved type
+     * @throws SourceException if the target type cannot be found
+     */
+    private static @NonNull TypeEffectiveStatement<TypeStatement> resolveType(final StmtContext<String, ?, ?> ctx) {
+        final String argument = ctx.coerceStatementArgument();
+        switch (argument) {
+            case BINARY:
+                return BuiltinEffectiveStatement.BINARY;
+            case BOOLEAN:
+                return BuiltinEffectiveStatement.BOOLEAN;
+            case EMPTY:
+                return BuiltinEffectiveStatement.EMPTY;
+            case INSTANCE_IDENTIFIER:
+                return BuiltinEffectiveStatement.INSTANCE_IDENTIFIER;
+            case INT8:
+                return BuiltinEffectiveStatement.INT8;
+            case INT16:
+                return BuiltinEffectiveStatement.INT16;
+            case INT32:
+                return BuiltinEffectiveStatement.INT32;
+            case INT64:
+                return BuiltinEffectiveStatement.INT64;
+            case STRING:
+                return BuiltinEffectiveStatement.STRING;
+            case UINT8:
+                return BuiltinEffectiveStatement.UINT8;
+            case UINT16:
+                return BuiltinEffectiveStatement.UINT16;
+            case UINT32:
+                return BuiltinEffectiveStatement.UINT32;
+            case UINT64:
+                return BuiltinEffectiveStatement.UINT64;
+            default:
+                final QName qname = StmtContextUtils.parseNodeIdentifier(ctx, argument);
+                final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
+                        SourceException.throwIfNull(ctx.getFromNamespace(TypeNamespace.class, qname),
+                            ctx.getStatementSourceReference(), "Type '%s' not found", qname);
+                return typedef.buildEffective().asTypeEffectiveStatement();
+        }
     }
 }
