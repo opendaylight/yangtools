@@ -260,7 +260,7 @@ abstract class AbstractTypeStatementSupport
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newUint64Builder((Uint64TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof UnionTypeDefinition) {
-            return new UnionTypeEffectiveStatementImpl(ctx, (UnionTypeDefinition) baseType);
+            return createUnion(ctx, (UnionTypeDefinition) baseType, declared, substatements);
         } else {
             throw new IllegalStateException("Unhandled base type " + baseType);
         }
@@ -374,4 +374,10 @@ abstract class AbstractTypeStatementSupport
             typeEffectiveSchemaPath(ctx)));
     }
 
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createUnion(final StmtContext<?, ?, ?> ctx,
+            final UnionTypeDefinition baseType, final TypeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newUnionBuilder(baseType,
+            typeEffectiveSchemaPath(ctx)));
+    }
 }
