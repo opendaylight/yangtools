@@ -11,12 +11,9 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
@@ -35,7 +32,7 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
     @Override
     protected final @NonNull E createDeclaredEffective(final StmtContext<QName, D, E> ctx,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final D declared) {
-        return createDeclaredEffective(computeFlags(ctx, substatements), ctx, substatements, declared);
+        return createDeclaredEffective(historyAndStatusFlags(ctx, substatements), ctx, substatements, declared);
     }
 
     protected abstract @NonNull E createDeclaredEffective(int flags, @NonNull StmtContext<QName, D, E> ctx,
@@ -44,17 +41,9 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
     @Override
     protected final E createUndeclaredEffective(final StmtContext<QName, D, E> ctx,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return createUndeclaredEffective(computeFlags(ctx, substatements), ctx, substatements);
+        return createUndeclaredEffective(historyAndStatusFlags(ctx, substatements), ctx, substatements);
     }
 
     protected abstract @NonNull E createUndeclaredEffective(int flags, @NonNull StmtContext<QName, D, E> ctx,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
-
-    private static int computeFlags(final StmtContext<?, ?, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .toFlags();
-    }
 }

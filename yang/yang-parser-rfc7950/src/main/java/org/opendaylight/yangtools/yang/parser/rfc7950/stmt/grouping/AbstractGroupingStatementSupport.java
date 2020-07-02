@@ -9,15 +9,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -68,10 +65,8 @@ abstract class AbstractGroupingStatementSupport
     protected final GroupingEffectiveStatement createEffective(
             final StmtContext<QName, GroupingStatement, GroupingEffectiveStatement> ctx,
             final GroupingStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new GroupingEffectiveStatementImpl(declared, ctx, substatements, new FlagsBuilder()
-            .setHistory(ctx.getCopyHistory())
-            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-            .toFlags());
+        return new GroupingEffectiveStatementImpl(declared, ctx, substatements,
+            historyAndStatusFlags(ctx, substatements));
     }
 
     @Override
