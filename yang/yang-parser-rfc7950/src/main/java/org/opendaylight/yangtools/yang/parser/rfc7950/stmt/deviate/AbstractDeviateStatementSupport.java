@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
@@ -28,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -49,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class AbstractDeviateStatementSupport
-        extends AbstractStatementSupport<DeviateKind, DeviateStatement, DeviateEffectiveStatement> {
+        extends BaseStatementSupport<DeviateKind, DeviateStatement, DeviateEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDeviateStatementSupport.class);
 
     private static final SubstatementValidator DEVIATE_NOT_SUPPORTED_SUBSTATEMENT_VALIDATOR =
@@ -104,17 +106,6 @@ abstract class AbstractDeviateStatementSupport
     public final DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(value),
             ctx.getStatementSourceReference(), "String '%s' is not valid deviate argument", value);
-    }
-
-    @Override
-    public final DeviateStatement createDeclared(final StmtContext<DeviateKind, DeviateStatement, ?> ctx) {
-        return new DeviateStatementImpl(ctx);
-    }
-
-    @Override
-    public final DeviateEffectiveStatement createEffective(
-            final StmtContext<DeviateKind, DeviateStatement, DeviateEffectiveStatement> ctx) {
-        return new DeviateEffectiveStatementImpl(ctx);
     }
 
     @Override
@@ -194,6 +185,33 @@ abstract class AbstractDeviateStatementSupport
     @Override
     protected final SubstatementValidator getSubstatementValidator() {
         return null;
+    }
+
+    @Override
+    protected final DeviateStatement createDeclared(final StmtContext<DeviateKind, DeviateStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new DeviateStatementImpl(ctx, substatements);
+    }
+
+    @Override
+    protected final DeviateStatement createEmptyDeclared(final StmtContext<DeviateKind, DeviateStatement, ?> ctx) {
+        // This is exceedingly unlikely, just reuse the implementation
+        return createDeclared(ctx, ImmutableList.of());
+    }
+
+    @Override
+    protected final DeviateEffectiveStatement createEffective(
+            final StmtContext<DeviateKind, DeviateStatement, DeviateEffectiveStatement> ctx,
+            final DeviateStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new DeviateEffectiveStatementImpl(declared, substatements);
+    }
+
+    @Override
+    protected final DeviateEffectiveStatement createEmptyEffective(
+            final StmtContext<DeviateKind, DeviateStatement, DeviateEffectiveStatement> ctx,
+            final DeviateStatement declared) {
+        // This is exceedingly unlikely, just reuse the implementation
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 
     protected SubstatementValidator getSubstatementValidatorForDeviate(final DeviateKind deviateKind) {
