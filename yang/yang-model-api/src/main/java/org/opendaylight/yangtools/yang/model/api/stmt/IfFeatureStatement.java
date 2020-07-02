@@ -11,12 +11,19 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Represents YANG if-feature statement. The "if-feature" statement makes its parent statement conditional.
  */
 public interface IfFeatureStatement extends DeclaredStatement<IfFeatureExpr> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.IF_FEATURE;
+    }
+
     /**
      * In YANG 1.1 (RFC7950) implementation of IfFeatureStatement, the argument is a boolean expression over feature
      * names defined by "feature" statements. Hence, add implementation to return a predicate on a collection
