@@ -23,6 +23,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  *
  * @param <A> Argument type ({@link Void} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
+ *
+ * @deprecated This class has a number of design problems. Please use either {@link AbstractDeclaredEffectiveStatement}
+ *             or {@link AbstractUndeclaredEffectiveStatement} instead.
  */
 // TODO: This class is problematic in that it interacts with its subclasses via methods which are guaranteed to allows
 //       atrocities like RecursiveObjectLeaker tricks. That should be avoided and pushed to caller in a way where
@@ -31,6 +34,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 //
 //       From memory efficiency perspective, it is very common to have effective statements without any substatements,
 //       in which case 'substatements' field is redundant.
+@Deprecated(forRemoval = true)
+// FIXME: 6.0.0: fold this into AbstractEffectiveDocumentedNodeWithStatus
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveStatement<A, D> {
     private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
@@ -51,6 +56,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
      * @param substatementsInit proposed substatements
      * @return Filtered substatements
      */
+    // FIXME: 6.0.0: this facility is only overridden by ExtensionEffectiveStatementImpl
     protected Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
             final Collection<? extends StmtContext<?, ?, ?>> substatementsInit) {
         return Collections2.transform(Collections2.filter(substatementsInit,

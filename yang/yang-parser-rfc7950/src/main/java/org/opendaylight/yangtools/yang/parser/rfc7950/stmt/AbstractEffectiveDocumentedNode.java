@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatemen
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
+@Deprecated(forRemoval = true)
 // FIXME: 6.0.0: fold this into AbstractEffectiveDocumentedNodeWithStatus
 public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
         extends DeclaredEffectiveStatementBase<A, D> implements DocumentedNode {
