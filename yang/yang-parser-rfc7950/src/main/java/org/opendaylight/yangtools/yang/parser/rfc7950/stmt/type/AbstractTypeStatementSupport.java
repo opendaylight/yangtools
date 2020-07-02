@@ -223,7 +223,7 @@ abstract class AbstractTypeStatementSupport
         } else if (baseType instanceof DecimalTypeDefinition) {
             return new DecimalTypeEffectiveStatementImpl(ctx, (DecimalTypeDefinition) baseType);
         } else if (baseType instanceof EmptyTypeDefinition) {
-            return new EmptyTypeEffectiveStatementImpl(ctx, (EmptyTypeDefinition) baseType);
+            return createEmpty(ctx, (EmptyTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof EnumTypeDefinition) {
             return new EnumTypeEffectiveStatementImpl(ctx, (EnumTypeDefinition) baseType);
         } else if (baseType instanceof IdentityrefTypeDefinition) {
@@ -357,6 +357,13 @@ abstract class AbstractTypeStatementSupport
             final BooleanTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newBooleanBuilder(baseType,
+            typeEffectiveSchemaPath(ctx)));
+    }
+
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createEmpty(final StmtContext<?, ?, ?> ctx,
+            final EmptyTypeDefinition baseType, final TypeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newEmptyBuilder(baseType,
             typeEffectiveSchemaPath(ctx)));
     }
 }
