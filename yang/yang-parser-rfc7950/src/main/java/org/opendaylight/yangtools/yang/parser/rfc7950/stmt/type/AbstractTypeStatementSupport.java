@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
@@ -56,6 +57,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.InstanceIdentifierTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.LengthRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
@@ -243,8 +245,7 @@ abstract class AbstractTypeStatementSupport
         } else if (baseType instanceof IdentityrefTypeDefinition) {
             return createIdentityref(ctx, (IdentityrefTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
-            return new InstanceIdentifierTypeEffectiveStatementImpl(ctx,
-                (InstanceIdentifierTypeDefinition) baseType);
+            return createInstanceIdentifier(ctx, (InstanceIdentifierTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof Int8TypeDefinition) {
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newInt8Builder((Int8TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
@@ -464,6 +465,21 @@ abstract class AbstractTypeStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newIdentityrefBuilder(baseType,
             typeEffectiveSchemaPath(ctx)));
+    }
+
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createInstanceIdentifier(
+            final StmtContext<?, ?, ?> ctx, final InstanceIdentifierTypeDefinition baseType,
+            final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final InstanceIdentifierTypeBuilder builder = RestrictedTypes.newInstanceIdentifierBuilder(baseType,
+                    typeEffectiveSchemaPath(ctx));
+
+        for (EffectiveStatement<?, ?> stmt : substatements) {
+            if (stmt instanceof RequireInstanceEffectiveStatement) {
+                builder.setRequireInstance(((RequireInstanceEffectiveStatement)stmt).argument());
+            }
+        }
+
+        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
     private static @NonNull TypeEffectiveStatement<TypeStatement> createUnion(final StmtContext<?, ?, ?> ctx,
