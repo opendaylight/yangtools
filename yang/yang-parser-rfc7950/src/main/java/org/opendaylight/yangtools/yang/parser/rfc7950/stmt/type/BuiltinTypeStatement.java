@@ -11,10 +11,10 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class BuiltinTypeStatement extends WithRawStringArgument implements TypeStatement {
     private static final ImmutableMap<String, BuiltinTypeStatement> BUILTINS;
@@ -45,15 +45,7 @@ final class BuiltinTypeStatement extends WithRawStringArgument implements TypeSt
         super(requireNonNull(rawArgument));
     }
 
-    static TypeStatement maybeReplace(final TypeStatementImpl orig) {
-        if (orig.declaredSubstatements().isEmpty() && orig.getStatementSource() == StatementSource.DECLARATION
-                && orig.statementDefinition() == YangStmtMapping.TYPE) {
-            final BuiltinTypeStatement builtin = BUILTINS.get(orig.argument());
-            if (builtin != null) {
-                return builtin;
-            }
-        }
-
-        return orig;
+    static @Nullable TypeStatement lookup(final StmtContext<String, TypeStatement, ?> ctx) {
+        return BUILTINS.get(ctx.coerceStatementArgument());
     }
 }

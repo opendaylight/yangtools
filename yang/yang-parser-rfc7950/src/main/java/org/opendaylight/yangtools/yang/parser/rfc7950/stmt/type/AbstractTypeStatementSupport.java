@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -16,6 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -41,8 +43,8 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -57,7 +59,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractTypeStatementSupport
-        extends AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
+        extends BaseStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.BASE)
@@ -135,21 +137,78 @@ abstract class AbstractTypeStatementSupport
     }
 
     @Override
-    public final TypeStatement createDeclared(final StmtContext<String, TypeStatement, ?> ctx) {
-        return BuiltinTypeStatement.maybeReplace(new TypeStatementImpl(ctx));
+    public final void onFullDefinitionDeclared(
+            final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt) {
+        super.onFullDefinitionDeclared(stmt);
+
+        // if it is yang built-in type, no prerequisite is needed, so simply return
+        if (BUILT_IN_TYPES.containsKey(stmt.getStatementArgument())) {
+            return;
+        }
+
+        final QName typeQName = StmtContextUtils.parseNodeIdentifier(stmt, stmt.getStatementArgument());
+        final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+        final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, TypeNamespace.class,
+                typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);
+        typeAction.mutatesEffectiveCtx(stmt.getParentContext());
+
+        /*
+         * If the type does not exist, throw new InferenceException.
+         * Otherwise perform no operation.
+         */
+        typeAction.apply(new InferenceAction() {
+            @Override
+            public void apply(final InferenceContext ctx) {
+                // Intentional NOOP
+            }
+
+            @Override
+            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                InferenceException.throwIf(failed.contains(typePrereq), stmt.getStatementSourceReference(),
+                    "Type [%s] was not found.", typeQName);
+            }
+        });
     }
 
     @Override
-    public final TypeEffectiveStatement<TypeStatement> createEffective(
-            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
+    public final String internArgument(final String rawArgument) {
+        final String found;
+        return (found = BUILT_IN_TYPES.get(rawArgument)) != null ? found : rawArgument;
+    }
 
+    @Override
+    public boolean hasArgumentSpecificSupports() {
+        return !ARGUMENT_SPECIFIC_SUPPORTS.isEmpty();
+    }
+
+    @Override
+    public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
+        return ARGUMENT_SPECIFIC_SUPPORTS.get(argument);
+    }
+
+    @Override
+    protected final SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected final TypeStatement createDeclared(final StmtContext<String, TypeStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularTypeStatement(ctx, substatements);
+    }
+
+    @Override
+    protected final TypeStatement createEmptyDeclared(final StmtContext<String, TypeStatement, ?> ctx) {
+        final TypeStatement builtin;
+        return (builtin = BuiltinTypeStatement.lookup(ctx)) != null ? builtin : new EmptyTypeStatement(ctx);
+    }
+
+    @Override
+    protected final EffectiveStatement<String, TypeStatement> createEffective(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // First look up the proper base type
         final TypeEffectiveStatement<TypeStatement> typeStmt = resolveType(ctx);
-
-        if (ctx.declaredSubstatements().isEmpty() && ctx.effectiveSubstatements().isEmpty()) {
-            return typeStmt;
-        }
-
         // Now instantiate the proper effective statement for that type
         final TypeDefinition<?> baseType = typeStmt.getTypeDefinition();
         if (baseType instanceof BinaryTypeDefinition) {
@@ -205,58 +264,10 @@ abstract class AbstractTypeStatementSupport
     }
 
     @Override
-    public final void onFullDefinitionDeclared(
-            final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-
-        // if it is yang built-in type, no prerequisite is needed, so simply return
-        if (BUILT_IN_TYPES.containsKey(stmt.getStatementArgument())) {
-            return;
-        }
-
-        final QName typeQName = StmtContextUtils.parseNodeIdentifier(stmt, stmt.getStatementArgument());
-        final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-        final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, TypeNamespace.class,
-                typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);
-        typeAction.mutatesEffectiveCtx(stmt.getParentContext());
-
-        /*
-         * If the type does not exist, throw new InferenceException.
-         * Otherwise perform no operation.
-         */
-        typeAction.apply(new InferenceAction() {
-            @Override
-            public void apply(final InferenceContext ctx) {
-                // Intentional NOOP
-            }
-
-            @Override
-            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(typePrereq), stmt.getStatementSourceReference(),
-                    "Type [%s] was not found.", typeQName);
-            }
-        });
-    }
-
-    @Override
-    protected final SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
-    }
-
-    @Override
-    public final String internArgument(final String rawArgument) {
-        final String found;
-        return (found = BUILT_IN_TYPES.get(rawArgument)) != null ? found : rawArgument;
-    }
-
-    @Override
-    public boolean hasArgumentSpecificSupports() {
-        return !ARGUMENT_SPECIFIC_SUPPORTS.isEmpty();
-    }
-
-    @Override
-    public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
-        return ARGUMENT_SPECIFIC_SUPPORTS.get(argument);
+    protected final EffectiveStatement<String, TypeStatement> createEmptyEffective(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final TypeStatement declared) {
+        return resolveType(ctx);
     }
 
     static final SchemaPath typeEffectiveSchemaPath(final StmtContext<?, ?, ?> stmtCtx) {
