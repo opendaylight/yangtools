@@ -9,24 +9,27 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class UniqueStatementSupport
-        extends AbstractStatementSupport<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> {
+        extends BaseStatementSupport<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> {
     /**
      * Support 'sep' ABNF rule in RFC7950 section 14. CRLF pattern is used to squash line-break from CRLF to LF form
      * and then we use SEP_SPLITTER, which can operate on single characters.
@@ -49,8 +52,8 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    public Set<Descendant> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final Set<Descendant> uniqueConstraints = parseUniqueConstraintArgument(ctx, value);
+    public ImmutableSet<Descendant> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        final ImmutableSet<Descendant> uniqueConstraints = parseUniqueConstraintArgument(ctx, value);
         SourceException.throwIf(uniqueConstraints.isEmpty(), ctx.getStatementSourceReference(),
                 "Invalid argument value '%s' of unique statement. The value must contains at least "
                         + "one descendant schema node identifier.", value);
@@ -58,22 +61,36 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    public UniqueStatement createDeclared(final StmtContext<Set<Descendant>, UniqueStatement, ?> ctx) {
-        return new UniqueStatementImpl(ctx);
-    }
-
-    @Override
-    public UniqueEffectiveStatement createEffective(
-            final StmtContext<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> ctx) {
-        return new UniqueEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
 
-    private static Set<Descendant> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
+    @Override
+    protected UniqueStatement createDeclared(final StmtContext<Set<Descendant>, UniqueStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularUniqueStatement(ctx, substatements);
+    }
+
+    @Override
+    protected UniqueStatement createEmptyDeclared(final StmtContext<Set<Descendant>, UniqueStatement, ?> ctx) {
+        return new EmptyUniqueStatement(ctx);
+    }
+
+    @Override
+    protected UniqueEffectiveStatement createEffective(
+            final StmtContext<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> ctx,
+            final UniqueStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularUniqueEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected UniqueEffectiveStatement createEmptyEffective(
+            final StmtContext<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> ctx,
+            final UniqueStatement declared) {
+        return new EmptyUniqueEffectiveStatement(declared);
+    }
+
+    private static ImmutableSet<Descendant> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
             final String argumentValue) {
         // deal with 'line-break' rule, which is either "\n" or "\r\n", but not "\r"
         final String nocrlf = CRLF_PATTERN.matcher(argumentValue).replaceAll("\n");
