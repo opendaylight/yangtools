@@ -30,8 +30,9 @@ public interface TypeStatement extends DeclaredStatement<String> {
     }
 
     @Rfc6020AbnfRule("numerical-restrictions")
+    // FIXME: 6.0.0: this interface does not have an implementation
     interface NumericalRestrictions extends TypeStatement {
-
+        // FIXME: 6.0.0: this is not accurate, 'range' is an optional statement
         default @NonNull RangeStatement getRange() {
             return findFirstDeclaredSubstatement(RangeStatement.class).get();
         }
