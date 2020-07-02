@@ -219,7 +219,7 @@ abstract class AbstractTypeStatementSupport
         } else if (baseType instanceof BitsTypeDefinition) {
             return new BitsTypeEffectiveStatementImpl(ctx, (BitsTypeDefinition) baseType);
         } else if (baseType instanceof BooleanTypeDefinition) {
-            return new BooleanTypeEffectiveStatementImpl(ctx, (BooleanTypeDefinition) baseType);
+            return createBoolean(ctx, (BooleanTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof DecimalTypeDefinition) {
             return new DecimalTypeEffectiveStatementImpl(ctx, (DecimalTypeDefinition) baseType);
         } else if (baseType instanceof EmptyTypeDefinition) {
@@ -351,5 +351,12 @@ abstract class AbstractTypeStatementSupport
         }
 
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+    }
+
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createBoolean(final StmtContext<?, ?, ?> ctx,
+            final BooleanTypeDefinition baseType, final TypeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newBooleanBuilder(baseType,
+            typeEffectiveSchemaPath(ctx)));
     }
 }
