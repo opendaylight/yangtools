@@ -7,12 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
+import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractRootStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveRootStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ModuleStatementImpl extends AbstractRootStatement<ModuleStatement> implements ModuleStatement {
-    ModuleStatementImpl(final StmtContext<String, ModuleStatement,?> context) {
-        super(context);
+final class ModuleStatementImpl extends AbstractDeclaredEffectiveRootStatement<ModuleStatement>
+        implements ModuleStatement {
+    ModuleStatementImpl(final StmtContext<String, ?, ?> context,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(context, substatements);
     }
 }
