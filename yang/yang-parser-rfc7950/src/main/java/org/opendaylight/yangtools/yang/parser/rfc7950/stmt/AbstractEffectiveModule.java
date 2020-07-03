@@ -68,7 +68,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         E extends DataTreeAwareEffectiveStatement<String, D>>
         extends AbstractEffectiveDocumentedNodeWithStatus<String, D>
         implements Module, NotificationNodeContainerCompat<String, D, E> {
-    private final String name;
     private final String prefix;
     private final YangVersion yangVersion;
     private final String organization;
@@ -103,7 +102,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         // Data tree check, not currently used
         createDataTreeNamespace(ctx.getStatementSourceReference(), schemaTree.values(), schemaTreeNamespace);
 
-        this.name = argument();
         this.prefix = requireNonNull(prefix);
         this.yangVersion = findFirstEffectiveSubstatementArgument(YangVersionEffectiveStatement.class)
                 .orElse(YangVersion.VERSION_1);
@@ -193,7 +191,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
 
     @Override
     public String getName() {
-        return name;
+        return argument();
     }
 
     @Override
@@ -306,7 +304,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).omitNullValues()
-                .add("name", name)
+                .add("name", getName())
                 .add("namespace", getNamespace())
                 .add("revision", getRevision().orElse(null))
                 .add("prefix", prefix)
