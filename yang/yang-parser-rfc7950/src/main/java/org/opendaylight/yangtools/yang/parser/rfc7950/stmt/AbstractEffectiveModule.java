@@ -67,9 +67,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         extends AbstractEffectiveDocumentedNodeWithStatus<String, D>
         implements Module, NotificationNodeContainerCompat<String, D, E> {
     private final String prefix;
-    private final YangVersion yangVersion;
-    private final String organization;
-    private final String contact;
     private final ImmutableSet<ModuleImport> imports;
     private final ImmutableSet<FeatureDefinition> features;
     private final @NonNull ImmutableSet<NotificationDefinition> notifications;
@@ -82,7 +79,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     private final ImmutableSet<UsesNode> uses;
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
     private final ImmutableSet<DataSchemaNode> publicChildNodes;
-    private final SemVer semanticVersion;
     private final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
 
     protected AbstractEffectiveModule(
@@ -101,14 +97,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         createDataTreeNamespace(ctx.getStatementSourceReference(), schemaTree.values(), schemaTreeNamespace);
 
         this.prefix = requireNonNull(prefix);
-        this.yangVersion = findFirstEffectiveSubstatementArgument(YangVersionEffectiveStatement.class)
-                .orElse(YangVersion.VERSION_1);
-        this.semanticVersion = findFirstEffectiveSubstatementArgument(OpenConfigVersionEffectiveStatement.class)
-                .orElse(null);
-        this.organization = findFirstEffectiveSubstatementArgument(OrganizationEffectiveStatement.class)
-                .orElse(null);
-        this.contact = findFirstEffectiveSubstatementArgument(ContactEffectiveStatement.class)
-                .orElse(null);
 
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
         final Set<ModuleImport> importsInit = new LinkedHashSet<>();
@@ -194,17 +182,18 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
 
     @Override
     public YangVersion getYangVersion() {
-        return yangVersion;
+        return findFirstEffectiveSubstatementArgument(YangVersionEffectiveStatement.class)
+                .orElse(YangVersion.VERSION_1);
     }
 
     @Override
     public Optional<String> getOrganization() {
-        return Optional.ofNullable(organization);
+        return findFirstEffectiveSubstatementArgument(OrganizationEffectiveStatement.class);
     }
 
     @Override
     public Optional<String> getContact() {
-        return Optional.ofNullable(contact);
+        return findFirstEffectiveSubstatementArgument(ContactEffectiveStatement.class);
     }
 
     @Override
@@ -276,7 +265,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
 
     @Override
     public Optional<SemVer> getSemanticVersion() {
-        return Optional.ofNullable(semanticVersion);
+        return findFirstEffectiveSubstatementArgument(OpenConfigVersionEffectiveStatement.class);
     }
 
     @Override
@@ -296,7 +285,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
                 .add("namespace", getNamespace())
                 .add("revision", getRevision().orElse(null))
                 .add("prefix", prefix)
-                .add("yangVersion", yangVersion)
+                .add("yangVersion", getYangVersion())
                 .toString();
     }
 
