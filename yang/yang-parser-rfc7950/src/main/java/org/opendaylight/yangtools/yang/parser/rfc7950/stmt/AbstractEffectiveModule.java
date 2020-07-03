@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -28,7 +27,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -185,18 +183,8 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     }
 
     @Override
-    public URI getNamespace() {
-        return getQNameModule().getNamespace();
-    }
-
-    @Override
     public String getName() {
         return argument();
-    }
-
-    @Override
-    public Optional<Revision> getRevision() {
-        return getQNameModule().getRevision();
     }
 
     @Override
