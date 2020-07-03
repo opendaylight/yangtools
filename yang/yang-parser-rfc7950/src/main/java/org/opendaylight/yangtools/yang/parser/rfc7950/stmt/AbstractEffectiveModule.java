@@ -12,14 +12,12 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -67,18 +65,9 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         extends AbstractEffectiveDocumentedNodeWithStatus<String, D>
         implements Module, NotificationNodeContainerCompat<String, D, E> {
     private final String prefix;
-    private final ImmutableSet<ModuleImport> imports;
-    private final ImmutableSet<FeatureDefinition> features;
-    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
-    private final ImmutableSet<AugmentationSchemaNode> augmentations;
-    private final ImmutableSet<RpcDefinition> rpcs;
-    private final ImmutableSet<Deviation> deviations;
-    private final ImmutableList<ExtensionDefinition> extensionNodes;
-    private final ImmutableSet<IdentitySchemaNode> identities;
     private final ImmutableSet<GroupingDefinition> groupings;
     private final ImmutableSet<UsesNode> uses;
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
-    private final ImmutableSet<DataSchemaNode> publicChildNodes;
     private final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
 
     protected AbstractEffectiveModule(
@@ -98,48 +87,11 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
 
         this.prefix = requireNonNull(prefix);
 
-        final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
-        final Set<ModuleImport> importsInit = new LinkedHashSet<>();
-        final Set<NotificationDefinition> notificationsInit = new LinkedHashSet<>();
-        final Set<RpcDefinition> rpcsInit = new LinkedHashSet<>();
-        final Set<Deviation> deviationsInit = new LinkedHashSet<>();
-        final Set<IdentitySchemaNode> identitiesInit = new LinkedHashSet<>();
-        final Set<FeatureDefinition> featuresInit = new LinkedHashSet<>();
-        final List<ExtensionDefinition> extensionNodesInit = new ArrayList<>();
-
         final Set<GroupingDefinition> mutableGroupings = new LinkedHashSet<>();
         final Set<UsesNode> mutableUses = new LinkedHashSet<>();
         final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
-        final Set<DataSchemaNode> mutablePublicChildNodes = new LinkedHashSet<>();
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof AugmentationSchemaNode) {
-                augmentationsInit.add((AugmentationSchemaNode) effectiveStatement);
-            }
-            if (effectiveStatement instanceof ModuleImport) {
-                importsInit.add((ModuleImport) effectiveStatement);
-            }
-            if (effectiveStatement instanceof NotificationDefinition) {
-                notificationsInit.add((NotificationDefinition) effectiveStatement);
-            }
-            if (effectiveStatement instanceof RpcDefinition) {
-                rpcsInit.add((RpcDefinition) effectiveStatement);
-            }
-            if (effectiveStatement instanceof Deviation) {
-                deviationsInit.add((Deviation) effectiveStatement);
-            }
-            if (effectiveStatement instanceof IdentitySchemaNode) {
-                identitiesInit.add((IdentitySchemaNode) effectiveStatement);
-            }
-            if (effectiveStatement instanceof FeatureDefinition) {
-                featuresInit.add((FeatureDefinition) effectiveStatement);
-            }
-            if (effectiveStatement instanceof ExtensionDefinition) {
-                extensionNodesInit.add((ExtensionDefinition) effectiveStatement);
-            }
-            if (effectiveStatement instanceof DataSchemaNode) {
-                mutablePublicChildNodes.add((DataSchemaNode) effectiveStatement);
-            }
             if (effectiveStatement instanceof UsesNode && !mutableUses.add((UsesNode) effectiveStatement)) {
                 throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
             }
@@ -155,17 +107,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
             }
         }
 
-        this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-        this.imports = ImmutableSet.copyOf(importsInit);
-        this.notifications = ImmutableSet.copyOf(notificationsInit);
-        this.rpcs = ImmutableSet.copyOf(rpcsInit);
-        this.deviations = ImmutableSet.copyOf(deviationsInit);
-        this.identities = ImmutableSet.copyOf(identitiesInit);
-        this.features = ImmutableSet.copyOf(featuresInit);
-        this.extensionNodes = ImmutableList.copyOf(extensionNodesInit);
-
         this.groupings = ImmutableSet.copyOf(mutableGroupings);
-        this.publicChildNodes = ImmutableSet.copyOf(mutablePublicChildNodes);
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
         this.uses = ImmutableSet.copyOf(mutableUses);
     }
@@ -198,42 +140,42 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
 
     @Override
     public Collection<? extends ModuleImport> getImports() {
-        return imports;
+        return filterSubstatements(ModuleImport.class);
     }
 
     @Override
     public Collection<? extends FeatureDefinition> getFeatures() {
-        return features;
+        return filterSubstatements(FeatureDefinition.class);
     }
 
     @Override
     public Collection<? extends NotificationDefinition> getNotifications() {
-        return notifications;
+        return filterSubstatements(NotificationDefinition.class);
     }
 
     @Override
     public Collection<? extends AugmentationSchemaNode> getAugmentations() {
-        return augmentations;
+        return filterSubstatements(AugmentationSchemaNode.class);
     }
 
     @Override
     public Collection<? extends RpcDefinition> getRpcs() {
-        return rpcs;
+        return filterSubstatements(RpcDefinition.class);
     }
 
     @Override
     public Collection<? extends Deviation> getDeviations() {
-        return deviations;
+        return filterSubstatements(Deviation.class);
     }
 
     @Override
     public Collection<? extends ExtensionDefinition> getExtensionSchemaNodes() {
-        return extensionNodes;
+        return filterSubstatements(ExtensionDefinition.class);
     }
 
     @Override
     public Collection<? extends IdentitySchemaNode> getIdentities() {
-        return identities;
+        return filterSubstatements(IdentitySchemaNode.class);
     }
 
     @Override
@@ -243,7 +185,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
 
     @Override
     public final Collection<? extends DataSchemaNode> getChildNodes() {
-        return publicChildNodes;
+        return filterSubstatements(DataSchemaNode.class);
     }
 
     @Override
@@ -307,5 +249,10 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
                             "Failed to resolve prefix %s", pfx);
                 builder.put(pfx, (ModuleEffectiveStatement) importedCtx.buildEffective());
             });
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> @NonNull Collection<? extends T> filterSubstatements(final Class<T> type) {
+        return (Collection<? extends T>) Collections2.filter(effectiveSubstatements(), type::isInstance);
     }
 }
