@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
 
-final class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> implements ExtensionStatement {
-    ExtensionStatementImpl(final StmtContext<QName, ExtensionStatement,?> context) {
-        super(context);
+final class EmptyExtensionStatement extends WithQNameArgument implements ExtensionStatement {
+    EmptyExtensionStatement(final QName argument) {
+        super(argument);
     }
 }

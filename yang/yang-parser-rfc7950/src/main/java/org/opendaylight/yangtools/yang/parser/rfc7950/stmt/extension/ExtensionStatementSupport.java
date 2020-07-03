@@ -7,15 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -23,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ExtensionStatementSupport
-        extends AbstractQNameStatementSupport<ExtensionStatement, ExtensionEffectiveStatement> {
+        extends BaseQNameStatementSupport<ExtensionStatement, ExtensionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .EXTENSION)
         .addOptional(YangStmtMapping.ARGUMENT)
@@ -44,17 +47,6 @@ public final class ExtensionStatementSupport
     @Override
     public QName parseArgumentValue(final StmtContext<?,?,?> ctx, final String value) {
         return StmtContextUtils.parseIdentifier(ctx, value);
-    }
-
-    @Override
-    public ExtensionStatement createDeclared(final StmtContext<QName, ExtensionStatement,?> ctx) {
-        return new ExtensionStatementImpl(ctx);
-    }
-
-    @Override
-    public ExtensionEffectiveStatement createEffective(
-            final StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement> ctx) {
-        return ExtensionEffectiveStatementImpl.create(ctx);
     }
 
     @Override
@@ -83,5 +75,33 @@ public final class ExtensionStatementSupport
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected ExtensionStatement createDeclared(final StmtContext<QName, ExtensionStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularExtensionStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected ExtensionStatement createEmptyDeclared(final StmtContext<QName, ExtensionStatement, ?> ctx) {
+        return new EmptyExtensionStatement(ctx.coerceStatementArgument());
+    }
+
+    @Override
+    protected ExtensionEffectiveStatement createEffective(
+            final StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement> ctx,
+            final ExtensionStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        // TODO Auto-generated method stub
+        return ExtensionEffectiveStatementImpl.create(ctx);
+    }
+
+    @Override
+    protected ExtensionEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement> ctx,
+            final ExtensionStatement declared) {
+        // TODO Auto-generated method stub
+        return ExtensionEffectiveStatementImpl.create(ctx);
     }
 }
