@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -54,6 +55,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
@@ -61,19 +64,18 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>,
-        E extends DataTreeAwareEffectiveStatement<String, D>>
-        extends AbstractEffectiveDocumentedNodeWithStatus<String, D>
-        implements Module, NotificationNodeContainerCompat<String, D, E> {
+        E extends DataTreeAwareEffectiveStatement<String, D>> extends WithSubstatements<String, D, E>
+        implements Module, DocumentedNodeMixin<String, D>, NotificationNodeContainerCompat<String, D, E> {
     private final String prefix;
     private final ImmutableSet<GroupingDefinition> groupings;
     private final ImmutableSet<UsesNode> uses;
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
     private final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
 
-    protected AbstractEffectiveModule(
-            final @NonNull StmtContext<String, D, ? extends EffectiveStatement<String, ?>> ctx,
-            final @NonNull String prefix) {
-        super(ctx);
+    protected AbstractEffectiveModule(final D declared,
+            final StmtContext<String, D, ? extends EffectiveStatement<String, ?>> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final String prefix) {
+        super(declared, ctx, substatements);
 
         // This check is rather weird, but comes from our desire to lower memory footprint while providing both
         // EffectiveStatements and SchemaNode interfaces -- which do not overlap completely where child lookups are
@@ -110,6 +112,11 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         this.groupings = ImmutableSet.copyOf(mutableGroupings);
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
         this.uses = ImmutableSet.copyOf(mutableUses);
+    }
+
+    @Override
+    public String argument() {
+        return getDeclared().argument();
     }
 
     @Override

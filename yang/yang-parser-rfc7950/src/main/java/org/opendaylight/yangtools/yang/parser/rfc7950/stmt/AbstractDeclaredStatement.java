@@ -113,6 +113,12 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
                 this.substatements = maskList(substatements);
             }
 
+            protected WithSubstatements(final String rawArgument,
+                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                super(rawArgument);
+                this.substatements = maskList(substatements);
+            }
+
             @Override
             public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
                 return unmaskList(substatements);
