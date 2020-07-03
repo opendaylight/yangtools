@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionAwareDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
+@Deprecated(forRemoval = true)
 public abstract class AbstractRootStatement<T extends DeclaredStatement<String>>
         extends AbstractDeclaredStatement<String> implements LinkageDeclaredStatement, MetaDeclaredStatement<String>,
         RevisionAwareDeclaredStatement, BodyDeclaredStatement {
