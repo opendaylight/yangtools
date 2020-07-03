@@ -48,7 +48,7 @@ public abstract class BaseQNameStatementSupport<D extends DeclaredStatement<QNam
     protected abstract @NonNull D createEmptyDeclared(@NonNull StmtContext<QName, D, ?> ctx);
 
     @Override
-    public final E createEffective(final StmtContext<QName, D, E> ctx) {
+    public E createEffective(final StmtContext<QName, D, E> ctx) {
         final D declared = ctx.buildDeclared();
         final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
                 BaseStatementSupport.buildEffectiveSubstatements(ctx);
