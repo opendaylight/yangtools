@@ -7,13 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static org.opendaylight.mdsal.binding.model.util.BindingTypes.DATA_OBJECT
 import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_EQUALS_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_HASHCODE_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_TO_STRING_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 
 import java.util.Collection
 import java.util.List
@@ -95,43 +93,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         «IF !properties.empty || augmentType !== null»
             @«OVERRIDE.importedName»
             public boolean equals(«Types.objectType().importedName» obj) {
-                if (this == obj) {
-                    return true;
-                }
-                if (!(obj instanceof «DATA_OBJECT.importedName»)) {
-                    return false;
-                }
-                if (!«targetType.importedName».class.equals(((«DATA_OBJECT.importedName»)obj).«DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»())) {
-                    return false;
-                }
-                «targetType.importedName» other = («targetType.importedName»)obj;
-                «FOR property : properties»
-                    «val fieldName = property.fieldName»
-                    if (!«property.importedUtilClass».equals(«fieldName», other.«property.getterName»())) {
-                        return false;
-                    }
-                «ENDFOR»
-                «IF augmentType !== null»
-                    if (getClass() == obj.getClass()) {
-                        // Simple case: we are comparing against self
-                        «type.name» otherImpl = («type.name») obj;
-                        if (!«JU_OBJECTS.importedName».equals(augmentations(), otherImpl.augmentations())) {
-                            return false;
-                        }
-                    } else {
-                        // Hard case: compare our augments with presence there...
-                        for («JU_MAP.importedName».Entry<«CLASS.importedName»<? extends «augmentType.importedName»>, «augmentType.importedName»> e : augmentations().entrySet()) {
-                            if (!e.getValue().equals(other.«AUGMENTABLE_AUGMENTATION_NAME»(e.getKey()))) {
-                                return false;
-                            }
-                        }
-                        // .. and give the other one the chance to do the same
-                        if (!obj.equals(this)) {
-                            return false;
-                        }
-                    }
-                «ENDIF»
-                return true;
+                return «targetType.importedName».«BINDING_EQUALS_NAME»(this, obj);
             }
         «ENDIF»
     '''

@@ -87,6 +87,12 @@ public final class BindingMapping {
     public static final @NonNull String BINDING_HASHCODE_NAME = "bindingHashCode";
 
     /**
+     * Name of default {@link Object#equals(Object)} implementation for instantiated DataObjects. Each such generated
+     * interface contains this static method.
+     */
+    public static final @NonNull String BINDING_EQUALS_NAME = "bindingEquals";
+
+    /**
      * Name of default {@link Object#toString()} implementation for instantiated DataObjects. Each such generated
      * interface contains this static method.
      */

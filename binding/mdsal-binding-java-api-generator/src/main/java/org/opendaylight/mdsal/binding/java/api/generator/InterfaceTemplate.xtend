@@ -7,11 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.getGetterMethodForNonnull
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isGetterMethodName
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isNonnullMethodName
+import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_EQUALS_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_HASHCODE_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_TO_STRING_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
@@ -27,6 +28,7 @@ import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Type
+import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
 
 /**
@@ -192,6 +194,7 @@ class InterfaceTemplate extends BaseTemplate {
 
     def private generateStaticMethod(MethodSignature method) {
         switch method.name {
+            case BINDING_EQUALS_NAME : generateBindingEquals
             case BINDING_HASHCODE_NAME : generateBindingHashCode
             case BINDING_TO_STRING_NAME : generateBindingToString
         }
@@ -222,10 +225,9 @@ class InterfaceTemplate extends BaseTemplate {
         /**
          * Default implementation of {@link «Object.importedName»#hashCode()} contract for this interface.
          * Implementations of this interface are encouraged to defer to this method to get consistent hashing
-         * results across all implementation.
+         * results across all implementations.
          *
          «IF augmentable»
-         * <p>
          * @param <T$$> implementation type, which has to also implement «AUGMENTATION_HOLDER.importedName» interface
          *              contract.
          «ENDIF»
@@ -234,9 +236,9 @@ class InterfaceTemplate extends BaseTemplate {
          * @throws «NPE.importedName» if {@code obj} is null
          */
         «IF augmentable»
-            static <T$$ extends «type.fullyQualifiedName» & «AUGMENTATION_HOLDER.importedName»<?>> int «BINDING_HASHCODE_NAME»(final @«NONNULL.importedName» T$$ obj) {
+        static <T$$ extends «type.fullyQualifiedName» & «AUGMENTATION_HOLDER.importedName»<?>> int «BINDING_HASHCODE_NAME»(final @«NONNULL.importedName» T$$ obj) {
         «ELSE»
-            static int «BINDING_HASHCODE_NAME»(final «type.fullyQualifiedName» obj) {
+        static int «BINDING_HASHCODE_NAME»(final «type.fullyQualifiedName» obj) {
         «ENDIF»
             final int prime = 31;
             int result = 1;
@@ -250,15 +252,53 @@ class InterfaceTemplate extends BaseTemplate {
         }
     '''
 
+    def private generateBindingEquals() '''
+        «val augmentable = analyzeType»
+        «IF augmentable || !typeAnalysis.value.isEmpty»
+            /**
+             * Default implementation of {@link «Object.importedName»#equals(«Object.importedName»)} contract for this interface.
+             * Implementations of this interface are encouraged to defer to this method to get consistent equality
+             * results across all implementations.
+             *
+             «IF augmentable»
+             * @param <T$$> implementation type, which has to also implement «AUGMENTATION_HOLDER.importedName» interface
+             *              contract.
+             «ENDIF»
+             * @param thisObj Object acting as the receiver of equals invocation
+             * @param obj Object acting as argument to equals invocation
+             * @return True if thisObj and obj are considered equal
+             * @throws «NPE.importedName» if {@code thisObj} is null
+             */
+            «IF augmentable»
+            static <T$$ extends «type.fullyQualifiedName» & «AUGMENTATION_HOLDER.importedName»<«type.fullyQualifiedName»>> boolean «BINDING_EQUALS_NAME»(final @«NONNULL.importedName» T$$ thisObj, final «Types.objectType().importedName» obj) {
+            «ELSE»
+            static boolean «BINDING_EQUALS_NAME»(final «type.fullyQualifiedName» thisObj, final «Types.objectType().importedName» obj) {
+            «ENDIF»
+                if (thisObj == obj) {
+                    return true;
+                }
+                final «type.fullyQualifiedName» other = «CODEHELPERS.importedName».checkCast(«type.fullyQualifiedName».class, obj);
+                if (other == null) {
+                    return false;
+                }
+                «FOR property : typeAnalysis.value»
+                    if (!«property.importedUtilClass».equals(thisObj.«property.getterName»(), other.«property.getterName»())) {
+                        return false;
+                    }
+                «ENDFOR»
+                return «IF augmentable»«CODEHELPERS.importedName».equalsAugmentations(thisObj, other)«ELSE»true«ENDIF»;
+            }
+        «ENDIF»
+    '''
+
     def generateBindingToString() '''
         «val augmentable = analyzeType»
         /**
          * Default implementation of {@link «Object.importedName»#toString()} contract for this interface.
          * Implementations of this interface are encouraged to defer to this method to get consistent string
-         * representations across all implementation.
+         * representations across all implementations.
          *
          «IF augmentable»
-         * <p>
          * @param <T$$> implementation type, which has to also implement «AUGMENTATION_HOLDER.importedName» interface
          *              contract.
          «ENDIF»
@@ -267,9 +307,9 @@ class InterfaceTemplate extends BaseTemplate {
          * @throws «NPE.importedName» if {@code obj} is null
          */
         «IF augmentable»
-            static <T$$ extends «type.fullyQualifiedName» & «AUGMENTATION_HOLDER.importedName»<«type.fullyQualifiedName»>> «STRING.importedName» «BINDING_TO_STRING_NAME»(final @«NONNULL.importedName» T$$ obj) {
+        static <T$$ extends «type.fullyQualifiedName» & «AUGMENTATION_HOLDER.importedName»<«type.fullyQualifiedName»>> «STRING.importedName» «BINDING_TO_STRING_NAME»(final @«NONNULL.importedName» T$$ obj) {
         «ELSE»
-            static «STRING.importedName» «BINDING_TO_STRING_NAME»(final «type.fullyQualifiedName» obj) {
+        static «STRING.importedName» «BINDING_TO_STRING_NAME»(final «type.fullyQualifiedName» obj) {
         «ENDIF»
             final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper("«type.name»");
             «FOR property : typeAnalysis.value»
@@ -288,7 +328,7 @@ class InterfaceTemplate extends BaseTemplate {
         «formatDataForJavaDoc(method, "@return " + asCode(ret.fullyQualifiedName) + " " + asCode(propertyNameFromGetter(method)) + ", or an empty list if it is not present")»
         «method.annotations.generateAnnotations»
         default «ret.importedNonNull» «name»() {
-            return «CODEHELPERS.importedName».nonnull(«getGetterMethodForNonnull(name)»());
+            return «CODEHELPERS.importedName».nonnull(«name.getGetterMethodForNonnull»());
         }
     '''
 
