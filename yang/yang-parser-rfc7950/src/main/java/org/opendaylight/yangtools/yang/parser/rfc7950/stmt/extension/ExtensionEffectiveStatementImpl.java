@@ -7,26 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Deque;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNodeWithStatus;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 
-final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNodeWithStatus<QName, ExtensionStatement>
-        implements ExtensionDefinition, ExtensionEffectiveStatement {
+final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, ExtensionStatement>
+        implements ExtensionDefinition, ExtensionEffectiveStatement, DocumentedNodeMixin<QName, ExtensionStatement> {
     private static final class RecursionDetector extends ThreadLocal<Deque<ExtensionEffectiveStatementImpl>> {
         boolean check(final ExtensionEffectiveStatementImpl current) {
             final Deque<ExtensionEffectiveStatementImpl> stack = get();
@@ -61,85 +64,50 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
 
     private static final RecursionDetector TOSTRING_DETECTOR = new RecursionDetector();
 
-    private final @NonNull QName qname;
-    private final @Nullable String argument;
-    private final @NonNull SchemaPath schemaPath;
+    private final @NonNull SchemaPath path;
 
-    private final boolean yin;
+    private volatile Object substatements;
 
-    private ExtensionEffectiveStatementImpl(
-            final StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement> ctx) {
-        super(ctx);
-        this.qname = ctx.coerceStatementArgument();
-        this.schemaPath = ctx.getSchemaPath().get();
-
-        // initFields
-        final Optional<ArgumentEffectiveStatement> optArgumentSubstatement = findFirstEffectiveSubstatement(
-            ArgumentEffectiveStatement.class);
-        if (optArgumentSubstatement.isPresent()) {
-            final ArgumentEffectiveStatement argumentStatement = optArgumentSubstatement.get();
-            this.argument = argumentStatement.argument().getLocalName();
-            this.yin = argumentStatement.findFirstEffectiveSubstatement(YinElementEffectiveStatement.class)
-                    .map(YinElementEffectiveStatement::argument).orElse(Boolean.FALSE).booleanValue();
-        } else {
-            this.argument = null;
-            this.yin = false;
-        }
-    }
-
-    /**
-     * Create a new ExtensionEffectiveStatement, dealing with potential recursion.
-     *
-     * @param ctx Statement context
-     * @return A potentially under-initialized instance
-     */
-    static ExtensionEffectiveStatement create(
-            final StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement> ctx) {
-        // Look at the thread-local leak in case we are invoked recursively
-        final ExtensionEffectiveStatementImpl existing = RecursiveObjectLeaker.lookup(ctx,
-            ExtensionEffectiveStatementImpl.class);
-        if (existing != null) {
-            // Careful! this object is not fully initialized!
-            return existing;
-        }
-
-        RecursiveObjectLeaker.beforeConstructor(ctx);
-        try {
-            // This result is fine, we know it has been completely initialized
-            return new ExtensionEffectiveStatementImpl(ctx);
-        } finally {
-            RecursiveObjectLeaker.afterConstructor(ctx);
-        }
-    }
-
-    @Override
-    protected Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
-            final Collection<? extends StmtContext<?, ?, ?>> substatementsInit) {
-        // WARNING: this leaks an incompletely-initialized object
-        RecursiveObjectLeaker.inConstructor(this);
-
-        return super.initSubstatements(substatementsInit);
+    ExtensionEffectiveStatementImpl(final ExtensionStatement declared, final SchemaPath path) {
+        super(declared);
+        this.path = requireNonNull(path);
     }
 
     @Override
     public QName getQName() {
-        return qname;
+        return argument();
     }
 
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return schemaPath;
+        return path;
     }
 
     @Override
     public String getArgument() {
-        return argument;
+        return findFirstEffectiveSubstatementArgument(ArgumentEffectiveStatement.class)
+                .map(QName::getLocalName)
+                .orElse(null);
     }
 
     @Override
     public boolean isYinElement() {
-        return yin;
+        return findFirstEffectiveSubstatement(ArgumentEffectiveStatement.class)
+                .flatMap(arg -> arg.findFirstEffectiveSubstatementArgument(YinElementEffectiveStatement.class))
+                .orElse(Boolean.FALSE)
+                .booleanValue();
+    }
+
+    @Override
+    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+        final Object local = verifyNotNull(substatements, "Substatements are not yet initialized");
+        return unmaskList(local);
+    }
+
+    @Override
+    public Status getStatus() {
+        return findFirstEffectiveSubstatementArgument(StatusEffectiveStatement.class).orElse(Status.CURRENT);
     }
 
     @Override
@@ -151,23 +119,28 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
         TOSTRING_DETECTOR.push(this);
         try {
             return ExtensionEffectiveStatementImpl.class.getSimpleName() + "["
-                    + "argument=" + argument
-                    + ", qname=" + qname
-                    + ", schemaPath=" + schemaPath
+                    + "argument=" + getArgument()
+                    + ", qname=" + getQName()
+                    + ", schemaPath=" + path
+                    + ", yin=" + isYinElement()
                     + ", extensionSchemaNodes=" + getUnknownSchemaNodes()
-                    + ", yin=" + yin
                     + "]";
         } finally {
             TOSTRING_DETECTOR.pop();
         }
     }
 
+    void setSubstatements(final ImmutableList<? extends EffectiveStatement<?, ?>> newSubstatements) {
+        verify(substatements == null, "Substatements already initialized");
+        substatements = maskList(newSubstatements);
+    }
+
     private String recursedToString() {
         return ExtensionEffectiveStatementImpl.class.getSimpleName() + "["
-                + "argument=" + argument
-                + ", qname=" + qname
-                + ", schemaPath=" + schemaPath
-                + ", yin=" + yin
+                + "argument=" + getArgument()
+                + ", qname=" + getQName()
+                + ", schemaPath=" + path
+                + ", yin=" + isYinElement()
                 + " <RECURSIVE> ]";
     }
 }
