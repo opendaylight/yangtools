@@ -57,7 +57,7 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
     public final E createEffective(final StmtContext<A, D, E> ctx) {
         final D declared = ctx.buildDeclared();
         final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
-                buildEffectiveSubstatements(statementsToBuild(ctx, declaredSubstatements(ctx)));
+                buildEffectiveSubstatements(ctx, statementsToBuild(ctx, declaredSubstatements(ctx)));
         return substatements.isEmpty() ? createEmptyEffective(ctx, declared)
                 : createEffective(ctx, declared, substatements);
     }
@@ -97,13 +97,26 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
     }
 
     /**
+     * Create a set of substatements. This method is split out so it can be overridden in subclasses adjust the
+     * resulting statements
+     *
+     * @param ctx Parent statement context
+     * @param substatements proposed substatements
+     * @return Built effective substatements
+     */
+    protected ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
+            final StmtContext<A, D, E> ctx, final List<? extends StmtContext<?, ?, ?>> substatements) {
+        return defaultBuildEffectiveSubstatements(substatements);
+    }
+
+    /**
      * Create a set of substatements. This method is split out so it can be overridden in
      * ExtensionEffectiveStatementImpl to leak a not-fully-initialized instance.
      *
      * @param substatements proposed substatements
      * @return Filtered substatements
      */
-    private static ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
+    private static ImmutableList<? extends EffectiveStatement<?, ?>> defaultBuildEffectiveSubstatements(
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         return substatements.stream()
                 .filter(StmtContext::isSupportedToBuildEffective)
@@ -113,7 +126,7 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
 
     static final ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
             final StmtContext<?, ?, ?> ctx) {
-        return buildEffectiveSubstatements(declaredSubstatements(ctx));
+        return defaultBuildEffectiveSubstatements(declaredSubstatements(ctx));
     }
 
     static final @NonNull List<StmtContext<?, ?, ?>> declaredSubstatements(final StmtContext<?, ?, ?> ctx) {

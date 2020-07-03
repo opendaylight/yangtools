@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective view of a {@link ModuleStatement}.
@@ -50,6 +52,11 @@ public interface ModuleEffectiveStatement extends DataTreeAwareEffectiveStatemen
         private NameToEffectiveSubmoduleNamespace() {
             // This class should never be subclassed
         }
+    }
+
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangStmtMapping.MODULE;
     }
 
     /**

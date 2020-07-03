@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -53,8 +54,9 @@ final class SubmoduleEffectiveStatementImpl
     private ImmutableSet<Module> submodules;
     private boolean sealed;
 
-    SubmoduleEffectiveStatementImpl(final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx) {
-        super(ctx, findSubmodulePrefix(ctx));
+    SubmoduleEffectiveStatementImpl(final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
+            final SubmoduleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared, ctx, substatements, findSubmodulePrefix(ctx));
 
         final String belongsToModuleName = firstAttributeOf(ctx.declaredSubstatements(), BelongsToStatement.class);
         final QNameModule belongsToModuleQName = ctx.getFromNamespace(ModuleNameToModuleQName.class,
