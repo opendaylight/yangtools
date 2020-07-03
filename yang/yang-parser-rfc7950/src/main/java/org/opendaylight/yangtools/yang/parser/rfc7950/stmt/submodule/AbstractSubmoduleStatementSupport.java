@@ -10,15 +10,18 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -26,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractSubmoduleStatementSupport
-        extends AbstractStatementSupport<String, SubmoduleStatement, SubmoduleEffectiveStatement> {
+        extends BaseStatementSupport<String, SubmoduleStatement, SubmoduleEffectiveStatement> {
     AbstractSubmoduleStatementSupport() {
         super(YangStmtMapping.SUBMODULE);
     }
@@ -34,17 +37,6 @@ abstract class AbstractSubmoduleStatementSupport
     @Override
     public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return value;
-    }
-
-    @Override
-    public final SubmoduleStatement createDeclared(final StmtContext<String, SubmoduleStatement, ?> ctx) {
-        return new SubmoduleStatementImpl(ctx);
-    }
-
-    @Override
-    public final SubmoduleEffectiveStatement createEffective(
-            final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx) {
-        return new SubmoduleEffectiveStatementImpl(ctx);
     }
 
     @Override
@@ -77,5 +69,34 @@ abstract class AbstractSubmoduleStatementSupport
         final String prefix = (String) prefixSubStmtCtx.getStatementArgument();
 
         stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
+    }
+
+    @Override
+    protected final SubmoduleStatement createDeclared(final StmtContext<String, SubmoduleStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new SubmoduleStatementImpl(ctx, substatements);
+    }
+
+    @Override
+    protected final SubmoduleStatement createEmptyDeclared(final StmtContext<String, SubmoduleStatement, ?> ctx) {
+        throw noBelongsTo(ctx);
+    }
+
+    @Override
+    protected final SubmoduleEffectiveStatement createEffective(
+            final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
+            final SubmoduleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new SubmoduleEffectiveStatementImpl(ctx, declared, substatements);
+    }
+
+    @Override
+    protected final SubmoduleEffectiveStatement createEmptyEffective(
+            final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
+            final SubmoduleStatement declared) {
+        throw noBelongsTo(ctx);
+    }
+
+    private static SourceException noBelongsTo(final StmtContext<?, ?, ?> ctx) {
+        return new SourceException("No belongs-to declared in submodule", ctx.getStatementSourceReference());
     }
 }
