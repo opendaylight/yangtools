@@ -39,6 +39,7 @@ public interface UnknownSchemaNode extends SchemaNode, AddedByUsesAware {
      *             world should be sufficient to ascertain its origin.
      */
     @Deprecated
+    // FIXME: 6.0.0: rename this to isAugmenting(), unifying this interface with CopyableNode
     boolean isAddedByAugmentation();
 
     /**

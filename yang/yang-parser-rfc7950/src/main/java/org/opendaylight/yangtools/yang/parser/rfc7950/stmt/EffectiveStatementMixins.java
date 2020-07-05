@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
@@ -301,6 +302,27 @@ public final class EffectiveStatementMixins {
         @Override
         default QName getQName() {
             return getPath().getLastComponent();
+        }
+    }
+
+    /**
+     * Bridge between {@link EffectiveStatementWithFlags} and {@link UnknownSchemaNode}.
+     *
+     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <D> Class representing declared version of this statement.
+     */
+    public interface UnknownSchemaNodeMixin<A, D extends DeclaredStatement<A>>
+            extends SchemaNodeMixin<A, D>, CopyableMixin<A, D>, UnknownSchemaNode {
+
+        @Override
+        default String getNodeParameter() {
+            return Strings.nullToEmpty(getDeclared().rawArgument());
+        }
+
+        @Override
+        @Deprecated
+        default boolean isAddedByAugmentation() {
+            return isAugmenting();
         }
     }
 
