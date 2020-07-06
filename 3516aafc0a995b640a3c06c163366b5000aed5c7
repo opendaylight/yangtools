@@ -22,6 +22,30 @@
       "revId": "3516aafc0a995b640a3c06c163366b5000aed5c7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c019b03b_61f1f2b8",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 8665
+      },
+      "writtenOn": "2020-07-06T08:01:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "24e5e0d6_d4f1af97",
+      "range": {
+        "startLine": 32,
+        "startChar": 7,
+        "endLine": 32,
+        "endChar": 22
+      },
+      "revId": "3516aafc0a995b640a3c06c163366b5000aed5c7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
