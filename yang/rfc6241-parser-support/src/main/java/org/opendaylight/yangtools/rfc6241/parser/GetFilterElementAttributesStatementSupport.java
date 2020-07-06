@@ -8,18 +8,15 @@
 package org.opendaylight.yangtools.rfc6241.parser;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNull;
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
-import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.NetconfStatements;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractVoidStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -28,43 +25,8 @@ import org.slf4j.LoggerFactory;
 
 @Beta
 public final class GetFilterElementAttributesStatementSupport
-    extends AbstractVoidStatementSupport<GetFilterElementAttributesStatement,
+    extends BaseVoidStatementSupport<GetFilterElementAttributesStatement,
         GetFilterElementAttributesEffectiveStatement> {
-
-    private static final class Declared extends AbstractDeclaredStatement<Void>
-            implements GetFilterElementAttributesStatement {
-        Declared(final StmtContext<Void, ?, ?> context) {
-            super(context);
-        }
-
-        @Override
-        public Void getArgument() {
-            return null;
-        }
-    }
-
-    private static final class Effective
-            extends UnknownEffectiveStatementBase<Void, GetFilterElementAttributesStatement>
-            implements GetFilterElementAttributesEffectiveStatement, GetFilterElementAttributesSchemaNode {
-        private final @NonNull SchemaPath path;
-
-        Effective(final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx) {
-            super(ctx);
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(
-                ctx.getPublicDefinition().getStatementName());
-        }
-
-        @Override
-        public QName getQName() {
-            return path.getLastComponent();
-        }
-
-        @Override
-        @Deprecated
-        public SchemaPath getPath() {
-            return path;
-        }
-    }
 
     private static final Logger LOG = LoggerFactory.getLogger(GetFilterElementAttributesStatementSupport.class);
     private static final GetFilterElementAttributesStatementSupport INSTANCE =
@@ -82,15 +44,16 @@ public final class GetFilterElementAttributesStatementSupport
     }
 
     @Override
-    public GetFilterElementAttributesStatement createDeclared(
-            final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx) {
-        return new Declared(ctx);
-    }
-
-    @Override
     public GetFilterElementAttributesEffectiveStatement createEffective(final StmtContext<Void,
             GetFilterElementAttributesStatement, GetFilterElementAttributesEffectiveStatement> ctx) {
         return new Effective(ctx);
+    }
+
+    @Override
+    public void onFullDefinitionDeclared(final Mutable<Void, GetFilterElementAttributesStatement,
+            GetFilterElementAttributesEffectiveStatement> stmt) {
+        super.onFullDefinitionDeclared(stmt);
+        stmt.setIsSupportedToBuildEffective(computeSupported(stmt));
     }
 
     @Override
@@ -99,10 +62,33 @@ public final class GetFilterElementAttributesStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<Void, GetFilterElementAttributesStatement,
-            GetFilterElementAttributesEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-        stmt.setIsSupportedToBuildEffective(computeSupported(stmt));
+    protected GetFilterElementAttributesStatement createDeclared(
+            final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularGetFilterElementAttributesStatement(substatements);
+    }
+
+    @Override
+    protected GetFilterElementAttributesStatement createEmptyDeclared(
+            final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx) {
+        return EmptyGetFilterElementAttributesStatement.INSTANCE;
+    }
+
+    @Override
+    protected GetFilterElementAttributesEffectiveStatement createEffective(
+            final StmtContext<Void, GetFilterElementAttributesStatement,
+                GetFilterElementAttributesEffectiveStatement> ctx,
+            final GetFilterElementAttributesStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected GetFilterElementAttributesEffectiveStatement createEmptyEffective(
+            final StmtContext<Void, GetFilterElementAttributesStatement,
+                GetFilterElementAttributesEffectiveStatement> ctx, final GetFilterElementAttributesStatement declared) {
+        return new EmptyGetFilterElementAttributesEffectiveStatement(declared);
     }
 
     private static boolean computeSupported(final StmtContext<?, ?, ?> stmt) {

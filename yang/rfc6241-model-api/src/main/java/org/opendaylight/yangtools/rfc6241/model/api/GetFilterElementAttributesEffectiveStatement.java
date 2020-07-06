@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc6241.model.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective statement representation of 'get-filter-element-attributes' extension defined in
@@ -17,5 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 @Beta
 public interface GetFilterElementAttributesEffectiveStatement
         extends EffectiveStatement<Void, GetFilterElementAttributesStatement> {
-
+    @Override
+    default StatementDefinition statementDefinition() {
+        return NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES;
+    }
 }

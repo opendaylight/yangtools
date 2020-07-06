@@ -70,6 +70,31 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         }
     }
 
+    public abstract static class WithoutArgument extends AbstractDeclaredStatement<Void> {
+        public abstract static class WithSubstatements extends WithoutArgument {
+            private final @NonNull Object substatements;
+
+            protected WithSubstatements(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                this.substatements = maskList(substatements);
+            }
+
+            @Override
+            public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+                return unmaskList(substatements);
+            }
+        }
+
+        @Override
+        public final Void argument() {
+            return null;
+        }
+
+        @Override
+        public final String rawArgument() {
+            return null;
+        }
+    }
+
     public abstract static class WithQNameArgument extends AbstractDeclaredStatement<QName> {
         public abstract static class WithSubstatements extends WithQNameArgument {
             private final @NonNull Object substatements;
