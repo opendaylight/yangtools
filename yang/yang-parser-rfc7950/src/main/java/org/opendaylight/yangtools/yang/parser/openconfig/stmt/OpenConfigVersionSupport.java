@@ -9,16 +9,16 @@ package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class OpenConfigVersionSupport extends AbstractStatementSupport<SemVer, OpenConfigVersionStatement,
-        EffectiveStatement<SemVer, OpenConfigVersionStatement>> {
+public final class OpenConfigVersionSupport
+        extends AbstractStatementSupport<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         OpenConfigStatements.OPENCONFIG_VERSION).build();
     private static final OpenConfigVersionSupport INSTANCE = new OpenConfigVersionSupport();
@@ -37,8 +37,8 @@ public final class OpenConfigVersionSupport extends AbstractStatementSupport<Sem
     }
 
     @Override
-    public void onLinkageDeclared(final Mutable<SemVer, OpenConfigVersionStatement,
-            EffectiveStatement<SemVer, OpenConfigVersionStatement>> stmt) {
+    public void onLinkageDeclared(
+            final Mutable<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> stmt) {
         stmt.addToNs(SemanticVersionNamespace.class, stmt.getParentContext(), stmt.getStatementArgument());
     }
 
@@ -48,9 +48,8 @@ public final class OpenConfigVersionSupport extends AbstractStatementSupport<Sem
     }
 
     @Override
-    public EffectiveStatement<SemVer, OpenConfigVersionStatement> createEffective(
-            final StmtContext<SemVer, OpenConfigVersionStatement,
-            EffectiveStatement<SemVer, OpenConfigVersionStatement>> ctx) {
+    public OpenConfigVersionEffectiveStatement createEffective(
+            final StmtContext<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> ctx) {
         return new OpenConfigVersionEffectiveStatementImpl(ctx);
     }
 
