@@ -16,18 +16,18 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public final class YangConstants {
     /**
-     * YANG File Extension, as defined in https://tools.ietf.org/html/rfc6020#section-14.1.
+     * YANG File Extension, as defined in <a href="https://tools.ietf.org/html/rfc6020#section-14.1">RFC6020</a>.
      */
     public static final String RFC6020_YANG_FILE_EXTENSION = ".yang";
 
     /**
-     * YANG Media Type, as defined in https://tools.ietf.org/html/rfc6020#section-14.1.
+     * YANG Media Type, as defined in <a href="https://tools.ietf.org/html/rfc6020#section-14.1">RFC6020</a>.
      */
     public static final String RFC6020_YANG_MAC_FILE_TYPE = "TEXT";
 
 
     /**
-     * YANG Media Type, as defined in https://tools.ietf.org/html/rfc6020#section-14.1.
+     * YANG Media Type, as defined in h<a href="https://tools.ietf.org/html/rfc6020#section-14.1">RFC6020</a>.
      */
     public static final String RFC6020_YANG_MEDIA_TYPE = "application/yang";
 
@@ -47,19 +47,19 @@ public final class YangConstants {
     public static final QNameModule RFC6020_YANG_MODULE = QNameModule.create(RFC6020_YANG_NAMESPACE).intern();
 
     /**
-     * YIN File Extension, as defined in https://tools.ietf.org/html/rfc6020#section-14.2.
+     * YIN File Extension, as defined in <a href="https://tools.ietf.org/html/rfc6020#section-14.2">RFC6020</a>.
      */
     public static final String RFC6020_YIN_FILE_EXTENSION = ".yin";
 
     /**
-     * YANG Media Type, as defined in https://tools.ietf.org/html/rfc6020#section-14.1.
+     * YANG Media Type, as defined in <a href="https://tools.ietf.org/html/rfc6020#section-14.1">RFC6020</a>.
      */
     public static final String RFC6020_MAC_FILE_TYPE = "TEXT";
 
     /**
-     * YANG Media Type, as defined in https://tools.ietf.org/html/rfc6020#section-14.1.
+     * YANG Media Type, as defined in <a href="https://tools.ietf.org/html/rfc6020#section-14.2">RFC6020</a>.
      */
-    public static final String RFC6020_YIN_MEDIA_TYPE = "application/xml+yin";
+    public static final String RFC6020_YIN_MEDIA_TYPE = "application/yin+xml";
 
     /**
      * YIN namespace, as defined in https://tools.ietf.org/html/rfc6020#section-14, in String format.
