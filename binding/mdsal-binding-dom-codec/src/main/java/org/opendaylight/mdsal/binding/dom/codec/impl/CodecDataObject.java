@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Optional;
@@ -64,20 +63,9 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     }
 
     @Override
-    @SuppressFBWarnings(value = "EQ_UNUSUAL", justification = "State is examined indirectly enough to confuse SpotBugs")
     public final boolean equals(final Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        final Class<? extends DataObject> iface = implementedInterface();
-        if (!iface.isInstance(obj)) {
-            return false;
-        }
-        @SuppressWarnings("unchecked")
-        final T other = (T) iface.cast(obj);
-        // Note: we do not want to compare NormalizedNode data here, as we may be looking at different instantiations
-        //       of the same grouping -- in which case normalized node will not compare as equal.
-        return codecAugmentedEquals(other);
+        // Indirection to keep checkstyle happy
+        return codecEquals(obj);
     }
 
     @Override
@@ -105,7 +93,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     protected abstract int codecHashCode();
 
-    protected abstract boolean codecEquals(T other);
+    protected abstract boolean codecEquals(Object obj);
 
     final @NonNull DataObjectCodecContext<T, ?> codecContext() {
         return context;
@@ -114,11 +102,6 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     @SuppressWarnings("rawtypes")
     final @NonNull NormalizedNodeContainer codecData() {
         return data;
-    }
-
-    // Non-final to allow specialization in AugmentableCodecDataObject
-    boolean codecAugmentedEquals(final T other) {
-        return codecEquals(other);
     }
 
     // Helper split out of codecMember to aid its inlining

@@ -14,7 +14,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
@@ -85,11 +84,6 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
     public final ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations() {
         final ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> local = acquireAugmentations();
         return local != null ? local : loadAugmentations();
-    }
-
-    @Override
-    final boolean codecAugmentedEquals(final T other) {
-        return super.codecAugmentedEquals(other) && augmentations().equals(BindingReflections.getAugmentations(other));
     }
 
     private ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> acquireAugmentations() {
