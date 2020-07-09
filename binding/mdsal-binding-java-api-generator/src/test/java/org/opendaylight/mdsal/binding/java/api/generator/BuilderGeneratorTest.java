@@ -34,18 +34,34 @@ public class BuilderGeneratorTest {
     public void builderTemplateGenerateToStringWithPropertyTest() {
         final GeneratedType genType = mockGenType("get" + TEST);
 
-        assertEquals("@Override\n"
-                + "public String toString() {\n"
+        assertEquals("/**\n"
+                + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
+                + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
+                + "\n * representations across all implementation.\n"
+                + " *\n"
+                + " * @param obj Object for which to generate toString() result.\n"
+                + " * @return {@link String} value of data modeled by this interface.\n"
+                + " * @throws NullPointerException if {@code obj} is null\n"
+                + " */\n"
+                + "static String bindingToString(final test.test obj) {\n"
                 + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
-                + "    CodeHelpers.appendValue(helper, \"_test\", _test);\n"
+                + "    CodeHelpers.appendValue(helper, \"test\", obj.gettest());\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(genType).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithoutAnyPropertyTest() throws Exception {
-        assertEquals("@Override\n"
-                + "public String toString() {\n"
+        assertEquals("/**\n"
+                + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
+                + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
+                + "\n * representations across all implementation.\n"
+                + " *\n"
+                + " * @param obj Object for which to generate toString() result.\n"
+                + " * @return {@link String} value of data modeled by this interface.\n"
+                + " * @throws NullPointerException if {@code obj} is null\n"
+                + " */\n"
+                + "static String bindingToString(final test.test obj) {\n"
                 + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(mockGenType(TEST)).toString());
@@ -53,44 +69,88 @@ public class BuilderGeneratorTest {
 
     @Test
     public void builderTemplateGenerateToStringWithMorePropertiesTest() throws Exception {
-        assertEquals("@Override\n"
-                + "public String toString() {\n"
+        assertEquals("/**\n"
+                + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
+                + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
+                + "\n * representations across all implementation.\n"
+                + " *\n"
+                + " * @param obj Object for which to generate toString() result.\n"
+                + " * @return {@link String} value of data modeled by this interface.\n"
+                + " * @throws NullPointerException if {@code obj} is null\n"
+                + " */\n"
+                + "static String bindingToString(final test.test obj) {\n"
                 + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
-                + "    CodeHelpers.appendValue(helper, \"_test1\", _test1);\n"
-                + "    CodeHelpers.appendValue(helper, \"_test2\", _test2);\n"
+                + "    CodeHelpers.appendValue(helper, \"test1\", obj.gettest1());\n"
+                + "    CodeHelpers.appendValue(helper, \"test2\", obj.gettest2());\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(mockGenTypeMoreMeth("get" + TEST)).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() throws Exception {
-        assertEquals("@Override\n"
-                + "public String toString() {\n"
+        assertEquals("/**\n"
+                + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
+                + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
+                + "\n * representations across all implementation.\n"
+                + " *\n"
+                + " * <p>\n"
+                + " * @param <T$$> implementation type, which has to also implement AugmentationHolder interface\n"
+                + " *              contract.\n"
+                + " * @param obj Object for which to generate toString() result.\n"
+                + " * @return {@link String} value of data modeled by this interface.\n"
+                + " * @throws NullPointerException if {@code obj} is null\n"
+                + " */\n"
+                + "static <T$$ extends test.test & AugmentationHolder<test.test>> String bindingToString(final @NonNull"
+                + " T$$ obj) {\n"
                 + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
-                + "    CodeHelpers.appendValue(helper, \"augmentation\", augmentations().values());\n"
+                + "    CodeHelpers.appendValue(helper, \"augmentation\", obj.augmentations().values());\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(mockAugment(mockGenType(TEST))).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithPropertyWithAugmentTest() throws Exception {
-        assertEquals("@Override\n"
-                + "public String toString() {\n"
+        assertEquals("/**\n"
+                + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
+                + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
+                + "\n * representations across all implementation.\n"
+                + " *\n"
+                + " * <p>\n"
+                + " * @param <T$$> implementation type, which has to also implement AugmentationHolder interface\n"
+                + " *              contract.\n"
+                + " * @param obj Object for which to generate toString() result.\n"
+                + " * @return {@link String} value of data modeled by this interface.\n"
+                + " * @throws NullPointerException if {@code obj} is null\n"
+                + " */\n"
+                + "static <T$$ extends test.test & AugmentationHolder<test.test>> String bindingToString(final @NonNull"
+                + " T$$ obj) {\n"
                 + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
-                + "    CodeHelpers.appendValue(helper, \"_test\", _test);\n"
-                + "    CodeHelpers.appendValue(helper, \"augmentation\", augmentations().values());\n"
+                + "    CodeHelpers.appendValue(helper, \"test\", obj.gettest());\n"
+                + "    CodeHelpers.appendValue(helper, \"augmentation\", obj.augmentations().values());\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(mockAugment(mockGenType("get" + TEST))).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() throws Exception {
-        assertEquals("@Override\n"
-                + "public String toString() {\n"
+        assertEquals("/**\n"
+                + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
+                + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
+                + "\n * representations across all implementation.\n"
+                + " *\n"
+                + " * <p>\n"
+                + " * @param <T$$> implementation type, which has to also implement AugmentationHolder interface\n"
+                + " *              contract.\n"
+                + " * @param obj Object for which to generate toString() result.\n"
+                + " * @return {@link String} value of data modeled by this interface.\n"
+                + " * @throws NullPointerException if {@code obj} is null\n"
+                + " */\n"
+                + "static <T$$ extends test.test & AugmentationHolder<test.test>> String bindingToString(final @NonNull"
+                + " T$$ obj) {\n"
                 + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
-                + "    CodeHelpers.appendValue(helper, \"_test1\", _test1);\n"
-                + "    CodeHelpers.appendValue(helper, \"_test2\", _test2);\n"
-                + "    CodeHelpers.appendValue(helper, \"augmentation\", augmentations().values());\n"
+                + "    CodeHelpers.appendValue(helper, \"test1\", obj.gettest1());\n"
+                + "    CodeHelpers.appendValue(helper, \"test2\", obj.gettest2());\n"
+                + "    CodeHelpers.appendValue(helper, \"augmentation\", obj.augmentations().values());\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toString());
     }
@@ -123,8 +183,7 @@ public class BuilderGeneratorTest {
     }
 
     private static CharSequence genToString(final GeneratedType genType) {
-        final BuilderTemplate bt = BuilderGenerator.templateForType(genType);
-        return bt.generateToString(bt.properties);
+        return new InterfaceTemplate(genType).generateBindingToString();
     }
 
     private static GeneratedType mockGenType(final String methodeName) {

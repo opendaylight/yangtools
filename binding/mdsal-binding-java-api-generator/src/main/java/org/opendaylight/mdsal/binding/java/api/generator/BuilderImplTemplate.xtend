@@ -8,8 +8,10 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static org.opendaylight.mdsal.binding.model.util.BindingTypes.DATA_OBJECT
+import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_TO_STRING_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 
 import java.util.Collection
@@ -51,7 +53,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
 
             «generateEquals()»
 
-            «generateToString(properties)»
+            «generateToString()»
         }
     '''
 
@@ -135,6 +137,18 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
                 return true;
             }
         «ENDIF»
+    '''
+
+    /**
+     * Template method which generates the method <code>toString()</code>.
+     *
+     * @return string with the <code>toString()</code> method definition in JAVA format
+     */
+    def protected generateToString() '''
+        @«OVERRIDE.importedName»
+        public «STRING.importedName» toString() {
+            return «targetType.importedName».«BINDING_TO_STRING_NAME»(this);
+        }
     '''
 
     override protected generateCopyKeys(List<GeneratedProperty> keyProps) '''

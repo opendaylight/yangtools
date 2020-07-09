@@ -26,6 +26,7 @@ import static org.opendaylight.mdsal.binding.model.util.Types.BOOLEAN
 import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
+import com.google.common.base.MoreObjects
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Lists
@@ -33,6 +34,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import java.beans.ConstructorProperties
 import java.util.ArrayList
 import java.util.Base64;
+import java.util.Collection
 import java.util.Comparator
 import java.util.List
 import java.util.Map
@@ -611,6 +613,19 @@ class ClassTemplate extends BaseTemplate {
                     }
                 «ENDFOR»
                 return true;
+            }
+        «ENDIF»
+    '''
+
+    def private generateToString(Collection<? extends GeneratedProperty> properties) '''
+        «IF !properties.empty»
+            @«OVERRIDE.importedName»
+            public «STRING.importedName» toString() {
+                final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper(«type.importedName».class);
+                «FOR property : properties»
+                    «CODEHELPERS.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
+                «ENDFOR»
+                return helper.toString();
             }
         «ENDIF»
     '''

@@ -31,7 +31,6 @@ import org.opendaylight.mdsal.binding.model.util.TypeConstants
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.concepts.Builder
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder
 
 /**
  * Template for generating JAVA builder classes.
@@ -500,7 +499,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     '''
 
     override protected generateCopyAugmentation(Type implType) {
-        val augmentationHolderRef = AugmentationHolder.importedName
+        val augmentationHolderRef = AUGMENTATION_HOLDER.importedName
         val typeRef = targetType.importedName
         val hashMapRef = JU_HASHMAP.importedName
         val augmentTypeRef = augmentType.importedName

@@ -7,10 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 
-import com.google.common.base.MoreObjects
 import java.util.ArrayList
 import java.util.Collection
 import java.util.Collections
@@ -87,22 +85,6 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
            «JU_MAP.importedName»<«CLASS.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> «AUGMENTATION_FIELD» = «Collections.importedName».emptyMap();
         '''
     }
-
-    override generateToString(Collection<? extends GeneratedProperty> properties) '''
-        «IF properties !== null»
-            @«OVERRIDE.importedName»
-            public «STRING.importedName» toString() {
-                final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper("«targetType.name»");
-                «FOR property : properties»
-                    «CODEHELPERS.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
-                «ENDFOR»
-                «IF augmentType !== null»
-                    «CODEHELPERS.importedName».appendValue(helper, "«AUGMENTATION_FIELD»", augmentations().values());
-                «ENDIF»
-                return helper.toString();
-            }
-        «ENDIF»
-    '''
 
     /**
      * Template method which generate getter methods for IMPL class.

@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -657,6 +658,11 @@ public final class BindingReflections {
             return false;
         }
         for (Method potentialMethod : potential.getMethods()) {
+            if (Modifier.isStatic(potentialMethod.getModifiers())) {
+                // Skip any static methods, as we are not interested in those
+                continue;
+            }
+
             try {
                 Method targetMethod = target.getMethod(potentialMethod.getName(), potentialMethod.getParameterTypes());
                 if (!potentialMethod.getReturnType().equals(targetMethod.getReturnType())) {
