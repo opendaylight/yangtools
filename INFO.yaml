@@ -36,7 +36,7 @@ committers:
     - <<: *odl_yangtools_ptl
 tsc:
     # yamllint disable rule:line-length
-    approval: 'NA'
+    approval: 'https://wiki-archive.opendaylight.org/images/f/fb/TSC_2013-07-18_Minutes.pdf'
     changes:
         - type: ''
           name: ''
