@@ -1,0 +1,43 @@
+---
+project: 'yangtools'
+project_creation_date: '2013-07-18'
+project_category: ''
+lifecycle_state: 'Incubation'
+project_lead: &odl_yangtools_ptl
+    name: 'Robert Varga'
+    email: 'nite@hq.sk'
+    company: ''
+    id: 'rovarga'
+    timezone: 'Unknown/Unknown'
+primary_contact: *odl_yangtools_ptl
+issue_tracking:
+    type: 'jira'
+    url: 'https://jira.opendaylight.org/projects/'
+    key: 'yangtools'
+mailing_list:
+    type: 'groups.io'
+    url: 'kernel-dev@lists.opendaylight.org'
+    tag: '[]'
+realtime_discussion:
+    type: 'irc'
+    server: 'freenode.net'
+    channel: '#opendaylight'
+meetings:
+    - type: 'gotomeeting+irc'
+      agenda: 'https://wiki.opendaylight.org/display/'
+      url: ''
+      server: 'freenode.net'
+      channel: '#opendaylight'
+      repeats: ''
+      time: ''
+repositories:
+    - yangtools
+committers:
+    - <<: *odl_yangtools_ptl
+tsc:
+    # yamllint disable rule:line-length
+    approval: 'NA'
+    changes:
+        - type: ''
+          name: ''
+          link: ''
