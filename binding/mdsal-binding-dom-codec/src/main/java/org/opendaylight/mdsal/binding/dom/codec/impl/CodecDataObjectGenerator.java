@@ -451,11 +451,10 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
 
         @Override
         public ByteCodeAppender appender(final Target implementationTarget) {
-            final TypeDescription instrumentedType = implementationTarget.getInstrumentedType();
             return new ByteCodeAppender.Simple(
                 // return (FooType) codecKey(getFoo$$$V);
                 THIS,
-                getField(instrumentedType, handleName),
+                getField(implementationTarget.getInstrumentedType(), handleName),
                 CODEC_KEY,
                 TypeCasting.to(retType),
                 MethodReturn.REFERENCE);
@@ -525,11 +524,10 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
 
         @Override
         public ByteCodeAppender appender(final Target implementationTarget) {
-            final TypeDescription instrumentedType = implementationTarget.getInstrumentedType();
             return new ByteCodeAppender.Simple(
                 // return (FooType) codecMember(getFoo$$$V, FooType.class);
                 THIS,
-                getField(instrumentedType, handleName),
+                getField(implementationTarget.getInstrumentedType(), handleName),
                 ClassConstant.of(TypeDefinition.Sort.describe(bindingClass).asErasure()),
                 CODEC_MEMBER,
                 TypeCasting.to(retType),
