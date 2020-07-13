@@ -286,26 +286,6 @@ public final class GeneratorUtil {
     }
 
     /**
-     * Returns the reference to highest (top parent) Generated Transfer Object.
-     *
-     * @param childTransportObject is generated transfer object which can be extended by other generated transfer object
-     * @return in first case that <code>childTransportObject</code> is not extended then
-     *         <code>childTransportObject</code> is returned. In second case the method is recursive called until first
-     *         case.
-     * @throws IllegalArgumentException if <code>childTransportObject</code> equals <code>null</code>
-     */
-    static GeneratedTransferObject getTopParentTransportObject(final GeneratedTransferObject childTransportObject) {
-        if (childTransportObject == null) {
-            throw new IllegalArgumentException("Parameter childTransportObject can't be null.");
-        }
-        if (childTransportObject.getSuperType() == null) {
-            return childTransportObject;
-        }
-
-        return getTopParentTransportObject(childTransportObject.getSuperType());
-    }
-
-    /**
      * Selects from input list of properties only those which have read only attribute set to true.
      *
      * @param properties list of properties of generated transfer object

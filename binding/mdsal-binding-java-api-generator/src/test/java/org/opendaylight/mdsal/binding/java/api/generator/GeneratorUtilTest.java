@@ -148,18 +148,4 @@ public class GeneratorUtilTest {
                 createImports(generatedType)).contains(parameterizedType.getName()));
 
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getTopParentTransportObjectWithExceptionTest() throws Exception {
-        GeneratorUtil.getTopParentTransportObject(null);
-    }
-
-    @Test
-    public void getTopParentTransportObjectTest() throws Exception {
-        assertEquals(enclosedType, GeneratorUtil.getTopParentTransportObject(enclosedType));
-
-        final GeneratedTransferObject parent = mock(GeneratedTransferObject.class);
-        doReturn(parent).when(enclosedType).getSuperType();
-        assertEquals(parent, GeneratorUtil.getTopParentTransportObject(enclosedType));
-    }
 }
