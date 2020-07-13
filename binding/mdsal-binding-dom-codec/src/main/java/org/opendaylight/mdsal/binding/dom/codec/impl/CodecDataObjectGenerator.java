@@ -109,8 +109,10 @@ import org.slf4j.LoggerFactory;
  * This strategy minimizes the bytecode footprint and follows the generally good idea of keeping common logic in a
  * single place in a maintainable form. The glue code is extremely light (~6 instructions), which is beneficial on both
  * sides of invocation:
- * - generated method can readily be inlined into the caller
- * - it forms a call site into which codeMember() can be inlined with VarHandle being constant
+ * <ul>
+ *   <li>generated method can readily be inlined into the caller</li>
+ *   <li>it forms a call site into which codeMember() can be inlined with VarHandle being constant</li>
+ * </ul>
  *
  * <p>
  * The second point is important here, as it allows the invocation logic around VarHandle to completely disappear,
@@ -131,12 +133,12 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The sticky point here is the NodeContextSupplier, as it is a heap object which cannot normally be looked up from the
  * static context in which the static class initializer operates -- so we need perform some sort of a trick here.
- * Eventhough ByteBuddy provides facilities for bridging references to type fields, those facilities operate on volatile
- * fields -- hence they do not quite work for us.
+ * Even though ByteBuddy provides facilities for bridging references to type fields, those facilities operate on
+ * volatile fields -- hence they do not quite work for us.
  *
  * <p>
  * Another alternative, which we used in Javassist-generated DataObjectSerializers, is to muck with the static field
- * using reflection -- which works, but requires redefinition of Field.modifiers, which is something Java 9 complains
+ * using reflection -- which works, but requires redefinition of Field.modifiers, which is something Java 9+ complains
  * about quite noisily.
  *
  * <p>
@@ -151,7 +153,7 @@ import org.slf4j.LoggerFactory;
  *     class loading operation. At this point the generator installs itself as the current generator for this thread via
  *     {@link ClassGeneratorBridge#setup(CodecDataObjectGenerator)} and allows the class to be loaded.
  * <li>After the class has been loaded, but before the call returns, we will force the class to initialize, at which
- *     point the static invocations will be redirect to {@link #resolveNodeContextSupplier(String)} and
+ *     point the static invocations will be redirected to {@link #resolveNodeContextSupplier(String)} and
  *     {@link #resolveKey(String)} methods, thus initializing the fields to the intended constants.</li>
  * <li>Before returning from the class loading call, the generator will detach itself via
  *     {@link ClassGeneratorBridge#tearDown(CodecDataObjectGenerator)}.</li>
@@ -164,7 +166,7 @@ import org.slf4j.LoggerFactory;
 abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T> {
     // Not reusable definition: we can inline NodeContextSuppliers without a problem
     // FIXME: 6.0.0: wire this implementation, which requires that BindingRuntimeTypes provides information about types
-    //               being genenerated from within a grouping
+    //               being generated from within a grouping
     private static final class Fixed<T extends CodecDataObject<?>> extends CodecDataObjectGenerator<T>
             implements NodeContextSupplierProvider<T> {
         private final ImmutableMap<Method, NodeContextSupplier> properties;
