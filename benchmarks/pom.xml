@@ -18,18 +18,18 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>benchmarks</artifactId>
-    <version>3.0.13-SNAPSHOT</version>
+    <version>3.0.14-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-impl</artifactId>
-            <version>3.0.13-SNAPSHOT</version>
+            <version>3.0.14-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-test-util</artifactId>
-            <version>3.0.13-SNAPSHOT</version>
+            <version>3.0.14-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
