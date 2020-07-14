@@ -656,7 +656,7 @@ public final class SchemaContextUtil {
 
         return pathStr.startsWith("deref(") ? resolveDerefPath(context, module, actualSchemaNode, pathStr)
                 : findTargetNode(context, resolveRelativePath(context, module, actualSchemaNode,
-                    doSplitXPath(pathStr)));
+                new ArrayList<>(doSplitXPath(pathStr))));
     }
 
     private static Iterable<QName> resolveRelativePath(final SchemaContext context, final Module module,
@@ -805,7 +805,17 @@ public final class SchemaContextUtil {
 
                 ++leadingParents;
             }
+            // first match for predicates ie. "[aa-id=current()/../bb]"
+            int openIndex = findStringInXpath("[", xpath);
+            if (openIndex != -1) {
+                int closeIndex = findStringInXpath("]", xpath);
+                int toRemove = closeIndex - openIndex + 1;
+                for (int i = 0; i < toRemove; i++) {
+                    xpath.remove(openIndex);
+                }
+            }
 
+            // also check the aa/../bb case
             // Now let's see if there there is a '..' in the rest
             final int dots = findDots(xpath, leadingParents + 1);
             if (dots == -1) {
@@ -816,6 +826,16 @@ public final class SchemaContextUtil {
             xpath.remove(dots - 1);
             LOG.trace("Next iteration {}", xpath);
         }
+    }
+
+    private static int findStringInXpath(final String pattern, final List<String> xpath) {
+        for (int i = 0; i < xpath.size(); ++i) {
+            if (xpath.get(i).contains(pattern)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     private static int findDots(final List<String> xpath, final int startIndex) {

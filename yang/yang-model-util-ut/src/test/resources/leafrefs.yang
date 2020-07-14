@@ -29,6 +29,12 @@ module leafrefs {
       }
     }
 
+    leaf indirect-with-current {
+      type leafref {
+        path "../../../n[n-id=current()/../node]/tp/tp-id";
+      }
+    }
+
     leaf absolute {
       type leafref {
         // direct path to an instantiation
