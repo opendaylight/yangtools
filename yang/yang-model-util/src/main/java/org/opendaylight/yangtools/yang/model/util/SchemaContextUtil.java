@@ -77,7 +77,7 @@ import org.slf4j.LoggerFactory;
 public final class SchemaContextUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaContextUtil.class);
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
-    private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
+    private static final Splitter SLASH_SPLITTER = Splitter.onPattern("/|]/").omitEmptyStrings();
 
     private SchemaContextUtil() {
         // Hidden on purpose
@@ -656,7 +656,7 @@ public final class SchemaContextUtil {
 
         return pathStr.startsWith("deref(") ? resolveDerefPath(context, module, actualSchemaNode, pathStr)
                 : findTargetNode(context, resolveRelativePath(context, module, actualSchemaNode,
-                    doSplitXPath(pathStr)));
+                new ArrayList<>(doSplitXPath(pathStr))));
     }
 
     private static Iterable<QName> resolveRelativePath(final SchemaContext context, final Module module,
