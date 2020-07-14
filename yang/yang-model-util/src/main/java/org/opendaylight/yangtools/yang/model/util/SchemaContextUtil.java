@@ -656,7 +656,7 @@ public final class SchemaContextUtil {
 
         return pathStr.startsWith("deref(") ? resolveDerefPath(context, module, actualSchemaNode, pathStr)
                 : findTargetNode(context, resolveRelativePath(context, module, actualSchemaNode,
-                    doSplitXPath(pathStr)));
+                new ArrayList<>(doSplitXPath(pathStr))));
     }
 
     private static Iterable<QName> resolveRelativePath(final SchemaContext context, final Module module,
