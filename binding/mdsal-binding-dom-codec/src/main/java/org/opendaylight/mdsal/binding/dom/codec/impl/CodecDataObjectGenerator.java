@@ -15,7 +15,6 @@ import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.getFi
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.invokeMethod;
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.putField;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.lang.invoke.MethodHandles;
@@ -60,6 +59,7 @@ import org.opendaylight.mdsal.binding.dom.codec.impl.ClassGeneratorBridge.NodeCo
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader.ClassGenerator;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader.GeneratorResult;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -259,8 +259,8 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     private static final Logger LOG = LoggerFactory.getLogger(CodecDataObjectGenerator.class);
     private static final Generic BB_BOOLEAN = TypeDefinition.Sort.describe(boolean.class);
     private static final Generic BB_DATAOBJECT = TypeDefinition.Sort.describe(DataObject.class);
-    private static final Generic BB_HELPER = TypeDefinition.Sort.describe(ToStringHelper.class);
     private static final Generic BB_INT = TypeDefinition.Sort.describe(int.class);
+    private static final Generic BB_STRING = TypeDefinition.Sort.describe(String.class);
     private static final TypeDescription BB_CDO = ForLoadedType.of(CodecDataObject.class);
     private static final TypeDescription BB_ACDO = ForLoadedType.of(AugmentableCodecDataObject.class);
     private static final Comparator<Method> METHOD_BY_ALPHABET = Comparator.comparing(Method::getName);
@@ -269,9 +269,6 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         byte[].class, byte[].class);
     private static final StackManipulation OBJECTS_EQUALS = invokeMethod(Objects.class, "equals",
         Object.class, Object.class);
-    private static final StackManipulation HELPER_ADD = invokeMethod(ToStringHelper.class, "add",
-        String.class, Object.class);
-
     private static final StackManipulation FIRST_ARG_REF = MethodVariableAccess.REFERENCE.loadFrom(1);
 
     private static final int PROT_FINAL = Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
@@ -339,9 +336,9 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
                 // ... codecEquals() ...
                 .defineMethod("codecEquals", BB_BOOLEAN, PROT_FINAL).withParameter(BB_DATAOBJECT)
                 .intercept(codecEquals(methods))
-                // ... and codecFillToString() ...
-                .defineMethod("codecFillToString", BB_HELPER, PROT_FINAL).withParameter(BB_HELPER)
-                .intercept(codecFillToString(methods))
+                // ... toString() ...
+                .defineMethod("toString", BB_STRING, PUB_FINAL)
+                .intercept(toString(bindingInterface))
                 // ... and build it
                 .make());
     }
@@ -380,21 +377,12 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         return new Implementation.Simple(manipulations.toArray(new StackManipulation[0]));
     }
 
-    private static Implementation codecFillToString(final ImmutableMap<StackManipulation, Method> properties) {
-        final List<StackManipulation> manipulations = new ArrayList<>(properties.size() * 4 + 2);
-        // push 'return helper' to stack...
-        manipulations.add(FIRST_ARG_REF);
-        for (Entry<StackManipulation, Method> entry : properties.entrySet()) {
-            // .add("getFoo", getFoo())
-            manipulations.add(new TextConstant(entry.getValue().getName()));
-            manipulations.add(THIS);
-            manipulations.add(entry.getKey());
-            manipulations.add(HELPER_ADD);
-        }
-        // ... execute 'return helper'
-        manipulations.add(MethodReturn.REFERENCE);
-
-        return new Implementation.Simple(manipulations.toArray(new StackManipulation[0]));
+    private static Implementation toString(final Class<?> bindingInterface) {
+        return new Implementation.Simple(
+            // return Foo.bindingToString(this);
+            THIS,
+            invokeMethod(bindingInterface, BindingMapping.BINDING_TO_STRING_NAME, bindingInterface),
+            MethodReturn.REFERENCE);
     }
 
     private abstract static class AbstractMethodImplementation implements Implementation {

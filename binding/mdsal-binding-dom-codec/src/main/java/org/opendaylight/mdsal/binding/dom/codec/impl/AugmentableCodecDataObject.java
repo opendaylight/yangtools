@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -96,11 +95,6 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
     @Override
     final boolean codecAugmentedEquals(final T other) {
         return super.codecAugmentedEquals(other) && augmentations().equals(BindingReflections.getAugmentations(other));
-    }
-
-    @Override
-    final ToStringHelper codecAugmentedFillToString(final ToStringHelper helper) {
-        return super.codecAugmentedFillToString(helper).add("augmentation", augmentations().values());
     }
 
     private ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> acquireAugmentations() {
