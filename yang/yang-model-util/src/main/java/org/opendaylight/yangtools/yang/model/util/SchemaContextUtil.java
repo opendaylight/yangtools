@@ -77,7 +77,7 @@ import org.slf4j.LoggerFactory;
 public final class SchemaContextUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaContextUtil.class);
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
-    private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
+    private static final Splitter SLASH_SPLITTER = Splitter.onPattern("/|]/").omitEmptyStrings();
 
     private SchemaContextUtil() {
         // Hidden on purpose
@@ -829,7 +829,11 @@ public final class SchemaContextUtil {
     }
 
     private static List<String> doSplitXPath(final String xpath) {
-        return SLASH_SPLITTER.splitToList(xpath);
+        final List<String> ret = new ArrayList<>();
+        for (String str : SLASH_SPLITTER.split(xpath)) {
+            ret.add(str);
+        }
+        return ret;
     }
 
     /**
