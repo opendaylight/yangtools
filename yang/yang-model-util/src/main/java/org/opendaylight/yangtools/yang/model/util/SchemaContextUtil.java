@@ -835,7 +835,11 @@ public final class SchemaContextUtil {
     }
 
     private static List<String> doSplitXPath(final String xpath) {
-        return SLASH_SPLITTER.splitToList(xpath);
+        final List<String> ret = new ArrayList<>();
+        for (String str : SLASH_SPLITTER.split(xpath)) {
+            ret.add(str);
+        }
+        return ret;
     }
 
     /**
