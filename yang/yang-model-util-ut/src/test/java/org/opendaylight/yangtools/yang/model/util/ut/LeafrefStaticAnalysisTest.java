@@ -135,4 +135,12 @@ public class LeafrefStaticAnalysisTest {
         assertNull(SchemaContextUtil.findDataSchemaNodeForRelativeXPath(context, module, leaf,
             ((LeafrefTypeDefinition) leaf.getType()).getPathStatement()));
     }
+
+    @Test
+    public void testNonExistentRelativeXpath() {
+        final LeafSchemaNode leaf = (LeafSchemaNode) bar.findDataChildByName(
+                QName.create(FOO, "indirect-with-current")).get();
+        assertNull(SchemaContextUtil.findDataSchemaNodeForRelativeXPath(context, module, leaf,
+                ((LeafrefTypeDefinition) leaf.getType()).getPathStatement()));
+    }
 }
