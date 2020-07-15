@@ -41,6 +41,9 @@ import org.opendaylight.yangtools.yang.binding.Augmentation;
  * class. For generation of the source code is used the template written in XTEND language.
  */
 public final class BuilderGenerator implements CodeGenerator {
+    private static final JavaTypeName AUGMENTABLE = JavaTypeName.create(Augmentable.class);
+    private static final JavaTypeName AUGMENTATION = JavaTypeName.create(Augmentation.class);
+
     private static final Comparator<MethodSignature> METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<>();
     private static final Type AUGMENTATION_RET_TYPE;
 
@@ -66,12 +69,10 @@ public final class BuilderGenerator implements CodeGenerator {
         if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
             for (Type t : ((GeneratedType) type).getImplements()) {
                 // "rpc" and "grouping" elements do not implement Augmentable
-                if (t.getFullyQualifiedName().equals(Augmentable.class.getName())) {
-                    return true;
-                } else if (t.getFullyQualifiedName().equals(Augmentation.class.getName())) {
+                final JavaTypeName name = t.getIdentifier();
+                if (name.equals(AUGMENTABLE) || name.equals(AUGMENTATION)) {
                     return true;
                 }
-
             }
         }
         return false;
