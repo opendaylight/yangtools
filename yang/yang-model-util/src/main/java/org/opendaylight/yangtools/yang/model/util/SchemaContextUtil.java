@@ -78,6 +78,7 @@ public final class SchemaContextUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaContextUtil.class);
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
+    private static final Pattern GROUPS_PATTERN = Pattern.compile("\\[(.*?)\\]");
 
     private SchemaContextUtil() {
         // Hidden on purpose
@@ -265,7 +266,12 @@ public final class SchemaContextUtil {
             final SchemaNode actualSchemaNode, final PathExpression relativeXPath) {
         checkState(!relativeXPath.isAbsolute(), "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
                 + "for non relative Revision Aware XPath use findDataSchemaNode method");
-        return resolveRelativeXPath(context, module, relativeXPath.getOriginalString(), actualSchemaNode);
+        return resolveRelativeXPath(context, module, removePredicatesFromXpath(relativeXPath.getOriginalString()),
+                actualSchemaNode);
+    }
+
+    private static String removePredicatesFromXpath(final String xpath) {
+        return GROUPS_PATTERN.matcher(xpath).replaceAll("");
     }
 
     /**
