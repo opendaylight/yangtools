@@ -13,6 +13,8 @@ import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMappin
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isNonnullMethodName
 
 import java.util.List
+import java.util.Map.Entry
+import java.util.Set
 import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.Constant
@@ -46,6 +48,8 @@ class InterfaceTemplate extends BaseTemplate {
      * List of generated types which are enclosed inside <code>genType</code>
      */
     val List<GeneratedType> enclosedGeneratedTypes
+
+    var Entry<Type, Set<BuilderGeneratedProperty>> typeAnalysis
 
     /**
      * Creates the instance of this class which is used for generating the interface file source
@@ -219,5 +223,11 @@ class InterfaceTemplate extends BaseTemplate {
     def private static boolean isObject(Type type) {
         // The return type has a package, so it's not a primitive type
         return !type.getPackageName().isEmpty()
+    }
+
+    def analyzeType() {
+        if (typeAnalysis === null) {
+            typeAnalysis = analyzeTypeHierarchy(type)
+        }
     }
 }
