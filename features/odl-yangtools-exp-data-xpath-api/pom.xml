@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-exp-data-xpath-api</artifactId>
-    <version>0.3.4-SNAPSHOT</version>
+    <version>0.3.5-SNAPSHOT</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: Experimental :: Data XPath API</name>
     <description>YANG-modeled data XPath APIs</description>
@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>5.0.4-SNAPSHOT</version>
+                <version>5.0.5-SNAPSHOT</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
