@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-exp-data-xpath</artifactId>
-    <version>0.2.12-SNAPSHOT</version>
+    <version>0.2.12</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: Experimental :: Data XPath support</name>
     <description>XPath support for YANG-modeled data</description>
@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>4.0.12-SNAPSHOT</version>
+                <version>4.0.12</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
