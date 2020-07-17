@@ -54,14 +54,19 @@ import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 
 final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCodecContext<D,SchemaContext> {
 
-    private final LoadingCache<Class<?>, DataContainerCodecContext<?, ?>> childrenByClass =
-        CacheBuilder.newBuilder()
-            .build(new CacheLoader<Class<?>, DataContainerCodecContext<?,?>>() {
-                @Override
-                public DataContainerCodecContext<?,?> load(final Class<?> key) {
-                    return createDataTreeChildContext(key);
+    private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?>> childrenByClass =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public DataContainerCodecContext<?, ?> load(final Class<? extends DataObject> key) {
+                if (Notification.class.isAssignableFrom(key)) {
+                    return createNotificationDataContext(key);
                 }
-            });
+                if (RpcInput.class.isAssignableFrom(key) || RpcOutput.class.isAssignableFrom(key)) {
+                    return createRpcDataContext(key);
+                }
+                return createDataTreeChildContext(key);
+            }
+        });
 
     private final LoadingCache<Class<? extends Action<?, ?, ?>>, ActionCodecContext> actionsByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
@@ -70,22 +75,6 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 return createActionContext(key);
             }
         });
-
-    private final LoadingCache<Class<?>, ContainerNodeCodecContext<?>> rpcDataByClass = CacheBuilder.newBuilder().build(
-            new CacheLoader<Class<?>, ContainerNodeCodecContext<?>>() {
-                @Override
-                public ContainerNodeCodecContext<?> load(final Class<?> key) {
-                    return createRpcDataContext(key);
-                }
-            });
-
-    private final LoadingCache<Class<?>, NotificationCodecContext<?>> notificationsByClass = CacheBuilder.newBuilder()
-            .build(new CacheLoader<Class<?>, NotificationCodecContext<?>>() {
-                @Override
-                public NotificationCodecContext<?> load(final Class<?> key) {
-                    return createNotificationDataContext(key);
-                }
-            });
 
     private final LoadingCache<Class<? extends DataObject>, ChoiceNodeCodecContext<?>> choicesByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
@@ -158,15 +147,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     @SuppressWarnings("unchecked")
     @Override
     public <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
-        /* FIXME: This is still not solved for RPCs
-         * TODO: Probably performance wise RPC, Data and Notification loading cache
-         *       should be merge for performance resons. Needs microbenchmark to
-         *       determine which is faster (keeping them separate or in same cache).
-         */
-        if (Notification.class.isAssignableFrom(childClass)) {
-            return (DataContainerCodecContext<C, ?>) getNotification((Class<? extends Notification>)childClass);
-        }
-        return (DataContainerCodecContext<C, ?>) getOrRethrow(childrenByClass,childClass);
+        return (DataContainerCodecContext<C, ?>) getOrRethrow(childrenByClass, childClass);
     }
 
     @Override
@@ -190,7 +171,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     NotificationCodecContext<?> getNotification(final Class<? extends Notification> notification) {
-        return getOrRethrow(notificationsByClass, notification);
+        return (NotificationCodecContext<?>) streamChild((Class<? extends DataObject>)notification);
     }
 
     NotificationCodecContext<?> getNotification(final Absolute notification) {
@@ -198,7 +179,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     ContainerNodeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
-        return getOrRethrow(rpcDataByClass, rpcInputOrOutput);
+        return (ContainerNodeCodecContext<?>) streamChild((Class<? extends DataObject>)rpcInputOrOutput);
     }
 
     RpcInputCodec<?> getRpc(final Absolute containerPath) {
