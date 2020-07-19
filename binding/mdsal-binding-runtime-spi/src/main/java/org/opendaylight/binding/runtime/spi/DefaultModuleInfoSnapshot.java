@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceExcepti
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
-final class DefaultModuleInfoSnapshot extends GeneratedClassLoadingStrategy implements ModuleInfoSnapshot {
+final class DefaultModuleInfoSnapshot implements ModuleInfoSnapshot {
     private final ImmutableMap<SourceIdentifier, YangModuleInfo> moduleInfos;
     private final ImmutableMap<String, ClassLoader> classLoaders;
     private final @NonNull EffectiveModelContext effectiveModel;

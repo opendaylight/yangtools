@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaContextResolver;
 
 @Beta
+@Deprecated(forRemoval = true)
 public class ModuleInfoBackedContext extends AbstractModuleInfoTracker implements ClassLoadingStrategy,
         EffectiveModelContextProvider, SchemaSourceProvider<YangTextSchemaSource> {
     private static final class WithFallback extends ModuleInfoBackedContext {

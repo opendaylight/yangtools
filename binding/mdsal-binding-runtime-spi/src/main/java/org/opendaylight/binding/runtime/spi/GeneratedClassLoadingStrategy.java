@@ -13,6 +13,7 @@ import org.opendaylight.binding.runtime.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 
 @Beta
+@Deprecated(forRemoval = true)
 public abstract class GeneratedClassLoadingStrategy implements ClassLoadingStrategy {
     private static final class AlwaysFailClassLoadingStrategy extends GeneratedClassLoadingStrategy {
         static final @NonNull AlwaysFailClassLoadingStrategy INSTANCE = new AlwaysFailClassLoadingStrategy();
