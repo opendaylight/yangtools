@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.runtime.osgi;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.dom.schema.osgi.ModelGenerationAware;
 
 @Beta

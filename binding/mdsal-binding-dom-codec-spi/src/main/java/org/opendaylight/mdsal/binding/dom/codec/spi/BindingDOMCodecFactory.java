@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.spi;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 
 @Beta
 @NonNullByDefault

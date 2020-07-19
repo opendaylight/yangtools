@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.binding.runtime.spi;
+package org.opendaylight.mdsal.binding.runtime.spi;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
@@ -20,10 +20,10 @@ import java.util.Optional;
 import java.util.Set;
 import org.checkerframework.checker.lock.qual.Holding;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
-import org.opendaylight.binding.runtime.api.BindingRuntimeGenerator;
-import org.opendaylight.binding.runtime.api.ClassLoadingStrategy;
-import org.opendaylight.binding.runtime.api.DefaultBindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
+import org.opendaylight.mdsal.binding.runtime.api.ClassLoadingStrategy;
+import org.opendaylight.mdsal.binding.runtime.api.DefaultBindingRuntimeContext;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;

@@ -5,11 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.binding.runtime.spi;
+package org.opendaylight.mdsal.binding.runtime.spi;
 
 import java.util.ServiceLoader;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.binding.runtime.api.BindingRuntimeGenerator;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 
 /**

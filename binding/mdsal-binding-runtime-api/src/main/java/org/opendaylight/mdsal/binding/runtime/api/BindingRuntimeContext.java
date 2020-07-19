@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.binding.runtime.api;
+package org.opendaylight.mdsal.binding.runtime.api;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;

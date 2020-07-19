@@ -9,8 +9,8 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
-import org.opendaylight.binding.runtime.spi.BindingRuntimeHelpers;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.spi.BindingRuntimeHelpers;
 
 public abstract class AbstractBindingRuntimeTest {
     private static BindingRuntimeContext runtimeContext;

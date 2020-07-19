@@ -18,7 +18,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.gaul.modernizer_maven_annotations.SuppressModernizer;
-import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.osgi.OSGiBindingRuntimeContext;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;

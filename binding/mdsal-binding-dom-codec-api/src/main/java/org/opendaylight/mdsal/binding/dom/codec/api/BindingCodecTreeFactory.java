@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
-import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 
 public interface BindingCodecTreeFactory {
     /**

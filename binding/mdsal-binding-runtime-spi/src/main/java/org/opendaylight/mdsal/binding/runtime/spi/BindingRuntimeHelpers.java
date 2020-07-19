@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.binding.runtime.spi;
+package org.opendaylight.mdsal.binding.runtime.spi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Throwables;
@@ -13,9 +13,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
-import org.opendaylight.binding.runtime.api.BindingRuntimeGenerator;
-import org.opendaylight.binding.runtime.api.DefaultBindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
+import org.opendaylight.mdsal.binding.runtime.api.DefaultBindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;

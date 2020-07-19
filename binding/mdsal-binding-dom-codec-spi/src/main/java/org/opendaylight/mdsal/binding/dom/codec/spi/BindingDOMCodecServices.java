@@ -9,10 +9,10 @@ package org.opendaylight.mdsal.binding.dom.codec.spi;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 
 /**
  * Collection of services provided by a Binding-DOM codec instance. This interface serves as an atomic unit for
