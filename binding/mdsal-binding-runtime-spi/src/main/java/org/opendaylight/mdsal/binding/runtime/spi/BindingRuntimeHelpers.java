@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
 import org.opendaylight.mdsal.binding.runtime.api.DefaultBindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -45,14 +46,14 @@ public final class BindingRuntimeHelpers {
 
     public static @NonNull EffectiveModelContext createEffectiveModel(final YangParserFactory parserFactory,
             final Iterable<? extends YangModuleInfo> moduleInfos) {
-        return prepareContext(parserFactory, moduleInfos).tryToCreateModelContext().orElseThrow();
+        return prepareContext(parserFactory, moduleInfos).getEffectiveModelContext();
     }
 
     public static @NonNull BindingRuntimeContext createRuntimeContext() {
-        final ModuleInfoBackedContext ctx = prepareContext(ServiceLoaderState.ParserFactory.INSTANCE,
+        final ModuleInfoSnapshot infos = prepareContext(ServiceLoaderState.ParserFactory.INSTANCE,
             BindingReflections.loadModuleInfos());
         return DefaultBindingRuntimeContext.create(ServiceLoaderState.Generator.INSTANCE.generateTypeMapping(
-            ctx.tryToCreateModelContext().orElseThrow()), ctx);
+            infos.getEffectiveModelContext()), infos);
     }
 
     public static @NonNull BindingRuntimeContext createRuntimeContext(final Class<?>... classes) {
@@ -67,11 +68,11 @@ public final class BindingRuntimeHelpers {
 
     public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
             final BindingRuntimeGenerator generator, final Collection<Class<?>> classes) {
-        final ModuleInfoBackedContext ctx = prepareContext(parserFactory, classes.stream()
+        final ModuleInfoSnapshot infos = prepareContext(parserFactory, classes.stream()
             .map(BindingRuntimeHelpers::extractYangModuleInfo)
             .collect(Collectors.toList()));
         return DefaultBindingRuntimeContext.create(
-            generator.generateTypeMapping(ctx.tryToCreateModelContext().orElseThrow()), ctx);
+            generator.generateTypeMapping(infos.getEffectiveModelContext()), infos);
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
@@ -84,10 +85,10 @@ public final class BindingRuntimeHelpers {
         }
     }
 
-    private static @NonNull ModuleInfoBackedContext prepareContext(final YangParserFactory parserFactory,
+    private static @NonNull ModuleInfoSnapshot prepareContext(final YangParserFactory parserFactory,
             final Iterable<? extends YangModuleInfo> moduleInfos) {
-        final ModuleInfoBackedContext ctx = ModuleInfoBackedContext.create("helper", parserFactory);
+        final ModuleInfoSnapshotBuilder ctx = new ModuleInfoSnapshotBuilder("helper", parserFactory);
         ctx.registerModuleInfos(moduleInfos);
-        return ctx;
+        return ctx.build();
     }
 }
