@@ -11,12 +11,10 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
-import com.google.common.util.concurrent.ListenableFuture;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,34 +60,18 @@ import org.slf4j.LoggerFactory;
  * Note this class has some locking quirks and may end up being further refactored.
  */
 abstract class AbstractModuleInfoTracker implements Mutable {
-    abstract static class AbstractRegisteredModuleInfo {
+    private static final class RegisteredModuleInfo {
         final YangTextSchemaSourceRegistration reg;
         final YangModuleInfo info;
         final ClassLoader loader;
 
-        AbstractRegisteredModuleInfo(final YangModuleInfo info, final YangTextSchemaSourceRegistration reg,
+        private int refcount = 1;
+
+        RegisteredModuleInfo(final YangModuleInfo info, final YangTextSchemaSourceRegistration reg,
             final ClassLoader loader) {
             this.info = requireNonNull(info);
             this.reg = requireNonNull(reg);
             this.loader = requireNonNull(loader);
-        }
-
-        @Override
-        public final String toString() {
-            return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-        }
-
-        ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-            return helper.add("info", info).add("registration", reg).add("classLoader", loader);
-        }
-    }
-
-    private static final class ExplicitRegisteredModuleInfo extends AbstractRegisteredModuleInfo {
-        private int refcount = 1;
-
-        ExplicitRegisteredModuleInfo(final YangModuleInfo info, final YangTextSchemaSourceRegistration reg,
-                final ClassLoader loader) {
-            super(info, reg, loader);
         }
 
         void incRef() {
@@ -101,15 +83,9 @@ abstract class AbstractModuleInfoTracker implements Mutable {
         }
 
         @Override
-        ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-            return super.addToStringAttributes(helper).add("refCount", refcount);
-        }
-    }
-
-    private static final class ImplicitRegisteredModuleInfo extends AbstractRegisteredModuleInfo {
-        ImplicitRegisteredModuleInfo(final YangModuleInfo info, final YangTextSchemaSourceRegistration reg,
-                final ClassLoader loader) {
-            super(info, reg, loader);
+        public String toString() {
+            return MoreObjects.toStringHelper(this).add("info", info).add("registration", reg)
+                    .add("classLoader", loader).add("refCount", refcount).toString();
         }
     }
 
@@ -118,10 +94,7 @@ abstract class AbstractModuleInfoTracker implements Mutable {
     private final YangTextSchemaContextResolver ctxResolver;
 
     @GuardedBy("this")
-    private final ListMultimap<String, AbstractRegisteredModuleInfo> packageToInfoReg =
-            MultimapBuilder.hashKeys().arrayListValues().build();
-    @GuardedBy("this")
-    private final ListMultimap<SourceIdentifier, AbstractRegisteredModuleInfo> sourceToInfoReg =
+    private final ListMultimap<SourceIdentifier, RegisteredModuleInfo> sourceToInfoReg =
             MultimapBuilder.hashKeys().arrayListValues().build();
     @GuardedBy("this")
     private @Nullable ModuleInfoSnapshot currentSnapshot;
@@ -141,11 +114,11 @@ abstract class AbstractModuleInfoTracker implements Mutable {
 
     @Holding("this")
     private ObjectRegistration<YangModuleInfo> register(final @NonNull YangModuleInfo moduleInfo) {
-        final Builder<ExplicitRegisteredModuleInfo> regBuilder = ImmutableList.builder();
+        final Builder<RegisteredModuleInfo> regBuilder = ImmutableList.builder();
         for (YangModuleInfo info : flatDependencies(moduleInfo)) {
-            regBuilder.add(registerExplicitModuleInfo(info));
+            regBuilder.add(registerModuleInfo(info));
         }
-        final ImmutableList<ExplicitRegisteredModuleInfo> regInfos = regBuilder.build();
+        final ImmutableList<RegisteredModuleInfo> regInfos = regBuilder.build();
 
         return new AbstractObjectRegistration<>(moduleInfo) {
             @Override
@@ -155,67 +128,18 @@ abstract class AbstractModuleInfoTracker implements Mutable {
         };
     }
 
-    @Holding("this")
-    final void registerImplicitBindingClass(final Class<?> bindingClass) {
-        registerImplicitModuleInfo(BindingRuntimeHelpers.extractYangModuleInfo(bindingClass));
-    }
-
-    @Holding("this")
-    final @Nullable ClassLoader findClassLoader(final String fullyQualifiedName) {
-        // This performs an explicit check for binding classes
-        final String modulePackageName = BindingReflections.getModelRootPackageName(fullyQualifiedName);
-
-        // Try to find a loaded class loader
-        // FIXME: two-step process, try explicit registrations first
-        for (AbstractRegisteredModuleInfo reg : packageToInfoReg.get(modulePackageName)) {
-            return reg.loader;
-        }
-        return null;
-    }
-
     /*
-     * Perform implicit registration of a YangModuleInfo and any of its dependencies. If there is a registration for
-     * a particular source, we do not create a duplicate registration.
+     * Perform registration of a YangModuleInfo.
      */
     @Holding("this")
-    private void registerImplicitModuleInfo(final @NonNull YangModuleInfo moduleInfo) {
-        for (YangModuleInfo info : flatDependencies(moduleInfo)) {
-            final Class<?> infoClass = info.getClass();
-            final SourceIdentifier sourceId = sourceIdentifierFrom(info);
-            if (sourceToInfoReg.containsKey(sourceId)) {
-                LOG.debug("Skipping implicit registration of {} as source {} is already registered", info, sourceId);
-                continue;
-            }
-
-            final YangTextSchemaSourceRegistration reg;
-            try {
-                reg = ctxResolver.registerSource(toYangTextSource(sourceId, info));
-            } catch (YangSyntaxErrorException | SchemaSourceException | IOException e) {
-                LOG.warn("Failed to register info {} source {}, ignoring it", info, sourceId, e);
-                continue;
-            }
-
-            final ImplicitRegisteredModuleInfo regInfo = new ImplicitRegisteredModuleInfo(info, reg,
-                infoClass.getClassLoader());
-            sourceToInfoReg.put(sourceId, regInfo);
-            packageToInfoReg.put(BindingReflections.getModelRootPackageName(infoClass.getPackage()), regInfo);
-        }
-    }
-
-    /*
-     * Perform explicit registration of a YangModuleInfo. This always results in a new explicit registration. In case
-     * there is a pre-existing implicit registration, it is removed just after the explicit registration is made.
-     */
-    @Holding("this")
-    private ExplicitRegisteredModuleInfo registerExplicitModuleInfo(final @NonNull YangModuleInfo info) {
+    private RegisteredModuleInfo registerModuleInfo(final @NonNull YangModuleInfo info) {
         // First search for an existing explicit registration
         final SourceIdentifier sourceId = sourceIdentifierFrom(info);
-        for (AbstractRegisteredModuleInfo reg : sourceToInfoReg.get(sourceId)) {
-            if (reg instanceof ExplicitRegisteredModuleInfo && info.equals(reg.info)) {
-                final ExplicitRegisteredModuleInfo explicit = (ExplicitRegisteredModuleInfo) reg;
-                explicit.incRef();
-                LOG.debug("Reusing explicit registration {}", explicit);
-                return explicit;
+        for (RegisteredModuleInfo reg : sourceToInfoReg.get(sourceId)) {
+            if (info.equals(reg.info)) {
+                reg.incRef();
+                LOG.debug("Reusing registration {}", reg);
+                return reg;
             }
         }
 
@@ -227,28 +151,11 @@ abstract class AbstractModuleInfoTracker implements Mutable {
             throw new IllegalStateException("Failed to register info " + info, e);
         }
 
-        final Class<?> infoClass = info.getClass();
-        final String packageName = BindingReflections.getModelRootPackageName(infoClass.getPackage());
-        final ExplicitRegisteredModuleInfo regInfo = new ExplicitRegisteredModuleInfo(info, reg,
-            infoClass.getClassLoader());
-        LOG.debug("Created new explicit registration {}", regInfo);
+        final RegisteredModuleInfo regInfo = new RegisteredModuleInfo(info, reg, info.getClass().getClassLoader());
+        LOG.debug("Created new registration {}", regInfo);
 
         sourceToInfoReg.put(sourceId, regInfo);
-        removeImplicit(sourceToInfoReg.get(sourceId));
-        packageToInfoReg.put(packageName, regInfo);
-        removeImplicit(packageToInfoReg.get(packageName));
-
         return regInfo;
-    }
-
-    // Reconsider utility of this
-    final Optional<? extends EffectiveModelContext> getResolverEffectiveModel() {
-        return ctxResolver.getEffectiveModelContext();
-    }
-
-    @Deprecated
-    final ListenableFuture<? extends YangTextSchemaSource> getResolverSource(final SourceIdentifier sourceIdentifier) {
-        return ctxResolver.getSource(sourceIdentifier);
     }
 
     @Holding("this")
@@ -279,16 +186,10 @@ abstract class AbstractModuleInfoTracker implements Mutable {
         final Map<SourceIdentifier, YangModuleInfo> moduleInfos = new HashMap<>();
         final Map<String, ClassLoader> classLoaders = new HashMap<>();
         for (SourceIdentifier source : sources) {
-            final List<AbstractRegisteredModuleInfo> regs = sourceToInfoReg.get(source);
+            final List<RegisteredModuleInfo> regs = sourceToInfoReg.get(source);
             checkState(!regs.isEmpty(), "No registration for %s", source);
 
-            AbstractRegisteredModuleInfo reg = regs.stream()
-                    .filter(ExplicitRegisteredModuleInfo.class::isInstance).findFirst()
-                    .orElse(null);
-            if (reg == null) {
-                reg = regs.get(0);
-            }
-
+            final RegisteredModuleInfo reg = regs.get(0);
             final YangModuleInfo info = reg.info;
             moduleInfos.put(source, info);
             final Class<?> infoClass = info.getClass();
@@ -303,8 +204,8 @@ abstract class AbstractModuleInfoTracker implements Mutable {
 
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
                 justification = "https://github.com/spotbugs/spotbugs/issues/811")
-    private synchronized void unregister(final ImmutableList<ExplicitRegisteredModuleInfo> regInfos) {
-        for (ExplicitRegisteredModuleInfo regInfo : regInfos) {
+    private synchronized void unregister(final ImmutableList<RegisteredModuleInfo> regInfos) {
+        for (RegisteredModuleInfo regInfo : regInfos) {
             if (!regInfo.decRef()) {
                 LOG.debug("Registration {} has references, not removing it", regInfo);
                 continue;
@@ -315,31 +216,7 @@ abstract class AbstractModuleInfoTracker implements Mutable {
                 LOG.warn("Failed to find {} registered under {}", regInfo, sourceId);
             }
 
-            final String packageName = BindingReflections.getModelRootPackageName(regInfo.info.getClass().getPackage());
-            if (!packageToInfoReg.remove(packageName, regInfo)) {
-                LOG.warn("Failed to find {} registered under {}", regInfo, packageName);
-            }
-
             regInfo.reg.close();
-        }
-    }
-
-    @Holding("this")
-    private static void removeImplicit(final List<AbstractRegisteredModuleInfo> regs) {
-        /*
-         * Search for implicit registration for a sourceId/packageName.
-         *
-         * Since we are called while an explicit registration is being created (and has already been inserted, we know
-         * there is at least one entry in the maps. We also know registrations retain the order in which they were
-         * created and that implicit registrations are not created if there already is a registration.
-         *
-         * This means that if an implicit registration exists, it will be the first entry in the list.
-         */
-        final AbstractRegisteredModuleInfo reg = regs.get(0);
-        if (reg instanceof ImplicitRegisteredModuleInfo) {
-            LOG.debug("Removing implicit registration {}", reg);
-            regs.remove(0);
-            reg.reg.close();
         }
     }
 
