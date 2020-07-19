@@ -16,7 +16,6 @@ import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev1
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev160101.grouping.module1.list.module1._1.ListModule12Builder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev160101.grouping.module1.list.module1._1.list.module1._2.ContainerModule1Builder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module3.rev160101.grouping.module3.ContainerManualListModule11Builder;
-import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module3.rev160101.grouping.module3.ContainerModule11;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module3.rev160101.grouping.module3.ContainerModule11Builder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module3.rev160101.grouping.module3.ManualListModule11Builder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module3.rev160101.grouping.module3.container.manual.list.module1._1.ContainerManualListModule12Builder;
@@ -27,7 +26,6 @@ import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module3.rev1
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev160101.Module4Main;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev160101.Module4MainBuilder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev160101.module4.main.ContainerModule4Builder;
-import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev160101.module4.main.container.module._4.ManualContainerModule11;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev160101.module4.main.container.module._4.ManualContainerModule11Builder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -38,18 +36,17 @@ public class Bug5524augmentUses extends AbstractBindingCodecTest {
         final Module4Main module4Main = new Module4MainBuilder().setContainerModule4(
                 new ContainerModule4Builder().setListModule11(Collections.singletonList(
                         new ListModule11Builder().setListModule12(Collections.singletonList(
-                                new ListModule12Builder().setContainerModule1(
-                                        new ContainerModule1Builder().addAugmentation(ContainerModule11.class,
-                                                new ContainerModule11Builder().build()).build())
-                                                    .build())).build())).build()).build();
+                                new ListModule12Builder().setContainerModule1(new ContainerModule1Builder()
+                                    .addAugmentation(new ContainerModule11Builder().build()).build())
+                                .build())).build())).build()).build();
 
         final Module4Main manualModule4Main = new Module4MainBuilder().setContainerModule4(
                 new ContainerModule4Builder().setManualListModule11(Collections.singletonList(
                         new ManualListModule11Builder().setManualListModule12(Collections.singletonList(
                                 new ManualListModule12Builder().setManualContainerModule1(
                                         new ManualContainerModule1Builder().addAugmentation(
-                                                ManualContainerModule11.class, new ManualContainerModule11Builder()
-                                                    .build()).build()).build())).build())).build()).build();
+                                            new ManualContainerModule11Builder().build())
+                                        .build()).build())).build())).build()).build();
 
         final Module4Main contManualModule4Main = new Module4MainBuilder().setContainerModule4(
                 new ContainerModule4Builder().setContainerManualListModule11(Collections.singletonList(

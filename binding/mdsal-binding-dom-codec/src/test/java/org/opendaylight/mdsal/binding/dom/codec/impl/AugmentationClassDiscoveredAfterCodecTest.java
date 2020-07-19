@@ -77,11 +77,10 @@ public class AugmentationClassDiscoveredAfterCodecTest {
     public void testUsingBindingData() {
         materializeWithExclusions(TreeLeafOnlyAugment.class, TreeComplexUsesAugment.class);
         filter.includeClass(TreeLeafOnlyAugment.class);
-        final TopLevelList data =
-                new TopLevelListBuilder()
-                        .withKey(TOP_FOO_KEY)
-                        .addAugmentation(TreeLeafOnlyAugment.class,
-                                new TreeLeafOnlyAugmentBuilder().setSimpleValue("foo").build()).build();
+        final TopLevelList data = new TopLevelListBuilder()
+                .withKey(TOP_FOO_KEY)
+                .addAugmentation(new TreeLeafOnlyAugmentBuilder().setSimpleValue("foo").build())
+                .build();
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> domData =
                 serializer.toNormalizedNode(BA_TOP_LEVEL_LIST, data);
         assertNotNull(domData);

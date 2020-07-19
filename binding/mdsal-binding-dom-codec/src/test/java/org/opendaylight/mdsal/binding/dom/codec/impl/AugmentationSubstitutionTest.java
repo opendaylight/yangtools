@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugmentBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.complex.from.grouping.ContainerWithUsesBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
@@ -33,12 +32,11 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
     public void augmentationInGroupingSubstituted() {
         final TopLevelList baRpc = new TopLevelListBuilder()
             .withKey(TOP_FOO_KEY)
-            .addAugmentation(RpcComplexUsesAugment.class, new RpcComplexUsesAugmentBuilder(createComplexData()).build())
+            .addAugmentation(new RpcComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
         final TopLevelList baTree = new TopLevelListBuilder()
             .withKey(TOP_FOO_KEY)
-            .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData())
-                .build())
+            .addAugmentation(new TreeComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
         final NormalizedNode<?, ?> domTreeEntry = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, baTree).getValue();
         final NormalizedNode<?, ?> domRpcEntry = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, baRpc).getValue();
@@ -49,8 +47,7 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
     public void copyBuilderWithAugmenationsTest() {
         final TopLevelList manuallyConstructed = new TopLevelListBuilder()
             .withKey(TOP_FOO_KEY)
-            .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData())
-                .build())
+            .addAugmentation(new TreeComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
 
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(

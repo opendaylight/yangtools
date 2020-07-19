@@ -31,9 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment1;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment1Builder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment2;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment2Builder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
@@ -229,8 +227,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     private static Top topWithAugments(
             final Map<Class<? extends Augmentation<Top>>, ? extends Augmentation<Top>> augments) {
         final TopBuilder topBuilder = new TopBuilder();
-        for (Entry<Class<? extends Augmentation<Top>>, ? extends Augmentation<Top>> augment : augments.entrySet()) {
-            topBuilder.addAugmentation(augment.getKey(), augment.getValue());
+        for (Augmentation<Top> augment : augments.values()) {
+            topBuilder.addAugmentation(augment);
         }
         return topBuilder.build();
     }
@@ -540,9 +538,9 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         cccc1Builder.setCase11ChoiceCaseLeaf("leaf-value");
         c11Builder.setCase11ChoiceCaseContainer(cccc1Builder.build());
         tca2Builder.setAugmentChoice2(c11Builder.build());
-        c1Builder.addAugmentation(TopChoiceAugment2.class, tca2Builder.build());
+        c1Builder.addAugmentation(tca2Builder.build());
         tca1Builder.setAugmentChoice1(c1Builder.build());
-        tBuilder.addAugmentation(TopChoiceAugment1.class, tca1Builder.build());
+        tBuilder.addAugmentation(tca1Builder.build());
         final Top top = tBuilder.build();
 
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> biResult = codecContext.toNormalizedNode(
