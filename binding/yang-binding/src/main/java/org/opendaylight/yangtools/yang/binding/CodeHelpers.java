@@ -15,7 +15,6 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
@@ -291,24 +290,6 @@ public final class CodeHelpers {
      */
     public static <K, V> @Nullable Map<K, V> emptyToNull(final @Nullable Map<K, V> input) {
         return input != null && input.isEmpty() ? null : input;
-    }
-
-    /**
-     * Compatibility utility for turning a List of identifiable objects to an indexed map.
-     *
-     * @param <K> key type
-     * @param <V> identifiable type
-     * @param list legacy list
-     * @return Indexed map
-     * @throws IllegalArgumentException if the list contains entries with the same key
-     * @throws NullPointerException if the list contains a null entry
-     * @deprecated This method is a transitional helper used only in methods deprecated themselves.
-     */
-    // FIXME: MDSAL-540: remove this method
-    @Deprecated
-    public static <K extends Identifier<V>, V extends Identifiable<K>> @Nullable Map<K, V> compatMap(
-            final @Nullable List<V> list) {
-        return list == null || list.isEmpty() ? null : Maps.uniqueIndex(list, Identifiable::key);
     }
 
     /**

@@ -353,42 +353,21 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
     '''
 
-    // FIXME: MDSAL-540: remove the migration setter
     def private generateMapSetter(GeneratedProperty field, Type actualType) '''
         «val restrictions = restrictionsForSetter(actualType)»
-        «val actualTypeRef = actualType.importedName»
-        «val setterName = "set" + field.name.toFirstUpper»
         «IF restrictions !== null»
             «generateCheckers(field, restrictions, actualType)»
         «ENDIF»
-        public «type.getName» «setterName»(final «field.returnType.importedName» values) {
+        public «type.getName» set«field.name.toFirstUpper»(final «field.returnType.importedName» values) {
         «IF restrictions !== null»
             if (values != null) {
-               for («actualTypeRef» value : values.values()) {
+               for («actualType.importedName» value : values.values()) {
                    «checkArgument(field, restrictions, actualType, "value")»
                }
             }
         «ENDIF»
             this.«field.fieldName» = values;
             return this;
-        }
-
-        /**
-          * Utility migration setter.
-          *
-          * <b>IMPORTANT NOTE</b>: This method does not completely match previous mechanics, as the list is processed as
-          *                        during this method's execution. Any future modifications of the list are <b>NOT</b>
-          *                        reflected in this builder nor its products.
-          *
-          * @param values Legacy List of values
-          * @return this builder
-          * @throws IllegalArgumentException if the list contains entries with the same key
-          * @throws NullPointerException if the list contains a null entry
-          * @deprecated Use {@link #«setterName»(«JU_MAP.importedName»)} instead.
-          */
-        @«DEPRECATED.importedName»(forRemoval = true)
-        public «type.getName» «setterName»(final «JU_LIST.importedName»<«actualTypeRef»> values) {
-            return «setterName»(«CODEHELPERS.importedName».compatMap(values));
         }
     '''
 
