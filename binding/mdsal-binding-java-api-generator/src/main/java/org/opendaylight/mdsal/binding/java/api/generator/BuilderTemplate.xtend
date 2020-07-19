@@ -402,20 +402,13 @@ class BuilderTemplate extends AbstractBuilderTemplate {
               * @throws NullPointerException if {@code augmentation} is null
               */
             public «type.name» addAugmentation(«augmentTypeRef» augmentation) {
-                return doAddAugmentation(augmentation.«DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»(), augmentation);
-            }
+                «jlClassRef»<? extends «augmentTypeRef»> augmentationType = augmentation.«DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»();
+                if (!(this.«AUGMENTATION_FIELD» instanceof «hashMapRef»)) {
+                    this.«AUGMENTATION_FIELD» = new «hashMapRef»<>();
+                }
 
-            /**
-              * Add or remove an augmentation to this builder's product.
-              *
-              * @param augmentationType augmentation type to be added or removed
-              * @param augmentationValue augmentation value, null if the augmentation type should be removed
-              * @return this builder
-              * @deprecated Use either {@link #addAugmentation(«augmentType.importedJavadocName»)} or {@link #removeAugmentation(«CLASS.importedName»)} instead.
-              */
-            @«DEPRECATED.importedName»(forRemoval = true)
-            public «type.name» addAugmentation(«jlClassRef»<? extends «augmentTypeRef»> augmentationType, «augmentTypeRef» augmentationValue) {
-                return augmentationValue == null ? removeAugmentation(augmentationType) : doAddAugmentation(augmentationType, augmentationValue);
+                this.«AUGMENTATION_FIELD».put(augmentationType, augmentation);
+                return this;
             }
 
             /**
@@ -429,15 +422,6 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                 if (this.«AUGMENTATION_FIELD» instanceof «hashMapRef») {
                     this.«AUGMENTATION_FIELD».remove(augmentationType);
                 }
-                return this;
-            }
-
-            private «type.name» doAddAugmentation(«jlClassRef»<? extends «augmentTypeRef»> augmentationType, «augmentTypeRef» augmentationValue) {
-                if (!(this.«AUGMENTATION_FIELD» instanceof «hashMapRef»)) {
-                    this.«AUGMENTATION_FIELD» = new «hashMapRef»<>();
-                }
-
-                this.«AUGMENTATION_FIELD».put(augmentationType, augmentationValue);
                 return this;
             }
         «ENDIF»
