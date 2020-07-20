@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Augmentable (extensible) object which could carry additional data defined by third-party extension, without
@@ -24,5 +25,5 @@ public interface AugmentationHolder<T> {
      *
      * @return map of all augmentations.
      */
-    Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations();
+    @NonNull Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations();
 }

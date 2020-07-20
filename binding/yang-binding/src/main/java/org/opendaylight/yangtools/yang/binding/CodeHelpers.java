@@ -388,7 +388,7 @@ public final class CodeHelpers {
      * @throws NullPointerException if obj is null
      */
     public static int hashAugmentations(final @NonNull AugmentationHolder<?> obj) {
-        return Objects.hashCode(obj.augmentations());
+        return obj.augmentations().hashCode();
     }
 
     /**
