@@ -35,6 +35,121 @@ public class BuilderGeneratorTest {
     }
 
     @Test
+    public void builderTemplateGenerateHashcodeWithPropertyTest() {
+        final GeneratedType genType = mockGenType("get" + TEST);
+
+        assertEquals("/**\n"
+                + " * Default implementation of {@link Object#hashCode()} contract for this interface.\n"
+                + " * Implementations of this interface are encouraged to defer to this method to get consistent"
+                + " hashing\n"
+                + " * results across all implementations.\n"
+                + " *\n"
+                + " * @param obj Object for which to generate hashCode() result.\n"
+                + " * @return Hash code value of data modeled by this interface.\n"
+                + " * @throws NullPointerException if {@code obj} is null\n"
+                + " */\n"
+                + "static int bindingHashCode(final test.test obj) {\n"
+                + "    final int prime = 31;\n"
+                + "    int result = 1;\n"
+                + "    result = prime * result + Objects.hashCode(obj.getTest());\n"
+                + "    return result;\n"
+                + "}\n", genHashCode(genType).toString());
+    }
+
+    @Test
+    public void builderTemplateGenerateHashCodeWithMorePropertiesTest() throws Exception {
+        assertEquals("/**\n"
+                + " * Default implementation of {@link Object#hashCode()} contract for this interface.\n"
+                + " * Implementations of this interface are encouraged to defer to this method to get consistent"
+                + " hashing\n"
+                + " * results across all implementations.\n"
+                + " *\n"
+                + " * @param obj Object for which to generate hashCode() result.\n"
+                + " * @return Hash code value of data modeled by this interface.\n"
+                + " * @throws NullPointerException if {@code obj} is null\n"
+                + " */\n"
+                + "static int bindingHashCode(final test.test obj) {\n"
+                + "    final int prime = 31;\n"
+                + "    int result = 1;\n"
+                + "    result = prime * result + Objects.hashCode(obj.getTest1());\n"
+                + "    result = prime * result + Objects.hashCode(obj.getTest2());\n"
+                + "    return result;\n"
+                + "}\n", genHashCode(mockGenTypeMoreMeth("get" + TEST)).toString());
+    }
+
+    @Test
+    public void builderTemplateGenerateHashCodeWithoutPropertyWithAugmentTest() throws Exception {
+        assertEquals("/**\n"
+                + " * Default implementation of {@link Object#hashCode()} contract for this interface.\n"
+                + " * Implementations of this interface are encouraged to defer to this method to get consistent"
+                + " hashing\n"
+                + " * results across all implementations.\n"
+                + " *\n"
+                + " * @param <T$$> implementation type, which has to also implement AugmentationHolder interface\n"
+                + " *              contract.\n"
+                + " * @param obj Object for which to generate hashCode() result.\n"
+                + " * @return Hash code value of data modeled by this interface.\n"
+                + " * @throws NullPointerException if {@code obj} is null\n"
+                + " */\n"
+                + "static <T$$ extends test.test & AugmentationHolder<?>> int bindingHashCode(final @NonNull T$$ obj) {"
+                + "\n"
+                + "    final int prime = 31;\n"
+                + "    int result = 1;\n"
+                + "    result = prime * result + CodeHelpers.hashAugmentations(obj);\n"
+                + "    return result;\n"
+                + "}\n", genHashCode(mockAugment(mockGenType(TEST))).toString());
+    }
+
+    @Test
+    public void builderTemplateGenerateHashCodeWithPropertyWithAugmentTest() throws Exception {
+        assertEquals("/**\n"
+                + " * Default implementation of {@link Object#hashCode()} contract for this interface.\n"
+                + " * Implementations of this interface are encouraged to defer to this method to get consistent"
+                + " hashing\n"
+                + " * results across all implementations.\n"
+                + " *\n"
+                + " * @param <T$$> implementation type, which has to also implement AugmentationHolder interface\n"
+                + " *              contract.\n"
+                + " * @param obj Object for which to generate hashCode() result.\n"
+                + " * @return Hash code value of data modeled by this interface.\n"
+                + " * @throws NullPointerException if {@code obj} is null\n"
+                + " */\n"
+                + "static <T$$ extends test.test & AugmentationHolder<?>> int bindingHashCode(final @NonNull T$$ obj) {"
+                + "\n"
+                + "    final int prime = 31;\n"
+                + "    int result = 1;\n"
+                + "    result = prime * result + Objects.hashCode(obj.getTest());\n"
+                + "    result = prime * result + CodeHelpers.hashAugmentations(obj);\n"
+                + "    return result;\n"
+                + "}\n", genHashCode(mockAugment(mockGenType("get" + TEST))).toString());
+    }
+
+    @Test
+    public void builderTemplateGenerateHashCodeWithMorePropertiesWithAugmentTest() throws Exception {
+        assertEquals("/**\n"
+                + " * Default implementation of {@link Object#hashCode()} contract for this interface.\n"
+                + " * Implementations of this interface are encouraged to defer to this method to get consistent"
+                + " hashing\n"
+                + " * results across all implementations.\n"
+                + " *\n"
+                + " * @param <T$$> implementation type, which has to also implement AugmentationHolder interface\n"
+                + " *              contract.\n"
+                + " * @param obj Object for which to generate hashCode() result.\n"
+                + " * @return Hash code value of data modeled by this interface.\n"
+                + " * @throws NullPointerException if {@code obj} is null\n"
+                + " */\n"
+                + "static <T$$ extends test.test & AugmentationHolder<?>> int bindingHashCode(final @NonNull T$$ obj) {"
+                + "\n"
+                + "    final int prime = 31;\n"
+                + "    int result = 1;\n"
+                + "    result = prime * result + Objects.hashCode(obj.getTest1());\n"
+                + "    result = prime * result + Objects.hashCode(obj.getTest2());\n"
+                + "    result = prime * result + CodeHelpers.hashAugmentations(obj);\n"
+                + "    return result;\n"
+                + "}\n", genHashCode(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toString());
+    }
+
+    @Test
     public void builderTemplateGenerateToStringWithPropertyTest() {
         final GeneratedType genType = mockGenType("get" + TEST);
 
@@ -215,6 +330,10 @@ public class BuilderGeneratorTest {
         return new InterfaceTemplate(genType).generateBindingToString();
     }
 
+    private static CharSequence genHashCode(final GeneratedType genType) {
+        return new InterfaceTemplate(genType).generateBindingHashCode();
+    }
+
     private static GeneratedType mockGenType(final String methodeName) {
         final GeneratedType genType = spy(GeneratedType.class);
         doReturn(TYPE_NAME).when(genType).getIdentifier();
@@ -236,6 +355,7 @@ public class BuilderGeneratorTest {
         doReturn(methodeName).when(methSign).getName();
         final Type methType = mock(Type.class);
         doReturn(TYPE_NAME).when(methType).getIdentifier();
+        doReturn(TEST).when(methType).getName();
         doReturn(methType).when(methSign).getReturnType();
         doReturn(ValueMechanics.NORMAL).when(methSign).getMechanics();
         return methSign;

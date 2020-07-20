@@ -17,6 +17,7 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_TO_STRING_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects
 import java.util.List
 import java.util.Map.Entry
@@ -220,7 +221,8 @@ class InterfaceTemplate extends BaseTemplate {
         }
     '''
 
-    def private generateBindingHashCode() '''
+    @VisibleForTesting
+    def generateBindingHashCode() '''
         «val augmentable = analyzeType»
         /**
          * Default implementation of {@link «Object.importedName»#hashCode()} contract for this interface.
