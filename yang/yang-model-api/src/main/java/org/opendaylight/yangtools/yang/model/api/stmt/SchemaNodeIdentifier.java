@@ -14,6 +14,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,104 +34,182 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     /**
      * An absolute schema node identifier.
      */
-    public static final class Absolute extends SchemaNodeIdentifier {
+    public abstract static class Absolute extends SchemaNodeIdentifier {
         private static final Interner<Absolute> INTERNER = Interners.newWeakInterner();
 
-        Absolute(final QName qname) {
-            super(qname);
-        }
-
-        Absolute(final Collection<QName> qnames) {
-            super(qnames);
+        Absolute() {
+            // Hidden on purpose
         }
 
         public static @NonNull Absolute of(final QName nodeIdentifier) {
-            return new Absolute(nodeIdentifier);
+            return new AbsoluteSingle(nodeIdentifier);
         }
 
         public static @NonNull Absolute of(final QName... nodeIdentifiers) {
-            return new Absolute(Arrays.asList(nodeIdentifiers));
+            return of(Arrays.asList(nodeIdentifiers));
         }
 
         public static @NonNull Absolute of(final Collection<QName> nodeIdentifiers) {
-            return new Absolute(nodeIdentifiers);
+            final ImmutableList<QName> qnames = checkQNames(nodeIdentifiers);
+            return qnames.size() == 1 ? of(qnames.get(0)) : new AbsoluteMultiple(qnames);
         }
 
-        public @NonNull Absolute intern() {
+        public final @NonNull Absolute intern() {
             return INTERNER.intern(this);
         }
 
+        public abstract @NonNull QName firstNodeIdentifier();
+
+        public abstract @NonNull QName lastNodeIdentifier();
+
         @Override
-        SchemaPath implicitSchemaPathParent() {
+        final SchemaPath implicitSchemaPathParent() {
             return SchemaPath.ROOT;
+        }
+
+        @Override
+        final Class<Absolute> toStringClass() {
+            return Absolute.class;
         }
     }
 
     /**
      * A descendant schema node identifier.
      */
-    public static final class Descendant extends SchemaNodeIdentifier {
-        Descendant(final QName qname) {
-            super(qname);
-        }
-
-        Descendant(final Collection<QName> qnames) {
-            super(qnames);
+    public abstract static class Descendant extends SchemaNodeIdentifier {
+        Descendant() {
+            // Hidden on purpose
         }
 
         public static @NonNull Descendant of(final QName nodeIdentifier) {
-            return new Descendant(nodeIdentifier);
+            return new DescendantSingle(nodeIdentifier);
         }
 
         public static @NonNull Descendant of(final QName... nodeIdentifiers) {
-            return new Descendant(Arrays.asList(nodeIdentifiers));
+            return of(Arrays.asList(nodeIdentifiers));
         }
 
         public static @NonNull Descendant of(final Collection<QName> nodeIdentifiers) {
-            return new Descendant(nodeIdentifiers);
+            final ImmutableList<QName> qnames = checkQNames(nodeIdentifiers);
+            return qnames.size() == 1 ? of(qnames.get(0)) : new DescandantMultiple(qnames);
         }
 
         @Override
-        SchemaPath implicitSchemaPathParent() {
+        final SchemaPath implicitSchemaPathParent() {
             return SchemaPath.SAME;
+        }
+
+        @Override
+        final Class<Descendant> toStringClass() {
+            return Descendant.class;
+        }
+    }
+
+    private static final class AbsoluteSingle extends Absolute {
+        private final @NonNull QName qname;
+
+        AbsoluteSingle(final QName qname) {
+            this.qname = requireNonNull(qname);
+        }
+
+        @Override
+        public ImmutableList<QName> getNodeIdentifiers() {
+            return ImmutableList.of(qname);
+        }
+
+        @Override
+        public QName firstNodeIdentifier() {
+            return qname;
+        }
+
+        @Override
+        public QName lastNodeIdentifier() {
+            return qname;
+        }
+
+        @Override
+        Object pathObject() {
+            return qname;
+        }
+    }
+
+    private static final class AbsoluteMultiple extends Absolute {
+        private final @NonNull ImmutableList<QName> qnames;
+
+        AbsoluteMultiple(final ImmutableList<QName> qnames) {
+            this.qnames = requireNonNull(qnames);
+        }
+
+        @Override
+        public ImmutableList<QName> getNodeIdentifiers() {
+            return qnames;
+        }
+
+        @Override
+        public @NonNull QName firstNodeIdentifier() {
+            return qnames.get(0);
+        }
+
+        @Override
+        public @NonNull QName lastNodeIdentifier() {
+            return qnames.get(qnames.size() - 1);
+        }
+
+        @Override
+        Object pathObject() {
+            return qnames;
+        }
+    }
+
+    private static final class DescendantSingle extends Descendant {
+        private final @NonNull QName qname;
+
+        DescendantSingle(final QName qname) {
+            this.qname = requireNonNull(qname);
+        }
+
+        @Override
+        public ImmutableList<QName> getNodeIdentifiers() {
+            return ImmutableList.of(qname);
+        }
+
+        @Override
+        Object pathObject() {
+            return qname;
+        }
+    }
+
+    private static final class DescandantMultiple extends Descendant {
+        private final @NonNull ImmutableList<QName> qnames;
+
+        DescandantMultiple(final ImmutableList<QName> qnames) {
+            this.qnames = requireNonNull(qnames);
+        }
+
+        @Override
+        public ImmutableList<QName> getNodeIdentifiers() {
+            return qnames;
+        }
+
+        @Override
+        Object pathObject() {
+            return qnames;
         }
     }
 
     private static final AtomicReferenceFieldUpdater<SchemaNodeIdentifier, SchemaPath> SCHEMAPATH_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(SchemaNodeIdentifier.class, SchemaPath.class, "schemaPath");
 
-    private final @NonNull Object qnames;
-
     // Cached SchemaPath.
     private volatile SchemaPath schemaPath;
     // Cached hashCode
     private volatile int hash;
 
-    SchemaNodeIdentifier(final QName qname) {
-        this.qnames = requireNonNull(qname);
+    SchemaNodeIdentifier() {
+        // Hidden on purpose
     }
 
-    SchemaNodeIdentifier(final Collection<QName> qnames) {
-        final ImmutableList<QName> tmp = ImmutableList.copyOf(qnames);
-        checkArgument(!tmp.isEmpty(), "SchemaNodeIdentifier has to have at least one node identifier");
-        this.qnames = tmp.size() == 1 ? tmp.get(0) : tmp;
-    }
-
-    public final @NonNull List<QName> getNodeIdentifiers() {
-        return qnames instanceof QName ? ImmutableList.of((QName) qnames) : castQNames();
-    }
-
-    public final @NonNull QName firstNodeIdentifier() {
-        return qnames instanceof QName ? (QName) qnames : castQNames().get(0);
-    }
-
-    public final @NonNull QName lastNodeIdentifier() {
-        if (qnames instanceof QName) {
-            return (QName) qnames;
-        }
-        final ImmutableList<QName> cast = castQNames();
-        return cast.get(cast.size() - 1);
-    }
+    public abstract @NonNull List<QName> getNodeIdentifiers();
 
     /**
      * Create the {@link SchemaPath} equivalent of this identifier.
@@ -142,43 +221,45 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         return ret != null ? ret : loadSchemaPath();
     }
 
+    @Override
+    public final int hashCode() {
+        final int local;
+        return (local = hash) != 0 ? local : (hash = pathObject().hashCode());
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return this == obj || obj != null && getClass() == obj.getClass()
+                && pathObject().equals(((SchemaNodeIdentifier) obj).pathObject());
+    }
+
+    @Override
+    public final String toString() {
+        return MoreObjects.toStringHelper(toStringClass()).add("qnames", toStringQNames()).toString();
+    }
+
+    abstract @NonNull SchemaPath implicitSchemaPathParent();
+
+    abstract @NonNull Object pathObject();
+
+    abstract @NonNull Class<? extends SchemaNodeIdentifier> toStringClass();
+
     private @NonNull SchemaPath loadSchemaPath() {
         final SchemaPath newPath = implicitSchemaPathParent().createChild(getNodeIdentifiers());
         return SCHEMAPATH_UPDATER.compareAndSet(this, null, newPath) ? newPath : schemaPath;
     }
 
-    abstract SchemaPath implicitSchemaPathParent();
-
-    @Override
-    public final int hashCode() {
-        final int local;
-        return (local = hash) != 0 ? local : (hash = qnames.hashCode());
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        return qnames.equals(((SchemaNodeIdentifier) obj).qnames);
-    }
-
-    @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(this).add("qnames", toStringQNames()).toString();
-    }
-
-    @SuppressWarnings("unchecked")
-    private @NonNull ImmutableList<QName> castQNames() {
-        return (ImmutableList<QName>) qnames;
-    }
-
     private List<?> toStringQNames() {
         final List<QName> ids = getNodeIdentifiers();
         return ids.size() < 2 ? ids : simplifyQNames(ids);
+    }
+
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+            justification = "https://github.com/spotbugs/spotbugs/issues/811")
+    private static ImmutableList<QName> checkQNames(final Collection<QName> qnames) {
+        final ImmutableList<QName> ret = ImmutableList.copyOf(qnames);
+        checkArgument(!ret.isEmpty(), "SchemaNodeIdentifier has to have at least one node identifier");
+        return ret;
     }
 
     private static List<?> simplifyQNames(final List<QName> qnames) {
