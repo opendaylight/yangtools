@@ -22,8 +22,18 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  */
 // FIXME: IllegalArgumentCodec is perhaps not appropriate here due to null behavior
 abstract class ValueTypeCodec implements IllegalArgumentCodec<Object, Object> {
-    private static final Cache<Class<?>, SchemaUnawareCodec> STATIC_CODECS = CacheBuilder.newBuilder().weakKeys()
-            .build();
+    /*
+     * Use identity comparison for keys and allow classes to be GCd themselves.
+     *
+     * Since codecs can (and typically do) hold a direct or indirect strong reference to the class, they need to be also
+     * accessed via reference. Using a weak reference could be problematic, because the codec would quite often be only
+     * weakly reachable. We therefore use a soft reference, whose implementation guidance is suitable to our use case:
+     *
+     *     "Virtual machine implementations are, however, encouraged to bias against clearing recently-created or
+     *      recently-used soft references."
+     */
+    private static final Cache<Class<?>, SchemaUnawareCodec> STATIC_CODECS = CacheBuilder.newBuilder()
+            .weakKeys().softValues().build();
 
     /**
      * Marker interface for codecs, which functionality will not be affected by schema change (introduction of new YANG
@@ -39,7 +49,6 @@ abstract class ValueTypeCodec implements IllegalArgumentCodec<Object, Object> {
      * binary, strings and empty.
      */
     public static final SchemaUnawareCodec NOOP_CODEC = new SchemaUnawareCodec() {
-
         @Override
         public Object serialize(final Object input) {
             return input;
@@ -89,5 +98,4 @@ abstract class ValueTypeCodec implements IllegalArgumentCodec<Object, Object> {
             EncapsulatedValueCodec.loader(typeClz, typeDef));
         return new CompositeValueCodec(extractor, delegate);
     }
-
 }
