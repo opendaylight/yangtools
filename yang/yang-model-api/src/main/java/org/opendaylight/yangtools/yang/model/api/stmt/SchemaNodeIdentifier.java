@@ -12,6 +12,8 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +34,8 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      * An absolute schema node identifier.
      */
     public static final class Absolute extends SchemaNodeIdentifier {
+        private static final Interner<Absolute> INTERNER = Interners.newWeakInterner();
+
         Absolute(final QName qname) {
             super(qname);
         }
@@ -49,7 +53,11 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         public static @NonNull Absolute of(final Collection<QName> nodeIdentifiers) {
-            return new Absolute(ImmutableList.copyOf(nodeIdentifiers));
+            return new Absolute(nodeIdentifiers);
+        }
+
+        public @NonNull Absolute intern() {
+            return INTERNER.intern(this);
         }
 
         @Override
