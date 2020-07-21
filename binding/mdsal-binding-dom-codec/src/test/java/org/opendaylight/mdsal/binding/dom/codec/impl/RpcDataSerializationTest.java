@@ -21,15 +21,13 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 public class RpcDataSerializationTest extends AbstractBindingCodecTest {
-
     private static final QName PUT_TOP = QName.create(PutTopInput.QNAME, "put-top");
     private static final QName GET_TOP = QName.create(GetTopOutput.QNAME, "get-top");
-
-    private static final SchemaPath PUT_TOP_INPUT = SchemaPath.create(true, PUT_TOP, PutTopInput.QNAME);
-    private static final SchemaPath GET_TOP_OUTPUT = SchemaPath.create(true, GET_TOP, GetTopOutput.QNAME);
+    private static final Absolute PUT_TOP_INPUT = Absolute.of(PUT_TOP, PutTopInput.QNAME);
+    private static final Absolute GET_TOP_OUTPUT = Absolute.of(GET_TOP, GetTopOutput.QNAME);
 
     private static final TopLevelListKey LIST_KEY = new TopLevelListKey("test");
 

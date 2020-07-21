@@ -18,10 +18,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 public class Mdsal552Test extends AbstractBindingCodecTest {
-    private static final SchemaPath OUTPUT_PATH = SchemaPath.create(true, QName.create(RefTestOutput.QNAME, "ref_test"),
+    private static final Absolute OUTPUT_PATH = Absolute.of(QName.create(RefTestOutput.QNAME, "ref_test"),
         RefTestOutput.QNAME);
     private static final QName OUTPUTREF = QName.create(RefTestOutput.QNAME, "outputref");
 

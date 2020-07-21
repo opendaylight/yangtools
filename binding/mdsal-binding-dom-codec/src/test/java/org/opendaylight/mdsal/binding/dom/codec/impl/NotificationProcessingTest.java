@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 public class NotificationProcessingTest extends AbstractBindingCodecTest {
     private static final QName NAME = QName.create(TopLevelList.QNAME, "name");
@@ -58,7 +58,7 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
 
     @Test
     public void testNormalizedToNotification() {
-        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(SchemaPath.create(true,
+        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
             TwoLevelListChanged.QNAME), createTestDomData());
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);
@@ -67,7 +67,7 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
     @Test
     public void testNormalizedToNotificationWithInstant() {
         final Instant instant = Instant.now();
-        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(SchemaPath.create(true,
+        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
             TwoLevelListChanged.QNAME), createTestDomData(), instant);
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);
@@ -77,7 +77,7 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
 
     @Test
     public void testNormalizedToNotificationWithNull() {
-        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(SchemaPath.create(true,
+        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
             TwoLevelListChanged.QNAME), createTestDomData(), null);
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);
