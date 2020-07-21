@@ -116,8 +116,20 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         this.qnames = tmp.size() == 1 ? tmp.get(0) : tmp;
     }
 
-    public @NonNull List<QName> getNodeIdentifiers() {
-        return qnames instanceof QName ? ImmutableList.of((QName) qnames) : (ImmutableList<QName>) qnames;
+    public final @NonNull List<QName> getNodeIdentifiers() {
+        return qnames instanceof QName ? ImmutableList.of((QName) qnames) : castQNames();
+    }
+
+    public final @NonNull QName firstNodeIdentifier() {
+        return qnames instanceof QName ? (QName) qnames : castQNames().get(0);
+    }
+
+    public final @NonNull QName lastNodeIdentifier() {
+        if (qnames instanceof QName) {
+            return (QName) qnames;
+        }
+        final ImmutableList<QName> cast = castQNames();
+        return cast.get(cast.size() - 1);
     }
 
     /**
@@ -130,7 +142,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         return ret != null ? ret : loadSchemaPath();
     }
 
-    private SchemaPath loadSchemaPath() {
+    private @NonNull SchemaPath loadSchemaPath() {
         final SchemaPath newPath = implicitSchemaPathParent().createChild(getNodeIdentifiers());
         return SCHEMAPATH_UPDATER.compareAndSet(this, null, newPath) ? newPath : schemaPath;
     }
@@ -157,6 +169,11 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     @Override
     public final String toString() {
         return MoreObjects.toStringHelper(this).add("qnames", toStringQNames()).toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    private @NonNull ImmutableList<QName> castQNames() {
+        return (ImmutableList<QName>) qnames;
     }
 
     private List<?> toStringQNames() {
