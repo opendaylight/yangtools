@@ -57,6 +57,11 @@ public class BuilderGeneratorTest {
     }
 
     @Test
+    public void builderTemplateGenerateHashCodeWithoutAnyPropertyTest() throws Exception {
+        assertEquals("", genHashCode(mockGenType(TEST)).toString());
+    }
+
+    @Test
     public void builderTemplateGenerateHashCodeWithMorePropertiesTest() throws Exception {
         assertEquals("/**\n"
                 + " * Default implementation of {@link Object#hashCode()} contract for this interface.\n"

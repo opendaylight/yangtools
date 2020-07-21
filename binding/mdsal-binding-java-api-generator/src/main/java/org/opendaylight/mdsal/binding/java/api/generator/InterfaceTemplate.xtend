@@ -224,34 +224,36 @@ class InterfaceTemplate extends BaseTemplate {
     @VisibleForTesting
     def generateBindingHashCode() '''
         «val augmentable = analyzeType»
-        /**
-         * Default implementation of {@link «Object.importedName»#hashCode()} contract for this interface.
-         * Implementations of this interface are encouraged to defer to this method to get consistent hashing
-         * results across all implementations.
-         *
-         «IF augmentable»
-         * @param <T$$> implementation type, which has to also implement «AUGMENTATION_HOLDER.importedName» interface
-         *              contract.
-         «ENDIF»
-         * @param obj Object for which to generate hashCode() result.
-         * @return Hash code value of data modeled by this interface.
-         * @throws «NPE.importedName» if {@code obj} is null
-         */
-        «IF augmentable»
-        static <T$$ extends «type.fullyQualifiedName» & «AUGMENTATION_HOLDER.importedName»<?>> int «BINDING_HASHCODE_NAME»(final @«NONNULL.importedName» T$$ obj) {
-        «ELSE»
-        static int «BINDING_HASHCODE_NAME»(final «type.fullyQualifiedName» obj) {
-        «ENDIF»
-            final int prime = 31;
-            int result = 1;
-            «FOR property : typeAnalysis.value»
-                result = prime * result + «property.importedUtilClass».hashCode(obj.«property.getterMethodName»());
-            «ENDFOR»
+        «IF augmentable || !typeAnalysis.value.empty»
+            /**
+             * Default implementation of {@link «Object.importedName»#hashCode()} contract for this interface.
+             * Implementations of this interface are encouraged to defer to this method to get consistent hashing
+             * results across all implementations.
+             *
+             «IF augmentable»
+             * @param <T$$> implementation type, which has to also implement «AUGMENTATION_HOLDER.importedName» interface
+             *              contract.
+             «ENDIF»
+             * @param obj Object for which to generate hashCode() result.
+             * @return Hash code value of data modeled by this interface.
+             * @throws «NPE.importedName» if {@code obj} is null
+             */
             «IF augmentable»
-                result = prime * result + «CODEHELPERS.importedName».hashAugmentations(obj);
+                static <T$$ extends «type.fullyQualifiedName» & «AUGMENTATION_HOLDER.importedName»<?>> int «BINDING_HASHCODE_NAME»(final @«NONNULL.importedName» T$$ obj) {
+            «ELSE»
+                static int «BINDING_HASHCODE_NAME»(final «type.fullyQualifiedName» obj) {
             «ENDIF»
-            return result;
-        }
+                final int prime = 31;
+                int result = 1;
+                «FOR property : typeAnalysis.value»
+                    result = prime * result + «property.importedUtilClass».hashCode(obj.«property.getterMethodName»());
+                «ENDFOR»
+                «IF augmentable»
+                    result = prime * result + «CODEHELPERS.importedName».hashAugmentations(obj);
+                «ENDIF»
+                return result;
+            }
+        «ENDIF»
     '''
 
     def private generateBindingEquals() '''
