@@ -17,4 +17,16 @@ file : SEP* statement SEP* EOF;
 statement : keyword (SEP+ argument)? SEP* (SEMICOLON | LEFT_BRACE SEP* (statement SEP*)* RIGHT_BRACE);
 keyword : IDENTIFIER (COLON IDENTIFIER)?;
 
-argument : STRING (SEP* PLUS SEP* STRING)* | IDENTIFIER;
+// A statement argument can either be unquoted string, or a quoted string,
+// or a concatenation of quoted strings.
+argument : unquoted | (quoted (concat)*);
+
+// A quoted string, which is quite simple
+quoted : DQUOT_STRING | SQUOT_STRING | EMPTY_QUOT;
+
+// And additional concatenation of a quoted string
+concat : SEP* PLUS SEP* quoted;
+
+// An unquoted string, which can be a lot of things
+unquoted : (IDENTIFIER | COLON | PLUS | YANG_CHAR)+;
+
