@@ -18,6 +18,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ConcatContext;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.QuotedContext;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -109,74 +112,66 @@ abstract class ArgumentContextUtils {
      *       such as intermediate List allocation et al.
      */
     final @NonNull String stringFromStringContext(final ArgumentContext context, final StatementSourceReference ref) {
+        final int childCount = context.getChildCount();
+        verify(childCount != 0, "Unexpected shape of %s", context);
+        final ParseTree firstChild = context.getChild(0);
+
+        // Deal with simple (non-concat) cases first
+        if (childCount == 1) {
+            if (firstChild instanceof UnquotedContext) {
+                return firstChild.getText();
+            }
+
+            verify(firstChild instanceof QuotedContext, "Unexpected shape of %s", context);
+            return quotedString((QuotedContext) firstChild, ref);
+        }
+
+        // Now deal with concatenation...
+        final StringBuilder sb = new StringBuilder();
+
+        // ... first item ...
+        verify(firstChild instanceof QuotedContext, "Unexpected shape of %s", context);
+        sb.append(quotedString((QuotedContext) firstChild, ref));
+
+        // ... and the rest
+        for (int i = 1; i < childCount; ++i) {
+            final ParseTree child = context.getChild(i);
+            verify(child instanceof ConcatContext, "Unexpected child %s", child);
+            sb.append(concatString((ConcatContext) child, ref));
+        }
+
+        return sb.toString();
+    }
+
+    // Decodes a concatenation, which really is all about taking the last quoted string
+    private @NonNull String concatString(final ConcatContext context, final StatementSourceReference ref) {
+        final int childCount = context.getChildCount();
+        verify(childCount > 1, "Unexpected shape of %s", context);
+
+        final ParseTree lastChild = context.getChild(childCount - 1);
+        verify(lastChild instanceof QuotedContext, "Unexpected shape of %s", context);
+        return quotedString((QuotedContext) lastChild, ref);
+    }
+
+    // Decodes a single quoted context
+    private @NonNull String quotedString(final QuotedContext context, final StatementSourceReference ref) {
         // Get first child, which we fully expect to exist and be a lexer token
         final ParseTree firstChild = context.getChild(0);
         verify(firstChild instanceof TerminalNode, "Unexpected shape of %s", context);
         final TerminalNode firstNode = (TerminalNode) firstChild;
         final int firstType = firstNode.getSymbol().getType();
         switch (firstType) {
-            case YangStatementParser.IDENTIFIER:
-                // Simple case, there is a simple string, which cannot contain anything that we would need to process.
+            case YangStatementParser.EMPTY_QUOT:
+                // Empty quoted string
+                return "";
+            case YangStatementParser.SQUOT_STRING:
+                // Single-quoted content: no substitution unescaping necessary
                 return firstNode.getText();
-            case YangStatementParser.STRING:
-                // Complex case, defer to a separate method
-                return concatStrings(context, ref);
+            case YangStatementParser.DQUOT_STRING:
+                final String str = firstNode.getText();
+                return normalizeDoubleQuoted(str, str.length(), ref);
             default:
                 throw new VerifyException("Unexpected first symbol in " + context);
-        }
-    }
-
-    private String concatStrings(final ArgumentContext context, final StatementSourceReference ref) {
-        /*
-         * We have multiple fragments. Just search the tree. This code is equivalent to
-         *
-         *    context.STRING().forEach(stringNode -> appendString(sb, stringNode, ref))
-         *
-         * except we minimize allocations which that would do.
-         */
-        final StringBuilder sb = new StringBuilder();
-        for (ParseTree child : context.children) {
-            verify(child instanceof TerminalNode, "Unexpected fragment component %s", child);
-            final TerminalNode childNode = (TerminalNode) child;
-            switch (childNode.getSymbol().getType()) {
-                case YangStatementParser.SEP:
-                    // Ignore whitespace
-                    break;
-                case YangStatementParser.PLUS:
-                    // Operator, which we are handling by concat
-                    break;
-                case YangStatementParser.STRING:
-                    // a lexer string, could be pretty much anything
-                    // TODO: appendString() is a dispatch based on quotes, which we should be able to defer to lexer for
-                    //       a dedicated type. That would expand the switch table here, but since we have it anyway, it
-                    //       would be nice to have the quoting distinction already taken care of. The performance
-                    //       difference will need to be benchmarked, though.
-                    appendString(sb, childNode, ref);
-                    break;
-                default:
-                    throw new VerifyException("Unexpected symbol in " + childNode);
-            }
-        }
-        return sb.toString();
-    }
-
-    private void appendString(final StringBuilder sb, final TerminalNode stringNode,
-            final StatementSourceReference ref) {
-        final String str = stringNode.getText();
-        final char firstChar = str.charAt(0);
-        final char lastChar = str.charAt(str.length() - 1);
-        if (firstChar == '"' && lastChar == '"') {
-            sb.append(normalizeDoubleQuoted(str.substring(1, str.length() - 1),
-                stringNode.getSymbol().getCharPositionInLine(), ref));
-        } else if (firstChar == '\'' && lastChar == '\'') {
-            /*
-             * According to RFC6020 a single quote character cannot occur in a single-quoted string, even when preceded
-             * by a backslash.
-             */
-            sb.append(str, 1, str.length() - 1);
-        } else {
-            checkUnquoted(str, ref);
-            sb.append(str);
         }
     }
 
