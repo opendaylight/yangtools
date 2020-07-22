@@ -118,8 +118,6 @@ abstract class ArgumentContextUtils {
             case YangStatementParser.IDENTIFIER:
                 // Simple case, there is a simple string, which cannot contain anything that we would need to process.
                 return firstNode.getText();
-            case YangStatementParser.PLUS:
-                return "+";
             case YangStatementParser.STRING:
                 // Complex case, defer to a separate method
                 return concatStrings(context, ref);

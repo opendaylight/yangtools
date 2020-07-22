@@ -35,7 +35,7 @@ fragment ESC : '\\' (["\\/bfnrt] | UNICODE);
 fragment UNICODE : 'u' HEX HEX HEX HEX;
 fragment HEX : [0-9a-fA-F] ;
 
-STRING: ((~( '\r' | '\n' | '\t' | ' ' | ';' | '{' | '"' | '\'' | '}' | '/')~( '\r' | '\n' | '\t' | ' ' | ';' | '{' | '}' )* ) | SUB_STRING );
+STRING: ((~( '\r' | '\n' | '\t' | ' ' | ';' | '{' | '"' | '\'' | '}' | '/' | '+')~( '\r' | '\n' | '\t' | ' ' | ';' | '{' | '}' )* ) | SUB_STRING );
 
 mode BLOCK_COMMENT_MODE;
 END_BLOCK_COMMENT : '*/' -> popMode, skip;
