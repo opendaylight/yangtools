@@ -41,9 +41,12 @@ public final class ClassLoaderUtils {
      * the thread's Thread Context Class Loader to the specified class loader for the duration of execution of that
      * method.
      *
+     * @param <T> the type of the input to the function
+     * @param <R> the type of the result of the function
      * @param cls {@link ClassLoader} to be used.
      * @param function Function to be applied.
      * @param input Function input
+     * @return Result of function invocation.
      * @throws NullPointerException if class loader or function is null
      */
     @Beta
@@ -64,10 +67,12 @@ public final class ClassLoaderUtils {
      * the thread's Thread Context Class Loader to the specified class loader for the duration of execution of that
      * method.
      *
+     * @param <V> the result type of the callable
      * @param cls {@link ClassLoader} to be used.
      * @param callable Function to be executed.
      * @return Result of callable invocation.
      * @throws NullPointerException if class loader or callable is null
+     * @throws Exception if the callable fails
      */
     @Beta
     public static <V> V callWithClassLoader(final @NonNull ClassLoader cls, final @NonNull Callable<V> callable)
@@ -87,6 +92,7 @@ public final class ClassLoaderUtils {
      * the thread's Thread Context Class Loader to the specified class loader for the duration of execution of that
      * method.
      *
+     * @param <V> the result type of the supplier
      * @param cls {@link ClassLoader} to be used.
      * @param supplier Function to be executed.
      * @return Result of supplier invocation.
@@ -128,7 +134,11 @@ public final class ClassLoaderUtils {
     /**
      * Loads class using this supplied classloader.
      *
+     * @param cls class loader
      * @param name String name of class.
+     * @return Loaded class
+     * @throws ClassNotFoundException if the class cannot be loaded
+     * @throws NullPointerException if any argument is null
      */
     public static Class<?> loadClass(final ClassLoader cls, final String name) throws ClassNotFoundException {
         if ("byte[]".equals(name)) {
@@ -137,7 +147,7 @@ public final class ClassLoaderUtils {
         if ("char[]".equals(name)) {
             return char[].class;
         }
-        return loadClass0(cls,name);
+        return loadClass0(cls, name);
     }
 
     private static Class<?> loadClass0(final ClassLoader cls, final String name) throws ClassNotFoundException {

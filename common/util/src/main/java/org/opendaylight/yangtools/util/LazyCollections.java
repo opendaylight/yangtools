@@ -23,12 +23,13 @@ public final class LazyCollections {
     /**
      * Add an element to a list, potentially transforming the list.
      *
+     * @param <E> the type of elements in the list
      * @param list Current list
      * @param obj Object that needs to be added
      * @return new list
      */
-    public static <T> List<T> lazyAdd(final List<T> list, final T obj) {
-        final List<T> ret;
+    public static <E> List<E> lazyAdd(final List<E> list, final E obj) {
+        final List<E> ret;
 
         switch (list.size()) {
             case 0:

@@ -128,6 +128,7 @@ public final class CollectionWrappers {
      * interface, it is returned unwrapped. Backing collection is required to be effectively immutable. If this
      * requirement is violated, the returned object may behave in unpredictable ways.
      *
+     * @param <E> the type of elements in the collection
      * @param collection Collection to be wrapped
      * @return An effectively-immutable wrapper of the collection.
      * @throws NullPointerException if collection is null
@@ -156,6 +157,7 @@ public final class CollectionWrappers {
      * it effectively implements the Set contract. Backing collection is required to be effectively immutable. If this
      * requirement is violated, the returned object may behave in unpredictable ways.
      *
+     * @param <E> the type of elements in the collection
      * @param collection Collection to be wrapped
      * @return An effectively-immutable wrapper of the collection.
      * @throws NullPointerException if collection is null or any of its elements is null
