@@ -42,12 +42,13 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
      * Returns collection of explicitly declared child statements, while preserving its original ordering from original
      * source.
      *
+     * @param <T> substatement type
      * @param type {@link DeclaredStatement} type
      * @return Collection of statements, which were explicitly declared in source of model.
      * @throws NullPointerException if {@code type} is null
      */
-    default <S extends DeclaredStatement<?>> @NonNull Collection<? extends S> declaredSubstatements(
-            final Class<S> type) {
+    default <T extends DeclaredStatement<?>> @NonNull Collection<? extends T> declaredSubstatements(
+            final Class<T> type) {
         requireNonNull(type);
         return Collections2.transform(Collections2.filter(declaredSubstatements(), type::isInstance), type::cast);
     }
@@ -55,6 +56,7 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
     /**
      * Find the first effective substatement of specified type.
      *
+     * @param <T> substatement type
      * @param type {@link DeclaredStatement} type
      * @return First declared substatement, or empty if no match is found.
      * @throws NullPointerException if {@code type} is null
@@ -69,6 +71,9 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
     /**
      * Find the first declared substatement of specified type and return its value.
      *
+     * @param <T> substatement type
+     * @param <V> substatement argument type
+     * @param type {@link DeclaredStatement} type
      * @return First declared substatement's argument, or empty if no match is found.
      * @throws NullPointerException if {@code type} is null
      */
@@ -81,6 +86,8 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
     /**
      * Find all declared substatements of specified type and return them as a stream.
      *
+     * @param <T> substatement type
+     * @param type {@link DeclaredStatement} type
      * @return A stream of all declared substatements of specified type.
      * @throws NullPointerException if {@code type} is null
      */

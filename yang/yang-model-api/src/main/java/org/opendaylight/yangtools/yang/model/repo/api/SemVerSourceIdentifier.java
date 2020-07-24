@@ -79,6 +79,7 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      *
      * @param moduleName Name of schema
      * @param semVer semantic version of source
+     * @return A SemVerSourceIdentifier
      */
     public static @NonNull SemVerSourceIdentifier create(final String moduleName, final SemVer semVer) {
         return new SemVerSourceIdentifier(moduleName, semVer);
@@ -90,6 +91,7 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      * @param moduleName Name of schema
      * @param revision Revision of source in format YYYY-mm-dd
      * @param semVer semantic version of source
+     * @return A SemVerSourceIdentifier
      */
     public static @NonNull SemVerSourceIdentifier create(final String moduleName, final Revision revision,
             final SemVer semVer) {
@@ -102,6 +104,7 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      * @param moduleName Name of schema
      * @param revision Optional of source revision in format YYYY-mm-dd. If not present, default value will be used.
      * @param semVer semantic version of source
+     * @return A SemVerSourceIdentifier
      */
     public static @NonNull SemVerSourceIdentifier create(final String moduleName, final Optional<Revision> revision,
             final SemVer semVer) {

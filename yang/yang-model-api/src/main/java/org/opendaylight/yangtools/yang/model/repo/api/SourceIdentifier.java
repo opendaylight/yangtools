@@ -121,15 +121,15 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * <p>
      * See http://tools.ietf.org/html/rfc6020#section-5.2
      *
+     * @param moduleName module name
+     * @param revision optional revision
      * @return Filename for this source identifier.
      */
     public static @NonNull String toYangFileName(final String moduleName, final Optional<Revision> revision) {
-        StringBuilder filename = new StringBuilder(moduleName);
+        final StringBuilder sb = new StringBuilder(moduleName);
         if (revision.isPresent()) {
-            filename.append('@');
-            filename.append(revision.get());
+            sb.append('@').append(revision.orElseThrow());
         }
-        filename.append(YangConstants.RFC6020_YANG_FILE_EXTENSION);
-        return filename.toString();
+        return sb.append(YangConstants.RFC6020_YANG_FILE_EXTENSION).toString();
     }
 }

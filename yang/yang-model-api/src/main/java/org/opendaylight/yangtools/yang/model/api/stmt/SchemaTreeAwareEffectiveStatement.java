@@ -44,6 +44,7 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
     /**
      * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its QName argument.
      *
+     * @param <E> Effective substatement type
      * @param qname Child identifier
      * @return Schema tree child, or empty
      * @throws NullPointerException if {@code qname} is null

@@ -301,6 +301,7 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
     /**
      * Get identities derived from a selected identity.
      *
+     * @param identity base identity
      * @return collection of identities derived from this identity
      * @throws NullPointerException if identity is null
      * @throws IllegalArgumentException if the specified identity is not present in this context

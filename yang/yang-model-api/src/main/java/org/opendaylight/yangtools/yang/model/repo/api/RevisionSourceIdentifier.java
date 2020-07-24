@@ -75,6 +75,7 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      *
      * @param moduleName Name of schema
      * @param revision Revision of source in format YYYY-mm-dd. If not present, default value will be used.
+     * @return A RevisionSourceIdentifier
      */
     public static @NonNull RevisionSourceIdentifier create(final String moduleName, final Optional<Revision> revision) {
         return new RevisionSourceIdentifier(moduleName, revision);
@@ -85,6 +86,7 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      *
      * @param moduleName Name of schema
      * @param revision Revision of source, may be null
+     * @return A RevisionSourceIdentifier
      */
     public static @NonNull RevisionSourceIdentifier create(final String moduleName, final @Nullable Revision revision) {
         return new RevisionSourceIdentifier(moduleName, revision);
@@ -94,8 +96,8 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      * Creates new YANG Schema revision source identifier for sources without
      * a revision.
      *
-     * @param moduleName
-     *            Name of schema
+     * @param moduleName Name of schema
+     * @return A RevisionSourceIdentifier
      */
     public static @NonNull RevisionSourceIdentifier create(final String moduleName) {
         return new RevisionSourceIdentifier(moduleName);

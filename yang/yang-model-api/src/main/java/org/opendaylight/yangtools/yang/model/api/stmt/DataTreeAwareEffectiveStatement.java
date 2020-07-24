@@ -48,6 +48,7 @@ public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement<
     /**
      * Find a {@code data tree} child {@link DataTreeEffectiveStatement}, as identified by its QName argument.
      *
+     * @param <E> Effective substatement type
      * @param qname Child identifier
      * @return Data tree child, or empty
      * @throws NullPointerException if {@code qname} is null

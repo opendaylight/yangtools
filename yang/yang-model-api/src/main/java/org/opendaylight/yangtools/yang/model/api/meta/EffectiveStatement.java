@@ -85,6 +85,8 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
     /**
      * Find the first effective substatement of specified type.
      *
+     * @param <T> substatement type
+     * @param type substatement type
      * @return First effective substatement, or empty if no match is found.
      */
     @Beta
@@ -95,6 +97,9 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
     /**
      * Find the first effective substatement of specified type and return its value.
      *
+     * @param <T> substatement type
+     * @param <V> substatement argument type
+     * @param type substatement type
      * @return First effective substatement's argument, or empty if no match is found.
      */
     @Beta
@@ -106,6 +111,8 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
     /**
      * Find all effective substatements of specified type and return them as a stream.
      *
+     * @param <T> substatement type
+     * @param type substatement type
      * @return A stream of all effective substatements of specified type.
      */
     @Beta
