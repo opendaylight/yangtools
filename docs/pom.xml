@@ -21,6 +21,10 @@
     <name>${project.artifactId}</name>
     <description>YANG Tools documentation</description>
 
+    <properties>
+        <maven.javadoc.failOnWarnings>true</maven.javadoc.failOnWarnings>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
