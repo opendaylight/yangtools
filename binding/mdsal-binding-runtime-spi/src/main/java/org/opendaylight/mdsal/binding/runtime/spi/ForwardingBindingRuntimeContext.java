@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 @Beta
 public abstract class ForwardingBindingRuntimeContext extends ForwardingObject implements BindingRuntimeContext {
@@ -60,6 +61,11 @@ public abstract class ForwardingBindingRuntimeContext extends ForwardingObject i
     @Override
     public ActionDefinition getActionDefinition(final Class<? extends Action<?, ?, ?>> cls) {
         return delegate().getActionDefinition(cls);
+    }
+
+    @Override
+    public Absolute getActionIdentifier(final Class<? extends Action<?, ?, ?>> cls) {
+        return delegate().getActionIdentifier(cls);
     }
 
     @Override

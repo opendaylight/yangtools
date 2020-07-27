@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 /**
  * Runtime Context for Java YANG Binding classes. It provides information derived from the backing effective model,
@@ -98,6 +99,8 @@ public interface BindingRuntimeContext extends EffectiveModelContextProvider, Im
     @Nullable DataSchemaNode getSchemaDefinition(Class<?> cls);
 
     @Nullable ActionDefinition getActionDefinition(Class<? extends Action<?, ?, ?>> cls);
+
+    @Nullable Absolute getActionIdentifier(Class<? extends Action<?, ?, ?>> cls);
 
     @NonNull Entry<AugmentationIdentifier, AugmentationSchemaNode> getResolvedAugmentationSchema(
             DataNodeContainer target, Class<? extends Augmentation<?>> aug);
