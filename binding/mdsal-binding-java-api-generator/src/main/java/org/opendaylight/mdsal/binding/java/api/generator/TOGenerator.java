@@ -30,8 +30,11 @@ public final class TOGenerator implements CodeGenerator {
             } else if (genTO.isUnionTypeBuilder()) {
                 final UnionBuilderTemplate template = new UnionBuilderTemplate(genTO);
                 return template.generate();
-            } else {
+            } else if (genTO.isTypedef()) {
                 final ClassTemplate template = new ClassTemplate(genTO);
+                return template.generate();
+            } else {
+                final ListKeyTemplate template = new ListKeyTemplate(genTO);
                 return template.generate();
             }
         }

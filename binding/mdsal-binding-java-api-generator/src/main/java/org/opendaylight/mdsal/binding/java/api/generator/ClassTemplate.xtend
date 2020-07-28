@@ -267,7 +267,7 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def private allValuesConstructor() '''
+    def allValuesConstructor() '''
     public «type.name»(«allProperties.asArgumentsDeclaration») {
         «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
@@ -379,7 +379,7 @@ class ClassTemplate extends BaseTemplate {
         }
     }
 
-    def private generateRestrictions(Type type, String paramName, Type returnType) '''
+    def generateRestrictions(Type type, String paramName, Type returnType) '''
         «val restrictions = type.restrictions»
         «IF restrictions !== null»
             «IF restrictions.lengthConstraint.present || restrictions.rangeConstraint.present»

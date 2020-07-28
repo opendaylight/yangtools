@@ -20,6 +20,7 @@ import java.util.Locale
 import java.util.Map.Entry
 import java.util.StringTokenizer
 import java.util.regex.Pattern
+import org.eclipse.jdt.annotation.NonNull;
 import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
@@ -164,6 +165,17 @@ abstract class BaseTemplate extends JavaFileTemplate {
      */
     def final protected asArgumentsDeclaration(Iterable<GeneratedProperty> parameters) '''«IF !parameters.empty»«FOR parameter : parameters SEPARATOR ", "»«parameter.
         returnType.importedName» «parameter.fieldName»«ENDFOR»«ENDIF»'''
+
+    /**
+     * Template method which generates method parameters with their types from <code>parameters</code>, annotating them
+     * with {@link NonNull}.
+     *
+     * @param parameters group of generated property instances which are transformed to the method parameters
+     * @return string with the list of the method parameters with their types in JAVA format
+     */
+    def final protected asNonNullArgumentsDeclaration(Iterable<GeneratedProperty> parameters) '''«IF !parameters.empty»
+        «FOR parameter : parameters SEPARATOR ", "»«parameter.returnType.importedNonNull» «parameter
+        .fieldName»«ENDFOR»«ENDIF»'''
 
     /**
      * Template method which generates sequence of the names of the class attributes from <code>parameters</code>.
