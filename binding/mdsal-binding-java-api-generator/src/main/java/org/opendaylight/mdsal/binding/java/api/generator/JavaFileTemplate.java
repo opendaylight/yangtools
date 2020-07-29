@@ -183,6 +183,14 @@ class JavaFileTemplate {
         return importedName(intype, importedName(NULLABLE));
     }
 
+    final @NonNull String fullyQualifiedNonNull(final @NonNull Type intype) {
+        return fullyQualifiedName(intype, importedName(NONNULL));
+    }
+
+    final @NonNull String fullyQualifiedName(final @NonNull Type intype, final @NonNull String annotation) {
+        return javaType.getFullyQualifiedReference(intype, annotation);
+    }
+
     // Exposed for BuilderTemplate
     boolean isLocalInnerClass(final JavaTypeName name) {
         final Optional<JavaTypeName> optEnc = name.immediatelyEnclosingClass();
