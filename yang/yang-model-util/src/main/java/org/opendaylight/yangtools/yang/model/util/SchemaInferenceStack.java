@@ -524,7 +524,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
                     verify(step instanceof AxisStep, "Unexpected parent step %s", step);
                     try {
                         current = exitToDataTree();
-                    } catch (IllegalStateException e) {
+                    } catch (IllegalStateException | NoSuchElementException e) {
                         throw new IllegalArgumentException("Illegal parent access in " + path, e);
                     }
                     break;
