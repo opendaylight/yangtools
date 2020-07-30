@@ -674,40 +674,51 @@ public final class SchemaContextUtil {
         final List<QName> walkablePath = createWalkablePath(actualSchemaNode.getPath().getPathFromRoot(),
                 context, colCount);
 
-        if (walkablePath.size() - colCount >= 0) {
-            return Iterables.concat(Iterables.limit(walkablePath, walkablePath.size() - colCount),
-                    Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
+        if (walkablePath == null) {
+            return null;
         }
-        return Iterables.concat(walkablePath,
-                Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
+
+        return Iterables.concat(Iterables.limit(walkablePath, walkablePath.size() - colCount),
+            Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
     }
 
     /**
      * Return List of qNames that are walkable using xPath. When getting a path from schema node it will return path
      * with parents like CaseSchemaNode and ChoiceSchemaNode as well if they are parents of the node. We need to get
-     * rid of these in order to find the node that xPath is pointing to. Also we can not remove any node beyond the
-     * amount of "../" because we will not be able to find the correct schema node from schema context
+     * rid of these in order to find the node that xPath is pointing to.
+     *
+     * If path gone behind node method will return {@code null} if root is grouping, otherwise
+     * {@link IllegalArgumentException} will be thrown.
      *
      * @param schemaNodePath list of qNames as a path to the leaf of type leafref
      * @param context        create schema context
      * @param colCount       amount of "../" in the xPath expression
-     * @return list of QNames as a path where we should be able to find referenced node
+     * @return list of QNames as a path where we should be able to find referenced node or {@code null} if path gone
+     *         behind grouping node.
+     * @throws IllegalArgumentException if path gone behind root node and this node isn't grouping
      */
     private static List<QName> createWalkablePath(final Iterable<QName> schemaNodePath, final SchemaContext context,
             final int colCount) {
         final List<Integer> indexToRemove = new ArrayList<>();
+        SchemaNode nodeIn = null;
         List<QName> schemaNodePathRet = Lists.newArrayList(schemaNodePath);
-        for (int j = 0, i = schemaNodePathRet.size() - 1; i >= 0 && j != colCount; i--, j++) {
-            final SchemaNode nodeIn = findTargetNode(context, schemaNodePathRet);
+        int i = schemaNodePathRet.size() - 1;
+        int j = 0;
+        for (; i >= 0 && j < colCount; i--, j++) {
+            nodeIn = findTargetNode(context, schemaNodePathRet);
             if (nodeIn instanceof CaseSchemaNode || nodeIn instanceof ChoiceSchemaNode) {
                 indexToRemove.add(i);
                 j--;
             }
             schemaNodePathRet.remove(i);
         }
+        if (i == -1 && j < colCount) {
+            checkArgument(nodeIn instanceof GroupingDefinition, "Path gone behind root");
+            return null;
+        }
         schemaNodePathRet = Lists.newArrayList(schemaNodePath);
-        for (int i : indexToRemove) {
-            schemaNodePathRet.remove(i);
+        for (int k : indexToRemove) {
+            schemaNodePathRet.remove(k);
         }
         return schemaNodePathRet;
     }
@@ -775,7 +786,12 @@ public final class SchemaContextUtil {
         return findTargetNode(context, ret);
     }
 
-    private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final Iterable<QName> qnamePath) {
+    private static @Nullable SchemaNode findTargetNode(final SchemaContext context,
+            final @Nullable Iterable<QName> qnamePath) {
+        if (qnamePath == null) {
+            // happens when xpath gone behind root node ant this node it's grouping
+            return null;
+        }
         // We do not have enough information about resolution context, hence cannot account for actions, RPCs
         // and notifications. We therefore attempt to make a best estimate, but this can still fail.
         final Optional<DataSchemaNode> pureData = context.findDataTreeChild(qnamePath);
