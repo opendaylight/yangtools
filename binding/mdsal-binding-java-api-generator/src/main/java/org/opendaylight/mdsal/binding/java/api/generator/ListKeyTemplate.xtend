@@ -45,7 +45,7 @@ class ListKeyTemplate extends ClassTemplate {
         }
     '''
 
-    override final def getterMethod(GeneratedProperty field) {
+    override final getterMethod(GeneratedProperty field) {
         '''
             public «field.returnType.importedNonNull» «field.getterMethodName»() {
                 «val fieldName = field.fieldName»
