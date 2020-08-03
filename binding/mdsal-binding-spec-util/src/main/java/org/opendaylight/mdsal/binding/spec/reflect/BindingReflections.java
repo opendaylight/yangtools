@@ -43,7 +43,6 @@ import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -605,16 +604,14 @@ public final class BindingReflections {
     /**
      * Extracts augmentation from Binding DTO field using reflection.
      *
-     * @param input
-     *            Instance of DataObject which is augmentable and may contain
-     *            augmentation
+     * @param input Instance of DataObject which is augmentable and may contain augmentation
      * @return Map of augmentations if read was successful, otherwise empty map.
+     * @deprecated Use {@link Augmentable#augmentations()} instead.
      */
+    @SuppressWarnings("unchecked")
+    @Deprecated(forRemoval = true)
     public static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Augmentable<?> input) {
-        if (input instanceof AugmentationHolder) {
-            return ((AugmentationHolder) input).augmentations();
-        }
-        return AugmentationFieldGetter.getGetter(input.getClass()).getAugmentations(input);
+        return (Map) input.augmentations();
     }
 
     /**

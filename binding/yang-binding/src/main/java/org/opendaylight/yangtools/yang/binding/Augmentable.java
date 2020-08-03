@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -17,9 +21,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * This interface uses extended version of ExtensibleInterface pattern which also adds marker interface for
  * augmentations (extensions) - {@link Augmentable}.
  *
- * @param <T>
- *            Base class which should implements this interface and is target
- *            for augmentation.
+ * @param <T> Base class which should implements this interface and is target for augmentation.
  * @author Tony Tkacik
  */
 public interface Augmentable<T> {
@@ -28,7 +30,18 @@ public interface Augmentable<T> {
      *
      * @param augmentationType Type of augmentation to be returned.
      * @param <A> Type capture for augmentation type
-     * @return instance of augmentation.
+     * @return instance of augmentation, or null if the augmentationType is not present.
+     * @throws NullPointerException if augmentationType is null
      */
-    <A extends Augmentation<T>> @Nullable A augmentation(Class<A> augmentationType);
+    @SuppressWarnings("unchecked")
+    default <A extends Augmentation<T>> @Nullable A augmentation(final Class<A> augmentationType) {
+        return (A) augmentations().get(requireNonNull(augmentationType));
+    }
+
+    /**
+     * Returns map of all augmentations.
+     *
+     * @return map of all augmentations.
+     */
+    @NonNull Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations();
 }

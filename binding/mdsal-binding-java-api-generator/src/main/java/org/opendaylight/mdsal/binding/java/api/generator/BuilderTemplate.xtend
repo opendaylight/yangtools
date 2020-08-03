@@ -499,17 +499,13 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     '''
 
     override protected generateCopyAugmentation(Type implType) {
-        val augmentationHolderRef = AUGMENTATION_HOLDER.importedName
-        val typeRef = targetType.importedName
         val hashMapRef = JU_HASHMAP.importedName
         val augmentTypeRef = augmentType.importedName
         return '''
-            if (base instanceof «augmentationHolderRef») {
-                @SuppressWarnings("unchecked")
-                «JU_MAP.importedName»<«CLASS.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> aug =((«augmentationHolderRef»<«typeRef»>) base).augmentations();
-                if (!aug.isEmpty()) {
-                    this.«AUGMENTATION_FIELD» = new «hashMapRef»<>(aug);
-                }
+            @SuppressWarnings("unchecked")
+            «JU_MAP.importedName»<«CLASS.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> aug = base.augmentations();
+            if (!aug.isEmpty()) {
+                this.«AUGMENTATION_FIELD» = new «hashMapRef»<>(aug);
             }
         '''
     }

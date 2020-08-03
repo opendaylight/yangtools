@@ -16,7 +16,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -29,7 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
  * @param <T> DataObject type
  */
 public abstract class AugmentableCodecDataObject<T extends DataObject & Augmentable<T>>
-        extends CodecDataObject<T> implements Augmentable<T>, AugmentationHolder<T> {
+        extends CodecDataObject<T> implements Augmentable<T> {
     private static final VarHandle CACHED_AUGMENTATIONS;
 
     static {

@@ -15,14 +15,12 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
- * Abstract base class for implementing immutable {@link Augmentable} classes. This class is provided as a convenience,
- * combining {@link AugmentationHolder} and providing {@link Augmentable#augmentation(Class)} implementation on top of
- * held augmentations.
+ * Abstract base class for implementing immutable {@link Augmentable} classes. This class is provided as a convenience.
  *
  * @param <T> Augmentable type
  */
 @Beta
-public abstract class AbstractAugmentable<T extends Augmentable<T>> implements Augmentable<T>, AugmentationHolder<T> {
+public abstract class AbstractAugmentable<T extends Augmentable<T>> implements Augmentable<T> {
     private final @NonNull ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations;
 
     protected AbstractAugmentable() {
@@ -42,8 +40,8 @@ public abstract class AbstractAugmentable<T extends Augmentable<T>> implements A
         this(other.augmentations);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public final <A extends Augmentation<T>> A augmentation(final Class<A> augmentationType) {
         return (A) augmentations.get(requireNonNull(augmentationType));
     }

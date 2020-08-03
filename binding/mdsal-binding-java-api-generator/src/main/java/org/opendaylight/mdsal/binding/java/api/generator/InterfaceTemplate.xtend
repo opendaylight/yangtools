@@ -230,26 +230,18 @@ class InterfaceTemplate extends BaseTemplate {
              * Implementations of this interface are encouraged to defer to this method to get consistent hashing
              * results across all implementations.
              *
-             «IF augmentable»
-             * @param <T$$> implementation type, which has to also implement «AUGMENTATION_HOLDER.importedName» interface
-             *              contract.
-             «ENDIF»
              * @param obj Object for which to generate hashCode() result.
              * @return Hash code value of data modeled by this interface.
              * @throws «NPE.importedName» if {@code obj} is null
              */
-            «IF augmentable»
-                static <T$$ extends «type.fullyQualifiedName» & «AUGMENTATION_HOLDER.importedName»<?>> int «BINDING_HASHCODE_NAME»(final @«NONNULL.importedName» T$$ obj) {
-            «ELSE»
-                static int «BINDING_HASHCODE_NAME»(final «type.fullyQualifiedNonNull» obj) {
-            «ENDIF»
+            static int «BINDING_HASHCODE_NAME»(final «type.fullyQualifiedNonNull» obj) {
                 final int prime = 31;
                 int result = 1;
                 «FOR property : typeAnalysis.value»
                     result = prime * result + «property.importedUtilClass».hashCode(obj.«property.getterMethodName»());
                 «ENDFOR»
                 «IF augmentable»
-                    result = prime * result + «CODEHELPERS.importedName».hashAugmentations(obj);
+                    result = prime * result + obj.augmentations().hashCode();
                 «ENDIF»
                 return result;
             }
@@ -264,20 +256,12 @@ class InterfaceTemplate extends BaseTemplate {
              * Implementations of this interface are encouraged to defer to this method to get consistent equality
              * results across all implementations.
              *
-             «IF augmentable»
-             * @param <T$$> implementation type, which has to also implement «AUGMENTATION_HOLDER.importedName» interface
-             *              contract.
-             «ENDIF»
              * @param thisObj Object acting as the receiver of equals invocation
              * @param obj Object acting as argument to equals invocation
              * @return True if thisObj and obj are considered equal
              * @throws «NPE.importedName» if {@code thisObj} is null
              */
-            «IF augmentable»
-            static <T$$ extends «type.fullyQualifiedName» & «AUGMENTATION_HOLDER.importedName»<«type.fullyQualifiedName»>> boolean «BINDING_EQUALS_NAME»(final @«NONNULL.importedName» T$$ thisObj, final «Types.objectType().importedName» obj) {
-            «ELSE»
             static boolean «BINDING_EQUALS_NAME»(final «type.fullyQualifiedNonNull» thisObj, final «Types.objectType().importedName» obj) {
-            «ENDIF»
                 if (thisObj == obj) {
                     return true;
                 }
@@ -290,7 +274,7 @@ class InterfaceTemplate extends BaseTemplate {
                         return false;
                     }
                 «ENDFOR»
-                return «IF augmentable»«CODEHELPERS.importedName».equalsAugmentations(thisObj, other)«ELSE»true«ENDIF»;
+                return «IF augmentable»thisObj.augmentations().equals(other.augmentations())«ELSE»true«ENDIF»;
             }
         «ENDIF»
     '''
@@ -302,19 +286,11 @@ class InterfaceTemplate extends BaseTemplate {
          * Implementations of this interface are encouraged to defer to this method to get consistent string
          * representations across all implementations.
          *
-         «IF augmentable»
-         * @param <T$$> implementation type, which has to also implement «AUGMENTATION_HOLDER.importedName» interface
-         *              contract.
-         «ENDIF»
          * @param obj Object for which to generate toString() result.
          * @return {@link «STRING.importedName»} value of data modeled by this interface.
          * @throws «NPE.importedName» if {@code obj} is null
          */
-        «IF augmentable»
-        static <T$$ extends «type.fullyQualifiedName» & «AUGMENTATION_HOLDER.importedName»<«type.fullyQualifiedName»>> «STRING.importedName» «BINDING_TO_STRING_NAME»(final @«NONNULL.importedName» T$$ obj) {
-        «ELSE»
         static «STRING.importedName» «BINDING_TO_STRING_NAME»(final «type.fullyQualifiedNonNull» obj) {
-        «ENDIF»
             final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper("«type.name»");
             «FOR property : typeAnalysis.value»
                 «CODEHELPERS.importedName».appendValue(helper, "«property.name»", obj.«property.getterName»());

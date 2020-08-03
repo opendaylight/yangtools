@@ -43,7 +43,6 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.util.Types;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 import org.opendaylight.yangtools.yang.binding.CodeHelpers;
 
 
@@ -110,10 +109,6 @@ class JavaFileTemplate {
      * {@code org.opendaylight.yangtools.yang.binding.CodeHelpers} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
-    /**
-     * {@code org.opendaylight.yangtools.yang.binding.AugmentationHolder} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName AUGMENTATION_HOLDER = JavaTypeName.create(AugmentationHolder.class);
 
     private static final Comparator<MethodSignature> METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<>();
     private static final Type AUGMENTATION_RET_TYPE;
