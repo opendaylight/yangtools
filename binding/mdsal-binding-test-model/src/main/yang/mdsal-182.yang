@@ -1,11 +1,11 @@
 module mdsal-182 {
-	namespace "mdsal-182";
-	prefix "mdsal182";
+    namespace "mdsal-182";
+    prefix "mdsal182";
 
     grouping foo {
         leaf foo {
             type leafref {
-                path "../../bar";
+                path "../bar";
             }
         }
     }
