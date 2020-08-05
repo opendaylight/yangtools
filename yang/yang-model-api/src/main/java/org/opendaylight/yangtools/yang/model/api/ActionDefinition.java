@@ -9,6 +9,8 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
  * Represents YANG action statement.
@@ -21,4 +23,6 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 public interface ActionDefinition extends OperationDefinition, CopyableNode {
+    @Override
+    @NonNull ActionEffectiveStatement asEffectiveStatement();
 }

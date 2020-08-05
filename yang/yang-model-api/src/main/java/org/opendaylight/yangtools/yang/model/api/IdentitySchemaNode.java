@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 
 /**
  * Interface describing YANG 'identity' statement.
@@ -31,4 +32,7 @@ public interface IdentitySchemaNode extends SchemaNode {
      *         a root identity.
      */
     @NonNull Collection<? extends IdentitySchemaNode> getBaseIdentities();
+
+    @Override
+    IdentityEffectiveStatement asEffectiveStatement();
 }

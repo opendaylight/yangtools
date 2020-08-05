@@ -20,11 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 
@@ -82,21 +80,6 @@ final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, Exten
     @Deprecated
     public SchemaPath getPath() {
         return path;
-    }
-
-    @Override
-    public String getArgument() {
-        return findFirstEffectiveSubstatementArgument(ArgumentEffectiveStatement.class)
-                .map(QName::getLocalName)
-                .orElse(null);
-    }
-
-    @Override
-    public boolean isYinElement() {
-        return findFirstEffectiveSubstatement(ArgumentEffectiveStatement.class)
-                .flatMap(arg -> arg.findFirstEffectiveSubstatementArgument(YinElementEffectiveStatement.class))
-                .orElse(Boolean.FALSE)
-                .booleanValue();
     }
 
     @Override

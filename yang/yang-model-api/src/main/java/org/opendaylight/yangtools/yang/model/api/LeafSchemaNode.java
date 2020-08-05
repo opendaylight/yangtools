@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+
 /**
  * Interface describing YANG <code>leaf</code> statement.
  *
@@ -18,5 +20,6 @@ package org.opendaylight.yangtools.yang.model.api;
  * substatements is captured in the type returned via {@link #getType()}.
  */
 public interface LeafSchemaNode extends TypedDataSchemaNode, MandatoryAware, MustConstraintAware {
-
+    @Override
+    LeafEffectiveStatement asEffectiveStatement();
 }

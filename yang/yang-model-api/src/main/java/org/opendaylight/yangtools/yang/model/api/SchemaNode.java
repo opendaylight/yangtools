@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * SchemaNode represents a node in schema tree.
@@ -20,6 +21,8 @@ public interface SchemaNode extends DocumentedNode.WithStatus {
      * @return QName with the name of the schema node
      */
     @NonNull QName getQName();
+
+    @NonNull EffectiveStatement<QName, ?> asEffectiveStatement();
 
     /**
      * Returns the schema path of the instance of the type {@code SchemaNode}.

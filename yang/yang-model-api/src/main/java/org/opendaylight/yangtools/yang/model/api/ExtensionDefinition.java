@@ -7,6 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
+
 /**
  * Contains the methods for getting the data which are part of the YANG
  * <code>extensoion</code> statement.
@@ -24,7 +29,12 @@ public interface ExtensionDefinition extends SchemaNode {
      *         Keyword. If no argument statement is present the method will
      *         return <code>null</code>
      */
-    String getArgument();
+    default String getArgument() {
+        return asEffectiveStatement()
+                .findFirstEffectiveSubstatementArgument(ArgumentEffectiveStatement.class)
+                .map(QName::getLocalName)
+                .orElse(null);
+    }
 
     /**
      * This statement indicates if the argument is mapped to an XML element in
@@ -42,5 +52,14 @@ public interface ExtensionDefinition extends SchemaNode {
      *         YIN or returns <code>false</code> if the argument is mapped to an
      *         XML attribute.
      */
-    boolean isYinElement();
+    default boolean isYinElement() {
+        return asEffectiveStatement()
+                .findFirstEffectiveSubstatement(ArgumentEffectiveStatement.class)
+                .flatMap(arg -> arg.findFirstEffectiveSubstatementArgument(YinElementEffectiveStatement.class))
+                .orElse(Boolean.FALSE)
+                .booleanValue();
+    }
+
+    @Override
+    ExtensionEffectiveStatement asEffectiveStatement();
 }

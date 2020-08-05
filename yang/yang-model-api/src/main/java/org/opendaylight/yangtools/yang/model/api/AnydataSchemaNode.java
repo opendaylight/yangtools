@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 
 /**
  * The "anydata" statement defines an interior node in the schema tree. It takes one argument, which is an identifier,
@@ -28,4 +29,7 @@ public interface AnydataSchemaNode extends DataSchemaNode, MandatoryAware, MustC
      * @return schema of contained data or empty if it is not provided
      */
     Optional<ContainerSchemaNode> getDataSchema();
+
+    @Override
+    AnydataEffectiveStatement asEffectiveStatement();
 }

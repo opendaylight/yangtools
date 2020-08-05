@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
+
 /**
  * Interface describing YANG 'feature' statement.
  * <p>
@@ -16,5 +18,6 @@ package org.opendaylight.yangtools.yang.model.api;
  * </p>
  */
 public interface FeatureDefinition extends SchemaNode {
-
+    @Override
+    FeatureEffectiveStatement asEffectiveStatement();
 }

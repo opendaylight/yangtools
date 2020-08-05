@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
 /**
  * A ChoiceSchemaNode defines a set of alternatives. It consists of a number of branches defined as
@@ -86,4 +87,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      *         substatement of <code>choice</code> statement.
      */
     Optional<CaseSchemaNode> getDefaultCase();
+
+    @Override
+    ChoiceEffectiveStatement asEffectiveStatement();
 }

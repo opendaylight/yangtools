@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 
 /**
  * Interface describing YANG 'leaf-list' statement.
@@ -31,4 +32,7 @@ public interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintA
      * @return Ordered list of Strings which specify the default values of this leaf-list
      */
     @NonNull Collection<? extends Object> getDefaults();
+
+    @Override
+    LeafListEffectiveStatement asEffectiveStatement();
 }
