@@ -30,9 +30,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 
 /**
  * Baseline stateless implementation of an EffectiveStatement. This class adds a few default implementations and
- * namespace dispatch, but does not actually force any state on its subclasses. This approach is different from
- * {@link EffectiveStatementBase} in that it adds requirements for an implementation, but it leaves it up to the final
- * class to provide object layout.
+ * namespace dispatch, but does not actually force any state on its subclasses. This approach adds requirements for an
+ * implementation, but it leaves it up to the final class to provide object layout.
  *
  * <p>
  * This finds immense value in catering the common case, for example effective statements which can, but typically
