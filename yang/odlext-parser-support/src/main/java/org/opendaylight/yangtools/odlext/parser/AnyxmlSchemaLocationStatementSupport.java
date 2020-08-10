@@ -9,18 +9,21 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import static org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements.ANYXML_SCHEMA_LOCATION;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class AnyxmlSchemaLocationStatementSupport
-        extends AbstractStatementSupport<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
+        extends BaseStatementSupport<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
             AnyxmlSchemaLocationEffectiveStatement> {
     private static final AnyxmlSchemaLocationStatementSupport INSTANCE =
             new AnyxmlSchemaLocationStatementSupport(ANYXML_SCHEMA_LOCATION);
@@ -49,19 +52,35 @@ public final class AnyxmlSchemaLocationStatementSupport
     }
 
     @Override
-    public AnyxmlSchemaLocationStatement createDeclared(
-            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx) {
-        return new AnyxmlSchemaLocationStatementImpl(ctx);
-    }
-
-    @Override
-    public AnyxmlSchemaLocationEffectiveStatement createEffective(final StmtContext<SchemaNodeIdentifier,
-            AnyxmlSchemaLocationStatement, AnyxmlSchemaLocationEffectiveStatement> ctx) {
-        return new AnyxmlSchemaLocationEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return validator;
+    }
+
+    @Override
+    protected AnyxmlSchemaLocationStatement createDeclared(
+            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new AnyxmlSchemaLocationStatementImpl(ctx, substatements);
+    }
+
+    @Override
+    protected AnyxmlSchemaLocationStatement createEmptyDeclared(
+            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx) {
+        return createDeclared(ctx, ImmutableList.of());
+    }
+
+    @Override
+    protected AnyxmlSchemaLocationEffectiveStatement createEffective(
+            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
+                AnyxmlSchemaLocationEffectiveStatement> ctx, final AnyxmlSchemaLocationStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new AnyxmlSchemaLocationEffectiveStatementImpl(ctx, substatements);
+    }
+
+    @Override
+    protected AnyxmlSchemaLocationEffectiveStatement createEmptyEffective(
+            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
+                AnyxmlSchemaLocationEffectiveStatement> ctx, final AnyxmlSchemaLocationStatement declared) {
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 }

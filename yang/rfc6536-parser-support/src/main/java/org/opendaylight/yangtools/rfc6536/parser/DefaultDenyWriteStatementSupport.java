@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser;
 
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteSchemaNode;
@@ -14,24 +15,22 @@ import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DefaultDenyWriteStatementSupport
-    extends AbstractVoidStatementSupport<DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> {
+        extends BaseVoidStatementSupport<DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> {
+    private static final class Declared extends WithSubstatements implements DefaultDenyWriteStatement {
+        static final @NonNull Declared EMPTY = new Declared(ImmutableList.of());
 
-    private static final class Declared extends AbstractDeclaredStatement<Void> implements DefaultDenyWriteStatement {
-        Declared(final StmtContext<Void, ?, ?> context) {
-            super(context);
-        }
-
-        @Override
-        public Void getArgument() {
-            return null;
+        Declared(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            super(substatements);
         }
     }
 
@@ -39,8 +38,9 @@ public final class DefaultDenyWriteStatementSupport
             implements DefaultDenyWriteEffectiveStatement, DefaultDenyWriteSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<Void, DefaultDenyWriteStatement, ?> ctx) {
-            super(ctx);
+        Effective(final StmtContext<Void, DefaultDenyWriteStatement, ?> ctx,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(ctx, substatements);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }
@@ -72,18 +72,33 @@ public final class DefaultDenyWriteStatementSupport
     }
 
     @Override
-    public DefaultDenyWriteStatement createDeclared(final StmtContext<Void, DefaultDenyWriteStatement, ?> ctx) {
-        return new Declared(ctx);
-    }
-
-    @Override
-    public DefaultDenyWriteEffectiveStatement createEffective(
-            final StmtContext<Void, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> ctx) {
-        return new Effective(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return validator;
+    }
+
+    @Override
+    protected DefaultDenyWriteStatement createDeclared(final StmtContext<Void, DefaultDenyWriteStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new Declared(substatements);
+    }
+
+    @Override
+    protected DefaultDenyWriteStatement createEmptyDeclared(final StmtContext<Void, DefaultDenyWriteStatement, ?> ctx) {
+        return Declared.EMPTY;
+    }
+
+    @Override
+    protected DefaultDenyWriteEffectiveStatement createEffective(
+            final StmtContext<Void, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> ctx,
+            final DefaultDenyWriteStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new Effective(ctx, substatements);
+    }
+
+    @Override
+    protected DefaultDenyWriteEffectiveStatement createEmptyEffective(
+            final StmtContext<Void, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> ctx,
+            final DefaultDenyWriteStatement declared) {
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 }

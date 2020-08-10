@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.rfc8528.model.api;
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective statement representation of 'mount-point' extension defined in
@@ -17,5 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 @Beta
 public interface MountPointEffectiveStatement extends EffectiveStatement<QName, MountPointStatement> {
-
+    @Override
+    default StatementDefinition statementDefinition() {
+        return SchemaMountStatements.MOUNT_POINT;
+    }
 }
