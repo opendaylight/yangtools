@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import java.util.Map;
 import java.util.Optional;
+import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -52,7 +53,7 @@ public final class AnyxmlStatementSupportOverride
             final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx) {
         final AnyxmlEffectiveStatement delegateStatement = delegate().createEffective(ctx);
         final Map<StatementDefinition, Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-            EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>>> schemaLocations =
+                AnyxmlSchemaLocationEffectiveStatement>> schemaLocations =
                 ctx.getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);
         if (schemaLocations != null && !schemaLocations.isEmpty()) {
             final SchemaNodeIdentifier anyXmlSchemaNodeIdentifier = schemaLocations.values().iterator().next()
