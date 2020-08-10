@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6241.parser;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
@@ -16,10 +17,12 @@ import org.opendaylight.yangtools.rfc6241.model.api.NetconfStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -27,19 +30,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Beta
-public final class GetFilterElementAttributesStatementSupport
-    extends AbstractVoidStatementSupport<GetFilterElementAttributesStatement,
-        GetFilterElementAttributesEffectiveStatement> {
+public final class GetFilterElementAttributesStatementSupport extends BaseVoidStatementSupport<
+        GetFilterElementAttributesStatement, GetFilterElementAttributesEffectiveStatement> {
 
-    private static final class Declared extends AbstractDeclaredStatement<Void>
-            implements GetFilterElementAttributesStatement {
-        Declared(final StmtContext<Void, ?, ?> context) {
-            super(context);
-        }
+    private static final class Declared extends WithSubstatements implements GetFilterElementAttributesStatement {
+        static final @NonNull Declared EMPTY = new Declared(ImmutableList.of());
 
-        @Override
-        public Void getArgument() {
-            return null;
+        Declared(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            super(substatements);
         }
     }
 
@@ -48,8 +46,9 @@ public final class GetFilterElementAttributesStatementSupport
             implements GetFilterElementAttributesEffectiveStatement, GetFilterElementAttributesSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx) {
-            super(ctx);
+        Effective(final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(ctx, substatements);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }
@@ -82,15 +81,10 @@ public final class GetFilterElementAttributesStatementSupport
     }
 
     @Override
-    public GetFilterElementAttributesStatement createDeclared(
-            final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx) {
-        return new Declared(ctx);
-    }
-
-    @Override
-    public GetFilterElementAttributesEffectiveStatement createEffective(final StmtContext<Void,
-            GetFilterElementAttributesStatement, GetFilterElementAttributesEffectiveStatement> ctx) {
-        return new Effective(ctx);
+    public void onFullDefinitionDeclared(final Mutable<Void, GetFilterElementAttributesStatement,
+            GetFilterElementAttributesEffectiveStatement> stmt) {
+        super.onFullDefinitionDeclared(stmt);
+        stmt.setIsSupportedToBuildEffective(computeSupported(stmt));
     }
 
     @Override
@@ -99,10 +93,33 @@ public final class GetFilterElementAttributesStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<Void, GetFilterElementAttributesStatement,
-            GetFilterElementAttributesEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-        stmt.setIsSupportedToBuildEffective(computeSupported(stmt));
+    protected GetFilterElementAttributesStatement createDeclared(
+            final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new Declared(substatements);
+    }
+
+    @Override
+    protected GetFilterElementAttributesStatement createEmptyDeclared(
+            final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx) {
+        return Declared.EMPTY;
+    }
+
+    @Override
+    protected GetFilterElementAttributesEffectiveStatement createEffective(
+            final StmtContext<Void, GetFilterElementAttributesStatement,
+                GetFilterElementAttributesEffectiveStatement> ctx,
+            final GetFilterElementAttributesStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new Effective(ctx, substatements);
+    }
+
+    @Override
+    protected GetFilterElementAttributesEffectiveStatement createEmptyEffective(
+            final StmtContext<Void, GetFilterElementAttributesStatement,
+                GetFilterElementAttributesEffectiveStatement> ctx,
+            final GetFilterElementAttributesStatement declared) {
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 
     private static boolean computeSupported(final StmtContext<?, ?, ?> stmt) {

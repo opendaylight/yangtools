@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc8040.model.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 /**
@@ -17,6 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  */
 @Beta
 public interface YangDataEffectiveStatement extends EffectiveStatement<String, YangDataStatement> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangDataStatements.YANG_DATA;
+    }
 
     /**
      * Return the container statement defined in this yang-data statement instance.

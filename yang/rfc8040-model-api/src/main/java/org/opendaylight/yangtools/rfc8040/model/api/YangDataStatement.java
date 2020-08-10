@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc8040.model.api;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
@@ -16,5 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  */
 @Beta
 public interface YangDataStatement extends UnknownStatement<String> {
-
+    @Override
+    default StatementDefinition statementDefinition() {
+        return YangDataStatements.YANG_DATA;
+    }
 }

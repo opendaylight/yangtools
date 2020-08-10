@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
@@ -14,5 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  * concepts defined in yang-model-api.
  */
 public interface ThirdPartyExtensionStatement extends UnknownStatement<String> {
-
+    @Override
+    default StatementDefinition statementDefinition() {
+        return ThirdPartyExtensionsMapping.THIRD_PARTY_EXTENSION;
+    }
 }
