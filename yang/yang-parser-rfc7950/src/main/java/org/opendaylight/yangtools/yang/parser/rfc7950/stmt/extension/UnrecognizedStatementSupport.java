@@ -7,19 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 final class UnrecognizedStatementSupport
-        extends AbstractStatementSupport<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
+        extends BaseStatementSupport<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
     UnrecognizedStatementSupport(final StatementDefinition publicDefinition) {
         super(publicDefinition);
     }
@@ -27,22 +30,6 @@ final class UnrecognizedStatementSupport
     @Override
     public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return value;
-    }
-
-    @Override
-    public UnrecognizedStatement createDeclared(final StmtContext<String, UnrecognizedStatement, ?> ctx) {
-        return new UnrecognizedStatementImpl(ctx);
-    }
-
-    @Override
-    public UnrecognizedEffectiveStatement createEffective(
-            final StmtContext<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> ctx) {
-        return new UnrecognizedEffectiveStatementImpl(ctx);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return null;
     }
 
     @Override
@@ -61,4 +48,36 @@ final class UnrecognizedStatementSupport
         }
         return Optional.of(new ModelDefinedStatementSupport(def));
     }
+
+    @Override
+    protected SubstatementValidator getSubstatementValidator() {
+        return null;
+    }
+
+    @Override
+    protected UnrecognizedStatement createDeclared(final StmtContext<String, UnrecognizedStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new UnrecognizedStatementImpl(ctx, substatements);
+    }
+
+    @Override
+    protected UnrecognizedStatement createEmptyDeclared(final StmtContext<String, UnrecognizedStatement, ?> ctx) {
+        return createDeclared(ctx, ImmutableList.of());
+    }
+
+    @Override
+    protected UnrecognizedEffectiveStatement createEffective(
+            final StmtContext<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> ctx,
+            final UnrecognizedStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new UnrecognizedEffectiveStatementImpl(ctx, substatements);
+    }
+
+    @Override
+    protected UnrecognizedEffectiveStatement createEmptyEffective(
+            final StmtContext<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> ctx,
+            final UnrecognizedStatement declared) {
+        return createEffective(ctx, declared, ImmutableList.of());
+    }
+
 }
