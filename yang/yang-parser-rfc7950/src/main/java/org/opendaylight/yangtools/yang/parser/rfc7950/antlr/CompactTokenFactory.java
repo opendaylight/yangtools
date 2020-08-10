@@ -13,21 +13,18 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenFactory;
 import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.misc.Pair;
-import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A token factory which is more memory-efficient than {@link CommonTokenFactory}. We try to mimic behavior of common
  * tokens, but do so at lower memory overheads, potentially sacrificing some performance.
  */
-final class CompactTokenFactory implements TokenFactory<Token> {
-    static final @NonNull CompactTokenFactory INSTANCE = new CompactTokenFactory();
-
-    private CompactTokenFactory() {
+class CompactTokenFactory implements TokenFactory<Token> {
+    CompactTokenFactory() {
         // Hidden on purpose
     }
 
     @Override
-    public Token create(final Pair<TokenSource, CharStream> source, final int type, final String text,
+    public final Token create(final Pair<TokenSource, CharStream> source, final int type, final String text,
             final int channel, final int start, final int stop, final int line, final int charPositionInLine) {
         if (channel != Token.DEFAULT_CHANNEL || text != null) {
             // Non-default channel or text present, defer to common token factory
@@ -35,6 +32,11 @@ final class CompactTokenFactory implements TokenFactory<Token> {
                 charPositionInLine);
         }
 
+        return create(source, type, start, stop, line, charPositionInLine);
+    }
+
+    protected Token create(final Pair<TokenSource, CharStream> source, final int type, final int start,
+            final int stop, final int line, final int charPositionInLine) {
         // Can we fit token type into a single byte? This should always be true
         if (type >= Byte.MIN_VALUE && type <= Byte.MAX_VALUE) {
             // Can we fit line in an unsigned short? This is usually be true
@@ -54,7 +56,7 @@ final class CompactTokenFactory implements TokenFactory<Token> {
     }
 
     @Override
-    public Token create(final int type, final String text) {
+    public final Token create(final int type, final String text) {
         return new ExplicitTextToken(type, text);
     }
 }

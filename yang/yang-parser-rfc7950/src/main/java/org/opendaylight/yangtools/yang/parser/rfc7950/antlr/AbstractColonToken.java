@@ -7,18 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-import com.google.common.annotations.Beta;
-import org.antlr.v4.runtime.CharStream;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 
-/**
- * A {@link YangStatementLexer} backed by more efficient token factory. Exact details are explicitly outside of
- * specification.
- */
-@Beta
-public class CompactYangStatementLexer extends YangStatementLexer {
-    public CompactYangStatementLexer(final CharStream input) {
-        super(input);
-        setTokenFactory(YangStatementLexerTokenFactory.INSTANCE);
+abstract class AbstractColonToken extends AbstractCharToken {
+    @Override
+    public final int getType() {
+        return YangStatementLexer.COLON;
+    }
+
+    @Override
+    public final String getText() {
+        return ":";
     }
 }
