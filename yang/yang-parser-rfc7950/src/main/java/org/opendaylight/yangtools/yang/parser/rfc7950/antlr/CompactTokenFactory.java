@@ -15,6 +15,7 @@ import org.antlr.v4.runtime.TokenFactory;
 import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.misc.Pair;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 
 @Beta
 public final class CompactTokenFactory implements TokenFactory<Token> {
@@ -33,6 +34,34 @@ public final class CompactTokenFactory implements TokenFactory<Token> {
                 charPositionInLine);
         }
 
+        switch (type) {
+            case YangStatementLexer.COLON:
+                return fitsChar22(line, charPositionInLine) ? new ColonToken22(source, line, charPositionInLine)
+                        : new ColonToken44(source, line, charPositionInLine);
+            case YangStatementLexer.SEMICOLON:
+                return fitsChar22(line, charPositionInLine) ? new SemicolonToken22(source, line, charPositionInLine)
+                        : new SemicolonToken44(source, line, charPositionInLine);
+            case YangStatementLexer.LEFT_BRACE:
+                return fitsChar22(line, charPositionInLine) ? new LeftBraceToken22(source, line, charPositionInLine)
+                        : new LeftBraceToken44(source, line, charPositionInLine);
+            case YangStatementLexer.RIGHT_BRACE:
+                return fitsChar22(line, charPositionInLine) ? new RightBraceToken22(source, line, charPositionInLine)
+                        : new RightBraceToken44(source, line, charPositionInLine);
+            case YangStatementLexer.PLUS:
+                return fitsChar22(line, charPositionInLine) ? new PlusToken22(source, line, charPositionInLine)
+                        : new PlusToken44(source, line, charPositionInLine);
+            default:
+                return create(source, type, start, stop, line, charPositionInLine);
+        }
+    }
+
+    @Override
+    public Token create(final int type, final String text) {
+        return new ExplicitTextToken(type, text);
+    }
+
+    private static Token create(final Pair<TokenSource, CharStream> source, final int type, final int start,
+            final int stop, final int line, final int charPositionInLine) {
         // Can we fit token type into a single byte? This should always be true
         if (type >= Byte.MIN_VALUE && type <= Byte.MAX_VALUE) {
             // Can we fit line in an unsigned short? This is usually be true
@@ -48,12 +77,10 @@ public final class CompactTokenFactory implements TokenFactory<Token> {
             }
         }
 
-        // FIXME: add more specialized classes
         return new Token44444(source, type, line, charPositionInLine, start, stop);
     }
 
-    @Override
-    public Token create(final int type, final String text) {
-        return new ExplicitTextToken(type, text);
+    private static boolean fitsChar22(final int line, final int charPositionInLine) {
+        return line >= 0 && line <= 65535 && charPositionInLine >= 0 && charPositionInLine <= 65535;
     }
 }
