@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6241.parser;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
@@ -16,6 +17,7 @@ import org.opendaylight.yangtools.rfc6241.model.api.NetconfStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -48,8 +50,9 @@ public final class GetFilterElementAttributesStatementSupport
             implements GetFilterElementAttributesEffectiveStatement, GetFilterElementAttributesSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx) {
-            super(ctx);
+        Effective(final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(ctx, substatements);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }

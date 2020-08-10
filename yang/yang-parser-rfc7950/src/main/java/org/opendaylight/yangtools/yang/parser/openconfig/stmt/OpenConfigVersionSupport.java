@@ -7,18 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class OpenConfigVersionSupport
-        extends AbstractStatementSupport<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> {
+        extends BaseStatementSupport<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         OpenConfigStatements.OPENCONFIG_VERSION).build();
     private static final OpenConfigVersionSupport INSTANCE = new OpenConfigVersionSupport();
@@ -43,18 +46,34 @@ public final class OpenConfigVersionSupport
     }
 
     @Override
-    public OpenConfigVersionStatement createDeclared(final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx) {
-        return new OpenConfigVersionStatementImpl(ctx);
-    }
-
-    @Override
-    public OpenConfigVersionEffectiveStatement createEffective(
-            final StmtContext<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> ctx) {
-        return new OpenConfigVersionEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected OpenConfigVersionStatement createDeclared(final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new OpenConfigVersionStatementImpl(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected OpenConfigVersionStatement createEmptyDeclared(
+            final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx) {
+        return createDeclared(ctx, ImmutableList.of());
+    }
+
+    @Override
+    protected OpenConfigVersionEffectiveStatement createEffective(
+            final StmtContext<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> ctx,
+            final OpenConfigVersionStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new OpenConfigVersionEffectiveStatementImpl(ctx, substatements);
+    }
+
+    @Override
+    protected OpenConfigVersionEffectiveStatement createEmptyEffective(
+            final StmtContext<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> ctx,
+            final OpenConfigVersionStatement declared) {
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser;
 
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
@@ -14,6 +15,7 @@ import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -39,8 +41,9 @@ public final class DefaultDenyAllStatementSupport
             implements DefaultDenyAllEffectiveStatement, DefaultDenyAllSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx) {
-            super(ctx);
+        Effective(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(ctx, substatements);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }

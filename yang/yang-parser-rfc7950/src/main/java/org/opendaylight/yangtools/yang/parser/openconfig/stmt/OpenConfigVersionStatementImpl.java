@@ -7,14 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
-final class OpenConfigVersionStatementImpl extends AbstractDeclaredStatement<SemVer>
+final class OpenConfigVersionStatementImpl extends WithSubstatements<SemVer>
         implements OpenConfigVersionStatement {
-    OpenConfigVersionStatementImpl(final StmtContext<SemVer, OpenConfigVersionStatement, ?> context) {
-        super(context);
+    OpenConfigVersionStatementImpl(final SemVer argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(argument, substatements);
     }
 }

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc6536.model.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective statement representation of 'default-deny-write' extension defined in
@@ -16,5 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 @Beta
 public interface DefaultDenyWriteEffectiveStatement extends EffectiveStatement<Void, DefaultDenyWriteStatement> {
-
+    @Override
+    default StatementDefinition statementDefinition() {
+        return NACMStatements.DEFAULT_DENY_WRITE;
+    }
 }
