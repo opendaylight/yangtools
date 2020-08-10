@@ -17,15 +17,15 @@ import org.antlr.v4.runtime.misc.Pair;
 import org.eclipse.jdt.annotation.NonNull;
 
 @Beta
-public final class CompactTokenFactory implements TokenFactory<Token> {
+public class CompactTokenFactory implements TokenFactory<Token> {
     public static final @NonNull CompactTokenFactory INSTANCE = new CompactTokenFactory();
 
-    private CompactTokenFactory() {
+    protected CompactTokenFactory() {
         // Hidden on purpose
     }
 
     @Override
-    public Token create(final Pair<TokenSource, CharStream> source, final int type, final String text,
+    public final Token create(final Pair<TokenSource, CharStream> source, final int type, final String text,
             final int channel, final int start, final int stop, final int line, final int charPositionInLine) {
         if (channel != Token.DEFAULT_CHANNEL || text != null) {
             // Non-default channel or text present, defer to common token factory
@@ -33,6 +33,11 @@ public final class CompactTokenFactory implements TokenFactory<Token> {
                 charPositionInLine);
         }
 
+        return create(source, type, start, stop, line, charPositionInLine);
+    }
+
+    protected Token create(final Pair<TokenSource, CharStream> source, final int type, final int start,
+            final int stop, final int line, final int charPositionInLine) {
         // Can we fit token type into a single byte? This should always be true
         if (type >= Byte.MIN_VALUE && type <= Byte.MAX_VALUE) {
             // Can we fit line in an unsigned short? This is usually be true
@@ -52,7 +57,7 @@ public final class CompactTokenFactory implements TokenFactory<Token> {
     }
 
     @Override
-    public Token create(final int type, final String text) {
+    public final Token create(final int type, final String text) {
         return new ExplicitTextToken(type, text);
     }
 }
