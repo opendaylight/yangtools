@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -25,8 +27,9 @@ public final class AnyxmlSchemaLocationEffectiveStatementImpl
     private final @NonNull SchemaPath path;
 
     AnyxmlSchemaLocationEffectiveStatementImpl(
-            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx) {
-        super(ctx);
+            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(ctx, substatements);
         path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 

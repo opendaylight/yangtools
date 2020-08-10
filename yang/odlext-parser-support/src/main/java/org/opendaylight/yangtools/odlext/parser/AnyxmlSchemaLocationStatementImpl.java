@@ -7,20 +7,18 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class AnyxmlSchemaLocationStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier>
+final class AnyxmlSchemaLocationStatementImpl extends WithSubstatements<SchemaNodeIdentifier>
         implements AnyxmlSchemaLocationStatement {
     AnyxmlSchemaLocationStatementImpl(
-            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> context) {
-        super(context);
-    }
-
-    @Override
-    public SchemaNodeIdentifier getArgument() {
-        return argument();
+            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> context,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(context, substatements);
     }
 }
