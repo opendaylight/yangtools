@@ -14,10 +14,10 @@ import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.misc.Pair;
 
-abstract class AbstractLazyToken extends AbstractToken {
+abstract class AbstractSourceToken extends AbstractToken {
     private final Pair<TokenSource, CharStream> source;
 
-    AbstractLazyToken(final Pair<TokenSource, CharStream> source) {
+    AbstractSourceToken(final Pair<TokenSource, CharStream> source) {
         this.source = requireNonNull(source);
     }
 

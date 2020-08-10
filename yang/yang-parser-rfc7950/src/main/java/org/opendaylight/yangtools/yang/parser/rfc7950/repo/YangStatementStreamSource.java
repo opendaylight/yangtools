@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.KeywordContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
-import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.CompactTokenFactory;
+import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.YangStatementLexerTokenFactory;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -170,7 +170,7 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
     private static StatementContext parseYangSource(final SourceIdentifier source, final InputStream stream)
             throws IOException, YangSyntaxErrorException {
         final YangStatementLexer lexer = new YangStatementLexer(CharStreams.fromStream(stream));
-        lexer.setTokenFactory(CompactTokenFactory.INSTANCE);
+        lexer.setTokenFactory(YangStatementLexerTokenFactory.INSTANCE);
         final YangStatementParser parser = new YangStatementParser(new CommonTokenStream(lexer));
         // disconnect from console error output
         lexer.removeErrorListeners();
