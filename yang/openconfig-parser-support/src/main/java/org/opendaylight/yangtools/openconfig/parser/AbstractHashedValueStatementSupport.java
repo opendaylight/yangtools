@@ -7,30 +7,38 @@
  */
 package org.opendaylight.yangtools.openconfig.parser;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 abstract class AbstractHashedValueStatementSupport
-        extends AbstractVoidStatementSupport<OpenConfigHashedValueStatement,
-            OpenConfigHashedValueEffectiveStatement> {
+        extends BaseVoidStatementSupport<OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> {
 
-    private static final class Declared extends AbstractDeclaredStatement<Void>
-        implements OpenConfigHashedValueStatement {
-        Declared(final StmtContext<Void, ?, ?> context) {
-            super(context);
+    private static final class Declared extends WithSubstatements implements OpenConfigHashedValueStatement {
+        private final @NonNull StatementDefinition definition;
+
+        Declared(final StatementDefinition definition,
+                final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            super(substatements);
+            this.definition = requireNonNull(definition);
         }
 
         @Override
-        public Void getArgument() {
-            return null;
+        public StatementDefinition statementDefinition() {
+            return definition;
         }
     }
 
@@ -40,8 +48,9 @@ abstract class AbstractHashedValueStatementSupport
 
         private final SchemaPath path;
 
-        Effective(final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx) {
-            super(ctx);
+        Effective(final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(ctx, substatements);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }
@@ -66,19 +75,35 @@ abstract class AbstractHashedValueStatementSupport
     }
 
     @Override
-    public final OpenConfigHashedValueStatement createDeclared(
-            final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx) {
-        return new Declared(ctx);
-    }
-
-    @Override
-    public final OpenConfigHashedValueEffectiveStatement createEffective(
-            final StmtContext<Void, OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> ctx) {
-        return new Effective(ctx);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
+    protected final SubstatementValidator getSubstatementValidator() {
         return validator;
+    }
+
+    @Override
+    protected final OpenConfigHashedValueStatement createDeclared(
+            final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new Declared(getPublicView(), substatements);
+    }
+
+    @Override
+    protected final OpenConfigHashedValueStatement createEmptyDeclared(
+            final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx) {
+        return createDeclared(ctx, ImmutableList.of());
+    }
+
+    @Override
+    protected final OpenConfigHashedValueEffectiveStatement createEffective(
+            final StmtContext<Void, OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> ctx,
+            final OpenConfigHashedValueStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new Effective(ctx, substatements);
+    }
+
+    @Override
+    protected final OpenConfigHashedValueEffectiveStatement createEmptyEffective(
+            final StmtContext<Void, OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> ctx,
+            final OpenConfigHashedValueStatement declared) {
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 }

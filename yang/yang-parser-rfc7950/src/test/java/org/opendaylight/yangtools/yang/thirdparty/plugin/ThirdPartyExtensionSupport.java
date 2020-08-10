@@ -7,14 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
+import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class ThirdPartyExtensionSupport extends AbstractStatementSupport<String, ThirdPartyExtensionStatement,
-        EffectiveStatement<String, ThirdPartyExtensionStatement>> {
+public final class ThirdPartyExtensionSupport
+        extends BaseStringStatementSupport<ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> {
 
     private static final ThirdPartyExtensionSupport INSTANCE = new ThirdPartyExtensionSupport();
 
@@ -27,30 +29,42 @@ public final class ThirdPartyExtensionSupport extends AbstractStatementSupport<S
     }
 
     @Override
-    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
-    }
-
-    @Override
-    public void onFullDefinitionDeclared(final Mutable<String, ThirdPartyExtensionStatement,
-            EffectiveStatement<String, ThirdPartyExtensionStatement>> stmt) {
+    public void onFullDefinitionDeclared(
+            final Mutable<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
         stmt.addToNs(ThirdPartyNamespace.class, stmt, "Third-party namespace test.");
     }
 
     @Override
-    public ThirdPartyExtensionStatement createDeclared(final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx) {
-        return new ThirdPartyExtensionStatementImpl(ctx);
-    }
-
-    @Override
-    public EffectiveStatement<String, ThirdPartyExtensionStatement> createEffective(final StmtContext<String,
-            ThirdPartyExtensionStatement, EffectiveStatement<String, ThirdPartyExtensionStatement>> ctx) {
-        return new ThirdPartyExtensionEffectiveStatementImpl(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return null;
+    }
+
+    @Override
+    protected ThirdPartyExtensionStatement createDeclared(
+            final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new ThirdPartyExtensionStatementImpl(ctx, substatements);
+    }
+
+    @Override
+    protected ThirdPartyExtensionStatement createEmptyDeclared(
+            final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx) {
+        return createDeclared(ctx, ImmutableList.of());
+    }
+
+    @Override
+    protected ThirdPartyExtensionEffectiveStatement createEffective(
+            final StmtContext<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> ctx,
+            final ThirdPartyExtensionStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new ThirdPartyExtensionEffectiveStatementImpl(ctx, substatements);
+    }
+
+    @Override
+    protected ThirdPartyExtensionEffectiveStatement createEmptyEffective(
+            final StmtContext<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> ctx,
+            final ThirdPartyExtensionStatement declared) {
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 }

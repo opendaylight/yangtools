@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -30,8 +31,9 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
     private final QName nodeType;
     private final String nodeParameter;
 
-    protected UnknownEffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
-        super(ctx);
+    protected UnknownEffectiveStatementBase(final StmtContext<A, D, ?> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(ctx, substatements);
 
         final StmtContext<?, ExtensionStatement, ExtensionEffectiveStatement> extensionInit =
                 ctx.getFromNamespace(ExtensionNamespace.class, ctx.getPublicDefinition().getStatementName());

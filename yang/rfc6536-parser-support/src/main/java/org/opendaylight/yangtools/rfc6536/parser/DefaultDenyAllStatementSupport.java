@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser;
 
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
@@ -14,24 +15,22 @@ import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DefaultDenyAllStatementSupport
-        extends AbstractVoidStatementSupport<DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> {
+        extends BaseVoidStatementSupport<DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> {
+    private static final class Declared extends WithSubstatements implements DefaultDenyAllStatement {
+        static final @NonNull Declared EMPTY = new Declared(ImmutableList.of());
 
-    private static final class Declared extends AbstractDeclaredStatement<Void> implements DefaultDenyAllStatement {
-        Declared(final StmtContext<Void, ?, ?> context) {
-            super(context);
-        }
-
-        @Override
-        public Void getArgument() {
-            return null;
+        Declared(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            super(substatements);
         }
     }
 
@@ -39,8 +38,9 @@ public final class DefaultDenyAllStatementSupport
             implements DefaultDenyAllEffectiveStatement, DefaultDenyAllSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx) {
-            super(ctx);
+        Effective(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(ctx, substatements);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }
@@ -63,7 +63,7 @@ public final class DefaultDenyAllStatementSupport
     private final SubstatementValidator validator;
 
     private DefaultDenyAllStatementSupport(final StatementDefinition definition) {
-        super(definition, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(definition);
         this.validator = SubstatementValidator.builder(definition).build();
     }
 
@@ -72,18 +72,33 @@ public final class DefaultDenyAllStatementSupport
     }
 
     @Override
-    public DefaultDenyAllStatement createDeclared(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx) {
-        return new Declared(ctx);
-    }
-
-    @Override
-    public DefaultDenyAllEffectiveStatement createEffective(
-            final StmtContext<Void, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> ctx) {
-        return new Effective(ctx);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return validator;
+    }
+
+    @Override
+    protected DefaultDenyAllStatement createDeclared(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new Declared(substatements);
+    }
+
+    @Override
+    protected DefaultDenyAllStatement createEmptyDeclared(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx) {
+        return Declared.EMPTY;
+    }
+
+    @Override
+    protected DefaultDenyAllEffectiveStatement createEffective(
+            final StmtContext<Void, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> ctx,
+            final DefaultDenyAllStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new Effective(ctx, substatements);
+    }
+
+    @Override
+    protected DefaultDenyAllEffectiveStatement createEmptyEffective(
+            final StmtContext<Void, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> ctx,
+            final DefaultDenyAllStatement declared) {
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 }

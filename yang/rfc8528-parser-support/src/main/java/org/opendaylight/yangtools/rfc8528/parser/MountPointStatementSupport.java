@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc8528.parser;
 
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
@@ -16,10 +17,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -27,16 +30,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class MountPointStatementSupport
-        extends AbstractStatementSupport<QName, MountPointStatement, MountPointEffectiveStatement> {
+        extends BaseQNameStatementSupport<MountPointStatement, MountPointEffectiveStatement> {
 
-    private static final class Declared extends AbstractDeclaredStatement<QName> implements MountPointStatement {
-        Declared(final StmtContext<QName, ?, ?> context) {
-            super(context);
-        }
-
-        @Override
-        public QName getArgument() {
-            return argument();
+    private static final class Declared extends WithSubstatements implements MountPointStatement {
+        Declared(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            super(argument, substatements);
         }
     }
 
@@ -45,8 +43,9 @@ public final class MountPointStatementSupport
 
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<QName, MountPointStatement, ?> ctx) {
-            super(ctx);
+        Effective(final StmtContext<QName, MountPointStatement, ?> ctx,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(ctx, substatements);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(argument());
         }
 
@@ -82,17 +81,6 @@ public final class MountPointStatementSupport
     }
 
     @Override
-    public MountPointStatement createDeclared(final StmtContext<QName, MountPointStatement, ?> ctx) {
-        return new Declared(ctx);
-    }
-
-    @Override
-    public MountPointEffectiveStatement createEffective(
-            final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx) {
-        return new Effective(ctx);
-    }
-
-    @Override
     public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return StmtContextUtils.parseIdentifier(ctx, value);
     }
@@ -113,5 +101,30 @@ public final class MountPointStatementSupport
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return validator;
+    }
+
+    @Override
+    protected MountPointStatement createDeclared(@NonNull final StmtContext<QName, MountPointStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new Declared(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected MountPointStatement createEmptyDeclared(final StmtContext<QName, MountPointStatement, ?> ctx) {
+        return createDeclared(ctx, ImmutableList.of());
+    }
+
+    @Override
+    protected MountPointEffectiveStatement createEffective(
+            final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx,
+            final MountPointStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new Effective(ctx, substatements);
+    }
+
+    @Override
+    protected MountPointEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx,
+            final MountPointStatement declared) {
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 }

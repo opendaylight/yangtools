@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
@@ -20,8 +22,9 @@ final class ThirdPartyExtensionEffectiveStatementImpl
     private final @NonNull SchemaPath path;
     private final String valueFromNamespace;
 
-    ThirdPartyExtensionEffectiveStatementImpl(final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx) {
-        super(ctx);
+    ThirdPartyExtensionEffectiveStatementImpl(final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(ctx, substatements);
         path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
         valueFromNamespace = ctx.getFromNamespace(ThirdPartyNamespace.class, ctx);
     }
