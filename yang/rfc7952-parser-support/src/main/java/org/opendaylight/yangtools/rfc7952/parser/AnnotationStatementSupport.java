@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc7952.parser;
 
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
@@ -16,14 +17,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -31,11 +34,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class AnnotationStatementSupport
-        extends AbstractStatementSupport<QName, AnnotationStatement, AnnotationEffectiveStatement> {
+        extends BaseStatementSupport<QName, AnnotationStatement, AnnotationEffectiveStatement> {
 
-    private static final class Declared extends AbstractDeclaredStatement<QName> implements AnnotationStatement {
-        Declared(final StmtContext<QName, ?, ?> context) {
-            super(context);
+    private static final class Declared extends WithSubstatements implements AnnotationStatement {
+        Declared(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            super(argument, substatements);
         }
 
         @Override
@@ -50,8 +53,9 @@ public final class AnnotationStatementSupport
         private final @NonNull TypeDefinition<?> type;
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<QName, AnnotationStatement, ?> ctx) {
-            super(ctx);
+        Effective(final StmtContext<QName, AnnotationStatement, ?> ctx,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(ctx, substatements);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(argument());
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
@@ -112,17 +116,6 @@ public final class AnnotationStatementSupport
     }
 
     @Override
-    public AnnotationStatement createDeclared(final StmtContext<QName, AnnotationStatement, ?> ctx) {
-        return new Declared(ctx);
-    }
-
-    @Override
-    public AnnotationEffectiveStatement createEffective(
-            final StmtContext<QName, AnnotationStatement, AnnotationEffectiveStatement> ctx) {
-        return new Effective(ctx);
-    }
-
-    @Override
     public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return StmtContextUtils.parseIdentifier(ctx, value);
     }
@@ -138,5 +131,31 @@ public final class AnnotationStatementSupport
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return validator;
+    }
+
+    @Override
+    protected AnnotationStatement createDeclared(final StmtContext<QName, AnnotationStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new Declared(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected AnnotationStatement createEmptyDeclared(final StmtContext<QName, AnnotationStatement, ?> ctx) {
+        return createDeclared(ctx, ImmutableList.of());
+    }
+
+    @Override
+    protected AnnotationEffectiveStatement createEffective(
+            final StmtContext<QName, AnnotationStatement, AnnotationEffectiveStatement> ctx,
+            final AnnotationStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new Effective(ctx, substatements);
+    }
+
+    @Override
+    protected AnnotationEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, AnnotationStatement, AnnotationEffectiveStatement> ctx,
+            final AnnotationStatement declared) {
+        return new Effective(ctx, ImmutableList.of());
     }
 }

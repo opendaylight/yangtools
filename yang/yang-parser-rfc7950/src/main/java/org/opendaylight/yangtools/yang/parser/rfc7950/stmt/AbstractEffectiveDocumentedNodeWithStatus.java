@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -40,13 +42,12 @@ public abstract class AbstractEffectiveDocumentedNodeWithStatus<A, D extends Dec
      *
      * @param ctx context of statement.
      */
-    protected AbstractEffectiveDocumentedNodeWithStatus(final StmtContext<A, D, ?> ctx) {
+    protected AbstractEffectiveDocumentedNodeWithStatus(final StmtContext<A, D, ?> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         argument = ctx.getStatementArgument();
         statementSource = ctx.getStatementSource();
         declaredInstance = ctx.buildDeclared();
-        substatements = ImmutableList.copyOf(
-            Collections2.transform(Collections2.filter(BaseStatementSupport.declaredSubstatements(ctx),
-                StmtContext::isSupportedToBuildEffective), StmtContext::buildEffective));
+        this.substatements = requireNonNull(substatements);
     }
 
     @Override
