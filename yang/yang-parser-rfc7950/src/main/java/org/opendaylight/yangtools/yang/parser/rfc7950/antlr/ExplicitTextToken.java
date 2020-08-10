@@ -9,10 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
 import static java.util.Objects.requireNonNull;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.TokenSource;
-
-final class ExplicitTextToken extends AbstractToken {
+final class ExplicitTextToken extends AbstractTextToken {
     private final int type;
     private final String text;
 
@@ -52,15 +49,5 @@ final class ExplicitTextToken extends AbstractToken {
     public int getStopIndex() {
         // TODO: this mimics CommonToken, but is probably not right
         return 0;
-    }
-
-    @Override
-    public TokenSource getTokenSource() {
-        return null;
-    }
-
-    @Override
-    public CharStream getInputStream() {
-        return null;
     }
 }
