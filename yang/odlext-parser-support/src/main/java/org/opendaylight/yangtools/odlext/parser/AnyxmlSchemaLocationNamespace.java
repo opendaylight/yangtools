@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.odlext.parser;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -20,10 +20,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * Source-specific mapping of prefixes to namespaces.
  */
 public interface AnyxmlSchemaLocationNamespace extends IdentifierNamespace<StatementDefinition,
-    Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-        EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>>> {
+        Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, AnyxmlSchemaLocationEffectiveStatement>> {
     NamespaceBehaviour<StatementDefinition, Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-        EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>>,
+        AnyxmlSchemaLocationEffectiveStatement>,
         @NonNull AnyxmlSchemaLocationNamespace> BEHAVIOUR =
             NamespaceBehaviour.treeScoped(AnyxmlSchemaLocationNamespace.class);
 }
