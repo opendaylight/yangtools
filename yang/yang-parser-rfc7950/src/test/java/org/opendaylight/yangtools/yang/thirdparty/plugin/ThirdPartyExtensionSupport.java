@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class ThirdPartyExtensionSupport extends AbstractStatementSupport<String, ThirdPartyExtensionStatement,
-        EffectiveStatement<String, ThirdPartyExtensionStatement>> {
+public final class ThirdPartyExtensionSupport
+        extends AbstractStatementSupport<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> {
 
     private static final ThirdPartyExtensionSupport INSTANCE = new ThirdPartyExtensionSupport();
 
@@ -32,8 +31,8 @@ public final class ThirdPartyExtensionSupport extends AbstractStatementSupport<S
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<String, ThirdPartyExtensionStatement,
-            EffectiveStatement<String, ThirdPartyExtensionStatement>> stmt) {
+    public void onFullDefinitionDeclared(
+            final Mutable<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
         stmt.addToNs(ThirdPartyNamespace.class, stmt, "Third-party namespace test.");
     }
@@ -44,8 +43,8 @@ public final class ThirdPartyExtensionSupport extends AbstractStatementSupport<S
     }
 
     @Override
-    public EffectiveStatement<String, ThirdPartyExtensionStatement> createEffective(final StmtContext<String,
-            ThirdPartyExtensionStatement, EffectiveStatement<String, ThirdPartyExtensionStatement>> ctx) {
+    public ThirdPartyExtensionEffectiveStatement createEffective(
+            final StmtContext<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> ctx) {
         return new ThirdPartyExtensionEffectiveStatementImpl(ctx);
     }
 
