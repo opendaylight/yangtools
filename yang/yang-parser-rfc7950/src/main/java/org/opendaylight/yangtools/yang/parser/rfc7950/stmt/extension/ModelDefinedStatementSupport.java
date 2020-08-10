@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
  *
  * @author Robert Varga
  */
-final class ModelDefinedStatementSupport extends AbstractStatementSupport<String,
-        UnrecognizedStatement, EffectiveStatement<String, UnrecognizedStatement>> {
+final class ModelDefinedStatementSupport
+        extends AbstractStatementSupport<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
     private final UnrecognizedStatementSupport definition;
 
     ModelDefinedStatementSupport(final ModelDefinedStatementDefinition publicDefinition) {
@@ -37,8 +37,8 @@ final class ModelDefinedStatementSupport extends AbstractStatementSupport<String
     }
 
     @Override
-    public EffectiveStatement<String, UnrecognizedStatement> createEffective(
-            final StmtContext<String, UnrecognizedStatement, EffectiveStatement<String, UnrecognizedStatement>> ctx) {
+    public UnrecognizedEffectiveStatement createEffective(
+            final StmtContext<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> ctx) {
         return definition.createEffective(ctx);
     }
 
