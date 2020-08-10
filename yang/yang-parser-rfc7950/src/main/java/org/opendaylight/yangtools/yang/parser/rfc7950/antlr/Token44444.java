@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.misc.Pair;
 
-final class Token44444 extends AbstractLazyToken {
+final class Token44444 extends AbstractSourceToken {
     private final int type;
     private final int line;
     private final int charPositionInLine;
