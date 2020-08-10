@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import static org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements.ANYXML_SCHEMA_LOCATION;
 
+import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class AnyxmlSchemaLocationStatementSupport
         extends AbstractStatementSupport<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-            EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>> {
+            AnyxmlSchemaLocationEffectiveStatement> {
     private static final AnyxmlSchemaLocationStatementSupport INSTANCE =
             new AnyxmlSchemaLocationStatementSupport(ANYXML_SCHEMA_LOCATION);
 
@@ -43,7 +43,7 @@ public final class AnyxmlSchemaLocationStatementSupport
 
     @Override
     public void onFullDefinitionDeclared(final Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-            EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>> stmt) {
+            AnyxmlSchemaLocationEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
         stmt.coerceParentContext().addToNs(AnyxmlSchemaLocationNamespace.class, ANYXML_SCHEMA_LOCATION, stmt);
     }
@@ -55,9 +55,8 @@ public final class AnyxmlSchemaLocationStatementSupport
     }
 
     @Override
-    public EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement> createEffective(
-            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-            EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>> ctx) {
+    public AnyxmlSchemaLocationEffectiveStatement createEffective(final StmtContext<SchemaNodeIdentifier,
+            AnyxmlSchemaLocationStatement, AnyxmlSchemaLocationEffectiveStatement> ctx) {
         return new AnyxmlSchemaLocationEffectiveStatementImpl(ctx);
     }
 
