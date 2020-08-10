@@ -9,24 +9,20 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.TokenSource;
-import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.misc.Pair;
 
-abstract class AbstractLazyToken extends AbstractSourceToken {
-    AbstractLazyToken(final Pair<TokenSource, CharStream> source) {
+abstract class AbstractCharToken extends AbstractSourceToken {
+    AbstractCharToken(final Pair<TokenSource, CharStream> source) {
         super(source);
     }
 
     @Override
-    public final String getText() {
-        final CharStream input = getInputStream();
-        if (input == null) {
-            return null;
-        }
+    public final int getStartIndex() {
+        return -1;
+    }
 
-        final int n = input.size();
-        final int start = getStartIndex();
-        final int stop = getStopIndex();
-        return start < n && stop < n ? input.getText(Interval.of(start, stop)) : "<EOF>";
+    @Override
+    public final int getStopIndex() {
+        return -1;
     }
 }
