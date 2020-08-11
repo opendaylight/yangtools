@@ -7,16 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.TokenSource;
-import org.antlr.v4.runtime.misc.Pair;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 
 abstract class AbstractColonToken extends AbstractCharToken {
-    AbstractColonToken(final Pair<TokenSource, CharStream> source) {
-        super(source);
-    }
-
     @Override
     public final int getType() {
         return YangStatementLexer.COLON;

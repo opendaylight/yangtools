@@ -7,15 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.TokenSource;
-import org.antlr.v4.runtime.misc.Pair;
-
 final class LeftBraceToken31 extends AbstractLeftBraceToken {
     private final int value;
 
-    LeftBraceToken31(final Pair<TokenSource, CharStream> source, final int line, final int charPositionInLine) {
-        super(source);
+    LeftBraceToken31(final int line, final int charPositionInLine) {
         value = value31(line, charPositionInLine);
     }
 

@@ -7,17 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.TokenSource;
-import org.antlr.v4.runtime.misc.Pair;
-
 final class SPSepToken31 extends AbstractSPSepToken {
     private final int value;
 
-    SPSepToken31(final Pair<TokenSource, CharStream> source, final int line, final int charPositionInLine) {
-        super(source);
+    SPSepToken31(final int line, final int charPositionInLine) {
         value = value31(line, charPositionInLine);
-
     }
 
     @Override
