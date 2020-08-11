@@ -25,6 +25,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.FileContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.KeywordContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -145,9 +146,13 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
             final PrefixToModule prefixes, final YangVersion yangVersion) {
         new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion) {
             @Override
-            QName getValidStatementDefinition(final String keywordText, final StatementSourceReference ref) {
-                return SourceException.throwIfNull(super.getValidStatementDefinition(keywordText, ref), ref,
-                    "%s is not a YANG statement or use of extension.", keywordText);
+            QName getValidStatementDefinition(final KeywordContext keyword, final StatementSourceReference ref) {
+                final QName ret = super.getValidStatementDefinition(keyword, ref);
+                if (ret == null) {
+                    throw new SourceException(ref, "%s is not a YANG statement or use of extension.",
+                        keyword.getText());
+                }
+                return ret;
             }
         }.visit(context);
     }

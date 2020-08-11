@@ -56,11 +56,12 @@ class StatementContextVisitor {
      *
      * @param prefixes collection of all relevant prefix mappings supplied for actual parsing phase
      * @param stmtDef collection of all relevant statement definition mappings provided for actual parsing phase
-     * @param keywordText statement keyword text to parse from source
+     * @param keyword statement keyword text to parse from source
      * @param ref Source reference
      * @return valid QName for declared statement to be written, or null
      */
-    QName getValidStatementDefinition(final String keywordText, final StatementSourceReference ref) {
+    QName getValidStatementDefinition(final KeywordContext keyword, final StatementSourceReference ref) {
+        final String keywordText = keyword.getText();
         final int firstColon = keywordText.indexOf(':');
         if (firstColon == -1) {
             final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, keywordText));
@@ -103,11 +104,10 @@ class StatementContextVisitor {
 
     // Slow-path allocation of a new statement
     private boolean processNewStatement(final int myOffset, final StatementContext ctx) {
-        final String keywordTxt = verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
         final Token start = ctx.getStart();
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, start.getLine(),
             start.getCharPositionInLine());
-        final QName def = getValidStatementDefinition(keywordTxt, ref);
+        final QName def = getValidStatementDefinition(verifyNotNull(ctx.getChild(KeywordContext.class, 0)), ref);
         if (def == null) {
             return false;
         }
