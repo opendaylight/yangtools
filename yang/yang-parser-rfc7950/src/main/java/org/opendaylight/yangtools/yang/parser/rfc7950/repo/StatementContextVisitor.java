@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
-import static com.google.common.base.Verify.verifyNotNull;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
@@ -103,11 +103,14 @@ class StatementContextVisitor {
 
     // Slow-path allocation of a new statement
     private boolean processNewStatement(final int myOffset, final StatementContext ctx) {
-        final String keywordTxt = verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
         final Token start = ctx.getStart();
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, start.getLine(),
             start.getCharPositionInLine());
-        final QName def = getValidStatementDefinition(keywordTxt, ref);
+
+        final ParseTree first = ctx.getChild(0);
+        verify(first instanceof KeywordContext, "Unexpected shape of %s at %s", ctx, ref);
+        final KeywordContext keyword = (KeywordContext) first;
+        final QName def = getValidStatementDefinition(keyword.getText(), ref);
         if (def == null) {
             return false;
         }
