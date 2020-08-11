@@ -7,16 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.TokenSource;
-import org.antlr.v4.runtime.misc.Pair;
-
 final class PlusToken22 extends AbstractPlusToken {
     private final short line;
     private final short charPositionInLine;
 
-    PlusToken22(final Pair<TokenSource, CharStream> source, final int line, final int charPositionInLine) {
-        super(source);
+    PlusToken22(final int line, final int charPositionInLine) {
         this.line = (short) line;
         this.charPositionInLine = (short) charPositionInLine;
     }

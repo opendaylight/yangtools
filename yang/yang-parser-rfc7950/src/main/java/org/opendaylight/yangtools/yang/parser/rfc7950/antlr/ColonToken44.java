@@ -7,16 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.TokenSource;
-import org.antlr.v4.runtime.misc.Pair;
-
 final class ColonToken44 extends AbstractColonToken {
     private final int line;
     private final int charPositionInLine;
 
-    ColonToken44(final Pair<TokenSource, CharStream> source, final int line, final int charPositionInLine) {
-        super(source);
+    ColonToken44(final int line, final int charPositionInLine) {
         this.line = line;
         this.charPositionInLine = charPositionInLine;
     }
