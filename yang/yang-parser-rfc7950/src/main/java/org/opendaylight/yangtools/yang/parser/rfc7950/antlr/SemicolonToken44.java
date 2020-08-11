@@ -7,16 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.TokenSource;
-import org.antlr.v4.runtime.misc.Pair;
-
 final class SemicolonToken44 extends AbstractSemicolonToken {
     private final int line;
     private final int charPositionInLine;
 
-    SemicolonToken44(final Pair<TokenSource, CharStream> source, final int line, final int charPositionInLine) {
-        super(source);
+    SemicolonToken44(final int line, final int charPositionInLine) {
         this.line = line;
         this.charPositionInLine = charPositionInLine;
     }
