@@ -11,7 +11,8 @@ options {
     tokenVocab = YangStatementLexer;
 }
 
-statement : SEP? keyword (SEP argument)? SEP? (SEMICOLON | LEFT_BRACE SEP? (statement)* SEP? RIGHT_BRACE SEP?) SEP?;
+document : SEP? statement SEP? EOF
+statement : keyword (SEP argument)? SEP? (SEMICOLON | LEFT_BRACE SEP? (statement)* SEP? RIGHT_BRACE);
 keyword : (IDENTIFIER COLON)? IDENTIFIER;
 
 argument : STRING (SEP? PLUS SEP? STRING)* | IDENTIFIER;
