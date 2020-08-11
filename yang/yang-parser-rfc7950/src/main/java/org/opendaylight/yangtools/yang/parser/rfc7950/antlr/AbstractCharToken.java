@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-abstract class AbstractCharToken extends AbstractTextToken {
+abstract class AbstractCharToken extends AbstractTextToken implements SingletonTokenAware {
     @Override
     public final int getStartIndex() {
         return -1;
