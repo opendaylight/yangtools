@@ -17,7 +17,7 @@ import org.antlr.v4.runtime.misc.Pair;
  * down to unsigned shorts.
  *
  * <p>
- * This class ends up costing 24/40/32/32 bytes instead of 48/64/48/48 bytes, a saving of 33-50%, while being sufficient
+ * This class ends up costing 24/32/24/32 bytes instead of 48/64/48/48 bytes, a saving of 33-50%, while being sufficient
  * in most scenarios.
  */
 final class Token12122 extends AbstractSourceToken {

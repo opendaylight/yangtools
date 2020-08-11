@@ -7,13 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-import static com.google.common.base.Preconditions.checkState;
+import org.antlr.v4.runtime.Token;
 
-import org.antlr.v4.runtime.WritableToken;
-
-abstract class AbstractToken implements WritableToken {
-    private int tokenIndex = -1;
-
+abstract class AbstractToken implements Token {
     @Override
     public final int getChannel() {
         return DEFAULT_CHANNEL;
@@ -21,37 +17,8 @@ abstract class AbstractToken implements WritableToken {
 
     @Override
     public final int getTokenIndex() {
-        return tokenIndex;
-    }
-
-    @Override
-    public final void setTokenIndex(final int index) {
-        checkState(tokenIndex == -1);
-        tokenIndex = index;
-    }
-
-    @Override
-    public final void setText(final String text) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void setType(final int ttype) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void setLine(final int line) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void setCharPositionInLine(final int pos) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void setChannel(final int channel) {
+        // This is a loss of functionality when compared to CommonToken, but we do not seem to be using this facility
+        // anyway and it does make things quite a bit more efficient.
         throw new UnsupportedOperationException();
     }
 }

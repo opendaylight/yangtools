@@ -16,7 +16,7 @@ import org.antlr.v4.runtime.misc.Pair;
  * we do not use them. All other fields are retained..
  *
  * <p>
- * This class ends up costing 40/56/40/48 bytes instead of 48/64/48/48 bytes, a saving of 12-33%, while still being
+ * This class ends up costing 32/48/40/48 bytes instead of 48/64/48/48 bytes, a saving of 0-33%, while still being
  * applicable in all situations.
  */
 final class Token44444 extends AbstractSourceToken {

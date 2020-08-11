@@ -18,8 +18,8 @@ import org.antlr.v4.runtime.misc.Pair;
  * this implementation useful beyond 64K-char file mark.
  *
  * <p>
- * This class ends up costing 32/48/32/32 bytes instead of 48/64/48/48 bytes, a saving of 33% in the same scenarios as
- * {@link Token12122} across all possible file sizes.
+ * This class ends up costing 24/40/32/32 bytes instead of 48/64/48/48 bytes, a saving of 33-50% in the same scenarios
+ * as {@link Token12122} across all possible file sizes.
  */
 final class Token12144 extends AbstractSourceToken {
     private final byte type;
