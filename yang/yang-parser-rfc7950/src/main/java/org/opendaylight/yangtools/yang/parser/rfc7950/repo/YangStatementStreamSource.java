@@ -157,11 +157,6 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
         }.visit(context);
     }
 
-    @Deprecated(forRemoval = true)
-    public ParserRuleContext getYangAST() {
-        return statementContext();
-    }
-
     StatementContext statementContext() {
         return context;
     }
