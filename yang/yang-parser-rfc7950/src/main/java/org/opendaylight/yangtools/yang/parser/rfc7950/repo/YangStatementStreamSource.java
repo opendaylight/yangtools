@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -31,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -171,7 +173,7 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
         lexer.addErrorListener(errorListener);
         parser.addErrorListener(errorListener);
 
-        final StatementContext result = parser.statement();
+        final FileContext result = parser.file();
         errorListener.validate();
 
         // Walk the resulting tree and replace each children with an immutable list, lowering memory requirements
@@ -179,6 +181,6 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
         // org.antlr.v4.runtime.Parser.TrimToSizeListener, but that does not make the tree immutable.
         ParseTreeWalker.DEFAULT.walk(MAKE_IMMUTABLE_LISTENER, result);
 
-        return result;
+        return verifyNotNull(result.statement());
     }
 }
