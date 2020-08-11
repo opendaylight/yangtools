@@ -29,25 +29,25 @@ public final class YangStatementLexerTokenFactory extends CompactTokenFactory {
             final int stop, final int line, final int charPositionInLine) {
         switch (type) {
             case YangStatementLexer.LEFT_BRACE:
-                return createLeftBrace(source, line, charPositionInLine);
+                return createLeftBrace(line, charPositionInLine);
             case YangStatementLexer.RIGHT_BRACE:
-                return createRightBrace(source, line, charPositionInLine);
+                return createRightBrace(line, charPositionInLine);
             case YangStatementLexer.COLON:
-                return createColon(source, line, charPositionInLine);
+                return createColon(line, charPositionInLine);
             case YangStatementLexer.PLUS:
-                return createPlus(source, line, charPositionInLine);
+                return createPlus(line, charPositionInLine);
             case YangStatementLexer.SEMICOLON:
-                return createSemicolon(source, line, charPositionInLine);
+                return createSemicolon(line, charPositionInLine);
             case YangStatementLexer.SEP:
                 // Single-space separator tokens are very common
                 final CharStream input = source.b;
                 if (input != null && start == stop && start < input.size()
                         && " ".equals(input.getText(Interval.of(start, start)))) {
                     if (fitsChar22(line, charPositionInLine)) {
-                        return new SPSepToken22(source, line, charPositionInLine);
+                        return new SPSepToken22(line, charPositionInLine);
                     }
                     if (fitsChar31(line, charPositionInLine)) {
-                        return new SPSepToken31(source, line, charPositionInLine);
+                        return new SPSepToken31(line, charPositionInLine);
                     }
                 }
                 break;
@@ -57,49 +57,44 @@ public final class YangStatementLexerTokenFactory extends CompactTokenFactory {
         return super.create(source, type, start, stop, line, charPositionInLine);
     }
 
-    private static Token createLeftBrace(final Pair<TokenSource, CharStream> source, final int line,
-            final int charPositionInLine) {
+    private static Token createLeftBrace(final int line, final int charPositionInLine) {
         if (fitsChar22(line, charPositionInLine)) {
-            return new LeftBraceToken22(source, line, charPositionInLine);
+            return new LeftBraceToken22(line, charPositionInLine);
         }
-        return fitsChar31(line, charPositionInLine) ? new LeftBraceToken31(source, line, charPositionInLine)
-                : new LeftBraceToken44(source, line, charPositionInLine);
+        return fitsChar31(line, charPositionInLine) ? new LeftBraceToken31(line, charPositionInLine)
+                : new LeftBraceToken44(line, charPositionInLine);
     }
 
-    private static Token createRightBrace(final Pair<TokenSource, CharStream> source, final int line,
-            final int charPositionInLine) {
+    private static Token createRightBrace(final int line, final int charPositionInLine) {
         if (fitsChar22(line, charPositionInLine)) {
-            return new RightBraceToken22(source, line, charPositionInLine);
+            return new RightBraceToken22(line, charPositionInLine);
         }
-        return fitsChar31(line, charPositionInLine) ? new RightBraceToken31(source, line, charPositionInLine)
-                : new RightBraceToken44(source, line, charPositionInLine);
+        return fitsChar31(line, charPositionInLine) ? new RightBraceToken31(line, charPositionInLine)
+                : new RightBraceToken44(line, charPositionInLine);
     }
 
-    private static Token createColon(final Pair<TokenSource, CharStream> source, final int line,
-            final int charPositionInLine) {
+    private static Token createColon(final int line, final int charPositionInLine) {
         if (fitsChar22(line, charPositionInLine)) {
-            return new ColonToken22(source, line, charPositionInLine);
+            return new ColonToken22(line, charPositionInLine);
         }
-        return fitsChar31(line, charPositionInLine) ? new ColonToken31(source, line, charPositionInLine)
-                : new ColonToken44(source, line, charPositionInLine);
+        return fitsChar31(line, charPositionInLine) ? new ColonToken31(line, charPositionInLine)
+                : new ColonToken44(line, charPositionInLine);
     }
 
-    private static Token createPlus(final Pair<TokenSource, CharStream> source, final int line,
-            final int charPositionInLine) {
+    private static Token createPlus(final int line, final int charPositionInLine) {
         if (fitsChar22(line, charPositionInLine)) {
-            return new PlusToken22(source, line, charPositionInLine);
+            return new PlusToken22(line, charPositionInLine);
         }
-        return fitsChar31(line, charPositionInLine) ? new PlusToken31(source, line, charPositionInLine)
-                : new PlusToken44(source, line, charPositionInLine);
+        return fitsChar31(line, charPositionInLine) ? new PlusToken31(line, charPositionInLine)
+                : new PlusToken44(line, charPositionInLine);
     }
 
-    private static Token createSemicolon(final Pair<TokenSource, CharStream> source, final int line,
-            final int charPositionInLine) {
+    private static Token createSemicolon(final int line, final int charPositionInLine) {
         if (fitsChar22(line, charPositionInLine)) {
-            return new SemicolonToken22(source, line, charPositionInLine);
+            return new SemicolonToken22(line, charPositionInLine);
         }
-        return fitsChar31(line, charPositionInLine) ? new SemicolonToken31(source, line, charPositionInLine)
-                : new SemicolonToken44(source, line, charPositionInLine);
+        return fitsChar31(line, charPositionInLine) ? new SemicolonToken31(line, charPositionInLine)
+                : new SemicolonToken44(line, charPositionInLine);
     }
 
     private static boolean fitsChar22(final int line, final int charPositionInLine) {

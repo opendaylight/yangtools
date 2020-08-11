@@ -7,15 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.TokenSource;
-import org.antlr.v4.runtime.misc.Pair;
-
-abstract class AbstractCharToken extends AbstractSourceToken {
-    AbstractCharToken(final Pair<TokenSource, CharStream> source) {
-        super(source);
-    }
-
+abstract class AbstractCharToken extends AbstractTextToken {
     @Override
     public final int getStartIndex() {
         return -1;

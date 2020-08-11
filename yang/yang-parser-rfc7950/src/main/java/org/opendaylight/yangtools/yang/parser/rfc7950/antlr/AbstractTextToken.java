@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.TokenSource;
 
-abstract class AbstractLeftBraceToken extends AbstractCharToken {
+abstract class AbstractTextToken extends AbstractToken {
     @Override
-    public final int getType() {
-        return YangStatementLexer.LEFT_BRACE;
+    public final TokenSource getTokenSource() {
+        return null;
     }
 
     @Override
-    public final String getText() {
-        return "{";
+    public final CharStream getInputStream() {
+        return null;
     }
 }
