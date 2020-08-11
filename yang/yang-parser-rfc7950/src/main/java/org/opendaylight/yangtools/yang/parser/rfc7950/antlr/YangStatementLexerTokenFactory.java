@@ -28,75 +28,21 @@ public final class YangStatementLexerTokenFactory extends CompactTokenFactory {
             final int stop, final int line, final int charPositionInLine) {
         switch (type) {
             case YangStatementLexer.LEFT_BRACE:
-                return createLeftBrace(line, charPositionInLine);
+                return CharToken.LEFT_BRACE;
             case YangStatementLexer.RIGHT_BRACE:
-                return createRightBrace(line, charPositionInLine);
+                return CharToken.RIGHT_BRACE;
             case YangStatementLexer.COLON:
-                return createColon(line, charPositionInLine);
+                return CharToken.COLON;
             case YangStatementLexer.PLUS:
-                return createPlus(line, charPositionInLine);
+                return CharToken.PLUS;
             case YangStatementLexer.SEMICOLON:
-                return createSemicolon(line, charPositionInLine);
+                return CharToken.SEMICOLON;
             case YangStatementLexer.SEP:
-                return createSep(line, charPositionInLine);
+                // Yes, this squashes all whitespace to a single space, and that is just fine as we are not interested
+                // in the exact YANG text.
+                return CharToken.SEP;
             default:
                 return super.create(source, type, start, stop, line, charPositionInLine);
         }
-    }
-
-    private static Token createLeftBrace(final int line, final int charPositionInLine) {
-        if (fitsChar22(line, charPositionInLine)) {
-            return new LeftBraceToken22(line, charPositionInLine);
-        }
-        return fitsChar31(line, charPositionInLine) ? new LeftBraceToken31(line, charPositionInLine)
-                : new LeftBraceToken44(line, charPositionInLine);
-    }
-
-    private static Token createRightBrace(final int line, final int charPositionInLine) {
-        if (fitsChar22(line, charPositionInLine)) {
-            return new RightBraceToken22(line, charPositionInLine);
-        }
-        return fitsChar31(line, charPositionInLine) ? new RightBraceToken31(line, charPositionInLine)
-                : new RightBraceToken44(line, charPositionInLine);
-    }
-
-    private static Token createColon(final int line, final int charPositionInLine) {
-        if (fitsChar22(line, charPositionInLine)) {
-            return new ColonToken22(line, charPositionInLine);
-        }
-        return fitsChar31(line, charPositionInLine) ? new ColonToken31(line, charPositionInLine)
-                : new ColonToken44(line, charPositionInLine);
-    }
-
-    private static Token createPlus(final int line, final int charPositionInLine) {
-        if (fitsChar22(line, charPositionInLine)) {
-            return new PlusToken22(line, charPositionInLine);
-        }
-        return fitsChar31(line, charPositionInLine) ? new PlusToken31(line, charPositionInLine)
-                : new PlusToken44(line, charPositionInLine);
-    }
-
-    private static Token createSemicolon(final int line, final int charPositionInLine) {
-        if (fitsChar22(line, charPositionInLine)) {
-            return new SemicolonToken22(line, charPositionInLine);
-        }
-        return fitsChar31(line, charPositionInLine) ? new SemicolonToken31(line, charPositionInLine)
-                : new SemicolonToken44(line, charPositionInLine);
-    }
-
-    private static Token createSep(final int line, final int charPositionInLine) {
-        if (fitsChar22(line, charPositionInLine)) {
-            return new SepToken22(line, charPositionInLine);
-        }
-        return fitsChar31(line, charPositionInLine) ? new SepToken31(line, charPositionInLine)
-                : new SepToken44(line, charPositionInLine);
-    }
-
-    private static boolean fitsChar22(final int line, final int charPositionInLine) {
-        return line >= 0 && line <= 65535 && charPositionInLine >= 0 && charPositionInLine <= 65535;
-    }
-
-    private static boolean fitsChar31(final int line, final int charPositionInLine) {
-        return line >= 0 && line <= 16777215 && charPositionInLine >= 0 && charPositionInLine <= 255;
     }
 }
