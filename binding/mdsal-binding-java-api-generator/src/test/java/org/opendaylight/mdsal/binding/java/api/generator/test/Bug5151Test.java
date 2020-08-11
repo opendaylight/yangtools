@@ -12,10 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import org.junit.Test;
 
 /**
@@ -35,48 +32,20 @@ public class Bug5151Test extends BaseCompilationTest {
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        final Map<String, File> generatedFiles = getFiles(sourcesOutputDir);
+        final Map<String, File> generatedFiles = FileSearchUtil.getFiles(sourcesOutputDir);
         assertEquals(4, generatedFiles.size());
 
         final File fooContainerFile = generatedFiles.get("FooContainer.java");
         assertNotNull(fooContainerFile);
-        assertTrue(findInFile(fooContainerFile,
+        assertTrue(FileSearchUtil.findInFile(fooContainerFile,
                 "@return <code>java.lang.String</code> <code>fooInContainer</code>, "
                         + "or <code>null</code> if not present"));
 
         final File fooDataFile = generatedFiles.get("FooData.java");
         assertNotNull(fooDataFile);
-        assertTrue(findInFile(fooDataFile,
+        assertTrue(FileSearchUtil.findInFile(fooDataFile,
             "FooContainer</code> <code>fooContainer</code>, or <code>null</code> if not present"));
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
-    }
-
-    private static boolean findInFile(final File file, final String searchText) throws FileNotFoundException {
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNextLine()) {
-                final String nextLine = scanner.nextLine();
-                if (nextLine.contains(searchText)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private static Map<String, File> getFiles(final File path) {
-        return getFiles(path, new HashMap<>());
-    }
-
-    private static Map<String, File> getFiles(final File path, final Map<String, File> files) {
-        final File [] dirFiles = path.listFiles();
-        for (File file : dirFiles) {
-            if (file.isDirectory()) {
-                return getFiles(file, files);
-            }
-
-            files.put(file.getName(), file);
-        }
-        return files;
     }
 }
