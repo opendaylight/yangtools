@@ -7,22 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
+import com.google.common.annotations.Beta;
 import org.antlr.v4.runtime.Token;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
+import org.eclipse.jdt.annotation.NonNull;
 
-abstract class AbstractSepToken extends AbstractCharToken {
-    @Override
-    public final int getType() {
-        return YangStatementLexer.SEP;
-    }
+@Beta
+public interface SingletonTokenAware {
 
-    @Override
-    public final String getText() {
-        return " ";
-    }
-
-    @Override
-    public final Token asSingleton() {
-        return SingletonCharToken.PLUS;
-    }
+    @NonNull Token asSingleton();
 }

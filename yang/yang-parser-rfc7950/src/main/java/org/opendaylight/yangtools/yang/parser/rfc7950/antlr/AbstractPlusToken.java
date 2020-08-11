@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
+import org.antlr.v4.runtime.Token;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 
 abstract class AbstractPlusToken extends AbstractCharToken {
@@ -18,5 +19,10 @@ abstract class AbstractPlusToken extends AbstractCharToken {
     @Override
     public final String getText() {
         return "+";
+    }
+
+    @Override
+    public final Token asSingleton() {
+        return SingletonCharToken.PLUS;
     }
 }

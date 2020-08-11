@@ -60,6 +60,7 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
 
         @Override
         public void exitEveryRule(final ParserRuleContext ctx) {
+            // FIXME: integrate with SingletonTokenAware
             ctx.children = ctx.children == null ? ImmutableList.of() : ImmutableList.copyOf(ctx.children);
         }
 
