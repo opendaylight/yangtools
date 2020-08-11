@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
-import static com.google.common.base.Verify.verifyNotNull;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.Statemen
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
@@ -56,34 +55,32 @@ class StatementContextVisitor {
      *
      * @param prefixes collection of all relevant prefix mappings supplied for actual parsing phase
      * @param stmtDef collection of all relevant statement definition mappings provided for actual parsing phase
-     * @param keywordText statement keyword text to parse from source
+     * @param keyword statement keyword text to parse from source
      * @param ref Source reference
      * @return valid QName for declared statement to be written, or null
      */
-    QName getValidStatementDefinition(final String keywordText, final StatementSourceReference ref) {
-        final int firstColon = keywordText.indexOf(':');
-        if (firstColon == -1) {
-            final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, keywordText));
+    QName getValidStatementDefinition(final KeywordContext keyword, final StatementSourceReference ref) {
+        final int count = keyword.getChildCount();
+        verify(count > 0, "Unexpected shape of %s at %s", keyword, ref);
+
+        final String first = keyword.getChild(0).getText();
+        if (count == 1) {
+            final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, first));
             return def != null ? def.getStatementName() : null;
         }
 
-        SourceException.throwIf(firstColon == keywordText.length() - 1
-                || keywordText.indexOf(':', firstColon + 1) != -1, ref, "Malformed statement '%s'", keywordText);
-
+        verify(count == 3, "Unexpected shape of %s at %s", keyword, ref);
         if (prefixes == null) {
             // No prefixes to look up from
             return null;
         }
-
-        final String prefix = keywordText.substring(0, firstColon);
-        final QNameModule qNameModule = prefixes.get(prefix);
+        final QNameModule qNameModule = prefixes.get(first);
         if (qNameModule == null) {
             // Failed to look the namespace
             return null;
         }
 
-        final String localName = keywordText.substring(firstColon + 1);
-        final StatementDefinition foundStmtDef = resolveStatement(qNameModule, localName);
+        final StatementDefinition foundStmtDef = resolveStatement(qNameModule, keyword.getChild(2).getText());
         return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
     }
 
@@ -103,11 +100,14 @@ class StatementContextVisitor {
 
     // Slow-path allocation of a new statement
     private boolean processNewStatement(final int myOffset, final StatementContext ctx) {
-        final String keywordTxt = verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
         final Token start = ctx.getStart();
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, start.getLine(),
             start.getCharPositionInLine());
-        final QName def = getValidStatementDefinition(keywordTxt, ref);
+
+        final ParseTree first = ctx.getChild(0);
+        verify(first instanceof KeywordContext, "Unexpected shape of %s at %s", ctx, ref);
+        final KeywordContext keyword = (KeywordContext) first;
+        final QName def = getValidStatementDefinition(keyword.getText(), ref);
         if (def == null) {
             return false;
         }

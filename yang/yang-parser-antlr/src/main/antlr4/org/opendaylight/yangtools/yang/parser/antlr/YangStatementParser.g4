@@ -15,6 +15,6 @@ options {
 //       sequences into two.
 file : SEP* statement SEP* EOF;
 statement : keyword (SEP+ argument)? SEP* (SEMICOLON | LEFT_BRACE SEP* (statement SEP*)* RIGHT_BRACE);
-keyword : (IDENTIFIER COLON)? IDENTIFIER;
+keyword : IDENTIFIER (COLON IDENTIFIER)?;
 
 argument : STRING (SEP* PLUS SEP* STRING)* | IDENTIFIER;
