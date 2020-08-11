@@ -103,11 +103,11 @@ class StatementContextVisitor {
 
     // Slow-path allocation of a new statement
     private boolean processNewStatement(final int myOffset, final StatementContext ctx) {
-        final String keywordTxt = verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
-        final Token start = ctx.getStart();
+        final KeywordContext keyword = verifyNotNull(ctx.getChild(KeywordContext.class, 0));
+        final Token start = keyword.getStart();
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, start.getLine(),
             start.getCharPositionInLine());
-        final QName def = getValidStatementDefinition(keywordTxt, ref);
+        final QName def = getValidStatementDefinition(keyword.getText(), ref);
         if (def == null) {
             return false;
         }
