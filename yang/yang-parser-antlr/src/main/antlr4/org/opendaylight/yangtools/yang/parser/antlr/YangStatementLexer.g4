@@ -27,7 +27,7 @@ LINE_COMMENT : [ \n\r\t]* ('//' (~[\r\n]*)) [ \n\r\t]* -> skip;
 BLOCK_COMMENT : '/*' .*? '*/' -> skip;
 
 SEP: [ \n\r\t]+ -> type(SEP);
-IDENTIFIER : [a-zA-Z_/][a-zA-Z0-9_\-.:/]* -> type(IDENTIFIER);
+IDENTIFIER : [a-zA-Z_][a-zA-Z0-9_\-.]* -> type(IDENTIFIER);
 
 fragment SUB_STRING : ('"' (ESC | ~["])*? '"') | ('\'' (ESC | ~['])* '\'');
 fragment ESC : '\\' (["\\/bfnrt] | UNICODE);
