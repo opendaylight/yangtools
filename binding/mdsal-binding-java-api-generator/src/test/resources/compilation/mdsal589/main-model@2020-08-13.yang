@@ -1,0 +1,17 @@
+module main-model {
+    yang-version 1;
+    namespace "main-model";
+    prefix "main";
+
+    import extension-model { prefix "ex"; }
+
+    revision "2020-08-13" { }
+
+    container root-contaner {
+        leaf leaf1 {
+            type string;
+            ex:custom-ex;
+        }
+    }
+}
+

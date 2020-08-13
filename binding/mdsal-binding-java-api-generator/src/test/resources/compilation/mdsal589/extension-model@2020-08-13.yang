@@ -1,0 +1,15 @@
+module extension-model {
+    yang-version 1;
+    namespace "extension-model";
+    prefix "ex";
+
+    revision "2020-08-13" { }
+
+    extension custom-ex {
+        description ".....";
+    }
+
+    //container dummy {
+    //    // bug - necessary element in only exntensions model
+    //}
+}
