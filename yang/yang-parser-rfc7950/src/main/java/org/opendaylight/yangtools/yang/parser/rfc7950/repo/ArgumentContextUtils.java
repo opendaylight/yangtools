@@ -12,12 +12,15 @@ import static com.google.common.base.Verify.verify;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.QuotedStringContext;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedStringContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -111,18 +114,41 @@ abstract class ArgumentContextUtils {
     final @NonNull String stringFromStringContext(final ArgumentContext context, final StatementSourceReference ref) {
         // Get first child, which we fully expect to exist and be a lexer token
         final ParseTree firstChild = context.getChild(0);
-        verify(firstChild instanceof TerminalNode, "Unexpected shape of %s", context);
-        final TerminalNode firstNode = (TerminalNode) firstChild;
-        final int firstType = firstNode.getSymbol().getType();
-        switch (firstType) {
-            case YangStatementParser.IDENTIFIER:
-                // Simple case, there is a simple string, which cannot contain anything that we would need to process.
-                return firstNode.getText();
-            case YangStatementParser.STRING:
-                // Complex case, defer to a separate method
-                return concatStrings(context, ref);
+        if (firstChild instanceof UnquotedStringContext) {
+            // Simple case, just grab the text, as ANTLR has done all the heavy lifting
+            final String str = firstChild.getText();
+            checkUnquoted(str, ref);
+            return str;
+        }
+
+        verify(firstChild instanceof QuotedStringContext, "Unexpected shape of %s", context);
+        if (context.getChildCount() == 1) {
+            // No concatenation needed, special-case
+            return unquoteString((QuotedStringContext) firstChild, ref);
+        }
+
+        // Potentially-complex case of string quoting, escaping and concatenation.
+        return concatStrings(context, ref);
+    }
+
+    private String unquoteString(final QuotedStringContext context, final StatementSourceReference ref) {
+        final ParseTree secondChild = context.getChild(1);
+        verify(secondChild instanceof TerminalNode, "Unexpected shape of %s", context);
+        final Token secondToken = ((TerminalNode) secondChild).getSymbol();
+        final int type = secondToken.getType();
+        switch (type) {
+            case YangStatementParser.DQUOT_END:
+            case YangStatementParser.SQUOT_END:
+                // We are missing actual body, hence this is an empty string
+                return "";
+            case YangStatementParser.SQUOT_STRING:
+                return secondChild.getText();
+            case YangStatementParser.DQUOT_STRING:
+                // We should be looking at the first token, which is DQUOT_START, but since it is a single-character
+                // token, let's not bother.
+                return normalizeDoubleQuoted(secondChild.getText(), secondToken.getCharPositionInLine() - 1, ref);
             default:
-                throw new VerifyException("Unexpected first symbol in " + context);
+                throw new VerifyException("Unhandled token type " + type);
         }
     }
 
@@ -130,54 +156,29 @@ abstract class ArgumentContextUtils {
         /*
          * We have multiple fragments. Just search the tree. This code is equivalent to
          *
-         *    context.STRING().forEach(stringNode -> appendString(sb, stringNode, ref))
+         *    context.quotedString().forEach(stringNode -> sb.append(unquoteString(stringNode, ref))
          *
          * except we minimize allocations which that would do.
          */
         final StringBuilder sb = new StringBuilder();
         for (ParseTree child : context.children) {
-            verify(child instanceof TerminalNode, "Unexpected fragment component %s", child);
-            final TerminalNode childNode = (TerminalNode) child;
-            switch (childNode.getSymbol().getType()) {
-                case YangStatementParser.SEP:
-                    // Ignore whitespace
-                    break;
-                case YangStatementParser.PLUS:
-                    // Operator, which we are handling by concat
-                    break;
-                case YangStatementParser.STRING:
-                    // a lexer string, could be pretty much anything
-                    // TODO: appendString() is a dispatch based on quotes, which we should be able to defer to lexer for
-                    //       a dedicated type. That would expand the switch table here, but since we have it anyway, it
-                    //       would be nice to have the quoting distinction already taken care of. The performance
-                    //       difference will need to be benchmarked, though.
-                    appendString(sb, childNode, ref);
-                    break;
-                default:
-                    throw new VerifyException("Unexpected symbol in " + childNode);
+            if (child instanceof TerminalNode) {
+                final TerminalNode childNode = (TerminalNode) child;
+                switch (childNode.getSymbol().getType()) {
+                    case YangStatementParser.SEP:
+                    case YangStatementParser.PLUS:
+                        // Operator, which we are handling by concat
+                        break;
+                    default:
+                        throw new VerifyException("Unexpected symbol in " + childNode);
+                }
+            } else {
+                verify(child instanceof QuotedStringContext, "Unexpected fragment component %s", child);
+                sb.append(unquoteString((QuotedStringContext) child, ref));
+                continue;
             }
         }
         return sb.toString();
-    }
-
-    private void appendString(final StringBuilder sb, final TerminalNode stringNode,
-            final StatementSourceReference ref) {
-        final String str = stringNode.getText();
-        final char firstChar = str.charAt(0);
-        final char lastChar = str.charAt(str.length() - 1);
-        if (firstChar == '"' && lastChar == '"') {
-            sb.append(normalizeDoubleQuoted(str.substring(1, str.length() - 1),
-                stringNode.getSymbol().getCharPositionInLine(), ref));
-        } else if (firstChar == '\'' && lastChar == '\'') {
-            /*
-             * According to RFC6020 a single quote character cannot occur in a single-quoted string, even when preceded
-             * by a backslash.
-             */
-            sb.append(str, 1, str.length() - 1);
-        } else {
-            checkUnquoted(str, ref);
-            sb.append(str);
-        }
     }
 
     private String normalizeDoubleQuoted(final String str, final int dquot, final StatementSourceReference ref) {

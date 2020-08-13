@@ -1,0 +1,35 @@
+module foo {
+  namespace urn:foo;
+  prefix foo;
+
+  description +something;
+  contact contact++;
+  organization organiza++tion;
+
+  leaf foo {
+    type string;
+    default +;
+    description 'squot' + "dquot";
+    reference "+" + '+';
+  }
+
+  leaf bar {
+    type string;
+    default ++;
+    description "+ + ++";
+    reference "++ + +";
+  }
+
+  leaf baz {
+    type string;
+    default /;
+    description :;
+    reference *;
+  }
+
+  leaf xyzzy {
+    type string;
+    description "a weird" +" concat";
+    reference "another"+ " weird concat";
+  }
+}
