@@ -63,4 +63,7 @@ public abstract class IRKeyword implements Immutable {
     }
 
     public abstract @Nullable String prefix();
+
+    @Override
+    public abstract String toString();
 }

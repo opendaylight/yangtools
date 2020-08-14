@@ -69,7 +69,7 @@ public abstract class IRArgument implements Immutable {
         }
     }
 
-    static final class SingleQuoted extends Literal {
+    public static final class SingleQuoted extends Literal {
         SingleQuoted(final String string) {
             super(string);
         }
@@ -80,7 +80,7 @@ public abstract class IRArgument implements Immutable {
         }
     }
 
-    static final class Unquoted extends Literal {
+    public static final class Unquoted extends Literal {
         Unquoted(final String string) {
             super(string);
         }
