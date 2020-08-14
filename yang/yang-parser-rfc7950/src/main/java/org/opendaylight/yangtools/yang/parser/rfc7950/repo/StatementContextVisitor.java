@@ -7,21 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.VerifyException;
 import java.util.Optional;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.KeywordContext;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Qualified;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -45,8 +42,8 @@ class StatementContextVisitor {
         this.prefixes = prefixes;
     }
 
-    void visit(final StatementContext context) {
-        processStatement(0, context);
+    void visit(final IRStatement stmt) {
+        processStatement(0, stmt);
     }
 
     /**
@@ -60,31 +57,29 @@ class StatementContextVisitor {
      * @param ref Source reference
      * @return valid QName for declared statement to be written, or null
      */
-    QName getValidStatementDefinition(final KeywordContext keyword, final StatementSourceReference ref) {
-        switch (keyword.getChildCount()) {
-            case 1:
-                final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE,
-                    keyword.getChild(0).getText()));
-                return def != null ? def.getStatementName() : null;
-            case 3:
-                if (prefixes == null) {
-                    // No prefixes to look up from
-                    return null;
-                }
-
-                final String prefix = keyword.getChild(0).getText();
-                final QNameModule qNameModule = prefixes.get(prefix);
-                if (qNameModule == null) {
-                    // Failed to look the namespace
-                    return null;
-                }
-
-                final String localName = keyword.getChild(2).getText();
-                final StatementDefinition foundStmtDef = resolveStatement(qNameModule, localName);
-                return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
-            default:
-                throw new VerifyException("Unexpected shape of " + keyword);
+    QName getValidStatementDefinition(final IRKeyword keyword, final StatementSourceReference ref) {
+        if (keyword instanceof Qualified) {
+            return getValidStatementDefinition((Qualified) keyword, ref);
         }
+        final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE,
+            keyword.identifier()));
+        return def != null ? def.getStatementName() : null;
+    }
+
+    private QName getValidStatementDefinition(final Qualified keyword, final StatementSourceReference ref) {
+        if (prefixes == null) {
+            // No prefixes to look up from
+            return null;
+        }
+
+        final QNameModule qNameModule = prefixes.get(keyword.prefix());
+        if (qNameModule == null) {
+            // Failed to look the namespace
+            return null;
+        }
+
+        final StatementDefinition foundStmtDef = resolveStatement(qNameModule, keyword.identifier());
+        return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
     }
 
     StatementDefinition resolveStatement(final QNameModule module, final String localName) {
@@ -92,40 +87,37 @@ class StatementContextVisitor {
     }
 
     // Normal entry point, checks for potential resume
-    private boolean processStatement(final int myOffset, final StatementContext ctx) {
+    private boolean processStatement(final int myOffset, final IRStatement stmt) {
         final Optional<? extends ResumedStatement> optResumed = writer.resumeStatement(myOffset);
         if (optResumed.isPresent()) {
             final ResumedStatement resumed = optResumed.get();
-            return resumed.isFullyDefined() || doProcessStatement(ctx, resumed.getSourceReference());
+            return resumed.isFullyDefined() || doProcessStatement(stmt, resumed.getSourceReference());
         }
-        return processNewStatement(myOffset, ctx);
+        return processNewStatement(myOffset, stmt);
     }
 
     // Slow-path allocation of a new statement
-    private boolean processNewStatement(final int myOffset, final StatementContext ctx) {
-        final Token start = ctx.getStart();
-        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, start.getLine(),
-            start.getCharPositionInLine());
-        final QName def = getValidStatementDefinition(verifyNotNull(ctx.getChild(KeywordContext.class, 0)), ref);
+    private boolean processNewStatement(final int myOffset, final IRStatement stmt) {
+        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, stmt.startLine(),
+            stmt.startColumn());
+        final QName def = getValidStatementDefinition(stmt.keyword(), ref);
         if (def == null) {
             return false;
         }
 
-        final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
+        final IRArgument argumentCtx = stmt.argument();
         final String argument = argumentCtx == null ? null : utils.stringFromStringContext(argumentCtx, ref);
         writer.startStatement(myOffset, def, argument, ref);
-        return doProcessStatement(ctx, ref);
+        return doProcessStatement(stmt, ref);
     }
 
     // Actual processing
-    private boolean doProcessStatement(final StatementContext ctx, final StatementSourceReference ref) {
+    private boolean doProcessStatement(final IRStatement stmt, final StatementSourceReference ref) {
         int childOffset = 0;
         boolean fullyDefined = true;
-        if (ctx.children != null) {
-            for (ParseTree s : ctx.children) {
-                if (s instanceof StatementContext && !processStatement(childOffset++, (StatementContext) s)) {
-                    fullyDefined = false;
-                }
+        for (IRStatement substatement : stmt.statements()) {
+            if (!processStatement(childOffset++, substatement)) {
+                fullyDefined = false;
             }
         }
 
