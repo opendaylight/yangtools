@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import java.util.Optional;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -24,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.Statemen
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
@@ -61,31 +61,30 @@ class StatementContextVisitor {
      * @return valid QName for declared statement to be written, or null
      */
     QName getValidStatementDefinition(final KeywordContext keyword, final StatementSourceReference ref) {
-        final String keywordText = keyword.getText();
-        final int firstColon = keywordText.indexOf(':');
-        if (firstColon == -1) {
-            final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, keywordText));
-            return def != null ? def.getStatementName() : null;
+        switch (keyword.getChildCount()) {
+            case 1:
+                final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE,
+                    keyword.getChild(0).getText()));
+                return def != null ? def.getStatementName() : null;
+            case 3:
+                if (prefixes == null) {
+                    // No prefixes to look up from
+                    return null;
+                }
+
+                final String prefix = keyword.getChild(0).getText();
+                final QNameModule qNameModule = prefixes.get(prefix);
+                if (qNameModule == null) {
+                    // Failed to look the namespace
+                    return null;
+                }
+
+                final String localName = keyword.getChild(2).getText();
+                final StatementDefinition foundStmtDef = resolveStatement(qNameModule, localName);
+                return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
+            default:
+                throw new VerifyException("Unexpected shape of " + keyword);
         }
-
-        SourceException.throwIf(firstColon == keywordText.length() - 1
-                || keywordText.indexOf(':', firstColon + 1) != -1, ref, "Malformed statement '%s'", keywordText);
-
-        if (prefixes == null) {
-            // No prefixes to look up from
-            return null;
-        }
-
-        final String prefix = keywordText.substring(0, firstColon);
-        final QNameModule qNameModule = prefixes.get(prefix);
-        if (qNameModule == null) {
-            // Failed to look the namespace
-            return null;
-        }
-
-        final String localName = keywordText.substring(firstColon + 1);
-        final StatementDefinition foundStmtDef = resolveStatement(qNameModule, localName);
-        return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
     }
 
     StatementDefinition resolveStatement(final QNameModule module, final String localName) {
