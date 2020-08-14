@@ -11,15 +11,18 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
-import com.google.common.base.VerifyException;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.TerminalNode;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+<<<<<<< HEAD
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedStringContext;
+=======
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Concatenation;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Single;
+>>>>>>> c4b572cd6d... Add an explicit intermediate YANG representation
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -83,8 +86,6 @@ abstract class ArgumentContextUtils {
         }
     }
 
-    private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
-
     private ArgumentContextUtils() {
         // Hidden on purpose
     }
@@ -110,6 +111,7 @@ abstract class ArgumentContextUtils {
      *       based on the grammar assumptions. While this is more verbose, it cuts out a number of unnecessary code,
      *       such as intermediate List allocation et al.
      */
+<<<<<<< HEAD
     final @NonNull String stringFromStringContext(final ArgumentContext context, final StatementSourceReference ref) {
         // Get first child, which we fully expect to exist and be a lexer token
         final ParseTree firstChild = context.getChild(0);
@@ -188,10 +190,32 @@ abstract class ArgumentContextUtils {
                 default:
                     throw new VerifyException("Unexpected token " + token);
             }
+=======
+    final @NonNull String stringFromStringContext(final IRArgument argument, final StatementSourceReference ref) {
+        if (argument instanceof Single) {
+            final Single single = (Single) argument;
+            final String str = single.string();
+            if (single.needQuoteCheck()) {
+                checkUnquoted(str, ref);
+            }
+            return single.needUnescape() ? unescape(str, ref) : str;
+        }
+
+        verify(argument instanceof Concatenation, "Unexpected argument %s", argument);
+        return concatStrings(((Concatenation) argument).parts(), ref);
+    }
+
+    private @NonNull String concatStrings(final List<? extends Single> parts, final StatementSourceReference ref) {
+        final StringBuilder sb = new StringBuilder();
+        for (Single part : parts) {
+            final String str = part.string();
+            sb.append(part.needUnescape() ? unescape(str, ref) : str);
+>>>>>>> c4b572cd6d... Add an explicit intermediate YANG representation
         }
         return sb.toString();
     }
 
+<<<<<<< HEAD
     private String normalizeDoubleQuoted(final Token token, final StatementSourceReference ref) {
         // Whitespace normalization happens irrespective of further handling and has no effect on the result. Strictly
         // speaking we should also have the previous token, which would be a DQUOT_START and get the position from it.
@@ -204,6 +228,8 @@ abstract class ArgumentContextUtils {
         return backslash == -1 ? stripped : unescape(ref, stripped, backslash);
     }
 
+=======
+>>>>>>> c4b572cd6d... Add an explicit intermediate YANG representation
     /*
      * NOTE: Enforcement and transformation logic done by these methods should logically reside in the lexer and ANTLR
      *       account the for it with lexer modes. We do not want to force a re-lexing phase in the parser just because
@@ -213,10 +239,17 @@ abstract class ArgumentContextUtils {
 
     abstract void checkUnquoted(String str, StatementSourceReference ref);
 
+    private @NonNull String unescape(final String str, final StatementSourceReference ref) {
+        // Now we need to perform some amount of unescaping. This serves as a pre-check before we dispatch
+        // validation and processing (which will reuse the work we have done)
+        final int backslash = str.indexOf('\\');
+        return backslash == -1 ? str : unescape(ref, str, backslash);
+    }
+
     /*
      * Unescape escaped double quotes, tabs, new line and backslash in the inner string and trim the result.
      */
-    private String unescape(final StatementSourceReference ref, final String str, final int backslash) {
+    private @NonNull String unescape(final StatementSourceReference ref, final String str, final int backslash) {
         checkDoubleQuoted(str, ref, backslash);
         StringBuilder sb = new StringBuilder(str.length());
         unescapeBackslash(sb, str, backslash);
@@ -262,80 +295,5 @@ abstract class ArgumentContextUtils {
             default:
                 sb.append(str, backslash, nextAfterBackslash + 1);
         }
-    }
-
-    @VisibleForTesting
-    static String trimWhitespace(final String str, final int dquot) {
-        final int firstBrk = str.indexOf('\n');
-        if (firstBrk == -1) {
-            return str;
-        }
-
-        // Okay, we may need to do some trimming, set up a builder and append the first segment
-        final int length = str.length();
-        final StringBuilder sb = new StringBuilder(length);
-
-        // Append first segment, which needs only tail-trimming
-        sb.append(str, 0, trimTrailing(str, 0, firstBrk)).append('\n');
-
-        // With that out of the way, setup our iteration state. The string segment we are looking at is
-        // str.substring(start, end), which is guaranteed not to include any line breaks, i.e. end <= brk unless we are
-        // at the last segment.
-        int start = firstBrk + 1;
-        int brk = str.indexOf('\n', start);
-
-        // Loop over inner strings
-        while (brk != -1) {
-            trimLeadingAndAppend(sb, dquot, str, start, trimTrailing(str, start, brk)).append('\n');
-            start = brk + 1;
-            brk = str.indexOf('\n', start);
-        }
-
-        return trimLeadingAndAppend(sb, dquot, str, start, length).toString();
-    }
-
-    private static StringBuilder trimLeadingAndAppend(final StringBuilder sb, final int dquot, final String str,
-            final int start, final int end) {
-        int offset = start;
-        int pos = 0;
-
-        while (pos <= dquot) {
-            if (offset == end) {
-                // We ran out of data, nothing to append
-                return sb;
-            }
-
-            final char ch = str.charAt(offset);
-            if (ch == '\t') {
-                // tabs are to be treated as 8 spaces
-                pos += 8;
-            } else if (WHITESPACE_MATCHER.matches(ch)) {
-                pos++;
-            } else {
-                break;
-            }
-
-            offset++;
-        }
-
-        // We have expanded beyond double quotes, push equivalent spaces
-        while (pos - 1 > dquot) {
-            sb.append(' ');
-            pos--;
-        }
-
-        return sb.append(str, offset, end);
-    }
-
-    private static int trimTrailing(final String str, final int start, final int end) {
-        int ret = end;
-        while (ret > start) {
-            final int prev = ret - 1;
-            if (!WHITESPACE_MATCHER.matches(str.charAt(prev))) {
-                break;
-            }
-            ret = prev;
-        }
-        return ret;
     }
 }
