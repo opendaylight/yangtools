@@ -43,7 +43,6 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
 
         // TODO: missing validation (YangModelBasicValidationListener should be re-implemented to new parser)
 
-        return ASTSchemaSource.create(text.getIdentifier(), text.getSymbolicName().orElse(null),
-            src.statementContext());
+        return ASTSchemaSource.create(text.getIdentifier(), text.getSymbolicName().orElse(null), src.rootStatement());
     }
 }
