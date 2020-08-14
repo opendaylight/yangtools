@@ -11,16 +11,12 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
-import com.google.common.base.VerifyException;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.TerminalNode;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.QuotedStringContext;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedStringContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Concatenation;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Single;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -84,8 +80,6 @@ abstract class ArgumentContextUtils {
         }
     }
 
-    private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
-
     private ArgumentContextUtils() {
         // Hidden on purpose
     }
@@ -111,89 +105,27 @@ abstract class ArgumentContextUtils {
      *       based on the grammar assumptions. While this is more verbose, it cuts out a number of unnecessary code,
      *       such as intermediate List allocation et al.
      */
-    final @NonNull String stringFromStringContext(final ArgumentContext context, final StatementSourceReference ref) {
-        // Get first child, which we fully expect to exist and be a lexer token
-        final ParseTree firstChild = context.getChild(0);
-        if (firstChild instanceof TerminalNode) {
-            // Simplest of cases -- it is a simple IDENTIFIER, hence we do not need to validate anything else and can
-            // just grab the string and run with it.
-            return firstChild.getText();
-        }
-
-        if (firstChild instanceof UnquotedStringContext) {
-            // Simple case, just grab the text, as ANTLR has done all the heavy lifting
-            final String str = firstChild.getText();
-            checkUnquoted(str, ref);
-            return str;
-        }
-
-        verify(firstChild instanceof QuotedStringContext, "Unexpected shape of %s", context);
-        if (context.getChildCount() == 1) {
-            // No concatenation needed, special-case
-            return unquoteString((QuotedStringContext) firstChild, ref);
-        }
-
-        // Potentially-complex case of string quoting, escaping and concatenation.
-        return concatStrings(context, ref);
-    }
-
-    private String unquoteString(final QuotedStringContext context, final StatementSourceReference ref) {
-        final ParseTree secondChild = context.getChild(1);
-        verify(secondChild instanceof TerminalNode, "Unexpected shape of %s", context);
-        final Token secondToken = ((TerminalNode) secondChild).getSymbol();
-        final int type = secondToken.getType();
-        switch (type) {
-            case YangStatementParser.DQUOT_END:
-            case YangStatementParser.SQUOT_END:
-                // We are missing actual body, hence this is an empty string
-                return "";
-            case YangStatementParser.SQUOT_STRING:
-                return secondChild.getText();
-            case YangStatementParser.DQUOT_STRING:
-                // We should be looking at the first token, which is DQUOT_START, but since it is a single-character
-                // token, let's not bother.
-                return normalizeDoubleQuoted(secondChild.getText(), secondToken.getCharPositionInLine() - 1, ref);
-            default:
-                throw new VerifyException("Unhandled token type " + type);
-        }
-    }
-
-    private String concatStrings(final ArgumentContext context, final StatementSourceReference ref) {
-        /*
-         * We have multiple fragments. Just search the tree. This code is equivalent to
-         *
-         *    context.quotedString().forEach(stringNode -> sb.append(unquoteString(stringNode, ref))
-         *
-         * except we minimize allocations which that would do.
-         */
-        final StringBuilder sb = new StringBuilder();
-        for (ParseTree child : context.children) {
-            if (child instanceof TerminalNode) {
-                final TerminalNode childNode = (TerminalNode) child;
-                switch (childNode.getSymbol().getType()) {
-                    case YangStatementParser.SEP:
-                    case YangStatementParser.PLUS:
-                        // Operator, which we are handling by concat
-                        break;
-                    default:
-                        throw new VerifyException("Unexpected symbol in " + childNode);
-                }
-            } else {
-                verify(child instanceof QuotedStringContext, "Unexpected fragment component %s", child);
-                sb.append(unquoteString((QuotedStringContext) child, ref));
+    final @NonNull String stringFromStringContext(final IRArgument argument, final StatementSourceReference ref) {
+        if (argument instanceof Single) {
+            final Single single = (Single) argument;
+            final String str = single.string();
+            if (single.needQuoteCheck()) {
+                checkUnquoted(str, ref);
             }
+            return single.needUnescape() ? unescape(str, ref) : str;
+        }
+
+        verify(argument instanceof Concatenation, "Unexpected argument %s", argument);
+        return concatStrings(((Concatenation) argument).parts(), ref);
+    }
+
+    private @NonNull String concatStrings(final List<? extends Single> parts, final StatementSourceReference ref) {
+        final StringBuilder sb = new StringBuilder();
+        for (Single part : parts) {
+            final String str = part.string();
+            sb.append(part.needUnescape() ? unescape(str, ref) : str);
         }
         return sb.toString();
-    }
-
-    private String normalizeDoubleQuoted(final String str, final int dquot, final StatementSourceReference ref) {
-        // Whitespace normalization happens irrespective of further handling and has no effect on the result
-        final String stripped = trimWhitespace(str, dquot);
-
-        // Now we need to perform some amount of unescaping. This serves as a pre-check before we dispatch
-        // validation and processing (which will reuse the work we have done)
-        final int backslash = stripped.indexOf('\\');
-        return backslash == -1 ? stripped : unescape(ref, stripped, backslash);
     }
 
     /*
@@ -205,10 +137,17 @@ abstract class ArgumentContextUtils {
 
     abstract void checkUnquoted(String str, StatementSourceReference ref);
 
+    private @NonNull String unescape(final String str, final StatementSourceReference ref) {
+        // Now we need to perform some amount of unescaping. This serves as a pre-check before we dispatch
+        // validation and processing (which will reuse the work we have done)
+        final int backslash = str.indexOf('\\');
+        return backslash == -1 ? str : unescape(ref, str, backslash);
+    }
+
     /*
      * Unescape escaped double quotes, tabs, new line and backslash in the inner string and trim the result.
      */
-    private String unescape(final StatementSourceReference ref, final String str, final int backslash) {
+    private @NonNull String unescape(final StatementSourceReference ref, final String str, final int backslash) {
         checkDoubleQuoted(str, ref, backslash);
         StringBuilder sb = new StringBuilder(str.length());
         unescapeBackslash(sb, str, backslash);
@@ -254,80 +193,5 @@ abstract class ArgumentContextUtils {
             default:
                 sb.append(str, backslash, nextAfterBackslash + 1);
         }
-    }
-
-    @VisibleForTesting
-    static String trimWhitespace(final String str, final int dquot) {
-        final int firstBrk = str.indexOf('\n');
-        if (firstBrk == -1) {
-            return str;
-        }
-
-        // Okay, we may need to do some trimming, set up a builder and append the first segment
-        final int length = str.length();
-        final StringBuilder sb = new StringBuilder(length);
-
-        // Append first segment, which needs only tail-trimming
-        sb.append(str, 0, trimTrailing(str, 0, firstBrk)).append('\n');
-
-        // With that out of the way, setup our iteration state. The string segment we are looking at is
-        // str.substring(start, end), which is guaranteed not to include any line breaks, i.e. end <= brk unless we are
-        // at the last segment.
-        int start = firstBrk + 1;
-        int brk = str.indexOf('\n', start);
-
-        // Loop over inner strings
-        while (brk != -1) {
-            trimLeadingAndAppend(sb, dquot, str, start, trimTrailing(str, start, brk)).append('\n');
-            start = brk + 1;
-            brk = str.indexOf('\n', start);
-        }
-
-        return trimLeadingAndAppend(sb, dquot, str, start, length).toString();
-    }
-
-    private static StringBuilder trimLeadingAndAppend(final StringBuilder sb, final int dquot, final String str,
-            final int start, final int end) {
-        int offset = start;
-        int pos = 0;
-
-        while (pos <= dquot) {
-            if (offset == end) {
-                // We ran out of data, nothing to append
-                return sb;
-            }
-
-            final char ch = str.charAt(offset);
-            if (ch == '\t') {
-                // tabs are to be treated as 8 spaces
-                pos += 8;
-            } else if (WHITESPACE_MATCHER.matches(ch)) {
-                pos++;
-            } else {
-                break;
-            }
-
-            offset++;
-        }
-
-        // We have expanded beyond double quotes, push equivalent spaces
-        while (pos - 1 > dquot) {
-            sb.append(' ');
-            pos--;
-        }
-
-        return sb.append(str, offset, end);
-    }
-
-    private static int trimTrailing(final String str, final int start, final int end) {
-        int ret = end;
-        while (ret > start) {
-            final int prev = ret - 1;
-            if (!WHITESPACE_MATCHER.matches(str.charAt(prev))) {
-                break;
-            }
-            ret = prev;
-        }
-        return ret;
     }
 }
