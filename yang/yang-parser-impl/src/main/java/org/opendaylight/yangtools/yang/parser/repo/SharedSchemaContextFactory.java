@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
@@ -34,7 +33,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.eclipse.jdt.annotation.NonNull;
 import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -47,7 +45,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfig
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -231,12 +228,8 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
 
             for (final Entry<SourceIdentifier, ASTSchemaSource> entry : srcs.entrySet()) {
                 final ASTSchemaSource ast = entry.getValue();
-                final ParserRuleContext parserRuleCtx = ast.getAST();
-                checkArgument(parserRuleCtx instanceof StatementContext, "Unsupported context class %s for source %s",
-                    parserRuleCtx.getClass(), entry.getKey());
-
                 try {
-                    parser.addSource(entry.getValue());
+                    parser.addSource(ast);
                 } catch (YangSyntaxErrorException | IOException e) {
                     throw new SchemaResolutionException("Failed to add source " + entry.getKey(), e);
                 }
