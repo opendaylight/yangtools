@@ -175,7 +175,6 @@ abstract class ArgumentContextUtils {
             } else {
                 verify(child instanceof QuotedStringContext, "Unexpected fragment component %s", child);
                 sb.append(unquoteString((QuotedStringContext) child, ref));
-                continue;
             }
         }
         return sb.toString();
