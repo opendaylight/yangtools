@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
 
 public interface StatementWriter {
     /**
@@ -98,6 +99,11 @@ public interface StatementWriter {
      */
     void startStatement(int childId, @NonNull QName name, @Nullable String argument,
             @NonNull StatementSourceReference ref);
+
+    default void startStatement(int childId, @NonNull StatementSourceReference ref, @NonNull QName name,
+            @NonNull String identifier) {
+        startStatement(childId, name, identifier, ref);
+    }
 
     /**
      * Ends current opened statement.

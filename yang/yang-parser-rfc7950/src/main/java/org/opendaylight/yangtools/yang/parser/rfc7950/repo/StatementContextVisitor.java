@@ -106,8 +106,13 @@ class StatementContextVisitor {
         }
 
         final IRArgument argumentCtx = stmt.argument();
-        final String argument = argumentCtx == null ? null : utils.stringFromStringContext(argumentCtx, ref);
-        writer.startStatement(myOffset, def, argument, ref);
+        if (argumentCtx != null) {
+            // FIXME: propagate the fact we actually have an identifier here
+            final String argument = utils.stringFromStringContext(argumentCtx, ref);
+            writer.startStatement(myOffset, def, argument, ref);
+        } else {
+            writer.startStatement(myOffset, def, null, ref);
+        }
         return doProcessStatement(stmt, ref);
     }
 
