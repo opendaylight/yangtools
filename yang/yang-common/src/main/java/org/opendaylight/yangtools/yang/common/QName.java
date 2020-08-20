@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.DataInput;
@@ -205,6 +206,23 @@ public final class QName extends AbstractQName implements Comparable<QName> {
     public static @NonNull QName readFrom(final DataInput in) throws IOException {
         final QNameModule module = QNameModule.readFrom(in);
         return new QName(module, checkLocalName(in.readUTF()));
+    }
+
+    /**
+     * Creates new QName composed of specified module and local name. This method does not perform lexical checking of
+     * localName, and it is the caller's responsibility to performs these checks.
+     *
+     * <p>
+     * When in doubt, use {@link #create(QNameModule, String)} instead.
+     *
+     * @param qnameModule Namespace and revision enclosed as a QNameModule
+     * @param localName Local name part of QName, required to have been validated
+     * @return Instance of QName
+     * @throws NullPointerException if any of the arguments is null
+     */
+    @Beta
+    public static @NonNull QName unsafeOf(final @NonNull QNameModule qnameModule, final @NonNull String localName) {
+        return new QName(qnameModule, localName);
     }
 
     /**

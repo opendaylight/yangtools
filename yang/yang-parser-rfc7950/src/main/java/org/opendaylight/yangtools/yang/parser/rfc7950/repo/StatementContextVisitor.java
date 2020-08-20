@@ -59,7 +59,7 @@ class StatementContextVisitor {
     QName getValidStatementDefinition(final IRKeyword keyword, final StatementSourceReference ref) {
         final String prefix = keyword.prefix();
         if (prefix == null) {
-            final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE,
+            final StatementDefinition def = stmtDef.get(QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE,
                 keyword.identifier()));
             return def != null ? def.getStatementName() : null;
         }
