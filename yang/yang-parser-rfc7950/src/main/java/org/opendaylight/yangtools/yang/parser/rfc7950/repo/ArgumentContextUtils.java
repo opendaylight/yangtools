@@ -114,6 +114,12 @@ abstract class ArgumentContextUtils {
     final @NonNull String stringFromStringContext(final ArgumentContext context, final StatementSourceReference ref) {
         // Get first child, which we fully expect to exist and be a lexer token
         final ParseTree firstChild = context.getChild(0);
+        if (firstChild instanceof TerminalNode) {
+            // Simplest of cases -- it is a simple IDENTIFIER, hence we do not need to validate anything else and can
+            // just grab the string and run with it.
+            return firstChild.getText();
+        }
+
         if (firstChild instanceof UnquotedStringContext) {
             // Simple case, just grab the text, as ANTLR has done all the heavy lifting
             final String str = firstChild.getText();
