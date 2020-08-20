@@ -44,11 +44,11 @@ public final class QualifiedQName extends AbstractQName implements Comparable<Qu
     }
 
     /**
-     * Read an UnboundQName from a DataInput. The format is expected to match the output format of
+     * Read an QualifiedQName from a DataInput. The format is expected to match the output format of
      * {@link #writeTo(DataOutput)}.
      *
      * @param in DataInput to read
-     * @return An UnboundQName instance
+     * @return An QualifiedQName instance
      * @throws IOException if I/O error occurs
      */
     public static QualifiedQName readFrom(final DataInput in) throws IOException {

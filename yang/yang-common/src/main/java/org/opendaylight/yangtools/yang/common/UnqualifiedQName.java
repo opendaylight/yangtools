@@ -32,16 +32,23 @@ public final class UnqualifiedQName extends AbstractQName implements Comparable<
         super(localName);
     }
 
+    /**
+     * Create a new unqualified QName.
+     *
+     * @param localName The local name of this unqualified QName
+     * @return An UnqualifiedQName instance
+     * @throws IllegalArgumentException if localName is null or it does not conform to YANG localName requirements.
+     */
     public static UnqualifiedQName of(final String localName) {
         return new UnqualifiedQName(checkLocalName(localName));
     }
 
     /**
-     * Read an UnboundQName from a DataInput. The format is expected to match the output format of
+     * Read an UnqualifiedQName from a DataInput. The format is expected to match the output format of
      * {@link #writeTo(DataOutput)}.
      *
      * @param in DataInput to read
-     * @return An UnboundQName instance
+     * @return An UnqualifiedQName instance
      * @throws IOException if I/O error occurs
      */
     public static UnqualifiedQName readFrom(final DataInput in) throws IOException {
