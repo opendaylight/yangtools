@@ -106,11 +106,11 @@ public final class QName extends AbstractQName implements Comparable<QName> {
     /**
      * Creates new QName.
      *
-     * @param qnameModule
-     *            Namespace and revision enclosed as a QNameModule
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param qnameModule Namespace and revision enclosed as a QNameModule
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
+     * @throws NullPointerException if any argument is null
+     * @throws IllegalArgumentException if localName is not a valid YANG identifier
      */
     public static @NonNull QName create(final QNameModule qnameModule, final String localName) {
         return new QName(requireNonNull(qnameModule, "module may not be null"), checkLocalName(localName));

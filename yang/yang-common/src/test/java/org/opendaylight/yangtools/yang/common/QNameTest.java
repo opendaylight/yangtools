@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,31 +24,29 @@ public class QNameTest {
 
     @Test
     public void testStringSerialization() throws Exception {
-        {
-            QName qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
-            assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_REVISION_DELIMITER
-                    + REVISION + QName.QNAME_RIGHT_PARENTHESIS + LOCALNAME, qname.toString());
-            QName copied = QName.create(qname.toString());
-            assertEquals(qname, copied);
-        }
+        QName qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
+        assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_REVISION_DELIMITER + REVISION
+            + QName.QNAME_RIGHT_PARENTHESIS + LOCALNAME, qname.toString());
+        assertEquals(qname, QName.create(qname.toString()));
+    }
+
+    @Test
+    public void testStringSerializationNoRevision() throws Exception {
         // no revision
-        {
-            QName qname = QName.create(NS, LOCALNAME);
-            assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_RIGHT_PARENTHESIS
-                    + LOCALNAME, qname.toString());
-            QName copied = QName.create(qname.toString());
-            assertEquals(qname, copied);
-        }
+        QName qname = QName.create(NS, LOCALNAME);
+        assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_RIGHT_PARENTHESIS + LOCALNAME,
+            qname.toString());
+        assertEquals(qname, QName.create(qname.toString()));
     }
 
     @Test
     public void testIllegalLocalNames() {
-        assertLocalNameFails(null);
-        assertLocalNameFails("");
-        assertLocalNameFails("(");
-        assertLocalNameFails(")");
-        assertLocalNameFails("?");
-        assertLocalNameFails("&");
+        assertThrows(NullPointerException.class, () -> QName.create(NS, null));
+        assertThrows(IllegalArgumentException.class, () -> QName.create(NS, ""));
+        assertThrows(IllegalArgumentException.class, () -> QName.create(NS, "("));
+        assertThrows(IllegalArgumentException.class, () -> QName.create(NS, ")"));
+        assertThrows(IllegalArgumentException.class, () -> QName.create(NS, "?"));
+        assertThrows(IllegalArgumentException.class, () -> QName.create(NS, "&"));
     }
 
     @Test
@@ -88,8 +86,7 @@ public class QNameTest {
         assertEquals(qname1, qname.withoutRevision());
         assertEquals(qname1, qname2);
         assertTrue(qname.isEqualWithoutRevision(qname1));
-        assertNotNull(QName.formattedRevision(Revision.ofNullable("2000-01-01")));
-        assertNotNull(qname.hashCode());
+        assertEquals("2000-01-01", QName.formattedRevision(Revision.ofNullable("2000-01-01")));
         assertEquals(qname, qname.intern());
     }
 
@@ -98,14 +95,5 @@ public class QNameTest {
         final QNameModule qnameModule = QNameModule.create(NS, Revision.of("2000-01-01"));
         assertNotNull(qnameModule.toString());
         assertNotNull(qnameModule.getRevisionNamespace());
-    }
-
-    private static void assertLocalNameFails(final String localName) {
-        try {
-            QName.create(NS, localName);
-            fail("Local name should fail:" + localName);
-        } catch (IllegalArgumentException e) {
-            // Expected
-        }
     }
 }

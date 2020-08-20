@@ -75,7 +75,6 @@ public abstract class AbstractQName implements Identifier, WritableObject {
     abstract Object writeReplace();
 
     static final String checkLocalName(final @Nullable String localName) {
-        checkArgument(localName != null, "Parameter 'localName' may not be null.");
         checkArgument(!localName.isEmpty(), "Parameter 'localName' must be a non-empty string.");
         checkArgument(IDENTIFIER_START.matches(localName.charAt(0)) && NOT_IDENTIFIER_PART.indexIn(localName, 1) == -1,
                 "String '%s' is not a valid identifier", localName);
