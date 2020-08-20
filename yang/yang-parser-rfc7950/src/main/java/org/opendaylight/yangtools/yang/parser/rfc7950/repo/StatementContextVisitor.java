@@ -61,7 +61,7 @@ class StatementContextVisitor {
         if (keyword instanceof Qualified) {
             return getValidStatementDefinition((Qualified) keyword, ref);
         }
-        final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE,
+        final StatementDefinition def = stmtDef.get(QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE,
             keyword.identifier()));
         return def != null ? def.getStatementName() : null;
     }
@@ -83,7 +83,7 @@ class StatementContextVisitor {
     }
 
     StatementDefinition resolveStatement(final QNameModule module, final String localName) {
-        return stmtDef.get(QName.create(module, localName));
+        return stmtDef.get(QName.unsafeOf(module, localName));
     }
 
     // Normal entry point, checks for potential resume
