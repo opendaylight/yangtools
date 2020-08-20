@@ -21,8 +21,9 @@ keyword : IDENTIFIER (COLON IDENTIFIER)?;
 // the flaky definitions of RFC6020, which allow for insane quoting as well as
 // exclusion of comments. We also need to allow for stitching back tokens like
 // PLUS/COLON, which may end up being valid identifiers. Finally we need to allow
-// IDENTIFIER to be concatenated back to a string
-argument : unquotedString | quotedString (SEP* PLUS SEP* quotedString)*;
+// IDENTIFIER to be concatenated back to a string -- but it is common enough
+// so we want to specialize it.
+argument : IDENTIFIER | unquotedString | quotedString (SEP* PLUS SEP* quotedString)*;
 
 quotedString :
     DQUOT_START DQUOT_STRING? DQUOT_END
