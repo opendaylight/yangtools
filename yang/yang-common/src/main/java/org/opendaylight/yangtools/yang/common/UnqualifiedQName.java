@@ -37,7 +37,8 @@ public final class UnqualifiedQName extends AbstractQName implements Comparable<
      *
      * @param localName The local name of this unqualified QName
      * @return An UnqualifiedQName instance
-     * @throws IllegalArgumentException if localName is null or it does not conform to YANG localName requirements.
+     * @throws NullPointerException if localName is null
+     * @throws IllegalArgumentException if localName is not a valid YANG identifier
      */
     public static UnqualifiedQName of(final String localName) {
         return new UnqualifiedQName(checkLocalName(localName));
