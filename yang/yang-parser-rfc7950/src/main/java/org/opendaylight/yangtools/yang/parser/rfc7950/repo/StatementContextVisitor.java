@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -57,19 +58,21 @@ class StatementContextVisitor {
      * @return valid QName for declared statement to be written, or null
      */
     QName getValidStatementDefinition(final IRKeyword keyword, final StatementSourceReference ref) {
-        final String prefix = keyword.prefix();
-        if (prefix == null) {
-            final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE,
-                keyword.identifier()));
-            return def != null ? def.getStatementName() : null;
+        if (keyword instanceof Qualified) {
+            return getValidStatementDefinition((Qualified) keyword, ref);
         }
+        final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE,
+            keyword.identifier()));
+        return def != null ? def.getStatementName() : null;
+    }
 
+    private QName getValidStatementDefinition(final Qualified keyword, final StatementSourceReference ref) {
         if (prefixes == null) {
             // No prefixes to look up from
             return null;
         }
 
-        final QNameModule qNameModule = prefixes.get(prefix);
+        final QNameModule qNameModule = prefixes.get(keyword.prefix());
         if (qNameModule == null) {
             // Failed to look the namespace
             return null;

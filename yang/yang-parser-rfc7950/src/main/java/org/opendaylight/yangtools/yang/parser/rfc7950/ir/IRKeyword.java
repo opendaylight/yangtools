@@ -28,7 +28,8 @@ import org.opendaylight.yangtools.yang.common.AbstractQName;
  */
 @Beta
 public abstract class IRKeyword implements Immutable {
-    static final class Qualified extends IRKeyword {
+    @Beta
+    public static final class Qualified extends IRKeyword {
         private final @NonNull String prefix;
 
         Qualified(final String prefix, final String localName) {
@@ -47,7 +48,8 @@ public abstract class IRKeyword implements Immutable {
         }
     }
 
-    static final class Unqualified extends IRKeyword {
+    @Beta
+    public static final class Unqualified extends IRKeyword {
         Unqualified(final String localName) {
             super(localName);
         }
