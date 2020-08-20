@@ -260,6 +260,7 @@ class YangToSourcesProcessor {
              * Check if any of the listed files changed. If no changes occurred,
              * simply return null, which indicates and of execution.
              */
+            final Stopwatch watch = Stopwatch.createStarted();
             if (!allFiles.stream().anyMatch(buildContext::hasDelta)) {
                 LOG.info("{} None of {} input files changed", LOG_PREFIX, allFiles.size());
                 return Optional.empty();
@@ -295,7 +296,7 @@ class YangToSourcesProcessor {
             }
 
             LOG.debug("Found project files: {}", yangFilesInProject);
-            LOG.info("{} Project model files found: {}", LOG_PREFIX, yangFilesInProject.size());
+            LOG.info("{} Project model files found: {} in {}", LOG_PREFIX, yangFilesInProject.size(), watch);
 
             final ProcessorModuleReactor reactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
             LOG.debug("Initialized reactor {} with {}", reactor, yangFilesInProject);
