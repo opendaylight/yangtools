@@ -55,27 +55,6 @@ public final class DataSchemaContextTree {
         return getRoot().findChild(path);
     }
 
-    /**
-     * Get a child node as identified by an absolute {@link YangInstanceIdentifier}.
-     *
-     * @param path Path towards the child node
-     * @return Child node if present, or null when corresponding child is not found.
-     * @throws NullPointerException if {@code path} is null
-     *
-     * @deprecated Use {@link #findChild(YangInstanceIdentifier)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public @Nullable DataSchemaContextNode<?> getChild(final YangInstanceIdentifier path) {
-        DataSchemaContextNode<?> currentOp = root;
-        for (PathArgument arg : path.getPathArguments()) {
-            currentOp = currentOp.getChild(arg);
-            if (currentOp == null) {
-                return null;
-            }
-        }
-        return currentOp;
-    }
-
     public DataSchemaContextNode<?> getRoot() {
         return root;
     }
