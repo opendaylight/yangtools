@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Map;
@@ -58,22 +56,6 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @throws NullPointerException if namespace is null
      */
     <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> getAll(@NonNull Class<N> namespace);
-
-    /**
-     * Returns all local values from supplied namespace.
-     *
-     * @param <K> Identifier type
-     * @param <V> Value type
-     * @param <N> Namespace identifier type
-     * @param namespace Namespace type
-     * @return Key-value mappings, empty if the namespace does not exist.
-     * @throws NullPointerException if namespace is null
-     * @deprecated Use {@link #getAll(Class)} instead
-     */
-    @Deprecated(forRemoval = true)
-    default <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> findAll(final @NonNull Class<N> namespace) {
-        return getAll(requireNonNull(namespace));
-    }
 
     /**
      * Returns a collection of all effective substatements.
