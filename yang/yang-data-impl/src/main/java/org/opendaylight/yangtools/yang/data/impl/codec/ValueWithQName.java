@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -16,12 +15,6 @@ public class ValueWithQName<V> extends SimpleImmutableEntry<QName, V> {
 
     public ValueWithQName(final QName qname, final V value) {
         super(qname, value);
-    }
-
-    @Deprecated(forRemoval = true)
-    @SuppressFBWarnings(value = "NM_CONFUSING", justification = "Legacy typo")
-    public QName getQname() {
-        return getKey();
     }
 
     public QName getQName() {
