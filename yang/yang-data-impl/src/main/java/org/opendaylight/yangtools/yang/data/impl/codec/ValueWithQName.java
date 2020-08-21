@@ -18,12 +18,6 @@ public class ValueWithQName<V> extends SimpleImmutableEntry<QName, V> {
         super(qname, value);
     }
 
-    @Deprecated(forRemoval = true)
-    @SuppressFBWarnings(value = "NM_CONFUSING", justification = "Legacy typo")
-    public QName getQname() {
-        return getKey();
-    }
-
     public QName getQName() {
         return getKey();
     }
