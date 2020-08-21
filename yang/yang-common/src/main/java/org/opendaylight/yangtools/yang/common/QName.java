@@ -299,18 +299,6 @@ public final class QName extends AbstractQName implements Comparable<QName> {
     }
 
     /**
-     * Returns a QName with the specified QNameModule and the same localname as this one.
-     *
-     * @param newModule New QNameModule to use
-     * @return a QName with specified QNameModule and same local name as this one
-     * @deprecated Use {@link #bindTo(QNameModule)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public @NonNull QName withModule(final QNameModule newModule) {
-        return bindTo(newModule);
-    }
-
-    /**
      * Returns a QName with the same namespace and local name, but with no revision. If this QName does not have
      * a Revision, this object is returned.
      *
