@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.data.util.codec;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
@@ -45,21 +43,15 @@ public class DataSchemaContextTreeTest {
         assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO)).isPresent());
         assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO).node(BAR)).isPresent());
         assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO).node(BAR).node(BAZ)).isPresent());
-
-        assertNotNull(CONTEXT.getChild(YangInstanceIdentifier.of(FOO)));
-        assertNotNull(CONTEXT.getChild(YangInstanceIdentifier.of(FOO).node(BAR)));
-        assertNotNull(CONTEXT.getChild(YangInstanceIdentifier.of(FOO).node(BAR).node(BAZ)));
     }
 
     @Test
     public void testSimpleBad() {
         assertEquals(Optional.empty(), CONTEXT.findChild(YangInstanceIdentifier.of(BAR)));
-        assertNull(CONTEXT.getChild(YangInstanceIdentifier.of(BAR)));
     }
 
     @Test
     public void testNestedBad() {
         assertEquals(Optional.empty(), CONTEXT.findChild(YangInstanceIdentifier.of(BAR).node(BAZ)));
-        assertNull(CONTEXT.getChild(YangInstanceIdentifier.of(BAR).node(BAZ)));
     }
 }
