@@ -60,22 +60,6 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
     <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> getAll(@NonNull Class<N> namespace);
 
     /**
-     * Returns all local values from supplied namespace.
-     *
-     * @param <K> Identifier type
-     * @param <V> Value type
-     * @param <N> Namespace identifier type
-     * @param namespace Namespace type
-     * @return Key-value mappings, empty if the namespace does not exist.
-     * @throws NullPointerException if namespace is null
-     * @deprecated Use {@link #getAll(Class)} instead
-     */
-    @Deprecated(forRemoval = true)
-    default <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> findAll(final @NonNull Class<N> namespace) {
-        return getAll(requireNonNull(namespace));
-    }
-
-    /**
      * Returns a collection of all effective substatements.
      *
      * @return collection of all effective substatements.
