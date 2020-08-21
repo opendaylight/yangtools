@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -93,7 +92,6 @@ public class QNameTest {
     @Test
     public void testQNameModule() throws URISyntaxException {
         final QNameModule qnameModule = QNameModule.create(NS, Revision.of("2000-01-01"));
-        assertNotNull(qnameModule.toString());
-        assertNotNull(qnameModule.getRevisionNamespace());
+        assertEquals("QNameModule{ns=urn:foo, rev=2000-01-01}", qnameModule.toString());
     }
 }

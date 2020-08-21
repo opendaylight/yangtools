@@ -17,7 +17,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -160,21 +159,6 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
         }
         final QNameModule other = (QNameModule) obj;
         return Objects.equals(revision, other.revision) && namespace.equals(other.namespace);
-    }
-
-    /**
-     * Returns a namespace in form defined by section 5.6.4. of
-     * <a href=https://tools.ietf.org/html/rfc6020">RFC6020</a>, for example
-     * {@code http://example.acme.com/system?revision=2008-04-01}.
-     *
-     * @return Namespace in form defined by section 5.6.4. of RFC6020.
-     * @throws URISyntaxException on incorrect namespace definition
-     *
-     */
-    @NonNull URI getRevisionNamespace() throws URISyntaxException {
-        final String query = revision == null ? "" : "revision=" + revision.toString();
-        return new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(), namespace.getPort(),
-            namespace.getPath(), query, namespace.getFragment());
     }
 
     @Override
