@@ -12,9 +12,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -53,27 +51,6 @@ public final class DataSchemaContextTree {
      */
     public @NonNull Optional<@NonNull DataSchemaContextNode<?>> findChild(final @NonNull YangInstanceIdentifier path) {
         return getRoot().findChild(path);
-    }
-
-    /**
-     * Get a child node as identified by an absolute {@link YangInstanceIdentifier}.
-     *
-     * @param path Path towards the child node
-     * @return Child node if present, or null when corresponding child is not found.
-     * @throws NullPointerException if {@code path} is null
-     *
-     * @deprecated Use {@link #findChild(YangInstanceIdentifier)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public @Nullable DataSchemaContextNode<?> getChild(final YangInstanceIdentifier path) {
-        DataSchemaContextNode<?> currentOp = root;
-        for (PathArgument arg : path.getPathArguments()) {
-            currentOp = currentOp.getChild(arg);
-            if (currentOp == null) {
-                return null;
-            }
-        }
-        return currentOp;
     }
 
     public DataSchemaContextNode<?> getRoot() {
