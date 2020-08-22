@@ -54,7 +54,7 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
     protected abstract @NonNull D createEmptyDeclared(@NonNull StmtContext<A, D, ?> ctx);
 
     @Override
-    public final E createEffective(final StmtContext<A, D, E> ctx) {
+    public E createEffective(final StmtContext<A, D, E> ctx) {
         final D declared = ctx.buildDeclared();
         final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
                 buildEffectiveSubstatements(ctx, statementsToBuild(ctx, declaredSubstatements(ctx)));
@@ -109,11 +109,6 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
         return defaultBuildEffectiveSubstatements(substatements);
     }
 
-    static final ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
-            final StmtContext<?, ?, ?> ctx) {
-        return defaultBuildEffectiveSubstatements(declaredSubstatements(ctx));
-    }
-
     private static ImmutableList<? extends EffectiveStatement<?, ?>> defaultBuildEffectiveSubstatements(
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         return substatements.stream()
@@ -122,7 +117,7 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
                 .collect(ImmutableList.toImmutableList());
     }
 
-    static final @NonNull List<StmtContext<?, ?, ?>> declaredSubstatements(final StmtContext<?, ?, ?> ctx) {
+    private static @NonNull List<StmtContext<?, ?, ?>> declaredSubstatements(final StmtContext<?, ?, ?> ctx) {
         /*
          * This dance is required to ensure that effects of 'uses' nodes are applied in the same order as
          * the statements were defined -- i.e. if we have something like this:
