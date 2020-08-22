@@ -523,17 +523,20 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
     }
 
-    // Exists only due to memory optimization
+    // These two exists only due to memory optimization, should live in AbstractResumedStatement
     final boolean fullyDefined() {
         return fullyDefined;
     }
 
-    // Exists only due to memory optimization, should live in AbstractResumedStatement
     final void setFullyDefined() {
         fullyDefined = true;
     }
 
-    // Exists only due to memory optimization, should live in InferredStatementContext
+    // These two exist only due to memory optimization, should live in InferredStatementContext
+    final boolean substatementsInitialized() {
+        return substatementsInitialized;
+    }
+
     final void setSubstatementsInitialized() {
         substatementsInitialized = true;
     }

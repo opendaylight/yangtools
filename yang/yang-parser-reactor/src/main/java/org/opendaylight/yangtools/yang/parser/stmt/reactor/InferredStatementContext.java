@@ -57,6 +57,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.prototype = original.prototype;
         this.originalCtx = original.originalCtx;
         this.argument = original.argument;
+        setSubstatementsInitialized();
     }
 
     InferredStatementContext(final StatementContextBase<?, ?, ?> parent, final StatementContextBase<A, D, E> prototype,
@@ -70,8 +71,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.targetModule = targetModule;
         this.originalCtx = prototype.getOriginalCtx().orElse(prototype);
 
-        // FIXME: YANGTOOLS-784: instantiate these lazily
-        addEffectiveSubstatements(createEffective());
+        // Note: substatements from prototype are initialized lazily through ensureSubstatements()
     }
 
     @Override
@@ -121,18 +121,57 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
+    public Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
+        ensureSubstatements();
+        return super.mutableEffectiveSubstatements();
+    }
+
+    @Override
+    public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
+        ensureSubstatements();
+        super.addEffectiveSubstatement(substatement);
+    }
+
+    @Override
+    public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
+        ensureSubstatements();
+        super.addEffectiveSubstatements(statements);
+    }
+
+    @Override
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
+            final String statementArg) {
+        ensureSubstatements();
+        super.removeStatementFromEffectiveSubstatements(statementDef, statementArg);
+    }
+
+    @Override
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
+        ensureSubstatements();
+        super.removeStatementFromEffectiveSubstatements(statementDef);
+    }
+
+    @Override
     InferredStatementContext<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
         return new InferredStatementContext<>(this, newParent);
     }
 
     @Override
     boolean hasEmptySubstatements() {
+        ensureSubstatements();
         return hasEmptyEffectiveSubstatements();
     }
 
     // Instantiate this statement's effective substatements. Note this method has side-effects in namespaces and overall
     // BuildGlobalContext, hence it must be called at most once.
-    private List<Mutable<?, ?, ?>> createEffective() {
+    private void ensureSubstatements() {
+        if (!substatementsInitialized()) {
+            setSubstatementsInitialized();
+            initializeSubstatements();
+        }
+    }
+
+    private void initializeSubstatements() {
         final Collection<? extends StatementContextBase<?, ?, ?>> declared = prototype.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = prototype.mutableEffectiveSubstatements();
         final List<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
@@ -146,7 +185,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             copySubstatement(stmtContext, buffer);
         }
 
-        return buffer;
+        super.addEffectiveSubstatements(buffer);
     }
 
     // Statement copy mess starts here
