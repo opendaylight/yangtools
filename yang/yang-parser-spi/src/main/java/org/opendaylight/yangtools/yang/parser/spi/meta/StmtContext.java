@@ -122,7 +122,10 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * {@link Optional#empty()} is returned.
      *
      * @return Optional SchemaPath
+     * @deprecated Use of SchemaPath in the context of effective statements is going away. Consider not providing this
+     *             information, if your users can exist without it.
      */
+    @Deprecated
     @NonNull Optional<SchemaPath> getSchemaPath();
 
     boolean isConfiguration();
