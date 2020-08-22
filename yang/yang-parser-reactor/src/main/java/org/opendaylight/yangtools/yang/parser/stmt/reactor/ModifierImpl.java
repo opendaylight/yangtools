@@ -169,15 +169,15 @@ final class ModifierImpl implements ModelActionBuilder {
 
     @Override
     public <K, N extends StatementNamespace<K, ?, ?>> Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
-            final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key,
+            final StmtContext<?, ?, ?> context, final Class<@NonNull N> namespace, final K key,
             final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, namespace, key, phase);
     }
 
     @Override
     public <K, N extends StatementNamespace<K, ?, ?>> Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
-            final StmtContext<?, ?, ?> context, final Class<N> namespace, final NamespaceKeyCriterion<K> criterion,
-            final ModelProcessingPhase phase) {
+            final StmtContext<?, ?, ?> context, final Class<@NonNull N> namespace,
+            final NamespaceKeyCriterion<K> criterion, final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, namespace, criterion, phase);
     }
 

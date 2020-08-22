@@ -343,7 +343,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     @Override
     public final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNs(
-            final Class<N> type, final T key, final U value) {
+            final Class<@NonNull N> type, final T key, final U value) {
         addToNamespace(type, key, value);
     }
 
@@ -363,8 +363,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
     @Override
-    public final <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type,
-            final T key) {
+    public final <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(
+            final Class<@NonNull N> type, final T key) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
     }
 
@@ -792,7 +792,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<N> namespace,
+    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<@NonNull N> namespace,
             final KT key,final StmtContext<?, ?, ?> stmt) {
         addContextToNamespace(namespace, key, stmt);
     }
