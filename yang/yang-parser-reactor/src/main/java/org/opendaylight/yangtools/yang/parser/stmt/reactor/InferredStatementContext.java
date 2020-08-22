@@ -17,15 +17,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -38,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * effective substatements, which are either transformed from that prototype or added by inference.
  */
 final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends StatementContextBase<A, D, E> {
+        extends StatementContextBase<A, D, E> implements OnDemandSchemaTreeStorageNode {
     private static final Logger LOG = LoggerFactory.getLogger(InferredStatementContext.class);
 
     private final @NonNull StatementContextBase<A, D, E> prototype;
@@ -57,6 +60,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.prototype = original.prototype;
         this.originalCtx = original.originalCtx;
         this.argument = original.argument;
+        setSubstatementsInitialized();
     }
 
     InferredStatementContext(final StatementContextBase<?, ?, ?> parent, final StatementContextBase<A, D, E> prototype,
@@ -70,8 +74,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.targetModule = targetModule;
         this.originalCtx = prototype.getOriginalCtx().orElse(prototype);
 
-        // FIXME: YANGTOOLS-784: instantiate these lazily
-        addEffectiveSubstatements(createEffective());
+        // Note: substatements from prototype are initialized lazily through ensureSubstatements()
     }
 
     @Override
@@ -121,18 +124,74 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
+    public Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
+        ensureSubstatements();
+        return super.mutableEffectiveSubstatements();
+    }
+
+    @Override
+    public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
+        ensureSubstatements();
+        super.addEffectiveSubstatement(substatement);
+    }
+
+    @Override
+    public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
+        ensureSubstatements();
+        super.addEffectiveSubstatements(statements);
+    }
+
+    @Override
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
+            final String statementArg) {
+        ensureSubstatements();
+        super.removeStatementFromEffectiveSubstatements(statementDef, statementArg);
+    }
+
+    @Override
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
+        ensureSubstatements();
+        super.removeStatementFromEffectiveSubstatements(statementDef);
+    }
+
+    @Override
     InferredStatementContext<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
         return new InferredStatementContext<>(this, newParent);
     }
 
     @Override
     boolean hasEmptySubstatements() {
+        ensureSubstatements();
         return hasEmptyEffectiveSubstatements();
+    }
+
+    @Override
+    public <D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
+            StmtContext<QName, D, E> requestSchemaTreeChild(final QName qname) {
+        LOG.debug("Materializing on lookup of {}", qname);
+        // FIXME: YANGTOOLS-1160: we do not want to force full materialization here
+        ensureSubstatements();
+
+        // Now we have to do a lookup as we do not have access to the namespace being populated (yet). Here we are
+        // bypassing additional checks and talk directly to superclass to get the statements.
+        for (StmtContext<?, ?, ?> stmt : super.mutableEffectiveSubstatements()) {
+            if (stmt.producesEffective(SchemaTreeEffectiveStatement.class)
+                && qname.equals(stmt.coerceStatementArgument())) {
+                return (StmtContext<QName, D, E>) stmt;
+            }
+        }
+        return null;
     }
 
     // Instantiate this statement's effective substatements. Note this method has side-effects in namespaces and overall
     // BuildGlobalContext, hence it must be called at most once.
-    private List<Mutable<?, ?, ?>> createEffective() {
+    private void ensureSubstatements() {
+        if (!substatementsInitialized()) {
+            initializeSubstatements();
+        }
+    }
+
+    private void initializeSubstatements() {
         final Collection<? extends StatementContextBase<?, ?, ?>> declared = prototype.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = prototype.mutableEffectiveSubstatements();
         final List<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
@@ -146,7 +205,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             copySubstatement(stmtContext, buffer);
         }
 
-        return buffer;
+        // We are bypassing usual safeties here, as this is not introducing new statements but rather just materializing
+        // them when the need has arised.
+        addInitialEffectiveSubstatements(buffer);
     }
 
     // Statement copy mess starts here
