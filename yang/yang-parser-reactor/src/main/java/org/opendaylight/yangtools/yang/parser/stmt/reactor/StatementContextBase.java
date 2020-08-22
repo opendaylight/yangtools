@@ -155,6 +155,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Flag for use with AbstractResumedStatement. This is hiding in the alignment shadow created by above boolean
     private boolean fullyDefined;
 
+    // Flag for InferredStatementContext. This is hiding in the alignment shadow created by above boolean.
+    private boolean substatementsInitialized;
+
     // Flags for use with SubstatementContext. These are hiding in the alignment shadow created by above boolean and
     // hence improve memory layout.
     private byte flags;
@@ -520,14 +523,22 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
     }
 
-    // Exists only due to memory optimization
+    // These two exists only due to memory optimization, should live in AbstractResumedStatement
     final boolean fullyDefined() {
         return fullyDefined;
     }
 
-    // Exists only due to memory optimization, should live in AbstractResumedStatement
     final void setFullyDefined() {
         fullyDefined = true;
+    }
+
+    // These two exist only due to memory optimization, should live in InferredStatementContext
+    final boolean substatementsInitialized() {
+        return substatementsInitialized;
+    }
+
+    final void setSubstatementsInitialized() {
+        substatementsInitialized = true;
     }
 
     @Override
