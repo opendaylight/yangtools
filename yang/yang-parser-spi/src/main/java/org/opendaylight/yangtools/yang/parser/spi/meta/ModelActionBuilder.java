@@ -171,10 +171,10 @@ public interface ModelActionBuilder {
         requiresCtx(StmtContext<A, D, E> context, ModelProcessingPhase phase);
 
     <K, N extends StatementNamespace<K, ?, ?>> @NonNull Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
-        StmtContext<?, ?, ?> context, Class<N> namespace, K key, ModelProcessingPhase phase);
+        StmtContext<?, ?, ?> context, Class<@NonNull N> namespace, K key, ModelProcessingPhase phase);
 
     <K, N extends StatementNamespace<K, ?, ?>> @NonNull Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
-            StmtContext<?, ?, ?> context, Class<N> namespace, NamespaceKeyCriterion<K> criterion,
+            StmtContext<?, ?, ?> context, Class<@NonNull N> namespace, NamespaceKeyCriterion<K> criterion,
             ModelProcessingPhase phase);
 
     /**
