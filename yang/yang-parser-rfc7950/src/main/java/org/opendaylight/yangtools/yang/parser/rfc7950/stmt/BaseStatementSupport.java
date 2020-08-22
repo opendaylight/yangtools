@@ -91,7 +91,8 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
     }
 
     protected static final <A, E extends EffectiveStatement<A, ?>> A findFirstArgument(
-            final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<E> type, final A defValue) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<@NonNull E> type,
+                    final A defValue) {
         final @Nullable E stmt = findFirstStatement(statements, type);
         return stmt != null ? stmt.argument() : defValue;
     }
