@@ -182,6 +182,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
      * properly updated there.
      */
     @Override
+    @Deprecated
     public Optional<SchemaPath> getSchemaPath() {
         return substatementGetSchemaPath();
     }
