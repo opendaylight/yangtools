@@ -69,7 +69,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
@@ -154,6 +153,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     // Flag for use with AbstractResumedStatement. This is hiding in the alignment shadow created by above boolean
     private boolean fullyDefined;
+
+    // Flag for InferredStatementContext. This is hiding in the alignment shadow created by above boolean.
+    private boolean substatementsInitialized;
 
     // Flags for use with SubstatementContext. These are hiding in the alignment shadow created by above boolean and
     // hence improve memory layout.
@@ -479,18 +481,33 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         if (!statements.isEmpty()) {
             statements.forEach(StatementContextBase::verifyStatement);
             beforeAddEffectiveStatement(statements.size());
-
-            final Collection<? extends StatementContextBase<?, ?, ?>> casted =
-                    (Collection<? extends StatementContextBase<?, ?, ?>>) statements;
-            final ModelProcessingPhase phase = completedPhase;
-            if (phase != null) {
-                for (StatementContextBase<?, ?, ?> stmt : casted) {
-                    ensureCompletedPhase(stmt, phase);
-                }
-            }
-
-            effective.addAll(casted);
+            doAddEffectiveSubstatements(statements);
         }
+    }
+
+    // exposed for InferredStatementContext only
+    final void addInitialEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
+        verify(!substatementsInitialized, "Attempted to re-initialized statement {} with {}", this, statements);
+        substatementsInitialized = true;
+
+        if (!statements.isEmpty()) {
+            statements.forEach(StatementContextBase::verifyStatement);
+            beforeAddEffectiveStatementUnsafe(statements.size());
+            doAddEffectiveSubstatements(statements);
+        }
+    }
+
+    private void doAddEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
+        final Collection<? extends StatementContextBase<?, ?, ?>> casted =
+            (Collection<? extends StatementContextBase<?, ?, ?>>) statements;
+        final ModelProcessingPhase phase = completedPhase;
+        if (phase != null) {
+            for (StatementContextBase<?, ?, ?> stmt : casted) {
+                ensureCompletedPhase(stmt, phase);
+            }
+        }
+
+        effective.addAll(casted);
     }
 
     // Make sure target statement has transitioned at least to specified phase. This method is just before we take
@@ -507,27 +524,38 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private void beforeAddEffectiveStatement(final int toAdd) {
         // We cannot allow statement to be further mutated
-        final StatementSourceReference ref = getStatementSourceReference();
-        verify(completedPhase != ModelProcessingPhase.EFFECTIVE_MODEL, "Cannot modify finished statement at %s", ref);
+        verify(completedPhase != ModelProcessingPhase.EFFECTIVE_MODEL, "Cannot modify finished statement at %s",
+            getStatementSourceReference());
+        beforeAddEffectiveStatementUnsafe(toAdd);
+    }
 
+    private void beforeAddEffectiveStatementUnsafe(final int toAdd) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
                 || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Effective statement cannot be added in declared phase at: %s", ref);
+                "Effective statement cannot be added in declared phase at: %s", getStatementSourceReference());
 
         if (effective.isEmpty()) {
             effective = new ArrayList<>(toAdd);
         }
     }
 
-    // Exists only due to memory optimization
+    // These two exists only due to memory optimization, should live in AbstractResumedStatement
     final boolean fullyDefined() {
         return fullyDefined;
     }
 
-    // Exists only due to memory optimization, should live in AbstractResumedStatement
     final void setFullyDefined() {
         fullyDefined = true;
+    }
+
+    // These two exist only due to memory optimization, should live in InferredStatementContext
+    final boolean substatementsInitialized() {
+        return substatementsInitialized;
+    }
+
+    final void setSubstatementsInitialized() {
+        substatementsInitialized = true;
     }
 
     @Override
