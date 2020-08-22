@@ -1006,15 +1006,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return false;
     }
 
-    // Exists only to support SubstatementContext/InferredStatementContext
+    // Exists only to support {SubstatementContext,InferredStatementContext}.getSchemaPath()
+    @Deprecated
     final @NonNull Optional<SchemaPath> substatementGetSchemaPath() {
         SchemaPath local = schemaPath;
         if (local == null) {
             synchronized (this) {
                 local = schemaPath;
                 if (local == null) {
-                    local = createSchemaPath(coerceParentContext());
-                    schemaPath = local;
+                    schemaPath = local = createSchemaPath(coerceParentContext());
                 }
             }
         }
@@ -1022,6 +1022,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return Optional.ofNullable(local);
     }
 
+    @Deprecated
     private SchemaPath createSchemaPath(final Mutable<?, ?, ?> parent) {
         final Optional<SchemaPath> maybeParentPath = parent.getSchemaPath();
         verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
