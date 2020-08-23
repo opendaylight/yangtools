@@ -164,8 +164,9 @@ final class StatementFactory {
         final Token token = ((TerminalNode) literal).getSymbol();
         switch (token.getType()) {
             case YangStatementParser.DQUOT_END:
-                return dquotArguments.computeIfAbsent("", DoubleQuoted::new);
             case YangStatementParser.SQUOT_END:
+                // This is an empty string, the difference between double and single quotes does not exist. Single
+                // quotes have more stringent semantics, hence use those.
                 return squotArguments.computeIfAbsent("", SingleQuoted::new);
             case YangStatementParser.DQUOT_STRING:
                 return createDoubleQuoted(token);
