@@ -13,6 +13,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.KeywordContext;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.QuotedStringContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedStringContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Concatenation;
@@ -98,36 +98,70 @@ final class StatementFactory {
     }
 
     private IRArgument createArgument(final StatementContext stmt) {
-        final ArgumentContext argCtx = stmt.argument();
-        if (argCtx == null) {
+        final ArgumentContext argument = stmt.argument();
+        if (argument == null) {
             return null;
         }
-        if (argCtx.getChildCount() == 1) {
-            final ParseTree child = argCtx.getChild(0);
-            if (child instanceof TerminalNode) {
-                // This is as simple as it gets: we are dealing with an identifier here.
-                return idenArguments.computeIfAbsent(strOf(((TerminalNode) child).getSymbol()), Identifier::new);
-            }
-            if (child instanceof UnquotedStringContext) {
-                // TODO: check non-presence of quotes and create a different subclass, so that ends up treated as if it
-                //       was single-quoted, i.e. bypass the check implied by IRArgument.Single#needQuoteCheck().
-                return uquotArguments.computeIfAbsent(strOf(child), Unquoted::new);
-            }
-
-            verify(child instanceof QuotedStringContext, "Unexpected child %s", child);
-            return createArgument((QuotedStringContext) child);
+        switch (argument.getChildCount()) {
+            case 0:
+                throw new VerifyException("Unexpected shape of " + argument);
+            case 1:
+                return createUnquoted(argument);
+            case 2:
+            case 3:
+                return createQuoted(argument);
+            default:
+                return createConcatenation(argument);
         }
-
-        // TODO: perform concatenation of single-quoted strings. For double-quoted strings this may not be as nice, but
-        //       for single-quoted strings we do not need further validation in in the reactor and can use them as raw
-        //       literals. This saves some indirection overhead (on memory side) and can slightly improve execution
-        //       speed when we process the same IR multiple times.
-
-        return new Concatenation(argCtx.quotedString().stream().map(this::createArgument)
-            .collect(ImmutableList.toImmutableList()));
     }
 
-    private Single createArgument(final QuotedStringContext argument) {
+    private IRArgument createConcatenation(final ArgumentContext argument) {
+        final List<Single> parts = new ArrayList<>();
+
+        for (ParseTree child : argument.children) {
+            verify(child instanceof TerminalNode, "Unexpected argument component %s", child);
+            final Token token = ((TerminalNode) child).getSymbol();
+            switch (token.getType()) {
+                case YangStatementParser.SEP:
+                    // Separator, just skip it over
+                case YangStatementParser.PLUS:
+                    // Operator, which we are handling by concat, skip it over
+                case YangStatementParser.DQUOT_START:
+                case YangStatementParser.SQUOT_START:
+                    // Quote starts, skip them over as they are just markers
+                case YangStatementParser.DQUOT_END:
+                case YangStatementParser.SQUOT_END:
+                    // Quote stops, skip them over because we either already added the content, or would be appending
+                    // an empty string
+                    break;
+                case YangStatementParser.SQUOT_STRING:
+                    parts.add(createSingleQuoted(token));
+                    break;
+                case YangStatementParser.DQUOT_STRING:
+                    parts.add(createDoubleQuoted(token));
+                    break;
+                default:
+                    throw new VerifyException("Unexpected token " + token);
+            }
+        }
+
+        switch (parts.size()) {
+            case 0:
+                // A concatenation of empty strings, fall back to a single unquoted string
+                return SingleQuoted.EMPTY;
+            case 1:
+                // A single string concatenated with empty string(s), use just the significant portion
+                return parts.get(0);
+            default:
+                // TODO: perform concatenation of single-quoted strings. For double-quoted strings this may not be as
+                //       nice, but for single-quoted strings we do not need further validation in in the reactor and can
+                //       use them as raw literals. This saves some indirection overhead (on memory side) and can
+                //       slightly improve execution speed when we process the same IR multiple times.
+                return new Concatenation(parts);
+        }
+    }
+
+    private Single createQuoted(final ArgumentContext argument) {
         final ParseTree literal = argument.getChild(1);
         verify(literal instanceof TerminalNode, "Unexpected literal %s", literal);
         final Token token = ((TerminalNode) literal).getSymbol();
@@ -138,20 +172,41 @@ final class StatementFactory {
                 // quotes have more stringent semantics, hence use those.
                 return SingleQuoted.EMPTY;
             case YangStatementParser.DQUOT_STRING:
-                // Whitespace normalization happens irrespective of further handling and has no effect on the result
-                final String str = intern(trimWhitespace(token.getText(), token.getCharPositionInLine() - 1));
-
-                // TODO: turn this into a single-quoted literal if a backslash is not present. Doing so allows the
-                //       argument to be treated as a literal. See IRArgument.Single#needUnescape() for more context.
-                //       This may look unimportant, but there are scenarios where we process the same AST multiple times
-                //       and remembering this detail saves a string scan.
-
-                return dquotArguments.computeIfAbsent(str, DoubleQuoted::new);
+                return createDoubleQuoted(token);
             case YangStatementParser.SQUOT_STRING:
-                return squotArguments.computeIfAbsent(strOf(token), SingleQuoted::new);
+                return createSingleQuoted(token);
             default:
                 throw new VerifyException("Unexpected token " + token);
         }
+    }
+
+    private DoubleQuoted createDoubleQuoted(final Token token) {
+        // Whitespace normalization happens irrespective of further handling and has no effect on the result
+        final String str = intern(trimWhitespace(token.getText(), token.getCharPositionInLine() - 1));
+
+        // TODO: turn this into a single-quoted literal if a backslash is not present. Doing so allows the
+        //       argument to be treated as a literal. See IRArgument.Single#needUnescape() for more context.
+        //       This may look unimportant, but there are scenarios where we process the same AST multiple times
+        //       and remembering this detail saves a string scan.
+
+        return dquotArguments.computeIfAbsent(str, DoubleQuoted::new);
+    }
+
+    private SingleQuoted createSingleQuoted(final Token token) {
+        return squotArguments.computeIfAbsent(strOf(token), SingleQuoted::new);
+    }
+
+    private Single createUnquoted(final ArgumentContext argument) {
+        final ParseTree child = argument.getChild(0);
+        if (child instanceof TerminalNode) {
+            // This is as simple as it gets: we are dealing with an identifier here.
+            return idenArguments.computeIfAbsent(strOf(((TerminalNode) child).getSymbol()), Identifier::new);
+        }
+
+        verify(child instanceof UnquotedStringContext, "Unexpected shape of %s", argument);
+        // TODO: check non-presence of quotes and create a different subclass, so that ends up treated as if it
+        //       was single-quoted, i.e. bypass the check implied by IRArgument.Single#needQuoteCheck().
+        return uquotArguments.computeIfAbsent(strOf(child), Unquoted::new);
     }
 
     private ImmutableList<IRStatement> createStatements(final StatementContext stmt) {
