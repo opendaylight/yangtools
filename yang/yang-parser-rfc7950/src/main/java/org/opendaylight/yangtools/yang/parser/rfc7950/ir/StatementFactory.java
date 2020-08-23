@@ -133,7 +133,10 @@ final class StatementFactory {
         final Token token = ((TerminalNode) literal).getSymbol();
         switch (token.getType()) {
             case YangStatementParser.DQUOT_END:
-                return dquotArguments.computeIfAbsent("", DoubleQuoted::new);
+            case YangStatementParser.SQUOT_END:
+                // This is an empty string, the difference between double and single quotes does not exist. Single
+                // quotes have more stringent semantics, hence use those.
+                return SingleQuoted.EMPTY;
             case YangStatementParser.DQUOT_STRING:
                 // Whitespace normalization happens irrespective of further handling and has no effect on the result
                 final String str = intern(trimWhitespace(token.getText(), token.getCharPositionInLine() - 1));
@@ -144,8 +147,6 @@ final class StatementFactory {
                 //       and remembering this detail saves a string scan.
 
                 return dquotArguments.computeIfAbsent(str, DoubleQuoted::new);
-            case YangStatementParser.SQUOT_END:
-                return squotArguments.computeIfAbsent("", SingleQuoted::new);
             case YangStatementParser.SQUOT_STRING:
                 return squotArguments.computeIfAbsent(strOf(token), SingleQuoted::new);
             default:
