@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.QuotedStringContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedStringContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -115,46 +114,49 @@ abstract class ArgumentContextUtils {
         // Get first child, which we fully expect to exist and be a lexer token
         final ParseTree firstChild = context.getChild(0);
         if (firstChild instanceof TerminalNode) {
-            // Simplest of cases -- it is a simple IDENTIFIER, hence we do not need to validate anything else and can
-            // just grab the string and run with it.
-            return firstChild.getText();
+            final Token token = ((TerminalNode) firstChild).getSymbol();
+            switch (token.getType()) {
+                case YangStatementParser.IDENTIFIER:
+                    // Simplest of cases -- it is an IDENTIFIER, hence we do not need to validate anything else and can
+                    // just grab the string and run with it.
+                    return firstChild.getText();
+                case YangStatementParser.DQUOT_START:
+                case YangStatementParser.SQUOT_START:
+                    // Quoted strings are potentially a pain, deal with them separately
+                    return decodeQuoted(context, ref);
+                default:
+                    throw new VerifyException("Unexpected token " + token);
+            }
         }
 
-        if (firstChild instanceof UnquotedStringContext) {
-            // Simple case, just grab the text, as ANTLR has done all the heavy lifting
-            final String str = firstChild.getText();
-            checkUnquoted(str, ref);
-            return str;
-        }
-
-        verify(firstChild instanceof QuotedStringContext, "Unexpected shape of %s", context);
-        if (context.getChildCount() == 1) {
-            // No concatenation needed, special-case
-            return unquoteString((QuotedStringContext) firstChild, ref);
-        }
-
-        // Potentially-complex case of string quoting, escaping and concatenation.
-        return concatStrings(context, ref);
+        verify(firstChild instanceof UnquotedStringContext, "Unexpected shape of %s", context);
+        // Simple case, just grab the text, as ANTLR has done all the heavy lifting
+        final String str = firstChild.getText();
+        checkUnquoted(str, ref);
+        return str;
     }
 
-    private String unquoteString(final QuotedStringContext context, final StatementSourceReference ref) {
-        final ParseTree secondChild = context.getChild(1);
-        verify(secondChild instanceof TerminalNode, "Unexpected shape of %s", context);
-        final Token secondToken = ((TerminalNode) secondChild).getSymbol();
-        final int type = secondToken.getType();
-        switch (type) {
+    private @NonNull String decodeQuoted(final ArgumentContext context, final StatementSourceReference ref) {
+        if (context.getChildCount() > 3) {
+            // Potentially-complex case of string quoting, escaping and concatenation.
+            return concatStrings(context, ref);
+        }
+
+        // No concatenation needed, special-case
+        final ParseTree child = context.getChild(1);
+        verify(child instanceof TerminalNode, "Unexpected shape of %s", context);
+        final Token token = ((TerminalNode) child).getSymbol();
+        switch (token.getType()) {
             case YangStatementParser.DQUOT_END:
             case YangStatementParser.SQUOT_END:
                 // We are missing actual body, hence this is an empty string
                 return "";
             case YangStatementParser.SQUOT_STRING:
-                return secondChild.getText();
+                return token.getText();
             case YangStatementParser.DQUOT_STRING:
-                // We should be looking at the first token, which is DQUOT_START, but since it is a single-character
-                // token, let's not bother.
-                return normalizeDoubleQuoted(secondChild.getText(), secondToken.getCharPositionInLine() - 1, ref);
+                return normalizeDoubleQuoted(token, ref);
             default:
-                throw new VerifyException("Unhandled token type " + type);
+                throw new VerifyException("Unhandled token " + token);
         }
     }
 
@@ -168,28 +170,40 @@ abstract class ArgumentContextUtils {
          */
         final StringBuilder sb = new StringBuilder();
         for (ParseTree child : context.children) {
-            if (child instanceof TerminalNode) {
-                final TerminalNode childNode = (TerminalNode) child;
-                switch (childNode.getSymbol().getType()) {
-                    case YangStatementParser.SEP:
-                    case YangStatementParser.PLUS:
-                        // Operator, which we are handling by concat
-                        break;
-                    default:
-                        throw new VerifyException("Unexpected symbol in " + childNode);
-                }
-            } else {
-                verify(child instanceof QuotedStringContext, "Unexpected fragment component %s", child);
-                sb.append(unquoteString((QuotedStringContext) child, ref));
-                continue;
+            verify(child instanceof TerminalNode, "Unexpected argument component %s", child);
+            final Token token = ((TerminalNode) child).getSymbol();
+            switch (token.getType()) {
+                case YangStatementParser.SEP:
+                    // Separator, just skip it over
+                case YangStatementParser.PLUS:
+                    // Operator, which we are handling by concat, skip it over
+                case YangStatementParser.DQUOT_START:
+                case YangStatementParser.SQUOT_START:
+                    // Quote starts, skip them over as they are just markers
+                case YangStatementParser.DQUOT_END:
+                case YangStatementParser.SQUOT_END:
+                    // Quote stops, skip them over because we either already added the content, or would be appending
+                    // an empty string
+                    break;
+                case YangStatementParser.SQUOT_STRING:
+                    // Single-quoted string, append it as a literal
+                    sb.append(token.getText());
+                    break;
+                case YangStatementParser.DQUOT_STRING:
+                    sb.append(normalizeDoubleQuoted(token, ref));
+                    break;
+                default:
+                    throw new VerifyException("Unexpected token " + token);
             }
         }
         return sb.toString();
     }
 
-    private String normalizeDoubleQuoted(final String str, final int dquot, final StatementSourceReference ref) {
-        // Whitespace normalization happens irrespective of further handling and has no effect on the result
-        final String stripped = trimWhitespace(str, dquot);
+    private String normalizeDoubleQuoted(final Token token, final StatementSourceReference ref) {
+        // Whitespace normalization happens irrespective of further handling and has no effect on the result. Strictly
+        // speaking we should also have the previous token, which would be a DQUOT_START and get the position from it.
+        // Seeing as it is a single-character token let's just subtract one from this token to achieve the same result.
+        final String stripped = trimWhitespace(token.getText(), token.getCharPositionInLine() - 1);
 
         // Now we need to perform some amount of unescaping. This serves as a pre-check before we dispatch
         // validation and processing (which will reuse the work we have done)
