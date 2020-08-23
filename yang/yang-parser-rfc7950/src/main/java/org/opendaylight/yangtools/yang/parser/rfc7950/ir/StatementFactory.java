@@ -148,7 +148,7 @@ final class StatementFactory {
         // This could have ended up being a concatenation of empty strings, in which case we'll just turn it into an
         // empty single-quoted argument.
         if (parts.isEmpty()) {
-            return squotArguments.computeIfAbsent("", SingleQuoted::new);
+            return SingleQuoted.EMPTY;
         }
 
         // TODO: perform concatenation of single-quoted strings. For double-quoted strings this may not be as nice, but
@@ -164,9 +164,10 @@ final class StatementFactory {
         final Token token = ((TerminalNode) literal).getSymbol();
         switch (token.getType()) {
             case YangStatementParser.DQUOT_END:
-                return dquotArguments.computeIfAbsent("", DoubleQuoted::new);
             case YangStatementParser.SQUOT_END:
-                return squotArguments.computeIfAbsent("", SingleQuoted::new);
+                // This is an empty string, the difference between double and single quotes does not exist. Single
+                // quotes have more stringent semantics, hence use those.
+                return SingleQuoted.EMPTY;
             case YangStatementParser.DQUOT_STRING:
                 return createDoubleQuoted(token);
             case YangStatementParser.SQUOT_STRING:

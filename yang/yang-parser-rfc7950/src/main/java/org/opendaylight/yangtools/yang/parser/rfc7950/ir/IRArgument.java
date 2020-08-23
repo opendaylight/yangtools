@@ -173,6 +173,8 @@ public abstract class IRArgument extends AbstractIRObject {
     }
 
     static final class SingleQuoted extends Single {
+        static final @NonNull SingleQuoted EMPTY = new SingleQuoted("");
+
         SingleQuoted(final String string) {
             super(string);
         }
