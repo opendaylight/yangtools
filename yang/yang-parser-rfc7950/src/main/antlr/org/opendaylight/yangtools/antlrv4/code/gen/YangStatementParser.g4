@@ -30,15 +30,14 @@ argument :
     // special and deserving of this treatment.
     IDENTIFIER
     |
+    // Quoted string and concatenations thereof. We are sacrificing brewity
+    // here to eliminate the need for another parser construct. Quoted strings
+    // account for about 50% of all arguments encountered -- hence the added
+    // parse tree indirection is very visible.
+    (DQUOT_START DQUOT_STRING? DQUOT_END | SQUOT_START SQUOT_STRING? SQUOT_END)
+    (SEP* PLUS SEP* (DQUOT_START DQUOT_STRING? DQUOT_END | SQUOT_START SQUOT_STRING? SQUOT_END))*
+    |
     unquotedString
-    |
-    quotedString (SEP* PLUS SEP* quotedString)*
-    ;
-
-quotedString :
-    DQUOT_START DQUOT_STRING? DQUOT_END
-    |
-    SQUOT_START SQUOT_STRING? SQUOT_END
     ;
 
 unquotedString :
