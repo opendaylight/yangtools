@@ -86,8 +86,8 @@ UQUOT_STRING :
     -> type(UQUOT_STRING);
 
 // Double/single-quoted strings. We deal with these using specialized modes.
-DQUOT_START : '"' -> pushMode(DQUOT_STRING_MODE);
-SQUOT_START : '\'' -> pushMode(SQUOT_STRING_MODE);
+DQUOT_START : '"' -> pushMode(DQUOT_STRING_MODE), skip;
+SQUOT_START : '\'' -> pushMode(SQUOT_STRING_MODE), skip;
 
 //
 // Double-quoted string lexing mode. We do not need to recognize all possible
