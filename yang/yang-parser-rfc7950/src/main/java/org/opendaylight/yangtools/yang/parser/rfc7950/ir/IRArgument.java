@@ -50,8 +50,8 @@ public abstract class IRArgument extends AbstractIRObject {
     public static final class Concatenation extends IRArgument {
         private final @NonNull ImmutableList<Single> parts;
 
-        Concatenation(final ImmutableList<Single> parts) {
-            this.parts = requireNonNull(parts);
+        Concatenation(final List<Single> parts) {
+            this.parts = ImmutableList.copyOf(parts);
         }
 
         /**
