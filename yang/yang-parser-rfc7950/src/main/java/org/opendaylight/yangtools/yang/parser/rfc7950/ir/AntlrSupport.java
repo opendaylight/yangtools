@@ -124,9 +124,8 @@ public final class AntlrSupport {
             case 0:
                 throw new VerifyException("Unexpected shape of " + argument);
             case 1:
-                return createUnquoted(argument);
+                return createSimple(argument);
             case 2:
-            case 3:
                 return createQuoted(argument);
             default:
                 return createConcatenation(argument);
@@ -144,9 +143,6 @@ public final class AntlrSupport {
                     // Separator, just skip it over
                 case YangStatementParser.PLUS:
                     // Operator, which we are handling by concat, skip it over
-                case YangStatementParser.DQUOT_START:
-                case YangStatementParser.SQUOT_START:
-                    // Quote starts, skip them over as they are just markers
                 case YangStatementParser.DQUOT_END:
                 case YangStatementParser.SQUOT_END:
                     // Quote stops, skip them over because we either already added the content, or would be appending
@@ -180,15 +176,10 @@ public final class AntlrSupport {
     }
 
     private Single createQuoted(final ArgumentContext argument) {
-        final ParseTree literal = argument.getChild(1);
-        verify(literal instanceof TerminalNode, "Unexpected literal %s", literal);
-        final Token token = ((TerminalNode) literal).getSymbol();
+        final ParseTree child = argument.getChild(0);
+        verify(child instanceof TerminalNode, "Unexpected literal %s", child);
+        final Token token = ((TerminalNode) child).getSymbol();
         switch (token.getType()) {
-            case YangStatementParser.DQUOT_END:
-            case YangStatementParser.SQUOT_END:
-                // This is an empty string, the difference between double and single quotes does not exist. Single
-                // quotes have more stringent semantics, hence use those.
-                return SingleQuoted.EMPTY;
             case YangStatementParser.DQUOT_STRING:
                 return createDoubleQuoted(token);
             case YangStatementParser.SQUOT_STRING:
@@ -210,21 +201,32 @@ public final class AntlrSupport {
         return dquotArguments.computeIfAbsent(str, DoubleQuoted::new);
     }
 
-    private SingleQuoted createSingleQuoted(final Token token) {
-        return squotArguments.computeIfAbsent(strOf(token), SingleQuoted::new);
-    }
-
-    private Single createUnquoted(final ArgumentContext argument) {
+    private IRArgument createSimple(final ArgumentContext argument) {
         final ParseTree child = argument.getChild(0);
         if (child instanceof TerminalNode) {
-            // This is as simple as it gets: we are dealing with an identifier here.
-            return idenArguments.computeIfAbsent(strOf(((TerminalNode) child).getSymbol()), Identifier::new);
+            final Token token = ((TerminalNode) child).getSymbol();
+            switch (token.getType()) {
+                case YangStatementParser.IDENTIFIER:
+                    // This is as simple as it gets: we are dealing with an identifier here.
+                    return idenArguments.computeIfAbsent(strOf(token), Identifier::new);
+                case YangStatementParser.DQUOT_END:
+                case YangStatementParser.SQUOT_END:
+                    // This is an empty string, the difference between double and single quotes does not exist. Single
+                    // quotes have more stringent semantics, hence use those.
+                    return SingleQuoted.EMPTY;
+                default:
+                    throw new VerifyException("Unexpected token " + token);
+            }
         }
 
         verify(child instanceof UnquotedStringContext, "Unexpected shape of %s", argument);
         // TODO: check non-presence of quotes and create a different subclass, so that ends up treated as if it
         //       was single-quoted, i.e. bypass the check implied by IRArgument.Single#needQuoteCheck().
         return uquotArguments.computeIfAbsent(strOf(child), Unquoted::new);
+    }
+
+    private SingleQuoted createSingleQuoted(final Token token) {
+        return squotArguments.computeIfAbsent(strOf(token), SingleQuoted::new);
     }
 
     private ImmutableList<IRStatement> createStatements(final StatementContext stmt) {
