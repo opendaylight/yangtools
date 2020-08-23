@@ -120,8 +120,10 @@ abstract class ArgumentContextUtils {
                     // Simplest of cases -- it is an IDENTIFIER, hence we do not need to validate anything else and can
                     // just grab the string and run with it.
                     return firstChild.getText();
-                case YangStatementParser.DQUOT_START:
-                case YangStatementParser.SQUOT_START:
+                case YangStatementParser.DQUOT_STRING:
+                case YangStatementParser.DQUOT_END:
+                case YangStatementParser.SQUOT_STRING:
+                case YangStatementParser.SQUOT_END:
                     // Quoted strings are potentially a pain, deal with them separately
                     return decodeQuoted(context, ref);
                 default:
@@ -137,13 +139,13 @@ abstract class ArgumentContextUtils {
     }
 
     private @NonNull String decodeQuoted(final ArgumentContext context, final StatementSourceReference ref) {
-        if (context.getChildCount() > 3) {
+        if (context.getChildCount() > 2) {
             // Potentially-complex case of string quoting, escaping and concatenation.
             return concatStrings(context, ref);
         }
 
         // No concatenation needed, special-case
-        final ParseTree child = context.getChild(1);
+        final ParseTree child = context.getChild(0);
         verify(child instanceof TerminalNode, "Unexpected shape of %s", context);
         final Token token = ((TerminalNode) child).getSymbol();
         switch (token.getType()) {
@@ -170,9 +172,6 @@ abstract class ArgumentContextUtils {
                     // Separator, just skip it over
                 case YangStatementParser.PLUS:
                     // Operator, which we are handling by concat, skip it over
-                case YangStatementParser.DQUOT_START:
-                case YangStatementParser.SQUOT_START:
-                    // Quote starts, skip them over as they are just markers
                 case YangStatementParser.DQUOT_END:
                 case YangStatementParser.SQUOT_END:
                     // Quote stops, skip them over because we either already added the content, or would be appending
