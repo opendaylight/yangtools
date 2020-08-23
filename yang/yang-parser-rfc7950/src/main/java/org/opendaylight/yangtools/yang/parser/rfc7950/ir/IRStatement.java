@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 
 /**
  * A single YANG statement in its raw string form. A statement is composed of:
@@ -32,17 +31,6 @@ public abstract class IRStatement extends AbstractIRObject {
     IRStatement(final IRKeyword keyword, final IRArgument argument) {
         this.keyword = requireNonNull(keyword);
         this.argument = argument;
-    }
-
-    /**
-     * Create an {@link IRStatement} from a parsed {@link StatementContext}.
-     *
-     * @param context ANTLR statement context
-     * @return A new IRStatement
-     * @throws NullPointerException if {@code context} is null
-     */
-    public static @NonNull IRStatement forContext(final StatementContext context) {
-        return new StatementFactory().createStatement(context);
     }
 
     /**

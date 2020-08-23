@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
 
 import static org.junit.Assert.assertEquals;
-import static org.opendaylight.yangtools.yang.parser.rfc7950.ir.StatementFactory.trimWhitespace;
+import static org.opendaylight.yangtools.yang.parser.rfc7950.ir.AntlrSupport.trimWhitespace;
 
 import org.junit.Test;
 
-public class StatementFactoryTest {
+public class AntlrSupportTest {
     @Test
     public void testTrimWhitespace() {
         assertEquals("\n", trimWhitespace("\n", 0));

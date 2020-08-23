@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.CompactYangStatementLexer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.AntlrSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -144,6 +145,6 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
 
         final FileContext result = parser.file();
         errorListener.validate();
-        return IRStatement.forContext(result.statement());
+        return AntlrSupport.createStatement(result);
     }
 }

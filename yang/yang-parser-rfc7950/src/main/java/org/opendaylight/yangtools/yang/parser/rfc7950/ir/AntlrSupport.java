@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
 
 import static com.google.common.base.Verify.verify;
 
+import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
@@ -25,6 +26,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.KeywordContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedStringContext;
@@ -37,7 +39,8 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Unquoted;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Unqualified;
 
-final class StatementFactory {
+@Beta
+public final class AntlrSupport {
     private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
 
     private final Map<String, DoubleQuoted> dquotArguments = new HashMap<>();
@@ -48,7 +51,22 @@ final class StatementFactory {
     private final Map<Entry<String, String>, Qualified> qualKeywords = new HashMap<>();
     private final Map<String, String> strings = new HashMap<>();
 
-    @NonNull IRStatement createStatement(final StatementContext stmt) {
+    private AntlrSupport() {
+        // Hidden on purpose
+    }
+
+    /**
+     * Create an {@link IRStatement} from a parsed {@link StatementContext}.
+     *
+     * @param file ANTLR file context
+     * @return A new IRStatement
+     * @throws NullPointerException if {@code file} is null or it does not contain a root statement
+     */
+    public static @NonNull IRStatement createStatement(final FileContext file) {
+        return new AntlrSupport().createStatement(file.statement());
+    }
+
+    private @NonNull IRStatement createStatement(final StatementContext stmt) {
         final ParseTree firstChild = stmt.getChild(0);
         verify(firstChild instanceof KeywordContext, "Unexpected shape of %s", stmt);
 
