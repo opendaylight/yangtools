@@ -24,4 +24,8 @@ final class IRStatement031 extends IRStatement {
     public int startColumn() {
         return value & 0xFF;
     }
+
+    int value() {
+        return value;
+    }
 }
