@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -87,13 +88,20 @@ public final class TestUtils {
             final @Nullable Set<QName> supportedFeatures) throws Exception {
         final var reactor = RFC7950Reactors.defaultReactor().newBuild();
         for (var resourcePath : yangSourceFilePath) {
-            reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forPath(Path.of(
-                TestUtils.class.getResource(resourcePath).toURI()))));
+            reactor.addSource(YangStatementStreamSource.create(assertSchemaSource(resourcePath)));
         }
         if (supportedFeatures != null) {
             reactor.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
         return reactor.buildEffective();
+    }
+
+    public static YangTextSchemaSource assertSchemaSource(final String resourcePath) {
+        try {
+            return YangTextSchemaSource.forPath(Path.of(TestUtils.class.getResource(resourcePath).toURI()));
+        } catch (URISyntaxException e) {
+            throw new AssertionError(e);
+        }
     }
 
     // FIXME: these remain unaudited
