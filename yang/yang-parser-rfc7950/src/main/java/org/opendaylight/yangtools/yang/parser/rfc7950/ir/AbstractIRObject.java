@@ -12,6 +12,12 @@ import org.opendaylight.yangtools.concepts.Immutable;
 
 abstract class AbstractIRObject implements Immutable {
     @Override
+    public abstract int hashCode();
+
+    @Override
+    public abstract boolean equals(Object obj);
+
+    @Override
     public final String toString() {
         return MoreObjects.toStringHelper(this).add("fragment", toYangFragment(new StringBuilder())).toString();
     }
