@@ -17,4 +17,6 @@ abstract class AbstractIRObject implements Immutable {
     }
 
     abstract StringBuilder toYangFragment(StringBuilder sb);
+
+    abstract byte ioType();
 }

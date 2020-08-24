@@ -50,6 +50,11 @@ public abstract class IRKeyword extends AbstractIRObject {
         StringBuilder toYangFragment(final StringBuilder sb) {
             return sb.append(prefix).append(':').append(identifier());
         }
+
+        @Override
+        byte ioType() {
+            return IOSupport.KEY_QUAL;
+        }
     }
 
     @Beta
@@ -71,6 +76,11 @@ public abstract class IRKeyword extends AbstractIRObject {
         @Override
         StringBuilder toYangFragment(final StringBuilder sb) {
             return sb.append(identifier());
+        }
+
+        @Override
+        byte ioType() {
+            return IOSupport.KEY_UQUAL;
         }
     }
 

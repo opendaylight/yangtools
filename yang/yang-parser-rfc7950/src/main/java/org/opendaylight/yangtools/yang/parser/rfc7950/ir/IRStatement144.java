@@ -15,8 +15,8 @@ import org.eclipse.jdt.annotation.NonNull;
 final class IRStatement144 extends IRStatement044 {
     private final @NonNull IRStatement statement;
 
-    IRStatement144(final IRKeyword keyword, final IRArgument argument, final IRStatement statement,
-            final int startLine, final int startColumn) {
+    IRStatement144(final IRKeyword keyword, final IRArgument argument, final int startLine, final int startColumn,
+            final IRStatement statement) {
         super(keyword, argument, startLine, startColumn);
         this.statement = requireNonNull(statement);
     }
@@ -24,5 +24,10 @@ final class IRStatement144 extends IRStatement044 {
     @Override
     public ImmutableList<IRStatement> statements() {
         return ImmutableList.of(statement);
+    }
+
+    @Override
+    byte ioType() {
+        return IOSupport.STMT_144;
     }
 }

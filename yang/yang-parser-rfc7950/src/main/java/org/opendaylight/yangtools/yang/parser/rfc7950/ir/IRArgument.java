@@ -72,6 +72,11 @@ public abstract class IRArgument extends AbstractIRObject {
             }
             return sb;
         }
+
+        @Override
+        byte ioType() {
+            return parts.size() <= 255 ? IOSupport.ARG_CONCAT_U8 : IOSupport.ARG_CONCAT;
+        }
     }
 
     /**
@@ -170,6 +175,11 @@ public abstract class IRArgument extends AbstractIRObject {
             // may have trimmed.
             return super.toYangFragment(sb.append('"')).append('"');
         }
+
+        @Override
+        byte ioType() {
+            return IOSupport.ARG_DQUOT;
+        }
     }
 
     static final class SingleQuoted extends Single {
@@ -183,17 +193,32 @@ public abstract class IRArgument extends AbstractIRObject {
         StringBuilder toYangFragment(final StringBuilder sb) {
             return super.toYangFragment(sb.append('\'')).append('\'');
         }
+
+        @Override
+        byte ioType() {
+            return IOSupport.ARG_SQUOT;
+        }
     }
 
     static final class Identifier extends Single {
         Identifier(final String string) {
             super(string);
         }
+
+        @Override
+        byte ioType() {
+            return IOSupport.ARG_IDENTIFIER;
+        }
     }
 
     static final class Unquoted extends Single {
         Unquoted(final String string) {
             super(string);
+        }
+
+        @Override
+        byte ioType() {
+            return IOSupport.ARG_UQUOT;
         }
     }
 

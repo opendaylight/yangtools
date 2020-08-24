@@ -26,4 +26,9 @@ final class IRStatement022 extends IRStatement {
     public int startColumn() {
         return Short.toUnsignedInt(startColumn);
     }
+
+    @Override
+    byte ioType() {
+        return IOSupport.STMT_022;
+    }
 }

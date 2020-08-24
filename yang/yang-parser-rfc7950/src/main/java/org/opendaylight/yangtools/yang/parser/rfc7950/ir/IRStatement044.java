@@ -26,4 +26,9 @@ class IRStatement044 extends IRStatement {
     public final int startColumn() {
         return startColumn;
     }
+
+    @Override
+    byte ioType() {
+        return IOSupport.STMT_044;
+    }
 }
