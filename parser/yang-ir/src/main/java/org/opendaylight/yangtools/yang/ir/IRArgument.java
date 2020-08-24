@@ -179,7 +179,7 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         }
     }
 
-    private static final class DoubleQuoted extends Single {
+    static final class DoubleQuoted extends Single {
         private DoubleQuoted(final String string) {
             super(string);
         }
