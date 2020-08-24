@@ -157,6 +157,17 @@ public abstract class IRArgument extends AbstractIRObject {
         StringBuilder toYangFragment(final StringBuilder sb) {
             return sb.append(string);
         }
+
+        @Override
+        public final int hashCode() {
+            return string.hashCode();
+        }
+
+        @Override
+        public final boolean equals(final Object obj) {
+            return this == obj
+                    || obj != null && getClass().equals(obj.getClass()) && string.equals(((Single) obj).string);
+        }
     }
 
     static final class DoubleQuoted extends Single {

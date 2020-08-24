@@ -107,9 +107,9 @@ public final class AntlrSupport {
             case 0:
                 return statementOf(keyword, argument, line, column);
             case 1:
-                return new IRStatement144(keyword, argument, statements.get(0), line, column);
+                return new IRStatement144(keyword, argument, line, column, statements.get(0));
             default:
-                return new IRStatementL44(keyword, argument, statements, line, column);
+                return new IRStatementL44(keyword, argument, line, column, statements);
         }
     }
 
