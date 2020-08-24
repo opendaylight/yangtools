@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
@@ -113,4 +114,21 @@ public abstract class IRKeyword extends AbstractIRObject {
      * @return Declaration string.
      */
     public abstract @NonNull String asStringDeclaration();
+
+    @Override
+    public final int hashCode() {
+        return Objects.hashCode(prefix()) * 31 + identifier.hashCode();
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof IRKeyword)) {
+            return false;
+        }
+        final IRKeyword other = (IRKeyword) obj;
+        return identifier.equals(other.identifier) && Objects.equals(prefix(), other.prefix());
+    }
 }
