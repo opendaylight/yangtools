@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 
 /**
  * Abstract Syntax Tree representation of a schema source. This representation is internal to the YANG parser
@@ -35,11 +36,11 @@ public final class ASTSchemaSource extends AbstractIdentifiable<SourceIdentifier
         implements SchemaSourceRepresentation {
     private final @NonNull YangModelDependencyInfo depInfo;
     private final @NonNull SemVerSourceIdentifier semVerId;
-    private final @NonNull ParserRuleContext tree;
+    private final @NonNull StatementContext tree;
     private final @Nullable String symbolicName;
 
     private ASTSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull SemVerSourceIdentifier semVerId,
-            final @NonNull ParserRuleContext tree, final @NonNull YangModelDependencyInfo depInfo,
+            final @NonNull StatementContext tree, final @NonNull YangModelDependencyInfo depInfo,
             @Nullable final String symbolicName) {
         super(identifier);
         this.depInfo = requireNonNull(depInfo);
@@ -63,7 +64,7 @@ public final class ASTSchemaSource extends AbstractIdentifiable<SourceIdentifier
      *             if we fail to extract dependency information.
      */
     static @NonNull ASTSchemaSource create(final @NonNull SourceIdentifier identifier,
-            final @Nullable String symbolicName, final @NonNull ParserRuleContext tree)
+            final @Nullable String symbolicName, final @NonNull StatementContext tree)
                     throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(identifier, tree);
         final SourceIdentifier id = getSourceId(depInfo);
@@ -110,6 +111,10 @@ public final class ASTSchemaSource extends AbstractIdentifiable<SourceIdentifier
     //        on model.api types.
     public @NonNull YangModelDependencyInfo getDependencyInformation() {
         return depInfo;
+    }
+
+    @NonNull StatementContext tree() {
+        return tree;
     }
 
     private static @NonNull SourceIdentifier getSourceId(final @NonNull YangModelDependencyInfo depInfo) {

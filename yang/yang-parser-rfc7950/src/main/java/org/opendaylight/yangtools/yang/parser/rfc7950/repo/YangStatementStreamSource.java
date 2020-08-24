@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -109,10 +108,7 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
      * @return A new {@link YangStatementStreamSource}
      */
     public static YangStatementStreamSource create(final ASTSchemaSource source) {
-        final ParserRuleContext ast = source.getAST();
-        checkArgument(ast instanceof StatementContext,
-                "Unsupported context class %s for source %s", ast.getClass(), source.getIdentifier());
-        return create(source.getIdentifier(), (StatementContext) ast, source.getSymbolicName().orElse(null));
+        return create(source.getIdentifier(), source.tree(), source.getSymbolicName().orElse(null));
     }
 
     public static YangStatementStreamSource create(final SourceIdentifier identifier, final StatementContext context,
