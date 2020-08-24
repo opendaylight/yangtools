@@ -26,7 +26,7 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Beta
 public abstract sealed class IRStatement extends AbstractIRObject {
-    private static final class Z22 extends IRStatement {
+    static final class Z22 extends IRStatement {
         private final short startLine;
         private final short startColumn;
 
@@ -47,12 +47,16 @@ public abstract sealed class IRStatement extends AbstractIRObject {
         }
     }
 
-    private static final class Z31 extends IRStatement {
+    static final class Z31 extends IRStatement {
         private final int value;
 
         Z31(final IRKeyword keyword, final IRArgument argument, final int startLine, final int startColumn) {
+            this(keyword, argument, startLine << 8 | startColumn & 0xFF);
+        }
+
+        Z31(final IRKeyword keyword, final IRArgument argument, final int value) {
             super(keyword, argument);
-            value = startLine << 8 | startColumn & 0xFF;
+            this.value = value;
         }
 
         @Override
@@ -64,9 +68,13 @@ public abstract sealed class IRStatement extends AbstractIRObject {
         public int startColumn() {
             return value & 0xFF;
         }
+
+        int value() {
+            return value;
+        }
     }
 
-    private static sealed class Z44 extends IRStatement permits O44, L44 {
+    static sealed class Z44 extends IRStatement permits O44, L44 {
         private final int startLine;
         private final int startColumn;
 
@@ -87,7 +95,7 @@ public abstract sealed class IRStatement extends AbstractIRObject {
         }
     }
 
-    private static final class O44 extends Z44 {
+    static final class O44 extends Z44 {
         private final @NonNull IRStatement statement;
 
         O44(final IRKeyword keyword, final IRArgument argument, final IRStatement statement, final int startLine,
@@ -102,7 +110,7 @@ public abstract sealed class IRStatement extends AbstractIRObject {
         }
     }
 
-    private static final class L44 extends Z44 {
+    static final class L44 extends Z44 {
         private final @NonNull ImmutableList<IRStatement> statements;
 
         L44(final IRKeyword keyword, final IRArgument argument, final ImmutableList<IRStatement> statements,
