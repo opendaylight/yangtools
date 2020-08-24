@@ -15,8 +15,8 @@ import org.eclipse.jdt.annotation.NonNull;
 final class IRStatementL44 extends IRStatement044 {
     private final @NonNull ImmutableList<IRStatement> statements;
 
-    IRStatementL44(final IRKeyword keyword, final IRArgument argument, final ImmutableList<IRStatement> statements,
-            final int startLine, final int startColumn) {
+    IRStatementL44(final IRKeyword keyword, final IRArgument argument, final int startLine, final int startColumn,
+            final ImmutableList<IRStatement> statements) {
         super(keyword, argument, startLine, startColumn);
         this.statements = requireNonNull(statements);
     }

@@ -15,6 +15,11 @@ final class IRStatement031 extends IRStatement {
         this.value = startLine << 8 | startColumn & 0xFF;
     }
 
+    IRStatement031(final IRKeyword keyword, final IRArgument argument, final int value) {
+        super(keyword, argument);
+        this.value = value;
+    }
+
     @Override
     public int startLine() {
         return value >>> 8;
@@ -23,5 +28,9 @@ final class IRStatement031 extends IRStatement {
     @Override
     public int startColumn() {
         return value & 0xFF;
+    }
+
+    int value() {
+        return value;
     }
 }

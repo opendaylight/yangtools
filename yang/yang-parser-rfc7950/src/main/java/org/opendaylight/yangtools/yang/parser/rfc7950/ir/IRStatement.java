@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -93,5 +94,24 @@ public abstract class IRStatement extends AbstractIRObject {
             stmt.toYangFragment(sb).append('\n');
         }
         return sb.append('}');
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(keyword, argument, statements()) ^ startLine() ^ startColumn();
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof IRStatement)) {
+            return false;
+        }
+        final IRStatement other = (IRStatement) obj;
+        return keyword.equals(other.keyword) && Objects.equals(argument, other.argument)
+                && startLine() == other.startLine() && startColumn() == other.startColumn()
+                && statements().equals(other.statements());
     }
 }
