@@ -98,8 +98,8 @@ public final class AntlrSupport {
 
         return switch (statements.size()) {
             case 0 -> statementOf(keyword, argument, line, column);
-            case 1 -> new IRStatement144(keyword, argument, statements.get(0), line, column);
-            default -> new IRStatementL44(keyword, argument, statements, line, column);
+            case 1 -> new IRStatement144(keyword, argument, line, column, statements.get(0));
+            default -> new IRStatementL44(keyword, argument, line, column, statements);
         };
     }
 
