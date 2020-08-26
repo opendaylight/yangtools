@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5473b96a_c4d08012",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 8548
+      },
+      "writtenOn": "2020-08-26T07:06:08Z",
+      "side": 1,
+      "message": "Perhaps move it to separate method, because this part of code is used 5 times",
+      "range": {
+        "startLine": 200,
+        "startChar": 0,
+        "endLine": 202,
+        "endChar": 21
+      },
+      "revId": "d8cd97686e66fe43f7f6274bb3341efbab3eff4a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
