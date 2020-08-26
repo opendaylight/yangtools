@@ -12,12 +12,12 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>3.0.17-SNAPSHOT</version>
+        <version>3.0.18-SNAPSHOT</version>
         <relativePath>../../bundle-parent</relativePath>
     </parent>
 
     <artifactId>rfc6241-model-api</artifactId>
-    <version>1.0.17-SNAPSHOT</version>
+    <version>1.0.18-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>RFC6241 extensions for unbound metadata</description>
