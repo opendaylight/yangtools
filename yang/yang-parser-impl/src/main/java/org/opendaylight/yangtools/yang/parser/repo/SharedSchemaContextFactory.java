@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfig
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -78,7 +79,7 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
     private @NonNull ListenableFuture<EffectiveModelContext> createSchemaContext(
             final Collection<SourceIdentifier> requiredSources,
             final Cache<Collection<SourceIdentifier>, EffectiveModelContext> cache,
-            final AsyncFunction<List<ASTSchemaSource>, EffectiveModelContext> assembleSources) {
+            final AsyncFunction<List<IRSchemaSource>, EffectiveModelContext> assembleSources) {
         // Make sources unique
         final List<SourceIdentifier> uniqueSourceIdentifiers = deDuplicateSources(requiredSources);
 
@@ -89,7 +90,7 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
         }
 
         // Request all sources be loaded
-        ListenableFuture<List<ASTSchemaSource>> sf = Futures.allAsList(Collections2.transform(uniqueSourceIdentifiers,
+        ListenableFuture<List<IRSchemaSource>> sf = Futures.allAsList(Collections2.transform(uniqueSourceIdentifiers,
             this::requestSource));
 
         // Detect mismatch between requested Source IDs and IDs that are extracted from parsed source
@@ -129,8 +130,8 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
         return rf;
     }
 
-    private ListenableFuture<ASTSchemaSource> requestSource(final @NonNull SourceIdentifier identifier) {
-        return repository.getSchemaSource(identifier, ASTSchemaSource.class);
+    private ListenableFuture<IRSchemaSource> requestSource(final @NonNull SourceIdentifier identifier) {
+        return repository.getSchemaSource(identifier, IRSchemaSource.class);
     }
 
     /**
@@ -151,8 +152,8 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
     }
 
     @SuppressModernizer
-    private static final class SourceIdMismatchDetector implements Function<List<ASTSchemaSource>,
-            List<ASTSchemaSource>> {
+    private static final class SourceIdMismatchDetector implements Function<List<IRSchemaSource>,
+            List<IRSchemaSource>> {
         private final List<SourceIdentifier> sourceIdentifiers;
 
         SourceIdMismatchDetector(final List<SourceIdentifier> sourceIdentifiers) {
@@ -160,14 +161,14 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
         }
 
         @Override
-        public List<ASTSchemaSource> apply(final List<ASTSchemaSource> input) {
-            final Map<SourceIdentifier, ASTSchemaSource> filtered = new LinkedHashMap<>();
+        public List<IRSchemaSource> apply(final List<IRSchemaSource> input) {
+            final Map<SourceIdentifier, IRSchemaSource> filtered = new LinkedHashMap<>();
 
             for (int i = 0; i < input.size(); i++) {
 
                 final SourceIdentifier expectedSId = sourceIdentifiers.get(i);
-                final ASTSchemaSource astSchemaSource = input.get(i);
-                final SourceIdentifier realSId = astSchemaSource.getIdentifier();
+                final IRSchemaSource irSchemaSource = input.get(i);
+                final SourceIdentifier realSId = irSchemaSource.getIdentifier();
 
                 if (!expectedSId.equals(realSId)) {
                     LOG.warn("Source identifier mismatch for module \"{}\", requested as {} but actually is {}. "
@@ -178,17 +179,17 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
                     LOG.warn("Duplicate source for module {} detected in reactor", realSId);
                 }
 
-                filtered.put(realSId, astSchemaSource);
+                filtered.put(realSId, irSchemaSource);
 
             }
             return ImmutableList.copyOf(filtered.values());
         }
     }
 
-    private static final class AssembleSources implements AsyncFunction<List<ASTSchemaSource>, EffectiveModelContext> {
+    private static final class AssembleSources implements AsyncFunction<List<IRSchemaSource>, EffectiveModelContext> {
         private final @NonNull YangParserFactory parserFactory;
         private final @NonNull SchemaContextFactoryConfiguration config;
-        private final @NonNull Function<ASTSchemaSource, SourceIdentifier> getIdentifier;
+        private final @NonNull Function<IRSchemaSource, SourceIdentifier> getIdentifier;
 
         private AssembleSources(final @NonNull YangParserFactory parserFactory,
                 final @NonNull SchemaContextFactoryConfiguration config) {
@@ -199,16 +200,16 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
                     this.getIdentifier = ASTSchemaSource::getSemVerIdentifier;
                     break;
                 default:
-                    this.getIdentifier = ASTSchemaSource::getIdentifier;
+                    this.getIdentifier = IRSchemaSource::getIdentifier;
             }
         }
 
         @Override
-        public FluentFuture<EffectiveModelContext> apply(final List<ASTSchemaSource> sources)
+        public FluentFuture<EffectiveModelContext> apply(final List<IRSchemaSource> sources)
                 throws SchemaResolutionException, ReactorException {
-            final Map<SourceIdentifier, ASTSchemaSource> srcs = Maps.uniqueIndex(sources, getIdentifier);
+            final Map<SourceIdentifier, IRSchemaSource> srcs = Maps.uniqueIndex(sources, getIdentifier);
             final Map<SourceIdentifier, YangModelDependencyInfo> deps =
-                    Maps.transformValues(srcs, ASTSchemaSource::getDependencyInformation);
+                    Maps.transformValues(srcs, YangModelDependencyInfo::forIR);
 
             LOG.debug("Resolving dependency reactor {}", deps);
 
@@ -226,10 +227,9 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
             config.getSupportedFeatures().ifPresent(parser::setSupportedFeatures);
             config.getModulesDeviatedByModules().ifPresent(parser::setModulesWithSupportedDeviations);
 
-            for (final Entry<SourceIdentifier, ASTSchemaSource> entry : srcs.entrySet()) {
-                final ASTSchemaSource ast = entry.getValue();
+            for (final Entry<SourceIdentifier, IRSchemaSource> entry : srcs.entrySet()) {
                 try {
-                    parser.addSource(ast);
+                    parser.addSource(entry.getValue());
                 } catch (YangSyntaxErrorException | IOException e) {
                     throw new SchemaResolutionException("Failed to add source " + entry.getKey(), e);
                 }

@@ -56,17 +56,28 @@ public final class AntlrSupport {
     }
 
     /**
-     * Create an {@link IRStatement} from a parsed {@link StatementContext}.
+     * Create an {@link IRStatement} from a parsed {@link FileContext}.
      *
      * @param file ANTLR file context
      * @return A new IRStatement
      * @throws NullPointerException if {@code file} is null or it does not contain a root statement
      */
     public static @NonNull IRStatement createStatement(final FileContext file) {
-        return new AntlrSupport().createStatement(file.statement());
+        return createStatement(file.statement());
     }
 
-    private @NonNull IRStatement createStatement(final StatementContext stmt) {
+    /**
+     * Create an {@link IRStatement} from a parsed {@link StatementContext}.
+     *
+     * @param stmt ANTLR statement context
+     * @return A new IRStatement
+     * @throws NullPointerException if {@code stmt} is null
+     */
+    public static @NonNull IRStatement createStatement(final StatementContext stmt) {
+        return new AntlrSupport().internalCreateStatement(stmt);
+    }
+
+    private @NonNull IRStatement internalCreateStatement(final StatementContext stmt) {
         final ParseTree firstChild = stmt.getChild(0);
         verify(firstChild instanceof KeywordContext, "Unexpected shape of %s", stmt);
 
@@ -232,7 +243,7 @@ public final class AntlrSupport {
     private ImmutableList<IRStatement> createStatements(final StatementContext stmt) {
         final List<StatementContext> statements = stmt.statement();
         return statements.isEmpty() ? ImmutableList.of()
-                : statements.stream().map(this::createStatement).collect(ImmutableList.toImmutableList());
+                : statements.stream().map(this::internalCreateStatement).collect(ImmutableList.toImmutableList());
     }
 
     private String strOf(final ParseTree tree) {
@@ -248,7 +259,8 @@ public final class AntlrSupport {
     }
 
     @VisibleForTesting
-    static String trimWhitespace(final String str, final int dquot) {
+    @Deprecated
+    public static String trimWhitespace(final String str, final int dquot) {
         final int firstBrk = str.indexOf('\n');
         if (firstBrk == -1) {
             return str;
