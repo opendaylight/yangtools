@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFacto
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class OpenconfigVerSharedSchemaRepositoryTest {
 
@@ -29,15 +29,15 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "openconfig-ver-shared-schema-repo-test");
 
-        final SettableSchemaProvider<ASTSchemaSource> bar = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<IRSchemaSource> bar = getImmediateYangSourceProviderFromResource(
                 "/openconfig-version/openconfigver-shared-schema-repository/bar@2016-01-01.yang");
         bar.register(sharedSchemaRepository);
         bar.setResult();
-        final SettableSchemaProvider<ASTSchemaSource> foo = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<IRSchemaSource> foo = getImmediateYangSourceProviderFromResource(
                 "/openconfig-version/openconfigver-shared-schema-repository/foo.yang");
         foo.register(sharedSchemaRepository);
         foo.setResult();
-        final SettableSchemaProvider<ASTSchemaSource> semVer = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<IRSchemaSource> semVer = getImmediateYangSourceProviderFromResource(
                 "/openconfig-version/openconfigver-shared-schema-repository/openconfig-extensions.yang");
         semVer.register(sharedSchemaRepository);
         semVer.setResult();
@@ -61,15 +61,15 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
     public void testSharedSchemaRepository() throws Exception {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-test");
 
-        final SettableSchemaProvider<ASTSchemaSource> bar = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<IRSchemaSource> bar = getImmediateYangSourceProviderFromResource(
                 "/openconfig-version/shared-schema-repository/bar@2016-01-01.yang");
         bar.register(sharedSchemaRepository);
         bar.setResult();
-        final SettableSchemaProvider<ASTSchemaSource> foo = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<IRSchemaSource> foo = getImmediateYangSourceProviderFromResource(
                 "/openconfig-version/shared-schema-repository/foo.yang");
         foo.register(sharedSchemaRepository);
         foo.setResult();
-        final SettableSchemaProvider<ASTSchemaSource> semVer = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<IRSchemaSource> semVer = getImmediateYangSourceProviderFromResource(
                 "/openconfig-version/shared-schema-repository/openconfig-extensions.yang");
         semVer.register(sharedSchemaRepository);
         semVer.setResult();
@@ -91,10 +91,10 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
         assertEquals(moduleSize, schemaContext.getModules().size());
     }
 
-    static SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(final String resourceName)
+    static SettableSchemaProvider<IRSchemaSource> getImmediateYangSourceProviderFromResource(final String resourceName)
             throws Exception {
         final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
-        return SettableSchemaProvider.createImmediate(TextToASTTransformer.transformText(yangSource),
-            ASTSchemaSource.class);
+        return SettableSchemaProvider.createImmediate(TextToIRTransformer.transformText(yangSource),
+            IRSchemaSource.class);
     }
 }

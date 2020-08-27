@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfig
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SharedSchemaContextFactoryTest {
@@ -45,7 +45,7 @@ public class SharedSchemaContextFactoryTest {
         s1 = RevisionSourceIdentifier.create("ietf-inet-types", Revision.of("2010-09-24"));
         s2 = RevisionSourceIdentifier.create("iana-timezones", Revision.of("2012-07-09"));
 
-        final TextToASTTransformer transformer = TextToASTTransformer.create(repository, repository);
+        final TextToIRTransformer transformer = TextToIRTransformer.create(repository, repository);
         repository.registerSchemaSourceListener(transformer);
 
         repository.registerSchemaSource(sourceIdentifier -> immediateFluentFuture(source1),
@@ -71,7 +71,7 @@ public class SharedSchemaContextFactoryTest {
         s1 = source1.getIdentifier();
         s2 = source2.getIdentifier();
 
-        final SettableSchemaProvider<ASTSchemaSource> provider =
+        final SettableSchemaProvider<IRSchemaSource> provider =
                 SharedSchemaRepositoryTest.getImmediateYangSourceProviderFromResource(
                     "/no-revision/imported@2012-12-12.yang");
         provider.setResult();
@@ -80,7 +80,7 @@ public class SharedSchemaContextFactoryTest {
         // Register the same provider under source id without revision
         final SourceIdentifier sIdWithoutRevision = RevisionSourceIdentifier.create(provider.getId().getName());
         repository.registerSchemaSource(provider, PotentialSchemaSource.create(
-                sIdWithoutRevision, ASTSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
+                sIdWithoutRevision, IRSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
 
         final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
             config);

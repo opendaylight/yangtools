@@ -53,8 +53,10 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.util.InMemorySchemaSourceCache;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +68,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private final Multimap<SourceIdentifier, YangTextSchemaSource> texts = ArrayListMultimap.create();
     private final AtomicReference<Optional<EffectiveModelContext>> currentSchemaContext =
             new AtomicReference<>(Optional.empty());
-    private final InMemorySchemaSourceCache<ASTSchemaSource> cache;
+    private final InMemorySchemaSourceCache<IRSchemaSource> cache;
     private final SchemaListenerRegistration transReg;
     private final SchemaSourceRegistry registry;
     private final SchemaRepository repository;
@@ -77,10 +79,10 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         this.repository = requireNonNull(repository);
         this.registry = requireNonNull(registry);
 
-        final TextToASTTransformer t = TextToASTTransformer.create(repository, registry);
+        final TextToIRTransformer t = TextToIRTransformer.create(repository, registry);
         transReg = registry.registerSchemaSourceListener(t);
 
-        cache = InMemorySchemaSourceCache.createSoftCache(registry, ASTSchemaSource.class, SOURCE_LIFETIME_SECONDS,
+        cache = InMemorySchemaSourceCache.createSoftCache(registry, IRSchemaSource.class, SOURCE_LIFETIME_SECONDS,
             TimeUnit.SECONDS);
     }
 
