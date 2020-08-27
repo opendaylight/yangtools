@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
@@ -62,7 +61,6 @@ public abstract class YangModelDependencyInfo {
 
     private static final String OPENCONFIG_VERSION = OpenConfigStatements.OPENCONFIG_VERSION.getStatementName()
             .getLocalName();
-    private static final Splitter COLON_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
 
     private final String name;
     private final Revision revision;
