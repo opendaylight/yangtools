@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -26,9 +27,11 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileContext;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.CompactYangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.AntlrSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -66,13 +69,8 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
      */
     public static YangStatementStreamSource create(final YangTextSchemaSource source) throws IOException,
             YangSyntaxErrorException {
-        final IRStatement rootStatement;
-        try (InputStream stream = source.openStream()) {
-            rootStatement = parseYangSource(source.getIdentifier(), stream);
-        }
-
-        return new YangStatementStreamSource(source.getIdentifier(), rootStatement,
-            source.getSymbolicName().orElse(null));
+        return new YangStatementStreamSource(source.getIdentifier(),
+            AntlrSupport.createStatement(parseYangSource(source)), source.getSymbolicName().orElse(null));
     }
 
     /**
@@ -80,8 +78,21 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
      *
      * @param source YangTextSchemaSource, must not be null
      * @return A new {@link YangStatementStreamSource}
+     * @throws NullPointerException if {@code source} is null
      */
     public static YangStatementStreamSource create(final ASTSchemaSource source) {
+        return create(source.getIdentifier(), AntlrSupport.createStatement(source.tree()),
+            source.getSymbolicName().orElse(null));
+    }
+
+    /**
+     * Create a {@link YangStatementStreamSource} for a {@link IRSchemaSource}.
+     *
+     * @param source YangTextSchemaSource, must not be null
+     * @return A new {@link YangStatementStreamSource}
+     * @throws NullPointerException if {@code source} is null
+     */
+    public static YangStatementStreamSource create(final IRSchemaSource source) {
         return create(source.getIdentifier(), source.getRootStatement(), source.getSymbolicName().orElse(null));
     }
 
@@ -137,7 +148,14 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
         return rootStatement;
     }
 
-    private static IRStatement parseYangSource(final SourceIdentifier source, final InputStream stream)
+    static StatementContext parseYangSource(final YangTextSchemaSource source)
+            throws IOException, YangSyntaxErrorException {
+        try (InputStream stream = source.openStream()) {
+            return parseYangSource(source.getIdentifier(), stream);
+        }
+    }
+
+    private static StatementContext parseYangSource(final SourceIdentifier source, final InputStream stream)
             throws IOException, YangSyntaxErrorException {
         final YangStatementLexer lexer = new CompactYangStatementLexer(CharStreams.fromStream(stream));
         final YangStatementParser parser = new YangStatementParser(new CommonTokenStream(lexer));
@@ -151,6 +169,6 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
 
         final FileContext result = parser.file();
         errorListener.validate();
-        return AntlrSupport.createStatement(result);
+        return verifyNotNull(result.statement());
     }
 }

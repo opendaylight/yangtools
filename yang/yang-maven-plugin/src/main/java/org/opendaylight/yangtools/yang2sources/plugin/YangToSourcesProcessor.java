@@ -41,11 +41,10 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator.ImportResolutionMode;
@@ -269,21 +268,21 @@ class YangToSourcesProcessor {
             final YangParser parser = parserFactory.createParser(parserMode);
             final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
 
-            final List<Entry<YangTextSchemaSource, ASTSchemaSource>> parsed = yangFilesInProject.parallelStream()
+            final List<Entry<YangTextSchemaSource, IRSchemaSource>> parsed = yangFilesInProject.parallelStream()
                     .map(file -> {
                         final YangTextSchemaSource textSource = YangTextSchemaSource.forFile(file);
                         try {
                             return new SimpleImmutableEntry<>(textSource,
-                                    TextToASTTransformer.transformText(textSource));
-                        } catch (YangSyntaxErrorException | SchemaSourceException | IOException e) {
+                                    TextToIRTransformer.transformText(textSource));
+                        } catch (YangSyntaxErrorException | IOException e) {
                             throw new IllegalArgumentException("Failed to parse " + file, e);
                         }
                     })
                     .collect(Collectors.toList());
 
-            for (final Entry<YangTextSchemaSource, ASTSchemaSource> entry : parsed) {
+            for (final Entry<YangTextSchemaSource, IRSchemaSource> entry : parsed) {
                 final YangTextSchemaSource textSource = entry.getKey();
-                final ASTSchemaSource astSource = entry.getValue();
+                final IRSchemaSource astSource = entry.getValue();
                 parser.addSource(astSource);
 
                 if (!astSource.getIdentifier().equals(textSource.getIdentifier())) {

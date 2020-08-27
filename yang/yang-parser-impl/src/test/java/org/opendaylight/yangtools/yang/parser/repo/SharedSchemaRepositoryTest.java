@@ -51,8 +51,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
 import org.opendaylight.yangtools.yang.model.repo.util.FilesystemSchemaSourceCache;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class SharedSchemaRepositoryTest {
 
@@ -65,16 +65,16 @@ public class SharedSchemaRepositoryTest {
         final SourceIdentifier id2 = loadAndRegisterSource(sharedSchemaRepository,
             "/no-revision/imported@2012-12-12.yang");
 
-        ListenableFuture<ASTSchemaSource> source = sharedSchemaRepository.getSchemaSource(idNoRevision,
-            ASTSchemaSource.class);
+        ListenableFuture<IRSchemaSource> source = sharedSchemaRepository.getSchemaSource(idNoRevision,
+            IRSchemaSource.class);
         assertEquals(idNoRevision, source.get().getIdentifier());
-        source = sharedSchemaRepository.getSchemaSource(id2, ASTSchemaSource.class);
+        source = sharedSchemaRepository.getSchemaSource(id2, IRSchemaSource.class);
         assertEquals(id2, source.get().getIdentifier());
     }
 
     private static SourceIdentifier loadAndRegisterSource(final SharedSchemaRepository sharedSchemaRepository,
             final String resourceName) throws Exception {
-        final SettableSchemaProvider<ASTSchemaSource> sourceProvider = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<IRSchemaSource> sourceProvider = getImmediateYangSourceProviderFromResource(
             resourceName);
         sourceProvider.setResult();
         final SourceIdentifier idNoRevision = sourceProvider.getId();
@@ -86,11 +86,11 @@ public class SharedSchemaRepositoryTest {
     public void testSimpleSchemaContext() throws Exception {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
-        final SettableSchemaProvider<ASTSchemaSource> remoteInetTypesYang = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<IRSchemaSource> remoteInetTypesYang = getImmediateYangSourceProviderFromResource(
             "/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
-        final ListenableFuture<ASTSchemaSource> registeredSourceFuture = sharedSchemaRepository.getSchemaSource(
-            remoteInetTypesYang.getId(), ASTSchemaSource.class);
+        final ListenableFuture<IRSchemaSource> registeredSourceFuture = sharedSchemaRepository.getSchemaSource(
+            remoteInetTypesYang.getId(), IRSchemaSource.class);
         assertFalse(registeredSourceFuture.isDone());
 
         final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory();
@@ -123,15 +123,15 @@ public class SharedSchemaRepositoryTest {
     public void testTwoSchemaContextsSharingSource() throws Exception {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
-        final SettableSchemaProvider<ASTSchemaSource> remoteInetTypesYang = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<IRSchemaSource> remoteInetTypesYang = getImmediateYangSourceProviderFromResource(
             "/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
         remoteInetTypesYang.setResult();
-        final SettableSchemaProvider<ASTSchemaSource> remoteTopologyYang = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<IRSchemaSource> remoteTopologyYang = getImmediateYangSourceProviderFromResource(
             "/ietf/network-topology@2013-10-21.yang");
         remoteTopologyYang.register(sharedSchemaRepository);
         remoteTopologyYang.setResult();
-        final SettableSchemaProvider<ASTSchemaSource> remoteModuleNoRevYang =
+        final SettableSchemaProvider<IRSchemaSource> remoteModuleNoRevYang =
                 getImmediateYangSourceProviderFromResource("/no-revision/module-without-revision.yang");
         remoteModuleNoRevYang.register(sharedSchemaRepository);
 
@@ -154,7 +154,7 @@ public class SharedSchemaRepositoryTest {
     public void testFailedSchemaContext() throws Exception {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
-        final SettableSchemaProvider<ASTSchemaSource> remoteInetTypesYang = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<IRSchemaSource> remoteInetTypesYang = getImmediateYangSourceProviderFromResource(
             "/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
 
@@ -183,12 +183,12 @@ public class SharedSchemaRepositoryTest {
     public void testDifferentCosts() throws Exception {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
-        final SettableSchemaProvider<ASTSchemaSource> immediateInetTypesYang = spy(
+        final SettableSchemaProvider<IRSchemaSource> immediateInetTypesYang = spy(
             getImmediateYangSourceProviderFromResource("/ietf/ietf-inet-types@2010-09-24.yang"));
         immediateInetTypesYang.register(sharedSchemaRepository);
         immediateInetTypesYang.setResult();
 
-        final SettableSchemaProvider<ASTSchemaSource> remoteInetTypesYang = spy(
+        final SettableSchemaProvider<IRSchemaSource> remoteInetTypesYang = spy(
             getRemoteYangSourceProviderFromResource("/ietf/ietf-inet-types@2010-09-24.yang"));
         remoteInetTypesYang.register(sharedSchemaRepository);
         remoteInetTypesYang.setResult();
@@ -284,7 +284,7 @@ public class SharedSchemaRepositoryTest {
             }), PotentialSchemaSource.create(runningId, YangTextSchemaSource.class,
                 PotentialSchemaSource.Costs.REMOTE_IO.getValue()));
 
-        final TextToASTTransformer transformer = TextToASTTransformer.create(sharedSchemaRepository,
+        final TextToIRTransformer transformer = TextToIRTransformer.create(sharedSchemaRepository,
             sharedSchemaRepository);
         sharedSchemaRepository.registerSchemaSourceListener(transformer);
 
@@ -324,17 +324,17 @@ public class SharedSchemaRepositoryTest {
         assertEquals(moduleSize, schemaContext.getModules().size());
     }
 
-    static SettableSchemaProvider<ASTSchemaSource> getRemoteYangSourceProviderFromResource(final String resourceName)
+    static SettableSchemaProvider<IRSchemaSource> getRemoteYangSourceProviderFromResource(final String resourceName)
             throws Exception {
         final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
-        return SettableSchemaProvider.createRemote(TextToASTTransformer.transformText(yangSource),
-            ASTSchemaSource.class);
+        return SettableSchemaProvider.createRemote(TextToIRTransformer.transformText(yangSource),
+            IRSchemaSource.class);
     }
 
-    static SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(final String resourceName)
+    static SettableSchemaProvider<IRSchemaSource> getImmediateYangSourceProviderFromResource(final String resourceName)
             throws Exception {
         final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
-        return SettableSchemaProvider.createImmediate(TextToASTTransformer.transformText(yangSource),
-            ASTSchemaSource.class);
+        return SettableSchemaProvider.createImmediate(TextToIRTransformer.transformText(yangSource),
+            IRSchemaSource.class);
     }
 }

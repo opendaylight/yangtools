@@ -11,9 +11,17 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
+import com.google.common.base.VerifyException;
 import java.util.List;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedStringContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.AntlrSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Concatenation;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Single;
@@ -119,6 +127,65 @@ abstract class ArgumentContextUtils {
         return concatStrings(((Concatenation) argument).parts(), ref);
     }
 
+    /*
+     * NOTE: this method we do not use convenience methods provided by generated parser code, but instead are making
+     *       based on the grammar assumptions. While this is more verbose, it cuts out a number of unnecessary code,
+     *       such as intermediate List allocation et al.
+     */
+    @Deprecated(forRemoval = true)
+    final @NonNull String stringFromStringContext(final ArgumentContext context, final StatementSourceReference ref) {
+        // Get first child, which we fully expect to exist and be a lexer token
+        final ParseTree firstChild = context.getChild(0);
+        if (firstChild instanceof TerminalNode) {
+            final Token token = ((TerminalNode) firstChild).getSymbol();
+            switch (token.getType()) {
+                case YangStatementParser.IDENTIFIER:
+                    // Simplest of cases -- it is an IDENTIFIER, hence we do not need to validate anything else and can
+                    // just grab the string and run with it.
+                    return firstChild.getText();
+                case YangStatementParser.DQUOT_STRING:
+                case YangStatementParser.DQUOT_END:
+                case YangStatementParser.SQUOT_STRING:
+                case YangStatementParser.SQUOT_END:
+                    // Quoted strings are potentially a pain, deal with them separately
+                    return decodeQuoted(context, ref);
+                default:
+                    throw new VerifyException("Unexpected token " + token);
+            }
+        }
+
+        verify(firstChild instanceof UnquotedStringContext, "Unexpected shape of %s", context);
+        // Simple case, just grab the text, as ANTLR has done all the heavy lifting
+        final String str = firstChild.getText();
+        checkUnquoted(str, ref);
+        return str;
+    }
+
+    @Deprecated
+    private @NonNull String decodeQuoted(final ArgumentContext context, final StatementSourceReference ref) {
+        if (context.getChildCount() > 2) {
+            // Potentially-complex case of string quoting, escaping and concatenation.
+            return concatStrings(context, ref);
+        }
+
+        // No concatenation needed, special-case
+        final ParseTree child = context.getChild(0);
+        verify(child instanceof TerminalNode, "Unexpected shape of %s", context);
+        final Token token = ((TerminalNode) child).getSymbol();
+        switch (token.getType()) {
+            case YangStatementParser.DQUOT_END:
+            case YangStatementParser.SQUOT_END:
+                // We are missing actual body, hence this is an empty string
+                return "";
+            case YangStatementParser.SQUOT_STRING:
+                return token.getText();
+            case YangStatementParser.DQUOT_STRING:
+                return normalizeDoubleQuoted(token, ref);
+            default:
+                throw new VerifyException("Unhandled token " + token);
+        }
+    }
+
     private @NonNull String concatStrings(final List<? extends Single> parts, final StatementSourceReference ref) {
         final StringBuilder sb = new StringBuilder();
         for (Single part : parts) {
@@ -126,6 +193,49 @@ abstract class ArgumentContextUtils {
             sb.append(part.needUnescape() ? unescape(str, ref) : str);
         }
         return sb.toString();
+    }
+
+    @Deprecated
+    private String concatStrings(final ArgumentContext context, final StatementSourceReference ref) {
+        final StringBuilder sb = new StringBuilder();
+        for (ParseTree child : context.children) {
+            verify(child instanceof TerminalNode, "Unexpected argument component %s", child);
+            final Token token = ((TerminalNode) child).getSymbol();
+            switch (token.getType()) {
+                case YangStatementParser.SEP:
+                    // Separator, just skip it over
+                case YangStatementParser.PLUS:
+                    // Operator, which we are handling by concat, skip it over
+                case YangStatementParser.DQUOT_END:
+                case YangStatementParser.SQUOT_END:
+                    // Quote stops, skip them over because we either already added the content, or would be appending
+                    // an empty string
+                    break;
+                case YangStatementParser.SQUOT_STRING:
+                    // Single-quoted string, append it as a literal
+                    sb.append(token.getText());
+                    break;
+                case YangStatementParser.DQUOT_STRING:
+                    sb.append(normalizeDoubleQuoted(token, ref));
+                    break;
+                default:
+                    throw new VerifyException("Unexpected token " + token);
+            }
+        }
+        return sb.toString();
+    }
+
+    @Deprecated
+    private String normalizeDoubleQuoted(final Token token, final StatementSourceReference ref) {
+        // Whitespace normalization happens irrespective of further handling and has no effect on the result. Strictly
+        // speaking we should also have the previous token, which would be a DQUOT_START and get the position from it.
+        // Seeing as it is a single-character token let's just subtract one from this token to achieve the same result.
+        final String stripped = AntlrSupport.trimWhitespace(token.getText(), token.getCharPositionInLine() - 1);
+
+        // Now we need to perform some amount of unescaping. This serves as a pre-check before we dispatch
+        // validation and processing (which will reuse the work we have done)
+        final int backslash = stripped.indexOf('\\');
+        return backslash == -1 ? stripped : unescape(ref, stripped, backslash);
     }
 
     /*
