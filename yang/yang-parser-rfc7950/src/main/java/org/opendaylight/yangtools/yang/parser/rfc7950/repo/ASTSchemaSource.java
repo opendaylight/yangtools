@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
@@ -19,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 
 /**
  * Abstract Syntax Tree representation of a schema source. This representation is internal to the YANG parser
@@ -31,19 +32,22 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
  * basic semantic validation and we were able to extract dependency information.
  */
 @Beta
+@Deprecated(forRemoval = true)
 public final class ASTSchemaSource extends AbstractIdentifiable<SourceIdentifier>
         implements SchemaSourceRepresentation {
-    private final @NonNull YangModelDependencyInfo depInfo;
-    private final @NonNull SemVerSourceIdentifier semVerId;
-    private final @NonNull IRStatement rootStatement;
+    private final @NonNull StatementContext tree;
     private final @Nullable String symbolicName;
 
+    // FIXME: compute lazily
+    private final @NonNull YangModelDependencyInfo depInfo;
+    private final @NonNull SemVerSourceIdentifier semVerId;
+
     private ASTSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull SemVerSourceIdentifier semVerId,
-            final @NonNull IRStatement tree, final @NonNull YangModelDependencyInfo depInfo,
+            final @NonNull StatementContext tree, final @NonNull YangModelDependencyInfo depInfo,
             @Nullable final String symbolicName) {
         super(identifier);
         this.depInfo = requireNonNull(depInfo);
-        this.rootStatement = requireNonNull(tree);
+        this.tree = requireNonNull(tree);
         this.semVerId = requireNonNull(semVerId);
         this.symbolicName = symbolicName;
     }
@@ -63,9 +67,9 @@ public final class ASTSchemaSource extends AbstractIdentifiable<SourceIdentifier
      *             if we fail to extract dependency information.
      */
     static @NonNull ASTSchemaSource create(final @NonNull SourceIdentifier identifier,
-            final @Nullable String symbolicName, final @NonNull IRStatement rootStatement)
+            final @Nullable String symbolicName, final @NonNull StatementContext tree)
                     throws YangSyntaxErrorException {
-        final YangModelDependencyInfo depInfo = YangModelDependencyInfo.parseAST(rootStatement, identifier);
+        final YangModelDependencyInfo depInfo = YangModelDependencyInfo.parseAST(tree, identifier);
         final SourceIdentifier id = getSourceId(depInfo);
 
         final SemVerSourceIdentifier semVerId;
@@ -75,7 +79,7 @@ public final class ASTSchemaSource extends AbstractIdentifiable<SourceIdentifier
             semVerId = getSemVerSourceId(depInfo);
         }
 
-        return new ASTSchemaSource(id, semVerId, rootStatement, depInfo, symbolicName);
+        return new ASTSchemaSource(id, semVerId, tree, depInfo, symbolicName);
     }
 
     @Override
@@ -93,12 +97,16 @@ public final class ASTSchemaSource extends AbstractIdentifiable<SourceIdentifier
     }
 
     /**
-     * Return the root statement of this source.
+     * Return the underlying abstract syntax tree.
      *
-     * @return Root statement.
+     * @return Underlying AST.
      */
-    public @NonNull IRStatement getRootStatement() {
-        return rootStatement;
+    public @NonNull ParserRuleContext getAST() {
+        return tree;
+    }
+
+    @NonNull StatementContext tree() {
+        return tree;
     }
 
     /**

@@ -56,17 +56,28 @@ public final class AntlrSupport {
     }
 
     /**
-     * Create an {@link IRStatement} from a parsed {@link StatementContext}.
+     * Create an {@link IRStatement} from a parsed {@link FileContext}.
      *
      * @param file ANTLR file context
      * @return A new IRStatement
      * @throws NullPointerException if {@code file} is null or it does not contain a root statement
      */
     public static @NonNull IRStatement createStatement(final FileContext file) {
-        return new AntlrSupport().createStatement(file.statement());
+        return createStatement(file.statement());
     }
 
-    private @NonNull IRStatement createStatement(final StatementContext stmt) {
+    /**
+     * Create an {@link IRStatement} from a parsed {@link StatementContext}.
+     *
+     * @param stmt ANTLR statement context
+     * @return A new IRStatement
+     * @throws NullPointerException if {@code stmt} is null
+     */
+    public static @NonNull IRStatement createStatement(final StatementContext stmt) {
+        return new AntlrSupport().statementOf(stmt);
+    }
+
+    private @NonNull IRStatement statementOf(final StatementContext stmt) {
         final ParseTree firstChild = stmt.getChild(0);
         verify(firstChild instanceof KeywordContext, "Unexpected shape of %s", stmt);
 
@@ -94,7 +105,7 @@ public final class AntlrSupport {
 
         switch (statements.size()) {
             case 0:
-                return createStatement(keyword, argument, line, column);
+                return statementOf(keyword, argument, line, column);
             case 1:
                 return new IRStatement144(keyword, argument, statements.get(0), line, column);
             default:
@@ -102,7 +113,7 @@ public final class AntlrSupport {
         }
     }
 
-    private static @NonNull IRStatement createStatement(final IRKeyword keyword, final IRArgument argument,
+    private static @NonNull IRStatement statementOf(final IRKeyword keyword, final IRArgument argument,
             final int line, final int column) {
         if (line >= 0 && column >= 0) {
             if (line <= 65535 && column <= 65535) {
@@ -232,7 +243,7 @@ public final class AntlrSupport {
     private ImmutableList<IRStatement> createStatements(final StatementContext stmt) {
         final List<StatementContext> statements = stmt.statement();
         return statements.isEmpty() ? ImmutableList.of()
-                : statements.stream().map(this::createStatement).collect(ImmutableList.toImmutableList());
+                : statements.stream().map(this::statementOf).collect(ImmutableList.toImmutableList());
     }
 
     private String strOf(final ParseTree tree) {
@@ -248,7 +259,8 @@ public final class AntlrSupport {
     }
 
     @VisibleForTesting
-    static String trimWhitespace(final String str, final int dquot) {
+    @Deprecated
+    public static String trimWhitespace(final String str, final int dquot) {
         final int firstBrk = str.indexOf('\n');
         if (firstBrk == -1) {
             return str;
