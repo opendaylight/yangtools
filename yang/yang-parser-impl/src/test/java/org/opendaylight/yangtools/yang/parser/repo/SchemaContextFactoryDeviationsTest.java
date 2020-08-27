@@ -34,8 +34,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfig
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 
 public class SchemaContextFactoryDeviationsTest {
@@ -121,11 +121,11 @@ public class SchemaContextFactoryDeviationsTest {
             startsWith("Deviation must not target the same module as the one it is defined in"));
     }
 
-    private static SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(
+    private static SettableSchemaProvider<IRSchemaSource> getImmediateYangSourceProviderFromResource(
             final String resourceName) throws Exception {
         final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
-        return SettableSchemaProvider.createImmediate(TextToASTTransformer.transformText(yangSource),
-                ASTSchemaSource.class);
+        return SettableSchemaProvider.createImmediate(TextToIRTransformer.transformText(yangSource),
+                IRSchemaSource.class);
     }
 
     private static ListenableFuture<EffectiveModelContext> createSchemaContext(
@@ -136,7 +136,7 @@ public class SchemaContextFactoryDeviationsTest {
 
         final Collection<SourceIdentifier> requiredSources = new ArrayList<>();
         for (final String resource : resources) {
-            final SettableSchemaProvider<ASTSchemaSource> yangSource = getImmediateYangSourceProviderFromResource(
+            final SettableSchemaProvider<IRSchemaSource> yangSource = getImmediateYangSourceProviderFromResource(
                     resource);
             yangSource.register(sharedSchemaRepository);
             yangSource.setResult();
