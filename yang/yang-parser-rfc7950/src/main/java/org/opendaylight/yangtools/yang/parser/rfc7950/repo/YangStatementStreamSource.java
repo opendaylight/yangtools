@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileCont
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.CompactYangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.AntlrSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -79,8 +80,20 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
      *
      * @param source YangTextSchemaSource, must not be null
      * @return A new {@link YangStatementStreamSource}
+     * @throws NullPointerException if {@code source} is null
      */
     public static YangStatementStreamSource create(final ASTSchemaSource source) {
+        return create(source.getIdentifier(), source.getRootStatement(), source.getSymbolicName().orElse(null));
+    }
+
+    /**
+     * Create a {@link YangStatementStreamSource} for a {@link IRSchemaSource}.
+     *
+     * @param source YangTextSchemaSource, must not be null
+     * @return A new {@link YangStatementStreamSource}
+     * @throws NullPointerException if {@code source} is null
+     */
+    public static YangStatementStreamSource create(final IRSchemaSource source) {
         return create(source.getIdentifier(), source.getRootStatement(), source.getSymbolicName().orElse(null));
     }
 
