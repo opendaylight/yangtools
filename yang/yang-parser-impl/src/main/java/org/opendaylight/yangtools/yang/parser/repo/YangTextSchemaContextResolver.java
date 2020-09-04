@@ -54,8 +54,6 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.util.InMemorySchemaSourceCache;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +107,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
         checkArgument(source != null);
 
-        final ASTSchemaSource ast = TextToASTTransformer.transformText(source);
+        final IRSchemaSource ast = TextToIRTransformer.transformText(source);
         LOG.trace("Resolved source {} to source {}", source, ast);
 
         // AST carries an accurate identifier, check if it matches the one supplied by the source. If it
