@@ -73,18 +73,6 @@ public final class YangStatementStreamSource extends AbstractIdentifiable<Source
     }
 
     /**
-     * Create a {@link YangStatementStreamSource} for a {@link ASTSchemaSource}.
-     *
-     * @param source YangTextSchemaSource, must not be null
-     * @return A new {@link YangStatementStreamSource}
-     * @throws NullPointerException if {@code source} is null
-     */
-    public static YangStatementStreamSource create(final ASTSchemaSource source) {
-        return create(source.getIdentifier(), AntlrSupport.createStatement(source.tree()),
-            source.getSymbolicName().orElse(null));
-    }
-
-    /**
      * Create a {@link YangStatementStreamSource} for a {@link IRSchemaSource}.
      *
      * @param source YangTextSchemaSource, must not be null

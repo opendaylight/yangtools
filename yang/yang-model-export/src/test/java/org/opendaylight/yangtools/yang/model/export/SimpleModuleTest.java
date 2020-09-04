@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaListenerRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
 import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class SimpleModuleTest {
     private SharedSchemaRepository schemaRegistry;
@@ -34,7 +34,7 @@ public class SimpleModuleTest {
     @Before
     public void init() {
         schemaRegistry = new SharedSchemaRepository("test");
-        final TextToASTTransformer astTransformer = TextToASTTransformer.create(schemaRegistry, schemaRegistry);
+        final TextToIRTransformer astTransformer = TextToIRTransformer.create(schemaRegistry, schemaRegistry);
         schemaRegistry.registerSchemaSourceListener(astTransformer);
 
         schemaContextFactory = schemaRegistry.createEffectiveModelContextFactory();

@@ -259,8 +259,7 @@ public final class AntlrSupport {
     }
 
     @VisibleForTesting
-    @Deprecated
-    public static String trimWhitespace(final String str, final int dquot) {
+    static String trimWhitespace(final String str, final int dquot) {
         final int firstBrk = str.indexOf('\n');
         if (firstBrk == -1) {
             return str;
