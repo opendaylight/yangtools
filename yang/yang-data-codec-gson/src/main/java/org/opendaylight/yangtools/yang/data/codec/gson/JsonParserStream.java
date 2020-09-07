@@ -95,7 +95,7 @@ public final class JsonParserStream implements Closeable, Flushable {
      */
     public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory) {
-        return new JsonParserStream(writer, codecFactory, codecFactory.getSchemaContext(), false);
+        return new JsonParserStream(writer, codecFactory, codecFactory.getEffectiveModelContext(), false);
     }
 
     /**
@@ -131,7 +131,7 @@ public final class JsonParserStream implements Closeable, Flushable {
      */
     public static @NonNull JsonParserStream createLenient(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory) {
-        return new JsonParserStream(writer, codecFactory, codecFactory.getSchemaContext(), true);
+        return new JsonParserStream(writer, codecFactory, codecFactory.getEffectiveModelContext(), true);
     }
 
     /**
@@ -365,7 +365,8 @@ public final class JsonParserStream implements Closeable, Flushable {
             moduleNamePart = childName.substring(0, lastIndexOfColon);
             nodeNamePart = childName.substring(lastIndexOfColon + 1);
 
-            final Iterator<? extends Module> m = codecs.getSchemaContext().findModules(moduleNamePart).iterator();
+            final Iterator<? extends Module> m = codecs.getEffectiveModelContext().findModules(moduleNamePart)
+                    .iterator();
             namespace = m.hasNext() ? m.next().getNamespace() : null;
         } else {
             nodeNamePart = childName;
@@ -394,7 +395,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         for (final URI potentialUri : potentialUris) {
             builder.append('\n');
             //FIXME how to get information about revision from JSON input? currently first available is used.
-            builder.append(codecs.getSchemaContext().findModules(potentialUri).iterator().next().getName());
+            builder.append(codecs.getEffectiveModelContext().findModules(potentialUri).iterator().next().getName());
         }
         return builder.toString();
     }

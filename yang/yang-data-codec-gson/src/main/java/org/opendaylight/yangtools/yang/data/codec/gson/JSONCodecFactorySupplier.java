@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.util.codec.PrecomputedCodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public enum JSONCodecFactorySupplier {
      */
     RFC7951() {
         @Override
-        JSONCodecFactory createFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache) {
+        JSONCodecFactory createFactory(final EffectiveModelContext context, final CodecCache<JSONCodec<?>> cache) {
             return new RFC7951JSONCodecFactory(context, cache);
         }
     },
@@ -51,22 +52,23 @@ public enum JSONCodecFactorySupplier {
      */
     DRAFT_LHOTKA_NETMOD_YANG_JSON_02() {
         @Override
-        JSONCodecFactory createFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache) {
+        JSONCodecFactory createFactory(final EffectiveModelContext context, final CodecCache<JSONCodec<?>> cache) {
             return new Lhotka02JSONCodecFactory(context, cache);
         }
     };
 
     private static final Logger LOG = LoggerFactory.getLogger(JSONCodecFactorySupplier.class);
 
-    private static final class EagerCacheLoader extends CacheLoader<SchemaContext, JSONCodecFactory> {
-        private final BiFunction<SchemaContext, CodecCache<JSONCodec<?>>, JSONCodecFactory> factorySupplier;
+    private static final class EagerCacheLoader extends CacheLoader<EffectiveModelContext, JSONCodecFactory> {
+        private final BiFunction<EffectiveModelContext, CodecCache<JSONCodec<?>>, JSONCodecFactory> factorySupplier;
 
-        EagerCacheLoader(final BiFunction<SchemaContext, CodecCache<JSONCodec<?>>, JSONCodecFactory> factorySupplier) {
+        EagerCacheLoader(final BiFunction<EffectiveModelContext,
+                CodecCache<JSONCodec<?>>, JSONCodecFactory> factorySupplier) {
             this.factorySupplier = requireNonNull(factorySupplier);
         }
 
         @Override
-        public JSONCodecFactory load(final SchemaContext key) {
+        public JSONCodecFactory load(final EffectiveModelContext key) {
             final Stopwatch sw = Stopwatch.createStarted();
             final LazyCodecCache<JSONCodec<?>> lazyCache = new LazyCodecCache<>();
             final JSONCodecFactory lazy = factorySupplier.apply(key, lazyCache);
@@ -95,16 +97,16 @@ public enum JSONCodecFactorySupplier {
     }
 
     // Weak keys to retire the entry when SchemaContext goes away
-    private final LoadingCache<SchemaContext, JSONCodecFactory> precomputed;
+    private final LoadingCache<EffectiveModelContext, JSONCodecFactory> precomputed;
 
     // Weak keys to retire the entry when SchemaContext goes away and to force identity-based lookup
-    private final LoadingCache<SchemaContext, JSONCodecFactory> shared;
+    private final LoadingCache<EffectiveModelContext, JSONCodecFactory> shared;
 
     JSONCodecFactorySupplier() {
         precomputed = CacheBuilder.newBuilder().weakKeys().build(new EagerCacheLoader(this::createFactory));
-        shared = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<SchemaContext, JSONCodecFactory>() {
+        shared = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<EffectiveModelContext, JSONCodecFactory>() {
             @Override
-            public JSONCodecFactory load(final SchemaContext key) {
+            public JSONCodecFactory load(final EffectiveModelContext key) {
                 return createFactory(key, new SharedCodecCache<>());
             }
         });
@@ -131,7 +133,7 @@ public enum JSONCodecFactorySupplier {
      * @return A sharable {@link JSONCodecFactory}
      * @throws NullPointerException if context is null
      */
-    public @NonNull JSONCodecFactory getPrecomputed(final @NonNull SchemaContext context) {
+    public @NonNull JSONCodecFactory getPrecomputed(final @NonNull EffectiveModelContext context) {
         return verifyNotNull(precomputed.getUnchecked(context));
     }
 
@@ -146,7 +148,7 @@ public enum JSONCodecFactorySupplier {
      * @return A sharable {@link JSONCodecFactory}, or absent if such an implementation is not available.
      * @throws NullPointerException if context is null
      */
-    public @NonNull Optional<JSONCodecFactory> getPrecomputedIfAvailable(final @NonNull SchemaContext context) {
+    public @NonNull Optional<JSONCodecFactory> getPrecomputedIfAvailable(final @NonNull EffectiveModelContext context) {
         return Optional.ofNullable(precomputed.getIfPresent(context));
     }
 
@@ -163,7 +165,7 @@ public enum JSONCodecFactorySupplier {
      * @return A sharable {@link JSONCodecFactory}
      * @throws NullPointerException if context is null
      */
-    public @NonNull JSONCodecFactory getShared(final @NonNull SchemaContext context) {
+    public @NonNull JSONCodecFactory getShared(final @NonNull EffectiveModelContext context) {
         return verifyNotNull(shared.getUnchecked(context));
     }
 
@@ -180,7 +182,7 @@ public enum JSONCodecFactorySupplier {
      * @return A non-sharable {@link JSONCodecFactory}
      * @throws NullPointerException if context is null
      */
-    public @NonNull JSONCodecFactory createLazy(final @NonNull SchemaContext context) {
+    public @NonNull JSONCodecFactory createLazy(final @NonNull EffectiveModelContext context) {
         return createFactory(context, new LazyCodecCache<>());
     }
 
@@ -197,9 +199,9 @@ public enum JSONCodecFactorySupplier {
      * @return A non-sharable {@link JSONCodecFactory}
      * @throws NullPointerException if context is null.
      */
-    public @NonNull JSONCodecFactory createSimple(final @NonNull SchemaContext context) {
+    public @NonNull JSONCodecFactory createSimple(final @NonNull EffectiveModelContext context) {
         return createFactory(context, NoopCodecCache.getInstance());
     }
 
-    abstract @NonNull JSONCodecFactory createFactory(SchemaContext context, CodecCache<JSONCodec<?>> cache);
+    abstract @NonNull JSONCodecFactory createFactory(EffectiveModelContext context, CodecCache<JSONCodec<?>> cache);
 }

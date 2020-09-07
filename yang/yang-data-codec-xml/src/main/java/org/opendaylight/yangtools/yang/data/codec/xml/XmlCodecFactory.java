@@ -53,7 +53,7 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     private final MountPointContext mountCtx;
 
     private XmlCodecFactory(final MountPointContext mountCtx) {
-        super(mountCtx.getSchemaContext(), new SharedCodecCache<>());
+        super(mountCtx.getEffectiveModelContext(), new SharedCodecCache<>());
         this.mountCtx = requireNonNull(mountCtx);
     }
 
@@ -108,12 +108,12 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     @Override
     protected XmlCodec<?> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
-        return new IdentityrefXmlCodec(getSchemaContext(), module);
+        return new IdentityrefXmlCodec(getEffectiveModelContext(), module);
     }
 
     @Override
     protected XmlCodec<?> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
-        return new XmlStringInstanceIdentifierCodec(getSchemaContext(), this);
+        return new XmlStringInstanceIdentifierCodec(getEffectiveModelContext(), this);
     }
 
     @Override

@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
 final class Lhotka02JSONCodecFactory extends JSONCodecFactory {
     private final JSONInstanceIdentifierCodec iidCodec;
 
-    Lhotka02JSONCodecFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache) {
+    Lhotka02JSONCodecFactory(final EffectiveModelContext context, final CodecCache<JSONCodec<?>> cache) {
         super(context, cache);
         iidCodec = new Lhotka02JSONInstanceIdentifierCodec(context, this);
     }
@@ -27,7 +27,8 @@ final class Lhotka02JSONCodecFactory extends JSONCodecFactory {
     }
 
     @Override
-    Lhotka02JSONCodecFactory rebaseTo(final SchemaContext newSchemaContext, final CodecCache<JSONCodec<?>> newCache) {
+    Lhotka02JSONCodecFactory rebaseTo(final EffectiveModelContext newSchemaContext,
+            final CodecCache<JSONCodec<?>> newCache) {
         return new Lhotka02JSONCodecFactory(newSchemaContext, newCache);
     }
 

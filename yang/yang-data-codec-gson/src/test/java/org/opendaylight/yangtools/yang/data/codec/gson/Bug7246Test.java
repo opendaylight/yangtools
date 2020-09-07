@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -36,7 +36,8 @@ public class Bug7246Test {
 
     @Test
     public void test() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug7246/yang/rpc-test.yang");
+        final EffectiveModelContext schemaContext =
+                YangParserTestUtils.parseYangResource("/bug7246/yang/rpc-test.yang");
         final JsonParser parser = new JsonParser();
         final JsonElement expextedJson = parser
                 .parse(new FileReader(new File(getClass().getResource("/bug7246/json/expected-output.json").toURI())));
@@ -57,7 +58,7 @@ public class Bug7246Test {
         return QName.create(NS, localName);
     }
 
-    private static String normalizedNodeToJsonStreamTransformation(final SchemaContext schemaContext,
+    private static String normalizedNodeToJsonStreamTransformation(final EffectiveModelContext schemaContext,
             final SchemaPath path, final Writer writer, final NormalizedNode<?, ?> inputStructure)
             throws IOException {
 

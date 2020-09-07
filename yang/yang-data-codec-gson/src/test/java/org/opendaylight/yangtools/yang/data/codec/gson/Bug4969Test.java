@@ -27,20 +27,21 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4969Test {
 
     @Test
     public void newParserLeafRefTest() throws IOException, URISyntaxException {
-        SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/bug-4969/yang");
+        EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/bug-4969/yang");
         assertNotNull(context);
 
         verifyNormalizedNodeResult(context);
     }
 
-    private static void verifyNormalizedNodeResult(final SchemaContext context) throws IOException, URISyntaxException {
+    private static void verifyNormalizedNodeResult(final EffectiveModelContext context) throws IOException,
+            URISyntaxException {
         final String inputJson = TestUtils.loadTextFile("/bug-4969/json/foo.json");
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -93,13 +94,14 @@ public class Bug4969Test {
 
     @Test
     public void newParserLeafRefTest2() throws URISyntaxException, IOException {
-        SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/leafref/yang");
+        EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/leafref/yang");
         assertNotNull(context);
 
         parseJsonToNormalizedNodes(context);
     }
 
-    private static void parseJsonToNormalizedNodes(final SchemaContext context) throws IOException, URISyntaxException {
+    private static void parseJsonToNormalizedNodes(final EffectiveModelContext context) throws IOException,
+            URISyntaxException {
         final String inputJson = TestUtils.loadTextFile("/leafref/json/data.json");
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);

@@ -36,7 +36,7 @@ final class DOMSourceMountPointChild extends AbstractMountPointChild {
 
         final XmlParserStream xmlParser;
         try {
-            xmlParser = XmlParserStream.create(writer, mountCtx, mountCtx.getSchemaContext());
+            xmlParser = XmlParserStream.create(writer, mountCtx, mountCtx.getEffectiveModelContext());
         } catch (IllegalArgumentException e) {
             throw new IOException("Failed to instantiate XML parser", e);
         }

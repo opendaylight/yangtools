@@ -324,7 +324,7 @@ public final class XmlParserStream implements Closeable, Flushable {
             if (optModule.isPresent()) {
                 final QName qname = QName.create(optModule.get(), localName);
                 final Optional<AnnotationSchemaNode> optAnnotation = AnnotationSchemaNode.find(
-                    codecs.getSchemaContext(), qname);
+                    codecs.getEffectiveModelContext(), qname);
                 if (optAnnotation.isPresent()) {
                     final AnnotationSchemaNode schema = optAnnotation.get();
                     final Object value = codecs.codecFor(schema).parseValue(in.getNamespaceContext(), attrValue);
@@ -660,7 +660,8 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private Optional<QNameModule> resolveXmlNamespace(final String xmlNamespace) {
         return resolvedNamespaces.computeIfAbsent(xmlNamespace, nsUri -> {
-            final Iterator<? extends Module> it = codecs.getSchemaContext().findModules(URI.create(nsUri)).iterator();
+            final Iterator<? extends Module> it = codecs.getEffectiveModelContext().findModules(URI.create(nsUri))
+                    .iterator();
             return it.hasNext() ? Optional.of(it.next().getQNameModule()) : Optional.empty();
         });
     }

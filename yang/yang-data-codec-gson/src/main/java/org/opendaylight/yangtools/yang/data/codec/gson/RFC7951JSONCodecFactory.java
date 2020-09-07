@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
 final class RFC7951JSONCodecFactory extends JSONCodecFactory {
     private final RFC7951JSONInstanceIdentifierCodec iidCodec;
 
-    RFC7951JSONCodecFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache) {
+    RFC7951JSONCodecFactory(final EffectiveModelContext context, final CodecCache<JSONCodec<?>> cache) {
         super(context, cache);
         iidCodec = new RFC7951JSONInstanceIdentifierCodec(context, this);
     }
@@ -27,7 +27,7 @@ final class RFC7951JSONCodecFactory extends JSONCodecFactory {
     }
 
     @Override
-    JSONCodecFactory rebaseTo(final SchemaContext newSchemaContext, final CodecCache<JSONCodec<?>> newCache) {
+    JSONCodecFactory rebaseTo(final EffectiveModelContext newSchemaContext, final CodecCache<JSONCodec<?>> newCache) {
         return new RFC7951JSONCodecFactory(newSchemaContext, newCache);
     }
 
