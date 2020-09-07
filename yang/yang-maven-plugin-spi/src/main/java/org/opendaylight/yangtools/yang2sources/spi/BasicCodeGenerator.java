@@ -11,9 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
@@ -50,7 +48,7 @@ public interface BasicCodeGenerator {
      * @return collection of files that were generated from schema context
      */
     Collection<File> generateSources(EffectiveModelContext context, File outputBaseDir, Set<Module> currentModules,
-            Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException;
+            ModuleResourceResolver moduleResourcePathResolver) throws IOException;
 
     /**
      * Provided map contains all configuration that was set in pom for code
