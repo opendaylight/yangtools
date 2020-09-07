@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -38,13 +37,15 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * Generate sources from yang files using user provided set of
  * {@link BasicCodeGenerator}s. Steps of this process:
  * <ol>
- * <li>List yang files from {@link #yangFilesRootDir}</li>
- * <li>Process yang files using Yang Parser</li>
- * <li>For each {@link BasicCodeGenerator} from {@link #codeGenerators}:
- * <ol>
- * <li>Instantiate using default constructor</li>
- * <li>Call {@link BasicCodeGenerator#generateSources(EffectiveModelContext, File, Set, Function)}</li>
- * </ol></li>
+ *   <li>List yang files from {@link #yangFilesRootDir}</li>
+ *   <li>Process yang files using Yang Parser</li>
+ *   <li>For each {@link BasicCodeGenerator} from {@link #codeGenerators}:
+ *     <ol>
+ *       <li>Instantiate using default constructor</li>
+ *       <li>Call {@link BasicCodeGenerator#generateSources(EffectiveModelContext, File, Set,
+ *           org.opendaylight.yangtools.yang2sources.spi.ModuleResourceResolver))}</li>
+ *     </ol>
+ *   </li>
  * </ol>
  */
 @Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES,

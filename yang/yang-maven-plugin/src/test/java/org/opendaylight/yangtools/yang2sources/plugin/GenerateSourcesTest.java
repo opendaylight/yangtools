@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
@@ -38,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
+import org.opendaylight.yangtools.yang2sources.spi.ModuleResourceResolver;
 
 public class GenerateSourcesTest {
 
@@ -110,7 +109,7 @@ public class GenerateSourcesTest {
 
         @Override
         public Collection<File> generateSources(final EffectiveModelContext context, final File outputBaseDir,
-                final Set<Module> currentModules, final Function<Module, Optional<String>> moduleResourcePathResolver)
+                final Set<Module> currentModules, final ModuleResourceResolver moduleResourcePathResolver)
                         throws IOException {
             called++;
             outputDir = outputBaseDir;
