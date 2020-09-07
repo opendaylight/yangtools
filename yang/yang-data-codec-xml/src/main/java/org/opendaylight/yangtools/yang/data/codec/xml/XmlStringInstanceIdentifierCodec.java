@@ -22,9 +22,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
         implements XmlCodec<YangInstanceIdentifier> {
@@ -33,9 +33,9 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
 
     private final @NonNull DataSchemaContextTree dataContextTree;
     private final @NonNull XmlCodecFactory codecFactory;
-    private final @NonNull SchemaContext context;
+    private final @NonNull EffectiveModelContext context;
 
-    XmlStringInstanceIdentifierCodec(final SchemaContext context, final XmlCodecFactory xmlCodecFactory) {
+    XmlStringInstanceIdentifierCodec(final EffectiveModelContext context, final XmlCodecFactory xmlCodecFactory) {
         this.context = requireNonNull(context);
         this.dataContextTree = DataSchemaContextTree.from(context);
         this.codecFactory = requireNonNull(xmlCodecFactory);

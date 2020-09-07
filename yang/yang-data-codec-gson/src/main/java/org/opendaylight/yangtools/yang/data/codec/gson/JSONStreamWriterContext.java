@@ -19,8 +19,8 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * Abstract base class for a single level of {@link JSONNormalizedNodeStreamWriter} recursion. Provides the base API
@@ -60,7 +60,7 @@ abstract class JSONStreamWriterContext {
      * @param qname Namespace/name tuple
      * @throws IOException when the writer reports it
      */
-    final void writeChildJsonIdentifier(final SchemaContext schema, final JsonWriter writer, final QName qname)
+    final void writeChildJsonIdentifier(final EffectiveModelContext schema, final JsonWriter writer, final QName qname)
             throws IOException {
 
         final StringBuilder sb = new StringBuilder();
@@ -84,8 +84,8 @@ abstract class JSONStreamWriterContext {
      * @param qname Namespace/name tuple
      * @throws IOException when the writer reports it
      */
-    protected final void writeMyJsonIdentifier(final SchemaContext schema, final JsonWriter writer, final QName qname)
-            throws IOException {
+    protected final void writeMyJsonIdentifier(final EffectiveModelContext schema, final JsonWriter writer,
+            final QName qname) throws IOException {
         parent.writeChildJsonIdentifier(schema, writer, qname);
     }
 
@@ -103,7 +103,7 @@ abstract class JSONStreamWriterContext {
      * @param writer Output writer
      * @throws IOException when the writer reports it
      */
-    protected abstract void emitStart(SchemaContext schema, JsonWriter writer) throws IOException;
+    protected abstract void emitStart(EffectiveModelContext schema, JsonWriter writer) throws IOException;
 
     /**
      * Emit the end of an element.
@@ -114,7 +114,7 @@ abstract class JSONStreamWriterContext {
      */
     protected abstract void emitEnd(JsonWriter writer) throws IOException;
 
-    private void emitMyself(final SchemaContext schema, final JsonWriter writer) throws IOException {
+    private void emitMyself(final EffectiveModelContext schema, final JsonWriter writer) throws IOException {
         if (!emittedMyself) {
             if (parent != null) {
                 parent.emitMyself(schema, writer);
@@ -134,7 +134,7 @@ abstract class JSONStreamWriterContext {
      * @param writer Output writer
      * @throws IOException when writer reports it
      */
-    final void emittingChild(final SchemaContext schema, final JsonWriter writer) throws IOException {
+    final void emittingChild(final EffectiveModelContext schema, final JsonWriter writer) throws IOException {
         checkState(!inChild, "Duplicate child encountered");
         emitMyself(schema, writer);
         inChild = true;
@@ -150,7 +150,8 @@ abstract class JSONStreamWriterContext {
      * @throws IOException when writer reports it
      * @throws IllegalArgumentException if this node cannot be ended (e.g. root)
      */
-    final JSONStreamWriterContext endNode(final SchemaContext schema, final JsonWriter writer) throws IOException {
+    final JSONStreamWriterContext endNode(final EffectiveModelContext schema, final JsonWriter writer)
+            throws IOException {
         if (inChild) {
             inChild = false;
             return this;

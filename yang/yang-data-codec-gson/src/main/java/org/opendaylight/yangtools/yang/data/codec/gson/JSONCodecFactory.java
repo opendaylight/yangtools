@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -48,7 +49,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  */
 @Beta
 public abstract class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
-    JSONCodecFactory(final @NonNull SchemaContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
+    JSONCodecFactory(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
         super(context, cache);
     }
 
@@ -84,7 +85,7 @@ public abstract class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>
 
     @Override
     protected final JSONCodec<?> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
-        return new IdentityrefJSONCodec(getSchemaContext(), module);
+        return new IdentityrefJSONCodec(getEffectiveModelContext(), module);
     }
 
     @Override
@@ -154,11 +155,11 @@ public abstract class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>
     //
     //               The above is not currently possible, as we cannot reference JSONCodecFactorySupplier from the
     //               factory due to that potentially creating a circular reference.
-    final JSONCodecFactory rebaseTo(final SchemaContext newSchemaContext) {
+    final JSONCodecFactory rebaseTo(final EffectiveModelContext newSchemaContext) {
         return rebaseTo(newSchemaContext, new LazyCodecCache<>());
     }
 
-    abstract JSONCodecFactory rebaseTo(SchemaContext newSchemaContext, CodecCache<JSONCodec<?>> newCache);
+    abstract JSONCodecFactory rebaseTo(EffectiveModelContext newSchemaContext, CodecCache<JSONCodec<?>> newCache);
 
     abstract JSONCodec<?> wrapDecimalCodec(DecimalStringCodec decimalCodec);
 

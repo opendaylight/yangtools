@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 @Beta
 @NonNullByDefault
@@ -27,13 +27,13 @@ public final class ImmutableMetadataNormalizedAnydata extends ImmutableNormalize
         implements MetadataNormalizedAnydata {
     private final NormalizedMetadata metadata;
 
-    public ImmutableMetadataNormalizedAnydata(final SchemaContext schemaContext, final DataSchemaNode contextNode,
-            final NormalizedNode<?, ?> data, final NormalizedMetadata metadata) {
+    public ImmutableMetadataNormalizedAnydata(final EffectiveModelContext schemaContext,
+            final DataSchemaNode contextNode, final NormalizedNode<?, ?> data, final NormalizedMetadata metadata) {
         super(schemaContext, contextNode, data);
         this.metadata = requireNonNull(metadata);
     }
 
-    public static ImmutableNormalizedAnydata ofOptional(final SchemaContext schemaContext,
+    public static ImmutableNormalizedAnydata ofOptional(final EffectiveModelContext schemaContext,
             final DataSchemaNode contextNode, final NormalizedNode<?, ?> data,
             final Optional<NormalizedMetadata> metadata) {
         return metadata.isPresent()

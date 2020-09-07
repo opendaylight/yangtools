@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.AbstractSchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.util.AbstractEffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,12 +51,14 @@ import org.slf4j.LoggerFactory;
  * @param <T> Codec type
  * @author Robert Varga
  */
-public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> extends AbstractSchemaContextProvider {
+public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
+        extends AbstractEffectiveModelContextProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCodecFactory.class);
 
     private final @NonNull CodecCache<T> cache;
 
-    protected AbstractCodecFactory(final @NonNull SchemaContext schemaContext, final @NonNull CodecCache<T> cache) {
+    protected AbstractCodecFactory(final @NonNull EffectiveModelContext schemaContext,
+            final @NonNull CodecCache<T> cache) {
         super(schemaContext);
         this.cache = requireNonNull(cache);
     }
@@ -211,7 +213,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> ex
             return createComplexUnion(schema, (UnionTypeDefinition) type);
         } else if (type instanceof LeafrefTypeDefinition) {
             final TypeDefinition<?> target = SchemaContextUtil.getBaseTypeForLeafRef((LeafrefTypeDefinition) type,
-                getSchemaContext(), schema);
+                getEffectiveModelContext(), schema);
             verifyNotNull(target, "Unable to find base type for leafref node %s type %s.", schema, target);
 
             final T ret = getSimpleCodecFor(target);

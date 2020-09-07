@@ -16,16 +16,16 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.util.AbstractSchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.util.AbstractEffectiveModelContextProvider;
 
 @Beta
 @NonNullByDefault
-public class ImmutableNormalizedAnydata extends AbstractSchemaContextProvider implements NormalizedAnydata {
+public class ImmutableNormalizedAnydata extends AbstractEffectiveModelContextProvider implements NormalizedAnydata {
     private final DataSchemaNode contextNode;
     private final NormalizedNode<?, ?> data;
 
-    public ImmutableNormalizedAnydata(final SchemaContext schemaContext, final DataSchemaNode contextNode,
+    public ImmutableNormalizedAnydata(final EffectiveModelContext schemaContext, final DataSchemaNode contextNode,
             final NormalizedNode<?, ?> data) {
         super(schemaContext);
         this.contextNode = requireNonNull(contextNode);

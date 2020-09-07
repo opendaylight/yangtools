@@ -43,8 +43,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -68,7 +68,7 @@ public class Bug8083Test {
             .node(QName.create(BARMOD, "bar-leaf"))
             .build();
 
-    private static SchemaContext FULL_SCHEMA_CONTEXT;
+    private static EffectiveModelContext FULL_SCHEMA_CONTEXT;
 
     @BeforeClass
     public static void init() {
@@ -114,7 +114,7 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithEmptyListKey() throws IOException, URISyntaxException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
         final String inputJson = loadTextFile("/bug8083/json/baz.json");
 
         // deserialization
@@ -129,7 +129,7 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithIdentityrefListKey() throws IOException, URISyntaxException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
         final String inputJson = loadTextFile("/bug8083/json/zab.json");
 
         // deserialization
@@ -144,7 +144,7 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws IOException, URISyntaxException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
         final String inputJson = loadTextFile("/bug8083/json/foobar.json");
 
         // deserialization

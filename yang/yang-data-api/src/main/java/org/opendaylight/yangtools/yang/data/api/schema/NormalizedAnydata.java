@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 
 /**
  * The contents of an {@code anydata} node in a normalized format. This representation acts as a schema-bound bridge
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
  */
 @Beta
 @NonNullByDefault
-public interface NormalizedAnydata extends Immutable, SchemaContextProvider {
+public interface NormalizedAnydata extends Immutable, EffectiveModelContextProvider {
 
     DataSchemaNode getContextNode();
 

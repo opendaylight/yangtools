@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * A recursion level of {@link JSONNormalizedNodeStreamWriter}, which represents
@@ -26,7 +26,7 @@ class JSONStreamWriterObjectContext extends JSONStreamWriterQNameContext {
     }
 
     @Override
-    protected void emitStart(final SchemaContext schema, final JsonWriter writer) throws IOException {
+    protected void emitStart(final EffectiveModelContext schema, final JsonWriter writer) throws IOException {
         writer.beginObject();
     }
 

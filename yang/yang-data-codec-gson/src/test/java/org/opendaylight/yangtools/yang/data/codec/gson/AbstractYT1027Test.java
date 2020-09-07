@@ -31,8 +31,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -59,7 +59,7 @@ public abstract class AbstractYT1027Test {
             + "  \"yt1027:uint64\": 1\n"
             + "}";
 
-    static SchemaContext SCHEMA_CONTEXT;
+    static EffectiveModelContext SCHEMA_CONTEXT;
     private static DecimalTypeDefinition DECIMAL_TYPE;
     private static Int64TypeDefinition INT64_TYPE;
     private static Uint64TypeDefinition UINT64_TYPE;

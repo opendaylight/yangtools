@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class JSONStreamWriterExclusiveRootContext extends JSONStreamWriterRootContext {
     JSONStreamWriterExclusiveRootContext(final URI namespace) {
@@ -18,7 +18,7 @@ final class JSONStreamWriterExclusiveRootContext extends JSONStreamWriterRootCon
     }
 
     @Override
-    protected void emitStart(final SchemaContext schema, final JsonWriter writer) throws IOException {
+    protected void emitStart(final EffectiveModelContext schema, final JsonWriter writer) throws IOException {
         writer.beginObject();
     }
 
