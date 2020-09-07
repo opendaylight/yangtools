@@ -9,14 +9,16 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.TokenSource;
 
-final class ExplicitTextToken extends AbstractToken {
+@Beta
+public final class ExplicitTextToken extends AbstractToken {
     private final int type;
     private final String text;
 
-    ExplicitTextToken(final int type, final String text) {
+    public ExplicitTextToken(final int type, final String text) {
         this.type = type;
         this.text = requireNonNull(text);
     }
