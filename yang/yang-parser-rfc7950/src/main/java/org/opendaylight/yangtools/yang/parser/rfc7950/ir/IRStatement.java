@@ -78,7 +78,7 @@ public abstract class IRStatement extends AbstractIRObject {
 
     @Override
     final StringBuilder toYangFragment(final StringBuilder sb) {
-        sb.append(keyword);
+        keyword.toYangFragment(sb);
         if (argument != null) {
             argument.toYangFragment(sb.append(' '));
         }
