@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedSchemaNode;
+import org.opendaylight.yangtools.rfc6643.model.api.MaxAccess;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidSchemaNode;
@@ -95,7 +96,7 @@ public class IetfYangSmiv2ExtensionPluginTest {
         ifStackHigherLayer.getUnknownSchemaNodes().forEach(unknownSchemaNode -> {
             if (unknownSchemaNode instanceof MaxAccessSchemaNode) {
                 final MaxAccessSchemaNode maxAccess = (MaxAccessSchemaNode) unknownSchemaNode;
-                assertEquals(maxAccess.getArgument(), "not-accessible");
+                assertEquals(MaxAccess.NOT_ACCESSIBLE, maxAccess.getArgument());
             }
         });
 
