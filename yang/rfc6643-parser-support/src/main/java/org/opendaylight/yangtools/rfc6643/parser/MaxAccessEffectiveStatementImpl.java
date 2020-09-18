@@ -20,17 +20,10 @@ final class MaxAccessEffectiveStatementImpl extends UnknownEffectiveStatementBas
         implements MaxAccessEffectiveStatement, MaxAccessSchemaNode {
 
     private final SchemaPath path;
-    private final String valueFromNamespace;
 
     MaxAccessEffectiveStatementImpl(final StmtContext<String, MaxAccessStatement, ?> ctx) {
         super(ctx);
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
-        valueFromNamespace = ctx.getFromNamespace(IetfYangSmiv2Namespace.class, ctx);
-    }
-
-    // FIXME: what good is this method?
-    public String getValueFromNamespace() {
-        return valueFromNamespace;
     }
 
     @Override

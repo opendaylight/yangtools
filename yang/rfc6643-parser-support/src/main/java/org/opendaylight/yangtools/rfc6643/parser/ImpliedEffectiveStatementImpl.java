@@ -20,22 +20,15 @@ final class ImpliedEffectiveStatementImpl extends UnknownEffectiveStatementBase<
         implements ImpliedEffectiveStatement, ImpliedSchemaNode {
 
     private final SchemaPath path;
-    private final String valueFromNamespace;
 
     ImpliedEffectiveStatementImpl(final StmtContext<String, ImpliedStatement, ?> ctx) {
         super(ctx);
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
-        valueFromNamespace = ctx.getFromNamespace(IetfYangSmiv2Namespace.class, ctx);
     }
 
     @Override
     public String getArgument() {
         return argument();
-    }
-
-    // FIXME: what good is this method?
-    public String getValueFromNamespace() {
-        return valueFromNamespace;
     }
 
     @Override

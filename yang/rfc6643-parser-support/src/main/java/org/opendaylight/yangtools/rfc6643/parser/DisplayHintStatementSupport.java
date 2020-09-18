@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
@@ -37,12 +36,6 @@ public final class DisplayHintStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(
-            final Mutable<String, DisplayHintStatement, DisplayHintEffectiveStatement> stmt) {
-        stmt.addToNs(IetfYangSmiv2Namespace.class, stmt, "Ietf-yang-smiv2 namespace.");
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
@@ -57,5 +50,4 @@ public final class DisplayHintStatementSupport
             final StmtContext<String, DisplayHintStatement, DisplayHintEffectiveStatement> ctx) {
         return new DisplayHintEffectiveStatementImpl(ctx);
     }
-
 }

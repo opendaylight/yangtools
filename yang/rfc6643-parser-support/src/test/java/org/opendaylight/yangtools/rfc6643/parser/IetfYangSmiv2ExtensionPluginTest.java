@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.rfc6643.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
 
 import java.io.IOException;
 import org.junit.AfterClass;
@@ -52,7 +51,6 @@ public class IetfYangSmiv2ExtensionPluginTest {
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AliasStatementSupport.getInstance())
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, OidStatementSupport.getInstance())
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, SubIdStatementSupport.getInstance())
-                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, sourceLocal(IetfYangSmiv2Namespace.class))
                 .build();
     }
 

@@ -18,24 +18,16 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class DefValEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, DefValStatement>
         implements DefValEffectiveStatement, DefValSchemaNode {
-
     private final SchemaPath path;
-    private final String valueFromNamespace;
 
     DefValEffectiveStatementImpl(final StmtContext<String, DefValStatement, ?> ctx) {
         super(ctx);
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
-        valueFromNamespace = ctx.getFromNamespace(IetfYangSmiv2Namespace.class, ctx);
     }
 
     @Override
     public String getArgument() {
         return argument();
-    }
-
-    // FIXME: what good is this method?
-    public String getValueFromNamespace() {
-        return valueFromNamespace;
     }
 
     @Override

@@ -8,13 +8,11 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
@@ -37,12 +35,6 @@ public final class MaxAccessStatementSupport
         return value;
     }
 
-    @Override
-    public void onFullDefinitionDeclared(final Mutable<String, MaxAccessStatement, MaxAccessEffectiveStatement> stmt) {
-        stmt.addToNs(IetfYangSmiv2Namespace.class, stmt, "Ietf-yang-smiv2 namespace.");
-    }
-
-    @Nullable
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
