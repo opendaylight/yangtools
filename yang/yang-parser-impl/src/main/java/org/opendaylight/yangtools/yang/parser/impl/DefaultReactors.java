@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
-
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationNamespace;
@@ -22,7 +20,6 @@ import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSuppor
 import org.opendaylight.yangtools.rfc6643.parser.AliasStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.DefValStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.DisplayHintStatementSupport;
-import org.opendaylight.yangtools.rfc6643.parser.IetfYangSmiv2Namespace;
 import org.opendaylight.yangtools.rfc6643.parser.ImpliedStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.MaxAccessStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.OidStatementSupport;
@@ -99,7 +96,6 @@ public final class DefaultReactors {
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AliasStatementSupport.getInstance())
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, OidStatementSupport.getInstance())
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, SubIdStatementSupport.getInstance())
-                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, sourceLocal(IetfYangSmiv2Namespace.class))
 
                 // RFC7952 annotation support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnnotationStatementSupport.getInstance())

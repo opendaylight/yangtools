@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMappi
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
@@ -40,12 +39,6 @@ public final class AliasStatementSupport
     @Override
     public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return value;
-    }
-
-    @Override
-    public void onFullDefinitionDeclared(final Mutable<String, AliasStatement, AliasEffectiveStatement> stmt) {
-        stmt.addToNs(IetfYangSmiv2Namespace.class, stmt, "Ietf-yang-smiv2 namespace.");
-        getSubstatementValidator().validate(stmt);
     }
 
     @Override

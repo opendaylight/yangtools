@@ -20,16 +20,10 @@ final class DisplayHintEffectiveStatementImpl extends UnknownEffectiveStatementB
         implements DisplayHintEffectiveStatement, DisplayHintSchemaNode {
 
     private final SchemaPath path;
-    private final String valueFromNamespace;
 
     DisplayHintEffectiveStatementImpl(final StmtContext<String, DisplayHintStatement, ?> ctx) {
         super(ctx);
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
-        valueFromNamespace = ctx.getFromNamespace(IetfYangSmiv2Namespace.class, ctx);
-    }
-
-    public String getValueFromNamespace() {
-        return valueFromNamespace;
     }
 
     @Override

@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.rfc6643.model.api.ImpliedEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
@@ -34,11 +33,6 @@ public final class ImpliedStatementSupport
     @Override
     public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return value;
-    }
-
-    @Override
-    public void onFullDefinitionDeclared(final Mutable<String, ImpliedStatement, ImpliedEffectiveStatement> stmt) {
-        stmt.addToNs(IetfYangSmiv2Namespace.class, stmt, "Ietf-yang-smiv2 namespace.");
     }
 
     @Override

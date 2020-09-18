@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidEffectiveStatement;
@@ -37,13 +36,6 @@ public final class OidStatementSupport
         return ObjectIdentifier.forString(value);
     }
 
-    @Override
-    public void onFullDefinitionDeclared(
-            final StmtContext.Mutable<ObjectIdentifier, OidStatement, OidEffectiveStatement> stmt) {
-        stmt.addToNs(IetfYangSmiv2Namespace.class, stmt, "Ietf-yang-smiv2 namespace.");
-    }
-
-    @Nullable
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
