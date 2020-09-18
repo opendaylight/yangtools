@@ -1,0 +1,13 @@
+module bar {
+  yang-version 1.1;
+  namespace bar;
+  prefix bar;
+
+  import ietf-yang-structure-ext { prefix sx; }
+  import foo { prefix foo; }
+
+  sx:augment-structure  /foo:foo-data/foo:foo-con {
+    leaf add-leaf1 { type int32; }
+    leaf add-leaf2 { type string; }
+  }
+}
