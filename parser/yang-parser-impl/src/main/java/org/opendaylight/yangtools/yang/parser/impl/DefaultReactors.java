@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.rfc8040.parser.YangDataArgumentNamespace;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
 import org.opendaylight.yangtools.rfc8528.parser.MountPointStatementSupport;
 import org.opendaylight.yangtools.rfc8639.parser.SubscriptionStateNotificationStatementSupport;
+import org.opendaylight.yangtools.rfc8791.parser.IetfDataStructureSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -158,6 +159,9 @@ public final class DefaultReactors {
             // RFC8639 subscription-state-notification support
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                 new SubscriptionStateNotificationStatementSupport(config))
+
+            // RFC8791 structure/augment-structure support
+            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION, IetfDataStructureSupport.createBundle(config))
 
             // OpenConfig extensions support
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new EncryptedValueStatementSupport(config))
