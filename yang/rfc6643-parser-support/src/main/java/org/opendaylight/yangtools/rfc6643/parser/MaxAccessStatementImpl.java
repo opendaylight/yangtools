@@ -15,9 +15,4 @@ final class MaxAccessStatementImpl extends AbstractDeclaredStatement<String> imp
     MaxAccessStatementImpl(final StmtContext<String, MaxAccessStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public String getArgument() {
-        return argument();
-    }
 }

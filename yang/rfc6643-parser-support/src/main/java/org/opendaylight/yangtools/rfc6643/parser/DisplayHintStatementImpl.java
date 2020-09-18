@@ -15,9 +15,4 @@ final class DisplayHintStatementImpl extends AbstractDeclaredStatement<String> i
     DisplayHintStatementImpl(final StmtContext<String, DisplayHintStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public String getArgument() {
-        return argument();
-    }
 }

@@ -23,9 +23,4 @@ final class OidIdStatementImpl extends AbstractDeclaredStatement<ObjectIdentifie
     public ObjectIdentifier getOid() {
         return verifyNotNull(argument());
     }
-
-    @Override
-    public ObjectIdentifier getArgument() {
-        return null;
-    }
 }
