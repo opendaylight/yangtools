@@ -163,6 +163,10 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8791-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc8819-parser-support</artifactId>
         </dependency>
 
