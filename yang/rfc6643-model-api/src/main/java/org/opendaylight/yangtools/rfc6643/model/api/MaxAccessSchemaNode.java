@@ -8,10 +8,11 @@
 package org.opendaylight.yangtools.rfc6643.model.api;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 @Beta
 public interface MaxAccessSchemaNode extends UnknownSchemaNode {
 
-    String getArgument();
+    @NonNull MaxAccess getArgument();
 }
