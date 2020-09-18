@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 @Beta
-public interface MaxAccessStatement extends UnknownStatement<String> {
+public interface MaxAccessStatement extends UnknownStatement<MaxAccess> {
     @Override
     default StatementDefinition statementDefinition() {
         return IetfYangSmiv2ExtensionsMapping.MAX_ACCESS;
