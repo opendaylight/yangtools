@@ -36,6 +36,7 @@ module org.opendaylight.yangtools.yang.parser.impl {
     requires org.opendaylight.yangtools.rfc8040.parser.support;
     requires org.opendaylight.yangtools.rfc8528.parser.support;
     requires org.opendaylight.yangtools.rfc8639.parser.support;
+    requires org.opendaylight.yangtools.rfc8791.parser.support;
     requires org.opendaylight.yangtools.rfc8819.parser.support;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;

@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.rfc7952.parser.dagger.Rfc7952Module;
 import org.opendaylight.yangtools.rfc8040.parser.dagger.Rfc8040Module;
 import org.opendaylight.yangtools.rfc8528.parser.dagger.Rfc8528Module;
 import org.opendaylight.yangtools.rfc8639.parser.dagger.Rfc8639Module;
+import org.opendaylight.yangtools.rfc8791.parser.dagger.Rfc8791Module;
 import org.opendaylight.yangtools.rfc8819.parser.dagger.Rfc8819Module;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -45,6 +46,7 @@ import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule
         Rfc8040Module.class,
         Rfc8528Module.class,
         Rfc8639Module.class,
+        Rfc8791Module.class,
         Rfc8819Module.class,
         OdlCodegenModule.class,
         YangExtModule.class,
