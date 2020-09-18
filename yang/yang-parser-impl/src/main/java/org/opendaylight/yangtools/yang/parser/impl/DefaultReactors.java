@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
+
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationNamespace;
@@ -17,6 +19,14 @@ import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
 import org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
+import org.opendaylight.yangtools.rfc6643.parser.AliasStatementSupport;
+import org.opendaylight.yangtools.rfc6643.parser.DefValStatementSupport;
+import org.opendaylight.yangtools.rfc6643.parser.DisplayHintStatementSupport;
+import org.opendaylight.yangtools.rfc6643.parser.IetfYangSmiv2Namespace;
+import org.opendaylight.yangtools.rfc6643.parser.ImpliedStatementSupport;
+import org.opendaylight.yangtools.rfc6643.parser.MaxAccessStatementSupport;
+import org.opendaylight.yangtools.rfc6643.parser.OidStatementSupport;
+import org.opendaylight.yangtools.rfc6643.parser.SubIdStatementSupport;
 import org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
 import org.opendaylight.yangtools.rfc8528.parser.MountPointStatementSupport;
@@ -100,6 +110,16 @@ public final class DefaultReactors {
                     DefaultDenyAllStatementSupport.getInstance())
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     DefaultDenyWriteStatementSupport.getInstance())
+
+                // RFC6643 extensions
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, DisplayHintStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, MaxAccessStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, DefValStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ImpliedStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AliasStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, OidStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, SubIdStatementSupport.getInstance())
+                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, sourceLocal(IetfYangSmiv2Namespace.class))
 
                 // RFC7952 annotation support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnnotationStatementSupport.getInstance())
