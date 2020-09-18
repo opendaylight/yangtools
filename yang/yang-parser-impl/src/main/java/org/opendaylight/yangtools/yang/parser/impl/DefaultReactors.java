@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.rfc6643.parser.SubIdStatementSupport;
 import org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
 import org.opendaylight.yangtools.rfc8528.parser.MountPointStatementSupport;
+import org.opendaylight.yangtools.rfc8791.parser.IetfDataStructureSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -125,6 +126,9 @@ public final class DefaultReactors {
 
                 // RFC8528 yang-data support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, MountPointStatementSupport.getInstance())
+
+                // RFC8791 structure/augment-structure support
+                .addAllSupports(ModelProcessingPhase.FULL_DECLARATION, IetfDataStructureSupport.BUNDLE)
 
                 // OpenConfig extensions support (except openconfig-version)
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,

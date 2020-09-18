@@ -122,6 +122,14 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc8528-parser-support</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8791-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8791-parser-support</artifactId>
+        </dependency>
 
         <!-- XPath reference implementation -->
         <dependency>
