@@ -83,6 +83,10 @@
         <module>rfc6536-model-api</module>
         <module>rfc6536-parser-support</module>
 
+        <!-- SMIv2-to-YANG translations support -->
+        <module>rfc6643-model-api</module>
+        <module>rfc6643-parser-support</module>
+
         <!-- Metadata (annotation) metamodel support -->
         <module>rfc7952-data-api</module>
         <module>rfc7952-data-util</module>
