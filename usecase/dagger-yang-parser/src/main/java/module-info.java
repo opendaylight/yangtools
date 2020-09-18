@@ -21,6 +21,7 @@ module org.opendaylight.yangtools.dagger.yang.parser {
     requires org.opendaylight.yangtools.rfc8040.parser.support;
     requires org.opendaylight.yangtools.rfc8528.parser.support;
     requires org.opendaylight.yangtools.rfc8639.parser.support;
+    requires org.opendaylight.yangtools.rfc8791.parser.support;
     requires org.opendaylight.yangtools.rfc8819.parser.support;
     requires org.opendaylight.yangtools.yang.parser.rfc7950;
     requires org.opendaylight.yangtools.yang.source.ir;
