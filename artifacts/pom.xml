@@ -281,6 +281,11 @@
                 <artifactId>rfc8791-model-api</artifactId>
                 <version>14.0.21-SNAPSHOT</version>
             </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>rfc8791-parser-support</artifactId>
+                <version>14.0.21-SNAPSHOT</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
