@@ -17,8 +17,9 @@
         <bundle>mvn:org.opendaylight.yangtools/rfc8040-parser-support/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/rfc8528-parser-support/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/rfc8639-parser-support/{{versionAsInProject}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/yang-parser-impl/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc8791-parser-support/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/rfc8819-parser-support/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-impl/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-reactor/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-rfc7950/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-spi/{{versionAsInProject}}</bundle>
